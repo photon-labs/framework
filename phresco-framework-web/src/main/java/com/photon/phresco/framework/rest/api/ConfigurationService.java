@@ -437,7 +437,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_ENV_NAME) String envName,
 			@QueryParam("oldEnvName") String oldEnvName, @QueryParam("defaultEnv") String defaultEnv,
 			List<Configuration> configurationlist, @QueryParam("isEnvSpecific") String isEnvSpecific,
-			@QueryParam("configName") String configName, @QueryParam("desc") String desc) {
+			@QueryParam("configName") String configName, @QueryParam("desc") String desc , @QueryParam("isfavoric") String isfavoric,@QueryParam("favtype") String favtype ) {
 		Environment env = new Environment();
 		String configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
 		ResponseInfo<Configuration> responseData = new ResponseInfo<Configuration>();
@@ -451,17 +451,31 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 				}
 				boolean defaultBoolValue = Boolean.parseBoolean(defaultEnv);
-				configManager.deleteEnvironment(oldEnvName);
 				env.setName(envName);
 				env.setDesc(desc);
 				env.setDefaultEnv(defaultBoolValue);
-				env.setConfigurations(configurationlist);
-				List<Environment> environments = configManager.getEnvironments();
-				if (CollectionUtils.isNotEmpty(environments)) {
-					environments.add(env);
-					configManager.addEnvironments(environments);
+				if ("false".equalsIgnoreCase(isfavoric)) {
+					configManager.deleteEnvironment(oldEnvName);
+					env.setConfigurations(configurationlist);
+					List<Environment> environments = configManager.getEnvironments();
+					if (CollectionUtils.isNotEmpty(environments)) {
+						environments.add(env);
+						configManager.addEnvironments(environments);
+					} else {
+						configManager.addEnvironments(Arrays.asList(env));
+					}
 				} else {
-					configManager.addEnvironments(Arrays.asList(env));
+					configManager.deleteConfigurationsByType(oldEnvName, favtype);
+					List<Configuration> configurations = configManager.getConfigurations(oldEnvName);
+					configurations.addAll(configurationlist);
+					env.setConfigurations(configurations);
+					List<Environment> environments = configManager.getEnvironments();
+					if (CollectionUtils.isNotEmpty(environments)) {
+						environments.add(env);
+						configManager.addEnvironments(environments);
+					} else {
+						configManager.addEnvironments(Arrays.asList(env));
+					}
 				}
 			} else {
 				String nonEnvConfigFie = FrameworkServiceUtil.getnonEnvConfigFileDir(appDirName);

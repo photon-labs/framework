@@ -155,7 +155,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 			StringBuilder builder  = new StringBuilder();
 			String pomFileName = Utility.getPomFileName(applicationInfo);
 			builder.append(Utility.getProjectHome())
-			.append(applicationInfo.getAppDirName())
+			.append(appDirName)
 			.append(File.separatorChar)
 			.append(pomFileName);
 			return new PomProcessor(new File(builder.toString()));
@@ -591,7 +591,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 			File settingsFile = new File(Utility.getProjectHome()+ customerId + SETTINGS_INFO_FILE_NAME);
 			if (StringUtils.isNotEmpty(environmentName)) {
 				List<String> selectedEnvs = csvToList(environmentName);
-				List<String> selectedConfigTypeList = getSelectedConfigTypeList(baseDir.getName());
+				List<String> selectedConfigTypeList = getSelectedConfigTypeList(appDirName);
 				List<String> nullConfig = new ArrayList<String>();
 				if (settingsFile.exists()) {
 					configManager = PhrescoFrameworkFactory.getConfigManager(settingsFile);

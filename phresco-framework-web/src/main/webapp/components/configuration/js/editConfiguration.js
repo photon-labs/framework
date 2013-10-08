@@ -37,6 +37,7 @@ define(["configuration/listener/configurationListener"], function() {
 		
 		preRender: function(whereToRender, renderFunction){
 			var self = this, res = {};
+			self.configurationlistener.favourite = self.favourite;
 			if (self.configClick === "EditConfiguration") {
 				self.configName = ""; 
 				self.configRequestBody.envSpecific = self.envSpecificVal;
@@ -88,6 +89,8 @@ define(["configuration/listener/configurationListener"], function() {
 			self.configType = commonVariables.api.localVal.getJson('configTypes');
 			self.templateData.configType = self.configType;
 			self.templateData.envSpecificVal = self.envSpecificVal;
+			self.templateData.favourite = self.favourite;
+			self.templateData.favConfig = commonVariables.favConfig;
 			var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 			self.templateData.userPermissions = userPermissions;
 			
@@ -114,6 +117,8 @@ define(["configuration/listener/configurationListener"], function() {
 			self.updateConfigEvent = new signals.Signal();
 			self.addNonEnvirinmentConfigEvent = new signals.Signal();
 			self.validationConsoleEvent = new signals.Signal();
+			self.favConfigEvent = new signals.Signal();
+			self.favConfigEvent.add(configurationlistener.addConfiguration, configurationlistener);
 			self.cancelEditConfigurationEvent.add(configurationlistener.cancelEditConfiguration, configurationlistener);
 			self.addNonEnvirinmentConfigEvent.add(configurationlistener.addConfiguration, configurationlistener);
 			self.addConfigurationEvent.add(configurationlistener.addConfiguration, configurationlistener);
@@ -140,6 +145,10 @@ define(["configuration/listener/configurationListener"], function() {
 			
 			$("#themeValidation").click(function() {
 				self.validationConsoleEvent.dispatch($(this));
+			});
+			
+			$("input[favourite=favourite]").click(function() {
+				self.favConfigEvent.dispatch($(this).attr('configVal'));
 			});
 			
 			$("input[name=UpdateConfiguration]").unbind('click');

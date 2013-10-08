@@ -314,7 +314,9 @@ define([], function() {
 		getRequestHeader : function(type, body, urlContext, paramData) {
 			var appDirName = '';
 			var projectInfo = commonVariables.api.localVal.getProjectInfo();
-			if(projectInfo !== null) {
+			if (!self.isBlank($('.moduleName').val())) {
+				appDirName = $('.rootModule').val();
+			} else if(projectInfo !== null) {
 				appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
 			}
 			var header = {

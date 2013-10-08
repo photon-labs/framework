@@ -47,22 +47,24 @@ public class DynamicFetchSqlImpl implements DynamicParameter, Constants {
 		PossibleValues possibleValues = new PossibleValues();
 		try {
 			ApplicationInfo applicationInfo = (ApplicationInfo) map.get(KEY_APP_INFO);
-			String sqlFilePath = getSqlFilePath(applicationInfo);
+			boolean isMultiModule = (Boolean) map.get(KEY_MULTI_MODULE);
+        	String rootModule = (String) map.get(KEY_ROOT_MODULE);
+			String sqlFilePath = getSqlFilePath(applicationInfo, isMultiModule, rootModule);
 			String appDirectory = applicationInfo.getAppDirName();
-			String configPath = getConfigurationPath(appDirectory).toString();
 			String envName = (String) map.get(KEY_ENVIRONMENT);
 			String dbname = (String) map.get(KEY_DATABASE);
 			String customer = (String) map.get(KEY_CUSTOMER_ID);
+        	String configPath = getConfigurationPath(appDirectory, isMultiModule, rootModule).toString();
 			String settingsPath = getSettingsPath(customer);
 			ConfigManager configManager = new ConfigManagerImpl(new File(settingsPath)); 
 			List<Configuration> settingsconfig = configManager.getConfigurations(envName, Constants.SETTINGS_TEMPLATE_DB);
 			if(CollectionUtils.isNotEmpty(settingsconfig)) {
-				fetchSqlFilePath(possibleValues, applicationInfo, sqlFilePath, dbname, settingsconfig);
+				fetchSqlFilePath(possibleValues, applicationInfo, sqlFilePath, dbname, settingsconfig, isMultiModule, rootModule);
 			}
 			configManager = new ConfigManagerImpl(new File(configPath));
 			List<Configuration> configurations = configManager.getConfigurations(envName, SETTINGS_TEMPLATE_DB);
 			if(CollectionUtils.isNotEmpty(configurations)) {
-				fetchSqlFilePath(possibleValues, applicationInfo, sqlFilePath, dbname, configurations);
+				fetchSqlFilePath(possibleValues, applicationInfo, sqlFilePath, dbname, configurations, isMultiModule, rootModule);
 			}
 			return possibleValues;
 
@@ -74,7 +76,7 @@ public class DynamicFetchSqlImpl implements DynamicParameter, Constants {
 	}
 
 	private void fetchSqlFilePath(PossibleValues possibleValues, ApplicationInfo applicationInfo, String sqlFilePath,
-			String dbname, List<Configuration> configurations) {
+			String dbname, List<Configuration> configurations, boolean isMultiModule, String rootModule) {
 		String dbVersion = "";
 		String sqlFileName = "";
 		String path = "";
@@ -82,8 +84,14 @@ public class DynamicFetchSqlImpl implements DynamicParameter, Constants {
 			String dbType = configuration.getProperties().getProperty(DB_TYPE).toLowerCase();
 			if (dbname.equals(dbType)) { 
 				dbVersion =configuration.getProperties().getProperty(DB_VERSION);
-				File[] dbSqlFiles = new File(Utility.getProjectHome() + applicationInfo.getAppDirName() + sqlFilePath + dbname
-						+ File.separator + dbVersion).listFiles(new DumpFileNameFilter());
+				StringBuilder sb = new StringBuilder(Utility.getProjectHome());
+				if (isMultiModule) {
+					sb.append(rootModule).append(File.separator);
+				}
+				sb.append(applicationInfo.getAppDirName()).append(sqlFilePath).append(dbname)
+				.append(File.separator).append(dbVersion);
+				
+				File[] dbSqlFiles = new File(sb.toString()).listFiles(new DumpFileNameFilter());
 				for (int i = 0; i < dbSqlFiles.length; i++) {
 					if (!dbSqlFiles[i].isDirectory()) {
 					Value value = new Value();
@@ -105,8 +113,11 @@ public class DynamicFetchSqlImpl implements DynamicParameter, Constants {
 		}
 	}
 	
-	private StringBuilder getConfigurationPath(String projectDirectory) {
+	private StringBuilder getConfigurationPath(String projectDirectory, boolean isMultiModule, String rootModule) {
 		 StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+		 if (isMultiModule) {
+			 builder.append(rootModule).append(File.separator);
+		 }
 		 builder.append(projectDirectory);
 		 builder.append(File.separator);
 		 builder.append(DOT_PHRESCO_FOLDER);
@@ -116,9 +127,15 @@ public class DynamicFetchSqlImpl implements DynamicParameter, Constants {
 		 return builder;
 	 }
 	
-	private String getSqlFilePath(ApplicationInfo applicationInfo) throws PhrescoPomException {
-		PomProcessor pomPath = new PomProcessor(new File(Utility.getProjectHome() + applicationInfo.getAppDirName() + File.separator + Utility.getPomFileName(applicationInfo)));
-		String sqlFilePath = pomPath.getProperty(POM_PROP_KEY_SQL_FILE_DIR);
+	private String getSqlFilePath(ApplicationInfo applicationInfo, boolean isMultiModule, String rootModule) throws PhrescoPomException {
+		StringBuilder pom = new StringBuilder(Utility.getProjectHome());
+		if (isMultiModule) {
+			pom.append(rootModule).append(File.separator);
+		}
+		pom.append(applicationInfo.getAppDirName()).append(File.separator)
+		.append(Utility.getPomFileName(applicationInfo));
+		PomProcessor processor = new PomProcessor(new File(pom.toString()));
+		String sqlFilePath = processor.getProperty(POM_PROP_KEY_SQL_FILE_DIR);
 
 		return sqlFilePath;
 	}

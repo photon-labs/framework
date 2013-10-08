@@ -262,8 +262,9 @@ define(["projectlist/listener/projectListListener"], function() {
 						var techid = $(thisObj).closest("tr").attr("techid");
 						commonVariables.techId = techid;
 						$("#myTab li#appinfo a").addClass("act");
-						self.onProjectsEvent.dispatch(value , techid);
-
+						var module = "multimodule" === $(thisObj).attr("from") ?  $(thisObj).text() : "";
+						self.onProjectsEvent.dispatch(value , techid, module);
+	
 						//To show/hide openfolder, copy path icon and copy to clipboard
 						var actionBody = {};
 						self.projectslistListener.getProjectList(self.projectslistListener.getActionHeader(actionBody, "checkMachine"), function(response) {

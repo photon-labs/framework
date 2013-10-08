@@ -297,6 +297,82 @@
                   </td>
                         <td>&nbsp;</td>
                       </tr>
+					  {{#each modules}}
+                          <tr class="{{../appDirName}}" techid="{{techInfo.id}}">
+                              <td style="padding-left: 5%;"><a name="editApplication" from="multimodule" appDirName="{{../appDirName}}" href="javascript:;">{{code}}</a></td>
+                              <td>&nbsp;</td>
+                              <td>{{techInfo.name}}</td>
+                              <td colspan="2" class="list_img">
+                                  <a name="pdf_report_{{code}}" temp="pdf_report" fromPage="All" class="tooltiptop" title="" data-placement="bottom" data-t="tooltip" href="#" data-original-title="PDF Report">
+                                      <img src="themes/default/images/Phresco/pdf_icon.png" width="14" height="16" border="0" alt="">
+                                  </a>
+                                                
+                                  <div id="pdf_report_{{code}}" class="dyn_popup pdf_report">
+                                      <div id="noReport_{{id}}" class="alert noReport hideContent" style="text-align: center;"></div>
+                                      <table class="existing_report" width="100%" border="0" cellspacing="0" cellpadding="5">
+                                          <thead class="hideContent" name="pdfHeader_{{id}}" show="true">
+                                              <tr>
+                                                  <th data-i18n="commonlabel.label.existingreport"></th>
+                                                  <th data-i18n="commonlabel.label.type"></th>
+                                                  <th data-i18n="commonlabel.label.download"></th>
+                                                  <th data-i18n="commonlabel.label.delete"></th>
+                                              </tr>    
+                                          </thead>
+                                          <tbody name="generatedPdfs_{{id}}" class="scroll">
+                                          </tbody>    
+                                      </table>
+                                      <form id="pdfReport">
+                                          <table class="report_type">
+                                              <tbody>
+                                                  <tr>
+                                                      <td data-i18n="commonlabel.label.reporttype"></td>
+                                                      <td>
+                                                          <select name="reportDataType" class="reportDataType">
+                                                              <option value="detail" data-i18n="projectlist.label.detailedReport"></option>
+                                                              <option value="crisp" data-i18n="projectlist.label.overallReport"></option>
+                                                          </select>
+                                                      </td>
+                                                  </tr>
+                                                  <tr>
+                                                      <td data-i18n="commonlabel.label.pdfreportname"></td>
+                                                      <td>
+                                                          <input type="text" data-i18n="[placeholder]projectlist.label.pdfreportname" name="pdfName" class="pdfName">
+                                                      </td>
+                                                  </tr>
+                                              </tbody>
+                                          </table>
+                                          <div class="popuploading" id="pdfReportLoading_{{id}}">&nbsp;</div>
+                                          <div class="flt_right">
+                                              {{#if ../../../userPermissions.managePdfReports}}
+                                                  <input type="button" fromPage="All"  appDirName="{{appDirName}}" value="Generate" data-i18n="[value]projectlist.label.generate" class="btn btn_style" name="generate" appId="{{id}}" projectId = "{{../id}}">
+                                              {{else}}
+                                                  <input type="button" disabled=true fromPage="All"  appDirName="{{appDirName}}" value="Generate" data-i18n="[value]projectlist.label.generate" class="btn btn_style" name="generate" appId="{{id}}" projectId = "{{../id}}">
+                                              {{/if}}
+                                              <input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
+                                          </div>
+                                          <input type="hidden" name="fromPage" value="All" data-i18n="[value]common.btn.all"/>
+                                      </form>
+                                      <!--pdf_report div ends here -->  
+                                  </div> 
+                              </td>
+                              <td class="list_img">
+                                  {{#if ../../../userPermissions.manageApplication}}
+                                      <a class="tooltiptop" title="" name="{{code}}" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete {{code}}">
+                                          <img name="delete" src="themes/default/images/Phresco/delete_row.png" width="14" height="18" border="0" alt="">
+                                      </a>
+                                  {{else}}
+                                      <img name="delete" src="themes/default/images/Phresco/delete_row_off.png" width="14" height="18" border="0" alt="">
+                                  {{/if}}
+                                      <div class="dyn_popup delete_msg" id="{{code}}" currentModuleName={{code}}>
+                                          Are you sure to delete ?
+                                        <div>
+                                            <input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style dlt" from="module" appDirName="{{../appDirName}}" name="deleteConfirm" moduleName="{{code}}">
+                                            <input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close">
+                                        </div>
+                                      </div>
+                              </td>
+                          </tr>
+                      {{/each}}
                     {{/each}}
                   {{/each}}
               </tbody>

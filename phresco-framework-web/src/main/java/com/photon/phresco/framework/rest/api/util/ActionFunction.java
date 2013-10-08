@@ -122,6 +122,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	boolean connectionAlive = false;
 	private ServiceManager serviceManager = null;
 	private String appDirName = "";
+	private String module = "";
 	HttpServletRequest request;
 
 	public void prePopulateModelData(HttpServletRequest request) throws PhrescoException {
@@ -136,7 +137,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			}
 			
 			initAppDirName(request);
-			
+			initModuleName(request);
 			setSelectedFiles(request.getParameter(SELECTED_FILES));
 		} catch (Exception e) {
 			throw new PhrescoException(e.getMessage());
@@ -185,7 +186,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			}
 			
 			initAppDirName(request);
-			
+			initModuleName(request);
 //			setSelectedFiles(request.getParameter(SELECTED_FILES));
 		} catch (Exception e) {
 			throw new PhrescoException(e.getMessage());
@@ -211,7 +212,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			}
 			
 			initAppDirName(request);
-
+			initModuleName(request);
 			setSelectedFiles(request.getParameter(SELECTED_FILES));
 		} catch (Exception e) {
 			throw new PhrescoException(e.getMessage());
@@ -236,6 +237,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			}
 			
 			initAppDirName(request);
+			initModuleName(request);
 		} catch (Exception e) {
 			throw new PhrescoException(e.getMessage());
 		}
@@ -251,6 +253,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 				setProjectModule("");
 			}
 			initAppDirName(request);
+			initModuleName(request);
 		} catch (Exception e) {
 			throw new PhrescoException(e.getMessage());
 		}
@@ -278,6 +281,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			}
 			
 			initAppDirName(request);
+			initModuleName(request);
 		} catch (Exception e) {
 			throw new PhrescoException(e.getMessage());
 		}
@@ -289,6 +293,13 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			setAppDirName(appDirName);
 		} else {
 			throw new PhrescoException("No valid App Directory Name Passed");
+		}
+	}
+	
+	private void initModuleName(HttpServletRequest request) throws PhrescoException {
+		String moduleName = request.getParameter(MODULE_NAME);
+		if (StringUtils.isNotEmpty(moduleName)) {
+			setModule(moduleName);
 		}
 	}
 
@@ -327,7 +338,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		String displayName = request.getParameter("displayName");
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = build(unique_key, displayName);
+		server_logs = build(unique_key, displayName, getModule());
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
@@ -342,7 +353,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		String displayName = request.getParameter("displayName");
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = deploy(unique_key, displayName);
+		server_logs = deploy(unique_key, displayName, getModule());
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
@@ -397,7 +408,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		String displayName = request.getParameter("displayName");
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = codeValidate(unique_key, displayName);
+		server_logs = codeValidate(unique_key, displayName, getModule());
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
@@ -675,11 +686,12 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return printAsPdf(response, request);
 	}
 
-	public BufferedInputStream build(String uniqueKey, String displayName) throws PhrescoException {
+	public BufferedInputStream build(String uniqueKey, String displayName, String module) throws PhrescoException {
 		BufferedInputStream reader=null;
 		try {
+			String directory = getAppDirBasedOnMultiModule(module);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(directory);
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PACKAGE)));
 			persistValuesToXml(mojo, PHASE_PACKAGE);
@@ -687,8 +699,9 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PACKAGE);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
-			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			String workingDirectory = getWorkingDirectoryPath(getAppDirName());
 			getApplicationProcessor(getUsername()).preBuild(applicationInfo);
+			appendMultiModuleCommand(module, buildArgCmds); 
 			reader = applicationManager.performAction(projectInfo, ActionType.BUILD, buildArgCmds, workingDirectory);
 			
 			//To generate the lock for the particular operation
@@ -701,14 +714,15 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return reader;
 	}
 
-	public BufferedInputStream deploy(String uniqueKey ,String  displayName) throws PhrescoException {
+	public BufferedInputStream deploy(String uniqueKey ,String  displayName, String module) throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method  MavenFunctions.deploy()");
 		}
 		BufferedInputStream reader = null;
 		try {
+			String directory = getAppDirBasedOnMultiModule(module);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(directory);
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_DEPLOY)));
 
@@ -717,7 +731,10 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_DEPLOY);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
-			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			appendMultiModuleCommand(module, buildArgCmds); 
+			String workingDirectory = getWorkingDirectoryPath(getAppDirName());
+			System.out.println("directory >>> "+directory);
+			System.out.println("workingDirectory >> "+workingDirectory);
 			reader = applicationManager.performAction(projectInfo, ActionType.DEPLOY, buildArgCmds, workingDirectory);
 			
 			//To generate the lock for the particular operation
@@ -731,7 +748,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 
 		return reader;
 	}
-	
+
 	public BufferedInputStream processBuild() throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method  MavenFunctions.processBuild()");
@@ -814,13 +831,14 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return reader;
 	}
 
-	public BufferedInputStream codeValidate(String uniqueKey, String displayName) throws PhrescoException {
+	public BufferedInputStream codeValidate(String uniqueKey, String displayName, String module) throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.codeValidate()");
 		}
 		BufferedInputStream reader = null;
 		try {
-			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
+			String directory = getAppDirBasedOnMultiModule(module);
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(directory);
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_VALIDATE_CODE)));
 			persistValuesToXml(mojo, PHASE_VALIDATE_CODE);
@@ -828,7 +846,8 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_VALIDATE_CODE);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
-			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			appendMultiModuleCommand(module, buildArgCmds); 
+			String workingDirectory = getWorkingDirectoryPath(getAppDirName());
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 
 			reader = applicationManager.performAction(projectInfo, ActionType.CODE_VALIDATE, buildArgCmds, workingDirectory);
@@ -2106,13 +2125,18 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			sb.append(goal);
 		}
 		sb.append(INFO_XML);
-
 		return sb.toString();
 	}
 
 	public String getApplicationHome() throws PhrescoException {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		builder.append(FrameworkServiceUtil.getApplicationInfo(getAppDirName()).getAppDirName());
+		String directory = "";
+		if (StringUtils.isNotEmpty(getModule())) {
+			directory = getAppDirName() + File.separator + getModule();
+		} else {
+			directory = getAppDirName();
+		}
+		builder.append(directory);
 		return builder.toString();
 	}
 
@@ -2217,7 +2241,11 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	protected String getAppDirectoryPath(ApplicationInfo applicationInfo) throws PhrescoException {
 		return Utility.getProjectHome() + applicationInfo.getAppDirName();
 	}
-
+	
+	protected String getWorkingDirectoryPath(String directory) throws PhrescoException {
+		return Utility.getProjectHome() + directory;
+	}
+	
 	protected ApplicationProcessor getApplicationProcessor(String username) throws PhrescoException {
 		ApplicationProcessor applicationProcessor = null;
 		try {
@@ -2263,7 +2291,22 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		this.serviceManager = RestBase.CONTEXT_MANAGER_MAP.get(username);
 		return serviceManager;
 	}
-
+	
+	private void appendMultiModuleCommand(String module, List<String> buildArgCmds) {
+		if (StringUtils.isNotEmpty(module)) {
+			buildArgCmds.add("-DmoduleName="+module);
+		}
+	}
+	
+	private String getAppDirBasedOnMultiModule(String module) {
+		String directory = "";
+		if (StringUtils.isNotEmpty(module)) {
+			directory = getAppDirName() + File.separator + module;
+		} else {
+			directory = getAppDirName();
+		}
+		return directory;
+	}
 
 	public HttpServletRequest getHttpRequest(){
 		return request;
@@ -2391,6 +2434,14 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 
 	public void setAppDirName(String appDirName) {
 		this.appDirName = appDirName;
+	}
+
+	public void setModule(String module) {
+		this.module = module;
+	}
+
+	public String getModule() {
+		return module;
 	}
 
 	/* protected ServiceManager getServiceManager(String username) {

@@ -304,7 +304,7 @@ define(["build/listener/buildListener"], function() {
 								
 								queryStr = $(current).closest('tr').find('form[name=deployForm]').serialize().replace("=on", "=true");
 								queryStr += '&fetchSql=' + ($.isEmptyObject(sqlParam) === true ? "" : sqlParam);
-								
+								queryStr += self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
 								self.onMavenServiceEvent.dispatch('mvnDeploy', queryStr, '', '', function(response){
 									$('input[name=buildDelete]').show();
 									$('.progress_loading').css('display','none');
@@ -347,6 +347,7 @@ define(["build/listener/buildListener"], function() {
 					displayName = userInfo.displayName;
 				}
 				queryStr += '&displayName=' + displayName;
+				queryStr += self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
 				self.onMavenServiceEvent.dispatch('mvnDeploy', queryStr, '', '', function(response){
 					$('input[name=buildDelete]').show();
 					$('.progress_loading').css('display','none');
@@ -610,6 +611,7 @@ define(["build/listener/buildListener"], function() {
 					displayName = userInfo.displayName;
 				}
 				queryStr += '&displayName=' + displayName;
+				queryStr += self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
 				self.onValidationEvent.dispatch('run-against-source', queryStr, function(response){
 					if (!response.errorFound && response.status !== "error" && response.status !== "failure"){
 						$("form[name=runAgainstForm] #build_runagsource").hide();
@@ -699,6 +701,8 @@ define(["build/listener/buildListener"], function() {
 					displayName = userInfo.displayName;
 				}
 				queryStr += '&displayName=' + displayName;
+				queryStr += self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
+
 				self.onValidationEvent.dispatch('package', queryStr, function(response){
 					if (!response.errorFound && response.status !== "error" && response.status !== "failure"){
 						$("form[name=buildForm]").hide();

@@ -55,6 +55,7 @@ var commonVariables = {
 	editConfiguration : "editConfiguration",
 	updateConfigName : '',
 	envSpecifig : '',
+	favConfig : '',
 	
 	croneExpression : "croneExpression",
 	

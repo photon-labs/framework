@@ -91,23 +91,25 @@ define([], function() {
 		
 		getRequestHeader : function(BuildRequestBody, buildInfo, action) {
 			var self=this, header, appdirName = '', url = '', method = "GET", contType = "application/json", conte;
-			
-			if(commonVariables.api.localVal.getProjectInfo() !== null){
+			var moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
+			if (!self.isBlank(moduleParam)) {
+				appdirName = $('.rootModule').val()
+			} else if(commonVariables.api.localVal.getProjectInfo() !== null){
 				var projectInfo = commonVariables.api.localVal.getProjectInfo();
 				appdirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
 			}
 
 			if (action === "getList") {
 				method = "GET";
-				url = 'buildinfo/list?appDirName=' + appdirName;
+				url = 'buildinfo/list?appDirName=' + appdirName+moduleParam;
 			} else if(action === "download") {
 				method = "GET";
 				contType: "multipart/form-data";
-				url = 'buildinfo/downloadBuild?appDirName=' + appdirName + '&buildNumber=' + buildInfo.buildNo;
+				url = 'buildinfo/downloadBuild?appDirName=' + appdirName + '&buildNumber=' + buildInfo.buildNo+moduleParam;
 			} else if(action === "ipadownload") {
 				method = "POST";
 				contType: "multipart/form-data";
-				url = 'Ipadownload?appDirName=' + appdirName + '&buildNumber=' + buildInfo.buildNo;
+				url = 'Ipadownload?appDirName=' + appdirName + '&buildNumber=' + buildInfo.buildNo+moduleParam;
 			} else if(action === "delete") {
 				method = "DELETE";
 				var appInfo = commonVariables.api.localVal.getProjectInfo();
@@ -116,13 +118,13 @@ define([], function() {
 				}
 			} else if(action === "serverstatus") {
 				method = "GET";
-				url = 'buildinfo/checkstatus?appDirName=' + appdirName;
+				url = 'buildinfo/checkstatus?appDirName=' + appdirName+moduleParam;
 			} else if (action === "validation") {
 				method = "GET";
-				url ='util/validation?appDirName=' + appdirName + '&customerId=' + self.getCustomer();
+				url ='util/validation?appDirName=' + appdirName + '&customerId=' + self.getCustomer()+moduleParam;
 			} else if (action === "minifyList") {
 				method = "GET";
-				url ='buildinfo/minifer?appDirName=' + appdirName;
+				url ='buildinfo/minifer?appDirName=' + appdirName+moduleParam;
 			} else if (action === "logContent") {
 				method = "GET";
 				url = 'buildinfo/logContent?status=' + buildInfo + '&appDirName=' + appdirName;

@@ -87,7 +87,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 
 	@Test
 	public void editApplicationWithoutUserId() {
-		Response response = projectService.editApplication(appDirName,"admin");
+		Response response = projectService.editApplication(appDirName,"admin", "");
 		assertEquals(200 , response.getStatus());
 	}
 
@@ -232,7 +232,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 		File projectInfoPath = getProjectInfoPath();
 		File tempPath = getTempPath();
 		projectInfoPath.renameTo(tempPath);
-		Response response = projectService.editApplication(appDirName,"admin");
+		Response response = projectService.editApplication(appDirName,"admin", "");
 		tempPath.renameTo(projectInfoPath);
 		assertEquals(200 , response.getStatus());
 	}

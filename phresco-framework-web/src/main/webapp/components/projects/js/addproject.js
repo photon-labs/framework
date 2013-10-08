@@ -205,12 +205,14 @@ define(["projects/listener/projectsListener"], function() {
 				var str = $(this).val();
 				str = self.specialCharValidation(str);
 				str = str.replace(/\s+/g, '');
+				str = str.replace(/[^a-zA-Z 0-9\-\_]+/g, '');
 				$("input[name='projectcode']").val(str);
 			});
 
 			$("input[name='projectcode']").bind('input propertychange', function() {
 				var str = $(this).val();
 				str = self.specialCharValidation(str);
+				str = str.replace(/[^a-zA-Z 0-9\-\_]+/g, '');
 				str = str.replace(/\s+/g, '');
 				$(this).val(str);
 			});

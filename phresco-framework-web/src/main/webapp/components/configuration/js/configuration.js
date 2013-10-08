@@ -40,6 +40,7 @@ define(["configuration/listener/configurationListener"], function() {
 		
 		preRender: function(whereToRender, renderFunction){
 			var self = this, nonEnvSpecific = {};
+			self.configurationlistener.favourite = self.favourite;
 			if(self.envSpecific === false) {
 				nonEnvSpecific.envSpecific = self.envSpecific;
 				nonEnvSpecific.configType = self.configType;
@@ -142,6 +143,10 @@ define(["configuration/listener/configurationListener"], function() {
 				if(name === ""){	
 					$("input[name='envName']").focus();
 					$("input[name='envName']").attr('placeholder','Enter Environment Name');
+					$("input[name='envName']").addClass("errormessage");
+					$("input[name='envName']").bind('keypress', function() {
+						$("input[name='envName']").removeClass("errormessage");
+					});
 				} else {							  
 					$('.envlistname').each(function() {
 						if ($(this).text().toLowerCase() === $("input[name='envName']").val().toLowerCase()) {
@@ -183,6 +188,10 @@ define(["configuration/listener/configurationListener"], function() {
 				if (($.trim(Env) === $.trim(defaultEnv)) && ($.trim(arr) === $.trim(array))){
 					$("input[name='envName']").focus();
 					$("input[name='envName']").attr('placeholder','Enter Environment Name');
+					$("input[name='envName']").addClass("errormessage");
+					$("input[name='envName']").bind('keypress', function() {
+						$("input[name='envName']").removeClass("errormessage");
+					});
 				}
 				else {
 					self.saveEnvEvent.dispatch(self.envWithConfig, function(response){

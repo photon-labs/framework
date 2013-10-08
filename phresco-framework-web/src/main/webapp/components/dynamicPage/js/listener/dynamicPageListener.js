@@ -285,9 +285,9 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             checked = parameter.value === "true" ? "checked" : "";
             
             if (liLastPrevId !== undefined && liLastPrevId.indexOf('checkCtrl') !== -1) {
-                whereToRender.append('<li type="checkbox" class="ctrl checkCtrl '+columnClass+'" ' +optionalAttrs.show+' id="'+parameter.key+'Li"><input type="checkbox" showHide="'+parameter.show+'" parameterType="'+ parameter.type+'" name="'+ parameter.key +'" '+checked+' value="'+parameter.required+'" additionalparam="'+additionalparam+'" dependency="'+dependency+'" id="'+parameter.key+'" ' +optionalAttrs.editable+' > '+parameter.name.value[0].value+optionalAttrs.required+'</li>');
+                whereToRender.append('<li type="checkbox" class="ctrl checkCtrl '+columnClass+'" ' +optionalAttrs.show+' id="'+parameter.key+'Li"><input type="checkbox" showHide="'+parameter.show+'" parameterType="'+ parameter.type+'" name="'+ parameter.key +'" '+checked+' value="'+parameter.value+'" additionalparam="'+additionalparam+'" dependency="'+dependency+'" id="'+parameter.key+'" ' +optionalAttrs.editable+' > '+parameter.name.value[0].value+optionalAttrs.required+'</li>');
             } else {
-                whereToRender.append('<li type="checkbox" class="ctrl checkCtrl '+columnClass+'" ' +optionalAttrs.show+' id="'+parameter.key+'Li"><input type="checkbox" showHide="'+parameter.show+'" parameterType="'+ parameter.type+'" name="'+ parameter.key +'" '+checked+' value="'+parameter.required+'" additionalparam="'+additionalparam+'" dependency="'+dependency+'" id="'+parameter.key+'" ' +optionalAttrs.editable+' > '+parameter.name.value[0].value+optionalAttrs.required+'</li>');
+                whereToRender.append('<li type="checkbox" class="ctrl checkCtrl '+columnClass+'" ' +optionalAttrs.show+' id="'+parameter.key+'Li"><input type="checkbox" showHide="'+parameter.show+'" parameterType="'+ parameter.type+'" name="'+ parameter.key +'" '+checked+' value="'+parameter.value+'" additionalparam="'+additionalparam+'" dependency="'+dependency+'" id="'+parameter.key+'" ' +optionalAttrs.editable+' > '+parameter.name.value[0].value+optionalAttrs.required+'</li>');
             }
         },
         
@@ -1387,15 +1387,22 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
          */
         getRequestHeader : function(projectRequestBody, key, selectedOption, action, fileType) {
             var self = this;
-            var appDirName = commonVariables.appDirName;
+            var appDirName = '';
             var goal = commonVariables.goal;
             var phase = commonVariables.phase;
             var userId = commonVariables.api.localVal.getSession('username');
             var customerId = self.getCustomer();
+            var moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
+            if (!self.isBlank(moduleParam)) {
+                appDirName = $('.rootModule').val();
+            } else if(commonVariables.api.localVal.getProjectInfo() !== null){
+                var projectInfo = commonVariables.api.localVal.getProjectInfo();
+                appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+            }
             var header = {
                 contentType: "application/json",
                 dataType: "json",
-                webserviceurl: commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dynamicPageContext + "?appDirName="+appDirName+"&goal="+ goal
+                webserviceurl: commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dynamicPageContext + "?appDirName="+appDirName+"&goal="+ goal+moduleParam
             };
             
             if(action === "parameter"){
@@ -1406,17 +1413,17 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 					buildNumber = "&buildNumber="+ commonVariables.buildNo+"&iphoneDeploy=" + (commonVariables.iphoneDeploy == null ? "" : commonVariables.iphoneDeploy);
 				} 
 				
-                header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dynamicPageContext + "?appDirName="+appDirName+"&goal="+ goal+"&phase="+phase+"&customerId="+customerId+"&userId="+userId+buildNumber;
+                header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dynamicPageContext + "?appDirName="+appDirName+"&goal="+ goal+"&phase="+phase+"&customerId="+customerId+"&userId="+userId+buildNumber+moduleParam;
             } else if (action === "updateWatcher") {
                 header.requestMethod = "POST";
-                header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + "updateWatcher" + "?appDirName="+appDirName+"&goal="+ goal+"&key="+key+"&value="+selectedOption;
+                header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + "updateWatcher" + "?appDirName="+appDirName+"&goal="+ goal+"&key="+key+"&value="+selectedOption+moduleParam;
             } else if(action === "dependency" && key !== ""){
                 header.requestMethod = "POST";
                 header.requestPostBody = projectRequestBody;
-                header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dependencyContext + "?appDirName="+appDirName+"&goal="+ goal+"&phase="+phase+"&customerId="+customerId+"&userId="+userId+"&key="+ key;
+                header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dependencyContext + "?appDirName="+appDirName+"&goal="+ goal+"&phase="+phase+"&customerId="+customerId+"&userId="+userId+"&key="+ key+moduleParam;
             } else if (action === "template") {
                 header.requestMethod = "GET";
-                header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.templateContext + "?appDirName="+appDirName+"&goal="+ goal+"&phase="+phase+"&customerId="+customerId+"&userId="+userId+"&parameterKey="+ key;                
+                header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.templateContext + "?appDirName="+appDirName+"&goal="+ goal+"&phase="+phase+"&customerId="+customerId+"&userId="+userId+"&parameterKey="+ key+moduleParam;                
             } else if (action === "fileBrowse") {
 				header.requestMethod = "GET";
 				header.dataType = "xml";
