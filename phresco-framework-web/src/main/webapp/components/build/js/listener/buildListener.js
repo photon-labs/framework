@@ -105,7 +105,12 @@ define([], function() {
 			} else if(action === "download") {
 				method = "GET";
 				contType: "multipart/form-data";
-				url = 'buildinfo/downloadBuild?appDirName=' + appdirName + '&buildNumber=' + buildInfo.buildNo+moduleParam;
+				if (self.isBlank($('.moduleName').val())) {
+					url = 'buildinfo/downloadBuild?appDirName=' + appdirName + '&buildNumber=' + buildInfo.buildNo;
+				} else {
+					url = 'buildinfo/downloadBuild?appDirName=' + appdirName + '\\' + $('.moduleName').val() + '&buildNumber=' + buildInfo.buildNo;
+				}
+				
 			} else if(action === "ipadownload") {
 				method = "POST";
 				contType: "multipart/form-data";
@@ -114,7 +119,7 @@ define([], function() {
 				method = "DELETE";
 				var appInfo = commonVariables.api.localVal.getProjectInfo();
 				if(appInfo !== null){
-					url = 'buildinfo/deletebuild?customerId='+ self.getCustomer() +'&appId='+ appInfo.data.projectInfo.appInfos[0].id +'&projectId=' + appInfo.data.projectInfo.id;
+					url = 'buildinfo/deletebuild?appDirName=' + appdirName+moduleParam;
 				}
 			} else if(action === "serverstatus") {
 				method = "GET";

@@ -158,7 +158,7 @@ public class BuildInfoTest extends RestBaseTest {
 	@Test
 	public void deleteBuild() {
 		String[] buildNumbers = {"1"};
-		Response parameter = buildinfoservice.deleteBuild(buildNumbers, "TestProject", customerId, "TestProject");
+		Response parameter = buildinfoservice.deleteBuild(buildNumbers, "TestProject", "");
 		assertEquals(200, parameter.getStatus());
 	}
 
@@ -166,7 +166,7 @@ public class BuildInfoTest extends RestBaseTest {
 	@Test
 	public void deleteBuildFailure() {
 		String[] buildNumbers = {"3"};
-		Response parameter = buildinfoservice.deleteBuild(buildNumbers, "TestProject", customerId, "TestProject");
+		Response parameter = buildinfoservice.deleteBuild(buildNumbers, "TestProject", "");
 		assertEquals(200, parameter.getStatus());
 	}
 

@@ -166,6 +166,9 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 	@Produces(MediaType.MULTIPART_FORM_DATA)
 	public Response buildInfoZip(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
 			@QueryParam(REST_QUERY_BUILD_NUMBER) int buildNumber, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
+		if(StringUtils.isNotEmpty(module)) {
+			appDirName = appDirName + File.separator + module;
+		}
 		InputStream fileInputStream = null;
 		ResponseInfo responseData = new ResponseInfo();
 		StringBuilder builder = new StringBuilder();
@@ -237,18 +240,18 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 	@Path("/deletebuild")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteBuild(String[] buildNumbers, @QueryParam(REST_QUERY_PROJECTID) String projectId,
-			@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_APPID) String appId) {
+	public Response deleteBuild(String[] buildNumbers, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
+		if(StringUtils.isNotEmpty(module)) {
+			appDirName = appDirName + File.separator + module;
+		}
 		ResponseInfo responseData = new ResponseInfo();
 		try {
 			int[] buildInts = new int[buildNumbers.length];
 			for (int i = 0; i < buildNumbers.length; i++) {
 				buildInts[i] = Integer.parseInt(buildNumbers[i]);
 			}
-			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-			ProjectInfo project = projectManager.getProject(projectId, customerId, appId);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			applicationManager.deleteBuildInfos(project, buildInts);
+			applicationManager.deleteBuildInfos(appDirName, buildInts);
 		} catch (PhrescoException e) {
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR710004);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")

@@ -225,10 +225,10 @@ public class ApplicationManagerImpl implements ApplicationManager {
 	 }
 	
 	 @Override
-	 public void deleteBuildInfos(ProjectInfo project, int[] buildNumbers) throws PhrescoException {
+	 public void deleteBuildInfos(String appDirName, int[] buildNumbers) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ApplicationManagerImpl.deleteBuildInfos(ProjectInfo project, int[] buildNumbers)");
 
-		 String buildInfoFile = getBuildInfoFilePath(project);
+		 String buildInfoFile = getBuildInfoFilePath(appDirName);
 		 
 		 List<BuildInfo> totalBuildInfos = getBuildInfos(new File(buildInfoFile));
 		 List<BuildInfo> buildInfos = new CopyOnWriteArrayList<BuildInfo>();
@@ -238,7 +238,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
 			 buildInfos.add(buildInfo);
 		 }
 		 
-		 deleteBuildArchive(project, buildInfos);
+		 deleteBuildArchive(appDirName, buildInfos);
 		 
 		 
 		 for (BuildInfo selectedInfo : buildInfos) {
@@ -259,7 +259,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
 		 }
 	 }
 	 
-	 private void deleteBuildArchive(ProjectInfo project, List<BuildInfo> selectedInfos) throws PhrescoException {
+	 private void deleteBuildArchive(String appDirName, List<BuildInfo> selectedInfos) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method AppliacationmanagerImpl.deleteBuildArchive(ProjectInfo project, List<BuildInfo> selectedInfos)");
 		 File file = null;
 		 try {
@@ -267,9 +267,9 @@ public class ApplicationManagerImpl implements ApplicationManager {
 			 for (BuildInfo selectedInfo : selectedInfos) {
 				 //Delete zip file
 				 delFilename = selectedInfo.getBuildName();
-				 file = new File(getBuildInfoHome(project) + delFilename);
+				 file = new File(getBuildInfoHome(appDirName) + delFilename);
 				 FilenameUtils.removeExtension(file.getName());
-				 File temp = new File(getBuildInfoHome(project) + file.getName().substring(0, file.getName().length() - 4));
+				 File temp = new File(getBuildInfoHome(appDirName) + file.getName().substring(0, file.getName().length() - 4));
 				 file.delete(); 
 				 if (temp.exists()) {
 					FileUtil.delete(temp);
@@ -281,18 +281,18 @@ public class ApplicationManagerImpl implements ApplicationManager {
 		}
 	 }
 	 
-	 private String getBuildInfoHome(ProjectInfo project) {
+	 private String getBuildInfoHome(String appDirName) {
 		 StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		 builder.append(project.getAppInfos().get(0).getAppDirName())
+		 builder.append(appDirName)
 		 .append(File.separator)
 		 .append(FrameworkConstants.BUILD_DIR)
 		 .append(File.separator);
 		 return builder.toString();
 	 }
 	 
-	 private String getBuildInfoFilePath(ProjectInfo project) {
+	 private String getBuildInfoFilePath(String appDirName) {
 		 StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		 builder.append(project.getAppInfos().get(0).getAppDirName())
+		 builder.append(appDirName)
 		 .append(File.separator)
 		 .append(FrameworkConstants.BUILD_DIR)
 		 .append(File.separator)
