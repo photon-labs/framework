@@ -291,16 +291,23 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			var header, userId;
 			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			var userId = userInfo.id;
-			var projectInfo = commonVariables.api.localVal.getProjectInfo();
-			var appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+			var appDirName = '', moduleName = '';
 			var techReport = $('#reportOptionsDrop').attr("value");
-			var moduleName = $('#modulesDrop').attr("value");
+			// var moduleName = $('#modulesDrop').attr("value");
 			header = {
 				contentType: "application/json",				
 				dataType: "json",
 				webserviceurl: ''
 			};
 			
+			var moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
+			if (!self.isBlank(moduleParam)) {
+				appDirName = $('.rootModule').val()
+			} else if(commonVariables.api.localVal.getProjectInfo() !== null) {
+				var projectInfo = commonVariables.api.localVal.getProjectInfo();
+				appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+			}
+
 			var currentTab = commonVariables.navListener.currentTab;
 			var testType = "";
 			if ("unitTest" === currentTab) {
@@ -315,31 +322,25 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			if (action === "getTestSuite") {
 				header.requestMethod = "GET";
 				if ("manualTest" === currentTab) {
-					header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + "/testsuites?appDirName=" + appDirName;
+					header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + "/testsuites?appDirName=" + appDirName + moduleParam;
 				} else {
-					header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/testsuites?appDirName=" + appDirName + "&testType=" + testType;
+					header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/testsuites?appDirName=" + appDirName + "&testType=" + testType + moduleParam;
 				}
 				
 				if (techReport !== undefined) {
 					header.webserviceurl = header.webserviceurl.concat("&techReport=" + techReport);
-				}
-				if (moduleName !== undefined) {
-					header.webserviceurl = header.webserviceurl.concat("&moduleName=" + moduleName);
 				}
 			} else if (action === "getTestReport") {
 				header.requestMethod = "GET";
 				if ("manualTest" === currentTab) {
-					header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + "/testcases?appDirName=" + appDirName+"&testSuiteName=" + requestBody.testSuite;
+					header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + "/testcases?appDirName=" + appDirName+"&testSuiteName=" + requestBody.testSuite + moduleParam;
 				} else {
 					header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/testreports?appDirName=" + appDirName +
-					"&testType=" + testType+ "&testSuite=" + requestBody.testSuite;
+					"&testType=" + testType+ "&testSuite=" + requestBody.testSuite + moduleParam;
 				}
 				
 				if (techReport !== undefined) {
 					header.webserviceurl = header.webserviceurl.concat("&techReport=" + techReport);
-				}
-				if (moduleName !== undefined) {
-					header.webserviceurl = header.webserviceurl.concat("&moduleName=" + moduleName);
 				}
 			} else if (action === "generatePdfReport") {
 				commonVariables.hideloading = true;

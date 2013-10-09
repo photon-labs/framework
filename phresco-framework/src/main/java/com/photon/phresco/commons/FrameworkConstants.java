@@ -32,6 +32,7 @@ public interface FrameworkConstants {
     String PHRESCO_DOT_EXTRACT_DOT = "phresco.extract.";
     
     String HYPHEN_N = "-N";
+    String DMODULE_NAME = "-DmoduleName=";
     String DOT_JMX = ".jmx";
 
 	String CSV_PATTERN = "\\s*,\\s*";

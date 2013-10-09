@@ -380,7 +380,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		String displayName = request.getParameter("displayName");
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = runUnitTest(unique_key, displayName);
+		server_logs = runUnitTest(unique_key, displayName, getModule());
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
@@ -773,15 +773,17 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return reader;
 	}
 	
-	public BufferedInputStream runUnitTest(String uniqueKey, String displayName) throws PhrescoException {
+	public BufferedInputStream runUnitTest(String uniqueKey, String displayName, String module) throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.runUnitTest()");
 		}
 		BufferedInputStream reader = null;
 		try {
-			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(getAppDirName());
-			StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(appInfo));
+			String directory = getAppDirBasedOnMultiModule(module);
+			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(directory);
+			String workingDirectory = getWorkingDirectoryPath(directory);
 			String phrescoUnitInfoFilePath = getPhrescoPluginInfoFilePath(PHASE_UNIT_TEST);
+			System.out.println("phrescoUnitInfoFilePath >>> "+phrescoUnitInfoFilePath);
 			List<String> buildArgCmds = new ArrayList<String>();
 			if (new File(phrescoUnitInfoFilePath).exists()) {
 				MojoProcessor mojo = new MojoProcessor(new File(phrescoUnitInfoFilePath));
@@ -790,8 +792,10 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 				buildArgCmds = getMavenArgCommands(parameters);
 				buildArgCmds.add(HYPHEN_N);
 			}
+			appendMultiModuleCommand(module, buildArgCmds); 
+			
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(getAppDirName()), ActionType.UNIT_TEST, buildArgCmds, workingDirectory.toString());
+			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(directory), ActionType.UNIT_TEST, buildArgCmds, getWorkingDirectoryPath(getAppDirName()));
 			 //To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), UNIT, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
@@ -2294,7 +2298,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	
 	private void appendMultiModuleCommand(String module, List<String> buildArgCmds) {
 		if (StringUtils.isNotEmpty(module)) {
-			buildArgCmds.add("-DmoduleName="+module);
+			buildArgCmds.add(DMODULE_NAME + module);
 		}
 	}
 	

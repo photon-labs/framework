@@ -22,7 +22,7 @@ public class UnitServiceTest extends RestBaseTest {
 
 	@Test
 	public void testUnitTestReportOption() throws PhrescoException, IOException {
-		Response response = service.unit(appDirName, userId);
+		Response response = service.unit(appDirName, userId, "");
 		ResponseInfo<List<String>> responseInfo = (ResponseInfo<List<String>>) response.getEntity();
 		Assert.assertEquals(200, response.getStatus());
 	}
@@ -30,7 +30,7 @@ public class UnitServiceTest extends RestBaseTest {
 	
 	@Test
 	public void testUnitTestReportOptionWithoutDirName() throws PhrescoException, IOException {
-		Response response = service.unit("", userId);
+		Response response = service.unit("", userId, "");
 		ResponseInfo<List<String>> responseInfo = (ResponseInfo<List<String>>) response.getEntity();
 		Assert.assertEquals(200, response.getStatus());
 	}

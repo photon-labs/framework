@@ -134,14 +134,18 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	@Path(REST_API_UNIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response unit(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_USERID) String userId) {
+			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		ResponseInfo<Map> responseData = new ResponseInfo<Map>();
 		try {
+			String rootModule = appDirName;
+			if (StringUtils.isNotEmpty(module)) {
+				appDirName = appDirName + File.separator + module;
+			}
 			List<String> unitReportOptions = getUnitReportOptions(appDirName);
-			List<String> projectModules = FrameworkServiceUtil.getProjectModules(appDirName);
+//			List<String> projectModules = FrameworkServiceUtil.getProjectModules(rootModule);
 			Map<String, List<String>> unitTestOptionsMap = new HashMap<String, List<String>>();
 			unitTestOptionsMap.put(REPORT_OPTIONS, unitReportOptions);
-			unitTestOptionsMap.put(PROJECT_MODULES, projectModules);
+//			unitTestOptionsMap.put(PROJECT_MODULES, projectModules);
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
 					unitTestOptionsMap, RESPONSE_STATUS_SUCCESS, PHRQ100001);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
@@ -172,12 +176,16 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		ResponseInfo<List<TestSuite>> responseData = new ResponseInfo<List<TestSuite>>();
 		try {
 			// TO kill the Process
+			String rootModule = appDirName;
+			if (StringUtils.isNotEmpty(moduleName)) {
+				appDirName = appDirName + File.separator + moduleName;
+			}
 			String baseDir = Utility.getProjectHome() + appDirName;
 			Utility.killProcess(baseDir, testType);
 
 			String testSuitePath = getTestSuitePath(appDirName, testType, techReport);
 			String testCasePath = getTestCasePath(appDirName, testType, techReport);
-			List<TestSuite> testSuites = testSuites(appDirName, moduleName, testType, moduleName, techReport,
+			List<TestSuite> testSuites = testSuites(rootModule, moduleName, testType, moduleName, techReport,
 					testSuitePath, testCasePath, ALL);
 			if (CollectionUtils.isEmpty(testSuites)) {
 				ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, null,
@@ -211,7 +219,8 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		setTestSuite(testSuite);
 		List<TestSuite> suites = new ArrayList<TestSuite>();
 		try {
-			String testSuitesMapKey = appDirName + testType + module + techReport;
+			String mapKey = constructMapKey(appDirName, moduleName);
+			String testSuitesMapKey = mapKey + testType + module + techReport;
 			String testResultPath = getTestResultPath(appDirName, moduleName, testType, techReport);
 			File[] testResultFiles = getTestResultFiles(testResultPath);
 			if (ArrayUtils.isEmpty(testResultFiles)) {
@@ -287,6 +296,14 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		return suites;
 	}
 
+	private String constructMapKey(String appDirName, String moduleName) {
+		String key = appDirName;
+		if (StringUtils.isNotEmpty(moduleName)) {
+			key = appDirName + moduleName;
+		}
+		return key;
+	}
+
 	/**
 	 * Gets the test reports.
 	 *
@@ -308,9 +325,13 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		String testSuitePath = "";
 		String testCasePath = "";
 		try {
+			String rootModule = appDirName;
+			if (StringUtils.isNotEmpty(moduleName)) {
+				appDirName = appDirName + File.separator + moduleName;
+			}
 			testSuitePath = getTestSuitePath(appDirName, testType, techReport);
 			testCasePath = getTestCasePath(appDirName, testType, techReport);
-			return testReport(appDirName, moduleName, testType, moduleName, techReport, testSuitePath, testCasePath,
+			return testReport(rootModule, moduleName, testType, moduleName, techReport, testSuitePath, testCasePath,
 					testSuite);
 		} catch (Exception e) {
 			throw new PhrescoException(e);
@@ -502,7 +523,8 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		ResponseInfo<TestReportResult> responseDataAll = new ResponseInfo<TestReportResult>();
 		ResponseInfo<List<TestCase>> responseData = new ResponseInfo<List<TestCase>>();
 		try {
-			String testSuitesMapKey = appDirName + testType + module + techReport;
+			String mapKey = constructMapKey(appDirName, moduleName);
+			String testSuitesMapKey = mapKey + testType + module + techReport;
 			if (MapUtils.isEmpty(testSuiteMap)) {
 				String testResultPath = getTestResultPath(appDirName, moduleName, testType, techReport);
 				getTestSuiteNames(appDirName, testType, moduleName, techReport, testResultPath, testSuitePath);
@@ -699,7 +721,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 				screenShotDir.append(sceenShotDir);
 			}
 			screenShotDir.append(File.separator);
-
 			int failureTestCases = 0;
 			int errorTestCases = 0;
 			for (int i = 0; i < nodeList.getLength(); i++) {
@@ -877,6 +898,9 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			throws PhrescoException {
 		String testResultPath = "";
 		if (testType.equals(UNIT)) {
+			if(StringUtils.isNotEmpty(moduleName)) {
+				appDirName = appDirName + File.separator + moduleName; 
+			}
 			testResultPath = getUnitTestResultPath(appDirName, moduleName, techReport);
 		} else if (testType.equals(FUNCTIONAL)) {
 			testResultPath = getFunctionalTestResultPath(appDirName, moduleName);
@@ -925,10 +949,10 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	private String getUnitTestResultPath(String appDirName, String moduleName, String techReport)
 			throws PhrescoException {
 		StringBuilder sb = new StringBuilder(Utility.getProjectHome() + appDirName);
-		if (StringUtils.isNotEmpty(moduleName)) {
-			sb.append(File.separatorChar);
-			sb.append(moduleName);
-		}
+//		if (StringUtils.isNotEmpty(moduleName)) {
+//			sb.append(File.separatorChar);
+//			sb.append(moduleName);
+//		}
 		// TODO Need to change this
 		StringBuilder tempsb = new StringBuilder(sb);
 		if (FrameworkConstants.JAVASCRIPT.equals(techReport)) {
@@ -1013,7 +1037,8 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 */
 	private List<String> getTestSuiteNames(String appDirName, String testType, String moduleName, String techReport,
 			String testResultPath, String testSuitePath) throws PhrescoException {
-		String testSuitesMapKey = appDirName + testType + moduleName + techReport;
+		String mapKey = constructMapKey(appDirName, moduleName);
+		String testSuitesMapKey = mapKey + testType + moduleName + techReport;
 		Map<String, NodeList> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
 		List<String> resultTestSuiteNames = null;
 		//if (MapUtils.isEmpty(testResultNameMap)) {
@@ -1122,8 +1147,8 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 				}
 			}
 		}
-		String testSuitesKey = appDirName + testType + moduleName + techReport;
-
+		String mapKey = constructMapKey(appDirName, moduleName);
+		String testSuitesKey = mapKey + testType + moduleName + techReport;
 		testSuiteMap.put(testSuitesKey, mapTestSuites);
 	}
 

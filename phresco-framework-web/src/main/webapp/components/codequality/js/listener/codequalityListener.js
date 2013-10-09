@@ -35,6 +35,7 @@ define([], function() {
 			if(appdetails !== null && userInfo !== null){
 				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=validate-code&phase=validate-code&projectId="+projectId+"&"+ipjson+'&displayName='+userInfo.displayName;
 			}
+			queryString += self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
 			$('#iframePart').html('');
 			self.openConsole();//To open the console
 			
@@ -85,7 +86,7 @@ define([], function() {
 			var self=this, header, username, appId, customerId, projectId;
 			var customerId = self.getCustomer();
 			customerId = (customerId === "") ? "photon" : customerId;
-			
+			var moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
 			header = {
 				contentType: "application/json",
 				requestMethod: "GET",
@@ -109,7 +110,7 @@ define([], function() {
 			
 			if(action === "reporttypes"){
 				var appDirName = commonVariables.api.localVal.getSession('appDirName');
-				header.webserviceurl = commonVariables.webserviceurl+"parameter/codeValidationReportTypes?appDirName="+appDirName+"&goal=validate-code";
+				header.webserviceurl = commonVariables.webserviceurl+"parameter/codeValidationReportTypes?appDirName="+appDirName+"&goal=validate-code"+moduleParam;
 			}
 			
 			if(action === "sonarurl"){
@@ -119,7 +120,7 @@ define([], function() {
 			if(action === "iframereport"){
 				var appDirName = commonVariables.api.localVal.getSession('appDirName');
 				username = commonVariables.api.localVal.getSession('username');
-				header.webserviceurl = commonVariables.webserviceurl+"parameter/iFrameReport?appDirName="+appDirName+"&validateAgainst="+inputData+"&customerId="+customerId+"&userId="+username;
+				header.webserviceurl = commonVariables.webserviceurl+"parameter/iFrameReport?appDirName="+appDirName+"&validateAgainst="+inputData+"&customerId="+customerId+"&userId="+username+moduleParam;
 			}
 
 			return header;

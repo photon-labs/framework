@@ -27,20 +27,24 @@ define([], function() {
 		 * @return: returns the contructed header
 		 */
 		getActionHeader : function(requestBody, action) {
-			var self = this, header, data = {}, userId;
+			var self = this, appDirName='', header, data = {}, userId;
 			data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			userId = data.id;
-			var projectInfo = commonVariables.api.localVal.getProjectInfo();
-			appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
 			header = {
 				contentType: "application/json",				
 				dataType: "json",
 				webserviceurl: ''
 			};
-					
+			var moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
+			if (!self.isBlank(moduleParam)) {
+				appDirName = $('.rootModule').val()
+			} else if(commonVariables.api.localVal.getProjectInfo() !== null) {
+				var projectInfo = commonVariables.api.localVal.getProjectInfo();
+				appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+			}					
 			if(action === "get") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/" + commonVariables.unit + "?userId="+userId+"&appDirName="+appDirName;				
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/" + commonVariables.unit + "?userId="+userId+"&appDirName="+appDirName+moduleParam;				
 			}
 			return header;
 		},
@@ -90,7 +94,7 @@ define([], function() {
 			if (appdetails !== null && userInfo !== null) {
 				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=unit-test&phase=unit-test&projectId="+projectId+"&"+testData+'&displayName='+userInfo.displayName;
 			}
-			
+			queryString += self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
 			$('#testConsole').html('');
 			self.testResultListener.openConsoleDiv();//To open the console
 			$('.progress_loading').show();
