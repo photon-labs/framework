@@ -202,15 +202,22 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projId);
-			boolean updateJobTemplate = ciManager.updateJobTemplate(ciJobTemplate, oldName, projId, appInfos);
-			if (!updateJobTemplate) {
-			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, updateJobTemplate, RESPONSE_STATUS_ERROR, PHR810024);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
-			} 			
-			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, updateJobTemplate, RESPONSE_STATUS_SUCCESS, PHR800017);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+			
+			List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByProjId(projId, appInfos);
+			boolean validate = validate(ciJobTemplate.getName(), jobTemplates, projId, appInfos, "update", ciJobTemplate, null);
+			if(validate) {
+				boolean updateJobTemplate = ciManager.updateJobTemplate(ciJobTemplate, oldName, projId, appInfos);
+				if (!updateJobTemplate) {
+				ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, updateJobTemplate, RESPONSE_STATUS_ERROR, PHR810024);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+				} 			
+				ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, updateJobTemplate, RESPONSE_STATUS_SUCCESS, PHR800017);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+			} else {
+				ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, validate, RESPONSE_STATUS_FAILURE, PHR810038);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810024);
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					ALL_HEADER).build();
@@ -232,7 +239,7 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projId);
 			List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByProjId(projId, appInfos);
-			boolean validate = validate(name, jobTemplates, projId, appInfos);
+			boolean validate = validate(name, jobTemplates, projId, appInfos, "delete", null, null);
 			if(validate) {
 				boolean deleteJobTemplate = ciManager.deleteJobTemplate(name, projId, appInfos);
 				if (deleteJobTemplate) {
@@ -253,7 +260,27 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 		}
 	}
 
-	private boolean validate(String name, List<CIJobTemplate> jobTemplates, String projId, List<ApplicationInfo> appInfos) throws PhrescoException {
+
+	@GET
+	@Path("/validateApp")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response validateJobTemplate(@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId, 
+			@QueryParam(REST_QUERY_NAME) String name, @QueryParam(REST_QUERY_APPNAME) String appName) {
+		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
+		try {
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByProjId(projectId, appInfos);
+			boolean validate = validate(name, jobTemplates, projectId, appInfos, "appNameValidate", null, appName);
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, validate, RESPONSE_STATUS_SUCCESS, PHR800015);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+		} catch (Exception e) {
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810022);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+		}
+	}
+
+	private boolean validate(String name, List<CIJobTemplate> jobTemplates, String projId, List<ApplicationInfo> appInfos, String operation, CIJobTemplate ciJobTemplate, String appName) throws PhrescoException {
 		CIJobTemplate jobTemplate = new CIJobTemplate();
 		for (CIJobTemplate ciJobTemplate2 : jobTemplates) {
 			if(ciJobTemplate2.getName().equals(name)) {
@@ -270,7 +297,11 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 					for (ContinuousDelivery continuousDelivery : continuousDeliveries) {
 						List<CIJob> jobs = continuousDelivery.getJobs();
 						for (CIJob ciJob : jobs) {
-							if(ciJob.getTemplateName().equals(name)) {
+							if(ciJob.getTemplateName().equals(name) && operation.equalsIgnoreCase("delete")) {
+								return false;
+							} else if (StringUtils.isNotEmpty(appName) && operation.equalsIgnoreCase("appNameValidate") && ciJob.getTemplateName().equals(name) && ciJob.getAppName().equals(appName)) {
+								return false;
+							} else if (ciJob.getTemplateName().equals(name) && operation.equalsIgnoreCase("update") && StringUtils.isEmpty(ciJob.getUpstreamApplication()) && !ciJobTemplate.isEnableRepo()) {
 								return false;
 							}
 						}
@@ -291,7 +322,11 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 							for (ContinuousDelivery cd : continuousDelivery) {
 								List<CIJob> jobs = cd.getJobs();
 								for (CIJob ciJob : jobs) {
-									if(ciJob.getTemplateName().equals(name)) {
+									if(ciJob.getTemplateName().equals(name) && operation.equalsIgnoreCase("delete")) {
+										return false;
+									} else if (StringUtils.isNotEmpty(appName) && operation.equalsIgnoreCase("appNameValidate") && ciJob.getTemplateName().equals(name) && ciJob.getAppName().equals(appName)) {
+										return false;
+									} else if (ciJob.getTemplateName().equals(name) && operation.equalsIgnoreCase("update") && StringUtils.isEmpty(ciJob.getUpstreamApplication()) && !ciJobTemplate.isEnableRepo()) {
 										return false;
 									}
 								}

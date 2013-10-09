@@ -67,6 +67,7 @@
   		
           
         <div id="datetime_status" class="dyn_popup popup_bg">
+        	<a class="closeDyn flt_right"><img src="themes/default/images/Phresco/cross_red.png"/></a>
         	<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
               <thead>
                 <tr>
@@ -83,6 +84,7 @@
         	</table>
         </div>
         <div id="ci_info" class="dyn_popup popup_bg">
+        	<a class="closeDyn flt_right"><img src="themes/default/images/Phresco/cross_red.png"/></a>
             <div class="ci_inner_info" id="buildStatus">
                
              </div> 

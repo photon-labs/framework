@@ -207,8 +207,15 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
    	   			});
  			}, 10000);
    			
+   			var flag1 = 1;
 			$(".datetime_status").click(function() {
-				self.openccwait(this, $(this).attr('class'));
+				if (flag1 ===1) {
+					flag1 = 0;
+					self.openccwait(this, $(this).attr('class'));
+				} else {
+					flag1 = 1;
+					$('.dyn_popup').hide();
+				}
 			});
 			
 			$("a[temp=deleteCI]").click(function() {
@@ -229,8 +236,15 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 				self.deleteJobEvent.dispatch($(this));
 			});
 			
+			var flag = 1;
 			$(".ci_info").click(function() {
-				self.opencctime(this, $(this).attr('class'));
+				if (flag ===1) {
+					flag = 0;
+					self.opencctime(this, $(this).attr('class'));
+				} else {
+					flag = 1;
+					$('.dyn_popup').hide();
+				}
 			});
 			
 			$("#clone_ci").click(function() {
@@ -249,6 +263,11 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 				$(this).parent().parent().parent("div").find(".img_process").attr('src',"themes/default/images/Phresco/processing.gif");
 				self.generateBuildEvent.dispatch($(this));
 			});
+			
+			$('.closeDyn').click(function(){
+				$(this).closest('div[id=datetime_status]').hide();
+				$(this).closest('div[id=ci_info]').hide();
+			}) ;
 			
 			this.customScroll($(".scrollpage"));
 			

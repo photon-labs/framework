@@ -312,6 +312,7 @@ define([], function() {
 		 * @return: returns the contructed header
 		 */
 		getRequestHeader : function(type, body, urlContext, paramData) {
+			var self = this;
 			var appDirName = '';
 			var projectInfo = commonVariables.api.localVal.getProjectInfo();
 			if (!self.isBlank($('.moduleName').val())) {

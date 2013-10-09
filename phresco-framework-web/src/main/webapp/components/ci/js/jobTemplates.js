@@ -154,7 +154,7 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 		getAction : function(ciRequestBody, action, param, callback) {
 			var self = this;
 			// Content place holder for the Job template
-			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, action, param), function(response) {			
+			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, action, param), function(response) {	
 				if (action === "edit") {				
 					// only for edit popup value population
 					self.editEvent.dispatch(response.data);
@@ -187,6 +187,7 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 						$.each(response.data, function(key, value) {
 							var obj = $('select[name=appIds]');
 							var opt = document.createElement("option");
+							opt.setAttribute('class',value.name);
 							opt.appendChild(document.createTextNode(value.name));
 							obj.append(opt);
 						});
@@ -258,7 +259,11 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
    			// Update job template
    			$('#jobTemplate').on('click', '[name=update]', function(e) {				
 				self.validateName.dispatch('update', self, function(response) {
-					self.pageRefresh(response);
+					if(response.data !== false) {
+						self.pageRefresh(response);
+					} else if(response.data === false) {
+						commonVariables.api.showError(response.responseCode ,"error", true, false, true);
+					}
 				});
 			});
 

@@ -207,6 +207,8 @@
 		"PHR810031" : "Job already exists",
 		"PHR810032" : "Could not retrieve jenkins info",
 		"PHR810033" : "Job(s) have already been created using this job template",
+		"PHR810038" : "Job(s) have already been created using this job template with Repo",
+		"PHR810039" : "Job(s) have already been created using this job template for this App",
 		"PHR10LC0001" : "Code validation in progress. ",
 		"PHR10LB0001" : "Build in progress. ",
 		"PHR10LR0001" : "Run against source in progress. ",

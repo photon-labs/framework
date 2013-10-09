@@ -142,6 +142,9 @@ define([], function() {
 				header.requestPostBody = JSON.stringify(ciRequestBody);
 				var oldname = $('[name="oldname"]').val();				
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "?oldname=" + oldname + "&customerId="+ customerId+"&projectId=" + projectId;
+			} else if(action === "validateApp") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates+"/validateApp?projectId="+projectId+"&customerId="+customerId+"&name="+ciRequestBody.name+"&appName="+ciRequestBody.appName;
 			} else if (action === "edit") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;
@@ -782,6 +785,16 @@ define([], function() {
 			// button name change
 			$('input[name=save]').prop("value", "Update");
 			$('input[name=save]').prop("name", "update");
+			for (var i=0; i < data.appIds.length; i++) {
+				var ciRequestBody = {};
+				ciRequestBody.appName = data.appIds[i];
+				ciRequestBody.name = data.name;
+				self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'validateApp'), function (response) {
+					if(response.data === false) {
+						$("select[name=appIds]").find("option[class='"+ciRequestBody.appName+"']").attr('disabled', 'disabled');
+					}
+				});
+			}
 		},
 				
 		//remove error class for multiselect

@@ -1398,6 +1398,8 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             } else if(commonVariables.api.localVal.getProjectInfo() !== null){
                 var projectInfo = commonVariables.api.localVal.getProjectInfo();
                 appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+            } else {
+            	appDirName = commonVariables.appDirName;
             }
             var header = {
                 contentType: "application/json",

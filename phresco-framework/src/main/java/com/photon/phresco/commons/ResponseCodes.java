@@ -484,6 +484,8 @@ public interface ResponseCodes {
 	String PHR810036 = "PHR810036"; // failed to get last build status
 	String PHR800024 = "PHR800024"; // Returned Jenkins url successfully
 	String PHR810037 = "PHR810037"; // failed to get jenkins url
+	String PHR810038 = "PHR810038"; // job(s) have already been created using this job template with Repo
+	String PHR810039 = "PHR810039"; // job(s) have already been created using this job template for this App
 	
 	/*
 	 * Upgrade Service
