@@ -786,14 +786,20 @@ define([], function() {
 			$('input[name=save]').prop("value", "Update");
 			$('input[name=save]').prop("name", "update");
 			for (var i=0; i < data.appIds.length; i++) {
+				
 				var ciRequestBody = {};
 				ciRequestBody.appName = data.appIds[i];
 				ciRequestBody.name = data.name;
 				self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'validateApp'), function (response) {
-					if(response.data === false) {
-						$("select[name=appIds]").find("option[class='"+ciRequestBody.appName+"']").attr('disabled', 'disabled');
+					var str = [];
+					str = response.data.split("#SEP#");
+					if(str[1] === "false") {
+						$("select[name=appIds]").find("option[class='"+str[0]+"']").attr('disabled', 'disabled');
 					}
 				});
+				
+				
+				
 			}
 		},
 				

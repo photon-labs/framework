@@ -272,7 +272,8 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
 			List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByProjId(projectId, appInfos);
 			boolean validate = validate(name, jobTemplates, projectId, appInfos, "appNameValidate", null, appName);
-			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, validate, RESPONSE_STATUS_SUCCESS, PHR800015);
+			String msg = appName + "#SEP#" + validate;
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, msg, RESPONSE_STATUS_SUCCESS, PHR800015);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (Exception e) {
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810022);
