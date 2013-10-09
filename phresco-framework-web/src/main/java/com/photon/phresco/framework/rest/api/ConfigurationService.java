@@ -123,7 +123,10 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response addEnvironment(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, List<Environment> environments) {
+	public Response addEnvironment(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName, List<Environment> environments) {
+		if (StringUtils.isNotEmpty(moduleName)) {
+			appDirName = appDirName + File.separator + moduleName;
+		}
 		ResponseInfo<Environment> responseData = new ResponseInfo<Environment>();
 		try {
 			String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
@@ -156,7 +159,10 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response listEnvironments(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_ENV_NAME) String envName, @QueryParam("isEnvSpecific") String isEnvSpecific, @QueryParam("configName") String configName) {
+			@QueryParam(REST_QUERY_ENV_NAME) String envName, @QueryParam("isEnvSpecific") String isEnvSpecific, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName, @QueryParam("configName") String configName) {
+		if (StringUtils.isNotEmpty(moduleName)) {
+			appDirName = appDirName + File.separator + moduleName;
+		}
 		ResponseInfo<Environment> responseData = new ResponseInfo<Environment>();
 		try {
 			if (StringUtils.isNotEmpty(isEnvSpecific) && isEnvSpecific.equals("false")) {
@@ -204,9 +210,13 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@GET
 	@Path("allEnvironments")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllEnvironments(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam("isEnvSpecific") String isEnvSpecific, @QueryParam("configType") String configType) {
+	public Response getAllEnvironments(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName, @QueryParam("isEnvSpecific") String isEnvSpecific, @QueryParam("configType") String configType) {
+		if (StringUtils.isNotEmpty(moduleName)) {
+			appDirName = appDirName + File.separator + moduleName;
+		} 
 		ResponseInfo<Environment> responseData = new ResponseInfo<Environment>();
 		try {
+			
 			if (StringUtils.isNotEmpty(isEnvSpecific) && isEnvSpecific.equals("false")) {
 				String nonEnvConfigFile = FrameworkServiceUtil.getnonEnvConfigFileDir(appDirName);
 				NonEnvConfigManager nonConfigManager = new NonEnvConfigManagerImpl(new File(nonEnvConfigFile));
@@ -246,7 +256,10 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Path("/deleteEnv")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteEnv(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_ENV_NAME) String envName) {
+			@QueryParam(REST_QUERY_ENV_NAME) String envName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) {
+		if (StringUtils.isNotEmpty(moduleName)) {
+			appDirName = appDirName + File.separator + moduleName;
+		}
 		String configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
 		ResponseInfo<Environment> responseData = new ResponseInfo<Environment>();
 		try {
@@ -281,8 +294,11 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@DELETE
 	@Path("/deleteConfig")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteConfiguraion(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+	public Response deleteConfiguraion(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName,
 			@QueryParam("configName") String configName) {
+		if (StringUtils.isNotEmpty(moduleName)) {
+			appDirName = appDirName + File.separator + moduleName;
+		}
 		ResponseInfo<Environment> responseData = new ResponseInfo<Environment>();
 		try {
 			String nonEnvConfigFie = FrameworkServiceUtil.getnonEnvConfigFileDir(appDirName);
@@ -311,9 +327,12 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@GET
 	@Path("/settingsTemplate")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getSettingsTemplate(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+	public Response getSettingsTemplate(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName,
 			@QueryParam(REST_QUERY_TECHID) String techId, @QueryParam(REST_QUERY_USERID) String userId,
 			@QueryParam(REST_QUERY_TYPE) String type) {
+		if (StringUtils.isNotEmpty(moduleName)) {
+			appDirName = appDirName + File.separator + moduleName;
+		}
 		ResponseInfo<List<SettingsTemplate>> responseData = new ResponseInfo<List<SettingsTemplate>>();
 		Map<String, Object> templateMap = new HashMap<String, Object>();
 		try {
@@ -434,10 +453,13 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateConfiguration(@QueryParam(REST_QUERY_USERID) String userId,
 			@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_ENV_NAME) String envName,
+			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_ENV_NAME) String envName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName,
 			@QueryParam("oldEnvName") String oldEnvName, @QueryParam("defaultEnv") String defaultEnv,
 			List<Configuration> configurationlist, @QueryParam("isEnvSpecific") String isEnvSpecific,
 			@QueryParam("configName") String configName, @QueryParam("desc") String desc , @QueryParam("isfavoric") String isfavoric,@QueryParam("favtype") String favtype ) {
+		if (StringUtils.isNotEmpty(moduleName)) {
+			appDirName = appDirName + File.separator + moduleName;
+		}
 		Environment env = new Environment();
 		String configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
 		ResponseInfo<Configuration> responseData = new ResponseInfo<Configuration>();
@@ -484,7 +506,6 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					Configuration config = configurationlist.get(0);
 					Configuration addFilesToConfigFile = addFilesToConfigFile(appDirName, config);
 					nonConfigManager.createConfiguration(addFilesToConfigFile);
-
 					ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, "Success",
 							RESPONSE_STATUS_SUCCESS, PHR600015);
 					return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
@@ -494,7 +515,6 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					nonConfigManager.updateConfiguration(configName, addFilesToConfigFile);
 				}
 			}
-
 			String pluginInfoFile = FrameworkServiceUtil.getPluginInfoPath(appDirName);
 			MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
 			String className = mojoProcessor.getApplicationHandler().getClazz();
@@ -546,8 +566,10 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response cloneEnvironment(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_ENV_NAME) String envName, Environment cloneEnvironment) {
-
+			@QueryParam(REST_QUERY_ENV_NAME) String envName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName, Environment cloneEnvironment) {
+		if (StringUtils.isNotEmpty(moduleName)) {
+			appDirName = appDirName + File.separator + moduleName;
+		}
 		String configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
 		Environment clonedEnvironment = null;
 		ResponseInfo<Configuration> responseData = new ResponseInfo<Configuration>();
@@ -707,7 +729,10 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Path("/environmentList")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEnvironmentList(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) {
+		if (StringUtils.isNotEmpty(moduleName)) {
+			appDirName = appDirName + File.separator + moduleName;
+		}
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
 			String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
@@ -739,7 +764,10 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@GET
 	@Path("/returnCertificate")
 	@Produces(MediaType.APPLICATION_JSON)
-	 public Response authenticateServer(@QueryParam("host") String host, @QueryParam("port") String port, @QueryParam("appDirName") String appDirName) throws PhrescoException {
+	 public Response authenticateServer(@QueryParam("host") String host, @QueryParam("port") String port, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
+		if (StringUtils.isNotEmpty(moduleName)) {
+			appDirName = appDirName + File.separator + moduleName;
+		}
 		ResponseInfo<RemoteCertificateInfo> responseData = new ResponseInfo<RemoteCertificateInfo>();
 	    		RemoteCertificateInfo remoteCertificateInfo = new RemoteCertificateInfo();
 	    		int portValue = Integer.parseInt(port);
@@ -838,7 +866,10 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@GET
 	@Path("/fileBrowse")
 	@Produces(MediaType.APPLICATION_XML)
-	public Response returnFileBorwseEntireStructure(@QueryParam("appDirName") String appDirName , @QueryParam("fileType") String fileType) {
+	public Response returnFileBorwseEntireStructure(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName, @QueryParam("fileType") String fileType) {
+		if (StringUtils.isNotEmpty(moduleName)) {
+			appDirName = appDirName + File.separator + moduleName;
+		}
 		ResponseInfo<DOMSource> responseData = new ResponseInfo<DOMSource>();
 		try {
 			String browsePath = Utility.getProjectHome()  + appDirName;
@@ -941,9 +972,12 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@GET
 	@Path("/listUploadedFiles")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response listUploadedFiles(@QueryParam("appDirName") String appDirName,
+	public Response listUploadedFiles(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName,
 			@QueryParam("envName") String envName, @QueryParam("configType") String configType,
 			@QueryParam("configName") String configName, @QueryParam("isEnvSpecific") String isEnvSpecific) {
+		if (StringUtils.isNotEmpty(moduleName)) {
+			appDirName = appDirName + File.separator + moduleName;
+		}
 		List<String> uploadedFiles = new ArrayList<String>();
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
@@ -1005,10 +1039,13 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@GET
 	@Path("/removeFile")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response removeConfigFile(@QueryParam("appDirName") String appDirName,
-			@QueryParam("configType") String configType, @QueryParam("propName") String propName,
+	public Response removeConfigFile(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam("configType") String configType, @QueryParam("propName") String propName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName,
 			@QueryParam("fileName") String fileName, @QueryParam("envName") String envName,
 			@QueryParam("configName") String configName) {
+		if (StringUtils.isNotEmpty(moduleName)) {
+			appDirName = appDirName + File.separator + moduleName;
+		}
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
 			if (getTargetDir(configType, appDirName) != null) {
@@ -1111,8 +1148,11 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Path("/configType")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response showProperties(@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_TYPE) String type, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+	public Response showProperties(@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_TYPE) String type, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName,
 			@QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
+		if (StringUtils.isNotEmpty(moduleName)) {
+			appDirName = appDirName + File.separator + moduleName;
+		}
 		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
@@ -1192,7 +1232,10 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response showFeatureConfigs(@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_FEATURENAME) String featureName, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_EVN_NAME) String envName) {
+			@QueryParam(REST_QUERY_FEATURENAME) String featureName, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_EVN_NAME) String envName,@QueryParam(REST_QUERY_MODULE_NAME) String moduleName) {
+		if (StringUtils.isNotEmpty(moduleName)) {
+			appDirName = appDirName + File.separator + moduleName;
+		}
 		ResponseInfo<FeatureConfigure> responseData = new ResponseInfo<FeatureConfigure>();
         try {
         	ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);

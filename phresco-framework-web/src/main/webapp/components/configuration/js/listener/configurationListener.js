@@ -126,13 +126,16 @@ define(["croneExpression/croneExpression"], function() {
 		},
 		
 		getRequestHeader : function(configRequestBody, action, deleteEnv) {
-			var self = this, header, appDirName;
+			var self = this, header, appDirName, techId;
 			var customerId = self.getCustomer();
 			customerId = (customerId === "") ? "photon" : customerId;
-			if(commonVariables.api.localVal.getProjectInfo() !== null){
-				var projectInfo = commonVariables.api.localVal.getProjectInfo();
+			var moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
+			var projectInfo = commonVariables.api.localVal.getProjectInfo();
+			techId = projectInfo.data.projectInfo.appInfos[0].techInfo.id;
+			if (!self.isBlank(moduleParam)) {
+				appDirName = $('.rootModule').val()
+			} else if(commonVariables.api.localVal.getProjectInfo() !== null){
 				appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
-				techId = projectInfo.data.projectInfo.appInfos[0].techInfo.id;
 			}
 
 			data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
@@ -148,74 +151,74 @@ define(["croneExpression/croneExpression"], function() {
 			};
 			if (action === 'list') {
 				if (configRequestBody.envSpecific === false && configRequestBody.configType !== "") {
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName="+appDirName+"&isEnvSpecific="+configRequestBody.envSpecific+"&configType="+configRequestBody.configType;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName="+appDirName+"&isEnvSpecific="+configRequestBody.envSpecific+"&configType="+configRequestBody.configType+moduleParam;
 				} else {				
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName="+appDirName;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName="+appDirName+moduleParam;
 				}
 			} else if (action === 'edit') {
 				if (configRequestBody.envSpecific === false) {
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName+"&configName="+commonVariables.environmentName+"&isEnvSpecific="+configRequestBody.envSpecific;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName+"&configName="+commonVariables.environmentName+"&isEnvSpecific="+configRequestBody.envSpecific+moduleParam;
 				} else {
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName+"&envName="+commonVariables.environmentName;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName+"&envName="+commonVariables.environmentName+moduleParam;
 				}
 			}else if (action === 'configTypes') {
 				self.bcheck = true;
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/types?customerId="+customerId+"&userId="+userId+"&techId="+techId;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/types?customerId="+customerId+"&userId="+userId+"&techId="+techId+moduleParam;
 			} else if (action === 'delete') {
 				self.bcheck = true;
 				header.requestMethod = "DELETE";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/deleteEnv?appDirName="+appDirName+"&envName="+deleteEnv;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/deleteEnv?appDirName="+appDirName+"&envName="+deleteEnv+moduleParam;
 			} else if (action === "deleteConfig") {
 				header.requestMethod = "DELETE";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/deleteConfig?appDirName="+appDirName+"&configName="+deleteEnv;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/deleteConfig?appDirName="+appDirName+"&configName="+deleteEnv+moduleParam;
 			} else if (action === "template") {
 					self.bcheck = true;
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName="+appDirName+"&customerId="+customerId+"&userId="+userId+"&type="+deleteEnv+"&techId="+techId;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName="+appDirName+"&customerId="+customerId+"&userId="+userId+"&type="+deleteEnv+"&techId="+techId+moduleParam;
 			} else if (action === "saveEnv") {
 					header.requestMethod = "POST";
 					header.requestPostBody = JSON.stringify(configRequestBody);
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName+moduleParam;
 			} else if (action === "saveConfig") {
 					header.requestMethod = "POST";
 					header.requestPostBody = JSON.stringify(configRequestBody);
 					if (deleteEnv === "false") {
-						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&isEnvSpecific="+deleteEnv+"&configName="+commonVariables.updateConfigName+"&customerId="+customerId+"&userId="+userId;
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&isEnvSpecific="+deleteEnv+"&configName="+commonVariables.updateConfigName+"&customerId="+customerId+"&userId="+userId+moduleParam;
 					} else {
-						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&envName="+deleteEnv+"&customerId="+customerId+"&userId="+userId+"&oldEnvName="+self.oldEnvName+"&defaultEnv="+self.defaultEnv+"&desc="+self.desc+"&isfavoric="+self.favourite+"&favtype="+commonVariables.favConfig;
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&envName="+deleteEnv+"&customerId="+customerId+"&userId="+userId+"&oldEnvName="+self.oldEnvName+"&defaultEnv="+self.defaultEnv+"&desc="+self.desc+"&isfavoric="+self.favourite+"&favtype="+commonVariables.favConfig+moduleParam;
 					}
 			} else if (action === "cloneEnv") {
 					header.requestMethod = "POST";
 					header.requestPostBody = JSON.stringify(configRequestBody);
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/cloneEnvironment?appDirName="+appDirName+"&envName="+deleteEnv;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/cloneEnvironment?appDirName="+appDirName+"&envName="+deleteEnv+moduleParam;
 			} else if (action === "isAliveCheck") {
 					header.requestMethod = "GET";
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/connectionAliveCheck?url="+configRequestBody.protocol+","+configRequestBody.host+","+configRequestBody.port;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/connectionAliveCheck?url="+configRequestBody.protocol+","+configRequestBody.host+","+configRequestBody.port+moduleParam;
 			} else if (action === "listUploadedFiles") {
 					header.requestMethod = "GET";
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/listUploadedFiles?appDirName="+appDirName+"&isEnvSpecific="+commonVariables.envSpecifig+"&configName="+configRequestBody.name+"&envName="+configRequestBody.envName+"&configType="+configRequestBody.type;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/listUploadedFiles?appDirName="+appDirName+"&isEnvSpecific="+commonVariables.envSpecifig+"&configName="+configRequestBody.name+"&envName="+configRequestBody.envName+"&configType="+configRequestBody.type+moduleParam;
 			} else if (action === "deleteFile") {
 					header.requestMethod = "GET";
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/removeFile?appDirName="+appDirName+"&configType="+configRequestBody.configType+"&propName="+configRequestBody.propertyName+"&fileName="+configRequestBody.fileName+"&envName="+configRequestBody.envName+"&configName="+configRequestBody.configName;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/removeFile?appDirName="+appDirName+"&configType="+configRequestBody.configType+"&propName="+configRequestBody.propertyName+"&fileName="+configRequestBody.fileName+"&envName="+configRequestBody.envName+"&configName="+configRequestBody.configName+moduleParam;
 			} else if (action === "fileBrowse") {
 					header.requestMethod = "GET";
 					header.dataType = "xml";
 					header.contentType = "application/xml",
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/fileBrowse?&appDirName="+appDirName;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/fileBrowse?&appDirName="+appDirName+moduleParam;
 			} else if (action === "certificate") {
 					header.requestMethod = "GET";
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/returnCertificate?host="+configRequestBody.host+"&port="+configRequestBody.port+"&appDirName="+appDirName;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/returnCertificate?host="+configRequestBody.host+"&port="+configRequestBody.port+"&appDirName="+appDirName+moduleParam;
 			} else if (action === "addCertificate") {
 					header.requestMethod = "POST";
 					header.requestPostBody = JSON.stringify(configRequestBody);
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/addCertificate";
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/addCertificate"+moduleParam;
 			} else if(action === "configType") {
 					header.requestMethod = "POST";
 					header.requestPostBody = {};
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/configType?userId="+userId+"&type="+deleteEnv+"&customerId="+customerId+"&appDirName="+appDirName;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/configType?userId="+userId+"&type="+deleteEnv+"&customerId="+customerId+"&appDirName="+appDirName+moduleParam;
 			} else if(action === "showFeatureConfigs") {
 					header.requestMethod = "POST";
 					header.requestPostBody = {};
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/showFeatureConfigs?userId="+userId+"&customerId="+customerId+"&appDirName="+appDirName+"&envName="+deleteEnv+"&featureName="+ configRequestBody;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/showFeatureConfigs?userId="+userId+"&customerId="+customerId+"&appDirName="+appDirName+"&envName="+deleteEnv+"&featureName="+ configRequestBody+moduleParam;
 			}
 			return header;
 		},
