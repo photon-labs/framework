@@ -155,7 +155,11 @@ define(["configuration/listener/configurationListener"], function() {
 			$("input[name=UpdateConfiguration]").click(function() {
 				self.checkForLock("configUpdate", '', function(response){
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {
-						self.updateConfigEvent.dispatch();
+						if ($('input[name=EnvName]').val() !== '') {
+							self.updateConfigEvent.dispatch();
+						} else {
+							self.validationForEnv();
+						}
 					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
 						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true, true);
 					}	
@@ -164,7 +168,18 @@ define(["configuration/listener/configurationListener"], function() {
 
 			self.customScroll($(".scrolldiv"));
 			self.customScroll($(".popup_scroll"));
+		},
+		
+		validationForEnv : function() {
+			var self=this;
+			$('input[name=EnvName]').focus();
+			$("input[name='EnvName']").attr('placeholder','Enter Environment Name');
+			$("input[name='EnvName']").addClass("errormessage");
+			$("input[name='EnvName']").bind('keypress', function() {
+				$("input[name='EnvName']").removeClass("errormessage");
+			});
 		}
+
 	});
 
 	return Clazz.com.components.configuration.js.EditConfiguration;

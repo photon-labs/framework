@@ -51,7 +51,7 @@
 						{{#if envSpecificVal}}
 							<tr>
 								{{#configurations}}
-									<td>Name</td>
+									<td>Name<sup>*</sup></td>
 									<td><input type="text" name="EnvName" maxlength="30" title="30 Characters only" value="{{name}}"/></td>
 									<td>Description</td>
 									<td colspan="3"><input name="EnvDesc" type="text"  maxlength="150" title="150 Characters only" value="{{desc}}"/></td>

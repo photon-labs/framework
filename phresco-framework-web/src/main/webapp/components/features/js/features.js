@@ -77,7 +77,9 @@ define(["features/listener/featuresListener"], function() {
 								}
 								
 							});							
-						}
+						}else {							
+							fieldset = '<fieldset class="switch switchOff" depid="dep_'+id+'" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true" ></label></fieldset>';
+						} //for android null exception
 					});
 				}else {							
 					fieldset = '<fieldset class="switch switchOff" depid="dep_'+id+'" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true" ></label></fieldset>';
@@ -98,7 +100,9 @@ define(["features/listener/featuresListener"], function() {
 									fieldset = '<div class="flt_right" id="version_'+ id +'" style="display:none;">';
 								}
 							});
-						}		
+						}else{						
+							fieldset = '<div class="flt_right" id="version_'+ id +'" style="display:none;">';
+						} // for android null exception	
 					});
 					return fieldset;
 				}
