@@ -173,6 +173,10 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
         return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
     }
     
+    public String getSeleniumToolType(String appDirName) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
+    }
+    
     public String getFunctionalTestDir(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
         return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_FUNCTEST_DIR);
     }
@@ -329,8 +333,8 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
     		ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
     		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
     		builder.append(appDirName);
+    		String pomFileName = Utility.getPomFileNameFromWorkingDirectory(applicationInfo, new File(builder.toString()));
     		builder.append(File.separatorChar);
-    		String pomFileName = Utility.getPomFileName(applicationInfo);
     		builder.append(pomFileName);
     		S_LOGGER.debug("builder.toString() " + builder.toString());
     		File pomPath = new File(builder.toString());
@@ -340,7 +344,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
     		throw new PhrescoException(e);
     	}
     }
-
+    
     
 	// get server Url for sonar
 	public String getSonarHomeURL() throws PhrescoException {

@@ -347,9 +347,12 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	@GET
 	@Path(REST_API_FUNCTIONAL_FRAMEWORK)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getFunctionalTestFramework(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+	public Response getFunctionalTestFramework(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		ResponseInfo<Map<String, Object>> responseData = new ResponseInfo<Map<String, Object>>();
 		try {
+			if (StringUtils.isNotEmpty(module)) {
+				appDirName = appDirName + File.separator + module;
+			}
 			Map<String, Object> map = new HashMap<String, Object>();
 			String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
 			map.put(FUNCTIONAL_FRAMEWORK, functionalTestFramework);
@@ -390,10 +393,13 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	@GET
 	@Path("/connectionAliveCheck")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response connectionAliveCheck(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_FROM_PAGE) String fromPage) {
+	public Response connectionAliveCheck(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_FROM_PAGE) String fromPage, 
+			 @QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		boolean connection_status = false;
 		try {
+			if (StringUtils.isNotEmpty(module)) {
+				appDirName = appDirName + File.separator + module;
+			}
 			InetAddress ip = InetAddress.getLocalHost();
 			if (HUB_STATUS.equals(fromPage)) {
 				HubConfiguration hubConfig = getHubConfiguration(appDirName);

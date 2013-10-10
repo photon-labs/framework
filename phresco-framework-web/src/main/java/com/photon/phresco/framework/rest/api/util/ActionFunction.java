@@ -16,8 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
@@ -60,7 +56,6 @@ import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.configuration.ConfigurationInfo;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
@@ -70,14 +65,12 @@ import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.model.LockDetail;
 import com.photon.phresco.framework.model.MinifyInfo;
 import com.photon.phresco.framework.model.PerformanceUrls;
-import com.photon.phresco.framework.rest.api.QualityService;
 import com.photon.phresco.framework.rest.api.RestBase;
 import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.MavenCommands.MavenCommand;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.plugins.util.MojoUtil;
 import com.photon.phresco.service.client.api.ServiceManager;
@@ -88,7 +81,6 @@ import com.photon.phresco.util.NodeConfiguration;
 import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
-import com.phresco.pom.model.Model.Modules;
 import com.phresco.pom.util.PomProcessor;
 
 
@@ -556,7 +548,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		String displayName = request.getParameter("displayName");
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = runFunctionalTest(unique_key, displayName);
+		server_logs = runFunctionalTest(unique_key, displayName, getModule());
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
@@ -733,8 +725,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			buildArgCmds.add(HYPHEN_N);
 			appendMultiModuleCommand(module, buildArgCmds); 
 			String workingDirectory = getWorkingDirectoryPath(getAppDirName());
-			System.out.println("directory >>> "+directory);
-			System.out.println("workingDirectory >> "+workingDirectory);
 			reader = applicationManager.performAction(projectInfo, ActionType.DEPLOY, buildArgCmds, workingDirectory);
 			
 			//To generate the lock for the particular operation
@@ -781,9 +771,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		try {
 			String directory = getAppDirBasedOnMultiModule(module);
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(directory);
-			String workingDirectory = getWorkingDirectoryPath(directory);
 			String phrescoUnitInfoFilePath = getPhrescoPluginInfoFilePath(PHASE_UNIT_TEST);
-			System.out.println("phrescoUnitInfoFilePath >>> "+phrescoUnitInfoFilePath);
 			List<String> buildArgCmds = new ArrayList<String>();
 			if (new File(phrescoUnitInfoFilePath).exists()) {
 				MojoProcessor mojo = new MojoProcessor(new File(phrescoUnitInfoFilePath));
@@ -1076,16 +1064,17 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 
 		try {
+			String directory = getAppDirBasedOnMultiModule(getModule());
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_START_HUB)));
 			persistValuesToXml(mojo, PHASE_START_HUB);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
-			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
-			String workingDirectory = getAppDirectoryPath(appInfo);
+			
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(directory);
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_START_HUB);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
-			reader = applicationManager.performAction(projectInfo, ActionType.START_HUB, buildArgCmds, workingDirectory);
+			appendMultiModuleCommand(getModule(), buildArgCmds);
+			reader = applicationManager.performAction(projectInfo, ActionType.START_HUB, buildArgCmds, getWorkingDirectoryPath(getAppDirName()));
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of MavenFunctions.startHub()"+ FrameworkUtil.getStackTraceAsString(e));
 			throw new PhrescoException("Exception occured in the MavenFunctions.startHub process");
@@ -1103,16 +1092,16 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 
 		try {
+			String directory = getAppDirBasedOnMultiModule(getModule());
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_START_NODE)));
 			persistValuesToXml(mojo, PHASE_START_NODE);
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_START_NODE);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
+			appendMultiModuleCommand(getModule(), buildArgCmds);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
-			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
-			String workingDirectory = getAppDirectoryPath(appInfo);
-			reader = applicationManager.performAction(projectInfo, ActionType.START_NODE, buildArgCmds, workingDirectory);
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(directory);
+			reader = applicationManager.performAction(projectInfo, ActionType.START_NODE, buildArgCmds, getWorkingDirectoryPath(getAppDirName()));
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of MavenFunctions.startNode()"+ FrameworkUtil.getStackTraceAsString(e));
 			throw new PhrescoException("Exception occured in the MavenFunctions.startNode process");
@@ -1165,7 +1154,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return reader;
 	}
 
-	public BufferedInputStream runFunctionalTest(String uniqueKey, String displayName) throws PhrescoException {
+	public BufferedInputStream runFunctionalTest(String uniqueKey, String displayName, String module) throws PhrescoException {
 
 		BufferedInputStream reader = null;
 
@@ -1174,21 +1163,18 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 
 		try {
-			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(getAppDirName());
-			StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(appInfo));
-			if (StringUtils.isNotEmpty(getProjectModule())) {
-				workingDirectory.append(File.separator);
-				workingDirectory.append(getProjectModule());
-			}
+			String directory = getAppDirBasedOnMultiModule(module);
+			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(directory);
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_FUNCTIONAL_TEST)));
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-			String seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
+			String seleniumToolType = frameworkUtil.getSeleniumToolType(directory);
 			persistValuesToXml(mojo, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
+			appendMultiModuleCommand(module, buildArgCmds); 
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(getAppDirName()), ActionType.FUNCTIONAL_TEST, buildArgCmds, workingDirectory.toString());
+			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(directory), ActionType.FUNCTIONAL_TEST, buildArgCmds, getWorkingDirectoryPath(getAppDirName()));
 			 //To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), FUNCTIONAL, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
@@ -1222,6 +1208,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			String workingDirectory = getAppDirectoryPath(appInfo);
 			List<String> buildArgCmds = new ArrayList<String>();
 			buildArgCmds.add(HYPHEN_N);
+			appendMultiModuleCommand(getModule(), buildArgCmds);
 			reader = applicationManager.performAction(projectInfo, ActionType.STOP_HUB, buildArgCmds, workingDirectory);
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of MavenFunctions.stopHub()"+ FrameworkUtil.getStackTraceAsString(e));
@@ -1248,6 +1235,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			String workingDirectory = getAppDirectoryPath(appInfo);
 			List<String> buildArgCmds = new ArrayList<String>();
 			buildArgCmds.add(HYPHEN_N);
+			appendMultiModuleCommand(getModule(), buildArgCmds);
 			reader = applicationManager.performAction(projectInfo, ActionType.STOP_NODE, buildArgCmds, workingDirectory);
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of MavenFunctions.stopNode()"+ FrameworkUtil.getStackTraceAsString(e));
