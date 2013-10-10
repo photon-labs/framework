@@ -238,28 +238,30 @@ define(["framework/base", "api/localStorageAPI"], function(){
 		
 		errorpopupshow : function(response) {
 			var self = this;
-			$('#errpopup').remove();			
-			if(response.status !== 0) {
-				$(commonVariables.basePlaceholder).append('<div id="errpopup" class="modal fade" tabindex="-1" style="display: none;"><div class="modal-body temp"></div><div class="modal-footer"><div><a href="javascript:void(0)" title="" id="copytoclip" class="flt_left padding_img" href="javascript:void(0)"><img class="padding_img" src="themes/default/images/Phresco/buildreport_icon.png" width="15" height="18" border="0" alt=""></a><div class="errorpopuploading" id="copyloadicon" style="display:none;">&nbsp</div></div><button type="button" data-dismiss="modal" class="btn btn_style">Close</button></div></div>');
-				if(response.service_exception !== null && response.service_exception !== undefined) { 
-					$(".modal-body").append(response.service_exception);
-				}else if(response.exception !== null && response.exception !== undefined) {
-					if(response.exception.errorMessage !== null && response.exception.errorMessage !== undefined) {
-						$(".modal-body").append(response.exception.errorMessage+'<br>');
-					} else if(response.exception.message !== null && response.exception.message !== undefined) {
-						$(".modal-body").append(response.exception.message+'<br>');
+			if(response.responseCode !== undefined) {
+				$('#errpopup').remove();					
+				if(response.status !== 0) {
+					$(commonVariables.basePlaceholder).append('<div id="errpopup" class="modal fade" tabindex="-1" style="display: none;"><div class="modal-body temp"></div><div class="modal-footer"><div><a href="javascript:void(0)" title="" id="copytoclip" class="flt_left padding_img" href="javascript:void(0)"><img class="padding_img" src="themes/default/images/Phresco/buildreport_icon.png" width="15" height="18" border="0" alt=""></a><div class="errorpopuploading" id="copyloadicon" style="display:none;">&nbsp</div></div><button type="button" data-dismiss="modal" class="btn btn_style">Close</button></div></div>');
+					if(response.service_exception !== null && response.service_exception !== undefined) { 
+						$(".modal-body").append(response.service_exception);
+					}else if(response.exception !== null && response.exception !== undefined) {
+						if(response.exception.errorMessage !== null && response.exception.errorMessage !== undefined) {
+							$(".modal-body").append(response.exception.errorMessage+'<br>');
+						} else if(response.exception.message !== null && response.exception.message !== undefined) {
+							$(".modal-body").append(response.exception.message+'<br>');
+						}
+						$.each(response.exception.stackTrace, function(index, value){
+							$(".modal-body").append(' '+value.className+' '+value.fileName+' '+' '+value.lineNumber+' '+value.methodName);
+						});
 					}
-					$.each(response.exception.stackTrace, function(index, value){
-						$(".modal-body").append(' '+value.className+' '+value.fileName+' '+' '+value.lineNumber+' '+value.methodName);
-					});
+					$("#errpopup").modal();	
+					$("#copytoclip").click(function() {
+						$("#copyloadicon").show();
+						commonVariables.navListener.copyToClipboard($('.temp'));
+					});		
+					$(".popuploading").hide();
 				}
-				$("#errpopup").modal();	
-				$("#copytoclip").click(function() {
-					$("#copyloadicon").show();
-					commonVariables.navListener.copyToClipboard($('.temp'));
-				});		
-				$(".popuploading").hide();
-			}
+			}	
 		},
 		
 		urlExists : function(url, callbackfunction, errorHandler){
