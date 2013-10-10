@@ -203,7 +203,7 @@ define(["projectlist/listener/projectListListener"], function() {
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
 		 */
-		bindUI : function(){
+		bindUI : function(){   
 			var self = this;
 			$(".tooltiptop").tooltip();
 			$(".dyn_popup").hide();
