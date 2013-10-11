@@ -185,6 +185,14 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 	  		});
 	  		$(".first_list").find("span").hide();
 
+	  		$("input[name=continuousDeliveryName]").on("keypress keyup paste", function(e) {
+				this.value = this.value.replace(/[^-_a-zA-Z0-9]/g, '');
+			});
+	  		
+	  		$("input[name=jobName]").on("keypress keyup paste", function(e) {
+				this.value = this.value.replace(/[^-_a-zA-Z0-9 ]/g, '');
+			});
+	  		
 			$(function() {
 				// sortable1 functionality
 				$( "#sortable1" ).sortable({
