@@ -258,7 +258,7 @@
                                        <td colspan="2" data-i18n="projectlist.label.revision"></td>
                                     </tr>
                                     <tr>
-                                        <td><input type="radio" name="revision" class="radioBtnClass" value="head"><span data-i18n="projectlist.label.headrevision"></span><input type="radio" name="revision" class="radioBtnClass" value=""><span data-i18n="projectlist.label.revision"></span></td>
+                                        <td><input type="radio" name="revision" class="radioBtnClass" value="head" checked><span data-i18n="projectlist.label.headrevision"></span><input type="radio" name="revision" class="radioBtnClass" value=""><span data-i18n="projectlist.label.revision"></span></td>
                                         <td><input class="revision" type="text"></td>
                                     </tr>
                                 </tbody>

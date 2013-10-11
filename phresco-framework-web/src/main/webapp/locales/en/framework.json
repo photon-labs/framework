@@ -392,7 +392,7 @@
 			"headrevision" : "Head Revision",
 			"revision" : "Revision",
 			"message" : "Message",
-			"othercredential" : "Other Credential",
+			"othercredential" : "Other Credentials",
 			"pdfreportname" : "Pdf Report Name",
 			"notworkingcopy" : "This Project is not a working copy, add to repository and then try to commit.",
 			"notworkingupdate" : "This Project is not a working copy, add to repository and then try to update."
