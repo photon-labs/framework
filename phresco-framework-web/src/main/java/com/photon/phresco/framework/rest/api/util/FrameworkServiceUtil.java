@@ -247,7 +247,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	 * @throws PhrescoPomException
 	 */
 	public static String getFunctionalTestDir(String appDirName) throws PhrescoException, PhrescoPomException {
-		return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_FUNCTEST_DIR);
+		return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(POM_PROP_KEY_FUNCTEST_DIR);
 	}
 	
 	/**
@@ -374,7 +374,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
     }
 	
 	public static String getFunctionalTestFramework(String appDirName) throws PhrescoException, PhrescoPomException {
-		return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
+		return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
 	}
 	
 	public static List<ApplicationInfo> getAppInfos(String customerId, String projectId) throws PhrescoException {

@@ -163,6 +163,7 @@ define(["navigation/listener/navigationListener"], function() {
 			});
 			
 			$(".gitdata").hide();
+			$(".perforcedata").hide();
 			$(".importselect select").change(function () {
 				if($(this).val() === "bitkeeper") {
 					$(".svndata").hide();
@@ -172,8 +173,13 @@ define(["navigation/listener/navigationListener"], function() {
 					$(".seperatetd").hide();
 					$(".testCheckoutData").hide();
 					$("label[name='branch']").hide();
+					$(".gitdata").find('tbody').children('tr:last').show();
+					$(".gitdata").find('tbody').children('tr:last').prev('tr').show();
 					$(".branchval").hide();
 					$("#gitUserName").parent().parent().prev('tr').find('sup').show();
+					$(".perforcedata").hide();
+					$("#importRepourl").attr("placeholder","");
+
 				}
 
 				else if($(this).val() === "git") {
@@ -184,8 +190,12 @@ define(["navigation/listener/navigationListener"], function() {
 					$(".seperatetd").hide();
 					$(".testCheckoutData").hide();
 					$("label[name='branch']").show();
+					$(".gitdata").find('tbody').children('tr:last').show();
+					$(".gitdata").find('tbody').children('tr:last').prev('tr').show();
 					$(".branchval").show();
 					$("#gitUserName").parent().parent().prev('tr').find('sup').hide();
+					$(".perforcedata").hide();
+					$("#importRepourl").attr("placeholder","");
 				}
 
 				else if($(this).val() === "svn") {
@@ -195,6 +205,25 @@ define(["navigation/listener/navigationListener"], function() {
 					$(".svnusr").show();
 					$(".svnpswd").show();
 					$(".gitdata").hide();
+					$(".perforcedata").hide();
+					$("#importRepourl").attr("placeholder","");
+				}
+
+				else if($(this).val() === "perforce") {
+					$(".svndata").hide();
+					$(".svnusr").hide();
+					$(".svnpswd").hide();
+					$(".gitdata").show();
+					$(".gitdata").find('tbody').children('tr:last').hide();
+					$(".gitdata").find('tbody').children('tr:last').prev('tr').hide();
+					$(".seperatetd").hide();
+					$(".testCheckoutData").hide();
+					$("label[name='branch']").hide();
+					$(".branchval").hide();
+					$("#gitUserName").parent().parent().prev('tr').find('sup').hide();
+					$(".perforcedata").show();
+					$("#importRepourl").attr("placeholder","host:port");
+
 				}
 			});
 			

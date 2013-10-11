@@ -266,7 +266,7 @@
 
             <WebService desc="" name="webservice">
             <protocol>http</protocol>
-            <host>10.5.233.98</host>
+            <host>10.23.233.98</host>
             <port>8080</port>
             <username/>
             <password/>

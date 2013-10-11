@@ -275,6 +275,7 @@ public interface FrameworkConstants {
 	String ANY = "Any";
     String GIT = "git";
     String BITKEEPER = "bitkeeper";
+    String PERFORCE = "perforce";
     String REPO_TYPE = "repoType";
     String REPO = "repo";
     String IS_NOT_WORKING_COPY = "is not a working copy";

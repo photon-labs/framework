@@ -24,9 +24,11 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +37,7 @@ import java.util.UUID;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -85,9 +88,37 @@ import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 import org.tmatesoft.svn.core.wc.SVNWCClient;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
+
+
+
 import com.google.gson.Gson;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
+import com.perforce.p4java.client.IClient;
+import com.perforce.p4java.client.IClientSummary.IClientOptions;
+import com.perforce.p4java.core.ChangelistStatus;
+import com.perforce.p4java.core.IChangelist;
+import com.perforce.p4java.core.IChangelistSummary;
+import com.perforce.p4java.core.file.FileSpecBuilder;
+import com.perforce.p4java.core.file.FileSpecOpStatus;
+import com.perforce.p4java.core.file.IFileSpec;
+import com.perforce.p4java.exception.ConnectionException;
+import com.perforce.p4java.exception.P4JavaException;
+import com.perforce.p4java.exception.RequestException;
+import com.perforce.p4java.impl.generic.client.ClientOptions;
+import com.perforce.p4java.impl.generic.client.ClientView;
+import com.perforce.p4java.impl.generic.client.ClientView.ClientViewMapping;
+import com.perforce.p4java.impl.generic.core.Changelist;
+import com.perforce.p4java.impl.mapbased.client.Client;
+import com.perforce.p4java.impl.mapbased.server.Server;
+import com.perforce.p4java.option.client.AddFilesOptions;
+import com.perforce.p4java.option.client.EditFilesOptions;
+import com.perforce.p4java.option.client.GetDiffFilesOptions;
+import com.perforce.p4java.option.client.ReopenFilesOptions;
+import com.perforce.p4java.option.client.SyncOptions;
+import com.perforce.p4java.option.server.GetChangelistsOptions;
+import com.perforce.p4java.server.IOptionsServer;
+import com.perforce.p4java.server.ServerFactory;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.LockUtil;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -248,6 +279,14 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		    StringBuilder sb = new StringBuilder(Utility.getProjectHome())
 		    .append(appInfo.getAppDirName());
 		    updateFromBitKeeperRepo(repodetail.getRepoUrl(), sb.toString());
+		} else if (PERFORCE.equals(repodetail.getType())) {
+		    if (debugEnabled) {
+                S_LOGGER.debug("PERFORCE type");
+            }
+			File updateDir = new File(Utility.getProjectHome(), appInfo.getAppDirName()); 
+			String baseDir = updateDir.getAbsolutePath();
+		    perforceSync(repodetail, baseDir, appInfo.getAppDirName(),"update");
+			updateSCMConnection(appInfo, repodetail.getRepoUrl()+repodetail.getStream());
 		}
 
 		return false;
@@ -1183,5 +1222,106 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			return e.getLocalizedMessage();
 		}
 		return SUCCESSFUL;
+	}
+	public ApplicationInfo importFromPerforce(RepoDetail repodetail) throws Exception {
+		String uuid = UUID.randomUUID().toString();
+		File perforceImportTemp = new File(Utility.getPhrescoTemp(), uuid);
+		String baseDir=perforceImportTemp.getAbsolutePath();
+		perforceSync(repodetail, baseDir, uuid,"import");
+		String path=perforceImportTemp.getAbsolutePath();
+		String[] pathArr=repodetail.getStream().split("/");
+		String projName=pathArr[pathArr.length-1];
+		File actualFile=new  File(path+"/"+projName);
+		ProjectInfo projectInfo=getGitAppInfo(actualFile);
+		if(projectInfo!=null){
+			ApplicationInfo appInfo = returnAppInfo(projectInfo);
+			importToWorkspace(actualFile, Utility.getProjectHome(), appInfo.getAppDirName() );
+			updateSCMConnection(appInfo, repodetail.getRepoUrl()+repodetail.getStream());
+			return returnAppInfo(projectInfo);
+		} else{
+			return null;
+		}
+
+	}
+	
+	public void perforceSync(RepoDetail repodetail,String baseDir , String projectName,String flag) throws ConnectionException, RequestException  {
+		String url=repodetail.getRepoUrl();
+		String userName=repodetail.getUserName();
+		String password=repodetail.getPassword();
+		String stream=repodetail.getStream();
+		try {		
+			IOptionsServer server = ServerFactory.getOptionsServer("p4java://"+url, null, null);
+			server.connect();
+			server.setUserName(userName);
+			if(password!=""){
+				server.login(password);
+			}			
+			IClient client = new Client();
+			client.setName(projectName);
+			if(flag.equals("update")){
+				String[] rootArr=baseDir.split(projectName);
+				String root=rootArr[0].substring(0,rootArr[0].length()-1);
+				client.setRoot(root);
+			} else {
+				client.setRoot(baseDir);
+			}
+			client.setServer(server); 
+			server.setCurrentClient(client);
+			ClientViewMapping tempMappingEntry = new ClientViewMapping();
+			tempMappingEntry.setLeft(stream+"/...");
+			tempMappingEntry.setRight("//"+projectName+"/...");
+			ClientView clientView = new ClientView();
+			clientView.addEntry(tempMappingEntry);
+			try {
+			String[] arr=repodetail.getStream().split("//");
+			String[] arr1=arr[1].split("/");
+			client.setStream("//"+arr1[0]+"/"+arr1[1]);
+			client.setClientView(clientView);
+			client.setOptions(new ClientOptions("noallwrite clobber nocompress unlocked nomodtime normdir"));
+			}catch (ArrayIndexOutOfBoundsException e) {
+				System.out.println("dddddddddd");
+				throw new RequestException();
+			}
+			System.out.println(server.createClient(client));
+			if (client != null) {	
+				List<IFileSpec> syncList = client.sync(FileSpecBuilder.makeFileSpecList(stream+"/..."),new SyncOptions());
+				for (IFileSpec fileSpec : syncList) {
+					if (fileSpec != null) {
+						if (fileSpec.getOpStatus() == FileSpecOpStatus.VALID) {
+
+						} else {
+							System.err.println(fileSpec.getStatusMessage());
+						}
+					}
+				}}
+			IOFileFilter filter=new IOFileFilter() {
+				@Override
+				public boolean accept(File arg0, String arg1) {
+					return true;
+				}
+				@Override
+				public boolean accept(File arg0) {
+					return true;
+				}
+			};
+			Iterator<File> iterator= FileUtils.iterateFiles(new File(baseDir), filter, filter);
+			while(iterator.hasNext()){
+				File file = iterator.next();
+				file.setWritable(true);
+			}
+
+		} catch (RequestException rexc) {
+			System.err.println(rexc.getDisplayString());
+			rexc.printStackTrace();
+			throw new RequestException();
+		} catch (P4JavaException jexc) {
+			System.err.println(jexc.getLocalizedMessage());
+			jexc.printStackTrace();
+			throw new ConnectionException();
+		} catch (Exception exc) {
+			System.err.println(exc.getLocalizedMessage());
+			exc.printStackTrace();
+		}
+
 	}
 }

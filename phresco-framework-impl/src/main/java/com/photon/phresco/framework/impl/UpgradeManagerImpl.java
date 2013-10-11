@@ -25,20 +25,27 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.FileUtils;
 
 import com.google.gson.Gson;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.commons.model.VersionInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.UpgradeManager;
+import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.ArchiveUtil;
 import com.photon.phresco.util.ArchiveUtil.ArchiveType;
@@ -51,7 +58,10 @@ public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   
 	VersionInfo version = null;
 	private static final Logger S_LOGGER = Logger.getLogger(UpgradeManagerImpl.class);
 	private static Boolean DebugEnabled = S_LOGGER.isDebugEnabled();
-
+	
+	private static Properties upgradeproperties = null; 
+	private static ServiceManager serviceManager = null;
+	
 	public VersionInfo checkForUpdate(ServiceManager serviceManager, String versionNo) throws PhrescoException {
 		if (DebugEnabled) {
 			S_LOGGER.debug("Entering Method UpdateManagerImpl.checkForUpdate(String versionNo)");
@@ -79,6 +89,7 @@ public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   
 		if (DebugEnabled) {
 			S_LOGGER.debug("Entering Method UpdateManagerImpl.doUpdate(String newVersion)");
 		}
+		this.serviceManager = serviceManager;
 		InputStream latestVersionZip = null;
 		OutputStream outPutFile = null;
 		File tempFile = null;
@@ -120,6 +131,7 @@ public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   
 						reader = new FileReader(dotPhresco);
 						ProjectInfo projectInfo = new Gson().fromJson(reader, ProjectInfo.class);
 						ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+						updateFeatureIds(applicationInfo);
 						TechnologyInfo techInfo = applicationInfo.getTechInfo();
 						String appTypeId = techInfo.getAppTypeId();
 						if(appTypeId.equals("app-layer") || appTypeId.equals("web-layer") || appTypeId.equals("mob-layer")) {
@@ -146,12 +158,61 @@ public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   
 			}
 		}
 	}
+	
+	// To update the feature ids to the changed ids
+	private void updateFeatureIds(ApplicationInfo applicationInfo) throws PhrescoException {
+		List<String> selectedArtifacts = applicationInfo.getSelectedModules();
+		List<String> artifacts = createSelectedArtifacts(selectedArtifacts);
+		applicationInfo.setSelectedModules(artifacts);
+		selectedArtifacts = applicationInfo.getSelectedJSLibs();
+		artifacts = createSelectedArtifacts(selectedArtifacts);
+		applicationInfo.setSelectedJSLibs(artifacts);
+		selectedArtifacts = applicationInfo.getSelectedComponents();
+		artifacts = createSelectedArtifacts(selectedArtifacts);
+		applicationInfo.setSelectedComponents(artifacts);
+	}
+	
+	private List<String> createSelectedArtifacts(List<String> selectedModules) throws PhrescoException {
+		if(CollectionUtils.isEmpty(selectedModules)) {
+			return null;
+		}
+		if(upgradeproperties == null) {
+			getFeatureProperties();
+		}
+		List<String> features = new ArrayList<String>();
+		for (String feature : selectedModules) {
+			if(upgradeproperties.containsKey(feature)){
+				String property = upgradeproperties.getProperty(feature);
+				if(StringUtils.isNotEmpty(property)) {
+					features.add(property);
+				}
+			}
+			if(upgradeproperties.containsValue(feature)) {
+				features.add(feature);
+			} else {
+				ArtifactGroup artifactGroup = serviceManager.getFeatureById(feature);
+				if(artifactGroup != null) {
+					features.add(feature);
+				}
+			}
+		}
+		return features;
+	}
 
+	private void getFeatureProperties() throws PhrescoException {
+		InputStream resource = this.getClass().getClassLoader().getResourceAsStream("upgrade.properties");
+		upgradeproperties = new Properties();
+		try {
+			upgradeproperties.load(resource);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
 	private void extractUpdate(File tempFile) throws PhrescoException {
 		ArchiveUtil.extractArchive(tempFile.getPath(), FrameworkConstants.PREV_DIR, ArchiveType.ZIP);
 		FileUtil.delete(tempFile);
 	}
-
 
 	private void createBackUp() throws IOException, PhrescoException {
 		File tempFile = new File(Utility.getPhrescoTemp(), FrameworkConstants.TEMP_FOLDER);

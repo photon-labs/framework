@@ -104,6 +104,18 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 			});
 		},
 		
+		reportModifier : function(data) {
+			var returnVal = "";
+			$.each(data, function(index, current){
+				returnVal += '<li class="reportOption"><a href="javascript:void(0)">'+ current +'</a></li>';
+			});
+			$(".reportTechOptions").html(returnVal);
+			
+			$('#reportOptionsDrop').attr("value", data[0]);
+			$('#reportOptionsDrop').html(data[0] + '<b class="caret"></b>');
+			
+		},
+		
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -134,14 +146,19 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 			$('.projectModule').click(function() {
 				$('#modulesDrop').attr("value", $(this).children().text());
 				$('#modulesDrop').html($(this).children().text() + '<b class="caret"></b>');
+				self.projectRequestBody = $(this).children().text();
+				self.unitTestListener.getUnitTestReportOptions(self.unitTestListener.getActionHeader(self.projectRequestBody, "getTechOptions"), function(response) {
+					$(".reportTechOptions").empty();
+					self.reportModifier(response.data);
+					$('#testResult').empty();
+					Clazz.navigationController.jQueryContainer = '#testResult';
+					Clazz.navigationController.push(self.testsuiteResult, false);
+				});
 				
-				$('#testResult').empty();
-				Clazz.navigationController.jQueryContainer = '#testResult';
-				Clazz.navigationController.push(self.testsuiteResult, false);
 			});
 			
 			//Change event of the report type to get the report
-			$('.reportOption').click(function() {
+			$('.reportTechOptions').on("click", ".reportOption", function() {
 				$('#reportOptionsDrop').attr("value", $(this).children().text());
 				$('#reportOptionsDrop').html($(this).children().text() + '<b class="caret"></b>');
 				

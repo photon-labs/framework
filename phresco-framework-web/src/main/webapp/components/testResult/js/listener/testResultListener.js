@@ -307,6 +307,10 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				var projectInfo = commonVariables.api.localVal.getProjectInfo();
 				appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
 			}
+			
+			if (self.isBlank(moduleParam) && !self.isBlank($('#modulesDrop').attr('value'))) {
+				moduleParam = '&moduleName='+$('#modulesDrop').attr('value');
+			}
 
 			var currentTab = commonVariables.navListener.currentTab;
 			var testType = "";
@@ -456,6 +460,11 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 		getTestsuites : function(callback) {
 			var self = this;
 			self.performAction(self.getActionHeader(self.requestBody, "getTestSuite"), function(response) {
+				if (!self.isBlank(response.data)) {
+					$('#tabularView').show();
+				} else {
+					$('#tabularView').hide();
+				}
 				callback(response);
 			});
 		},

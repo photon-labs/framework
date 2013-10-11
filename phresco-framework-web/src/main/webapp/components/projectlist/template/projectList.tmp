@@ -238,6 +238,7 @@
                                                 <option value="svn" data-i18n="projectlist.label.svn"></option>
                                         		<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
                                         		<option value="git" data-i18n="projectlist.label.git"></option>
+                                            <option value="perforce" data-i18n="projectlist.label.perforce"></option>
                                             </select>
                                         </td>
                                         <td><input type="text" placeholder="Repo Url" id="updateRepourl_{{id}}" name="repoUrl"></td>
@@ -258,11 +259,23 @@
                                        <td colspan="2" data-i18n="projectlist.label.revision"></td>
                                     </tr>
                                     <tr>
-                                        <td><input type="radio" name="revision" class="radioBtnClass" value="head"><span data-i18n="projectlist.label.headrevision"></span><input type="radio" name="revision" class="radioBtnClass" value=""><span data-i18n="projectlist.label.revision"></span></td>
+                                        <td><input type="radio" name="revision" class="radioBtnClass" value="head" checked><span data-i18n="projectlist.label.headrevision"></span><input type="radio" name="revision" class="radioBtnClass" value=""><span data-i18n="projectlist.label.revision"></span></td>
                                         <td><input class="revision" type="text"></td>
                                     </tr>
                                 </tbody>
                      </table> 
+                       <div class="perforcedata">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td><label name="stream" value="stream">Stream</label></td>
+                                </tr>
+                                <tr>    
+                                    <td><input id="stream_{{id}}" name="stream" type="text" class="stream"></td>
+                                </tr>
+                            </tbody>
+                         </table>
+                     </div>
                      <div class="flt_right" style=margin-top:5px;" appDirName="{{appDirName}}">
                          <input type="button" value="Update Application" data-i18n="[value]common.btn.updateapp"  id="{{id}}" class="btn btn_style" name="updatebtn">
                          <input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">

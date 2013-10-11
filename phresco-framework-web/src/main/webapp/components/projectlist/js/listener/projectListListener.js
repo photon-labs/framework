@@ -218,6 +218,9 @@ define([], function() {
 				addupdate.userName = projectRequestBody.userName;
 				addupdate.password = projectRequestBody.password;
 				addupdate.version = projectRequestBody.revision;
+				if('perforce' === projectRequestBody.type) {
+					addupdate.stream = projectRequestBody.stream;
+				}
 				header.requestPostBody = JSON.stringify(addupdate);
 				header.webserviceurl = commonVariables.webserviceurl + "repository/updateImportedApplication?appDirName="+projectRequestBody.appdirname+"&displayName="+data.displayName;
 			} else if (action === "configTypes") {
@@ -620,6 +623,10 @@ define([], function() {
 				updatedata.password = $("#updatePassword_"+dynid).val();
 				updatedata.revision = revision;
 				updatedata.appdirname = obj.parent("div").attr("appDirName");
+				if('perforce' === updatedata.type) {
+				updatedata.stream = $("#stream_"+dynid).val();
+			}
+			
 				actionBody = updatedata;
 				action = "updateget";
 				commonVariables.hideloading = true;
@@ -705,34 +712,88 @@ define([], function() {
 				
 				else if(self.flag3 === 1)
 				{	
-					if(!self.isValidUrl(updateRepourl)){
-						$("#updateRepourl_"+dynid).focus();
-						$("#updateRepourl_"+dynid).val('');
-						$("#updateRepourl_"+dynid).attr('placeholder','Invalid Repourl');
-						$("#updateRepourl_"+dynid).addClass("errormessage");
-						setTimeout(function() { 
-							$("#updateRepourl_"+dynid).val(updateRepourl); 
-						}, 4000);
-						self.hasError = true;
-					
-					} else if(updateUsername === ""){
-						$("#updateUsername_"+dynid).focus();
-						$("#updateUsername_"+dynid).attr('placeholder','Enter UserName');
-						$("#updateUsername_"+dynid).addClass("errormessage");
-						self.hasError = true;
-					} else if(updatePassword === ""){
-						$("#updatePassword_"+dynid).focus();
-						$("#updatePassword_"+dynid).attr('placeholder','Enter Password');
-						$("#updatePassword_"+dynid).addClass("errormessage");
-						self.hasError = true;
-					}else {
-						self.hasError=false;
+				if($("#updateType_"+dynid).val() !== 'perforce') {
+						if(!self.isValidUrl(updateRepourl)){
+								$("#updateRepourl_"+dynid).focus();
+								$("#updateRepourl_"+dynid).val('');
+								$("#updateRepourl_"+dynid).attr('placeholder','Invalid Repourl');
+								$("#updateRepourl_"+dynid).addClass("errormessage");
+								setTimeout(function() { 
+									$("#updateRepourl_"+dynid).val(updateRepourl); 
+								}, 4000);
+								self.hasError = true;
+			
+						} else if(updateUsername === ""){
+							$("#updateUsername_"+dynid).focus();
+							$("#updateUsername_"+dynid).attr('placeholder','Enter UserName');
+							$("#updateUsername_"+dynid).addClass("errormessage");
+							self.hasError = true;
+						} else if(updatePassword === ""){
+								$("#updatePassword_"+dynid).focus();
+								$("#updatePassword_"+dynid).attr('placeholder','Enter Password');
+								$("#updatePassword_"+dynid).addClass("errormessage");
+								self.hasError = true;
+						}else {
+							self.hasError=false;
+						}
+
 					}
+					else {
+						stream = $("#stream_"+dynid).val();
+						if($(".stream").hasClass("errormessage")) 
+								$(".stream").removeClass("errormessage");
+
+						if(updateRepourl === ""){
+								$("#updateRepourl_"+dynid).focus();
+								$("#updateRepourl_"+dynid).addClass("errormessage");
+								$("#updateRepourl_"+dynid).attr('placeholder','Enter Url');
+								setTimeout(function() { 
+									$("#updateRepourl_"+dynid).val(updateRepourl); 
+								}, 4000);
+								self.hasError = true;
+			
+						} else if(!self.validateperforce(updateRepourl)) {
+								$("#updateRepourl_"+dynid).focus();
+								$("#updateRepourl_"+dynid).addClass("errormessage");
+								$("#updateRepourl_"+dynid).attr('placeholder','Enter Url');
+								self.hasError = true;
+			
+						} else if(updateUsername === ""){
+							if($("#updateRepourl_"+dynid).hasClass("errormessage")) 
+								$("#updateRepourl_"+dynid).removeClass("errormessage");
+							$("#updateUsername_"+dynid).focus();
+							$("#updateUsername_"+dynid).attr('placeholder','Enter UserName');
+							$("#updateUsername_"+dynid).addClass("errormessage");
+							self.hasError = true;
+						} else if(stream === ""){
+							if($("#updateRepourl_"+dynid).hasClass("errormessage")) 
+								$("#updateRepourl_"+dynid).removeClass("errormessage");
+								$("#stream_"+dynid).focus();
+								$("#stream_"+dynid).attr('placeholder','Enter Stream');
+								$("#stream_"+dynid).addClass("errormessage");
+								self.hasError = true;
+						} else {
+							self.hasError=false;
+						}
+
+					}	
 					self.flag3=0;
 					return self.hasError;
 				}
 		},
 		
+		validateperforce : function(updateRepourl) {
+			if( updateRepourl.indexOf(':') > 0 ){
+				var arr=new Array();
+				var arr=updateRepourl.split(":"); 
+				if(/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/i.test(arr[0]) === true || arr[0] === "localhost" ){
+					if(!isNaN(arr[1]) && isFinite(arr[1])){
+					return true;
+					}
+				}	
+
+			}
+		},	
 		trimValue: function (value) {
 			var len = value.length;
 			if(len > 50) {

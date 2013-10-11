@@ -154,6 +154,10 @@ public interface ResponseCodes {
 	String PHR210047 = "PHR210047"; // unable to delete the project
 	String PHR210048 = "PHR210048"; // Project Imported Succesfully.but, test checkout is not applicable for this multi-app Url
 	String PHR200027 = "PHR200027"; // report fetched successfully
+	String PHR210049 = "PHR210049"; // Invalid host or port
+	String PHR210050 = "PHR210050"; // Invalid stream
+
+
 	
 	/*
 	 * App Info Page

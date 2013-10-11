@@ -32,6 +32,7 @@ public class RepoDetail implements Serializable {
 	private String testRevisionVal;
 	private String branch;
 	private String passPhrase;
+	private String stream;
 	
 	private boolean repoExist;
 
@@ -41,7 +42,7 @@ public class RepoDetail implements Serializable {
 	
 	public RepoDetail(String revision, String repoUrl, String userName, String password, String revisionVal, String commitMessage,
 			List<String> commitableFiles, List<RepoFileInfo> repoInfoFile, String type, boolean testCheckOut, String testRepoUrl,
-			String testUserName, String testPassword, String testRevision, boolean repoExist) {
+			String testUserName, String testPassword, String testRevision, boolean repoExist,String stream) {
 		super();
 		this.revision = revision;
 		this.repoUrl = repoUrl;
@@ -58,6 +59,8 @@ public class RepoDetail implements Serializable {
 		this.testPassword = testPassword;
 		this.testRevision = testRevision;
 		this.repoExist = repoExist;
+		this.stream = stream;
+
 	}
 
 	public String getRevision() {
@@ -202,6 +205,14 @@ public class RepoDetail implements Serializable {
 
 	public String getPassPhrase() {
 		return passPhrase;
+	}
+	
+	public void setStream(String stream) {
+		this.stream = stream;
+	}
+
+	public String getStream() {
+		return stream;
 	}
 
 	public String toString() {

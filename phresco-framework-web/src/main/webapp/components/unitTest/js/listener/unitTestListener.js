@@ -45,6 +45,9 @@ define([], function() {
 			if(action === "get") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/" + commonVariables.unit + "?userId="+userId+"&appDirName="+appDirName+moduleParam;				
+			} else if (action === "getTechOptions") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/techOptions" + "?moduleName="+requestBody+"&appDirName="+appDirName;				
 			}
 			return header;
 		},

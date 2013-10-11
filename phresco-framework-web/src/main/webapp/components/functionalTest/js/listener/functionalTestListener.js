@@ -29,22 +29,26 @@ define([], function() {
 		getActionHeader : function(requestBody, action) {
 			var self = this, header, data = {}, userId;
 			data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
-			userId = data.id;
-			var projectInfo = commonVariables.api.localVal.getProjectInfo();
-			appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+			userId = data.id, appDirName = '';
 			header = {
 					contentType: "application/json",				
 					dataType: "json",
 					webserviceurl: ''
 			};
-
+			var moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
+			if (!self.isBlank(moduleParam)) {
+				appDirName = $('.rootModule').val()
+			} else if(commonVariables.api.localVal.getProjectInfo() !== null) {
+				var projectInfo = commonVariables.api.localVal.getProjectInfo();
+				appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+			}
 			if (action === "getFunctionalTestOptions") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/functionalFramework?appDirName="+appDirName;				
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/functionalFramework?appDirName="+appDirName + moduleParam;				
 			}
 			if (action === "status") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/connectionAliveCheck?appDirName="+appDirName+"&fromPage="+requestBody.from;				
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/connectionAliveCheck?appDirName="+appDirName+"&fromPage="+requestBody.from + moduleParam;				
 			}
 			return header;
 		},
@@ -145,7 +149,7 @@ define([], function() {
 			if (testData !== undefined) {
 				queryString = queryString+"&"+testData;
 			}
-			
+			queryString += self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
 			$('#testConsole').html('');
 			self.testResultListener.openConsoleDiv();//To open the console
 			$('.progress_loading').show();
