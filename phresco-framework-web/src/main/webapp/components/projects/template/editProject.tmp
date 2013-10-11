@@ -75,7 +75,7 @@
 										</td>
 										<td name="technology" class="technology">
 											<select name="appln_technology" class="appln_technology selectpicker" title="Select Technology">
-											   <option disabled value="Select Technology">Select Technology</option>
+											   <option value="Select Technology">Select Technology</option>
 											   {{#each applicationlayerData.techGroups}}
 													{{#each techInfos}}
 													  <option value="{{id}}">{{name}}</option>
@@ -84,7 +84,7 @@
 											</select>
 										 </td>
 										 <td name="version" class="version">
-											<select name="appln_version" class="appln_version" title="Select Version">
+											<select name="appln_version" class="appln_version selectpicker" title="Select Version">
 											   <option value="Select Version">Select Version</option>
 											</select>
 										 </td>

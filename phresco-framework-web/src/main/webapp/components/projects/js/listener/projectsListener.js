@@ -389,6 +389,43 @@ define([], function() {
 			$(".errmsg3").hide();	
 		},
 		
+		validateStartEndDate : function(startDateTime, endDateTime) {
+			var errorJson = {};
+			var startDate = startDateTime.substring(0, 10);
+			var startDateSplits = startDate.split('/');
+			var startMonth = Number(startDateSplits[0]);
+			var startDay = Number(startDateSplits[1]);
+			var startYear = Number(startDateSplits[2]);
+
+			var endDate = endDateTime.substring(0, 10);
+			var endDateSplits = endDate.split('/');
+			var endMonth = Number(endDateSplits[0]);
+			var endDay = Number(endDateSplits[1]);
+			var endYear = Number(endDateSplits[2]);
+
+			errorJson.hasError = false;
+			
+			if (endYear == startYear && endMonth == startMonth && endDay == startDay) {
+				errorJson.errorIn = "endDate";
+				errorJson.errorMsg = "Select valid end date";
+				errorJson.hasError = true;
+			} else if (endYear < startYear && endMonth < startMonth && endDay < startDay) {
+				errorJson.errorIn = "endDate";
+				errorJson.errorMsg = "Start date should be greater than the end date";
+				errorJson.hasError = true;
+			} else if (endYear == startYear && endMonth < startMonth) {
+				errorJson.errorIn = "endDate";
+				errorJson.errorMsg = "Start date should be greater than the end date";
+				errorJson.hasError = true;
+			} else if (endYear == startYear && endMonth == startMonth && endDay < startDay) {
+				errorJson.errorIn = "endDate";
+				errorJson.errorMsg = "Start date should be greater than the end date";
+				errorJson.hasError = true;
+			} 
+			
+			return errorJson;
+		},
+		
 		validation : function() {
 			 var self = this;
 			 var name = $("input[name='projectname']").val();
@@ -397,17 +434,29 @@ define([], function() {
 			 var appcode = $("#appcode").val();
 			 var webappcode = $("#webappcode").val();
 			 var mobileappcode = $("#mobileappcode").val();
+			 var startdate = $("#startDate").val();
+			 var enddate = $("#endDate").val();
+			 var errorJson = self.validateStartEndDate(startdate, enddate);
 			 	
 			    if(name === ""){
 					self.valid("input[name='projectname']", "Enter Name");
 					self.hasError = true;
-			    }else if(code === ""){
+			    } else if(code === ""){
 					self.valid("input[name='projectcode']", "Enter Code");
 					self.hasError = true;
-			    }else if(labelversion === ""){
+			    } else if(labelversion === ""){
 					self.valid("input[name='projectversion']", "Enter Version");
 					self.hasError = true;
-			    }else if(self.appvalid()) {
+			    } else if(errorJson.hasError) {
+					if (errorJson.errorIn == "startDate") {
+						$("#startDate").attr('placeholder', errorJson.errorMsg);
+						$("#startDate").addClass("errormessage");
+					} else if (errorJson.errorIn == "endDate") {
+						$("#endDate").attr('placeholder', errorJson.errorMsg);
+						$("#endDate").addClass("errormessage");
+					}
+					self.hasError = true;
+				} else if(self.appvalid()) {
 					self.hasError = true;
 			    }else if(self.webvalid()) {
 			    	$(".errmsg1").hide();
@@ -1261,7 +1310,7 @@ define([], function() {
 		},
 		
 		enablebuttonEdit : function(preBuilt) {
-			if (preBuilt !== "true") {
+			//if (preBuilt !== "true") {
 				if($('#appLayaer').css('display') === "none") {
 						$("input[name='appLayaer']").show();
 				}	
@@ -1271,7 +1320,7 @@ define([], function() {
 				if($('#mobLayers').css('display') === "none") {
 						$("input[name='mobLayers']").show();
 				}
-			}
+			//}
 		},
 		
 		editSeriveTechnolyEvent : function(getData) {
@@ -1285,6 +1334,7 @@ define([], function() {
 
 			$.each(getData, function(index, value) {
 				if (value.techInfo.appTypeId === "1dbcf61c-e7b7-4267-8431-822c4580f9cf") {
+					self.count ++;
 					$("#appLayaer").show();
 					$("tr.applnLayer").show();
 					$('img[name="close"]').hide();
@@ -1300,17 +1350,19 @@ define([], function() {
 					if(versionMsg === "" || versionMsg === null || versionMsg === undefined){
 						versionMsg = "No Version Available";
 					}
-					var appendData = '<tr class="applnlayercontent" name="dynamicAppLayer"><td><input type="text" value="'+value.code+'" disabled></td><td name="frontEnd" class="frontEnd"><select name="frontEnd" class="frontEnd" title="Select Group" disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td><select disabled>'+ self.getTechnology(value.techInfo.id) +'</select></td><td><select disabled><option>'+versionMsg+'</option></select></td><td><div class="flt_right icon_center"><a name="addApplnLayer" style="cursor:pointer;"></a><a href="javascript:;" name="removeApplnLayer" style="cursor:pointer;"></a></div></td></tr>';
+					var appendData = '<tr class="applnlayercontent" name="dynamicAppLayer"><td><input class="appln-appcode appCodeText" type="text" value="'+value.code+'" count='+ self.count +' disabled></td><td name="frontEnd" class="frontEnd"><select name="frontEnd" class="frontEnd" title="Select Group" disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td><select disabled>'+ self.getTechnology(value.techInfo.id) +'</select></td><td><select disabled><option>'+versionMsg+'</option></select></td><td><div class="flt_right icon_center"><a name="addApplnLayer" style="cursor:pointer;"></a><a href="javascript:;" name="removeApplnLayer" style="cursor:pointer;"></a></div></td></tr>';
 					$("tbody.applnLayer").append(appendData);
 					self.multiselect();
 				} else if (value.techInfo.appTypeId === "e1af3f5b-7333-487d-98fa-46305b9dd6ee") {
+					self.count ++;
 					$("#webLayers").show();
 					$("tr.webLayer").show();
 					$('img[name="close"]').hide();
-					var appendData = '<tr class="weblayercontent" name="dynamicWebLayer"><td><input type="text" value="'+value.code+'" disabled></td><td><select name="weblayer" disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td name="widget"><select name="web_widget" disabled> '+ self.editgetwidgettype(value.techInfo.id) +'</select></td> <td name="widgetversion"><select name="web_version" disabled><option>'+value.techInfo.version+'</option></select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer" style="cursor:pointer;"></a><a href="javascript:;" name="removeWebLayer" style="cursor:pointer;"></a></div></td></tr>';
+					var appendData = '<tr class="weblayercontent" name="dynamicWebLayer"><td><input class="web-appcode appCodeText" type="text" value="'+value.code+'" count='+ self.count +' disabled></td><td><select name="weblayer" disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td name="widget"><select name="web_widget" disabled> '+ self.editgetwidgettype(value.techInfo.id) +'</select></td> <td name="widgetversion"><select name="web_version" disabled><option>'+value.techInfo.version+'</option></select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer" style="cursor:pointer;"></a><a href="javascript:;" name="removeWebLayer" style="cursor:pointer;"></a></div></td></tr>';
 					$("tbody.WebLayer").append(appendData);
 					self.multiselect();
 				} else if (value.techInfo.appTypeId === "99d55693-dacd-4f77-994a-f02a66176ff9") {
+					self.count ++;
 					$("#mobLayers").show();
 					$("tr.mobLayer").show();
 					$('img[name="close"]').hide();
@@ -1318,7 +1370,7 @@ define([], function() {
 					if(versionMsg === "" || versionMsg === null || versionMsg === undefined || versionMsg === "null"){
 						versionMsg = "No Version Available";
 					}
-					var appendData = '<tr class="mobilelayercontent" name="dynamicMobileLayer"><td><input type="text" value="'+value.code+'" disabled></td><td><select disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td><select name="mobile_types" disabled>'+self.editgetmobiletype(value.techInfo.id)+'</select></td><td colspan="2"><select disabled><option>'+versionMsg +'</option></select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer" style="cursor:pointer;"></a><a href="javascript:;" name="removeMobileLayer" style="cursor:pointer;"></a> </div></td></tr>';
+					var appendData = '<tr class="mobilelayercontent" name="dynamicMobileLayer"><td><input class="mobile-appcode appCodeText" type="text" value="'+value.code+'" count='+ self.count +' disabled></td><td><select disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td><select name="mobile_types" disabled>'+self.editgetmobiletype(value.techInfo.id)+'</select></td><td colspan="2"><select disabled><option>'+versionMsg +'</option></select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer" style="cursor:pointer;"></a><a href="javascript:;" name="removeMobileLayer" style="cursor:pointer;"></a> </div></td></tr>';
 					$("tbody.MobLayer").append(appendData);
 					self.multiselect();
 				}
@@ -1327,6 +1379,7 @@ define([], function() {
 			$("tr[name=dynamicWebLayer]:last").find("a[name=addWebLayer]").html(addIcon);
 			$("tr[name=dynamicMobileLayer]:last").find("a[name=addMobileLayer]").html(addIcon);
 			self.addLayersEvent();
+			self.enablebuttonEdit();
 		},
 
 		

@@ -201,11 +201,17 @@ define(["projects/listener/projectsListener"], function() {
 				}
 			});
 
+			$("input[name='projectname']").on("keypress", function(e) {
+				if (e.which === 32 && !this.value.length) {
+					e.preventDefault();
+				}	
+			});
+			
 			$("input[name='projectname']").bind('input propertychange', function (e) {
 				var str = $(this).val();
 				str = self.specialCharValidation(str);
-				str = str.replace(/\s+/g, '');
 				str = str.replace(/[^a-zA-Z 0-9\-\_]+/g, '');
+				str = str.replace(/\s+/g, '');
 				$("input[name='projectcode']").val(str);
 			});
 

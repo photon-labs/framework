@@ -264,6 +264,23 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					start();
 					var errorMsg = $("input[name=projectcode]").attr('placeholder');
 					equal(errorMsg, "Enter Code", "Add Project - Empty Project Name Test Tested");
+					self.dateValidationTest();
+				}, 1500);
+			});
+		},
+		
+		dateValidationTest : function() {
+			var self=this;
+			asyncTest("Add Project- Date Validation Test", function() {
+				$("input#projectname").val('Test');
+				$("input#projectcode").val('Test');
+				$("#startDate").val('10/10/2013');
+				$("#endDate").val('10/09/2013');
+				$("input[name='Create']").click();
+				setTimeout(function() {
+					start();
+					var errorMsg = $("#endDate").attr('placeholder');
+					equal(errorMsg, "Start date should be greater than the end date", "Add Project - Date Validation Tested");
 					self.runEmptyApplicationAppCodeTest();
 				}, 1500);
 			});
@@ -274,6 +291,8 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 			asyncTest("Add Project- Empty Application AppCode Test", function() {
 				$("input#projectname").val('Test');
 				$("input#projectcode").val('Test');
+				$("#startDate").val('10/10/2013');
+				$("#endDate").val('10/11/2013');
 				$("input#appcode").val('');
 				$("input[name='Create']").click();
 				setTimeout(function() {
