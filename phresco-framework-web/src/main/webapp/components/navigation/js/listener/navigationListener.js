@@ -827,6 +827,9 @@ define([], function() {
 							callback(response);						
 						} else {
 							commonVariables.api.showError(response.responseCode ,"error", true);
+							if(response.responseCode === 'PHR210050' || response.responseCode === 'PHR210049') {
+								$("#importloading").hide();
+							}
 						}
 					},
 					function(textStatus) {
@@ -845,13 +848,45 @@ define([], function() {
 			$("#importRepourl").removeClass("errormessage");
 			var error = false;
 			
-			if(!self.isValidUrl(importRepourl)) {
-				error = true;
-				$("#importRepourl").val('');
-				self.validateTextBox($("#importRepourl"), 'Invalid Application Url');	
-				setTimeout(function() { 
-				//$("#importRepourl").val(importRepourl); 
-				}, 4000);				
+			if('perforce' !== importType) {
+				if(!self.isValidUrl(importRepourl)) {
+					error = true;
+					$("#importRepourl").val('');
+					self.validateTextBox($("#importRepourl"), 'Invalid Application Url');	
+					setTimeout(function() { 
+					//$("#importRepourl").val(importRepourl); 
+					}, 4000);				
+				}
+			} else {
+				if($(".stream").hasClass("errormessage")) 
+								$(".stream").removeClass("errormessage");
+
+				if(importRepourl === ""){
+					error = true;
+					$("#importRepourl").val('');
+					self.validateTextBox($("#importRepourl"), 'Invalid Application Url');	
+					setTimeout(function() { 
+					//$("#importRepourl").val(importRepourl); 
+					}, 4000);		
+				} else if(!self.validateperforce(importRepourl)) {
+					error = true;
+					$("#importRepourl").val('');
+					self.validateTextBox($("#importRepourl"), 'Invalid Application Url');
+
+				} else if ($("#gitUserName").val() === "") {
+					if($("#importRepourl").hasClass("errormessage")) 
+								$("#importRepourl").removeClass("errormessage");
+					error = true;
+					$("#gitName").val('');
+					self.validateTextBox($("#gitName"), 'Invalid User Name');	
+						
+				} else if ($(".stream").val() === "") {
+					if($("#importRepourl").hasClass("errormessage")) 
+								$("#importRepourl").removeClass("errormessage");
+					error = true;
+					$(".stream").val('');
+					self.validateTextBox($(".stream"), 'Invalid Stream');	
+				}
 			}
 			
 			if ('svn' === importType && !error) {
@@ -968,6 +1003,10 @@ define([], function() {
 			} else {
 				importdata.testCheckOut = false;
 			}
+
+			if('perforce' === importdata.type) {
+				importdata.stream = $('.stream').val();
+			}
 			
 			actionBody = importdata;
 			action = "importpost";
@@ -983,6 +1022,23 @@ define([], function() {
 				}
 				commonVariables.hideloading = false;
 			});
+		},
+
+		validateperforce : function(importRepourl) {
+			if( importRepourl.indexOf(':') > 0 ){
+				var arr=new Array();
+				var arr=importRepourl.split(":"); 
+				if(/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/i.test(arr[0]) === true || arr[0] === "localhost" ){
+					if(!isNaN(arr[1]) && isFinite(arr[1])){
+					return true;
+					}
+				}	
+
+
+				
+			}
+			return false;
+
 		},
 		
 		//To copy the console log content to the clip-board

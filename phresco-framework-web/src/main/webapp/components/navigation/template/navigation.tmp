@@ -17,6 +17,8 @@
                                 	<option value="svn" data-i18n="projectlist.label.svn"></option>
 									<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 									<option value="git" data-i18n="projectlist.label.git"></option>
+                                    <option value="perforce" data-i18n="projectlist.label.perforce"></option>
+
                             	</select>
                             </td>
                             <td><input type="text" id="importRepourl" data-i18n="[placeholder]navigation.application.apprepourl"></td>
@@ -99,6 +101,18 @@
                             </tbody>
                          </table>
                   	 </div>
+                       <div class="perforcedata">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td><label name="stream" value="stream">Stream</label></td>
+                                </tr>
+                                <tr>    
+                                    <td><input name="stream" type="text" class="stream"></td>
+                                </tr>
+                            </tbody>
+                         </table>
+                     </div>
                </div>
 				<div class="popuploading" id="importloading" style="display:none">&nbsp</div>
                   <div class="flt_right">

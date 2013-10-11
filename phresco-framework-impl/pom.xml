@@ -158,7 +158,11 @@
 			<artifactId>mockito-all</artifactId>
 			<version>1.9.5</version>
 		</dependency>
-
+		<dependency>
+			<groupId>com.perforce</groupId>
+			<artifactId>p4java</artifactId>
+			<version>2012.3.551082</version>
+		</dependency>
     </dependencies>
     
     <build>

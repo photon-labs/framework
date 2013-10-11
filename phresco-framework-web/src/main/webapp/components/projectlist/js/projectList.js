@@ -291,6 +291,12 @@ define(["projectlist/listener/projectListListener"], function() {
 				//for hiding and clearing the dropdown values
 				$('.searchdropdown').hide();
 				$('.searchdropdown').html('');
+				if ($("#updateType_"+dynamicId).val() !== "perforce") {
+				$('.perforcedata').hide();
+			    } else {
+			 	$('.perforcedata').show();
+			 	$('#updateRepourl_'+dynamicId).attr('placeholder','host:portnumber');
+			    }
 				//end for hiding and clearing dropdown value
 				/* $("#uname_"+dynamicId).keypress(function(e) {
 						if($("#type_"+dynamicId).val() === 'git') {
@@ -384,6 +390,7 @@ define(["projectlist/listener/projectListListener"], function() {
 						self.hideShowCredentials(selectObj.val(),usrObj,pwdObj,checkObj);	
 						if($(selectObj).attr('id') === 'updateType_'+dynamicId) {
 							$('#temporary_'+dynamicId).remove();
+							$('.perforcedata').hide();
 							if(selectObj.val() !== 'svn') {
 								$("#updatePassword_"+dynamicId).parent().parent().next('tr').hide();
 								$("#updatePassword_"+dynamicId).parent().parent().next('tr').next('tr').hide();
@@ -391,7 +398,14 @@ define(["projectlist/listener/projectListListener"], function() {
 							} else {
 								$("#updatePassword_"+dynamicId).parent().parent().next('tr').show();
 								$("#updatePassword_"+dynamicId).parent().parent().next('tr').next('tr').show();
-							}	
+							}
+							if(selectObj.val() === 'perforce') {
+								$('.perforcedata').show();
+								$('#temporary_'+dynamicId).hide();
+								$('#updateRepourl_'+dynamicId).attr('placeholder','host:portnumber');
+							} else {
+								$('#updateRepourl_'+dynamicId).attr('placeholder','Repo Url');
+							}		
 						}
 					});
 				}
