@@ -137,17 +137,41 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		ResponseInfo<Map> responseData = new ResponseInfo<Map>();
 		try {
+			Map<String, List<String>> unitTestOptionsMap = new HashMap<String, List<String>>();
 			String rootModule = appDirName;
 			if (StringUtils.isNotEmpty(module)) {
 				appDirName = appDirName + File.separator + module;
 			}
 			List<String> unitReportOptions = getUnitReportOptions(appDirName);
-//			List<String> projectModules = FrameworkServiceUtil.getProjectModules(rootModule);
-			Map<String, List<String>> unitTestOptionsMap = new HashMap<String, List<String>>();
+			if (StringUtils.isEmpty(module)) {
+				List<String> projectModules = FrameworkServiceUtil.getProjectModules(rootModule);
+				unitTestOptionsMap.put(PROJECT_MODULES, projectModules);
+				if (CollectionUtils.isNotEmpty(projectModules)) {
+					unitReportOptions = getUnitReportOptions(appDirName + File.separator + projectModules.get(0));
+				}
+			}
 			unitTestOptionsMap.put(REPORT_OPTIONS, unitReportOptions);
-//			unitTestOptionsMap.put(PROJECT_MODULES, projectModules);
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
 					unitTestOptionsMap, RESPONSE_STATUS_SUCCESS, PHRQ100001);
+			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
+					null, RESPONSE_STATUS_ERROR, PHRQ110001);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+					.build();
+		}
+	}
+	
+	@GET
+	@Path("techOptions")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response reportOptions(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			 @QueryParam(REST_QUERY_MODULE_NAME) String module) {
+		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
+		try {
+			List<String> unitReportOptions = getUnitReportOptions(appDirName + File.separator + module);
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
+					unitReportOptions, RESPONSE_STATUS_SUCCESS, PHRQ100001);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
