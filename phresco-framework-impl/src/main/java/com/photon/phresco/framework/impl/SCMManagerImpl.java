@@ -1279,7 +1279,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			client.setClientView(clientView);
 			client.setOptions(new ClientOptions("noallwrite clobber nocompress unlocked nomodtime normdir"));
 			}catch (ArrayIndexOutOfBoundsException e) {
-				System.out.println("dddddddddd");
 				throw new RequestException();
 			}
 			System.out.println(server.createClient(client));

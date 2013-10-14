@@ -94,7 +94,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	}
 	
 	@Test
-	public void  importProjectFromRepo() {
+	public void  importProjectFromRepo() throws Exception {
 		RepoDetail repodetail = new RepoDetail();
 		repodetail.setUserName("santhosh_ja");
 		repodetail.setPassword("santJ!23");
@@ -103,6 +103,10 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0/239/");
 		Response importApplication = repositoryservice.importApplication(repodetail, "Admin");
 		Assert.assertEquals(200,importApplication.getStatus());
+		
+		repodetail.setUserName("sample");
+		Response authenticationException = repositoryservice.importApplication(repodetail, "Admin");
+		Assert.assertEquals(200, authenticationException.getStatus());
 	}
 	
 
@@ -116,6 +120,19 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
 		Response fetchLogMessages = repositoryservice.fetchLogMessages(repodetail);
 		Assert.assertEquals(200,fetchLogMessages.getStatus());
+		
+		repodetail.setRepoUrl("http://wrong.url.com");
+		Response wrongUrlResponse = repositoryservice.fetchLogMessages(repodetail);
+		Assert.assertEquals(200, wrongUrlResponse.getStatus());
+		
+		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/Dharani/iphone/iPhone-Native-None/");
+		Response lessLogs = repositoryservice.fetchLogMessages(repodetail);
+		Assert.assertEquals(200, lessLogs.getStatus());
+		
+		repodetail.setUserName("sample");
+		repodetail.setPassword("sample");
+		Response unauthorisedResponse = repositoryservice.fetchLogMessages(repodetail);
+		Assert.assertEquals(200, unauthorisedResponse.getStatus());
 	}
 	
 	@Test
@@ -170,7 +187,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	}
 	
 	@Test
-	public void  importGitProjectFromRepo() {
+	public void  importGitProjectFromRepo() throws Exception {
 		RepoDetail repodetail = new RepoDetail();
 		repodetail.setUserName("santhosh-ja");
 		repodetail.setPassword("santJ!23");
