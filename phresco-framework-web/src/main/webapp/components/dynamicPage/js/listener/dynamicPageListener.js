@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.0", "lib/fileuploader-2.3"], function() {
+define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.0", "lib/fileuploader-2.4"], function() {
 
     Clazz.createPackage("com.components.dynamicPage.js.listener");
 
@@ -233,16 +233,24 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 		},
 
         createFileUploader : function (parameter, goal, allowedExtensions) {
-            var self = this, appDirName, dependency = "";
-            appDirName = commonVariables.api.localVal.getSession("appDirName");
+            var self = this, appDirName = '', dependency = "";
             if (!self.isBlank(parameter.dependency)) {
                 dependency = parameter.dependency;
             }
+            var moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
+            if (!self.isBlank(moduleParam)) {
+                appDirName = $('.rootModule').val()
+            } else if(commonVariables.api.localVal.getProjectInfo() !== null) {
+                var projectInfo = commonVariables.api.localVal.getProjectInfo();
+                appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+            }
+
             var uploader = new qq.FileUploader({
                 element: document.getElementById(parameter.key),
                 action: commonVariables.webserviceurl + commonVariables.paramaterContext + "/dynamicUpload",
                 actionType : "dynamicUpload",
                 appDirName : appDirName,
+                moduleName : $('.moduleName').val(),
                 multiple: false,
                 key : parameter.key,
                 allowedExtensions : allowedExtensions,

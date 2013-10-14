@@ -256,8 +256,7 @@
 					equal($(".contextDivParent").find(".contextDivClass").size(), 1, "Context URL template render test");
 					equal($("#dbContextDivParent").find(".dbContextDivClass").size(), 1, "DB Context template render test");
 					self.runAddContextUrlTest(performanceTest);
-					
-				},1200);
+				},1800);
 			});
 		},
 		

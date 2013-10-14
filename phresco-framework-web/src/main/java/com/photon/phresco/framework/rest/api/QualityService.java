@@ -1464,10 +1464,13 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	@GET
 	@Path(REST_API_PERFORMANCE)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response performance(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+	public Response performance(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		List<String> testResultFiles = null;
 		ResponseInfo<Map> responseData = new ResponseInfo<Map>();
 		try {
+			if (StringUtils.isNotEmpty(module)) {
+				appDirName = appDirName + File.separator + module;
+			}
 			Map<String, Object> performanceMap = new HashMap<String, Object>();
             MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_PERFORMANCE_TEST, 
 									Constants.PHASE_PERFORMANCE_TEST, appDirName)));
@@ -1514,11 +1517,14 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTypeFiles(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_ACTION_TYPE) String actionType, List<String> testAgainsts) {
+			@QueryParam(REST_ACTION_TYPE) String actionType, List<String> testAgainsts, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		List<String> testResultFiles = null;
 		boolean resutlAvailable = false;
 		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
 		try {
+			if (StringUtils.isNotEmpty(module)) {
+				appDirName = appDirName + File.separator + module;
+			}
 			if (actionType.equalsIgnoreCase(Constants.PHASE_PERFORMANCE_TEST)) {
 				resutlAvailable = testResultAvail(appDirName, testAgainsts, Constants.PHASE_PERFORMANCE_TEST);
 			} else if (actionType.equalsIgnoreCase(Constants.PHASE_LOAD_TEST)) {
@@ -1526,8 +1532,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			}
 			boolean showDevice = Boolean.parseBoolean(getPerformanceTestShowDevice(appDirName));
 			if (resutlAvailable) {
-				testResultFiles = testResultFiles(appDirName, testAgainsts, showDevice,
-						actionType);
+				testResultFiles = testResultFiles(appDirName, testAgainsts, showDevice, actionType);
 				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
 						testResultFiles, RESPONSE_STATUS_SUCCESS, PHRQ500002);
 				return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
@@ -1548,10 +1553,13 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response devices(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, 
-			@QueryParam(REST_QUERY_RESULT_FILE_NAME) String resultFileName) throws PhrescoException {
+			@QueryParam(REST_QUERY_RESULT_FILE_NAME) String resultFileName, @QueryParam(REST_QUERY_MODULE_NAME) String module) throws PhrescoException {
 		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
 		List<String> devices = new ArrayList<String>();
 		try {
+			if (StringUtils.isNotEmpty(module)) {
+				appDirName = appDirName + File.separator + module;
+			}
 			String testResultPath = getLoadOrPerformanceTestResultPath(appDirName, "", resultFileName, Constants.PHASE_PERFORMANCE_TEST);
 			Document document = getDocument(new File(testResultPath));
 			devices = QualityUtil.getDeviceNames(document);
@@ -1725,7 +1733,11 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	@Path(REST_API_PERFORMANCE_RESULTS)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response performanceTestResults(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_TEST_AGAINST) String testAgainst , 
-			@QueryParam(REST_QUERY_RESULT_FILE_NAME) String resultFileName, @QueryParam(REST_QUERY_DEVICE_ID) String deviceId, @QueryParam(REST_QUERY_SHOW_GRAPH_FOR) String showGraphFor, @QueryParam("from") String from) {
+			@QueryParam(REST_QUERY_RESULT_FILE_NAME) String resultFileName, @QueryParam(REST_QUERY_DEVICE_ID) String deviceId, @QueryParam(REST_QUERY_SHOW_GRAPH_FOR) String showGraphFor, 
+			@QueryParam("from") String from, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
+		if (StringUtils.isNotEmpty(module)) {
+			appDirName = appDirName + File.separator + module;
+		}
 		ResponseInfo<List<PerformanceTestResult>> responseData = new ResponseInfo<List<PerformanceTestResult>>();
 		PerformancResultInfo performanceResultInfo = null;
 		 StringBuilder graphData = new StringBuilder("[");
@@ -1828,8 +1840,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	
 	private String getPerformanceTestShowDevice(String appDirName) throws PhrescoException {
 		try {
-			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(
-					Constants.POM_PROP_KEY_PERF_SHOW_DEVICE);
+			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_PERF_SHOW_DEVICE);
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		}
@@ -1857,9 +1868,12 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	@GET
 	@Path(REST_API_LOAD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response load(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+	public Response load(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		ResponseInfo<Map> responseData = new ResponseInfo<Map>();
 		try {
+			if (StringUtils.isNotEmpty(module)) {
+				appDirName = appDirName + File.separator + module;
+			}
 			Map<String, Object> loadMap = new HashMap<String, Object>();
             MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_LOAD_TEST, 
 									Constants.PHASE_LOAD_TEST, appDirName)));

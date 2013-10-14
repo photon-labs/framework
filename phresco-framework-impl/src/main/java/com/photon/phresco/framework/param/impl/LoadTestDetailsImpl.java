@@ -30,7 +30,9 @@ public class LoadTestDetailsImpl implements DynamicPageParameter, Constants {
 			ApplicationInfo applicationInfo = (ApplicationInfo) paramsMap.get(KEY_APP_INFO);
 			String testAgainst = (String) paramsMap.get(KEY_TEST_AGAINST);
 			String testResultName = (String) paramsMap.get(KEY_TEST_RESULT_NAME);
-			String testResultJsonFile = testResultJsonFile(applicationInfo, testAgainst, testResultName);
+			boolean isMultiModule = (Boolean) paramsMap.get(KEY_MULTI_MODULE);
+	     	String rootModule = (String) paramsMap.get(KEY_ROOT_MODULE);
+			String testResultJsonFile = testResultJsonFile(applicationInfo, testAgainst, testResultName, isMultiModule, rootModule);
 			Gson gson = new Gson();
 			File file = new File(testResultJsonFile);
 			List<PerformanceDetails> performanceDetails = new ArrayList<PerformanceDetails>();
@@ -59,10 +61,13 @@ public class LoadTestDetailsImpl implements DynamicPageParameter, Constants {
 		return null;
 	}
 
-	private String testResultJsonFile(ApplicationInfo appInfo, String testAgainst, String testResultName) throws PhrescoPomException {
+	private String testResultJsonFile(ApplicationInfo appInfo, String testAgainst, String testResultName, boolean isMultiModule, String rootModule) throws PhrescoPomException {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+		if (isMultiModule) {
+        	builder.append(rootModule + File.separator);
+        }
 		builder.append(appInfo.getAppDirName());
-		PomProcessor processor = new PomProcessor(getPOMFile(appInfo));
+		PomProcessor processor = new PomProcessor(getPOMFile(appInfo, isMultiModule, rootModule));
 		String performDir = processor.getProperty(POM_PROP_KEY_LOADTEST_DIR);
 		builder.append(performDir);
 		builder.append(File.separator);
@@ -75,11 +80,15 @@ public class LoadTestDetailsImpl implements DynamicPageParameter, Constants {
 		return builder.toString();
 	}
 
-	private File getPOMFile(ApplicationInfo appInfo) {
-		StringBuilder builder = new StringBuilder(Utility.getProjectHome())
-		.append(appInfo.getAppDirName())
-		.append(File.separatorChar)
-		.append(Utility.getPomFileName(appInfo));
+	private File getPOMFile(ApplicationInfo appInfo, boolean isMultiModule, String rootModule) {
+		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+		if (isMultiModule) {
+        	builder.append(rootModule + File.separator);
+        }
+		builder.append(appInfo.getAppDirName());
+		String pomFile = Utility.getPomFileNameFromWorkingDirectory(appInfo, new File(builder.toString()));
+		builder.append(File.separatorChar)
+		.append(pomFile);
 		return new File(builder.toString());
 	}
 

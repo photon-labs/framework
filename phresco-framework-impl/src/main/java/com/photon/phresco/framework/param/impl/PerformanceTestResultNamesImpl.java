@@ -46,7 +46,9 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 		ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
 		String testAgainst = (String) paramMap.get(KEY_TEST_AGAINST);
 		String goal = (String) paramMap.get(KEY_GOAL);
-		String testDirPath = getTestDirPath(applicationInfo, testAgainst, goal);
+		boolean isMultiModule = (Boolean) paramMap.get(KEY_MULTI_MODULE);
+    	String rootModule = (String) paramMap.get(KEY_ROOT_MODULE);
+		String testDirPath = getTestDirPath(applicationInfo, testAgainst, goal, isMultiModule, rootModule);
 		String dependencyStr = "";
 		
 		if (PHASE_LOAD_TEST.equals(goal)) {
@@ -58,7 +60,6 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 				dependencyStr = "contextUrls";
 			}
 		}
-		
 		File file = new File(testDirPath);
 		File[] testFiles = file.listFiles(new XmlNameFileFilter(FrameworkConstants.JSON));
 		if (testFiles.length != 0) {
@@ -71,17 +72,11 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 				value.setDependency(dependencyStr);
 				possibleValues.getValue().add(value);
 			}
-		} /*else {
-			Value value = new Value();
-			value.setKey("");
-			value.setValue("");
-			possibleValues.getValue().add(value);
-		}*/
-
+		} 
 		return possibleValues;
 	}
 	
-	private String getTestDirPath(ApplicationInfo appInfo, String testAgainst, String goal) throws PhrescoException {
+	private String getTestDirPath(ApplicationInfo appInfo, String testAgainst, String goal, boolean isMultiModule, String rootModule) throws PhrescoException {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 		try {
 			String property = "";
@@ -90,8 +85,11 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 			} else {
 				property = POM_PROP_KEY_PERFORMANCETEST_DIR;
 			}
-			PomProcessor processor = new PomProcessor(getPOMFile(appInfo));
+			PomProcessor processor = new PomProcessor(getPOMFile(appInfo, isMultiModule, rootModule));
 			String performDir = processor.getProperty(property);
+			if (isMultiModule) {
+				 builder.append(rootModule).append(File.separator);
+			 }
 			builder.append(appInfo.getAppDirName())
 			.append(performDir)
 			.append(File.separator)
@@ -103,11 +101,15 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
     	}
 	}
 	
-	private File getPOMFile(ApplicationInfo appInfo) {
-        StringBuilder builder = new StringBuilder(Utility.getProjectHome())
-        .append(appInfo.getAppDirName())
-        .append(File.separatorChar)
-        .append(Utility.getPomFileName(appInfo));
+	private File getPOMFile(ApplicationInfo appInfo, boolean isMultiModule, String rootModule) {
+        StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+        if (isMultiModule) {
+			 builder.append(rootModule).append(File.separator);
+		 }
+        builder.append(appInfo.getAppDirName());
+        String pomName = Utility.getPomFileNameFromWorkingDirectory(appInfo, new File(builder.toString()));
+        builder.append(File.separatorChar)
+        .append(pomName);
         return new File(builder.toString());
     }
 	
