@@ -501,6 +501,8 @@ public interface ResponseCodes {
 	String PHR910003 = "PHR910003"; // unauthorized user
 	String PHR910004 = "PHR910004"; // failed to upgrade framework
 	
+	
+	
 	/*
 	 * Process Lock 
 	 */
@@ -517,4 +519,24 @@ public interface ResponseCodes {
 	String PHR10LUR001 = "PHR10LUR001"; // commit in progress
 	String PHR10LCR001 = "PHR10LCR001"; // update in progress
 	String PHR10LIM001 = "PHR10LIM001"; // import in progress
+	
+	/*
+	 * Dashboard Service
+	 */
+	String PHRD010001 = "PHRD010001"; // Dashboard configuration retrieved successfully
+	String PHRD010002 = "PHRD010002"; // Dashboard configuration updated/added successfully
+	String PHRD010003 = "PHRD010003"; // Dashboard widget added successfully
+	String PHRD010004 = "PHRD010004"; // Dashboard widget updated successfully
+	String PHRD010005 = "PHRD010005"; // All dashboard widgets listed successfully
+	String PHRD000001 = "PHRD000001"; // Dashboard configuration not found
+	String PHRD000002 = "PHRD000002"; // Dashboard configuration updation failed
+	String PHRD000003 = "PHRD000003"; // Dashboard widget insertion failed
+	String PHRD000004 = "PHRD000004"; // Dashboard widget updation failed
+	String PHRD000005 = "PHRD000005"; // All dashboard widgets listing failed
+
+
+
+
+
+	
 }

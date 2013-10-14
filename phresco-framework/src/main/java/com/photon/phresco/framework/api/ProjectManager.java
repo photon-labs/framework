@@ -21,6 +21,8 @@ import java.util.List;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
+import com.photon.phresco.commons.model.DashboardConfigInfo;
+import com.photon.phresco.commons.model.DashboardWidgetConfigInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.service.client.api.ServiceManager;
@@ -85,4 +87,54 @@ public interface ProjectManager {
 	 * @throws PhrescoException
 	 */
 	ProjectInfo getProject(String projectId, String customerId, String appId) throws PhrescoException;
+	
+	/**
+	 * This method returns the Dashboardinfo of the given projectid
+	 * @param projectId
+	 * @return
+	 * @throws PhrescoException
+	 */
+	DashboardConfigInfo getDashboardInfo(String projectId) throws PhrescoException;
+	
+	/**
+	 * This method returns void
+	 * @param dashboardConfigInfo
+	 * @return
+	 * @throws PhrescoException
+	 */
+	void updateDashboardInfo(DashboardConfigInfo dashboardConfigInfo) throws PhrescoException;
+	
+	/**
+	 * This method returns void
+	 * @param dashboardConfigInfo
+	 * @return
+	 * @throws PhrescoException
+	 */
+	void addDashboardInfo(DashboardConfigInfo dashboardConfigInfo) throws PhrescoException;
+	
+	/**
+	 * This method returns list of widgets of given project id
+	 * @param dashboardWidgetConfigInfo
+	 * @param projectId
+	 * @return
+	 * @throws PhrescoException
+	 */
+	DashboardWidgetConfigInfo addDashboardWidgetInfo(DashboardWidgetConfigInfo dashboardWidgetConfigInfo , String projectId) throws PhrescoException;
+	
+	/**
+	 * This method returns true if widget is present
+	 * @param dashboardWidgetConfigInfo
+	 * @return
+	 * @throws PhrescoException
+	 */
+	Boolean configureDashboardWidgetInfo(DashboardWidgetConfigInfo dashboardWidgetConfigInfo , String projectId) throws PhrescoException;
+	
+	/**
+	 * This method returns list of all widgets in the workspace
+	 * @param poject id
+	 * @return
+	 * @throws PhrescoException
+	 */
+	List<DashboardWidgetConfigInfo> listAllDashboardWidgetInfo(String projectId) throws PhrescoException;
+
 }
