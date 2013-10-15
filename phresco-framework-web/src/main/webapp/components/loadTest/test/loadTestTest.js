@@ -192,7 +192,7 @@ define(["loadTest/loadTest"], function(LoadTest) {
 					equal($(".contextDivParent").find(".contextDivClass").size(), 1, "Context URL template render test");
 					self.runAddContextUrlTest(loadTest);
 					
-				},1200);
+				},1800);
 			});
 		},
 		

@@ -2,6 +2,7 @@
 	<div class="unit_text" data-i18n="ci.loadtest">
     </div>
     <input type="hidden" class="testingType" value="load-test"/>
+    <input type="hidden" id="top_hold" value=""/>
         <div class="flt_right">
         	{{#showIcons resultAvailable testResultFiles}}
 	        	<div class="unit_view performanceView">

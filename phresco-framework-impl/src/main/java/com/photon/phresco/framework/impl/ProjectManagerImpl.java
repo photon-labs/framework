@@ -18,6 +18,7 @@
 package com.photon.phresco.framework.impl;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -34,6 +35,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -41,6 +43,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.eclipse.ui.internal.handlers.WidgetMethodHandler;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -53,6 +56,8 @@ import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.CIJob;
 import com.photon.phresco.commons.model.ContinuousDelivery;
 import com.photon.phresco.commons.model.Customer;
+import com.photon.phresco.commons.model.DashboardConfigInfo;
+import com.photon.phresco.commons.model.DashboardWidgetConfigInfo;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectDelivery;
 import com.photon.phresco.commons.model.ProjectInfo;
@@ -592,6 +597,22 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
         
 		return null;
     }
+    
+    private DashboardConfigInfo getDashboardInfo(File dotProjectFile) throws PhrescoException {
+        S_LOGGER.debug("Entering Method ProjectManagerImpl.getDashboardInfo");
+
+        Gson gson = new Gson();
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(dotProjectFile));
+            DashboardConfigInfo dashboardconfiginfo = gson.fromJson(reader, DashboardConfigInfo.class);
+            return dashboardconfiginfo;
+        } catch (FileNotFoundException e) {
+            throw new PhrescoException(e);
+        } finally {
+            Utility.closeStream(reader);
+        }
+    }
 	
 	private void extractArchive(ClientResponse response, ProjectInfo info) throws IOException, PhrescoException {
 		InputStream inputStream = response.getEntityInputStream();
@@ -739,4 +760,183 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		 }
 	 }
 
+	@Override
+	public DashboardConfigInfo getDashboardInfo(String projectId)
+			throws PhrescoException {
+		File[] appDirs = new File(Utility.getProjectHome()).listFiles();
+	    for (File appDir : appDirs) {
+	        if (appDir.isDirectory() && appDir.getName().equalsIgnoreCase(projectId)) { 
+	            File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
+	            if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
+	            	continue;
+	            }
+	            File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(DASHBOARD_CONFIG_INFO_FILE));
+	            DashboardConfigInfo dashboardconfiginfo = getDashboardInfo(dotProjectFiles[0]);
+	            if (dashboardconfiginfo != null) {
+	            	return dashboardconfiginfo;
+	            }
+	        }
+	    }
+		
+		return null;
+	
+	}
+	
+	@Override
+	public void updateDashboardInfo(DashboardConfigInfo dashboardConfigInfo)
+			throws PhrescoException {
+		Gson gson = new Gson();
+		FileWriter writer = null;
+		try {
+			writer = new FileWriter(getDashboardConfigFile(dashboardConfigInfo.getProjectid()));
+			String json = gson.toJson(dashboardConfigInfo);
+			writer.write(json);
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private File getDashboardConfigFile(String projectId)
+			throws PhrescoException {
+		
+		File[] appDirs = new File(Utility.getProjectHome()).listFiles();
+	    for (File appDir : appDirs) {
+	        if (appDir.isDirectory() && appDir.getName().equalsIgnoreCase(projectId)) { 
+	            File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
+	            if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
+	            	continue;
+	            }
+	            File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(DASHBOARD_CONFIG_INFO_FILE));
+	            return dotProjectFiles[0];
+	        }
+	    }
+		
+		return null;
+	
+	}
+	
+	@Override
+	public void addDashboardInfo(DashboardConfigInfo dashboardConfigInfo)
+			throws PhrescoException {
+		Gson gson = new Gson();
+		FileWriter writer = null;
+		try { 
+			String baseDir = Utility.getProjectHome().concat(FORWARD_SLASH).concat(dashboardConfigInfo.getProjectid()).concat(FORWARD_SLASH).concat(DOT_PHRESCO_FOLDER);
+			FileUtils.forceMkdir(new File(baseDir));
+			File dashboardConfigInfoFile = new File(baseDir.concat(FORWARD_SLASH).concat(DASHBOARD_CONFIG_INFO_FILE));
+			writer = new FileWriter(dashboardConfigInfoFile);
+			String json = gson.toJson(dashboardConfigInfo);
+			writer.write(json);
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public DashboardWidgetConfigInfo addDashboardWidgetInfo(DashboardWidgetConfigInfo dashboardWidgetConfigInfo , String projectId)
+			throws PhrescoException {
+		Gson gson = new Gson();
+		try { 
+			String baseDir = Utility.getProjectHome().concat(FORWARD_SLASH).concat(projectId).concat(FORWARD_SLASH).concat(DOT_PHRESCO_FOLDER);
+			File dashboardWidgetConfigInfoFile = new File(baseDir.concat(FORWARD_SLASH).concat(DASHBOARD_WIGET_CONFIG_INFO_FILE));
+			UUID unique_id = UUID.randomUUID();
+			String id = unique_id.toString();
+			dashboardWidgetConfigInfo.setId(id);
+			List<DashboardWidgetConfigInfo> widgetList;
+			if (dashboardWidgetConfigInfoFile.exists()) {
+				widgetList = gson.fromJson(FileUtils.readFileToString(dashboardWidgetConfigInfoFile)
+						,  new TypeToken<List<DashboardWidgetConfigInfo>>(){}.getType());
+			} else {
+				
+				widgetList = new ArrayList<DashboardWidgetConfigInfo>();
+			}
+			widgetList.add(dashboardWidgetConfigInfo);
+			String json = gson.toJson(widgetList);
+			FileUtils.writeStringToFile(dashboardWidgetConfigInfoFile, json);
+			return dashboardWidgetConfigInfo;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@Override
+	public Boolean configureDashboardWidgetInfo(DashboardWidgetConfigInfo dashboardWidgetConfigInfo , String projectId )
+			throws PhrescoException {
+		try {
+		File[] appDirs = new File(Utility.getProjectHome()).listFiles();
+	    for (File appDir : appDirs) {
+	        if (appDir.isDirectory() && appDir.getName().equalsIgnoreCase(projectId)) { 
+	            File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
+	            if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
+	            	continue;
+	            }
+	            File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(DASHBOARD_WIGET_CONFIG_INFO_FILE));
+	            if (ArrayUtils.isEmpty(dotProjectFiles)) {
+	            	continue;
+	            }
+	            Gson gson = new Gson();
+	            List<DashboardWidgetConfigInfo> widgetList;
+	            if (dotProjectFiles[0].exists()) {
+	            	widgetList = gson.fromJson(FileUtils.readFileToString(dotProjectFiles[0])
+	            			,  new TypeToken<List<DashboardWidgetConfigInfo>>(){}.getType());
+	            	for( DashboardWidgetConfigInfo widgetInfo: widgetList ) {
+	            		if (widgetInfo.getId().equals(dashboardWidgetConfigInfo.getId())) {
+	            			widgetInfo.setDefaultProperty(dashboardWidgetConfigInfo.getDefaultProperty());
+	            			widgetInfo.setQuery(dashboardWidgetConfigInfo.getQuery());
+	            			widgetInfo.setWidgetName(dashboardWidgetConfigInfo.getWidgetName());
+	            			String json = gson.toJson(widgetList);
+	            			FileUtils.writeStringToFile(dotProjectFiles[0], json);
+	            			return true;
+	            		}
+	            	}
+
+	            }
+				} 
+	    	} 
+		}catch (IOException e) {
+				}
+		return false;
+	}
+	
+	@Override
+	public List<DashboardWidgetConfigInfo> listAllDashboardWidgetInfo(String projectId)
+			throws PhrescoException {
+			try {
+				List<DashboardWidgetConfigInfo> allWidgetsList = new ArrayList<DashboardWidgetConfigInfo>(); 
+				File[] appDirs = new File(Utility.getProjectHome()).listFiles();
+				for (File appDir : appDirs) {
+					if (appDir.isDirectory() && appDir.getName().equalsIgnoreCase(projectId)) { 
+						File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
+						if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
+							continue;
+						}
+						File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(DASHBOARD_WIGET_CONFIG_INFO_FILE));
+						if (ArrayUtils.isEmpty(dotProjectFiles)) {
+							continue;
+						}
+						Gson gson = new Gson();
+						List<DashboardWidgetConfigInfo> widgetList;
+						if (dotProjectFiles[0].exists()) {
+							widgetList = gson.fromJson(FileUtils.readFileToString(dotProjectFiles[0])
+									,  new TypeToken<List<DashboardWidgetConfigInfo>>(){}.getType());
+							if(!widgetList.isEmpty()) {
+								for( DashboardWidgetConfigInfo widgetInfo: widgetList ) {
+									allWidgetsList.add(widgetInfo);
+								}
+
+							}
+						}
+					} 
+				} 
+				return allWidgetsList;
+			}catch (IOException e) {
+				e.printStackTrace();
+				}
+			return null;
+	}
 }

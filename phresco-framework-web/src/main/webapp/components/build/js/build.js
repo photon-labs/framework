@@ -642,9 +642,9 @@ define(["build/listener/buildListener"], function() {
 					$("input[name=build_runagsource]").addClass("btn_style_off");
 					$("#stop").addClass("btn_style_off");
 					$("#restart").addClass("btn_style_off");
-				
+					var queryStr = self.isBlank($('.moduleName').val()) ? "" : 'moduleName='+$('.moduleName').val();
 					self.clearLogContent();
-					self.onMavenServiceEvent.dispatch('mvnStopServer', '', '', '', function(response){
+					self.onMavenServiceEvent.dispatch('mvnStopServer', queryStr, '', '', function(response){
 						$('.progress_loading').css('display','none');
 						self.runAgainSourceStatus();
 					});					
@@ -660,7 +660,8 @@ define(["build/listener/buildListener"], function() {
 					$("#restart").addClass("btn_style_off");
 					
 					self.clearLogContent();
-					self.onMavenServiceEvent.dispatch('mvnRestartServer', '', '', '', function(response){
+					var queryStr = self.isBlank($('.moduleName').val()) ? "" : 'moduleName='+$('.moduleName').val();
+					self.onMavenServiceEvent.dispatch('mvnRestartServer', queryStr, '', '', function(response){
 						$('.progress_loading').css('display','none');
 						self.runAgainSourceStatus();						
 					});

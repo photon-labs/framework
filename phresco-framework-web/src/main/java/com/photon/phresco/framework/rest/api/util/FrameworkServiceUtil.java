@@ -269,7 +269,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	 * @throws PhrescoPomException
 	 */
 	public static String getLoadTestDir(String appDirName) throws PhrescoException, PhrescoPomException {
-    	return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_LOADTEST_DIR);
+    	return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(POM_PROP_KEY_LOADTEST_DIR);
     }
 	
 	
@@ -281,7 +281,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	 * @throws PhrescoPomException
 	 */
 	public static String getLoadTestReportDir(String appDirName) throws PhrescoException, PhrescoPomException {
-    	return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_LOADTEST_RPT_DIR);
+    	return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(POM_PROP_KEY_LOADTEST_RPT_DIR);
     }
 	
 	/**
@@ -292,7 +292,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	 * @throws PhrescoPomException
 	 */
 	public static String getLoadResultFileExtension(String appDirName) throws PhrescoException, PhrescoPomException {
-			return getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_LOADTEST_RESULT_EXTENSION);
+			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_LOADTEST_RESULT_EXTENSION);
 	}
 	
 	/**
@@ -303,7 +303,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	 * @throws PhrescoPomException
 	 */
 	public static String getLoadUploadJmxDir(String appDirName) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_LOADTEST_JMX_UPLOAD_DIR);
+        return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(POM_PROP_KEY_LOADTEST_JMX_UPLOAD_DIR);
     }
 	
 	/**
@@ -314,7 +314,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	 * @throws PhrescoPomException
 	 */
 	public static String getPerformanceTestDir(String appDirName) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
+        return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
     }
 	
 	/**
@@ -325,7 +325,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	 * @throws PhrescoPomException
 	 */
 	public static String getPerformanceUploadJmxDir(String appDirName) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_PERFORMANCETEST_JMX_UPLOAD_DIR);
+        return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(POM_PROP_KEY_PERFORMANCETEST_JMX_UPLOAD_DIR);
     }
 	
 	/**
@@ -336,7 +336,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	 * @throws PhrescoPomException
 	 */
 	public static String getPerformanceTestReportDir(String appDirName) throws PhrescoException, PhrescoPomException {
-			return getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_PERFORMANCETEST_RPT_DIR);
+		return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_PERFORMANCETEST_RPT_DIR);
 	}
 	
 	/**
@@ -347,7 +347,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	 * @throws PhrescoPomException
 	 */
 	public static String getPerformanceResultFileExtension(String appDirName) throws PhrescoException, PhrescoPomException {
-			return getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_PERFORMANCETEST_RESULT_EXTENSION);
+			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_PERFORMANCETEST_RESULT_EXTENSION);
 	}
 	/**
 	 * To get the manual test directory

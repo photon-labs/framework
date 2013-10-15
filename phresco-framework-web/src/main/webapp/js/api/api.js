@@ -255,10 +255,14 @@ define(["framework/base", "api/localStorageAPI"], function(){
 						});
 					}
 					$("#errpopup").modal();	
-					$("#copytoclip").click(function() {
-						$("#copyloadicon").show();
-						commonVariables.navListener.copyToClipboard($('.temp'));
-					});		
+					setTimeout(function() {
+						$("#copytoclip").zclip({
+							path: "lib/ZeroClipboard.swf",
+							copy: function(){
+								return $(".temp").text();
+							}
+						});
+					},700);	
 					$(".popuploading").hide();
 				}
 			}	

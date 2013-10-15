@@ -1,4 +1,4 @@
-define(["lib/fileuploader-2.3"], function() {
+define(["lib/fileuploader-2.4"], function() {
 
 	Clazz.createPackage("com.components.manualTest.js.listener");
 

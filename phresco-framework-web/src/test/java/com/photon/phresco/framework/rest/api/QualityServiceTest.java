@@ -31,28 +31,28 @@ public class QualityServiceTest extends RestBaseTest {
 //	@Test
 	public void performanceResultAvailTest() {
 		QualityService qualitService = new QualityService();
-		Response response = qualitService.performance("MergePerformanceAndLoad1-php5.4.x");
+		Response response = qualitService.performance("MergePerformanceAndLoad1-php5.4.x", "");
 		assertEquals(200 , response.getStatus());
 	}
 	
 //	@Test
 	public void loadResultAvailTest() {
 		QualityService qualitService = new QualityService();
-		Response response = qualitService.load("MergePerformanceAndLoad1-php5.4.x");
+		Response response = qualitService.load("MergePerformanceAndLoad1-php5.4.x", "");
 		assertEquals(200 , response.getStatus());
 	}
 	
 //	@Test
 	public void performancetTestResultsTest() {
 		QualityService qualityService = new QualityService();
-		Response response = qualityService.performanceTestResults("MergePerformanceAndLoad1-php5.4.x", "server", "testServer.jtl", "", "responseTime", "performance-test");
+		Response response = qualityService.performanceTestResults("MergePerformanceAndLoad1-php5.4.x", "server", "testServer.jtl", "", "responseTime", "performance-test", "");
 		assertEquals(200, response.getStatus());
 	}
 
 //	@Test
 	public void performancetTestResultsFailureTest() {
 		QualityService qualityService = new QualityService();
-		Response response = qualityService.performanceTestResults("MergePerformanceAndLoad1-php5.4.x", "server", "noFile.jtl", "", "responseTime", "performance-test");
+		Response response = qualityService.performanceTestResults("MergePerformanceAndLoad1-php5.4.x", "server", "noFile.jtl", "", "responseTime", "performance-test", "");
 		assertEquals(400, response.getStatus());
 	}
 	
@@ -75,7 +75,7 @@ public class QualityServiceTest extends RestBaseTest {
 		QualityService qualityService = new QualityService();
 		List<String> testAgainst = new ArrayList<String>();
 		testAgainst.add("server");
-		Response response = qualityService.getTypeFiles("MergePerformanceAndLoad1-php5.4.x", "performance-test", testAgainst);
+		Response response = qualityService.getTypeFiles("MergePerformanceAndLoad1-php5.4.x", "performance-test", testAgainst, "");
 		assertEquals(200, response.getStatus());;
 	}
 }
