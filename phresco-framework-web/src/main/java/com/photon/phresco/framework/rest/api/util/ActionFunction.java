@@ -691,7 +691,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PACKAGE);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
-			String workingDirectory = getWorkingDirectoryPath(getAppDirName());
+			String workingDirectory = Utility.getWorkingDirectoryPath(getAppDirName());
 			getApplicationProcessor(getUsername()).preBuild(applicationInfo);
 			appendMultiModuleCommand(module, buildArgCmds); 
 			reader = applicationManager.performAction(projectInfo, ActionType.BUILD, buildArgCmds, workingDirectory);
@@ -724,7 +724,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
 			appendMultiModuleCommand(module, buildArgCmds); 
-			String workingDirectory = getWorkingDirectoryPath(getAppDirName());
+			String workingDirectory = Utility.getWorkingDirectoryPath(getAppDirName());
 			reader = applicationManager.performAction(projectInfo, ActionType.DEPLOY, buildArgCmds, workingDirectory);
 			
 			//To generate the lock for the particular operation
@@ -783,7 +783,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			appendMultiModuleCommand(module, buildArgCmds); 
 			
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(directory), ActionType.UNIT_TEST, buildArgCmds, getWorkingDirectoryPath(getAppDirName()));
+			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(directory), ActionType.UNIT_TEST, buildArgCmds, Utility.getWorkingDirectoryPath(getAppDirName()));
 			 //To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), UNIT, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
@@ -839,7 +839,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
 			appendMultiModuleCommand(module, buildArgCmds); 
-			String workingDirectory = getWorkingDirectoryPath(getAppDirName());
+			String workingDirectory = Utility.getWorkingDirectoryPath(getAppDirName());
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 
 			reader = applicationManager.performAction(projectInfo, ActionType.CODE_VALIDATE, buildArgCmds, workingDirectory);
@@ -1074,7 +1074,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
 			appendMultiModuleCommand(getModule(), buildArgCmds);
-			reader = applicationManager.performAction(projectInfo, ActionType.START_HUB, buildArgCmds, getWorkingDirectoryPath(getAppDirName()));
+			reader = applicationManager.performAction(projectInfo, ActionType.START_HUB, buildArgCmds, Utility.getWorkingDirectoryPath(getAppDirName()));
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of MavenFunctions.startHub()"+ FrameworkUtil.getStackTraceAsString(e));
 			throw new PhrescoException("Exception occured in the MavenFunctions.startHub process");
@@ -1101,7 +1101,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			appendMultiModuleCommand(getModule(), buildArgCmds);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(directory);
-			reader = applicationManager.performAction(projectInfo, ActionType.START_NODE, buildArgCmds, getWorkingDirectoryPath(getAppDirName()));
+			reader = applicationManager.performAction(projectInfo, ActionType.START_NODE, buildArgCmds, Utility.getWorkingDirectoryPath(getAppDirName()));
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of MavenFunctions.startNode()"+ FrameworkUtil.getStackTraceAsString(e));
 			throw new PhrescoException("Exception occured in the MavenFunctions.startNode process");
@@ -1174,7 +1174,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			buildArgCmds.add(HYPHEN_N);
 			appendMultiModuleCommand(module, buildArgCmds); 
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(directory), ActionType.FUNCTIONAL_TEST, buildArgCmds, getWorkingDirectoryPath(getAppDirName()));
+			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(directory), ActionType.FUNCTIONAL_TEST, buildArgCmds, Utility.getWorkingDirectoryPath(getAppDirName()));
 			 //To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), FUNCTIONAL, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
@@ -1490,6 +1490,11 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			String pdfName = request.getParameter(REQ_PDF_NAME);
 			String reportDataType = request.getParameter(REPORT_DATA_TYPE);
 			
+			System.out.println("Generate report module name =>? " + module);
+			System.out.println("pdfName " + pdfName);
+			System.out.println("reportDataType " + reportDataType);
+			System.out.println("fromPage " + fromPage);
+			
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDirName);
 			String sonarURL = FrameworkServiceUtil.getSonarURL(request);
@@ -1505,13 +1510,21 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 				return response;
 			} 
 			Technology technology = serviceManager.getTechnology(techId);
+			
 			StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
 			sb.append(File.separator);
+			if (StringUtils.isNotEmpty(getModule())) {
+				sb.append(getModule());
+				sb.append(File.separator);
+			}
 			sb.append(FOLDER_DOT_PHRESCO);
 			sb.append(File.separator);
 			sb.append(PHRESCO_HYPEN);
 			sb.append(PHASE_PDF_REPORT);
 			sb.append(INFO_XML);
+			
+			System.out.println("###### Stroing theme on ###### " + sb.toString());
+			System.out.println("Report file accessing path => " + sb.toString());
 			MojoProcessor mojo = new MojoProcessor(new File(sb.toString()));
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PDF_REPORT);
 
@@ -1522,6 +1535,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 						parameter.setValue(reportDataType);
 					} else if (REQ_TEST_TYPE.equals(key)) {
 						if (StringUtils.isEmpty(fromPage)) {
+							System.out.println("All report is set ");
 							setFromPage(FROMPAGE_ALL);
 						}
 						parameter.setValue(fromPage);
@@ -1532,6 +1546,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	            	} else if (THEME.equals(key)) {
 	            		parameter.setValue(getThemeColorJson(userId, customerId));
 	            	} else if (REQ_REPORT_NAME.equals(key)) {
+	            		System.out.println("Pdf report name is going to be set .... " + pdfName);
 	            		parameter.setValue(pdfName);
 	            	} else if (TECHNOLOGY_NAME.equals(key)) {
 	            		parameter.setValue(technology.getName());
@@ -1542,7 +1557,9 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
+			appendMultiModuleCommand(module, buildArgCmds); 
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			System.out.println("Execution working dir > " + workingDirectory);
 			BufferedInputStream reader = applicationManager.performAction(projectInfo, ActionType.PDF_REPORT, buildArgCmds, workingDirectory);
 			
 			int available = reader.available();
@@ -2232,10 +2249,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 
 	protected String getAppDirectoryPath(ApplicationInfo applicationInfo) throws PhrescoException {
 		return Utility.getProjectHome() + applicationInfo.getAppDirName();
-	}
-	
-	protected String getWorkingDirectoryPath(String directory) throws PhrescoException {
-		return Utility.getProjectHome() + directory;
 	}
 	
 	protected ApplicationProcessor getApplicationProcessor(String username) throws PhrescoException {
