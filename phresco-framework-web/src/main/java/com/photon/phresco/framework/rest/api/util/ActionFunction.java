@@ -478,6 +478,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		printLogs();
 		BufferedInputStream server_logs=null;
 		String displayName = request.getParameter("displayName");
+		initModuleName(request);
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
 		server_logs = performanceTest(performanceUrls, unique_key, displayName);
@@ -492,6 +493,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		printLogs();
 		BufferedInputStream server_logs=null;
 		String displayName = request.getParameter("displayName");
+		initModuleName(request);
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
 		server_logs = loadTest(performanceUrls, unique_key, displayName);
@@ -963,9 +965,9 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		BufferedInputStream reader=null;
 
 		try {
-			FileOutputStream fop = null;
+			String directory = getAppDirBasedOnMultiModule(getModule());
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(directory);
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PERFORMANCE_TEST)));
 			persistValuesToXml(mojo, PHASE_PERFORMANCE_TEST);
@@ -974,10 +976,9 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PERFORMANCE_TEST);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
-			String workingDirectory = getAppDirectoryPath(applicationInfo);  
-
-			jsonWriter(performanceUrls);    			
-			reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, workingDirectory);
+			appendMultiModuleCommand(getModule(), buildArgCmds);
+			jsonWriter(performanceUrls, directory);    			
+			reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, getWorkingDirectoryPath(getAppDirName()));
 			//To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), PERFORMACE, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
@@ -995,16 +996,17 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			S_LOGGER.debug("Entering Method MavenFunctions.runLoadTest()");
 		} 
 		try {
-			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(getAppDirName());
-			StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(appInfo));
+			String directory = getAppDirBasedOnMultiModule(getModule());
+			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(directory);
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_LOAD_TEST)));
 			persistValuesToXml(mojo, PHASE_LOAD_TEST);
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_LOAD_TEST);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
-			jsonWriter(performanceUrls);  
+			appendMultiModuleCommand(getModule(), buildArgCmds);
+			jsonWriter(performanceUrls, directory);  
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(getAppDirName()), ActionType.LOAD_TEST, buildArgCmds, workingDirectory.toString());
+			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(directory), ActionType.LOAD_TEST, buildArgCmds, getWorkingDirectoryPath(getAppDirName()));
 			 //To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), LOAD, displayName, uniqueKey)), true);
 		} catch(PhrescoException e) {
@@ -1726,6 +1728,11 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	public String jsonWriterForCi(@Context HttpServletRequest request ,PerformanceUrls performanceUrls) throws PhrescoException {
 		FileWriter fw = null;
 		String property = "";
+		String module = request.getParameter("moduleName");
+		String appDirName = request.getParameter("appDirName");
+		if (StringUtils.isNotEmpty(module)) {
+			appDirName = appDirName + File.separator + module;
+		}
 		try {
 			if(REQ_PARAMETERS.equalsIgnoreCase(request.getParameter("testBasis")) && StringUtils.isNotEmpty("testAgainst")
 					|| (StringUtils.isEmpty(request.getParameter("testBasis")) && StringUtils.isNotEmpty("testAgainst"))) {
@@ -1734,14 +1741,14 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 				} else {
 					property = POM_PROP_KEY_PERFORMANCETEST_DIR;					
 				}
-				ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(request.getParameter("appDirName"));
-				File pomFile = getPOMFile(applicationInfo.getAppDirName());
+				ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+				File pomFile = getPOMFile(applicationInfo, appDirName);
 				PomProcessor processor = new PomProcessor(pomFile);					
 		        String performTestDir = processor.getProperty(property);	        
 				FileOutputStream fop;
 				boolean success = false;
 				StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
-				.append(applicationInfo.getAppDirName())
+				.append(appDirName)
 				.append(performTestDir)
 				.append(File.separator)
 				.append(request.getParameter("testAgainst"))
@@ -1765,7 +1772,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 				fop.close();				
 									
 				StringBuilder infofilepath = new StringBuilder(Utility.getProjectHome())
-				.append(applicationInfo.getAppDirName())
+				.append(appDirName)
 				.append(performTestDir)
 				.append(File.separator)
 				.append(request.getParameter("testAgainst"))
@@ -1795,7 +1802,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return SUCCESS;
 	}
 	
-	public String jsonWriter(PerformanceUrls performanceUrls) throws PhrescoException {
+	public String jsonWriter(PerformanceUrls performanceUrls, String appDirName) throws PhrescoException {
 		FileWriter fw = null;
 		String property = "";
 		try {
@@ -1807,14 +1814,13 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 					property = POM_PROP_KEY_PERFORMANCETEST_DIR;					
 				}
 				
-				ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(getAppDirName());
-				File pomFile = getPOMFile(applicationInfo.getAppDirName());
+				ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+				File pomFile = getPOMFile(applicationInfo, appDirName);
 				PomProcessor processor = new PomProcessor(pomFile);					
 		        String performTestDir = processor.getProperty(property);	        
 				FileOutputStream fop;
-				boolean success = false;
 				StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
-				.append(applicationInfo.getAppDirName())
+				.append(appDirName)
 				.append(performTestDir)
 				.append(File.separator)
 				.append(request.getParameter("testAgainst"))
@@ -1845,11 +1851,11 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return SUCCESS;
 	}
 
-	private File getPOMFile(String appDirName) throws PhrescoException {
-		StringBuilder builder = new StringBuilder(Utility.getProjectHome())
-		.append(appDirName)
-		.append(File.separatorChar)
-		.append(POM_NAME);
+	private File getPOMFile(ApplicationInfo appInfo, String appDirName) throws PhrescoException {
+		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+		builder.append(appDirName);
+		String pomFile = Utility.getPomFileNameFromWorkingDirectory(appInfo, new File(builder.toString()));
+		builder.append(File.separatorChar).append(pomFile);
 		return new File(builder.toString());
 	}
 
@@ -2117,6 +2123,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			sb.append(goal);
 		}
 		sb.append(INFO_XML);
+
 		return sb.toString();
 	}
 
