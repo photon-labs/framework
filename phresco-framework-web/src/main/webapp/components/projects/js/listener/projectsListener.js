@@ -1413,7 +1413,8 @@ define([], function() {
 				}	
 				var multimodule = $("input[name='multimodule']").val() === "true"? true:false;
 				var	preBuilt = $("select[name=builtmyself]").val() === "custom"? false:true;
-					
+				var intTest = $("input[name=integrationTest]").is(":checked");
+				
 				var count = 0;
 				self.customerIds = [];
 				self.appInfos = [];
@@ -1429,6 +1430,7 @@ define([], function() {
 				self.projectInfo.preBuilt = preBuilt;
 				self.projectInfo.multiModule = multimodule;
 				self.projectInfo.customerIds = self.customerIds;
+				self.projectInfo.intTestVal = intTest;
 							
 				$.each($("tbody[name='layercontents']").children(), function(index, value){
 				

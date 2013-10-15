@@ -87,6 +87,10 @@ define(["projects/listener/projectsListener"], function() {
 						} else {
 							responseData.endDate = "";
 						}
+						if(responseData.integrationTest === "false"){
+							$('#integrationTest').hide();
+						}else
+							$('#integrationTest').show();
 					}
 					self.templateData.editProject = responseData;
 					// Setting project id in local storage for future use in job templates
@@ -127,6 +131,10 @@ define(["projects/listener/projectsListener"], function() {
 							} else {
 								responseData.endDate = "";
 							}
+							if(responseData.integrationTest === "false"){
+								$('#integrationTest').hide();
+							}else
+								$('#integrationTest').show();
 						}
 						self.templateData.editProject = responseData;
 						// Setting project id in local storage for future use in job templates
@@ -154,6 +162,7 @@ define(["projects/listener/projectsListener"], function() {
 		postRender : function(element) {
 			var projectname = $("#editPrjprojectname").val();
 			$("#editprojecttitle").html("Edit - "+projectname);
+			$("#editprojecttitle").attr("projectname", projectname);
 			var self=this;
 			self.multiselect();
 			commonVariables.navListener.currentTab = commonVariables.editproject;

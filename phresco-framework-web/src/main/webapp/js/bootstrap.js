@@ -162,6 +162,7 @@ var commonVariables = {
 	unitTestGoal : "unit-test",
 	componentTestGoal : "component-test",
 	functionalTestGoal : "functional-test",
+	integrationTestGoal : "integration-test",
 	performanceTestGoal : "performance-test",
 	loadTestGoal : "load-test",
 	pdfReportGoal : "pdf-report",

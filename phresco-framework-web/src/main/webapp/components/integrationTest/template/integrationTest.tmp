@@ -5,7 +5,7 @@
     <div class="flt_right">
 		<div class="unit_view hideContent">
 			<div class="code_report_icon" id="pdfDiv">
-				div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/Phresco/pdf_icon_white.png" ></a>
+				<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/Phresco/pdf_icon_white.png" ></a>
 				<!--Pdf report popup starts here -->
 				<div id="pdf_report" class="dyn_popup hideContent">
 					<div id="noPdfReport" class="noReport"></div>
@@ -52,12 +52,21 @@
 				</div>
 				<!--Pdf report popup ends here -->	
 			</div>
-            <span>
-            	<a id="tabularView" href="javascript:void(0)"><img src="themes/default/images/Phresco/quality_table_on.png" width="25" height="25" border="0" alt=""><b data-i18n="commonlabel.label.tableview"></b></a>
+			</div>
+            <span id="tabularView" class="table" style="cursor: pointer;">
+            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/Phresco/table_active.png" width="213" height="29" border="0" alt="" usemap="#tabularViewMap"></a>
+            	 <map name="tabularViewMap">
+                      <area class="table1" shape="rect" coords="3,1,104,29">
+                      <area class="graph1" shape="rect" coords="106,3,215,29">
+                 </map>
             </span>
-            <span>
-            	<a id="graphicalView" href="javascript:void(0)"><img src="themes/default/images/Phresco/quality_graph_off.png" width="26" height="24" border="0" alt="" data-i18n="[value]commonlabel.label.graphview"></a>
-            </span>    
+           	<span id="graphicalView" class="newclas table hideContent" style="cursor: pointer;">
+            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/Phresco/graph_active.png" width="213" height="29" border="0" alt="" usemap="#graphicalViewMap"></a>
+                    <map name="graphicalViewMap">
+                      <area class="table2" shape="rect" coords="3,1,104,29">
+                      <area class="graph2" shape="rect" coords="106,3,215,29">
+                    </map>
+            </span>
         </div>
     	<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/Phresco/openfolder_icon.png" ></a></div>
 		<div class="icon_images copy_path_icon"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/Phresco/copypath_icon.png" ></a></div>	
@@ -102,19 +111,19 @@
            
         <div class="code_anal">
         	{{#if userPermissions.manageTests}}
-            	<input type="button" data-i18n="[value]commonlabel.label.test" id="unitTestBtn" class="btn btn_style">
+            	<input type="button" data-i18n="[value]commonlabel.label.test" id="integrationTestBtn" class="btn btn_style">
         	{{else}}
-        		<input type="button" data-i18n="[value]commonlabel.label.test" id="unitTestBtn" class="btn btn_style" disabled>
+        		<input type="button" data-i18n="[value]commonlabel.label.test" id="integrationTestBtn" class="btn btn_style" disabled>
         	{{/if}}
 			
-			<form id="unitTestForm">
-				<div id="unit_popup" class="dyn_popup hideContent dynamic_cont" style="width:310px;">
-					<ul class="row dynamicControls">
+			<form id="integrationTestForm">
+				<div id="integration_popup" class="dyn_popup hideContent dynamic_cont" style="width:310px;">
+					<ul class="row dynamicControls id="integrationTestDynCtrls">
 					</ul>
 					<div class="dynamicPopupLoading" style="display:none;">&nbsp</div>
 					<div class="hiddenControls"></div>
 					<div class="flt_right">
-						<input type="button" data-i18n="[value]commonlabel.label.test" class="btn btn_style" id="runUnitTest">
+						<input type="button" data-i18n="[value]commonlabel.label.test" class="btn btn_style" id="runIntegrationTest">
 						<input type="button" data-i18n="[value]commonlabel.label.close" class="btn btn_style dyn_popup_close">
 					</div>
 				</div>

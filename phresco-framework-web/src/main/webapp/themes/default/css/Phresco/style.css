@@ -1246,6 +1246,7 @@ img[name="close"] {
 
 .create_proj textarea {
 	margin-bottom: 0px;
+	height:52px;
 }
 
 .startdate input, .enddate input {
@@ -2007,6 +2008,10 @@ img[name="close"] {
 	margin:0px 5px 0px 0px !important;
 }
 
+}
+
+.create_proj table tr td input[type=checkbox] {
+	margin-top: 0px !important;
 }
 
 @media screen and (min-width: 1025px) and (max-width: 1152px) {
