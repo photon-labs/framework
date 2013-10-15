@@ -163,6 +163,11 @@
 			<artifactId>p4java</artifactId>
 			<version>2012.3.551082</version>
 		</dependency>
+		<dependency>
+			<groupId>com.splunk</groupId>
+			<artifactId>splunk</artifactId>
+			<version>1.2</version>
+		</dependency>
     </dependencies>
     
     <build>

@@ -528,12 +528,14 @@ public interface ResponseCodes {
 	String PHRD010003 = "PHRD010003"; // Dashboard widget added successfully
 	String PHRD010004 = "PHRD010004"; // Dashboard widget updated successfully
 	String PHRD010005 = "PHRD010005"; // All dashboard widgets listed successfully
+	String PHRD010006 = "PHRD010006"; // Search data retrieved successfully
 	String PHRD000001 = "PHRD000001"; // Dashboard configuration not found
 	String PHRD000002 = "PHRD000002"; // Dashboard configuration updation failed
 	String PHRD000003 = "PHRD000003"; // Dashboard widget insertion failed
 	String PHRD000004 = "PHRD000004"; // Dashboard widget updation failed
 	String PHRD000005 = "PHRD000005"; // All dashboard widgets listing failed
-
+	String PHRD000006 = "PHRD000006"; // Search data retrieval failed
+	String PHRD000007 = "PHRD000007"; // Search data retrieval has returned exception
 
 
 
