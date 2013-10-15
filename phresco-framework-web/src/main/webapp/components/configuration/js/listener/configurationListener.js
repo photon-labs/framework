@@ -267,7 +267,7 @@ define(["croneExpression/croneExpression"], function() {
 							if(currentConfig === 'Server') {
 								if($(this).attr('configType') === currentConfig) {
 									bCheck = true;									
-									commonVariables.api.showError("serveralreadyadded" ,"success", true, false, true);
+									commonVariables.api.showError("serveralreadyadded" ,"error", true, false, true);
 									flag = 1;
 								}
 							}
@@ -275,7 +275,7 @@ define(["croneExpression/croneExpression"], function() {
 							if(currentConfig === 'Email') {
 								if($(this).attr('configType') === currentConfig) {
 									bCheck = true;		
-									commonVariables.api.showError("emailalready" ,"success", true, false, true);
+									commonVariables.api.showError("emailalready" ,"error", true, false, true);
 								}
 							}
 						});
@@ -570,6 +570,7 @@ define(["croneExpression/croneExpression"], function() {
 				oldName : "oldName",
 				propName : propertyName,
 				buttonLabel: "Upload File",
+				allowedExtensions: ["zip"],
 				multiple: false,
 				debug: true,	
 				onComplete: function (id, fileName, responseJSON) {

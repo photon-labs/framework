@@ -572,17 +572,18 @@ a.dropdown-toggle b.caret  {
 }
 
 .cust_sel {
-	right: 0;
+	right: 0px;
 	left: auto !important;
 	padding: 0px !important;
 }
 
 .cus_themes {
 	width:175px !important;
-    max-height: 200px;
-    overflow-y: auto;
 }
-
+.customer_names {
+	max-height:200px;
+	overflow:auto;
+}
 .cust_sel:after {
 	right: 22px !important;
 	left: auto !important;
@@ -2998,7 +2999,6 @@ html>body tbody.scrollContent {
 	cursor:default !important;
 }
 
-
 /* *************************************************************** STYLES FOR QUALITY_UNIT_GRAPH PAGE ************************************************************************************ */
 
 .graph_area {
@@ -4859,4 +4859,8 @@ textarea[name="regex"] {
 	border-radius: 6px;
 	padding: 10px;
 	z-index: 1;
+}
+
+:-moz-placeholder { 
+  color: #999999 !important;
 }
