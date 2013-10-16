@@ -693,7 +693,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PACKAGE);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
-			String workingDirectory = getWorkingDirectoryPath(getAppDirName());
+			String workingDirectory = Utility.getWorkingDirectoryPath(getAppDirName());
 			getApplicationProcessor(getUsername()).preBuild(applicationInfo);
 			appendMultiModuleCommand(module, buildArgCmds); 
 			reader = applicationManager.performAction(projectInfo, ActionType.BUILD, buildArgCmds, workingDirectory);
@@ -726,7 +726,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
 			appendMultiModuleCommand(module, buildArgCmds); 
-			String workingDirectory = getWorkingDirectoryPath(getAppDirName());
+			String workingDirectory = Utility.getWorkingDirectoryPath(getAppDirName());
 			reader = applicationManager.performAction(projectInfo, ActionType.DEPLOY, buildArgCmds, workingDirectory);
 			
 			//To generate the lock for the particular operation
@@ -785,7 +785,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			appendMultiModuleCommand(module, buildArgCmds); 
 			
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(directory), ActionType.UNIT_TEST, buildArgCmds, getWorkingDirectoryPath(getAppDirName()));
+			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(directory), ActionType.UNIT_TEST, buildArgCmds, Utility.getWorkingDirectoryPath(getAppDirName()));
 			 //To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), UNIT, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
@@ -841,7 +841,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
 			appendMultiModuleCommand(module, buildArgCmds); 
-			String workingDirectory = getWorkingDirectoryPath(getAppDirName());
+			String workingDirectory = Utility.getWorkingDirectoryPath(getAppDirName());
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 
 			reader = applicationManager.performAction(projectInfo, ActionType.CODE_VALIDATE, buildArgCmds, workingDirectory);
@@ -863,25 +863,27 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 		BufferedInputStream reader = null;
 		try {
+			String directory = getAppDirBasedOnMultiModule(getModule());
+			
 			//To generate the lock for the particular operation
-			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(getAppDirName());
+			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(directory);
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), REQ_START, displayName, uniqueKey)), true);
 			
-			BufferedReader compileReader = compileSource();
+			BufferedReader compileReader = compileSource(directory);
 			String line = compileReader.readLine();
 			while (StringUtils.isNotEmpty(line) && !line.startsWith("[INFO] BUILD FAILURE")) {
 				line = compileReader.readLine();
 			}
 
 			if (StringUtils.isNotEmpty(line) && line.startsWith("[INFO] BUILD FAILURE")) {
-				reader = new BufferedInputStream(new FileInputStream(getLogFilePath()));
+				reader = new BufferedInputStream(new FileInputStream(getLogFilePath(directory)));
 			} else {
 				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_RUNGAINST_SRC_START)));
 				persistValuesToXml(mojo, PHASE_RUNGAINST_SRC_START);
 				com.photon.phresco.plugins.model.Mojos.Mojo.Configuration config = mojo.getConfiguration(PHASE_RUNGAINST_SRC_START);
 				Map<String, String> configs = MojoUtil.getAllValues(config);
 				String environmentName = configs.get(ENVIRONMENT_NAME);
-				reader = startServer(environmentName);
+				reader = startServer(environmentName, directory);
 			}
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of Build.runAgainstSource()" + FrameworkUtil.getStackTraceAsString(e));
@@ -915,7 +917,8 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 				String uniqueKey = "";
 				List<LockDetail> lockDetails = LockUtil.getLockDetails();
 				for (LockDetail lockDetail : lockDetails) {
-					if("Start".equalsIgnoreCase(lockDetail.getActionType()) && FrameworkServiceUtil.getApplicationInfo(getAppDirName()).getId().equals(lockDetail.getAppId())) {
+					String directory = getAppDirBasedOnMultiModule(getModule());
+					if("Start".equalsIgnoreCase(lockDetail.getActionType()) && FrameworkServiceUtil.getApplicationInfo(directory).getId().equals(lockDetail.getAppId())) {
 						uniqueKey = lockDetail.getUniqueKey();
 					}
 				}
@@ -937,17 +940,18 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 
 		try {
+			String directory = getAppDirBasedOnMultiModule(getModule());
 			handleStopServer(true);
-			BufferedReader compileReader = compileSource();
+			BufferedReader compileReader = compileSource(directory);
 			String line = compileReader.readLine();
 			while (line != null && !line.startsWith("[INFO] BUILD FAILURE")) {
 				line = compileReader.readLine();
 			}
 
 			if (line != null && line.startsWith("[INFO] BUILD FAILURE")) {
-				reader = new BufferedInputStream(new FileInputStream(getLogFilePath()));
+				reader = new BufferedInputStream(new FileInputStream(getLogFilePath(directory)));
 			} else {
-				reader = startServer(null);
+				reader = startServer(null, directory);
 			}
 		} catch (PhrescoException e) {
 
@@ -978,7 +982,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			buildArgCmds.add(HYPHEN_N);
 			appendMultiModuleCommand(getModule(), buildArgCmds);
 			jsonWriter(performanceUrls, directory);    			
-			reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, getWorkingDirectoryPath(getAppDirName()));
+			reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, Utility.getWorkingDirectoryPath(getAppDirName()));
 			//To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), PERFORMACE, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
@@ -1006,7 +1010,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			appendMultiModuleCommand(getModule(), buildArgCmds);
 			jsonWriter(performanceUrls, directory);  
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(directory), ActionType.LOAD_TEST, buildArgCmds, getWorkingDirectoryPath(getAppDirName()));
+			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(directory), ActionType.LOAD_TEST, buildArgCmds, Utility.getWorkingDirectoryPath(getAppDirName()));
 			 //To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), LOAD, displayName, uniqueKey)), true);
 		} catch(PhrescoException e) {
@@ -1076,7 +1080,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
 			appendMultiModuleCommand(getModule(), buildArgCmds);
-			reader = applicationManager.performAction(projectInfo, ActionType.START_HUB, buildArgCmds, getWorkingDirectoryPath(getAppDirName()));
+			reader = applicationManager.performAction(projectInfo, ActionType.START_HUB, buildArgCmds, Utility.getWorkingDirectoryPath(getAppDirName()));
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of MavenFunctions.startHub()"+ FrameworkUtil.getStackTraceAsString(e));
 			throw new PhrescoException("Exception occured in the MavenFunctions.startHub process");
@@ -1103,7 +1107,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			appendMultiModuleCommand(getModule(), buildArgCmds);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(directory);
-			reader = applicationManager.performAction(projectInfo, ActionType.START_NODE, buildArgCmds, getWorkingDirectoryPath(getAppDirName()));
+			reader = applicationManager.performAction(projectInfo, ActionType.START_NODE, buildArgCmds, Utility.getWorkingDirectoryPath(getAppDirName()));
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of MavenFunctions.startNode()"+ FrameworkUtil.getStackTraceAsString(e));
 			throw new PhrescoException("Exception occured in the MavenFunctions.startNode process");
@@ -1176,7 +1180,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			buildArgCmds.add(HYPHEN_N);
 			appendMultiModuleCommand(module, buildArgCmds); 
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(directory), ActionType.FUNCTIONAL_TEST, buildArgCmds, getWorkingDirectoryPath(getAppDirName()));
+			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(directory), ActionType.FUNCTIONAL_TEST, buildArgCmds, Utility.getWorkingDirectoryPath(getAppDirName()));
 			 //To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), FUNCTIONAL, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
@@ -1507,13 +1511,19 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 				return response;
 			} 
 			Technology technology = serviceManager.getTechnology(techId);
+			
 			StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
 			sb.append(File.separator);
+			if (StringUtils.isNotEmpty(getModule())) {
+				sb.append(getModule());
+				sb.append(File.separator);
+			}
 			sb.append(FOLDER_DOT_PHRESCO);
 			sb.append(File.separator);
 			sb.append(PHRESCO_HYPEN);
 			sb.append(PHASE_PDF_REPORT);
 			sb.append(INFO_XML);
+			
 			MojoProcessor mojo = new MojoProcessor(new File(sb.toString()));
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PDF_REPORT);
 
@@ -1544,6 +1554,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
+			appendMultiModuleCommand(module, buildArgCmds); 
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			BufferedInputStream reader = applicationManager.performAction(projectInfo, ActionType.PDF_REPORT, buildArgCmds, workingDirectory);
 			
@@ -1554,7 +1565,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
                 if (read == -1 ||  buf[available-1] == -1) {
                 	break;
                 } else {
-                	System.out.println("Restart Start Console : " + new String(buf));
+                	System.out.println("Console : " + new String(buf));
                 }
                 available = reader.available();
 			}
@@ -1867,10 +1878,13 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 
 		BufferedInputStream reader = null;
 		try {
-			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(getAppDirName());
+			String directory = getAppDirBasedOnMultiModule(getModule());
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			String workingDirectory = getAppDirectoryPath(applicationInfo);
-			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(getAppDirName()), ActionType.STOPSERVER, null, workingDirectory);
+			String workingDirectory = Utility.getWorkingDirectoryPath(getAppDirName());
+			List<String> buildArgCmds = new ArrayList<String>();
+			buildArgCmds.add(HYPHEN_N);
+			appendMultiModuleCommand(getModule(), buildArgCmds);
+			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(getAppDirName()), ActionType.STOPSERVER, buildArgCmds, workingDirectory);
 			
 			if (readData) {
 				int available = reader.available();
@@ -1886,7 +1900,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 				}
 			}
 			
-			deleteLogFile();
+			deleteLogFile(directory);
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Build.handleStopServer()"
 					+ FrameworkUtil.getStackTraceAsString(e));
@@ -1897,7 +1911,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	}
 
 
-	private BufferedReader compileSource() throws PhrescoException {
+	private BufferedReader compileSource(String directory) throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method Build.compileSource()");
 		}
@@ -1905,12 +1919,12 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		BufferedReader reader = null;
 		try {
 			Commandline cl = new Commandline("mvn clean compile");
-			String projectDir = Utility.getProjectHome() + FrameworkServiceUtil.getApplicationInfo(getAppDirName()).getAppDirName();
+			String projectDir = Utility.getProjectHome() + directory;
 			cl.setWorkingDirectory(projectDir);
 			Process process = cl.execute();
 			reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			writeLog(reader);
-			reader = new BufferedReader(new FileReader(getLogFilePath()));
+			writeLog(reader, directory);
+			reader = new BufferedReader(new FileReader(getLogFilePath(directory)));
 		} catch (FileNotFoundException e) {
 			if (isDebugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.compileSource()"
@@ -1928,16 +1942,16 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return reader;
 	}
 
-	private void writeLog(BufferedReader in) throws PhrescoException {
+	private void writeLog(BufferedReader in, String directory) throws PhrescoException {
 		FileWriter fstream = null;
 		BufferedWriter out = null;
 		try {
-			String logFolderPath = getLogFolderPath();
+			String logFolderPath = getLogFolderPath(directory);
 			File logfolder = new File(logFolderPath);
 			if (!logfolder.exists()) {
 				logfolder.mkdirs();
 			}
-			fstream = new FileWriter(getLogFilePath());
+			fstream = new FileWriter(getLogFilePath(directory));
 			out = new BufferedWriter(fstream);
 			String line = "";
 			while ((line = in.readLine()) != null) {
@@ -1959,7 +1973,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	}
 
 
-	private BufferedInputStream startServer(String environmentName) throws PhrescoException {
+	private BufferedInputStream startServer(String environmentName, String directory) throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.startServer()");
 		}
@@ -1969,9 +1983,9 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		BufferedInputStream reader = null;
 		try {
 			if(StringUtils.isEmpty(environmentName)) {
-				environmentName = readRunAgainstInfo();
+				environmentName = readRunAgainstInfo(directory);
 			}
-			List<com.photon.phresco.configuration.Configuration> configurations = getConfiguration(environmentName, Constants.SETTINGS_TEMPLATE_SERVER);
+			List<com.photon.phresco.configuration.Configuration> configurations = getConfiguration(directory, environmentName, Constants.SETTINGS_TEMPLATE_SERVER);
 			if (CollectionUtils.isNotEmpty(configurations)) {
 				for (com.photon.phresco.configuration.Configuration serverConfiguration : configurations) {
 					serverHost = serverConfiguration.getProperties().getProperty(Constants.SERVER_HOST);
@@ -1981,12 +1995,14 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 				}
 			}
 			// TODO: delete the server.log and create empty server.log file
-			deleteLogFile();
+			deleteLogFile(directory);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
-			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
-			String workingDirectory = getAppDirectoryPath(applicationInfo);
-			reader = applicationManager.performAction(projectInfo, ActionType.RUNAGAINSTSOURCE, null, workingDirectory);
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(directory);
+			String workingDirectory = Utility.getWorkingDirectoryPath(getAppDirName());
+			List<String> buildArgCmds = new ArrayList<String>();
+			buildArgCmds.add(HYPHEN_N);
+			appendMultiModuleCommand(getModule(), buildArgCmds);
+			reader = applicationManager.performAction(projectInfo, ActionType.RUNAGAINSTSOURCE, buildArgCmds, workingDirectory);
 			boolean connectionStatus = Utility.isConnectionAlive(serverProtocol, serverHost, serverPort);
 
 		} catch (PhrescoException e) {
@@ -1998,13 +2014,13 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return reader;
 	}
 
-	public void deleteLogFile() throws PhrescoException {
+	public void deleteLogFile(String directory) throws PhrescoException {
 		try {
-			File logFile = new File(getLogFilePath());
-			File infoFile = new File(getLogFolderPath() + File.separator + RUN_AGS_LOG_FILE);
+			File logFile = new File(getLogFilePath(directory));
+			File infoFile = new File(getLogFolderPath(directory) + File.separator + RUN_AGS_LOG_FILE);
 			if (logFile.isFile() && logFile.exists()) {
 				logFile.delete();
-			} 
+			}
 			if(infoFile.isFile() && infoFile.exists()) {
 				infoFile.delete();
 			}
@@ -2013,16 +2029,16 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 	}
 
-	private String getLogFilePath() throws PhrescoException {
-		StringBuilder builder = new StringBuilder(getLogFolderPath());
+	private String getLogFilePath(String directory) throws PhrescoException {
+		StringBuilder builder = new StringBuilder(getLogFolderPath(directory));
 		builder.append(File.separator);
 		builder.append(LOG_FILE);
 		return builder.toString();
 	}
 
-	private String getLogFolderPath() throws PhrescoException {
+	private String getLogFolderPath(String directory) throws PhrescoException {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		builder.append(FrameworkServiceUtil.getApplicationInfo(getAppDirName()).getAppDirName());
+		builder.append(directory);
 		builder.append(File.separator);
 		builder.append(DO_NOT_CHECKIN_DIR);
 		builder.append(File.separator);
@@ -2031,7 +2047,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	}
 
 
-	private List<com.photon.phresco.configuration.Configuration> getConfiguration(String environmentName,
+	private List<com.photon.phresco.configuration.Configuration> getConfiguration(String directory, String environmentName,
 			String type) throws PhrescoException {
 		ConfigManager configManager = null;
 		try {
@@ -2044,7 +2060,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 					return settingsconfig;
 				}
 			}
-			configManager = new ConfigManagerImpl(new File(getAppConfigPath()));
+			configManager = new ConfigManagerImpl(new File(getAppConfigPath(directory)));
 			List<com.photon.phresco.configuration.Configuration> configurations = configManager.getConfigurations(
 					environmentName, type);
 			if (CollectionUtils.isNotEmpty(configurations)) {
@@ -2065,9 +2081,9 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return builder.toString();
 	}
 
-	public String getAppConfigPath() throws PhrescoException {
+	public String getAppConfigPath(String directory) throws PhrescoException {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		builder.append(FrameworkServiceUtil.getApplicationInfo(getAppDirName()).getAppDirName());
+		builder.append(directory);
 		builder.append(File.separator);
 		builder.append(FOLDER_DOT_PHRESCO);
 		builder.append(File.separator);
@@ -2076,13 +2092,13 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	}
 
 
-	private String readRunAgainstInfo() throws PhrescoException {
+	private String readRunAgainstInfo(String directory) throws PhrescoException {
 		String env = null;
 		BufferedReader reader = null;
 		try {
 			ConfigurationInfo info = new ConfigurationInfo();
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-			builder.append(FrameworkServiceUtil.getApplicationInfo(getAppDirName()).getAppDirName());
+			builder.append(directory);
 			builder.append(File.separator);
 			builder.append(FOLDER_DOT_PHRESCO);
 			builder.append(File.separator);
@@ -2123,7 +2139,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			sb.append(goal);
 		}
 		sb.append(INFO_XML);
-
 		return sb.toString();
 	}
 
@@ -2239,10 +2254,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 
 	protected String getAppDirectoryPath(ApplicationInfo applicationInfo) throws PhrescoException {
 		return Utility.getProjectHome() + applicationInfo.getAppDirName();
-	}
-	
-	protected String getWorkingDirectoryPath(String directory) throws PhrescoException {
-		return Utility.getProjectHome() + directory;
 	}
 	
 	protected ApplicationProcessor getApplicationProcessor(String username) throws PhrescoException {

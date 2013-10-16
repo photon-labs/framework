@@ -227,7 +227,9 @@
 		"enteruniquename" : "Enter Unique Name",
 		"configureatleastonejob" : "Configure atleast one Job!",
 		"hasdependencies" : "Feature has dependencies.",
-		"serviceerror" : "Service Error"
+		"serviceerror" : "Service Error",
+		"serveralreadyadded" : "Server configuration already exist for this environment",
+		"emailalready" : "Email configuration already exist for this environment"
 	},
 	"successCodes" : {
 		"PHR200004" : "Project created successfully",
@@ -267,8 +269,6 @@
 		"PHRQ400006" : "Test case updated successfully",
 		"PHR12C00001" : "No Downloads available",
 		"envalreadyexists" : "Environment Already Exists",
-		"serveralreadyadded" : "Server Already Added",
-		"emailalready" : "Email Already Added",
 		"chooseserver" : "Choose the Server Type from App Info",
 		"choosedb" : "Choose the DB Type from App Info",
 		"PHR500005" : "Report not available"

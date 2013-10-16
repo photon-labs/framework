@@ -17,6 +17,7 @@
  */
 package com.photon.phresco.framework.rest.api;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -29,6 +30,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.photon.phresco.commons.FrameworkConstants;
@@ -842,16 +844,23 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 			FrameworkServiceUtil futil = new FrameworkServiceUtil();
 			String appDirName = request.getParameter(APPDIR);
 			String fromPage = request.getParameter(FROM_PAGE);
+			String moduleName = request.getParameter(MODULE_NAME);
+			
+			if (StringUtils.isNotEmpty(moduleName)) {
+				appDirName = appDirName + File.separator + moduleName;
+			}
+			
+			// module app info
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			
 			// is sonar report available
 			if ((FrameworkConstants.ALL).equals(fromPage)) {
-				isReportAvailable = futil.isSonarReportAvailable(frameworkUtil, appInfo, request);
+				isReportAvailable = futil.isSonarReportAvailable(frameworkUtil, request, appDirName);
 			}
 
 			// is test report available
 			if (!isReportAvailable) {
-				isReportAvailable = futil.isTestReportAvailable(frameworkUtil, appInfo, fromPage);
+				isReportAvailable = futil.isTestReportAvailable(frameworkUtil, appDirName);
 			}
 //			boolean testReportAvailable = actionFunction.isTestReportAvailable(frameworkUtil, appInfo, fromPage);
 			if (isReportAvailable) {

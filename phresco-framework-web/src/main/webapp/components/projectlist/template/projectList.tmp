@@ -311,29 +311,32 @@
                         <td>&nbsp;</td>
                       </tr>
 					  {{#each modules}}
-                          <tr class="{{../appDirName}}" techid="{{techInfo.id}}">
+                          <tr class="{{../appDirName}}" techid="{{techInfo.id}}" isMultiModule="true" moduleName="{{code}}">
                               <td style="padding-left: 5%;"><a name="editApplication" from="multimodule" appDirName="{{../appDirName}}" href="javascript:;">{{code}}</a></td>
                               <td>&nbsp;</td>
                               <td>{{techInfo.name}}</td>
                               <td colspan="2" class="list_img">
-                                  <a name="pdf_report_{{code}}" temp="pdf_report" fromPage="All" class="tooltiptop" title="" data-placement="bottom" data-t="tooltip" href="#" data-original-title="PDF Report">
+                                  <a name="pdf_report_{{id}}" temp="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="{{id}}" data-placement="bottom" data-t="tooltip" href="javascript:void(0)" data-original-title="PDF Report">
                                       <img src="themes/default/images/Phresco/pdf_icon.png" width="14" height="16" border="0" alt="">
                                   </a>
                                                 
-                                  <div id="pdf_report_{{code}}" class="dyn_popup pdf_report">
+                                  <div id="pdf_report_{{id}}" class="dyn_popup pdf_report">
                                       <div id="noReport_{{id}}" class="alert noReport hideContent" style="text-align: center;"></div>
-                                      <table class="existing_report" width="100%" border="0" cellspacing="0" cellpadding="5">
-                                          <thead class="hideContent" name="pdfHeader_{{id}}" show="true">
-                                              <tr>
-                                                  <th data-i18n="commonlabel.label.existingreport"></th>
-                                                  <th data-i18n="commonlabel.label.type"></th>
-                                                  <th data-i18n="commonlabel.label.download"></th>
-                                                  <th data-i18n="commonlabel.label.delete"></th>
-                                              </tr>    
-                                          </thead>
-                                          <tbody name="generatedPdfs_{{id}}" class="scroll">
-                                          </tbody>    
-                                      </table>
+										<table class="hideContent table" name="pdfHeader_{{id}}" show="true">
+											  <thead>  
+												<tr>
+													<th class="" data-i18n="commonlabel.label.existingreport"></th>
+													<th class="" data-i18n="commonlabel.label.type"></th>
+													<th class="" data-i18n="commonlabel.label.download"></th>
+													<th class="" data-i18n="commonlabel.label.delete"></th>
+												</tr>
+											  </thead>			
+									  </table>
+                                      <div class = "pdfheight">
+										  <table class="existing_report" width="100%" border="0" cellspacing="0" cellpadding="5">
+												<tbody name="generatedPdfs_{{id}}" class="scroll"></tbody>    
+										  </table>
+									  </div>
                                       <form id="pdfReport">
                                           <table class="report_type">
                                               <tbody>
@@ -357,9 +360,9 @@
                                           <div class="popuploading" id="pdfReportLoading_{{id}}">&nbsp;</div>
                                           <div class="flt_right">
                                               {{#if ../../../userPermissions.managePdfReports}}
-                                                  <input type="button" fromPage="All"  appDirName="{{appDirName}}" value="Generate" data-i18n="[value]projectlist.label.generate" class="btn btn_style" name="generate" appId="{{id}}" projectId = "{{../id}}">
+                                                  <input type="button" fromPage="All"  appDirName="{{../../appDirName}}" value="Generate" data-i18n="[value]projectlist.label.generate" class="btn btn_style" moduleName="{{code}}" name="generate" appId="{{id}}" projectId = "{{../id}}">
                                               {{else}}
-                                                  <input type="button" disabled=true fromPage="All"  appDirName="{{appDirName}}" value="Generate" data-i18n="[value]projectlist.label.generate" class="btn btn_style" name="generate" appId="{{id}}" projectId = "{{../id}}">
+                                                  <input type="button" disabled=true fromPage="All"  appDirName="{{../../appDirName}}" value="Generate" data-i18n="[value]projectlist.label.generate" class="btn btn_style" name="generate" moduleName="{{code}}" appId="{{id}}" projectId = "{{../id}}">
                                               {{/if}}
                                               <input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
                                           </div>

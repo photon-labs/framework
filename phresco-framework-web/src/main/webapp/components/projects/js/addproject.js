@@ -156,6 +156,11 @@ define(["projects/listener/projectsListener"], function() {
 				self.onRemoveLayerEvent.dispatch($(this));
 			});
 			
+			$("img[name='close']").dblclick(function(){
+				self.projectsListener.counter--;
+				$('img[name="close"]').show();
+			});
+			
 			$(".flt_left input").unbind('click');
 			$(".flt_left input").bind('click', function(){
 				self.onAddLayerEvent.dispatch($(this));

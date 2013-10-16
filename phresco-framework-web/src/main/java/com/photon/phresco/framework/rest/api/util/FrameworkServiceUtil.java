@@ -1008,26 +1008,28 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	        return plugins;
 	    }
 	    
-	public  boolean isSonarReportAvailable(FrameworkUtil frameworkUtil, ApplicationInfo appInfo,
-			HttpServletRequest request) throws PhrescoException {
+	public  boolean isSonarReportAvailable(FrameworkUtil frameworkUtil,
+			HttpServletRequest request, String appDirName) throws PhrescoException {
 		boolean isSonarReportAvailable = false;
 		try {
-			String isIphone = frameworkUtil.isIphoneTagExists(appInfo);
+			// get module appInfo
+			String isIphone = frameworkUtil.isIphoneTagExists(appDirName);
 			if (StringUtils.isEmpty(isIphone)) {
 				FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
 				String serverUrl = FrameworkServiceUtil.getSonarURL(request);
 				String sonarReportPath = frameworkConfig.getSonarReportPath().replace(
 						FrameworkConstants.FORWARD_SLASH + SONAR, "");
 				serverUrl = serverUrl + sonarReportPath;
-				PomProcessor processor = frameworkUtil.getPomProcessor(appInfo.getAppDirName());
+				// sub module pom processor
+				PomProcessor processor = frameworkUtil.getPomProcessor(appDirName);
 				Modules pomModules = processor.getPomModule();
 				List<String> modules = null;
 				if (pomModules != null) {
 					modules = pomModules.getModule();
 				}
-
+				
 				// check multimodule or not
-				List<String> sonarProfiles = frameworkUtil.getSonarProfiles(appInfo);
+				List<String> sonarProfiles = frameworkUtil.getSonarProfiles(appDirName);
 				if (CollectionUtils.isEmpty(sonarProfiles)) {
 					sonarProfiles.add(SONAR_SOURCE);
 				}
@@ -1036,9 +1038,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 				if (CollectionUtils.isNotEmpty(modules)) {
 					for (String module : modules) {
 						for (String sonarProfile : sonarProfiles) {
-							isSonarUrlAvailable = checkSonarModuleUrl(sonarProfile, serverUrl, module, frameworkUtil,
-									appInfo);
-
+							isSonarUrlAvailable = checkSonarModuleUrl(sonarProfile, serverUrl, module, frameworkUtil, appDirName);
 							if (isSonarUrlAvailable) {
 								isSonarReportAvailable = true;
 								break;
@@ -1047,7 +1047,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 					}
 				} else {
 					for (String sonarProfile : sonarProfiles) {
-						isSonarUrlAvailable = checkSonarUrl(sonarProfile, serverUrl, frameworkUtil, appInfo);
+						isSonarUrlAvailable = checkSonarUrl(sonarProfile, serverUrl, frameworkUtil, appDirName);
 						if (isSonarUrlAvailable) {
 							isSonarReportAvailable = true;
 							break;
@@ -1055,7 +1055,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 					}
 				}
 			} else {
-				StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appInfo.getAppDirName()).append(
+				StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(
 						File.separatorChar).append(DO_NOT_CHECKIN_DIR).append(File.separatorChar).append(
 						STATIC_ANALYSIS_REPORT);
 				File indexPath = new File(sb.toString());
@@ -1096,28 +1096,27 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	 *             the phresco exception
 	 */
 	private boolean checkSonarModuleUrl(String sonarProfile, String serverUrl, String module,
-			FrameworkUtil frameworkUtil, ApplicationInfo appInfo) throws PhrescoException {
+			FrameworkUtil frameworkUtil, String appDirName) throws PhrescoException {
 		boolean isSonarReportAvailable = false;
 		try {
 			if (StringUtils.isNotEmpty(module)) {
 				StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-				builder.append(appInfo.getAppDirName());
+				builder.append(appDirName);
 				builder.append(File.separatorChar);
 
 				if (!FUNCTIONALTEST.equals(sonarProfile)) {
 					builder.append(module);
 				}
 				if (StringUtils.isNotEmpty(sonarProfile) && FUNCTIONALTEST.equals(sonarProfile)) {
-					builder.append(frameworkUtil.getFunctionalTestDir(appInfo));
+					builder.append(frameworkUtil.getFunctionalTestDir(appDirName));
 				}
 
 				builder.append(File.separatorChar);
-				File pomXml = new File(builder.toString() + File.separatorChar + Utility.getPomFileName(appInfo));
-				if (pomXml.exists()) {
-					builder.append(Utility.getPomFileName(appInfo));
-				} else {
-					builder.append(Constants.POM_NAME);
-				}
+				ApplicationInfo applicationInfo = getApplicationInfo(appDirName);
+				String workingDirectoryPath = Utility.getWorkingDirectoryPath(appDirName);
+				String pomFileName = Utility.getPomFileNameFromWorkingDirectory(applicationInfo, new File(workingDirectoryPath));
+				builder.append(pomFileName);
+				
 				File pomPath = new File(builder.toString());
 				StringBuilder sbuild = new StringBuilder();
 				if (pomPath.exists()) {
@@ -1163,22 +1162,26 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	 * @throws PhrescoException
 	 *             the phresco exception
 	 */
-	private boolean checkSonarUrl(String sonarProfile, String serverUrl, FrameworkUtil frameworkUtil,
-			ApplicationInfo appInfo) throws PhrescoException {
+	private boolean checkSonarUrl(String sonarProfile, String serverUrl, FrameworkUtil frameworkUtil, String appDirName) throws PhrescoException {
 		boolean isSonarReportAvailable = false;
 		try {
 			if (StringUtils.isNotBlank(sonarProfile)) {
 				// get sonar report
 				StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-				builder.append(appInfo.getAppDirName());
+				builder.append(appDirName);
 				builder.append(File.separatorChar);
 
 				if (StringUtils.isNotEmpty(sonarProfile) && FUNCTIONALTEST.equals(sonarProfile)) {
-					builder.append(frameworkUtil.getFunctionalTestDir(appInfo));
+					builder.append(frameworkUtil.getFunctionalTestDir(appDirName));
 				}
 
 				builder.append(File.separatorChar);
-				builder.append(Utility.getPomFileName(appInfo));
+				
+				ApplicationInfo applicationInfo = getApplicationInfo(appDirName);
+				String workingDirectoryPath = Utility.getWorkingDirectoryPath(appDirName);
+				String pomFileName = Utility.getPomFileNameFromWorkingDirectory(applicationInfo, new File(workingDirectoryPath));
+				
+				builder.append(pomFileName);
 				File pomPath = new File(builder.toString());
 				StringBuilder sbuild = new StringBuilder();
 				if (pomPath.exists()) {
@@ -1235,46 +1238,46 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 		return xmlResultsAvailable;
 	}
 
-	public  boolean isTestReportAvailable(FrameworkUtil frameworkUtil, ApplicationInfo appInfo, String fromPage)
+	public  boolean isTestReportAvailable(FrameworkUtil frameworkUtil, String appDirName)
 			throws PhrescoException {
 		boolean xmlResultsAvailable = false;
 		File file = null;
 		StringBuilder sb = new StringBuilder(Utility.getProjectHome());
-		sb.append(appInfo.getAppDirName());
+		sb.append(appDirName);
 		try {
-			String isIphone = frameworkUtil.isIphoneTagExists(appInfo);
+			String isIphone = frameworkUtil.isIphoneTagExists(appDirName);
 			// unit xml check
 			if (!xmlResultsAvailable) {
 				List<String> moduleNames = new ArrayList<String>();
-				PomProcessor processor = frameworkUtil.getPomProcessor(appInfo.getAppDirName());
+				PomProcessor processor = frameworkUtil.getPomProcessor(appDirName);
 				Modules pomModules = processor.getPomModule();
 				List<String> modules = null;
 				// check multimodule or not
 				if (pomModules != null) {
-					modules = FrameworkServiceUtil.getProjectModules(appInfo.getAppDirName());
+					modules = FrameworkServiceUtil.getProjectModules(appDirName);
 					for (String module : modules) {
 						if (StringUtils.isNotEmpty(module)) {
 							moduleNames.add(module);
 						}
 					}
 					for (String moduleName : moduleNames) {
-						String moduleXmlPath = sb.toString() + File.separator + moduleName
-								+ frameworkUtil.getUnitTestReportDir(appInfo);
+						
+						String moduleXmlPath = sb.toString() + File.separator + moduleName + frameworkUtil.getUnitTestReportDir(appDirName);
 						file = new File(moduleXmlPath);
 						xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
-					}
+					} 
 				} else {
 					if (StringUtils.isNotEmpty(isIphone)) {
-						String unitIphoneTechReportDir = frameworkUtil.getUnitTestReportDir(appInfo);
+						String unitIphoneTechReportDir = frameworkUtil.getUnitTestReportDir(appDirName);
 						file = new File(sb.toString() + unitIphoneTechReportDir);
 					} else {
-						String unitTechReports = frameworkUtil.getUnitTestReportOptions(appInfo);
+						String unitTechReports = frameworkUtil.getUnitTestReportOptions(appDirName);
 						if (StringUtils.isEmpty(unitTechReports)) {
-							file = new File(sb.toString() + frameworkUtil.getUnitTestReportDir(appInfo));
+							file = new File(sb.toString() + frameworkUtil.getUnitTestReportDir(appDirName));
 						} else {
 							List<String> unitTestTechs = Arrays.asList(unitTechReports.split(","));
 							for (String unitTestTech : unitTestTechs) {
-								unitTechReports = frameworkUtil.getUnitTestReportDir(appInfo, unitTestTech);
+								unitTechReports = frameworkUtil.getUnitTestReportDir(appDirName, unitTestTech);
 								if (StringUtils.isNotEmpty(unitTechReports)) {
 									file = new File(sb.toString() + unitTechReports);
 									xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
@@ -1288,13 +1291,13 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 
 			// functional xml check
 			if (!xmlResultsAvailable) {
-				file = new File(sb.toString() + frameworkUtil.getFunctionalTestReportDir(appInfo));
+				file = new File(sb.toString() + frameworkUtil.getFunctionalTestReportDir(appDirName));
 				xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
 			}
 
 			// component xml check
 			if (!xmlResultsAvailable) {
-				String componentDir = frameworkUtil.getComponentTestReportDir(appInfo);
+				String componentDir = frameworkUtil.getComponentTestReportDir(appDirName);
 				if (StringUtils.isNotEmpty(componentDir)) {
 					file = new File(sb.toString() + componentDir);
 					xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
@@ -1305,21 +1308,17 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 			if (StringUtils.isEmpty(isIphone)) {
 				if (!xmlResultsAvailable) {
 					QualityService qualityService = new QualityService();
-					String phrescoPluginInfoFilePath = FrameworkServiceUtil
-							.getPhrescoPluginInfoFilePath(Constants.PHASE_PERFORMANCE_TEST,
-									Constants.PHASE_PERFORMANCE_TEST, appInfo.getAppDirName());
+					String phrescoPluginInfoFilePath = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_PERFORMANCE_TEST, Constants.PHASE_PERFORMANCE_TEST, appDirName);
 					MojoProcessor mojo = new MojoProcessor(new File(phrescoPluginInfoFilePath));
 					List<String> testAgainsts = new ArrayList<String>();
-					Parameter testAgainstParameter = mojo.getParameter(Constants.PHASE_PERFORMANCE_TEST,
-							REQ_TEST_AGAINST);
+					Parameter testAgainstParameter = mojo.getParameter(Constants.PHASE_PERFORMANCE_TEST, REQ_TEST_AGAINST);
 					if (testAgainstParameter != null && TYPE_LIST.equalsIgnoreCase(testAgainstParameter.getType())) {
 						List<Value> values = testAgainstParameter.getPossibleValues().getValue();
 						for (Value value : values) {
 							testAgainsts.add(value.getKey());
 						}
 					}
-					xmlResultsAvailable = qualityService.testResultAvail(appInfo.getAppDirName(), testAgainsts,
-							Constants.PHASE_PERFORMANCE_TEST);
+					xmlResultsAvailable = qualityService.testResultAvail(appDirName, testAgainsts, Constants.PHASE_PERFORMANCE_TEST);
 				}
 			}
 
@@ -1327,7 +1326,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 			if (StringUtils.isEmpty(isIphone)) {
 				if (!xmlResultsAvailable) {
 					String phrescoPluginInfoFilePath = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(
-							Constants.PHASE_LOAD_TEST, Constants.PHASE_LOAD_TEST, appInfo.getAppDirName());
+							Constants.PHASE_LOAD_TEST, Constants.PHASE_LOAD_TEST, appDirName);
 					if(new File(phrescoPluginInfoFilePath).exists()) {
 					MojoProcessor mojo = new MojoProcessor(new File(phrescoPluginInfoFilePath));
 					Parameter testAgainstParameter = mojo.getParameter(Constants.PHASE_LOAD_TEST, REQ_TEST_AGAINST);
@@ -1339,8 +1338,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 						}
 					}
 					QualityService qualityService = new QualityService();
-					xmlResultsAvailable = qualityService.testResultAvail(appInfo.getAppDirName(), testAgainsts,
-							Constants.PHASE_LOAD_TEST);
+					xmlResultsAvailable = qualityService.testResultAvail(appDirName, testAgainsts, Constants.PHASE_LOAD_TEST);
 				}
 			}
 			}

@@ -18,7 +18,7 @@ public class PdfServiceTest extends RestBaseTest {
 		 request.setParameter("appDirName", "TestProject");
 		 request.setParameter("reportDataType", "detail");
 		 HttpServletRequest httpServletRequest = (HttpServletRequest)request;
-		 Response showGeneratePdfPopup = pdfService.showGeneratePdfPopup(appDirName, "unit", httpServletRequest);
+		 Response showGeneratePdfPopup = pdfService.showGeneratePdfPopup(appDirName, "unit", "", httpServletRequest);
 		 Assert.assertEquals(200, showGeneratePdfPopup.getStatus());
 	}
 	 
@@ -69,12 +69,12 @@ public class PdfServiceTest extends RestBaseTest {
 	
 	 @Test
 	 public void fetchDownloadReport() {
-		 Response unitdownloadReport = pdfService.downloadReport("unit", "testcheck_detail.pdf", appDirName);
-		 Response componentdownloadReport = pdfService.downloadReport("component", "testcheck_detail.pdf", appDirName);
-		 Response functionaldownloadReport = pdfService.downloadReport("functional", "testcheck_detail.pdf", appDirName);
-		 Response loaddownloadReport = pdfService.downloadReport("load", "testcheck_detail.pdf", appDirName);
-		 Response performancedownloadReport = pdfService.downloadReport("performance", "testcheck_detail.pdf", appDirName);
-		 Response manualdownloadReport = pdfService.downloadReport("manual", "testcheck_detail.pdf", appDirName);
+		 Response unitdownloadReport = pdfService.downloadReport("unit", "testcheck_detail.pdf", appDirName, "");
+		 Response componentdownloadReport = pdfService.downloadReport("component", "testcheck_detail.pdf", appDirName, "");
+		 Response functionaldownloadReport = pdfService.downloadReport("functional", "testcheck_detail.pdf", appDirName, "");
+		 Response loaddownloadReport = pdfService.downloadReport("load", "testcheck_detail.pdf", appDirName, "");
+		 Response performancedownloadReport = pdfService.downloadReport("performance", "testcheck_detail.pdf", appDirName, "");
+		 Response manualdownloadReport = pdfService.downloadReport("manual", "testcheck_detail.pdf", appDirName, "");
 		 Assert.assertEquals(200, unitdownloadReport.getStatus());
 		 Assert.assertEquals(200, componentdownloadReport.getStatus());
 		 Assert.assertEquals(200, functionaldownloadReport.getStatus());
@@ -85,7 +85,7 @@ public class PdfServiceTest extends RestBaseTest {
 	 
 	 @Test
 	 public void DownloadReportNotFound() {
-		 Response downloadReport = pdfService.downloadReport("unit", "testcheck_detai.pdf", appDirName);
+		 Response downloadReport = pdfService.downloadReport("unit", "testcheck_detai.pdf", appDirName, "");
 		 Assert.assertEquals(200, downloadReport.getStatus());
 	 }
 	 
@@ -96,19 +96,19 @@ public class PdfServiceTest extends RestBaseTest {
 		 request.setParameter("reportDataType", "detail");
 		 HttpServletRequest httpServletRequest = (HttpServletRequest)request;
 		 
-		 Response showGeneratePdfPopup = pdfService.showGeneratePdfPopup(appDirName, "unit", httpServletRequest);
+		 Response showGeneratePdfPopup = pdfService.showGeneratePdfPopup(appDirName, "unit", "", httpServletRequest);
 		 Assert.assertEquals(200, showGeneratePdfPopup.getStatus());
 		 
-		 Response showGeneratePdfPopupAll = pdfService.showGeneratePdfPopup(appDirName, "All", httpServletRequest);
+		 Response showGeneratePdfPopupAll = pdfService.showGeneratePdfPopup(appDirName, "All", "", httpServletRequest);
 		 Assert.assertEquals(200, showGeneratePdfPopupAll.getStatus());
 		 
-		 Response showGeneratePdfPopupFail = pdfService.showGeneratePdfPopup("xx", "All", httpServletRequest);
+		 Response showGeneratePdfPopupFail = pdfService.showGeneratePdfPopup("xx", "All", "", httpServletRequest);
 		 Assert.assertEquals(200, showGeneratePdfPopupFail.getStatus());
 	 }
 	
 	 @Test
 	 public void deleteReports() {
-		 Response deleteReport = pdfService.deleteReport("unit", "testcheck_detail.pdf", appDirName);
+		 Response deleteReport = pdfService.deleteReport("unit", "testcheck_detail.pdf", appDirName, "");
 		 Assert.assertEquals(200, deleteReport.getStatus());
 	 }
 }

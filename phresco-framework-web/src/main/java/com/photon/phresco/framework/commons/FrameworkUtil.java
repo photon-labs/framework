@@ -121,6 +121,10 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 		return getPomProcessor(appinfo).getProperty(PHRESCO_UNIT_TEST);
 	}
 	
+	public String getUnitTestReportOptions(String appDirName) throws PhrescoException, PhrescoPomException {
+		return getPomProcessor(appDirName).getProperty(PHRESCO_UNIT_TEST);
+	}
+	
     public String getUnitTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
         return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_UNITTEST_DIR);
     }
@@ -137,12 +141,24 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
         return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR);
     }
     
+    public String getUnitTestReportDir(String appDirName) throws PhrescoPomException, PhrescoException {
+        return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR);
+    }
+    
     public String getComponentTestReportDir(ApplicationInfo appInfo) throws PhrescoPomException, PhrescoException {
         return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_COMPONENTTEST_RPT_DIR);
     }
     
+    public String getComponentTestReportDir(String appDirName) throws PhrescoPomException, PhrescoException {
+        return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_COMPONENTTEST_RPT_DIR);
+    }
+    
     public String getUnitTestReportDir(ApplicationInfo appInfo, String option) throws PhrescoPomException, PhrescoException {
         return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR_START + option + POM_PROP_KEY_UNITTEST_RPT_DIR_END);
+    }
+    
+    public String getUnitTestReportDir(String appDirName, String option) throws PhrescoPomException, PhrescoException {
+        return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR_START + option + POM_PROP_KEY_UNITTEST_RPT_DIR_END);
     }
 
 	public String getUnitTestSuitePath(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
@@ -177,6 +193,10 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
         return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
     }
     
+    public String getFunctionalTestDir(String appDirName) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_FUNCTEST_DIR);
+    }
+    
     public String getFunctionalTestDir(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
         return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_FUNCTEST_DIR);
     }
@@ -185,6 +205,10 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
         return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_FUNCTEST_RPT_DIR);
     }
 
+    public String getFunctionalTestReportDir(String appDirName) throws PhrescoPomException, PhrescoException {
+        return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_FUNCTEST_RPT_DIR);
+    }
+    
     public String getSceenShotDir(ApplicationInfo appInfo) throws PhrescoPomException, PhrescoException {
         return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_SCREENSHOT_DIR);
     }
@@ -245,6 +269,10 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
         return getPomProcessor(appinfo).getProperty(PHRESCO_CODE_VALIDATE_REPORT);
     }
 	
+    public String isIphoneTagExists(String appDirName) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appDirName).getProperty(PHRESCO_CODE_VALIDATE_REPORT);
+    }
+    
 	public String getThemeFileExtension(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
         return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_THEME_EXT);
     }
@@ -388,16 +416,10 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 	    return serverUrl;
     }
     
-	public List<String> getSonarProfiles(ApplicationInfo appInfo) throws PhrescoException {
+	public List<String> getSonarProfiles(String appDirName) throws PhrescoException {
 		List<String> sonarTechReports = new ArrayList<String>(6);
 		try {
-			StringBuilder pomBuilder = new StringBuilder(Utility.getProjectHome());
-			pomBuilder.append(File.separator);
-			pomBuilder.append(appInfo.getAppDirName());
-			pomBuilder.append(File.separator);
-			pomBuilder.append(Utility.getPomFileName(appInfo));
-			File pomPath = new File(pomBuilder.toString());
-			PomProcessor pomProcessor = new PomProcessor(pomPath);
+			PomProcessor pomProcessor = frameworkUtil.getPomProcessor(appDirName);
 			Model model = pomProcessor.getModel();
 			S_LOGGER.debug("model... " + model);
 			Profiles modelProfiles = model.getProfiles();

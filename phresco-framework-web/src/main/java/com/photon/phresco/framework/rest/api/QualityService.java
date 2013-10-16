@@ -76,6 +76,7 @@ import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
@@ -530,6 +531,8 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			testCasePath = getFunctionalTestCasePath(appDirName);
 		} else if (testType.equals(COMPONENT)) {
 			testCasePath = getComponentTestCasePath(appDirName);
+		} else if(testType.equals("integration")) {
+			testCasePath = getIntegrationTestCasePath(appDirName);
 		}
 		return testCasePath;
 	}
@@ -936,7 +939,9 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			testResultPath = getFunctionalTestResultPath(appDirName, moduleName);
 		} else if (testType.equals(COMPONENT)) {
 			testResultPath = getComponentTestResultPath(appDirName, moduleName);
-		} 
+		} else if (testType.equals("integration")){
+			testResultPath = getIntegraionTestResultPath(appDirName);
+		}
 		
 		return testResultPath;
 	}
@@ -962,7 +967,9 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			testSuitePath = getComponentTestSuitePath(appDirName);
 		} else if (testType.equals(FUNCTIONAL)) {
 			testSuitePath = getFunctionalTestSuitePath(appDirName);
-		} 
+		} else if(testType.equals("integration")){
+			testSuitePath = getIntegrationTestSuitePath(appDirName);
+		}
 		
 		return testSuitePath;
 	}
@@ -1027,7 +1034,21 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 
 		return sb.toString();
 	}
+	
+	
+	private String getIntegraionTestResultPath(String appDirName) throws PhrescoException {
 
+		StringBuilder sb = new StringBuilder();
+		try {
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDirName);
+			sb.append(Utility.getProjectHome() + projectInfo.getName() +  "-integrationTest");
+			sb.append(getIntegrationTestReportDir(appDirName));
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+
+		return sb.toString();
+	}
 	/**
 	 * Gets the component test result path.
 	 *
@@ -1148,6 +1169,32 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		try {
 			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(
 					Constants.POM_PROP_KEY_UNITTEST_TESTSUITE_XPATH);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	
+	public String getIntegrationTestReportDir(String appDirName) throws PhrescoException {
+		try {
+			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(
+					"phresco.IntegrationTest.report.dir");
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+
+	/**
+	 * Gets the Integration test suite path.
+	 *
+	 * @param appDirName the app dir name
+	 * @return the unit test suite path
+	 * @throws PhrescoException the phresco exception
+	 */
+	public String getIntegrationTestSuitePath(String appDirName) throws PhrescoException {
+		try {
+		return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(
+					"phresco.IntegrationTest.testsuite.xpath");
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		}
@@ -1417,6 +1464,15 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		try {
 			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(
 					Constants.POM_PROP_KEY_FUNCTEST_TESTCASE_PATH);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	private String getIntegrationTestCasePath(String appDirName) throws PhrescoException {
+		try {
+			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(
+					"phresco.IntegrationTest.testcase.path");
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		}

@@ -206,6 +206,16 @@
 			"path" : "components/functionalTest/test/functionalTestTest"
 		},
 
+		"integrationTest" : {
+			"moduleName":"integrationTest",
+			"path" : "components/integrationTest/js"
+		},
+
+		"integrationTestTest" : {
+			"moduleName":"integrationTestTest",
+			"path" : "components/integrationTest/test/integrationTestTest"
+		},
+
 		"performanceTest" : {
 			"moduleName":"performanceTest",
 			"path" : "components/performanceTest/js"

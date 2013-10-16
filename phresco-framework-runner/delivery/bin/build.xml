@@ -28,6 +28,7 @@
 	<property name="ios-sim.home" value="${phresco.home}/workspace/tools/ios-sim"/>
 	<property name="sonar.war.dir" value="${phresco.home}/workspace/tools/war/sonar.war"/>
 	<property name="phresco.upgrade.file" value="${phresco.home}/workspace/temp/upgrade.properties"/>
+    <property name="phantomjs.mac.path" value="${phresco.home}/workspace/tools/phantomjs-1.5.0-mac/bin"/>
 	<property name="phresco.file.server.home" value="${phresco.home}/workspace/projects"/>
 	<property name="phresco.file.server" value="PhrescoFileServer"/>
     <property file = "${phresco.home}/conf/service.properties"/>
@@ -46,7 +47,7 @@
 		<available property="phresco.upgraded" file="${phresco.upgrade.file}"/>
 	</target>	
 	
-	<target name="set-execute-permissions">
+	<target name="set-execute-permissions" depends="condition-true">
 		<echo message="Setting execute permissions ${checkers.home}, ${chief.home}" />
 		<chmod perm="ugo+rx" type="file">
 		  <fileset dir="${checkers.home}">
@@ -66,6 +67,18 @@
 		  </fileset>
 		</chmod>
 	</target>
+    
+    <condition property="strings-match">
+        <equals arg1="${os.name}" arg2="mac os x" casesensitive="false"/>
+    </condition>
+
+    <target name="condition-true" if="${strings-match}">
+        <chmod perm="ugo+rx" type="file">
+              <fileset dir="${phantomjs.mac.path}">
+                <include name="**/*"/>
+              </fileset>
+        </chmod>
+    </target>
 
 	<target name="run-phresco">
 		<echo message="starting ${framework.context} deployment from ${phresco.home}"/>

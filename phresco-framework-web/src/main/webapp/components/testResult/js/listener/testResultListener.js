@@ -291,7 +291,8 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			var header, userId;
 			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			var userId = userInfo.id;
-			var appDirName = '', moduleName = '';
+			var projectInfo = commonVariables.api.localVal.getProjectInfo();
+			var appDirName = "";
 			var techReport = $('#reportOptionsDrop').attr("value");
 			// var moduleName = $('#modulesDrop').attr("value");
 			header = {
@@ -301,10 +302,11 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			};
 			
 			var moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
+			var rootModuleParam = moduleParam;
+			
 			if (!self.isBlank(moduleParam)) {
 				appDirName = $('.rootModule').val()
-			} else if(commonVariables.api.localVal.getProjectInfo() !== null) {
-				var projectInfo = commonVariables.api.localVal.getProjectInfo();
+			} else if(projectInfo !== null && projectInfo !== undefined) {
 				appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
 			}
 			
@@ -322,6 +324,9 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				testType = "component";
 			} else if ("manualTest" === currentTab) {
 				testType = "manual";
+			} else if ("integrationTest" === currentTab) {
+			    appDirName = $("#editprojecttitle").attr('projectname');
+ 				testType = "integration";
 			}
 			if (action === "getTestSuite") {
 				header.requestMethod = "GET";
@@ -350,21 +355,21 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				commonVariables.hideloading = true;
 				var data = $('#pdfReportForm').serialize();
 				header.requestMethod = "POST";
-				header.webserviceurl = commonVariables.webserviceurl + "app/printAsPdf?appDirName=" + appDirName + "&" + data + "&userId=" + userId;
+				header.webserviceurl = commonVariables.webserviceurl + "app/printAsPdf?appDirName=" + appDirName + "&" + data + "&userId=" + userId + rootModuleParam;
 			} else if (action === "getPdfReports") {
 				var data = $('#pdfReportForm').serialize();
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + "pdf/showPopUp?appDirName=" + appDirName + "&fromPage=" + testType;
+				header.webserviceurl = commonVariables.webserviceurl + "pdf/showPopUp?appDirName=" + appDirName + "&fromPage=" + testType + rootModuleParam;
 			} else if (action === "deletePdfReport") {
 				header.requestMethod = "DELETE";
-				header.webserviceurl = commonVariables.webserviceurl + "pdf/deleteReport?appDirName=" + appDirName + "&fromPage=" + testType + "&reportFileName=" + requestBody.fileName;
+				header.webserviceurl = commonVariables.webserviceurl + "pdf/deleteReport?appDirName=" + appDirName + "&fromPage=" + testType + "&reportFileName=" + requestBody.fileName + rootModuleParam;
 			} else if (action === "downloadPdfReport") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName=" + appDirName + "&fromPage=" + testType + "&reportFileName=" + requestBody.fileName;
+				header.webserviceurl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName=" + appDirName + "&fromPage=" + testType + "&reportFileName=" + requestBody.fileName + rootModuleParam;
 			} else if (action === "updateTestcase") {
 				header.requestMethod = "PUT";
 				header.requestPostBody = JSON.stringify(requestBody);
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + "/testcases?appDirName=" + appDirName+"&testSuiteName=" + requestBody.testSuite;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + "/testcases?appDirName=" + appDirName+"&testSuiteName=" + requestBody.testSuite + moduleParam;
 			}
 			return header;
 		},

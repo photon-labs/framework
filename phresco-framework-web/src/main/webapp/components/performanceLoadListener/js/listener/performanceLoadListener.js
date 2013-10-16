@@ -467,9 +467,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 		hideErrorAndShowControls : function () {
 			$('.perfError').hide();
 			$('.perfError').text("");
-			$('.testResultDropdown').show();
-			$('.testResultDiv').show();
-			$('.performanceView').show();
+			$('.testResultDropdown, .testResultDiv, .performanceView').show();
 		},
 
 		getResultOnChangeEvent : function (testAgainst, resultFileName, showGraphFor, deviceId, whereToRender, callback) {

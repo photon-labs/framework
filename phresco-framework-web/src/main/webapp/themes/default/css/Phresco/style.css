@@ -572,17 +572,18 @@ a.dropdown-toggle b.caret  {
 }
 
 .cust_sel {
-	right: 0;
+	right: 0px;
 	left: auto !important;
 	padding: 0px !important;
 }
 
 .cus_themes {
 	width:175px !important;
-    max-height: 200px;
-    overflow-y: auto;
 }
-
+.customer_names {
+	max-height:200px;
+	overflow:auto;
+}
 .cust_sel:after {
 	right: 22px !important;
 	left: auto !important;
@@ -1245,6 +1246,7 @@ img[name="close"] {
 
 .create_proj textarea {
 	margin-bottom: 0px;
+	height:52px;
 }
 
 .startdate input, .enddate input {
@@ -2006,6 +2008,10 @@ img[name="close"] {
 	margin:0px 5px 0px 0px !important;
 }
 
+}
+
+.create_proj table tr td input[type=checkbox] {
+	margin-top: 0px !important;
 }
 
 @media screen and (min-width: 1025px) and (max-width: 1152px) {
@@ -2997,7 +3003,6 @@ html>body tbody.scrollContent {
 .table1, .graph2 {
 	cursor:default !important;
 }
-
 
 /* *************************************************************** STYLES FOR QUALITY_UNIT_GRAPH PAGE ************************************************************************************ */
 
@@ -4859,4 +4864,8 @@ textarea[name="regex"] {
 	border-radius: 6px;
 	padding: 10px;
 	z-index: 1;
+}
+
+:-moz-placeholder { 
+  color: #999999 !important;
 }

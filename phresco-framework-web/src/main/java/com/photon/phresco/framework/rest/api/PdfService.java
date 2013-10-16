@@ -78,14 +78,18 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 	@Path("/downloadReport")
 	@Produces(MediaType.MULTIPART_FORM_DATA)
 	public Response downloadReport(@QueryParam(REST_QUERY_FROM_PAGE) String fromPage,
-			@QueryParam(REST_QUERY_REPORT_FILE_NAME) String reportFileName, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+			@QueryParam(REST_QUERY_REPORT_FILE_NAME) String reportFileName, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) {
 		FileInputStream fileInputStream = null;
 		ResponseInfo responseData = new ResponseInfo();
 		try {
 			String pdfLOC = "";
 			String applicationHome = FrameworkServiceUtil.getApplicationHome(appDirName);
-			String archivePath = applicationHome + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES
-					+ File.separator;
+			
+			if (StringUtils.isNotEmpty(moduleName)) {
+				applicationHome = applicationHome + File.separator + moduleName;
+			}
+			
+			String archivePath = applicationHome + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator;
 			if ((FrameworkConstants.ALL).equals(fromPage)) {
 				pdfLOC = archivePath + CUMULATIVE + File.separator + reportFileName;
 			} else {
@@ -128,13 +132,15 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 	@Path("/deleteReport")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteReport(@QueryParam(REST_QUERY_FROM_PAGE) String fromPage,
-			@QueryParam(REST_QUERY_REPORT_FILE_NAME) String reportFileName, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+			@QueryParam(REST_QUERY_REPORT_FILE_NAME) String reportFileName, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) {
 		ResponseInfo responseData = new ResponseInfo();
 		try {
 			String pdfLOC = "";
 			String applicationHome = FrameworkServiceUtil.getApplicationHome(appDirName);
-			String archivePath = applicationHome + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES
-					+ File.separator;
+			if (StringUtils.isNotEmpty(moduleName)) {
+				applicationHome = applicationHome + File.separator + moduleName;
+			}
+			String archivePath = applicationHome + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator;
 			if ((FrameworkConstants.ALL).equals(fromPage)) {
 				pdfLOC = archivePath + CUMULATIVE + File.separator + reportFileName;
 			} else {
@@ -183,7 +189,7 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 	@Path("/showPopUp")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response showGeneratePdfPopup(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_FROM_PAGE) String fromPage, @Context HttpServletRequest request) {
+			@QueryParam(REST_QUERY_FROM_PAGE) String fromPage, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName, @Context HttpServletRequest request) {
 		ResponseInfo<Map<String, Object>> responseData = new ResponseInfo<Map<String, Object>>();
 		 Map<String, Object> paramMap = new HashMap<String, Object>(8);
 		try {
@@ -191,18 +197,23 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 			boolean isReportAvailable = false;
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 			FrameworkServiceUtil futil = new FrameworkServiceUtil();
+			
+			if (StringUtils.isNotEmpty(moduleName)) {
+				appDirName = appDirName + File.separator + moduleName; 
+			}
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
-				existingPDFs = getExistingPDFs(fromPage, appInfo);
+			existingPDFs = getExistingPDFs(fromPage, appDirName);
 				
-				// is sonar report available
-				if ((FrameworkConstants.ALL).equals(fromPage)) {
-					isReportAvailable = futil.isSonarReportAvailable(frameworkUtil, appInfo, request);
-				}
+			// is sonar report available
+			if ((FrameworkConstants.ALL).equals(fromPage)) {
+				isReportAvailable = futil.isSonarReportAvailable(frameworkUtil, request, appDirName);
+			}
 
-				// is test report available
-				if (!isReportAvailable) {
-					isReportAvailable = futil.isTestReportAvailable(frameworkUtil, appInfo, fromPage);
-				}
+			// is test report available
+			if (!isReportAvailable) {
+				isReportAvailable = futil.isTestReportAvailable(frameworkUtil, appDirName);
+			}
+			
 			paramMap.put("value", isReportAvailable);
 			if (existingPDFs != null ) {
 				paramMap.put("json", existingPDFs);
@@ -233,17 +244,15 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 	 * @return the existing pd fs
 	 * @throws PhrescoException the phresco exception
 	 */
-	private List<PdfReportInfo> getExistingPDFs(String fromPage, ApplicationInfo appInfo) {
+	private List<PdfReportInfo> getExistingPDFs(String fromPage, String appDirName) {
 		List<PdfReportInfo> pdfList = new ArrayList<PdfReportInfo>();
 		
 		// popup showing list of pdf's already created
-		String pdfDirLoc = "";
+		String pdfDirLoc = Utility.getProjectHome() + appDirName + File.separator;
 		if (StringUtils.isEmpty(fromPage) || FROMPAGE_ALL.equals(fromPage)) {
-			pdfDirLoc = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR
-					+ File.separator + ARCHIVES + File.separator + CUMULATIVE;
+			pdfDirLoc =  pdfDirLoc + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + CUMULATIVE;
 		} else {
-			pdfDirLoc = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR
-					+ File.separator + ARCHIVES + File.separator + fromPage;
+			pdfDirLoc = pdfDirLoc + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + fromPage;
 		}
 		File pdfFileDir = new File(pdfDirLoc);
 		if (pdfFileDir.isDirectory()) {

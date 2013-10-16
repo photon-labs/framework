@@ -24,15 +24,30 @@ define([], function() {
 			}
 		},
 		
-		onGraphicalView : function() {
+		/*getDynamicParams : function(thisObj, whereToRender, popupId, goal) {
 			var self = this;
-			self.testResultListener.showGraphicalView();
-		},
-		
-		onTabularView : function() {
-			var self = this;
-			self.testResultListener.showTabularView();
-		},
+			commonVariables.goal = goal;
+			commonVariables.phase = goal;
+			commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(dynamicPageObject) {
+				self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
+				dynamicPageObject.getHtml(whereToRender, thisObj, popupId, function(response) {
+					var height = $(".testSuiteTable").height();
+					$(popupId).css("max-height", height - 40 + 'px');
+					var formObj;
+					if (goal === commonVariables.integrationTestGoal) {
+						formObj = $('#integrationTestForm');
+					}
+					formObj.css("max-height", height - 92 + 'px');
+					if (formObj.find('li.ctrl').length > 5) {
+						formObj.mCustomScrollbar({
+							autoHideScrollbar:true,
+							theme:"light-thin",
+							advanced:{updateOnContentResize: true}
+						});
+					}
+				});
+			});
+		},*/
 		
 		runIntegrationTest : function(callback) {
 			var self = this;
