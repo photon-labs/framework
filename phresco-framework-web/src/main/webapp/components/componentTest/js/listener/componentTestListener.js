@@ -49,7 +49,7 @@ define([], function() {
 			if (appdetails !== null && userInfo !== null) {
 				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=component-test&phase=component-test&projectId="+projectId+"&"+testData+'&displayName='+userInfo.displayName;
 			}
-			
+			queryString += self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
 			$('#testConsole').html('');
 			self.testResultListener.openConsoleDiv();//To open the console
 			$('.progress_loading').show();

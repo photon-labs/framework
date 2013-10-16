@@ -207,7 +207,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			}
 			String baseDir = Utility.getProjectHome() + appDirName;
 			Utility.killProcess(baseDir, testType);
-
 			String testSuitePath = getTestSuitePath(appDirName, testType, techReport);
 			String testCasePath = getTestCasePath(appDirName, testType, techReport);
 			List<TestSuite> testSuites = testSuites(rootModule, moduleName, testType, moduleName, techReport,
@@ -557,6 +556,10 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		ResponseInfo<List<TestCase>> responseData = new ResponseInfo<List<TestCase>>();
 		try {
 			String mapKey = constructMapKey(appDirName, moduleName);
+			String appDirWithModule = appDirName;
+			if (StringUtils.isNotEmpty(moduleName)) {
+				appDirWithModule = appDirName + File.separator + moduleName;
+			}
 			String testSuitesMapKey = mapKey + testType + module + techReport;
 			if (MapUtils.isEmpty(testSuiteMap)) {
 				String testResultPath = getTestResultPath(appDirName, moduleName, testType, techReport);
@@ -580,7 +583,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 								// testsuite values are set before calling
 								// getTestCases value
 								setTestSuite(tstSuite.getName());
-								getTestCases(appDirName, allTestResultNodeList, testSuitePath, testCasePath);
+								getTestCases(appDirWithModule, allTestResultNodeList, testSuitePath, testCasePath);
 								float tests = 0;
 								float failures = 0;
 								float errors = 0;
@@ -632,7 +635,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			} else {
 				if (testSuites.getLength() > 0) {
 					List<TestCase> testCases;
-					testCases = getTestCases(appDirName, testSuites, testSuitePath, testCasePath);
+					testCases = getTestCases(appDirWithModule, testSuites, testSuitePath, testCasePath);
 					if (CollectionUtils.isEmpty(testCases)) {
 						ResponseInfo<List<TestCase>> finalOutput = responseDataEvaluation(responseData, null,
 								testCases, RESPONSE_STATUS_SUCCESS, PHRQ000004);
@@ -929,11 +932,11 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 */
 	private String getTestResultPath(String appDirName, String moduleName, String testType, String techReport)
 			throws PhrescoException {
+		if(StringUtils.isNotEmpty(moduleName)) {
+			appDirName = appDirName + File.separator + moduleName; 
+		}
 		String testResultPath = "";
 		if (testType.equals(UNIT)) {
-			if(StringUtils.isNotEmpty(moduleName)) {
-				appDirName = appDirName + File.separator + moduleName; 
-			}
 			testResultPath = getUnitTestResultPath(appDirName, moduleName, techReport);
 		} else if (testType.equals(FUNCTIONAL)) {
 			testResultPath = getFunctionalTestResultPath(appDirName, moduleName);
@@ -986,10 +989,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	private String getUnitTestResultPath(String appDirName, String moduleName, String techReport)
 			throws PhrescoException {
 		StringBuilder sb = new StringBuilder(Utility.getProjectHome() + appDirName);
-//		if (StringUtils.isNotEmpty(moduleName)) {
-//			sb.append(File.separatorChar);
-//			sb.append(moduleName);
-//		}
 		// TODO Need to change this
 		StringBuilder tempsb = new StringBuilder(sb);
 		if (FrameworkConstants.JAVASCRIPT.equals(techReport)) {
@@ -1023,10 +1022,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		StringBuilder sb = new StringBuilder();
 		try {
 			sb.append(Utility.getProjectHome() + appDirName);
-			if (StringUtils.isNotEmpty(moduleName)) {
-				sb.append(File.separatorChar);
-				sb.append(moduleName);
-			}
 			sb.append(getFunctionalTestReportDir(appDirName));
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
@@ -1062,10 +1057,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		StringBuilder sb = new StringBuilder();
 		try {
 			sb.append(Utility.getProjectHome() + appDirName);
-			if (StringUtils.isNotEmpty(moduleName)) {
-				sb.append(File.separatorChar);
-				sb.append(moduleName);
-			}
 			sb.append(getComponentTestReportDir(appDirName));
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);

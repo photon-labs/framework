@@ -802,15 +802,16 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 		BufferedInputStream reader = null;
 		try {
-			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(getAppDirName());
-			StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(appInfo));
+			String directory = getAppDirBasedOnMultiModule(getModule());
+			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(directory);
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_COMPONENT_TEST)));
 			persistValuesToXml(mojo, PHASE_COMPONENT_TEST);
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_COMPONENT_TEST);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
+			appendMultiModuleCommand(getModule(), buildArgCmds);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(getAppDirName()), ActionType.COMPONENT_TEST, buildArgCmds, workingDirectory.toString());
+			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(directory), ActionType.COMPONENT_TEST, buildArgCmds, Utility.getWorkingDirectoryPath(getAppDirName()));
 			 //To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), COMPONENT, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
