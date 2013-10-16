@@ -45,7 +45,7 @@ define([], function() {
 								$('#login').removeAttr('disabled');
 								$(".login_error_msg").css('color','red');
 								$(".login_error_msg").attr('data-i18n', 'errorCodes.' + response.responseCode);
-								self.renderlocales(commonVariables.basePlaceholder);	
+								self.renderlocales(commonVariables.basePlaceholder);
 							}
 						}, 
 						function(serviceError){

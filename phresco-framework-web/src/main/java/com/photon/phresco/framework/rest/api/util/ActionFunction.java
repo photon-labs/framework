@@ -982,7 +982,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			buildArgCmds.add(HYPHEN_N);
 			appendMultiModuleCommand(getModule(), buildArgCmds);
 			jsonWriter(performanceUrls, directory);    			
-			reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, getWorkingDirectoryPath(getAppDirName()));
+			reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, Utility.getWorkingDirectoryPath(getAppDirName()));
 			//To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), PERFORMACE, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
@@ -1010,7 +1010,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			appendMultiModuleCommand(getModule(), buildArgCmds);
 			jsonWriter(performanceUrls, directory);  
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(directory), ActionType.LOAD_TEST, buildArgCmds, getWorkingDirectoryPath(getAppDirName()));
+			reader = applicationManager.performAction(FrameworkServiceUtil.getProjectInfo(directory), ActionType.LOAD_TEST, buildArgCmds, Utility.getWorkingDirectoryPath(getAppDirName()));
 			 //To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), LOAD, displayName, uniqueKey)), true);
 		} catch(PhrescoException e) {
@@ -1496,11 +1496,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			String pdfName = request.getParameter(REQ_PDF_NAME);
 			String reportDataType = request.getParameter(REPORT_DATA_TYPE);
 			
-			System.out.println("Generate report module name =>? " + module);
-			System.out.println("pdfName " + pdfName);
-			System.out.println("reportDataType " + reportDataType);
-			System.out.println("fromPage " + fromPage);
-			
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDirName);
 			String sonarURL = FrameworkServiceUtil.getSonarURL(request);
@@ -1529,8 +1524,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			sb.append(PHASE_PDF_REPORT);
 			sb.append(INFO_XML);
 			
-			System.out.println("###### Stroing theme on ###### " + sb.toString());
-			System.out.println("Report file accessing path => " + sb.toString());
 			MojoProcessor mojo = new MojoProcessor(new File(sb.toString()));
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PDF_REPORT);
 
@@ -1541,7 +1534,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 						parameter.setValue(reportDataType);
 					} else if (REQ_TEST_TYPE.equals(key)) {
 						if (StringUtils.isEmpty(fromPage)) {
-							System.out.println("All report is set ");
 							setFromPage(FROMPAGE_ALL);
 						}
 						parameter.setValue(fromPage);
@@ -1552,7 +1544,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	            	} else if (THEME.equals(key)) {
 	            		parameter.setValue(getThemeColorJson(userId, customerId));
 	            	} else if (REQ_REPORT_NAME.equals(key)) {
-	            		System.out.println("Pdf report name is going to be set .... " + pdfName);
 	            		parameter.setValue(pdfName);
 	            	} else if (TECHNOLOGY_NAME.equals(key)) {
 	            		parameter.setValue(technology.getName());
@@ -1565,7 +1556,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			buildArgCmds.add(HYPHEN_N);
 			appendMultiModuleCommand(module, buildArgCmds); 
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
-			System.out.println("Execution working dir > " + workingDirectory);
 			BufferedInputStream reader = applicationManager.performAction(projectInfo, ActionType.PDF_REPORT, buildArgCmds, workingDirectory);
 			
 			int available = reader.available();
@@ -1575,7 +1565,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
                 if (read == -1 ||  buf[available-1] == -1) {
                 	break;
                 } else {
-                	System.out.println("Restart Start Console : " + new String(buf));
+                	System.out.println("Console : " + new String(buf));
                 }
                 available = reader.available();
 			}
@@ -1890,7 +1880,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		try {
 			String directory = getAppDirBasedOnMultiModule(getModule());
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			String workingDirectory = getWorkingDirectoryPath(getAppDirName());
+			String workingDirectory = Utility.getWorkingDirectoryPath(getAppDirName());
 			List<String> buildArgCmds = new ArrayList<String>();
 			buildArgCmds.add(HYPHEN_N);
 			appendMultiModuleCommand(getModule(), buildArgCmds);
@@ -2008,7 +1998,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			deleteLogFile(directory);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(directory);
-			String workingDirectory = getWorkingDirectoryPath(getAppDirName());
+			String workingDirectory = Utility.getWorkingDirectoryPath(getAppDirName());
 			List<String> buildArgCmds = new ArrayList<String>();
 			buildArgCmds.add(HYPHEN_N);
 			appendMultiModuleCommand(getModule(), buildArgCmds);

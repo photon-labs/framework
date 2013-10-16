@@ -1014,14 +1014,12 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 		try {
 			// get module appInfo
 			String isIphone = frameworkUtil.isIphoneTagExists(appDirName);
-			System.out.println("isIphone exists > " + isIphone);
 			if (StringUtils.isEmpty(isIphone)) {
 				FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
 				String serverUrl = FrameworkServiceUtil.getSonarURL(request);
 				String sonarReportPath = frameworkConfig.getSonarReportPath().replace(
 						FrameworkConstants.FORWARD_SLASH + SONAR, "");
 				serverUrl = serverUrl + sonarReportPath;
-				System.out.println("serverUrl >  " + serverUrl);
 				// sub module pom processor
 				PomProcessor processor = frameworkUtil.getPomProcessor(appDirName);
 				Modules pomModules = processor.getPomModule();
@@ -1029,11 +1027,9 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 				if (pomModules != null) {
 					modules = pomModules.getModule();
 				}
-				System.out.println("modules > " + modules);
 				
 				// check multimodule or not
 				List<String> sonarProfiles = frameworkUtil.getSonarProfiles(appDirName);
-				System.out.println("sonarProfiles > " + sonarProfiles);
 				if (CollectionUtils.isEmpty(sonarProfiles)) {
 					sonarProfiles.add(SONAR_SOURCE);
 				}
@@ -1062,7 +1058,6 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 				StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(
 						File.separatorChar).append(DO_NOT_CHECKIN_DIR).append(File.separatorChar).append(
 						STATIC_ANALYSIS_REPORT);
-				System.out.println("Iphone technology report path => " + sb.toString());
 				File indexPath = new File(sb.toString());
 				if (indexPath.exists() && indexPath.isDirectory()) {
 					File[] listFiles = indexPath.listFiles();
@@ -1122,9 +1117,6 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 				String pomFileName = Utility.getPomFileNameFromWorkingDirectory(applicationInfo, new File(workingDirectoryPath));
 				builder.append(pomFileName);
 				
-				System.out.println("sonarProfile > " + sonarProfile);
-				System.out.println("module > " + module);
-				System.out.println("Check soanr url module url path ############ " + builder.toString());
 				File pomPath = new File(builder.toString());
 				StringBuilder sbuild = new StringBuilder();
 				if (pomPath.exists()) {
@@ -1142,7 +1134,6 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 
 					String artifact = sbuild.toString();
 					String url = serverUrl + artifact;
-					System.out.println("Is sonar alive => " + url);
 					if (isSonarAlive(url)) {
 						isSonarReportAvailable = true;
 					}
@@ -1191,7 +1182,6 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 				String pomFileName = Utility.getPomFileNameFromWorkingDirectory(applicationInfo, new File(workingDirectoryPath));
 				
 				builder.append(pomFileName);
-				System.out.println("pom file path => " + builder.toString());
 				File pomPath = new File(builder.toString());
 				StringBuilder sbuild = new StringBuilder();
 				if (pomPath.exists()) {
@@ -1259,9 +1249,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 			// unit xml check
 			if (!xmlResultsAvailable) {
 				List<String> moduleNames = new ArrayList<String>();
-				System.out.println("isTestReportAvailable check based on module ");
 				PomProcessor processor = frameworkUtil.getPomProcessor(appDirName);
-				System.out.println("Going on iffffffffff ");
 				Modules pomModules = processor.getPomModule();
 				List<String> modules = null;
 				// check multimodule or not
@@ -1273,24 +1261,18 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 						}
 					}
 					for (String moduleName : moduleNames) {
-						System.out.println("###### Getting unit test dir of each MODULE path => " + sb.toString());
 						
-						String moduleXmlPath = sb.toString() + File.separator + moduleName + frameworkUtil.getUnitTestReportDir(appDirName); // TODO: pass sb.tostring + moduleName
-						System.out.println("####### Module.getUnitTestReportDir(appDirName) > " + frameworkUtil.getUnitTestReportDir(appDirName));
+						String moduleXmlPath = sb.toString() + File.separator + moduleName + frameworkUtil.getUnitTestReportDir(appDirName);
 						file = new File(moduleXmlPath);
-						System.out.println("moduleXmlPath >? " + moduleXmlPath);
 						xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
-						System.out.println("Multimodule reoprt dir available => " + xmlResultsAvailable);
 					} 
 				} else {
 					if (StringUtils.isNotEmpty(isIphone)) {
 						String unitIphoneTechReportDir = frameworkUtil.getUnitTestReportDir(appDirName);
-						System.out.println("Iphone unit test dir path => " + sb.toString() + unitIphoneTechReportDir);
 						file = new File(sb.toString() + unitIphoneTechReportDir);
 					} else {
 						String unitTechReports = frameworkUtil.getUnitTestReportOptions(appDirName);
 						if (StringUtils.isEmpty(unitTechReports)) {
-							System.out.println("No js and java path is " + sb.toString() + frameworkUtil.getUnitTestReportDir(appDirName));
 							file = new File(sb.toString() + frameworkUtil.getUnitTestReportDir(appDirName));
 						} else {
 							List<String> unitTestTechs = Arrays.asList(unitTechReports.split(","));
@@ -1298,14 +1280,12 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 								unitTechReports = frameworkUtil.getUnitTestReportDir(appDirName, unitTestTech);
 								if (StringUtils.isNotEmpty(unitTechReports)) {
 									file = new File(sb.toString() + unitTechReports);
-									System.out.println("Widget app is file available > " + file.getPath());
 									xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
 								}
 							}
 						}
 					}
 					xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
-					System.out.println("****** unit test report available => " + xmlResultsAvailable);
 				}
 			}
 
@@ -1313,7 +1293,6 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 			if (!xmlResultsAvailable) {
 				file = new File(sb.toString() + frameworkUtil.getFunctionalTestReportDir(appDirName));
 				xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
-				System.out.println("****** Funtional test report available => " + xmlResultsAvailable);
 			}
 
 			// component xml check
@@ -1322,7 +1301,6 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 				if (StringUtils.isNotEmpty(componentDir)) {
 					file = new File(sb.toString() + componentDir);
 					xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
-					System.out.println("****** Component test report available => " + xmlResultsAvailable);
 				}
 			}
 
@@ -1340,9 +1318,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 							testAgainsts.add(value.getKey());
 						}
 					}
-					System.out.println("testAgainsts > " + testAgainsts);
 					xmlResultsAvailable = qualityService.testResultAvail(appDirName, testAgainsts, Constants.PHASE_PERFORMANCE_TEST);
-					System.out.println("****** Perforamce test report available => " + xmlResultsAvailable);
 				}
 			}
 
@@ -1363,7 +1339,6 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 					}
 					QualityService qualityService = new QualityService();
 					xmlResultsAvailable = qualityService.testResultAvail(appDirName, testAgainsts, Constants.PHASE_LOAD_TEST);
-					System.out.println("****** Load test report available => " + xmlResultsAvailable);
 				}
 			}
 			}

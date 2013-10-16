@@ -181,7 +181,7 @@ define([], function() {
 				webserviceurl: ''
 			};
 			self.act = action;
-					
+			
 			if(action === "delete") {
 				header.requestMethod = "DELETE";
 				header.requestPostBody = JSON.stringify(projectRequestBody);
@@ -228,16 +228,19 @@ define([], function() {
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/types?customerId="+customerId+"&userId="+userId+"&techId="+projectRequestBody.techid;
 			} 
 			if(action === "generateReport") {
+				var moduleParam = self.isBlank(projectRequestBody.moduleName) ? "" : '&moduleName='+projectRequestBody.moduleName;
 				header.requestMethod = "POST";
-				header.webserviceurl = commonVariables.webserviceurl + "app/printAsPdf?appDirName=" + projectRequestBody.appDirName + "&" + projectRequestBody.data + "&userId=" + userId;
+				header.webserviceurl = commonVariables.webserviceurl + "app/printAsPdf?appDirName=" + projectRequestBody.appDirName + "&" + projectRequestBody.data + "&userId=" + userId + moduleParam;
 			} 
 			if(action === "getreport") {
+				var moduleParam = self.isBlank(projectRequestBody.moduleName) ? "" : '&moduleName='+projectRequestBody.moduleName;
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + "pdf/showPopUp?appDirName="+projectRequestBody.appDir+"&fromPage="+projectRequestBody.fromPage;		
+				header.webserviceurl = commonVariables.webserviceurl + "pdf/showPopUp?appDirName="+projectRequestBody.appDir+"&fromPage="+projectRequestBody.fromPage + moduleParam;		
 			} 
 			if(action === "deleteReport") {
+				var moduleParam = self.isBlank(projectRequestBody.moduleName) ? "" : '&moduleName='+projectRequestBody.moduleName;
 				header.requestMethod = "DELETE";
-				header.webserviceurl = commonVariables.webserviceurl + "pdf/deleteReport?appDirName="+projectRequestBody.appDir+"&reportFileName="+projectRequestBody.fileName+"&fromPage="+projectRequestBody.fromPage;		
+				header.webserviceurl = commonVariables.webserviceurl + "pdf/deleteReport?appDirName="+projectRequestBody.appDir+"&reportFileName="+projectRequestBody.fileName+"&fromPage="+projectRequestBody.fromPage + moduleParam;		
 			} 
 			if(action === "downloadReport") {
 				header.requestMethod = "GET";
@@ -365,11 +368,15 @@ define([], function() {
 		},
 		
 		generateReportEvent : function(obj){
-			var self = this;
+			var self = this, modulename = '';
 			var reportdata = {}, actionBody, action;		
 			var appDir =  obj.attr("appDirName");
 			var dynamicId = obj.attr("appId");
 			reportdata.data = obj.closest("form").serialize();
+			
+			modulename = self.isBlank(obj.attr("moduleName")) ? "" : obj.attr("moduleName");
+			
+			reportdata.moduleName = modulename;
 			reportdata.appDirName = appDir;
 			actionBody = reportdata;
 			action = "generateReport";
@@ -377,7 +384,7 @@ define([], function() {
 			self.projectListAction(self.getActionHeader(actionBody, action), $('#pdfReportLoading_'+dynamicId), function(response){
 				if (response.service_exception !== null) {
 				} else {
-					self.getReportEvent(response, appDir, "All", dynamicId);
+					self.getReportEvent(response, appDir, "All", dynamicId, modulename);
 				}
 				commonVariables.hideloading = false;
 			});
@@ -479,15 +486,16 @@ define([], function() {
 			});
 		},
 		
-		getReportEvent : function(obj, appDir, fromPage, dynamicId){
+		getReportEvent : function(obj, appDir, fromPage, dynamicId, modName){
 			var self = this;
 			$(".pdfheight").hide();
-			var getreportdata = {}, actionBody, action, temp;	
+			var getreportdata = {}, actionBody, action, temp, modulename = '';	
 			if (fromPage !== undefined && fromPage !== null) {
 				getreportdata.fromPage = fromPage;
 			} else {
 				getreportdata.fromPage = obj.attr("fromPage");
 			}
+			
 			if (appDir !== undefined && appDir !== null) {
 				getreportdata.appDir = appDir;
 				temp = appDir;
@@ -495,6 +503,15 @@ define([], function() {
 				temp  = obj.closest("tr").attr("class");
 				getreportdata.appDir = temp;
 			}
+			
+			// if module is empty then it might be root app or called direclyt for list
+			if (obj instanceof jQuery) {
+				modulename = self.isBlank(obj.closest("tr").attr("moduleName")) ? "" : obj.closest("tr").attr("moduleName");
+			} else {
+				modulename = modName;
+			}
+			
+			getreportdata.moduleName = modulename;
 			actionBody = getreportdata;
 			action = "getreport";
 			if (dynamicId === undefined || dynamicId === null) {
@@ -523,15 +540,15 @@ define([], function() {
 								}
 							}
 						});	
-				} 
-				self.listPdfReports(response, temp, dynamicId);
+				}
+				self.listPdfReports(response, temp, dynamicId, modulename);
 				self.clickFunction(dynamicId);
 				commonVariables.hideloading = false;
 			});
 		},
 		
 		//To list the generated PDF reports
-		listPdfReports : function(response, temp, dynamicId) {
+		listPdfReports : function(response, temp, dynamicId, modulename) {
 			var self = this;
 			var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 			var content = "";
@@ -544,7 +561,7 @@ define([], function() {
 				$("table[name=pdfHeader_"+dynamicId+"]").show();
 				for(var i =0; i < response.data.json.length; i++) {
 					var idgenerate = Date.now();
-					var headerTr = '<tr class="generatedRow" fileName="'+response.data.json[i].fileName+'" appdirname = "'+temp+'"><td>' + response.data.json[i].time + '</td><td>'+response.data.json[i].type+'</td>';
+					var headerTr = '<tr class="generatedRow" fileName="'+response.data.json[i].fileName+'" appdirname = "'+temp+'" moduleName="'+ modulename +'"><td>' + response.data.json[i].time + '</td><td>'+response.data.json[i].type+'</td>';
 					content = content.concat(headerTr);
 					headerTr = '<td class="list_img"><a class="tooltiptop" fileName="'+response.data.json[i].fileName+'" fromPage="All" href="javascript:void(0)" data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title=""><img src="themes/default/images/Phresco/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>';
 					content = content.concat(headerTr);
@@ -575,6 +592,7 @@ define([], function() {
 				deletedata.fileName = $(this).attr("fileName");
 				deletedata.fromPage = $(this).attr("frompage");
 				deletedata.appDir = $(this).closest('tr').attr("appdirname");
+				deletedata.moduleName = self.isBlank($(this).closest("tr").attr("moduleName")) ? "" : $(this).closest("tr").attr("moduleName");
 				$('input[name="delpdf"]').unbind();
 				$('input[name="delpdf"]').click(function() {
 					$(".generatedRow").each(function() {
@@ -601,7 +619,11 @@ define([], function() {
 				actionBody.fileName = $(this).attr("fileName");
 				actionBody.fromPage = $(this).attr("frompage");
 				actionBody.appDir = $(this).closest('tr').attr("appdirname");
-				var pdfDownloadUrl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName="+actionBody.appDir+"&reportFileName="+actionBody.fileName+"&fromPage="+actionBody.fromPage;
+				
+				actionBody.moduleName = self.isBlank($(this).closest("tr").attr("moduleName")) ? "" : $(this).closest("tr").attr("moduleName");
+				var moduleParam = self.isBlank(actionBody.moduleName) ? "" : '&moduleName='+actionBody.moduleName;
+				
+				var pdfDownloadUrl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName="+actionBody.appDir+"&reportFileName="+actionBody.fileName+"&fromPage="+actionBody.fromPage + moduleParam;
 				if(commonVariables.animation)
 				window.open(pdfDownloadUrl, '_self');
 			});
