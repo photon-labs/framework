@@ -19,6 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
@@ -32,6 +33,7 @@ import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
+
 
 @Path(ServiceConstants.REST_API_MANUAL)
 public class ManualTestService extends RestBase implements ServiceConstants, FrameworkConstants, ResponseCodes {
@@ -67,6 +69,10 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
         	String uploadedFileName = request.getHeader(FrameworkConstants.X_FILE_NAME);
         	String fileName = URLDecoder.decode(uploadedFileName, "UTF-8");
         	InputStream inputStream = request.getInputStream();
+        	String moduleName = request.getHeader("moduleName");
+        	if (StringUtils.isNotEmpty(moduleName)) {
+				appDirName = appDirName + File.separator + moduleName;
+			} 
         	PomProcessor pomProcessor = FrameworkUtil.getInstance().getPomProcessor(appDirName);
         	String manualTestReportPath = pomProcessor.getProperty("phresco.manualTest.report.dir");
         	StringBuilder builder = new StringBuilder(Utility.getProjectHome());
@@ -88,12 +94,15 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 	@GET
 	@Path(REST_API_TESTSUITES)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getTestSuites(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) throws PhrescoException {
+	public Response getTestSuites(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
 		ResponseInfo<List<TestSuite>> responseData = new ResponseInfo<List<TestSuite>>();
 		List<TestSuite> readManualTestSuiteFile = new ArrayList<TestSuite>();
 		ManualTestResult createManualTestResult = null;
 		ResponseInfo<List<TestSuite>> finalOutput = null;
 		try {
+			if (StringUtils.isNotEmpty(moduleName)) {
+				appDirName = appDirName + File.separator + moduleName;
+			}
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 			String manualTestDir = getManualTestReportDir(appDirName);
 			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(manualTestDir);
@@ -116,11 +125,14 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 	@Path(REST_API_TESTCASES)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTestCase(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, 
-			@QueryParam("testSuiteName") String testsuitename) throws PhrescoException {
+			@QueryParam("testSuiteName") String testsuitename, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
 		ResponseInfo<List<com.photon.phresco.commons.model.TestCase>> responseData = new 
 			ResponseInfo<List<com.photon.phresco.commons.model.TestCase>>();
 		List<com.photon.phresco.commons.model.TestCase> readTestCase = null;
 		try {
+			if (StringUtils.isNotEmpty(moduleName)) {
+				appDirName = appDirName + File.separator + moduleName;
+			}
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 			String manualTestDir = getManualTestReportDir(appDirName);
 			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(manualTestDir);
@@ -139,9 +151,12 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 	@Path(REST_API_TESTSUITES)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createTestSuite(@QueryParam("testSuiteName") String testSuiteName, 
-			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) throws PhrescoException {
+			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
 		ResponseInfo responseData = new ResponseInfo();
 		try {
+			if (StringUtils.isNotEmpty(moduleName)) {
+				appDirName = appDirName + File.separator + moduleName;
+			}
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 			String path = getManualTestReportDir(appDirName);
 			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(path);
@@ -160,9 +175,12 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes (MediaType.APPLICATION_JSON)
 	public Response createTestCase(com.photon.phresco.commons.model.TestCase testCase, @QueryParam("testSuiteName") String testSuiteName,
-			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) throws PhrescoException {
+			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
 		ResponseInfo responseData = new ResponseInfo();
 		try {
+			if (StringUtils.isNotEmpty(moduleName)) {
+				appDirName = appDirName + File.separator + moduleName;
+			}
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 			String path = getManualTestReportDir(appDirName);
 			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(path);
@@ -182,9 +200,12 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes (MediaType.APPLICATION_JSON)
 	public Response updateTestCase(com.photon.phresco.commons.model.TestCase testCase, @QueryParam("testSuiteName") String testSuiteName,
-			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) throws PhrescoException {
+			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
 		ResponseInfo responseData = new ResponseInfo();
 		try {
+			if (StringUtils.isNotEmpty(moduleName)) {
+				appDirName = appDirName + File.separator + moduleName;
+			}
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 			String path = getManualTestReportDir(appDirName);
 			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(path);

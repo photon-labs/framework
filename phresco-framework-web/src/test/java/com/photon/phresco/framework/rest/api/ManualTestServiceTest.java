@@ -62,7 +62,7 @@ public class ManualTestServiceTest extends RestBaseTest {
 	@Test
 	public void testGetTestSuites() throws PhrescoException {
 		ManualTestService service = new ManualTestService();
-		Response testSuites = service.getTestSuites(appDirName);
+		Response testSuites = service.getTestSuites(appDirName, "");
 		ResponseInfo<List<TestSuite>> response = (ResponseInfo<List<TestSuite>>) testSuites.getEntity();
 		
 		Assert.assertEquals(200, testSuites.getStatus());
@@ -72,7 +72,7 @@ public class ManualTestServiceTest extends RestBaseTest {
 	@Test
 	public void testGetTestCase() throws PhrescoException {
 		ManualTestService service = new ManualTestService();
-		Response testCase = service.getTestCase(appDirName, "Login");
+		Response testCase = service.getTestCase(appDirName, "Login", "");
 		ResponseInfo<List<com.photon.phresco.commons.model.TestCase>> response = (ResponseInfo<List<TestCase>>) testCase.getEntity();
 		List<TestCase> data = response.getData();
 		
@@ -84,7 +84,7 @@ public class ManualTestServiceTest extends RestBaseTest {
 	@Test
 	public void testCreateTestSuite() throws PhrescoException {
 		ManualTestService service = new ManualTestService();
-		Response response = service.createTestSuite(testSuiteName, appDirName);
+		Response response = service.createTestSuite(testSuiteName, appDirName, "");
 		ResponseInfo responseInfo = (ResponseInfo) response.getEntity();
 		Assert.assertEquals(200, response.getStatus());
 		Assert.assertEquals("PHRQ400004", responseInfo.getResponseCode());
@@ -93,7 +93,7 @@ public class ManualTestServiceTest extends RestBaseTest {
 	@Test
 	public void testCreateTestCase() throws PhrescoException {
 		ManualTestService service = new ManualTestService();
-		Response response = service.createTestCase(createTestCase() , testSuiteName, appDirName);
+		Response response = service.createTestCase(createTestCase() , testSuiteName, appDirName, "");
 		ResponseInfo responseInfo = (ResponseInfo) response.getEntity();
 		Assert.assertEquals(200, response.getStatus());
 		Assert.assertEquals("PHRQ400005", responseInfo.getResponseCode());
@@ -106,7 +106,7 @@ public class ManualTestServiceTest extends RestBaseTest {
 		testCase.setDescription("Manual Testing Description Updated");
 		testCase.setExpectedResult("Manual Test Expected Result Updated");
 		testCase.setFeatureId("Manual Test Feature ID Updated");
-		Response response = service.updateTestCase(testCase, testSuiteName, appDirName);
+		Response response = service.updateTestCase(testCase, testSuiteName, appDirName, "");
 		ResponseInfo responseInfo = (ResponseInfo) response.getEntity();
 		
 		Assert.assertEquals(200, response.getStatus());
