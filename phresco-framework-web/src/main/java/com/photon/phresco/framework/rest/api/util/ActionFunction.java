@@ -72,7 +72,6 @@ import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Para
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.MavenCommands.MavenCommand;
 import com.photon.phresco.plugins.util.MojoProcessor;
-import com.photon.phresco.plugins.util.MojoUtil;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.HubConfiguration;
@@ -140,7 +139,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		try {
 			this.request = request;
 			
-			String buildNumber = request.getParameter("buildNumber");
 
 			String customerId = request.getParameter(CUSTOMER_ID);
 			if (StringUtils.isNotEmpty(customerId) && !"null".equalsIgnoreCase(request.getParameter(CUSTOMER_ID))) {
@@ -880,10 +878,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			} else {
 				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_RUNGAINST_SRC_START)));
 				persistValuesToXml(mojo, PHASE_RUNGAINST_SRC_START);
-				com.photon.phresco.plugins.model.Mojos.Mojo.Configuration config = mojo.getConfiguration(PHASE_RUNGAINST_SRC_START);
-				Map<String, String> configs = MojoUtil.getAllValues(config);
-				String environmentName = configs.get(ENVIRONMENT_NAME);
-				reader = startServer(environmentName, directory);
+				reader = startServer(false, directory);
 			}
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of Build.runAgainstSource()" + FrameworkUtil.getStackTraceAsString(e));
@@ -951,7 +946,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			if (line != null && line.startsWith("[INFO] BUILD FAILURE")) {
 				reader = new BufferedInputStream(new FileInputStream(getLogFilePath(directory)));
 			} else {
-				reader = startServer(null, directory);
+				reader = startServer(true, directory);
 			}
 		} catch (PhrescoException e) {
 
@@ -1973,25 +1968,23 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	}
 
 
-	private BufferedInputStream startServer(String environmentName, String directory) throws PhrescoException {
+	private BufferedInputStream startServer(boolean isRunAgainst, String directory) throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.startServer()");
 		}
-		String serverHost = "";
-		String serverProtocol = "";
-		int serverPort = 0;
 		BufferedInputStream reader = null;
+		Parameter parameter = null;
+		MojoProcessor mojo = null;
 		try {
-			if(StringUtils.isEmpty(environmentName)) {
-				environmentName = readRunAgainstInfo(directory);
-			}
-			List<com.photon.phresco.configuration.Configuration> configurations = getConfiguration(directory, environmentName, Constants.SETTINGS_TEMPLATE_SERVER);
-			if (CollectionUtils.isNotEmpty(configurations)) {
-				for (com.photon.phresco.configuration.Configuration serverConfiguration : configurations) {
-					serverHost = serverConfiguration.getProperties().getProperty(Constants.SERVER_HOST);
-					serverProtocol = serverConfiguration.getProperties().getProperty(Constants.SERVER_PROTOCOL);
-					serverPort = Integer.parseInt(serverConfiguration.getProperties()
-							.getProperty(Constants.SERVER_PORT));
+			// TODO: delete the server.log and create empty server.log file
+			deleteLogFile(directory);
+			if (isRunAgainst) {
+				mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_RUNGAINST_SRC_START)));
+				parameter = mojo.getParameter(PHASE_RUNGAINST_SRC_START, "executeSql");
+				String execValue = parameter.getValue();
+				if (execValue.equals("true")) {
+					parameter.setValue("false");
+					mojo.save();
 				}
 			}
 			// TODO: delete the server.log and create empty server.log file
@@ -2003,7 +1996,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			buildArgCmds.add(HYPHEN_N);
 			appendMultiModuleCommand(getModule(), buildArgCmds);
 			reader = applicationManager.performAction(projectInfo, ActionType.RUNAGAINSTSOURCE, buildArgCmds, workingDirectory);
-			boolean connectionStatus = Utility.isConnectionAlive(serverProtocol, serverHost, serverPort);
 
 		} catch (PhrescoException e) {
 			if (isDebugEnabled) {
