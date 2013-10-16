@@ -4,7 +4,7 @@
      <parent>
         <groupId>com.photon.phresco.framework</groupId>
         <artifactId>phresco-framework-root</artifactId>
-        <version>3.1.0.2002-SNAPSHOT</version>
+        <version>3.1.0.2003-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
    
@@ -162,6 +162,11 @@
 			<groupId>com.perforce</groupId>
 			<artifactId>p4java</artifactId>
 			<version>2012.3.551082</version>
+		</dependency>
+		<dependency>
+			<groupId>com.splunk</groupId>
+			<artifactId>splunk</artifactId>
+			<version>1.2</version>
 		</dependency>
     </dependencies>
     

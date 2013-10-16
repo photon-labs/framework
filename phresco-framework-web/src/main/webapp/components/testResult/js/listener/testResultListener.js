@@ -291,7 +291,8 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			var header, userId;
 			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			var userId = userInfo.id;
-			var appDirName = '', moduleName = '';
+			var projectInfo = commonVariables.api.localVal.getProjectInfo();
+			var appDirName = "";
 			var techReport = $('#reportOptionsDrop').attr("value");
 			// var moduleName = $('#modulesDrop').attr("value");
 			header = {
@@ -305,8 +306,7 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			
 			if (!self.isBlank(moduleParam)) {
 				appDirName = $('.rootModule').val()
-			} else if(commonVariables.api.localVal.getProjectInfo() !== null) {
-				var projectInfo = commonVariables.api.localVal.getProjectInfo();
+			} else if(projectInfo !== null && projectInfo !== undefined) {
 				appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
 			}
 			
@@ -324,6 +324,9 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				testType = "component";
 			} else if ("manualTest" === currentTab) {
 				testType = "manual";
+			} else if ("integrationTest" === currentTab) {
+			    appDirName = $("#editprojecttitle").attr('projectname');
+ 				testType = "integration";
 			}
 			if (action === "getTestSuite") {
 				header.requestMethod = "GET";

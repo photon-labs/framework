@@ -6,6 +6,7 @@ import com.photon.phresco.commons.model.DashboardConfigInfo;
 import com.photon.phresco.commons.model.DashboardWidgetConfigInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.util.DashboardSearchInfo;
 import com.photon.phresco.util.ServiceConstants;
 import java.util.List;
 import javax.ws.rs.Consumes;
@@ -15,6 +16,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path(ServiceConstants.REST_API_DASHBOARD)
@@ -191,6 +196,49 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 				
 					return Response.status(Status.OK).entity(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 						.build();
+			}
+		}
+		
+		@POST
+		@Path(REST_API_WIDGET_SEARCH)
+		@Produces(MediaType.APPLICATION_JSON)
+		@Consumes(MediaType.APPLICATION_JSON)
+			public String searchData(DashboardSearchInfo dashboardSearchInfo) throws JSONException {
+				try {
+					JSONObject reponsedata = PhrescoFrameworkFactory.getProjectManager().getsplunkdata(dashboardSearchInfo);
+					System.out.println("Reponse data obatined is "+reponsedata);
+					
+					if (reponsedata != null) {
+
+						status = RESPONSE_STATUS_SUCCESS;
+						successCode = PHRD010006;
+						JSONObject finalOutput = new JSONObject();
+						finalOutput.put("data",reponsedata);
+						finalOutput.put("exception","null");
+						finalOutput.put("responseCode",successCode);
+						finalOutput.put("status",status);
+						return finalOutput.toString();
+					}
+					else {
+						status = RESPONSE_STATUS_FAILURE;
+						errorCode = PHRD000006;
+						JSONObject finalOutput = new JSONObject();
+						finalOutput.put("data",reponsedata);
+						finalOutput.put("exception","null");
+						finalOutput.put("responseCode",errorCode);
+						finalOutput.put("status",status);
+						return finalOutput.toString();	
+					}
+				}catch (Exception e) {
+				
+					status = RESPONSE_STATUS_ERROR;
+					errorCode = PHRD000007;
+					JSONObject finalOutput = new JSONObject();
+					finalOutput.put("data","null");
+					finalOutput.put("exception",e);
+					finalOutput.put("responseCode",errorCode);
+					finalOutput.put("status",status);
+					return finalOutput.toString();		
 			}
 		}
 }

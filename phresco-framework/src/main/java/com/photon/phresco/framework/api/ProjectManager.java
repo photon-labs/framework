@@ -19,6 +19,8 @@ package com.photon.phresco.framework.api;
 
 import java.util.List;
 
+import org.json.JSONObject;
+
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.DashboardConfigInfo;
@@ -26,6 +28,7 @@ import com.photon.phresco.commons.model.DashboardWidgetConfigInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.service.client.api.ServiceManager;
+import com.photon.phresco.util.DashboardSearchInfo;
 
 public interface ProjectManager {
 
@@ -136,5 +139,14 @@ public interface ProjectManager {
 	 * @throws PhrescoException
 	 */
 	List<DashboardWidgetConfigInfo> listAllDashboardWidgetInfo(String projectId) throws PhrescoException;
-
+	
+	/**
+	 * This method returns the Search result of the given Dashboard query for a project
+	 * @param projectId
+	 * @param customerId
+	 * @param appId
+	 * @return
+	 * @throws PhrescoException
+	 */
+	JSONObject getsplunkdata(DashboardSearchInfo dashboardsearchinfo) throws PhrescoException;
 }

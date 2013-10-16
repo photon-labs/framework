@@ -27,6 +27,7 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,6 +45,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.ui.internal.handlers.WidgetMethodHandler;
+import org.json.JSONObject;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -76,12 +78,17 @@ import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.ArchiveUtil;
 import com.photon.phresco.util.ArchiveUtil.ArchiveType;
 import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.DashboardSearchInfo;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.ProjectUtils;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
+import com.splunk.Args;
+import com.splunk.JobResultsArgs;
+import com.splunk.Service;
+import com.splunk.ServiceArgs;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 
@@ -939,4 +946,43 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				}
 			return null;
 	}
+
+	@Override
+	public JSONObject getsplunkdata(DashboardSearchInfo dashboardsearchinfo)
+			throws PhrescoException {
+		try {
+			System.out.println("Get splunk data");
+			ServiceArgs loginArgs = new ServiceArgs();
+			loginArgs.setUsername(dashboardsearchinfo.getUsername());
+			loginArgs.setPassword(dashboardsearchinfo.getPassword());
+			loginArgs.setHost(dashboardsearchinfo.getHost());
+			loginArgs.setPort(dashboardsearchinfo.getPort());
+			Service service = Service.connect(loginArgs);
+			// Set the parameters for the search:
+			Args oneshotSearchArgs = new Args();
+			oneshotSearchArgs.put(DASHBOARD_RESULT_OUTPUT_MODE, JobResultsArgs.OutputMode.JSON);
+			String oneshotSearchQuery = dashboardsearchinfo.getQuery();
+			System.out.println("Query changed to "+oneshotSearchQuery);
+
+			// The search results are returned directly
+			InputStream results_oneshot =  service.oneshotSearch(oneshotSearchQuery,oneshotSearchArgs);
+			String line = null;
+			String JSONResponse="";
+		    BufferedReader reader = new BufferedReader(new InputStreamReader(results_oneshot, "UTF-8"));
+		    while ((line = reader.readLine()) != null) {
+		    	JSONResponse = JSONResponse +line;
+		        System.out.println(line);
+		    }
+		    reader.close();
+		    results_oneshot.close();
+		    JSONObject search_result = new JSONObject(JSONResponse);
+		    
+		    return search_result;
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new PhrescoException("Exception occured while trying to retrieve the search result");
+		}
+	}
+	
 }
