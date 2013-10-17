@@ -445,7 +445,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 		info.setPilot(false);
 		info.setUsed(false);
 		info.setDisplayName("TestProject");
-		info.setSelectedJSLibs(getCollections("99aa3901-a088-4142-8158-000f1e80f1bf"));
+		info.setSelectedJSLibs(getCollections("c4a8d772-305e-441a-993e-703e63795aac"));
 		info.setVersion("1.0");
 
 		// TechnologyInfo
