@@ -523,20 +523,24 @@ public interface ResponseCodes {
 	/*
 	 * Dashboard Service
 	 */
-	String PHRD010001 = "PHRD010001"; // Dashboard configured retrieved successfully
-	String PHRD010002 = "PHRD010002"; // Dashboard retrieved successfully
-	String PHRD010003 = "PHRD010003"; // Dashboard update  successfully
-	String PHRD010004 = "PHRD010004"; // Dashboard widget added successfully
-	String PHRD010005 = "PHRD010005"; // Dashboard widget retrieved successfully
-	String PHRD010006 = "PHRD010006"; // Dashboard widget updated successfully
-	String PHRD010007 = "PHRD010007"; // All dashboard widgets listed successfully
-	String PHRD000001 = "PHRD000001"; // Dashboard configuration failed
-	String PHRD000002 = "PHRD000002"; // Dashboard not found
-	String PHRD000003 = "PHRD000003"; // Dashboard updation failed
-	String PHRD000004 = "PHRD000004"; // Dashboard widget adding failed
-	String PHRD000005 = "PHRD000005"; // Dashboard widget retrieved not found
-	String PHRD000006 = "PHRD000006"; // Dashboard widget updation failed
-	String PHRD000007 = "PHRD000007"; // No widgets present
+	String PHRD000001 = "PHRD000001"; // Dashboard configured retrieved successfully
+	String PHRD000002 = "PHRD000002"; // Dashboard retrieved successfully
+	String PHRD000003 = "PHRD000003"; // Dashboard update  successfully
+	String PHRD000004 = "PHRD000004"; // Dashboard widget added successfully
+	String PHRD000005 = "PHRD000005"; // Dashboard widget retrieved successfully
+	String PHRD000006 = "PHRD000006"; // Dashboard widget updated successfully
+	String PHRD000007 = "PHRD000007"; // All dashboard widgets listed successfully
+	String PHRD000008 = "PHRD000008"; // All application dashboards listed successfully
+
+	String PHRD010001 = "PHRD010001"; // Dashboard configuration failed
+	String PHRD010002 = "PHRD010002"; // Dashboard not found
+	String PHRD010003 = "PHRD010003"; // Dashboard updation failed
+	String PHRD010004 = "PHRD010004"; // Dashboard widget adding failed
+	String PHRD010005 = "PHRD010005"; // Dashboard widget retrieved not found
+	String PHRD010006 = "PHRD010006"; // Dashboard widget updation failed
+	String PHRD010007 = "PHRD010007"; // No widgets present
+	String PHRD010008 = "PHRD010008"; // No dashboards present
+
 
 
 
