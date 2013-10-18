@@ -679,7 +679,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	throws PhrescoException {
 		String dbName = "";
 		try {
-			File pomPath = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + Utility.getPomFileName(appInfo));
+			File pomPath = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + Utility.getPhrescoPomFile(appInfo));
 			PomProcessor pompro = new PomProcessor(pomPath);
 			String sqlFolderPath = pompro.getProperty(POM_PROP_KEY_SQL_FILE_DIR);
 			File mysqlFolder = new File(path, sqlFolderPath + Constants.DB_MYSQL);

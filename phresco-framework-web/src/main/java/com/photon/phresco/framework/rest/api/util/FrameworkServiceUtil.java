@@ -153,6 +153,21 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo(appDirName);
 			StringBuilder builder  = new StringBuilder();
+			String pomFileName = Utility.getPhrescoPomFile(applicationInfo);
+			builder.append(Utility.getProjectHome())
+			.append(appDirName)
+			.append(File.separatorChar)
+			.append(pomFileName);
+			return new PomProcessor(new File(builder.toString()));
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	public static PomProcessor getSourcePomProcessor(String appDirName) throws PhrescoException {
+		try {
+			ApplicationInfo applicationInfo = getApplicationInfo(appDirName);
+			StringBuilder builder  = new StringBuilder();
 			String pomFileName = Utility.getPomFileName(applicationInfo);
 			builder.append(Utility.getProjectHome())
 			.append(appDirName)
@@ -191,7 +206,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	 */
 	public static List<String> getProjectModules(String appDirName) throws PhrescoException {
     	try {
-            PomProcessor processor = getPomProcessor(appDirName);
+            PomProcessor processor = getSourcePomProcessor(appDirName);
     		Modules pomModule = processor.getPomModule();
     		if (pomModule != null) {
     			return pomModule.getModule();
@@ -215,7 +230,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 			List<String> warModules = new ArrayList<String>(5);
 			if (CollectionUtils.isNotEmpty(projectModules)) {
 				for (String projectModule : projectModules) {
-					PomProcessor processor = getPomProcessor(appDirName);
+					PomProcessor processor = getSourcePomProcessor(appDirName);
 					String packaging = processor.getModel().getPackaging();
 					if (StringUtils.isNotEmpty(packaging) && WAR.equalsIgnoreCase(packaging)) {
 						warModules.add(projectModule);

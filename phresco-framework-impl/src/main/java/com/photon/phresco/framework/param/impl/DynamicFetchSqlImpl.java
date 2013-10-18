@@ -133,7 +133,7 @@ public class DynamicFetchSqlImpl implements DynamicParameter, Constants {
 			pom.append(rootModule).append(File.separator);
 		}
 		pom.append(applicationInfo.getAppDirName()).append(File.separator)
-		.append(Utility.getPomFileName(applicationInfo));
+		.append(Utility.getPhrescoPomFile(applicationInfo));
 		PomProcessor processor = new PomProcessor(new File(pom.toString()));
 		String sqlFilePath = processor.getProperty(POM_PROP_KEY_SQL_FILE_DIR);
 
