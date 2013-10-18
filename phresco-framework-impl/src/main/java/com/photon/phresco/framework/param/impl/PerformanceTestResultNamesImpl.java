@@ -107,7 +107,7 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 			 builder.append(rootModule).append(File.separator);
 		 }
         builder.append(appInfo.getAppDirName());
-        String pomName = Utility.getPomFileNameFromWorkingDirectory(appInfo, new File(builder.toString()));
+        String pomName = Utility.getPhrescoPomFromWorkingDirectory(appInfo, new File(builder.toString()));
         builder.append(File.separatorChar)
         .append(pomName);
         return new File(builder.toString());

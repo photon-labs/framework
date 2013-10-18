@@ -100,17 +100,17 @@ public class FeatureServiceTest extends RestBaseTest {
 		selectedFeature.setArtifactGroupId("0e3cbd2a-4fe3-415f-8bc3-419c56aa6ca3");
 		selectedFeature.setPackaging("jar");
 		selectedFeatures.add(selectedFeature);
-		Response updateApplicationFeatures = projectService.updateApplicationFeatures(selectedFeatures, appDirName, userId, customerId, "admin");
+		Response updateApplicationFeatures = projectService.updateApplicationFeatures(selectedFeatures, appDirName, userId, customerId, "admin","","");
 		Assert.assertEquals(200, updateApplicationFeatures.getStatus());
-		Response updateApplicationFeatures2 = projectService.updateApplicationFeatures(selectedFeatures, appDirName, "sample", customerId, "admin");
+		Response updateApplicationFeatures2 = projectService.updateApplicationFeatures(selectedFeatures, appDirName, "sample", customerId, "admin","","");
 		Assert.assertEquals(200, updateApplicationFeatures2.getStatus());
 	}
 	
 	@Test
 	public void fetchSelectedFeatures() throws PhrescoException {
-		Response selectedFeaturesLoginFail = featureService.selectedFeatures("sample", appDirName);
+		Response selectedFeaturesLoginFail = featureService.selectedFeatures("sample", appDirName,"");
 		Assert.assertEquals(200, selectedFeaturesLoginFail.getStatus());
-		Response selectedFeatures = featureService.selectedFeatures(userId, appDirName);
+		Response selectedFeatures = featureService.selectedFeatures(userId, appDirName,"");
 		Assert.assertEquals(200, selectedFeatures.getStatus());
 	}
 	
@@ -127,7 +127,7 @@ public class FeatureServiceTest extends RestBaseTest {
 				request.setParameter("key", keys);
 				request.setParameter("value", values);
 				HttpServletRequest httpServletRequest = (HttpServletRequest)request;
-				Response response = featureService.configureFeature(httpServletRequest, "admin", "photon", "testFeature", "TestJquery");
+				Response response = featureService.configureFeature(httpServletRequest, "admin", "photon", "testFeature", "TestJquery","");
 				Assert.assertEquals(200, response.getStatus());
 			}
 		}
@@ -140,7 +140,7 @@ public class FeatureServiceTest extends RestBaseTest {
 		String[] values = {"one","three"};
 		request.setParameter("key", keys);
 		request.setParameter("value", values);
-		Response response = featureService.showFeatureConfigPopup("admin", "photon", "testFeature", "TestJquery");
+		Response response = featureService.showFeatureConfigPopup("admin", "photon", "testFeature", "TestJquery","");
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
@@ -152,14 +152,14 @@ public class FeatureServiceTest extends RestBaseTest {
 				request.setParameter("1", "re-one");
 				request.setParameter("3", "re-three");
 				HttpServletRequest httpServletRequest = (HttpServletRequest)request;
-				Response response = featureService.configureFeature(httpServletRequest, "admin", "photon", "testFeature", "TestJquery");
+				Response response = featureService.configureFeature(httpServletRequest, "admin", "photon", "testFeature", "TestJquery","");
 				Assert.assertEquals(200, response.getStatus());
 			}
 	}
 	
 	@Test
 	public void showFeatureConfigPopupWrongUser() throws PhrescoException, IOException {
-		Response response = featureService.showFeatureConfigPopup("jhsdfj", "photon", "testFeature", "TestJquery");
+		Response response = featureService.showFeatureConfigPopup("jhsdfj", "photon", "testFeature", "TestJquery","");
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
@@ -171,7 +171,7 @@ public class FeatureServiceTest extends RestBaseTest {
 				request.setParameter("1", "1re-one");
 				request.setParameter("3", "3re-three");
 				HttpServletRequest httpServletRequest = (HttpServletRequest)request;
-				Response response = featureService.configureFeature(httpServletRequest, "dsfghsdf", "photon", "testFeature", "TestJquery");
+				Response response = featureService.configureFeature(httpServletRequest, "dsfghsdf", "photon", "testFeature", "TestJquery","");
 				Assert.assertEquals(200, response.getStatus());
 			}
 	}
@@ -184,14 +184,14 @@ public class FeatureServiceTest extends RestBaseTest {
 				request.setParameter("1", "1re-one");
 				request.setParameter("3", "3re-three");
 				HttpServletRequest httpServletRequest = (HttpServletRequest)request;
-				Response response = featureService.configureFeature(httpServletRequest, "admin", "photon", "testFeature", "4565");
+				Response response = featureService.configureFeature(httpServletRequest, "admin", "photon", "testFeature", "4565","");
 				Assert.assertEquals(200, response.getStatus());
 			}
 	}
 	
 	@Test
 	public void showFeatureConfigPopupWrongDir() throws PhrescoException, IOException {
-			Response response = featureService.showFeatureConfigPopup("admin", "photon", "testFeature", "4565");
+			Response response = featureService.showFeatureConfigPopup("admin", "photon", "testFeature", "4565","");
 			Assert.assertEquals(200, response.getStatus());
 	}
 	
@@ -216,8 +216,8 @@ public class FeatureServiceTest extends RestBaseTest {
 				request.setParameter("key", keys);
 				request.setParameter("value", values);
 				HttpServletRequest httpServletRequest = (HttpServletRequest)request;
-				featureService.configureFeature(httpServletRequest, "admin", "photon", "testFeature", "TestJquery");
-				Response response = featureService.showFeatureConfigPopup("admin", "photon", "testFeature", "TestJquery");
+				featureService.configureFeature(httpServletRequest, "admin", "photon", "testFeature", "TestJquery","");
+				Response response = featureService.showFeatureConfigPopup("admin", "photon", "testFeature", "TestJquery","");
 				Assert.assertEquals(200, response.getStatus());
 			}
 		}

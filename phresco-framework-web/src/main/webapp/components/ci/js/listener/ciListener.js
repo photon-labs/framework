@@ -1063,7 +1063,9 @@ define([], function() {
 					}
 					if (templateJsonData.enableRepo && templateJsonData.repoTypes === "svn" || templateJsonData.enableRepo && templateJsonData.repoTypes === "git") {
 						$("input[name=repoType]").val(templateJsonData.repoTypes);
-					} 
+					} else {
+						$(repoTypeElemUrl).html('<input name="repoType" type="hidden" value="clonedWorkspace">');
+					}
 					
 					if(templateJsonData.enableUploadSettings) {
 						var upload = templateJsonData.uploadTypes;

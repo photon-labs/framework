@@ -75,10 +75,11 @@ public interface ProjectManager {
 	/**
 	 * @param projectInfo
 	 * @param serviceManager
+ 	 * @param rootModule
 	 * @return
 	 * @throws PhrescoException
 	 */
-	ProjectInfo updateApplicationFeatures(ProjectInfo projectInfo, ServiceManager serviceManager) throws PhrescoException;
+	ProjectInfo updateApplicationFeatures(ProjectInfo projectInfo, ServiceManager serviceManager, String rootModule) throws PhrescoException;
 	/**
 	 * This method deletes the project in local filesystem and not is server
 	 * @param ProjectInfo

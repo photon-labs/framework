@@ -1114,7 +1114,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 				builder.append(File.separatorChar);
 				ApplicationInfo applicationInfo = getApplicationInfo(appDirName);
 				String workingDirectoryPath = Utility.getWorkingDirectoryPath(appDirName);
-				String pomFileName = Utility.getPomFileNameFromWorkingDirectory(applicationInfo, new File(workingDirectoryPath));
+				String pomFileName = Utility.getPhrescoPomFromWorkingDirectory(applicationInfo, new File(workingDirectoryPath));
 				builder.append(pomFileName);
 				
 				File pomPath = new File(builder.toString());
@@ -1179,7 +1179,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 				
 				ApplicationInfo applicationInfo = getApplicationInfo(appDirName);
 				String workingDirectoryPath = Utility.getWorkingDirectoryPath(appDirName);
-				String pomFileName = Utility.getPomFileNameFromWorkingDirectory(applicationInfo, new File(workingDirectoryPath));
+				String pomFileName = Utility.getPhrescoPomFromWorkingDirectory(applicationInfo, new File(workingDirectoryPath));
 				
 				builder.append(pomFileName);
 				File pomPath = new File(builder.toString());

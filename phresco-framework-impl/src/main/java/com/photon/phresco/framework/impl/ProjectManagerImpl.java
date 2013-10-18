@@ -291,9 +291,17 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	}
 	
 	private boolean isCallEclipsePlugin(ApplicationInfo appInfo) throws PhrescoException {
-		String pomFile = Utility.getProjectHome() + File.separator + appInfo.getAppDirName() + File.separator + Utility.getPomFileName(appInfo);
+//		String pomFile = Utility.getProjectHome() + File.separator + appInfo.getAppDirName() + File.separator + Utility.getPomFileName(appInfo);
+		StringBuilder pomFile = new StringBuilder(Utility.getProjectHome());
+		if(StringUtils.isNotEmpty(appInfo.getRootModule())) {
+			pomFile.append(appInfo.getRootModule());
+			pomFile.append( File.separator);
+		}
+		pomFile.append(appInfo.getAppDirName())
+		.append(File.separator)
+		.append(Utility.getPomFileName(appInfo));
 		try {
-			PomProcessor processor = new PomProcessor(new File(pomFile));
+			PomProcessor processor = new PomProcessor(new File(pomFile.toString()));
 			String eclipsePlugin = processor.getProperty(POM_PROP_KEY_PHRESCO_ECLIPSE);
 			if(StringUtils.isNotEmpty(eclipsePlugin) && TRUE.equals(eclipsePlugin)) {
 				return true;
@@ -304,16 +312,19 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		return false;
 	}
 
-	public ProjectInfo updateApplicationFeatures(ProjectInfo projectInfo, ServiceManager serviceManager) throws PhrescoException {
+	public ProjectInfo updateApplicationFeatures(ProjectInfo projectInfo, ServiceManager serviceManager, String rootModule) throws PhrescoException {
 			ClientResponse response = serviceManager.updateProject(projectInfo);
 			if (response.getStatus() == 200) {
 				File backUpProjectInfoFile = null;
 				try {
 					//application path with new app dir
 					StringBuilder newAppDirSb = new StringBuilder(Utility.getProjectHome());
+					if(StringUtils.isNotEmpty(rootModule)) {
+						newAppDirSb.append(rootModule)
+						.append(File.separator);
+					}
 					newAppDirSb.append(projectInfo.getAppInfos().get(0).getAppDirName());
 					File projectInfoFile = new File(newAppDirSb.toString());
-					
 					StringBuilder dotPhrescoPathSb = new StringBuilder(projectInfoFile.getPath());
 					dotPhrescoPathSb.append(File.separator);
 					dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
@@ -327,6 +338,11 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					String pluginInfoFile = dotPhrescoPathSb.toString() + APPLICATION_HANDLER_INFO_FILE;
 					MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
 					ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
+					
+					//Need to remove later
+					if(StringUtils.isNotEmpty(rootModule)) {
+						appInfo.setRootModule(rootModule);
+					}
 					
 					if (applicationHandler != null) {
 						String selectedFeatures = applicationHandler.getSelectedFeatures();
@@ -349,16 +365,23 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						File projectInfoPath = new File(dotPhrescoPathSb.toString() + PROJECT_INFO_FILE);
 						ProjectUtils.updateProjectInfo(projectInfo, projectInfoPath);
 					}
+					
 					if (isCallEclipsePlugin(appInfo)) {
 						ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-						String baseDir = Utility.getProjectHome() + File.separator + appInfo.getAppDirName();
+						StringBuilder baseDir = new StringBuilder(Utility.getProjectHome());
+						if(StringUtils.isNotEmpty(rootModule)) {
+							baseDir.append(rootModule)
+							.append(File.separator);
+						}
+						baseDir.append(appInfo.getAppDirName());
+//						String baseDir = Utility.getProjectHome() + File.separator + appInfo.getAppDirName();
 						List<String> buildArgCmds = new ArrayList<String>();
-			            String pomFileName = Utility.getPomFileName(appInfo);
+			            String pomFileName = Utility.getPomFileNameFromRootModule(appInfo,rootModule);
 						if(!POM_NAME.equals(pomFileName)) {
 							buildArgCmds.add(HYPHEN_F);
 							buildArgCmds.add(pomFileName);
 						}
-						applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir);
+						applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir.toString());
                     }
 				} finally {
 					if(backUpProjectInfoFile!= null && backUpProjectInfoFile.exists()) {

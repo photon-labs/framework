@@ -326,7 +326,8 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateApplicationFeatures(List<SelectedFeature> selectedFeaturesFromUI,
 			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_USERID) String userId,
-			@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam("displayName") String displayName) {
+			@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam("displayName") String displayName,
+			@QueryParam(REST_QUERY_MODULE_NAME) String module, @QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule) {
 		File filePath = null;
 		BufferedReader bufferedReader = null;
 		Gson gson = new Gson();
@@ -348,6 +349,9 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			StringBuilder sbs = null;
 			
 			if (StringUtils.isNotEmpty(appDirName)) {
+				if (StringUtils.isNotEmpty(module)) {
+					appDirName = appDirName + File.separator + module;
+				}
 				sbs = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(File.separator).append(
 						Constants.DOT_PHRESCO_FOLDER).append(File.separator).append(PROJECT_INFO);
 			}
@@ -415,7 +419,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			applicationInfo.setCreated(true);
 			projectinfo.setAppInfos(Collections.singletonList(applicationInfo));
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-			projectManager.updateApplicationFeatures(projectinfo, serviceManager);
+			projectManager.updateApplicationFeatures(projectinfo, serviceManager, rootModule);
 		} catch (FileNotFoundException e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210007;

@@ -86,7 +86,7 @@ public class LoadTestDetailsImpl implements DynamicPageParameter, Constants {
         	builder.append(rootModule + File.separator);
         }
 		builder.append(appInfo.getAppDirName());
-		String pomFile = Utility.getPomFileNameFromWorkingDirectory(appInfo, new File(builder.toString()));
+		String pomFile = Utility.getPhrescoPomFromWorkingDirectory(appInfo, new File(builder.toString()));
 		builder.append(File.separatorChar)
 		.append(pomFile);
 		return new File(builder.toString());
