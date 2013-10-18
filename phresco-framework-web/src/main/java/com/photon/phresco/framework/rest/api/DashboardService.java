@@ -1,10 +1,12 @@
 package com.photon.phresco.framework.rest.api;
 
+import com.google.gson.Gson;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.Dashboard;
 import com.photon.phresco.commons.model.Dashboards;
 import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.User;
 import com.photon.phresco.commons.model.Widget;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -69,8 +71,11 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 				.build();	
 			}
 		}catch (Exception e) {
-			return Response.status(Status.OK).entity(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
-			.build();
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHRD010001;
+			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOuptut).header(
+					"Access-Control-Allow-Origin", "*").build();
 		}
 	}
 
@@ -99,9 +104,11 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 				.build();	
 			}
 		}catch (Exception e) {
-			return Response.status(Status.OK).entity(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
-			.build();
-		}
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHRD010002;
+			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOuptut).header(
+					"Access-Control-Allow-Origin", "*").build();}
 	}	
 
 	@POST
@@ -134,9 +141,11 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 				.build();	
 			}
 		}catch (Exception e) {
-			return Response.status(Status.OK).entity(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
-			.build();
-		}
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHRD010003;
+			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOuptut).header(
+					"Access-Control-Allow-Origin", "*").build();}
 	}	
 
 	@POST
@@ -164,8 +173,11 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 				.build();	
 			}
 		}catch (Exception e) {
-			return Response.status(Status.OK).entity(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
-			.build();
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHRD010008;
+			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOuptut).header(
+					"Access-Control-Allow-Origin", "*").build();
 		}
 	}
 
@@ -182,9 +194,7 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 			@QueryParam(REST_QUERY_WIDGET_END_TIME) String endtime) {
 		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
-			Date starttime1 = getDate(starttime);
-			Date endtime1 = getDate(endtime);
-			String widgetId = PhrescoFrameworkFactory.getProjectManager().addDashboardWidgetConfig(projectid, appdirname, dashboardid, name, query, autorefresh, starttime1, endtime1);
+			String widgetId = PhrescoFrameworkFactory.getProjectManager().addDashboardWidgetConfig(projectid, appdirname, dashboardid, name, query, autorefresh, starttime, endtime);
 			if (widgetId != null) {
 				status = RESPONSE_STATUS_SUCCESS;
 				errorCode = PHRD000004;
@@ -203,8 +213,11 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 				.build();	
 			}
 		}catch (Exception e) {
-			return Response.status(Status.OK).entity(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
-			.build();
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHRD010004;
+			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOuptut).header(
+					"Access-Control-Allow-Origin", "*").build();
 		}
 
 
@@ -237,13 +250,17 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 				.build();	
 			}
 		}catch (Exception e) {
-			return Response.status(Status.OK).entity(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
-			.build();
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHRD010005;
+			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOuptut).header(
+					"Access-Control-Allow-Origin", "*").build();
 		}
 	}	
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Path(REST_API_WIDGET_UPDATE)
 	public Response updateDashboardWidgetConfigureinfo(@QueryParam(REST_QUERY_PROJECTID) String projectid, 
 			@QueryParam(REST_QUERY_APPDIR_NAME) String appdirname, 
@@ -253,12 +270,10 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 			@QueryParam(REST_QUERY_WIDGET_QUERY) String query , 
 			@QueryParam(REST_QUERY_WIDGET_AUTOREFRESH) String autorefresh,
 			@QueryParam(REST_QUERY_WIDGET_START_TIME) String starttime,
-			@QueryParam(REST_QUERY_WIDGET_END_TIME) String endtime) {
+			@QueryParam(REST_QUERY_WIDGET_END_TIME) String endtime, HashMap<String, String> properties) {
 		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
-			Date starttime1 = getDate(starttime);
-			Date endtime1 = getDate(endtime);
-			if (PhrescoFrameworkFactory.getProjectManager().updateDashboardWidgetConfig(projectid, appdirname, dashboardid,widgetid, name, query, autorefresh, starttime1, endtime1)) {
+			if (PhrescoFrameworkFactory.getProjectManager().updateDashboardWidgetConfig(projectid, appdirname, dashboardid,widgetid, name, query, autorefresh, starttime, endtime, properties)) {
 				status = RESPONSE_STATUS_SUCCESS;
 				errorCode = PHRD000006;
 				ResponseInfo<HashMap<String, Widget>> finalOutput = responseDataEvaluation(responseData, null,
@@ -276,8 +291,11 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 				.build();	
 			}
 		}catch (Exception e) {
-			return Response.status(Status.OK).entity(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
-			.build();
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHRD010006;
+			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOuptut).header(
+					"Access-Control-Allow-Origin", "*").build();
 		}
 	}
 
@@ -306,8 +324,11 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 				.build();	
 			}
 		}catch (Exception e) {
-			return Response.status(Status.OK).entity(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
-			.build();
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHRD010007;
+			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOuptut).header(
+					"Access-Control-Allow-Origin", "*").build();
 		}
 
 	}
@@ -353,20 +374,5 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 			finalOutput.put("status",status);
 			return finalOutput.toString();		
 		}
-	}
-
-	public Date getDate(String dateStr) throws PhrescoException {
-		if(dateStr != null) {
-			DateFormat df = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a"); 
-			Date date;
-			try {
-				date = df.parse(dateStr);
-				return date;
-			} catch (ParseException e) {
-				throw new PhrescoException();
-			}
-		}
-		return null;
-
 	}
 }

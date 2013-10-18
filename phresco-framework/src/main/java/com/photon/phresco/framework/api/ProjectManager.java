@@ -161,7 +161,7 @@ public interface ProjectManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	String addDashboardWidgetConfig(String projectid, String appdirname, String dashboardid,  String name, String query , String autorefresh, Date starttime, Date endtime ) throws PhrescoException;
+	String addDashboardWidgetConfig(String projectid, String appdirname, String dashboardid,  String name, String query , String autorefresh, String starttime, String endtime ) throws PhrescoException;
 	
 	/**
 	 * This method returns Widget of the given widgetid
@@ -188,7 +188,7 @@ public interface ProjectManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	Boolean updateDashboardWidgetConfig(String projectid, String appdirname, String dashboardid, String widgetid, String name, String query, String autorefresh, Date starttime, Date endtime) throws PhrescoException;
+	Boolean updateDashboardWidgetConfig(String projectid, String appdirname, String dashboardid, String widgetid, String name, String query, String autorefresh, String starttime, String endtime, HashMap<String, String> properties) throws PhrescoException;
 
 	/**
 	 * This method returns list of all dashboards of the application
