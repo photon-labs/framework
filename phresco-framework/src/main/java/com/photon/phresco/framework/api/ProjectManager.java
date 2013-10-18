@@ -17,16 +17,14 @@
  */
 package com.photon.phresco.framework.api;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONObject;
 
-import com.photon.phresco.commons.model.ApplicationInfo;
-import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.Dashboard;
-import com.photon.phresco.commons.model.DashboardConfigInfo;
-import com.photon.phresco.commons.model.DashboardWidgetConfigInfo;
+import com.photon.phresco.commons.model.Dashboards;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.Widget;
 import com.photon.phresco.exception.PhrescoException;
@@ -74,7 +72,12 @@ public interface ProjectManager {
 	 */
 	ProjectInfo updateApplication(ProjectInfo projectInfo, ServiceManager serviceManager, String oldAppDirName) throws PhrescoException;
 	
-	
+	/**
+	 * @param projectInfo
+	 * @param serviceManager
+	 * @return
+	 * @throws PhrescoException
+	 */
 	ProjectInfo updateApplicationFeatures(ProjectInfo projectInfo, ServiceManager serviceManager) throws PhrescoException;
 	/**
 	 * This method deletes the project in local filesystem and not is server
@@ -95,83 +98,105 @@ public interface ProjectManager {
 	ProjectInfo getProject(String projectId, String customerId, String appId) throws PhrescoException;
 	
 	/**
-	 * This method returns dashboardconfig of the created dashboard
-	 * @param poject id
-	 * @param app id
-	 * @param app directory
-	 * @param dashboard
-	 * @return DashboardConfigInfo
+	 * This method returns dashboard id of new dashboard
+	 * @param projectid
+	 * @param appid
+	 * @param appcode
+	 * @param appname
+	 * @param appdirname
+	 * @param dashboardname
+	 * @param datatype
+	 * @param username
+	 * @param password
+	 * @param url
+	 * @return
 	 * @throws PhrescoException
 	 */
-	boolean configureDashboardConfig(String projectid, String datatype , String username, String password, String url) throws PhrescoException;
-	
+	String configureDashboardConfig(String projectid, String appid, String appcode, String appname, String appdirname, String dashboardname, String datatype, String username, String password, String url) throws PhrescoException;
 
 	/**
-	 * This method returns dashboardconfig of the created dashboard
-	 * @param poject id
-	 * @param app id
-	 * @param app directory
-	 * @param dashboard
-	 * @return DashboardConfigInfo
+	 * This method returns dashboard 
+	 * @param projectid
+	 * @param appdirname
+	 * @param dashboardid
+	 * @return
 	 * @throws PhrescoException
 	 */
-	HashMap<String, String> getDashboardConfig(String projectid) throws PhrescoException;
+	Dashboard getDashboardConfig(String projectid, String appdirname, String dashboardid) throws PhrescoException;
 	
 	/**
-	 * This method returns dashboardconfig of the created dashboard
-	 * @param poject id
-	 * @param app id
-	 * @param app directory
-	 * @param dashboard
-	 * @return DashboardConfigInfo
+	 * This method returns status of update operation
+	 * @param projectid
+	 * @param appdirname
+	 * @param dashboardid
+	 * @param dashboardname
+	 * @param datatype
+	 * @param username
+	 * @param password
+	 * @param url
+	 * @return
 	 * @throws PhrescoException
 	 */
-	boolean updateDashboardConfig(String projectid, String datatype , String username, String password, String url) throws PhrescoException;
+	boolean updateDashboardConfig(String projectid, String appdirname, String dashboardid, String dashboardname, String datatype, String username, String password, String url) throws PhrescoException;
 	
+	/**
+	 * Returns the all dashboards of all the applications under the given project
+	 * @param projectid
+	 * @return
+	 * @throws PhrescoException
+	 */
+	HashMap<String, Dashboards> listAllDashboardConfig(String projectid) throws PhrescoException;
 
 	/**
-	 * This method returns dashboardconfig of the created dashboard
-	 * @param poject id
-	 * @param app id
-	 * @param app directory
-	 * @param dashboard
-	 * @return DashboardConfigInfo
+	 * This method returns widget id of the new widget
+	 * @param projectid
+	 * @param appdirname
+	 * @param dashboardid
+	 * @param name
+	 * @param query
+	 * @param autorefresh
+	 * @param starttime
+	 * @param endtime
+	 * @return
 	 * @throws PhrescoException
 	 */
-	HashMap<String, Widget> addDashboardWidgetConfig(String projectid, String query , String name, String appid, String appcode, String appname) throws PhrescoException;
+	String addDashboardWidgetConfig(String projectid, String appdirname, String dashboardid,  String name, String query , String autorefresh, Date starttime, Date endtime ) throws PhrescoException;
 	
 	/**
-	 * This method returns dashboardconfig of the created dashboard
-	 * @param poject id
-	 * @param app id
-	 * @param app directory
-	 * @param dashboard
-	 * @return DashboardConfigInfo
+	 * This method returns Widget of the given widgetid
+	 * @param projectid
+	 * @param appdirname
+	 * @param dashboardid
+	 * @param widgetid
+	 * @return
 	 * @throws PhrescoException
 	 */
-	HashMap<String, Widget> getDashboardWidgetConfig(String projectid, String appid, String appcode, String appname) throws PhrescoException;
+	Widget getDashboardWidgetConfig(String projectid, String appdirname, String dashboardid, String widgetid) throws PhrescoException;
 	
 	/**
-	 * This method returns dashboardconfig of the created dashboard
-	 * @param poject id
-	 * @param app id
-	 * @param app directory
-	 * @param dashboard
-	 * @return DashboardConfigInfo
+	 * This method returns status of update operation
+	 * @param projectid
+	 * @param appdirname
+	 * @param dashboardid
+	 * @param widgetid
+	 * @param name
+	 * @param query
+	 * @param autorefresh
+	 * @param starttime
+	 * @param endtime
+	 * @return
 	 * @throws PhrescoException
 	 */
-	Boolean updateDashboardWidgetConfig(String projectid, String query , String name, String widgetid, String appid, String appcode, String appname) throws PhrescoException;
+	Boolean updateDashboardWidgetConfig(String projectid, String appdirname, String dashboardid, String widgetid, String name, String query, String autorefresh, Date starttime, Date endtime) throws PhrescoException;
 
 	/**
-	 * This method returns dashboardconfig of the created dashboard
-	 * @param poject id
-	 * @param app id
-	 * @param app directory
-	 * @param dashboard
-	 * @return DashboardConfigInfo
+	 * This method returns list of all dashboards of the application
+	 * @param projectid
+	 * @param appdirname
+	 * @return
 	 * @throws PhrescoException
 	 */
-	HashMap<String, Dashboard> listDashboardWidgetConfig(String projectid) throws PhrescoException;
+	Dashboards listDashboardWidgetConfig(String projectid, String appdirname) throws PhrescoException;
 	
 	/**
 	 * This method returns the Search result of the given Dashboard query for a project

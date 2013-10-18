@@ -40,7 +40,7 @@
 	            </div>  
             {{/showIcons}}
 
-            {{#showIcons resultAvailable testResultFiles}}
+            {{#showPdfIcon resultAvailable}}
 	           <div class="icon_images"><a class="tooltiptop loadPDF" from="load" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/Phresco/pdf_icon_white.png" ></a>
 	        		<!--Pdf report popup starts here -->
 					<div id="pdf_report" class="dyn_popup hideContent">
@@ -90,7 +90,7 @@
 	    		</div>
 			{{else}}  
 	        	<div class="icon_images hideContent"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/Phresco/pdf_icon_white.png" ></a></div>
-            {{/showIcons}}
+            {{/showPdfIcon}}
         	<div class="icon_images performanceScreenShotDiv" style="display: none;"><a class="tooltiptop performanceScreenShot" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Screen Shot"><img src="themes/default/images/Phresco/screenshot_white.png" ></a></div>
             
 			<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/Phresco/openfolder_icon.png" ></a></div>

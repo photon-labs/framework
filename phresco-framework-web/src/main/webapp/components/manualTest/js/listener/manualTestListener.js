@@ -35,26 +35,32 @@ define(["lib/fileuploader-2.4"], function() {
 		getActionHeader : function(requestBody, action) {
 			var self = this, header, data = {}, userId;
 			data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
-			userId = data.id;
-			var projectInfo = commonVariables.api.localVal.getProjectInfo();
-			appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+			userId = data.id, appDirName = '';
 			header = {
 				contentType: "application/json",				
 				dataType: "json",
 				webserviceurl: ''
+			};
+
+			var moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
+			if (!self.isBlank(moduleParam)) {
+				appDirName = $('.rootModule').val()
+			} else if(commonVariables.api.localVal.getProjectInfo() !== null) {
+				var projectInfo = commonVariables.api.localVal.getProjectInfo();
+				appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
 			}
 
 			if (action === "addTestSuite") {
 				header.requestMethod = "POST";
 				header.requestPostBody = JSON.stringify(requestBody);
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + '/testsuites?testSuiteName=' + requestBody.testSuiteName + '&appDirName=' + appDirName;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + '/testsuites?testSuiteName=' + requestBody.testSuiteName + '&appDirName=' + appDirName + moduleParam;
 			} else if (action === "addTestcase") {
 				header.requestMethod = "POST";
 				header.requestPostBody = JSON.stringify(requestBody);
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + '/testcases?testSuiteName=' + requestBody.testSuiteName + '&appDirName=' + appDirName;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + '/testcases?testSuiteName=' + requestBody.testSuiteName + '&appDirName=' + appDirName + moduleParam;
 			} else if (action === "downloadTemplate") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + "manual/manualTemplate?fileType="+requestBody.format;
+				header.webserviceurl = commonVariables.webserviceurl + "manual/manualTemplate?fileType="+requestBody.format  + moduleParam;
 			}
 			return header;
 		},
@@ -167,14 +173,22 @@ define(["lib/fileuploader-2.4"], function() {
 		
 		createUploader : function() {  
 			var self = this;
-			var projectInfo = commonVariables.api.localVal.getProjectInfo();
-			var appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+			var appDirName = '';
+			var moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
+            if (!self.isBlank(moduleParam)) {
+                appDirName = $('.rootModule').val()
+            } else if(commonVariables.api.localVal.getProjectInfo() !== null) {
+                var projectInfo = commonVariables.api.localVal.getProjectInfo();
+                appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+            }
+
 			var uploadFileUrl =commonVariables.webserviceurl + commonVariables.manual + '/uploadTemplate?appDirName=' + appDirName;
             var uploader = new qq.FileUploader({
                 element: document.getElementById('manual_temp_upload'),
                 action: uploadFileUrl,
 				actionType : "manualTest",
 				appDirName : appDirName,
+				moduleName : $('.moduleName').val(),
 				allowedExtensions : ['xls','xlsx','ods'],
 				buttonLabel: "Upload",
 				testListener : self.testResultListener,

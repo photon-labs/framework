@@ -128,7 +128,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 				}
 			});
 			
-			//To hide table view, graph view, pdf icons based on test results
+			//To hide table view, graph view based on test results
 			Handlebars.registerHelper('showIcons', function(resultAvailable, testResultFiles, options) {
 				if (resultAvailable && testResultFiles.length > 0) {
 					return options.fn(this);
@@ -137,6 +137,15 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 				}
 			});
 			
+			//To hide pdf icons based if no results available
+			Handlebars.registerHelper('showPdfIcon', function(resultAvailable, options) {
+				if (resultAvailable) {
+					return options.fn(this);
+				} else {
+					return options.inverse(this);
+				}
+			});
+
 			//To show/hide test against drop down
 			Handlebars.registerHelper('showTestAgainst', function(showDevice, resultAvailable, options) {
 				if (!showDevice && resultAvailable) {

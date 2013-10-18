@@ -583,61 +583,54 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 		return permissions;
     }
 
-	public List<TestSuite> readManualTestSuiteFile(String filePath) {
-		List<TestSuite> testSuites = readTestSuites(filePath);
-		return testSuites;
-	}
+	public  List<TestSuite> readManualTestSuiteFile(String filePath) throws PhrescoException  {
+		List<TestSuite> excels = new ArrayList<TestSuite>();
+		Iterator<Row> rowIterator = null;
+		try {
+			File testDir = new File(filePath);
+			StringBuilder sb = new StringBuilder(filePath);
+			if(testDir.isDirectory()) {
+				FilenameFilter filterXslx = new PhrescoFileFilter("", "xlsx");
+				FilenameFilter filterXls = new PhrescoFileFilter("", "xls");
+				FilenameFilter filterOds = new PhrescoFileFilter("", "ods");
+				File[] listXlsxFiles = testDir.listFiles(filterXslx);
+				File[] listXlsFiles = testDir.listFiles(filterXls);
+				File[] listOdsFiles = testDir.listFiles(filterOds);
+				if (listXlsxFiles.length != 0) {
+					for (File listXlsxFile : listXlsxFiles) {
+						if (listXlsxFile.isFile()) {
+							sb.append(File.separator);
+							sb.append(listXlsxFile.getName());
+							break;
+						}
+					}
+					readTestSuiteFromXLSX(excels, sb);
+				} else if (listXlsFiles.length != 0) {
+					for(File listXlsFile : listXlsFiles) {
+						if (listXlsFile.isFile()) {
+							sb.append(File.separator);
+							sb.append(listXlsFile.getName());
+							break;
+						}
+					}
+					readTestSuitesFromXLS(excels, sb);
+				} else if (listOdsFiles.length != 0) {
+					for(File listOdsFile : listOdsFiles) {
+						if (listOdsFile.isFile()) {
+							sb.append(File.separator);
+							sb.append(listOdsFile.getName());
+							break;
+						}
+					}
+					readTestSuiteFromODS(sb, excels);
+				}
+			}
 
-    public  List<TestSuite> readTestSuites(String filePath)  {
-            List<TestSuite> excels = new ArrayList<TestSuite>();
-            Iterator<Row> rowIterator = null;
-            try {
-            	File testDir = new File(filePath);
-          		StringBuilder sb = new StringBuilder(filePath);
-       	        if(testDir.isDirectory()) {
-	       	        	FilenameFilter filter = new PhrescoFileFilter("", "xlsx");
-	       	        	File[] listFiles = testDir.listFiles(filter);
-	       	        	if (listFiles.length != 0) {
-							for (File file1 : listFiles) {
-								 if (file1.isFile()) {
-									sb.append(File.separator);
-							    	sb.append(file1.getName());
-							    	break;
-							    }
-							}
-							readTestSuiteFromXLSX(excels, sb);
-	       	        	} else {
-	   	                	FilenameFilter filter1 = new PhrescoFileFilter("", "xls");
-	   	     	            File[] listFiles1 = testDir.listFiles(filter1);
-	   	     	            if (listFiles1.length != 0) {
-		   	     	            for(File file2 : listFiles1) {
-		   	     	            	if (file2.isFile()) {
-		   	     	            		sb.append(File.separator);
-		   	    	                	sb.append(file2.getName());
-		   	    	                	break;
-		   	     	            	}
-		   	     	            }
-		   	     	            readTestSuitesFromXLS(excels, sb);
-	   	     	            } else {
-		   	     	            FilenameFilter filterOds = new PhrescoFileFilter("", "ods");
-		   	     	            File[] odsListFiles = testDir.listFiles(filterOds);
-		   	     	            for(File file2 : odsListFiles) {
-		   	     	            	if (file2.isFile()) {
-		   	     	            		sb.append(File.separator);
-		   	    	                	sb.append(file2.getName());
-		   	    	                	break;
-		   	     	            	}
-		   	     	            }
-	   	     	            	readTestSuiteFromODS(sb, excels);
-	   	     	            }
-	   	                }
-       	        	}
-                    
-            } catch (Exception e) {
-                   e.printStackTrace();
-            }
-            return excels;
-    }
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		return excels;
+	}
     
     private void readTestSuiteFromODS(StringBuilder sb, List<TestSuite> testSuites) throws PhrescoException {
 		File file = new File(sb.toString());

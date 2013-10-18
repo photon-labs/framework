@@ -17,40 +17,6 @@
  */
 package com.photon.phresco.framework.impl;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.Map.Entry;
-
-import javax.ws.rs.QueryParam;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.eclipse.ui.internal.handlers.WidgetMethodHandler;
-import org.json.JSONObject;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -63,6 +29,7 @@ import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.Dashboard;
 import com.photon.phresco.commons.model.DashboardConfigInfo;
 import com.photon.phresco.commons.model.DashboardWidgetConfigInfo;
+import com.photon.phresco.commons.model.Dashboards;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectDelivery;
 import com.photon.phresco.commons.model.ProjectInfo;
@@ -89,6 +56,45 @@ import com.photon.phresco.util.ProjectUtils;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.Map.Entry;
+
+import java.lang.reflect.Type;
+import javax.ws.rs.QueryParam;
+import org.eclipse.ui.internal.handlers.WidgetMethodHandler;
+import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.splunk.Args;
 import com.splunk.JobResultsArgs;
 import com.splunk.Service;
@@ -547,7 +553,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		plugins.add(artifactGroup);
 		return plugins;
 	}
-
+	@Override
 	public boolean delete(List<String> appDirNames) throws PhrescoException {
 		boolean deletionSuccess = false;
 		String projectsPath = Utility.getProjectHome();
@@ -783,235 +789,250 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	
 	
 	@Override
-	public boolean configureDashboardConfig(String projectid, String datatype , String username, String password, String url) throws PhrescoException {
+	public String configureDashboardConfig(String projectid, String appid, String appcode, String appname, String appdirname, String dashboardname, String datatype, String username, String password, String url) throws PhrescoException {
 		Gson gson =new Gson();
-		List<ProjectInfo> projectInfos = discover();
-		int foundFlag = 0;
-		if (!projectInfos.isEmpty()) {
-			for (ProjectInfo projectInfo : projectInfos) {
-				if (projectInfo.getId().equals(projectid)) {
-					foundFlag=1;
-					File dashboardInfoFile = new File(getProjectPhresoFolder(projectInfo.getAppInfos().get(0).getAppDirName()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
-					Dashboard dashboard = new Dashboard();
+		Dashboards dashboards;
+		String json;
+		HashMap<String, Dashboard> dashboardMap;
+		Dashboard dashboard = new Dashboard();
+		try {
+			File dashboardInfoFile = new File(getProjectPhresoFolder(appdirname).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			if( dashboardInfoFile.exists()) {
+				json = FileUtils.readFileToString(dashboardInfoFile);
+				dashboards = gson.fromJson(json, Dashboards.class);
+				dashboardMap = dashboards.getDashboards();
+			} else {
+				dashboards =  new Dashboards();
+				dashboards.setProjectid(projectid);
+				dashboards.setAppid(appid);
+				dashboards.setAppcode(appcode);
+				dashboards.setAppname(appname);
+				dashboardMap = new HashMap<String, Dashboard>();
+			}
+			UUID uniqueId = UUID.randomUUID();
+			String dashboardId = uniqueId.toString();
+			dashboard.setDashboardname(dashboardname);
+			dashboard.setDatatype(datatype);
+			dashboard.setUsername(username);
+			dashboard.setPassword(password);
+			dashboard.setUrl(url);
+			dashboardMap.put(dashboardId, dashboard);
+			dashboards.setDashboards(dashboardMap);
+			json = gson.toJson(dashboards, Dashboards.class);
+			FileUtils.writeStringToFile(dashboardInfoFile, json);
+			return dashboardId;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+		return null;
+	}
+	
+	
+
+	@Override
+	public Dashboard getDashboardConfig(String projectid, String appdirname, String dashboardid) throws PhrescoException {
+		Gson gson =new Gson();
+		Dashboards dashboards;
+		String json;
+		HashMap<String, Dashboard> dashboardMap;
+		Dashboard dashboard = new Dashboard();
+		try {
+			File dashboardInfoFile = new File(getProjectPhresoFolder(appdirname).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			if( dashboardInfoFile.exists()) {
+				json = FileUtils.readFileToString(dashboardInfoFile);
+				dashboards = gson.fromJson(json, Dashboards.class);
+				dashboardMap = dashboards.getDashboards();
+				if (dashboardMap.containsKey(dashboardid)) {
+					return dashboardMap.get(dashboardid);
+				}
+				return null;
+			} 
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	
+	@Override
+	public boolean updateDashboardConfig(String projectid, String appdirname,String dashboardid,String dashboardname,String datatype, String username, String password, String url) throws PhrescoException {
+		Gson gson =new Gson();
+		Dashboards dashboards;
+		String json;
+		HashMap<String, Dashboard> dashboardMap;
+		Dashboard dashboard = new Dashboard();
+		try {
+			File dashboardInfoFile = new File(getProjectPhresoFolder(appdirname).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			if( dashboardInfoFile.exists()) {
+				json = FileUtils.readFileToString(dashboardInfoFile);
+				dashboards = gson.fromJson(json, Dashboards.class);
+				dashboardMap = dashboards.getDashboards();
+				if (dashboardMap.containsKey(dashboardid)) {
+					dashboard = dashboardMap.get(dashboardid);
+					dashboard.setDashboardname(dashboardname);
 					dashboard.setDatatype(datatype);
-					dashboard.setPassword(password);
-					dashboard.setProjectid(projectid);
-					dashboard.setUrl(url);
 					dashboard.setUsername(username);
-					dashboard.setAppcode(projectInfo.getAppInfos().get(0).getCode());
-					dashboard.setAppid(projectInfo.getAppInfos().get(0).getId());
-					dashboard.setAppname(projectInfo.getAppInfos().get(0).getName());
-					String json = gson.toJson(dashboard);
-					try {
-						FileUtils.writeStringToFile(dashboardInfoFile, json);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					dashboard.setPassword(password);
+					dashboard.setUrl(url);
+					dashboardMap.put(dashboardid, dashboard);
+					dashboards.setDashboards(dashboardMap);
+					json = gson.toJson(dashboards, Dashboards.class);
+					FileUtils.writeStringToFile(dashboardInfoFile, json);
+					return true;
 				}
-			}
-			if (foundFlag==1) {
-				return true;
-			}
+				return false;
+			} 
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return false;
 	}
-	
-	
 
 	@Override
-	public HashMap<String, String> getDashboardConfig(String projectid)	throws PhrescoException {
+	public HashMap<String, Dashboards> listAllDashboardConfig(String projectid) throws PhrescoException {
 		Gson gson =new Gson();
 		List<ProjectInfo> projectInfos = discover();
-		if (!projectInfos.isEmpty()) {
-			for (ProjectInfo projectInfo : projectInfos) {
-				if (projectInfo.getId().equals(projectid)) {
-					File dashboardInfoFile = new File(getProjectPhresoFolder(projectInfo.getAppInfos().get(0).getAppDirName()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
-					if (dashboardInfoFile.exists()) {
-						try {
-							String json = FileUtils.readFileToString(dashboardInfoFile);
-							Dashboard dashboard =  gson.fromJson(json, Dashboard.class);
-							HashMap<String, String> dashboardProps = new HashMap<String, String>();
-							dashboardProps.put(DASHBOARD_DATA_TYPE , dashboard.getDatatype());
-							dashboardProps.put(DASHBOARD_USER_NAME , dashboard.getUsername());
-							dashboardProps.put(DASHBOARD_PASSWORD , dashboard.getPassword());
-							dashboardProps.put(DASHBOARD_URL , dashboard.getUrl());
-							System.out.println(gson.toJson(dashboardProps));
-							return dashboardProps;
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-		}
-
-		return null;
-	}
-
-	
-	@Override
-	public boolean updateDashboardConfig(String projectid, String datatype,	String username, String password, String url) throws PhrescoException {
-		Gson gson =new Gson();
-		int foundFlag = 0;
-		List<ProjectInfo> projectInfos = discover();
+		HashMap<String, Dashboards> appDashboards = new HashMap<String, Dashboards>();
 		if (!projectInfos.isEmpty()) {
 			for (ProjectInfo projectInfo : projectInfos) {
 				if (projectInfo.getId().equals(projectid)) {
 					try {
-						foundFlag=1;
 						File dashboardInfoFile = new File(getProjectPhresoFolder(projectInfo.getAppInfos().get(0).getAppDirName()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+						if(dashboardInfoFile.exists()) {
 						String json = FileUtils.readFileToString(dashboardInfoFile);
-						Dashboard dashboard = gson.fromJson(json, Dashboard.class);
-						dashboard.setDatatype(datatype);
-						dashboard.setPassword(password);
-						dashboard.setUrl(url);
-						dashboard.setUsername(username);
-						json = gson.toJson(dashboard);
-						FileUtils.writeStringToFile(dashboardInfoFile, json);
+						Dashboards dashboards =  gson.fromJson(json, Dashboards.class);
+						appDashboards.put(dashboards.getAppcode(), dashboards);
+						}
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 			}
-			if (foundFlag==1) {
-				return true;
-			}
+			return appDashboards;
 		}
-		return false;
-	}
-
-
-	
-	@Override
-	public HashMap<String, Widget> addDashboardWidgetConfig(String projectid, String query , String name, String appid, String appcode, String appname) throws PhrescoException {
-		Gson gson =new Gson();
-		List<ProjectInfo> projectInfos = discover();
-		if (!projectInfos.isEmpty()) {
-			for (ProjectInfo projectInfo : projectInfos) {
-				if (projectInfo.getId().equals(projectid) && projectInfo.getAppInfos().get(0).getCode().equals(appcode)) {
-					File dashboardInfoFile = new File(getProjectPhresoFolder(projectInfo.getAppInfos().get(0).getAppDirName()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
-					if (dashboardInfoFile.exists()) {
-						try {
-							String json = FileUtils.readFileToString(dashboardInfoFile);
-							Dashboard dashboard =  gson.fromJson(json, Dashboard.class);
-							HashMap<String, Widget> widgetProps = dashboard.getWidgets();
-							if (dashboard.getWidgets() == null) {
-								widgetProps = new HashMap<String, Widget>();
-							} else {
-								widgetProps = dashboard.getWidgets();
-							}
-							Widget widget =new Widget();
-							widget.setName(name);
-							widget.setQuery(query);
-							UUID uniqueId = UUID.randomUUID();
-							String widgetId = uniqueId.toString();
-							widgetProps.put(widgetId , widget);
-							System.out.println(gson.toJson(widgetProps));
-							dashboard.setWidgets(widgetProps);
-							json = gson.toJson(dashboard);
-							FileUtils.writeStringToFile(dashboardInfoFile, json);
-							return widgetProps;
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-		}
-
 		return null;
 	}
 	
 	@Override
-	public HashMap<String, Widget> getDashboardWidgetConfig(String projectid, String appid, String appcode, String appname)	throws PhrescoException {
+	public String addDashboardWidgetConfig(String projectid, String appdirname, String dashboardid,  String name, String query , String autorefresh, Date starttime, Date endtime ) throws PhrescoException {
 		Gson gson =new Gson();
-		List<ProjectInfo> projectInfos = discover();
-		if (!projectInfos.isEmpty()) {
-			for (ProjectInfo projectInfo : projectInfos) {
-				if (projectInfo.getId().equals(projectid) && projectInfo.getAppInfos().get(0).getCode().equals(appcode)) {
-					File dashboardInfoFile = new File(getProjectPhresoFolder(projectInfo.getAppInfos().get(0).getAppDirName()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
-					if (dashboardInfoFile.exists()) {
-						try {
-							String json = FileUtils.readFileToString(dashboardInfoFile);
-							Dashboard dashboard =  gson.fromJson(json, Dashboard.class);
-							HashMap<String, Widget> widgetProps = dashboard.getWidgets();
-							if (dashboard.getWidgets() == null) {
-								return null;
-							} else {
-								widgetProps = dashboard.getWidgets();
-							}
-							return widgetProps;
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
+		Dashboards dashboards;
+		String json;
+		HashMap<String, Dashboard> dashboardMap;
+		Widget widget;
+		HashMap<String, Widget> widgets;
+		try {
+			File dashboardInfoFile = new File(getProjectPhresoFolder(appdirname).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			if( dashboardInfoFile.exists()) {
+				json = FileUtils.readFileToString(dashboardInfoFile);
+				dashboards = gson.fromJson(json, Dashboards.class);
+				dashboardMap = dashboards.getDashboards();
+				if (dashboardMap.containsKey(dashboardid)) {
+					if (dashboardMap.get(dashboardid).getWidgets() != null) {
+						widgets = dashboardMap.get(dashboardid).getWidgets();
+					} else {
+						widgets = new HashMap<String, Widget>();
 					}
+					UUID uniqueId = UUID.randomUUID();
+					String widgetId = uniqueId.toString();
+					widget =new Widget();
+					widget.setName(name);
+					widget.setQuery(query);
+					widget.setAutorefresh(autorefresh);
+					widget.setStarttime(starttime);
+					widget.setEndtime(endtime);
+					widgets.put(widgetId, widget);
+					dashboardMap.get(dashboardid).setWidgets(widgets);
+					dashboards.setDashboards(dashboardMap);
+					json = gson.toJson(dashboards, Dashboards.class);
+					FileUtils.writeStringToFile(dashboardInfoFile, json);
+					return widgetId;
 				}
-			}
+				return null;
+			} 
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		return null;
+	}
+	
 
+	@Override
+	public Widget getDashboardWidgetConfig(String projectid, String appdirname, String dashboardid, String widgetid) throws PhrescoException {
+		Gson gson =new Gson();
+		Dashboards dashboards;
+		String json;
+		HashMap<String, Dashboard> dashboardMap;
+		try {
+			File dashboardInfoFile = new File(getProjectPhresoFolder(appdirname).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			if( dashboardInfoFile.exists()) {
+				json = FileUtils.readFileToString(dashboardInfoFile);
+				dashboards = gson.fromJson(json, Dashboards.class);
+				dashboardMap = dashboards.getDashboards();
+				if (dashboardMap.containsKey(dashboardid)) {
+					if (dashboardMap.get(dashboardid).getWidgets() != null) {
+						if (dashboardMap.get(dashboardid).getWidgets().containsKey(widgetid)) {
+							return dashboardMap.get(dashboardid).getWidgets().get(widgetid);
+						} 
+					} 
+				}
+				return null;
+			} 
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
-	public Boolean updateDashboardWidgetConfig(String projectid, String query , String name, String widgetid, String appid, String appcode, String appname) throws PhrescoException {
+	public Boolean updateDashboardWidgetConfig(String projectid, String appdirname, String dashboardid, String widgetid, String name, String query, String autorefresh, Date starttime, Date endtime) throws PhrescoException {
 		Gson gson =new Gson();
-		List<ProjectInfo> projectInfos = discover();
-		if (!projectInfos.isEmpty()) {
-			for (ProjectInfo projectInfo : projectInfos) {
-				if (projectInfo.getId().equals(projectid) && projectInfo.getAppInfos().get(0).getCode().equals(appcode)) {
-					File dashboardInfoFile = new File(getProjectPhresoFolder(projectInfo.getAppInfos().get(0).getAppDirName()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
-					if (dashboardInfoFile.exists()) {
-						try {
-							String json = FileUtils.readFileToString(dashboardInfoFile);
-							Dashboard dashboard =  gson.fromJson(json, Dashboard.class);
-							HashMap<String, Widget> widgetProps = dashboard.getWidgets();
-							if (dashboard.getWidgets() == null) {
-								return false;
-							} else {
-								widgetProps = dashboard.getWidgets();
-							}
-							widgetProps.get(widgetid).setName(name);
-							widgetProps.get(widgetid).setQuery(query);
-							dashboard.setWidgets(widgetProps);
-							json = gson.toJson(dashboard);
+		Dashboards dashboards;
+		String json;
+		HashMap<String, Dashboard> dashboardMap;
+		try {
+			File dashboardInfoFile = new File(getProjectPhresoFolder(appdirname).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			if( dashboardInfoFile.exists()) {
+				json = FileUtils.readFileToString(dashboardInfoFile);
+				dashboards = gson.fromJson(json, Dashboards.class);
+				dashboardMap = dashboards.getDashboards();
+				if (dashboardMap.containsKey(dashboardid)) {
+					if (dashboardMap.get(dashboardid).getWidgets() != null) {
+						if (dashboardMap.get(dashboardid).getWidgets().containsKey(widgetid)) {
+							dashboardMap.get(dashboardid).getWidgets().get(widgetid).setName(name);
+							dashboardMap.get(dashboardid).getWidgets().get(widgetid).setQuery(query);
+							dashboardMap.get(dashboardid).getWidgets().get(widgetid).setAutorefresh(autorefresh);
+							dashboardMap.get(dashboardid).getWidgets().get(widgetid).setStarttime(starttime);
+							dashboardMap.get(dashboardid).getWidgets().get(widgetid).setEndtime(endtime);
+							dashboards.setDashboards(dashboardMap);
+							json = gson.toJson(dashboards, Dashboards.class);
 							FileUtils.writeStringToFile(dashboardInfoFile, json);
 							return true;
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
+						} 
+					} 
 				}
-			}
+				return false;
+			} 
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-
 		return false;
 	}
 	
-	
-
 	@Override
-	public HashMap<String, Dashboard> listDashboardWidgetConfig(String projectid) throws PhrescoException {
+	public Dashboards listDashboardWidgetConfig(String projectid, String appdirname) throws PhrescoException {
 		Gson gson =new Gson();
-		List<ProjectInfo> projectInfos = discover();
-		HashMap<String, Dashboard> dashboards = new HashMap<String, Dashboard>();
-		if (!projectInfos.isEmpty()) {
-			for (ProjectInfo projectInfo : projectInfos) {
-				if (projectInfo.getId().equals(projectid)) {
-					try {
-						File dashboardInfoFile = new File(getProjectPhresoFolder(projectInfo.getAppInfos().get(0).getAppDirName()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
-						String json = FileUtils.readFileToString(dashboardInfoFile);
-						Dashboard dashboard =  gson.fromJson(json, Dashboard.class);
-						dashboards.put(dashboard.getAppcode(), dashboard);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				
-				}
-			}
-			System.out.println(gson.toJson(dashboards));
-			return dashboards;
+		Dashboards dashboards;
+		String json;
+		try {
+			File dashboardInfoFile = new File(getProjectPhresoFolder(appdirname).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			if( dashboardInfoFile.exists()) {
+				json = FileUtils.readFileToString(dashboardInfoFile);
+				dashboards = gson.fromJson(json, Dashboards.class);
+				return dashboards;
+			} 
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -1054,5 +1075,4 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			throw new PhrescoException("Exception occured while trying to retrieve the search result");
 		}
 	}
-		
 }
