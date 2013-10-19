@@ -207,5 +207,5 @@ public interface ProjectManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	JSONObject getsplunkdata(DashboardSearchInfo dashboardsearchinfo) throws PhrescoException;
+	JSONObject getdata(DashboardSearchInfo dashboardsearchinfo) throws PhrescoException;
 }
