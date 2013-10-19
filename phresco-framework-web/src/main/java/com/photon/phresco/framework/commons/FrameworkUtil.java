@@ -345,7 +345,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
     		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
     		builder.append(appInfo.getAppDirName());
     		builder.append(File.separatorChar);
-    		String pomFileName = Utility.getPomFileName(appInfo);
+    		String pomFileName = Utility.getPhrescoPomFile(appInfo);
     		builder.append(pomFileName);
     		S_LOGGER.debug("builder.toString() " + builder.toString());
     		File pomPath = new File(builder.toString());
@@ -361,7 +361,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
     		ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
     		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
     		builder.append(appDirName);
-    		String pomFileName = Utility.getPomFileNameFromWorkingDirectory(applicationInfo, new File(builder.toString()));
+    		String pomFileName = Utility.getPhrescoPomFromWorkingDirectory(applicationInfo, new File(builder.toString()));
     		builder.append(File.separatorChar);
     		builder.append(pomFileName);
     		S_LOGGER.debug("builder.toString() " + builder.toString());

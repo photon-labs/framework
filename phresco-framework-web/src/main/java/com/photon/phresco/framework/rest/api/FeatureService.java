@@ -285,7 +285,7 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 	@Path("/selectedFeature")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response selectedFeatures(@QueryParam(REST_QUERY_USERID) String userId,
-			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) throws PhrescoException {
+			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module) throws PhrescoException {
 		ResponseInfo<List<SelectedFeature>> responseData = new ResponseInfo<List<SelectedFeature>>();
 		List<SelectedFeature> listFeatures = new ArrayList<SelectedFeature>();
 		try {
@@ -297,6 +297,9 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 						null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
+			}
+			if (StringUtils.isNotEmpty(module)) {
+				appDirName = appDirName + File.separator + module;
 			}
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			String selectedTechId = appInfo.getTechInfo().getId();
@@ -355,7 +358,8 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 	@Path("/populate")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response showFeatureConfigPopup(@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_FEATURENAME) String featureName, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+			@QueryParam(REST_QUERY_FEATURENAME) String featureName, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		ResponseInfo<FeatureConfigure> responseData = new ResponseInfo<FeatureConfigure>();
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
@@ -366,6 +370,9 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 						"*").build();
 			}
 			FeatureConfigure featureConfigure = new FeatureConfigure();
+			if (StringUtils.isNotEmpty(module)) {
+				appDirName = appDirName + File.separator + module;
+			}
 			featureConfigure = getTemplateConfigFile(appDirName, customerId, serviceManager, featureName);
 			ResponseInfo<FeatureConfigure> finalOutput = responseDataEvaluation(responseData, null,
 					featureConfigure, RESPONSE_STATUS_SUCCESS, PHR400005);
@@ -435,7 +442,8 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response configureFeature(@Context HttpServletRequest request, @QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_FEATURENAME) String featureName, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+			@QueryParam(REST_QUERY_FEATURENAME) String featureName, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		ResponseInfo<FeatureConfigure> responseData = new ResponseInfo<FeatureConfigure>();
 	    try {
 	    	ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
@@ -444,6 +452,9 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 						null, RESPONSE_STATUS_FAILURE, PHR410001);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
+			}
+			if (StringUtils.isNotEmpty(module)) {
+				appDirName = appDirName + File.separator + module;
 			}
 	    	ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 	    	FeatureConfigure featureConfigure = new FeatureConfigure();
@@ -564,6 +575,10 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 	 */
 	private void getScope(ApplicationInfo appInfo, String id, SelectedFeature selectFeature) throws PhrescoException {
 		StringBuilder dotPhrescoPathSb = new StringBuilder(Utility.getProjectHome());
+		if(StringUtils.isNotEmpty(appInfo.getRootModule())) {
+			dotPhrescoPathSb.append(appInfo.getRootModule());
+			dotPhrescoPathSb.append(File.separator);
+		}
 		dotPhrescoPathSb.append(appInfo.getAppDirName());
 		dotPhrescoPathSb.append(File.separator);
 		dotPhrescoPathSb.append(Constants.DOT_PHRESCO_FOLDER);

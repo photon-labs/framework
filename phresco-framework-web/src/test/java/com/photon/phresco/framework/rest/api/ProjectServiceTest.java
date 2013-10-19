@@ -95,7 +95,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 	@Test
 	public void updateApplicationFeaturesTest() {
 		List<SelectedFeature> selectedFeatures = getSelectedFeatures();
-		Response response = projectService.updateApplicationFeatures(selectedFeatures, appDirName, userId, customerId, "admin");
+		Response response = projectService.updateApplicationFeatures(selectedFeatures, appDirName, userId, customerId, "admin","","");
 		assertEquals(200 , response.getStatus());
 	}
 
@@ -140,7 +140,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 	@Test
 	public void updateApplicationFeatureswithOutUserId() {
 		List<SelectedFeature> selectedFeatures = getSelectedFeatures();
-		Response response = projectService.updateApplicationFeatures(selectedFeatures, appDirName, "", customerId, "admin");
+		Response response = projectService.updateApplicationFeatures(selectedFeatures, appDirName, "", customerId, "admin","","");
 		assertEquals(200 , response.getStatus());
 	}
 
@@ -210,7 +210,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 		File tempPath = getTempPath();
 		projectInfoPath.renameTo(tempPath);
 		List<SelectedFeature> selectedFeatures = getSelectedFeatures();
-		Response response = projectService.updateApplicationFeatures(selectedFeatures, appDirName, userId, customerId, "admin");
+		Response response = projectService.updateApplicationFeatures(selectedFeatures, appDirName, userId, customerId, "admin","","");
 		tempPath.renameTo(projectInfoPath);
 		assertEquals(200 , response.getStatus());
 	}

@@ -1861,7 +1861,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	private File getPOMFile(ApplicationInfo appInfo, String appDirName) throws PhrescoException {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 		builder.append(appDirName);
-		String pomFile = Utility.getPomFileNameFromWorkingDirectory(appInfo, new File(builder.toString()));
+		String pomFile = Utility.getPhrescoPomFromWorkingDirectory(appInfo, new File(builder.toString()));
 		builder.append(File.separatorChar).append(pomFile);
 		return new File(builder.toString());
 	}

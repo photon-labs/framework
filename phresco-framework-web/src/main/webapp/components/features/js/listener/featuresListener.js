@@ -367,18 +367,22 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 		},
 
 		getRequestHeader : function(projectRequestBody, type, descid) {
-			var url, self = this, appDirName = '', userId, custname, techId, header, projectInfo;
+			var url, self = this, appDirName = '', userId, custname, techId, header, projectInfo, rootModule;
 			custname = self.getCustomer();
 			userId = JSON.parse(commonVariables.api.localVal.getSession("userInfo"));
+			var moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
 			if(commonVariables.api.localVal.getProjectInfo() !== null){
 				appdetails = commonVariables.api.localVal.getProjectInfo();
 				appDirName = appdetails.data.projectInfo.appInfos[0].appDirName;
 				techId = appdetails.data.projectInfo.appInfos[0].techInfo.id;
 			}
+			appDirName = self.isBlank(moduleParam) ? appDirName : $('.rootModule').val();
+			rootModule = self.isBlank($('.rootModule').val()) ? "" : '&rootModule='+$('.rootModule').val();
 			header = {
 				contentType: "application/json",
 				dataType: "json"
 			};
+			
 			if(type === "FEATURE" || type === "JAVASCRIPT" || type === "COMPONENT"){
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/list?customerId="+custname+"&techId="+ (techId !== null? techId : "") +"&type="+type+"&userId="+ (userId !== null? userId.id : "");
@@ -387,7 +391,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/desc?artifactGroupId="+descid+"&userId="+(userId !== null? userId.id : "");
 			} else if (type === "SELECTED") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/selectedFeature?userId="+(userId !== null? userId.id : "")+"&appDirName="+(appDirName !== null? appDirName : "");
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/selectedFeature?userId="+(userId !== null? userId.id : "")+"&appDirName="+(appDirName !== null? appDirName : "")+moduleParam;
 			} else if (type === "UPDATE") {
 				var displayName="", userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 				if (userInfo !== null) {
@@ -395,19 +399,19 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				}
 				header.requestMethod = "PUT";
 				header.requestPostBody = JSON.stringify(projectRequestBody);
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId="+custname+"&userId="+(userId !== null? userId.id : "")+"&appDirName="+(appDirName !== null? appDirName : "")+"&displayName="+displayName;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId="+custname+"&userId="+(userId !== null? userId.id : "")+"&appDirName="+(appDirName !== null? appDirName : "")+"&displayName="+displayName + moduleParam +rootModule;
 			} else if (type === "DEPENDENCY") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext + "/dependencyFeature?userId="+(userId !== null? userId.id : "")+"&versionId="+descid; // descid is versionId
 			} else if (type === "populate") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext + "/populate?userId="+(userId !== null? userId.id : "")+"&customerId="+custname+"&featureName="+projectRequestBody.featureName+"&appDirName="+(appDirName !== null? appDirName : "");
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext + "/populate?userId="+(userId !== null? userId.id : "")+"&customerId="+custname+"&featureName="+projectRequestBody.featureName+"&appDirName="+(appDirName !== null? appDirName : "") + moduleParam;
 			} else if (type === "configureFeature") {
 				header.requestMethod = "POST";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext + "/configureFeature?userId="+(userId !== null? userId.id : "")+"&customerId="+custname+"&featureName="+projectRequestBody.featureName+"&appDirName="+(appDirName !== null? appDirName : "")+"&"+projectRequestBody.serval;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext + "/configureFeature?userId="+(userId !== null? userId.id : "")+"&customerId="+custname+"&featureName="+projectRequestBody.featureName+"&appDirName="+(appDirName !== null? appDirName : "")+"&"+projectRequestBody.serval + moduleParam;
 			} else if (type === "requireddependancies") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext + "/dependentToFeatures?userId="+(userId !== null? userId.id : "")+"&versionId="+descid+"&techId="+ (techId !== null? techId : "");
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext + "/dependentToFeatures?userId="+(userId !== null? userId.id : "")+"&versionId="+descid+"&techId="+ (techId !== null? techId : "") + moduleParam;
 			}
 			return header;
 		}

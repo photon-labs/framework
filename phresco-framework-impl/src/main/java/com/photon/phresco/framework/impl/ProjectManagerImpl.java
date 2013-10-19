@@ -86,6 +86,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.Map.Entry;
 
@@ -291,9 +292,17 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	}
 	
 	private boolean isCallEclipsePlugin(ApplicationInfo appInfo) throws PhrescoException {
-		String pomFile = Utility.getProjectHome() + File.separator + appInfo.getAppDirName() + File.separator + Utility.getPomFileName(appInfo);
+//		String pomFile = Utility.getProjectHome() + File.separator + appInfo.getAppDirName() + File.separator + Utility.getPomFileName(appInfo);
+		StringBuilder pomFile = new StringBuilder(Utility.getProjectHome());
+		if(StringUtils.isNotEmpty(appInfo.getRootModule())) {
+			pomFile.append(appInfo.getRootModule());
+			pomFile.append( File.separator);
+		}
+		pomFile.append(appInfo.getAppDirName())
+		.append(File.separator)
+		.append(Utility.getPomFileName(appInfo));
 		try {
-			PomProcessor processor = new PomProcessor(new File(pomFile));
+			PomProcessor processor = new PomProcessor(new File(pomFile.toString()));
 			String eclipsePlugin = processor.getProperty(POM_PROP_KEY_PHRESCO_ECLIPSE);
 			if(StringUtils.isNotEmpty(eclipsePlugin) && TRUE.equals(eclipsePlugin)) {
 				return true;
@@ -304,16 +313,19 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		return false;
 	}
 
-	public ProjectInfo updateApplicationFeatures(ProjectInfo projectInfo, ServiceManager serviceManager) throws PhrescoException {
+	public ProjectInfo updateApplicationFeatures(ProjectInfo projectInfo, ServiceManager serviceManager, String rootModule) throws PhrescoException {
 			ClientResponse response = serviceManager.updateProject(projectInfo);
 			if (response.getStatus() == 200) {
 				File backUpProjectInfoFile = null;
 				try {
 					//application path with new app dir
 					StringBuilder newAppDirSb = new StringBuilder(Utility.getProjectHome());
+					if(StringUtils.isNotEmpty(rootModule)) {
+						newAppDirSb.append(rootModule)
+						.append(File.separator);
+					}
 					newAppDirSb.append(projectInfo.getAppInfos().get(0).getAppDirName());
 					File projectInfoFile = new File(newAppDirSb.toString());
-					
 					StringBuilder dotPhrescoPathSb = new StringBuilder(projectInfoFile.getPath());
 					dotPhrescoPathSb.append(File.separator);
 					dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
@@ -327,6 +339,11 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					String pluginInfoFile = dotPhrescoPathSb.toString() + APPLICATION_HANDLER_INFO_FILE;
 					MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
 					ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
+					
+					//Need to remove later
+					if(StringUtils.isNotEmpty(rootModule)) {
+						appInfo.setRootModule(rootModule);
+					}
 					
 					if (applicationHandler != null) {
 						String selectedFeatures = applicationHandler.getSelectedFeatures();
@@ -349,16 +366,23 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						File projectInfoPath = new File(dotPhrescoPathSb.toString() + PROJECT_INFO_FILE);
 						ProjectUtils.updateProjectInfo(projectInfo, projectInfoPath);
 					}
+					
 					if (isCallEclipsePlugin(appInfo)) {
 						ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-						String baseDir = Utility.getProjectHome() + File.separator + appInfo.getAppDirName();
+						StringBuilder baseDir = new StringBuilder(Utility.getProjectHome());
+						if(StringUtils.isNotEmpty(rootModule)) {
+							baseDir.append(rootModule)
+							.append(File.separator);
+						}
+						baseDir.append(appInfo.getAppDirName());
+//						String baseDir = Utility.getProjectHome() + File.separator + appInfo.getAppDirName();
 						List<String> buildArgCmds = new ArrayList<String>();
-			            String pomFileName = Utility.getPomFileName(appInfo);
+			            String pomFileName = Utility.getPomFileNameFromRootModule(appInfo,rootModule);
 						if(!POM_NAME.equals(pomFileName)) {
 							buildArgCmds.add(HYPHEN_F);
 							buildArgCmds.add(pomFileName);
 						}
-						applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir);
+						applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir.toString());
                     }
 				} finally {
 					if(backUpProjectInfoFile!= null && backUpProjectInfoFile.exists()) {
@@ -655,7 +679,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	throws PhrescoException {
 		String dbName = "";
 		try {
-			File pomPath = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + Utility.getPomFileName(appInfo));
+			File pomPath = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + Utility.getPhrescoPomFile(appInfo));
 			PomProcessor pompro = new PomProcessor(pomPath);
 			String sqlFolderPath = pompro.getProperty(POM_PROP_KEY_SQL_FILE_DIR);
 			File mysqlFolder = new File(path, sqlFolderPath + Constants.DB_MYSQL);
@@ -914,7 +938,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	}
 	
 	@Override
-	public String addDashboardWidgetConfig(String projectid, String appdirname, String dashboardid,  String name, String query , String autorefresh, Date starttime, Date endtime ) throws PhrescoException {
+	public String addDashboardWidgetConfig(String projectid, String appdirname, String dashboardid,  String name, String query , String autorefresh, String starttime, String endtime ) throws PhrescoException {
 		Gson gson =new Gson();
 		Dashboards dashboards;
 		String json;
@@ -985,11 +1009,12 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	}
 
 	@Override
-	public Boolean updateDashboardWidgetConfig(String projectid, String appdirname, String dashboardid, String widgetid, String name, String query, String autorefresh, Date starttime, Date endtime) throws PhrescoException {
+	public Boolean updateDashboardWidgetConfig(String projectid, String appdirname, String dashboardid, String widgetid, String name, String query, String autorefresh, String starttime, String endtime, HashMap<String, String> properties) throws PhrescoException {
 		Gson gson =new Gson();
 		Dashboards dashboards;
 		String json;
 		HashMap<String, Dashboard> dashboardMap;
+		HashMap<String, String> widProperties = new HashMap<String, String>();
 		try {
 			File dashboardInfoFile = new File(getProjectPhresoFolder(appdirname).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 			if( dashboardInfoFile.exists()) {
@@ -1004,6 +1029,18 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 							dashboardMap.get(dashboardid).getWidgets().get(widgetid).setAutorefresh(autorefresh);
 							dashboardMap.get(dashboardid).getWidgets().get(widgetid).setStarttime(starttime);
 							dashboardMap.get(dashboardid).getWidgets().get(widgetid).setEndtime(endtime);
+							if (properties != null) {
+							if (dashboardMap.get(dashboardid).getWidgets().get(widgetid).getProperties() == null) {
+								widProperties = properties;
+							} else {
+								widProperties = dashboardMap.get(dashboardid).getWidgets().get(widgetid).getProperties();
+								Set<String> keys = properties.keySet();  
+								for (String key : keys) {  
+								    widProperties.put(key, properties.get(key));
+								}  
+							}
+							}
+							dashboardMap.get(dashboardid).getWidgets().get(widgetid).setProperties(widProperties);
 							dashboards.setDashboards(dashboardMap);
 							json = gson.toJson(dashboards, Dashboards.class);
 							FileUtils.writeStringToFile(dashboardInfoFile, json);
