@@ -10,6 +10,7 @@ import com.photon.phresco.commons.model.User;
 import com.photon.phresco.commons.model.Widget;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.logger.SplunkLog4JFactory;
 import com.photon.phresco.util.DashboardSearchInfo;
 import com.photon.phresco.util.ServiceConstants;
 
@@ -25,6 +26,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.log4j.Logger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +35,8 @@ import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path(ServiceConstants.REST_API_DASHBOARD)
 public class DashboardService extends RestBase implements ServiceConstants, FrameworkConstants, ResponseCodes {
+	private static final Logger LOGGER = Logger.getLogger(DashboardService.class);
+	
 	String status;
 	String errorCode;
 	String successCode;
@@ -339,13 +343,13 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 	@Consumes(MediaType.APPLICATION_JSON)
 	public String searchData(DashboardSearchInfo dashboardSearchInfo) throws JSONException {
 		try {
-			JSONObject reponsedata = PhrescoFrameworkFactory.getProjectManager().getsplunkdata(dashboardSearchInfo);
+			JSONObject reponsedata = PhrescoFrameworkFactory.getProjectManager().getdata(dashboardSearchInfo);
 			System.out.println("Reponse data obatined is "+reponsedata);
-
+			LOGGER.info("Reponse data obatined is "+reponsedata);
 			if (reponsedata != null) {
 
 				status = RESPONSE_STATUS_SUCCESS;
-				successCode = PHRD010006;
+				successCode = PHRD000009;
 				JSONObject finalOutput = new JSONObject();
 				finalOutput.put("data",reponsedata);
 				finalOutput.put("exception","null");
@@ -355,9 +359,9 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 			}
 			else {
 				status = RESPONSE_STATUS_FAILURE;
-				errorCode = PHRD000006;
+				errorCode = PHRD010009;
 				JSONObject finalOutput = new JSONObject();
-				finalOutput.put("data",reponsedata);
+				finalOutput.put("data","null");
 				finalOutput.put("exception","null");
 				finalOutput.put("responseCode",errorCode);
 				finalOutput.put("status",status);
@@ -366,7 +370,7 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 		}catch (Exception e) {
 
 			status = RESPONSE_STATUS_ERROR;
-			errorCode = PHRD000007;
+			errorCode = PHRD010010;
 			JSONObject finalOutput = new JSONObject();
 			finalOutput.put("data","null");
 			finalOutput.put("exception",e);
