@@ -1074,8 +1074,16 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		return null;
 	}
 	
-
 	@Override
+	public JSONObject getdata(DashboardSearchInfo dashboardsearchinfo)
+			throws PhrescoException {
+		if(dashboardsearchinfo.getDatatype() != null && !("null".equalsIgnoreCase(dashboardsearchinfo.getDatatype())) && SPLUNK_DATATYPE.equalsIgnoreCase(dashboardsearchinfo.getDatatype())){
+			return getsplunkdata(dashboardsearchinfo);
+		}else {
+			return null;
+		}
+	}
+	
 	public JSONObject getsplunkdata(DashboardSearchInfo dashboardsearchinfo)
 			throws PhrescoException {
 		try {
