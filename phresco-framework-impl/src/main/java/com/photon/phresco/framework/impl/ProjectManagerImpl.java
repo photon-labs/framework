@@ -27,8 +27,7 @@ import com.photon.phresco.commons.model.CIJob;
 import com.photon.phresco.commons.model.ContinuousDelivery;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.Dashboard;
-import com.photon.phresco.commons.model.DashboardConfigInfo;
-import com.photon.phresco.commons.model.DashboardWidgetConfigInfo;
+import com.photon.phresco.commons.model.DashboardInfo;
 import com.photon.phresco.commons.model.Dashboards;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectDelivery;
@@ -686,22 +685,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
         
 		return null;
     }
-    
-    private DashboardConfigInfo getDashboardInfo(File dotProjectFile) throws PhrescoException {
-        S_LOGGER.debug("Entering Method ProjectManagerImpl.getDashboardInfo");
-
-        Gson gson = new Gson();
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new FileReader(dotProjectFile));
-            DashboardConfigInfo dashboardconfiginfo = gson.fromJson(reader, DashboardConfigInfo.class);
-            return dashboardconfiginfo;
-        } catch (FileNotFoundException e) {
-            throw new PhrescoException(e);
-        } finally {
-            Utility.closeStream(reader);
-        }
-    }
 	
 	private void extractArchive(ClientResponse response, ProjectInfo info) throws IOException, PhrescoException {
 		InputStream inputStream = response.getEntityInputStream();
@@ -870,33 +853,33 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	
 	
 	@Override
-	public String configureDashboardConfig(String projectid, String appid, String appcode, String appname, String appdirname, String dashboardname, String datatype, String username, String password, String url) throws PhrescoException {
+	public String configureDashboardConfig(DashboardInfo dashboardInfo) throws PhrescoException {
 		Gson gson =new Gson();
 		Dashboards dashboards;
 		String json;
 		HashMap<String, Dashboard> dashboardMap;
 		Dashboard dashboard = new Dashboard();
 		try {
-			File dashboardInfoFile = new File(getProjectPhresoFolder(appdirname).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			File dashboardInfoFile = new File(getProjectPhresoFolder(dashboardInfo.getAppdirname()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 			if( dashboardInfoFile.exists()) {
 				json = FileUtils.readFileToString(dashboardInfoFile);
 				dashboards = gson.fromJson(json, Dashboards.class);
 				dashboardMap = dashboards.getDashboards();
 			} else {
 				dashboards =  new Dashboards();
-				dashboards.setProjectid(projectid);
-				dashboards.setAppid(appid);
-				dashboards.setAppcode(appcode);
-				dashboards.setAppname(appname);
+				dashboards.setProjectid(dashboardInfo.getProjectid());
+				dashboards.setAppid(dashboardInfo.getAppid());
+				dashboards.setAppcode(dashboardInfo.getAppcode());
+				dashboards.setAppname(dashboardInfo.getAppname());
 				dashboardMap = new HashMap<String, Dashboard>();
 			}
 			UUID uniqueId = UUID.randomUUID();
 			String dashboardId = uniqueId.toString();
-			dashboard.setDashboardname(dashboardname);
-			dashboard.setDatatype(datatype);
-			dashboard.setUsername(username);
-			dashboard.setPassword(password);
-			dashboard.setUrl(url);
+			dashboard.setDashboardname(dashboardInfo.getDashboardname());
+			dashboard.setDatatype(dashboardInfo.getDatatype());
+			dashboard.setUsername(dashboardInfo.getUsername());
+			dashboard.setPassword(dashboardInfo.getPassword());
+			dashboard.setUrl(dashboardInfo.getUrl());
 			dashboardMap.put(dashboardId, dashboard);
 			dashboards.setDashboards(dashboardMap);
 			json = gson.toJson(dashboards, Dashboards.class);
@@ -916,7 +899,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		Dashboards dashboards;
 		String json;
 		HashMap<String, Dashboard> dashboardMap;
-		Dashboard dashboard = new Dashboard();
 		try {
 			File dashboardInfoFile = new File(getProjectPhresoFolder(appdirname).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 			if( dashboardInfoFile.exists()) {
@@ -936,26 +918,26 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 
 	
 	@Override
-	public boolean updateDashboardConfig(String projectid, String appdirname,String dashboardid,String dashboardname,String datatype, String username, String password, String url) throws PhrescoException {
+	public boolean updateDashboardConfig(DashboardInfo dashboardInfo) throws PhrescoException {
 		Gson gson =new Gson();
 		Dashboards dashboards;
 		String json;
 		HashMap<String, Dashboard> dashboardMap;
 		Dashboard dashboard = new Dashboard();
 		try {
-			File dashboardInfoFile = new File(getProjectPhresoFolder(appdirname).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			File dashboardInfoFile = new File(getProjectPhresoFolder(dashboardInfo.getAppdirname()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 			if( dashboardInfoFile.exists()) {
 				json = FileUtils.readFileToString(dashboardInfoFile);
 				dashboards = gson.fromJson(json, Dashboards.class);
 				dashboardMap = dashboards.getDashboards();
-				if (dashboardMap.containsKey(dashboardid)) {
-					dashboard = dashboardMap.get(dashboardid);
-					dashboard.setDashboardname(dashboardname);
-					dashboard.setDatatype(datatype);
-					dashboard.setUsername(username);
-					dashboard.setPassword(password);
-					dashboard.setUrl(url);
-					dashboardMap.put(dashboardid, dashboard);
+				if (dashboardMap.containsKey(dashboardInfo.getDashboardid())) {
+					dashboard = dashboardMap.get(dashboardInfo.getDashboardid());
+					dashboard.setDashboardname(dashboardInfo.getDashboardname());
+					dashboard.setDatatype(dashboardInfo.getDatatype());
+					dashboard.setUsername(dashboardInfo.getUsername());
+					dashboard.setPassword(dashboardInfo.getPassword());
+					dashboard.setUrl(dashboardInfo.getUrl());
+					dashboardMap.put(dashboardInfo.getDashboardid(), dashboard);
 					dashboards.setDashboards(dashboardMap);
 					json = gson.toJson(dashboards, Dashboards.class);
 					FileUtils.writeStringToFile(dashboardInfoFile, json);
@@ -995,7 +977,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	}
 	
 	@Override
-	public String addDashboardWidgetConfig(String projectid, String appdirname, String dashboardid,  String name, String query , String autorefresh, String starttime, String endtime ) throws PhrescoException {
+	public String addDashboardWidgetConfig(DashboardInfo dashboardInfo) throws PhrescoException {
 		Gson gson =new Gson();
 		Dashboards dashboards;
 		String json;
@@ -1003,27 +985,27 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		Widget widget;
 		HashMap<String, Widget> widgets;
 		try {
-			File dashboardInfoFile = new File(getProjectPhresoFolder(appdirname).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			File dashboardInfoFile = new File(getProjectPhresoFolder(dashboardInfo.getAppdirname()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 			if( dashboardInfoFile.exists()) {
 				json = FileUtils.readFileToString(dashboardInfoFile);
 				dashboards = gson.fromJson(json, Dashboards.class);
 				dashboardMap = dashboards.getDashboards();
-				if (dashboardMap.containsKey(dashboardid)) {
-					if (dashboardMap.get(dashboardid).getWidgets() != null) {
-						widgets = dashboardMap.get(dashboardid).getWidgets();
+				if (dashboardMap.containsKey(dashboardInfo.getDashboardid())) {
+					if (dashboardMap.get(dashboardInfo.getDashboardid()).getWidgets() != null) {
+						widgets = dashboardMap.get(dashboardInfo.getDashboardid()).getWidgets();
 					} else {
 						widgets = new HashMap<String, Widget>();
 					}
 					UUID uniqueId = UUID.randomUUID();
 					String widgetId = uniqueId.toString();
 					widget =new Widget();
-					widget.setName(name);
-					widget.setQuery(query);
-					widget.setAutorefresh(autorefresh);
-					widget.setStarttime(starttime);
-					widget.setEndtime(endtime);
+					widget.setName(dashboardInfo.getName());
+					widget.setQuery(dashboardInfo.getQuery());
+					widget.setAutorefresh(dashboardInfo.getAutorefresh());
+					widget.setStarttime(dashboardInfo.getStarttime());
+					widget.setEndtime(dashboardInfo.getEndtime());
 					widgets.put(widgetId, widget);
-					dashboardMap.get(dashboardid).setWidgets(widgets);
+					dashboardMap.get(dashboardInfo.getDashboardid()).setWidgets(widgets);
 					dashboards.setDashboards(dashboardMap);
 					json = gson.toJson(dashboards, Dashboards.class);
 					FileUtils.writeStringToFile(dashboardInfoFile, json);
@@ -1066,38 +1048,38 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	}
 
 	@Override
-	public Boolean updateDashboardWidgetConfig(String projectid, String appdirname, String dashboardid, String widgetid, String name, String query, String autorefresh, String starttime, String endtime, HashMap<String, String> properties) throws PhrescoException {
+	public Boolean updateDashboardWidgetConfig(DashboardInfo dashboardInfo) throws PhrescoException {
 		Gson gson =new Gson();
 		Dashboards dashboards;
 		String json;
 		HashMap<String, Dashboard> dashboardMap;
-		HashMap<String, String> widProperties = new HashMap<String, String>();
+		HashMap<String, String[]> widProperties = new HashMap<String, String[]>();
 		try {
-			File dashboardInfoFile = new File(getProjectPhresoFolder(appdirname).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			File dashboardInfoFile = new File(getProjectPhresoFolder(dashboardInfo.getAppdirname()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 			if( dashboardInfoFile.exists()) {
 				json = FileUtils.readFileToString(dashboardInfoFile);
 				dashboards = gson.fromJson(json, Dashboards.class);
 				dashboardMap = dashboards.getDashboards();
-				if (dashboardMap.containsKey(dashboardid)) {
-					if (dashboardMap.get(dashboardid).getWidgets() != null) {
-						if (dashboardMap.get(dashboardid).getWidgets().containsKey(widgetid)) {
-							dashboardMap.get(dashboardid).getWidgets().get(widgetid).setName(name);
-							dashboardMap.get(dashboardid).getWidgets().get(widgetid).setQuery(query);
-							dashboardMap.get(dashboardid).getWidgets().get(widgetid).setAutorefresh(autorefresh);
-							dashboardMap.get(dashboardid).getWidgets().get(widgetid).setStarttime(starttime);
-							dashboardMap.get(dashboardid).getWidgets().get(widgetid).setEndtime(endtime);
-							if (properties != null) {
-							if (dashboardMap.get(dashboardid).getWidgets().get(widgetid).getProperties() == null) {
-								widProperties = properties;
+				if (dashboardMap.containsKey(dashboardInfo.getDashboardid())) {
+					if (dashboardMap.get(dashboardInfo.getDashboardid()).getWidgets() != null) {
+						if (dashboardMap.get(dashboardInfo.getDashboardid()).getWidgets().containsKey(dashboardInfo.getWidgetid())) {
+							dashboardMap.get(dashboardInfo.getDashboardid()).getWidgets().get(dashboardInfo.getWidgetid()).setName(dashboardInfo.getName());
+							dashboardMap.get(dashboardInfo.getDashboardid()).getWidgets().get(dashboardInfo.getWidgetid()).setQuery(dashboardInfo.getQuery());
+							dashboardMap.get(dashboardInfo.getDashboardid()).getWidgets().get(dashboardInfo.getWidgetid()).setAutorefresh(dashboardInfo.getAutorefresh());
+							dashboardMap.get(dashboardInfo.getDashboardid()).getWidgets().get(dashboardInfo.getWidgetid()).setStarttime(dashboardInfo.getStarttime());
+							dashboardMap.get(dashboardInfo.getDashboardid()).getWidgets().get(dashboardInfo.getWidgetid()).setEndtime(dashboardInfo.getEndtime());
+							if (dashboardInfo.getProperties() != null) {
+							if (dashboardMap.get(dashboardInfo.getDashboardid()).getWidgets().get(dashboardInfo.getWidgetid()).getProperties() == null) {
+								widProperties = dashboardInfo.getProperties();
 							} else {
-								widProperties = dashboardMap.get(dashboardid).getWidgets().get(widgetid).getProperties();
-								Set<String> keys = properties.keySet();  
+								widProperties = dashboardMap.get(dashboardInfo.getDashboardid()).getWidgets().get(dashboardInfo.getWidgetid()).getProperties();
+								Set<String> keys = dashboardInfo.getProperties().keySet();  
 								for (String key : keys) {  
-								    widProperties.put(key, properties.get(key));
+								    widProperties.put(key, dashboardInfo.getProperties().get(key));
 								}  
 							}
 							}
-							dashboardMap.get(dashboardid).getWidgets().get(widgetid).setProperties(widProperties);
+							dashboardMap.get(dashboardInfo.getDashboardid()).getWidgets().get(dashboardInfo.getWidgetid()).setProperties(widProperties);
 							dashboards.setDashboards(dashboardMap);
 							json = gson.toJson(dashboards, Dashboards.class);
 							FileUtils.writeStringToFile(dashboardInfoFile, json);

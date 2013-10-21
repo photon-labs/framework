@@ -539,7 +539,7 @@ public interface ResponseCodes {
 	String PHRD010002 = "PHRD010002"; // Dashboard not found
 	String PHRD010003 = "PHRD010003"; // Dashboard updation failed
 	String PHRD010004 = "PHRD010004"; // Dashboard widget adding failed
-	String PHRD010005 = "PHRD010005"; // Dashboard widget retrieved not found
+	String PHRD010005 = "PHRD010005"; // Dashboard widget not found
 	String PHRD010006 = "PHRD010006"; // Dashboard widget updation failed
 	String PHRD010007 = "PHRD010007"; // No widgets present
 	String PHRD010008 = "PHRD010008"; // No dashboards present

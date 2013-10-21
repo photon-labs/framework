@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.Dashboard;
+import com.photon.phresco.commons.model.DashboardInfo;
 import com.photon.phresco.commons.model.Dashboards;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.User;
@@ -21,7 +22,10 @@ import java.util.Date;
 import java.util.HashMap;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -42,21 +46,13 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 	String successCode;
 
 	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path(REST_API_DASHBOARD_CONFIGURE)
-	public Response configureDashboardConfigureinfo(@QueryParam(REST_QUERY_PROJECTID) String projectid, 
-			@QueryParam(REST_QUERY_APPID) String appid, 
-			@QueryParam(REST_QUERY_APPCODE) String appcode, 
-			@QueryParam(REST_QUERY_APPNAME) String appname, 
-			@QueryParam(REST_QUERY_APPDIR_NAME) String appdirname,
-			@QueryParam(REST_QUERY_DASHBOARD_NAME) String dashboardname, 
-			@QueryParam(REST_QUERY_DATATYPE) String datatype , 
-			@QueryParam(REST_QUERY_USER_NAME) String username, 
-			@QueryParam(REST_QUERY_PASSWORD) String password, 
-			@QueryParam(REST_QUERY_URL) String url) {
+	public Response configureDashboardInfo(DashboardInfo dashboardInfo) {
 		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
-			String dashboardid = PhrescoFrameworkFactory.getProjectManager().configureDashboardConfig(projectid, appid, appcode, appname, appdirname, dashboardname, datatype, username, password, url);
+			String dashboardid = PhrescoFrameworkFactory.getProjectManager().configureDashboardConfig(dashboardInfo);
+
 			if (dashboardid != null) {
 				status = RESPONSE_STATUS_SUCCESS;
 				errorCode = PHRD000001;
@@ -83,10 +79,10 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 		}
 	}
 
-	@POST
+	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path(REST_API_DASHBOARD_GET)
-	public Response getDashboardConfigureinfo(@QueryParam(REST_QUERY_PROJECTID) String projectid, @QueryParam(REST_QUERY_APPDIR_NAME) String appdirname, @QueryParam(REST_QUERY_DASHBOARD_ID) String dashboardid ) {
+	@Path(REST_API_DASHBOARD_ID)
+	public Response getDashboardInfo(@QueryParam(REST_QUERY_PROJECTID) String projectid, @QueryParam(REST_QUERY_APPDIR_NAME) String appdirname, @PathParam(REST_QUERY_DASHBOARD_ID) String dashboardid ) {
 		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
 			Dashboard dashboard = PhrescoFrameworkFactory.getProjectManager().getDashboardConfig(projectid, appdirname, dashboardid);
@@ -115,19 +111,13 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 					"Access-Control-Allow-Origin", "*").build();}
 	}	
 
-	@POST
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path(REST_API_DASHBOARD_UPDATE)
-	public Response updateDashboardConfigureinfo(@QueryParam(REST_QUERY_PROJECTID) String projectid, 
-			@QueryParam(REST_QUERY_APPDIR_NAME) String appdirname, 
-			@QueryParam(REST_QUERY_DASHBOARD_ID) String dashboardid, 
-			@QueryParam(REST_QUERY_DASHBOARD_NAME) String dashboardname, 
-			@QueryParam(REST_QUERY_DATATYPE) String datatype , 
-			@QueryParam(REST_QUERY_USER_NAME) String username, @QueryParam(REST_QUERY_PASSWORD) String password, 
-			@QueryParam(REST_QUERY_URL) String url) {
+	public Response updateDashboardInfo(DashboardInfo dashboardInfo) {
 		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
-			if (PhrescoFrameworkFactory.getProjectManager().updateDashboardConfig(projectid, appdirname, dashboardid, dashboardname, datatype, username, password, url)) {
+			if (PhrescoFrameworkFactory.getProjectManager().updateDashboardConfig(dashboardInfo)) {
 				status = RESPONSE_STATUS_SUCCESS;
 				errorCode = PHRD000003;
 				ResponseInfo<Dashboard> finalOutput = responseDataEvaluation(responseData, null,
@@ -152,10 +142,9 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 					"Access-Control-Allow-Origin", "*").build();}
 	}	
 
-	@POST
+	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path(REST_API_DASHBOARD_LIST)
-	public Response listAllDashboardConfigureinfo(@QueryParam(REST_QUERY_PROJECTID) String projectid) {
+	public Response listAllDashboardInfo(@QueryParam(REST_QUERY_PROJECTID) String projectid) {
 		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
 			HashMap<String, Dashboards> appDashboards = PhrescoFrameworkFactory.getProjectManager().listAllDashboardConfig(projectid);
@@ -186,19 +175,13 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 	}
 
 	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path(REST_API_WIDGET_ADD)
-	public Response addDashboardWidgetConfigureinfo(@QueryParam(REST_QUERY_PROJECTID) String projectid, 
-			@QueryParam(REST_QUERY_APPDIR_NAME) String appdirname, 
-			@QueryParam(REST_QUERY_DASHBOARD_ID) String dashboardid, 
-			@QueryParam(REST_QUERY_WIDGET_NAME) String name,  
-			@QueryParam(REST_QUERY_WIDGET_QUERY) String query , 
-			@QueryParam(REST_QUERY_WIDGET_AUTOREFRESH) String autorefresh,
-			@QueryParam(REST_QUERY_WIDGET_START_TIME) String starttime,
-			@QueryParam(REST_QUERY_WIDGET_END_TIME) String endtime) {
+	@Path(REST_API_WIDGET)
+	public Response addDashboardWidgetInfo(DashboardInfo dashboardInfo) {
 		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
-			String widgetId = PhrescoFrameworkFactory.getProjectManager().addDashboardWidgetConfig(projectid, appdirname, dashboardid, name, query, autorefresh, starttime, endtime);
+			String widgetId = PhrescoFrameworkFactory.getProjectManager().addDashboardWidgetConfig(dashboardInfo);
 			if (widgetId != null) {
 				status = RESPONSE_STATUS_SUCCESS;
 				errorCode = PHRD000004;
@@ -227,12 +210,12 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 
 	}	
 
-	@POST
+	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path(REST_API_WIDGET_GET)
-	public Response getDashboardWidgetConfigureinfo(@QueryParam(REST_QUERY_PROJECTID) String projectid, 
+	@Path(REST_API_WIDGET_ID)
+	public Response getDashboardWidgetInfo(@QueryParam(REST_QUERY_PROJECTID) String projectid, 
 			@QueryParam(REST_QUERY_APPDIR_NAME) String appdirname, 
-			@QueryParam(REST_QUERY_DASHBOARD_ID) String dashboardid, @QueryParam(REST_QUERY_WIDGET_ID) String widgetid) {
+			@QueryParam(REST_QUERY_DASHBOARD_ID) String dashboardid, @PathParam(REST_QUERY_WIDGET_ID) String widgetid) {
 		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
 			Widget widget = PhrescoFrameworkFactory.getProjectManager().getDashboardWidgetConfig(projectid, appdirname, dashboardid, widgetid);
@@ -262,22 +245,14 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 		}
 	}	
 
-	@POST
+	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path(REST_API_WIDGET_UPDATE)
-	public Response updateDashboardWidgetConfigureinfo(@QueryParam(REST_QUERY_PROJECTID) String projectid, 
-			@QueryParam(REST_QUERY_APPDIR_NAME) String appdirname, 
-			@QueryParam(REST_QUERY_DASHBOARD_ID) String dashboardid, 
-			@QueryParam(REST_QUERY_WIDGET_ID) String widgetid, 
-			@QueryParam(REST_QUERY_WIDGET_NAME) String name,  
-			@QueryParam(REST_QUERY_WIDGET_QUERY) String query , 
-			@QueryParam(REST_QUERY_WIDGET_AUTOREFRESH) String autorefresh,
-			@QueryParam(REST_QUERY_WIDGET_START_TIME) String starttime,
-			@QueryParam(REST_QUERY_WIDGET_END_TIME) String endtime, HashMap<String, String> properties) {
+	@Path(REST_API_WIDGET)
+	public Response updateDashboardWidgetInfo(DashboardInfo dashboardInfo) {
 		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
-			if (PhrescoFrameworkFactory.getProjectManager().updateDashboardWidgetConfig(projectid, appdirname, dashboardid,widgetid, name, query, autorefresh, starttime, endtime, properties)) {
+			if (PhrescoFrameworkFactory.getProjectManager().updateDashboardWidgetConfig(dashboardInfo)) {
 				status = RESPONSE_STATUS_SUCCESS;
 				errorCode = PHRD000006;
 				ResponseInfo<HashMap<String, Widget>> finalOutput = responseDataEvaluation(responseData, null,
@@ -303,10 +278,10 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 		}
 	}
 
-	@POST
+	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path(REST_API_WIDGET_LISTALL)
-	public Response listDashboardWidgetConfigureinfo(@QueryParam(REST_QUERY_PROJECTID) String projectid, @QueryParam(REST_QUERY_APPDIR_NAME) String appdirname) {
+	@Path(REST_API_WIDGET)
+	public Response listDashboardWidgetInfo(@QueryParam(REST_QUERY_PROJECTID) String projectid, @QueryParam(REST_QUERY_APPDIR_NAME) String appdirname) {
 		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
 			Dashboards dashboards = PhrescoFrameworkFactory.getProjectManager().listDashboardWidgetConfig(projectid, appdirname);
