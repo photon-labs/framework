@@ -92,10 +92,13 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 	@Path("/openFolder")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response openFolder(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_TYPE) String type) {
+			@QueryParam(REST_QUERY_TYPE) String type, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
 			if (Desktop.isDesktopSupported()) {
+				if (StringUtils.isNotEmpty(moduleName)) {
+					appDirName = appDirName + File.separator + moduleName;
+				}
 				File file = new File(getPath(appDirName, type));
 				if (file.exists()) {
 					Desktop.getDesktop().open(file);
@@ -126,9 +129,12 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 	@Path("/copyPath")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response copyPath(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_TYPE) String type) {
+			@QueryParam(REST_QUERY_TYPE) String type, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
+			if (StringUtils.isNotEmpty(moduleName)) {
+				appDirName = appDirName + File.separator + moduleName;
+			}
 			File file = new File(getPath(appDirName, type));
 			String pathToCopy = "";
 			if (file.exists()) {

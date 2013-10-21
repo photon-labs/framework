@@ -148,7 +148,7 @@ public class ProjectManagerTest {
 		List<String> customerIds = new ArrayList<String>();
 		customerIds.add(customerId);
 		projectInfo.setCustomerIds(customerIds);
-		ProjectInfo project = projectManager.updateApplication(projectInfo, serviceManager, "testPhp");
+		ProjectInfo project = projectManager.updateApplication(projectInfo, serviceManager, "testPhp", "");
 		Assert.assertEquals("testPhp", project.getProjectCode());
 	}
 	
@@ -191,7 +191,7 @@ public class ProjectManagerTest {
 		
 		projectInfo.setVersion("2.0");
 		projectInfo.setDescription("Sample Discription for php");
-		ProjectInfo project = projectManager.updateApplication(projectInfo, serviceManager, "testPhp");
+		ProjectInfo project = projectManager.updateApplication(projectInfo, serviceManager, "testPhp", "");
 		Assert.assertEquals("Sample Discription for php", project.getDescription());
 	}
 	

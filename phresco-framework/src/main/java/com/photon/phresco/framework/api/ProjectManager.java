@@ -23,6 +23,8 @@ import java.util.List;
 
 import org.json.JSONObject;
 
+import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.Dashboard;
 import com.photon.phresco.commons.model.Dashboards;
 import com.photon.phresco.commons.model.ProjectInfo;
@@ -49,6 +51,13 @@ public interface ProjectManager {
 	List<ProjectInfo> discover() throws PhrescoException;
 	
 	/**
+	 * This method provides the list of projects under a rootModule available in the local phresco workspace 
+	 * @return Returns list of ProjectInfos
+	 * @throws PhrescoException
+	 */
+	List<ProjectInfo> discoverFromRootModule(String rootModule) throws PhrescoException;
+	
+	/**
 	 * This method returns the Project for the given projectId
 	 * @param projectId
 	 * @return Returns the ProjectInfo with all the ApplicationInfos
@@ -70,7 +79,8 @@ public interface ProjectManager {
 	 * @return ProjectInfo
 	 * @throws PhrescoException
 	 */
-	ProjectInfo updateApplication(ProjectInfo projectInfo, ServiceManager serviceManager, String oldAppDirName) throws PhrescoException;
+	ProjectInfo updateApplication(ProjectInfo projectInfo, ServiceManager serviceManager, String oldAppDirName, String rootModule) throws PhrescoException;
+	
 	
 	/**
 	 * @param projectInfo

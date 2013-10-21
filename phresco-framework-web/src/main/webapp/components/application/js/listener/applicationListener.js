@@ -309,6 +309,8 @@ define([], function() {
 				var techInfo = {};
 				appInfo.code = $("input[name='appCode']").val();
 				appInfo.appDirName = $("input[name='appDirName']").val();
+				var rootModule = self.isBlank($('.rootModule').val()) ? "" : $('.rootModule').val();
+				appInfo.rootModule = rootModule;
 				appInfo.version = $("input[name='appVersion']").val();
 				appInfo.name = $("input[name='appName']").val();
 				appInfo.emailSupported = renderData.appdetails.data.projectInfo.appInfos[0].emailSupported;
@@ -323,6 +325,7 @@ define([], function() {
 				appInfo.phrescoPomFile = renderData.appdetails.data.projectInfo.appInfos[0].phrescoPomFile;
 				appInfo.pomFile = renderData.appdetails.data.projectInfo.appInfos[0].pomFile;
 				appInfo.embedAppId = $("#embed").val();
+				appInfo.modules = renderData.appdetails.data.projectInfo.appInfos[0].modules;
 				var selectedDatabases = [];
 				var selectedServers = [];
 				var selectedWebServices = [];
@@ -433,6 +436,8 @@ define([], function() {
 						if(response.responseCode === "PHR200008"){
 							var appDir = commonVariables.api.localVal.getSession('appDirName');
 							localStorage.setItem(appDir + '_AppUpdateMsg', response.message);
+							var newAppDirName = response.data.projectInfo.appInfos[0].appDirName;
+							!self.isBlank($('.moduleName').val()) ? $('.moduleName').val(newAppDirName) : $('.moduleName').val('');
 							commonVariables.navListener.getMyObj(commonVariables.editApplication, function(retVal){
 								self.editAplnContent = retVal;
 								self.editAplnContent.appDirName = response.data.projectInfo.appInfos[0].appDirName;
@@ -506,7 +511,8 @@ define([], function() {
 				if (userInfo !== null) {
 					displayName = userInfo.displayName;
 				}
-
+				moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&rootModule='+$('.rootModule').val()+'&moduleName='+$('.moduleName').val();
+				oldAppDirName = self.isBlank($('.moduleName').val()) ? oldAppDirName : $('.moduleName').val();
 				header.requestMethod ="PUT";
 				header.requestPostBody = appDirName;
 				header.webserviceurl = commonVariables.webserviceurl+"project/updateApplication?userId="+userId+"&oldAppDirName="+oldAppDirName+"&customerId=photon&displayName="+displayName+moduleParam;

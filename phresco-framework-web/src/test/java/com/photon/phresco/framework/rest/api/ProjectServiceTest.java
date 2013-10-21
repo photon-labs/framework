@@ -102,7 +102,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 	@Test
 	public void updateApplication() {
 		ApplicationInfo appInfo = getApplicationInfo1();
-		Response response  = projectService.updateApplication(appDirName, appInfo, userId, customerId, "admin");
+		Response response  = projectService.updateApplication(appDirName, appInfo, userId, customerId, "admin", "");
 		assertEquals(200 , response.getStatus());
 //		appInfo.setAppDirName("TestGitProject");
 //		Response responseonFail  = projectService.updateApplication(appDirName, appInfo, userId, customerId);
@@ -147,7 +147,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 	@Test
 	public void updateApplicationWithoutUserId() {
 		ApplicationInfo appInfo = getApplicationInfo();
-		Response response  = projectService.updateApplication(appDirName, appInfo, "", customerId, "admin");
+		Response response  = projectService.updateApplication(appDirName, appInfo, "", customerId, "admin", "");
 		assertEquals(200 , response.getStatus());
 	}
 
@@ -221,7 +221,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 		File tempPath = getTempPath();
 		projectInfoPath.renameTo(tempPath);
 		ApplicationInfo appInfo = getApplicationInfo();
-		Response response  = projectService.updateApplication(appDirName, appInfo, userId, customerId, "admin");
+		Response response  = projectService.updateApplication(appDirName, appInfo, userId, customerId, "admin", "");
 		tempPath.renameTo(projectInfoPath);
 		assertEquals(200 , response.getStatus());
 	}
