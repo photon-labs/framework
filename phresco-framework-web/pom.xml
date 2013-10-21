@@ -252,6 +252,31 @@
 			<type>js</type>
 		</dependency>
 		
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>barseries</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>flot</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>flotpie</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>flotresize</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		
 		 <!-- CometD insertions start -->
 	   
         
