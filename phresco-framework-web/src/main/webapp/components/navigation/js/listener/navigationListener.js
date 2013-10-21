@@ -757,9 +757,15 @@ define([], function() {
 		 * @return: returns the contructed header
 		 */
 		getActionHeader : function(requestBody, action) {
-			var self=this, header, data = {}, userId;
+			var self=this, header, data = {}, userId, appDirName='';
 			var type = requestBody.type;
-			var appDirName = commonVariables.api.localVal.getSession("appDirName");
+			var moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
+			if (!self.isBlank(moduleParam)) {
+				appDirName = $('.rootModule').val()
+			} else if(commonVariables.api.localVal.getProjectInfo() !== null) {
+				var projectInfo = commonVariables.api.localVal.getProjectInfo();
+				appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+			}
 			header = {
 				contentType: "application/json",				
 				dataType: "json",
@@ -768,10 +774,10 @@ define([], function() {
 			self.act=action;
 			if (action === "openFolder") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.openFolderContext + "?type=" + type + "&appDirName=" + appDirName;				
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.openFolderContext + "?type=" + type + "&appDirName=" + appDirName + moduleParam;				
 			} else if (action === "copyPath") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.copyPathContext + "?type=" + type + "&appDirName=" + appDirName;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.copyPathContext + "?type=" + type + "&appDirName=" + appDirName + moduleParam;
 			} else if(action === "importpost") {
 				var displayName="", userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 				if (userInfo !== null) {

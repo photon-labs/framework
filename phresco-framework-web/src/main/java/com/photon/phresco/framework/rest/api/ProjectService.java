@@ -62,6 +62,7 @@ import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.FunctionalFramework;
 import com.photon.phresco.commons.model.FunctionalFrameworkInfo;
 import com.photon.phresco.commons.model.FunctionalFrameworkProperties;
+import com.photon.phresco.commons.model.ModuleInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.SelectedFeature;
 import com.photon.phresco.commons.model.Technology;
@@ -84,6 +85,7 @@ import com.photon.phresco.util.ProjectUtils;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.model.Model.Modules;
 import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
@@ -460,7 +462,8 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateApplication(@QueryParam(REST_QUERY_OLD_APPDIR_NAME) String oldAppDirName,
 			ApplicationInfo appInfo, @QueryParam(REST_QUERY_USERID) String userId,
-			@QueryParam(REST_QUERY_CUSTOMERID) String customerId,  @QueryParam("displayName") String displayName) {
+			@QueryParam(REST_QUERY_CUSTOMERID) String customerId,  @QueryParam("displayName") String displayName,
+			@QueryParam("rootModule") String rootModule) {
 		BufferedReader bufferedReader = null;
 		File filePath = null;
 		String unique_key = "";
@@ -470,7 +473,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			UUID uniqueKey = UUID.randomUUID();
 			unique_key = uniqueKey.toString();
 			
-				ResponseInfo validationResponse = validateAppInfo(oldAppDirName,appInfo);
+				ResponseInfo validationResponse = validateAppInfo(oldAppDirName,appInfo, rootModule);
 				if (validationResponse != null) {
 				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
 						null, validationResponse.getStatus(), validationResponse.getResponseCode());
@@ -494,8 +497,11 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			List<DownloadInfo> selectedDatabaseGroup = new ArrayList<DownloadInfo>();
 			
 			Gson gson = new Gson();
-
-			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(oldAppDirName).append(File.separator)
+			String folder = oldAppDirName;
+			if (StringUtils.isNotEmpty(rootModule)) {
+				folder = rootModule + File.separator + oldAppDirName;
+			}
+			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(folder).append(File.separator)
 					.append(Constants.DOT_PHRESCO_FOLDER).append(File.separator).append(
 							Constants.APPLICATION_HANDLER_INFO_FILE);
 			filePath = new File(sb.toString());
@@ -573,8 +579,8 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 
 			mojo.save();
 			StringBuilder sbs = null;
-			if (StringUtils.isNotEmpty(oldAppDirName)) {
-				sbs = new StringBuilder(Utility.getProjectHome()).append(oldAppDirName).append(File.separator).append(
+			if (StringUtils.isNotEmpty(folder)) {
+				sbs = new StringBuilder(Utility.getProjectHome()).append(folder).append(File.separator).append(
 						Constants.DOT_PHRESCO_FOLDER).append(File.separator).append(PROJECT_INFO);
 			}
 			bufferedReader = new BufferedReader(new FileReader(sbs.toString()));
@@ -584,15 +590,36 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			appInfo.setCreated(true);
 			bufferedReader.close();
-			deleteSqlFolder(applicationInfo, selectedDatabases, serviceManager, oldAppDirName);
+			deleteSqlFolder(applicationInfo, selectedDatabases, serviceManager, folder);
 
 			projectInfo.setAppInfos(Collections.singletonList(appInfo));
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-			projectManager.updateApplication(projectInfo, serviceManager, oldAppDirName);
-			// to update functional framework in pom.xml
-			updateFunctionalTestProperties(appInfo, serviceManager);
+			projectManager.updateApplication(projectInfo, serviceManager, oldAppDirName, rootModule);
+
+			//to update submodule's appdirname in root module's project info
+			if (StringUtils.isNotEmpty(rootModule) && !oldAppDirName.equals(appInfo.getAppDirName())) {
+				updateSubModuleNameInRootProjInfo(rootModule, oldAppDirName, appInfo.getAppDirName());
+			} 
+			String newFolderDir = appInfo.getAppDirName();
+			if (StringUtils.isEmpty(rootModule)) {
+				File rootProjInfoFile = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + Constants.DOT_PHRESCO_FOLDER + 
+						                        File.separator + PROJECT_INFO);
+				bufferedReader = new BufferedReader(new FileReader(rootProjInfoFile.getPath()));
+				type = new TypeToken<ProjectInfo>() {}.getType();
+				ProjectInfo rootProjectInfo = gson.fromJson(bufferedReader, type);
+				List<ModuleInfo> modules = rootProjectInfo.getAppInfos().get(0).getModules();
+				updateRootModuleNameInSubProjectInfo(modules, oldAppDirName, appInfo.getAppDirName());
+				bufferedReader.close();
+			} else {
+				newFolderDir = rootModule + File.separator + appInfo.getAppDirName();
+			}
 			
-			json = embedApplication(json, projectInfo, serviceManager, projectManager, oldAppDirName);
+			//To update parent tags in submodule's pom
+			updateSubModulePomParentTagInfo(newFolderDir, appInfo);
+			
+			// to update functional framework in pom.xml
+			updateFunctionalTestProperties(appInfo, serviceManager, rootModule);
+			json = embedApplication(json, projectInfo, serviceManager, projectManager, folder);
 					status = RESPONSE_STATUS_SUCCESS;
 					successCode = PHR200008;
 					json.put("projectInfo", projectInfo);
@@ -629,6 +656,115 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			}
 		}
 	}
+
+	private void updateSubModulePomParentTagInfo(String newFolderDir, ApplicationInfo appInfo) throws PhrescoException  {
+		Type type;
+		try {
+			File mainPom = new File(Utility.getProjectHome() + newFolderDir + File.separator + Utility.getPomFileName(appInfo));
+			if (mainPom.exists()) {
+				Gson gson = new Gson();
+				PomProcessor mainPomProcessor = new PomProcessor(mainPom);
+				Modules modules = mainPomProcessor.getModel().getModules();
+				if (modules != null && CollectionUtils.isNotEmpty(modules.getModule())) {
+					List<String> subModules = modules.getModule();
+					for (String subModule : subModules) {
+						File subModuleDir = new File(Utility.getProjectHome() + newFolderDir + File.separator + subModule);
+						File subModuleProjInfo = new File(subModuleDir.getPath() + File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator + PROJECT_INFO);
+						BufferedReader bufferedReader = new BufferedReader(new FileReader(subModuleProjInfo.getPath()));
+						type = new TypeToken<ProjectInfo>() {
+						}.getType();
+						ProjectInfo subModuleProjectInfo = gson.fromJson(bufferedReader, type);
+						ApplicationInfo subModuleApplnInfo = subModuleProjectInfo.getAppInfos().get(0);
+						String subModuleMainPomName = Utility.getPomFileName(subModuleApplnInfo);
+						File subModuleMainPom = new File(subModuleDir.getPath() + File.separator + subModuleMainPomName);
+						if (subModuleMainPom.exists()) {
+							PomProcessor subPomProcessor = new PomProcessor(subModuleMainPom);
+							subPomProcessor.getParent().setArtifactId(mainPomProcessor.getArtifactId());
+							subPomProcessor.getParent().setGroupId(mainPomProcessor.getGroupId());
+							subPomProcessor.getParent().setVersion(mainPomProcessor.getVersion());
+							subPomProcessor.getParent().setRelativePath("../");
+							subPomProcessor.save();
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	private void updateSubModuleNameInRootProjInfo(String rootModule, String oldSubModuleName, String newSubModuleName) throws PhrescoException {
+		try {
+			File rootFolder = new File(Utility.getProjectHome() + rootModule);
+			File rootModuleProjInfo = new File(rootFolder.getPath() + File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator + PROJECT_INFO);
+			Gson gson = new Gson();
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(rootModuleProjInfo.getPath()));
+			Type type = new TypeToken<ProjectInfo>() {
+			}.getType();
+			ProjectInfo rootProjInfo = gson.fromJson(bufferedReader, type);
+			ApplicationInfo rootAppInfo = rootProjInfo.getAppInfos().get(0);
+			List<ModuleInfo> modules = rootAppInfo.getModules();
+			List<ModuleInfo> newModuleInfos = new ArrayList<ModuleInfo>();
+			if (CollectionUtils.isNotEmpty(modules)) {
+				for (ModuleInfo module : modules) {
+					if (oldSubModuleName.equals(module.getCode())) {
+						module.setCode(newSubModuleName);
+					}
+					newModuleInfos.add(module);
+				}
+			}
+			rootAppInfo.setModules(newModuleInfos);
+			rootProjInfo.setAppInfos(Collections.singletonList(rootAppInfo));
+			ProjectUtils.updateProjectInfo(rootProjInfo, rootModuleProjInfo);
+			bufferedReader.close();
+			updateRootPomModules(rootModule, oldSubModuleName, newSubModuleName, rootFolder, rootAppInfo);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		} 
+	}
+
+	private void updateRootPomModules(String rootModule, String oldSubModuleName, String newSubModuleName, File rootFolder,
+			ApplicationInfo rootAppInfo) throws PhrescoPomException {
+		String rootPomName = Utility.getPomFileNameFromRootModule(rootAppInfo, rootModule);
+		File rootPom = new File(rootFolder.getPath() + File.separator + rootPomName);
+		PomProcessor processor = new PomProcessor(rootPom);
+		Modules pomModules = processor.getModel().getModules();
+		if (pomModules != null && CollectionUtils.isNotEmpty(pomModules.getModule())) {
+			List<String> pomModulesList = pomModules.getModule();
+			Modules newModules = new Modules();
+			for (String pomModule : pomModulesList) {
+				if (oldSubModuleName.equals(pomModule)) {
+					newModules.getModule().add(newSubModuleName);
+				} else {
+					newModules.getModule().add(pomModule);
+				}
+			}
+			processor.getModel().setModules(newModules);
+			processor.save();
+		}
+	}
+	
+	private void updateRootModuleNameInSubProjectInfo(List<ModuleInfo> modules, String oldRootAppDirName, String newRootAppDirName) throws PhrescoException {
+		try {
+			if (CollectionUtils.isNotEmpty(modules) && !oldRootAppDirName.equals(newRootAppDirName))  {
+				for (ModuleInfo module : modules) {
+					File subModuleProjInfoFile = new File(Utility.getProjectHome() + newRootAppDirName + File.separator + module.getCode() + File.separator
+							+ Constants.DOT_PHRESCO_FOLDER + File.separator + PROJECT_INFO);
+					Gson gson = new Gson();
+					BufferedReader bufferedReader = new BufferedReader(new FileReader(subModuleProjInfoFile.getPath()));
+					Type type = new TypeToken<ProjectInfo>() {
+					}.getType();
+					ProjectInfo subModuleProjInfo = gson.fromJson(bufferedReader, type);
+					ApplicationInfo subModuleAppInfo = subModuleProjInfo.getAppInfos().get(0);
+					subModuleAppInfo.setRootModule(newRootAppDirName);
+					subModuleProjInfo.setAppInfos(Collections.singletonList(subModuleAppInfo));
+					ProjectUtils.updateProjectInfo(subModuleProjInfo, subModuleProjInfoFile);
+				}
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
 	
 	private Map embedApplication(Map json, ProjectInfo projectInfo, ServiceManager serviceManager, ProjectManager projectManager, String appDirName) throws PhrescoException {
 		ProjectInfo parentProjectInfo = null;
@@ -655,7 +791,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		return json;
 	}
 	
-	private void updateFunctionalTestProperties(ApplicationInfo appInfo, ServiceManager serviceManager) throws PhrescoException {
+	private void updateFunctionalTestProperties(ApplicationInfo appInfo, ServiceManager serviceManager, String rootModule) throws PhrescoException {
 		FunctionalFrameworkInfo functionalFrameworkInfo = appInfo.getFunctionalFrameworkInfo();
 		if(functionalFrameworkInfo == null) {
 			return;
@@ -674,7 +810,11 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 			
 			try {
-				PomProcessor pomProcessor = frameworkUtil.getPomProcessor(appInfo);
+				String folder = appInfo.getAppDirName();
+				if (StringUtils.isNotEmpty(rootModule)) {
+					folder = rootModule + File.separator + appInfo.getAppDirName();
+				}
+				PomProcessor pomProcessor = frameworkUtil.getPomProcessor(folder);
                 pomProcessor.setProperty(Constants.POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL, functionalFramework.getName());
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_FUNCTEST_DIR, testDir);
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_FUNCTEST_RPT_DIR, testReportDir);
@@ -1045,10 +1185,16 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		return response;
 	}
 
-	private ResponseInfo validateAppInfo(String oldAppDirName, ApplicationInfo appInfo) throws PhrescoException {
+	private ResponseInfo validateAppInfo(String oldAppDirName, ApplicationInfo appInfo, String rootModule) throws PhrescoException {
 		ResponseInfo response = null;
 		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-		List<ProjectInfo> discoveredProjectInfos = projectManager.discover();
+		List<ProjectInfo> discoveredProjectInfos = new ArrayList<ProjectInfo>(); 
+		if (StringUtils.isNotEmpty(rootModule)) {
+			discoveredProjectInfos = projectManager.discoverFromRootModule(rootModule);
+		} else {
+			discoveredProjectInfos = projectManager.discover();
+		}
+		
 		for (ProjectInfo projectInfo : discoveredProjectInfos) {
 			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
 			for (int i = 0; i < appInfos.size(); i++) {

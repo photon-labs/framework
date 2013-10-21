@@ -80,46 +80,46 @@ public class UtilServiceTest extends RestBaseTest {
 	}
 	@Test
 	public void openFolder() {
-		Response openFolderUnit = utilService.openFolder(appDirName, "unitTest");
+		Response openFolderUnit = utilService.openFolder(appDirName, "unitTest", "");
 		Assert.assertEquals(200, openFolderUnit.getStatus());
-		Response openFolderFunc = utilService.openFolder(appDirName, "functionalTest");
+		Response openFolderFunc = utilService.openFolder(appDirName, "functionalTest", "");
 		Assert.assertEquals(200, openFolderFunc.getStatus());
-		Response openFolderComp = utilService.openFolder(appDirName, "componentTest");
+		Response openFolderComp = utilService.openFolder(appDirName, "componentTest", "");
 		Assert.assertEquals(200, openFolderComp.getStatus());
-		Response openFolderLoad = utilService.openFolder(appDirName, "loadTest");
+		Response openFolderLoad = utilService.openFolder(appDirName, "loadTest", "");
 		Assert.assertEquals(200, openFolderLoad.getStatus());
-		Response openFolderManual = utilService.openFolder(appDirName, "manualTest");
+		Response openFolderManual = utilService.openFolder(appDirName, "manualTest", "");
 		Assert.assertEquals(200, openFolderManual.getStatus());
-		Response openFolderPerform = utilService.openFolder(appDirName, "performanceTest");
+		Response openFolderPerform = utilService.openFolder(appDirName, "performanceTest", "");
 		Assert.assertEquals(200, openFolderPerform.getStatus());
-		Response openFolderBuild = utilService.openFolder(appDirName, "build");
+		Response openFolderBuild = utilService.openFolder(appDirName, "build", "");
 		Assert.assertEquals(200, openFolderBuild.getStatus());
-		Response openFolderDirFail = utilService.openFolder(appDirName, null);
+		Response openFolderDirFail = utilService.openFolder(appDirName, null, "");
 		Assert.assertEquals(200, openFolderDirFail.getStatus());
-		Response openFolderFail = utilService.openFolder(appDirName, "");
+		Response openFolderFail = utilService.openFolder(appDirName, "", "");
 		Assert.assertEquals(200, openFolderFail.getStatus());
 		
 	}
 
 	@Test
 	public void copyPath() {
-		Response openFolderUnit = utilService.copyPath(appDirName, "unitTest");
+		Response openFolderUnit = utilService.copyPath(appDirName, "unitTest", "");
 		Assert.assertEquals(200, openFolderUnit.getStatus());
-		Response openFolderFunc = utilService.copyPath(appDirName, "functionalTest");
+		Response openFolderFunc = utilService.copyPath(appDirName, "functionalTest", "");
 		Assert.assertEquals(200, openFolderFunc.getStatus());
-		Response openFolderComp = utilService.copyPath(appDirName, "componentTest");
+		Response openFolderComp = utilService.copyPath(appDirName, "componentTest", "");
 		Assert.assertEquals(200, openFolderComp.getStatus());
-		Response openFolderLoad = utilService.copyPath(appDirName, "loadTest");
+		Response openFolderLoad = utilService.copyPath(appDirName, "loadTest", "");
 		Assert.assertEquals(200, openFolderLoad.getStatus());
-		Response openFolderManual = utilService.copyPath(appDirName, "manualTest");
+		Response openFolderManual = utilService.copyPath(appDirName, "manualTest", "");
 		Assert.assertEquals(200, openFolderManual.getStatus());
-		Response openFolderPerform = utilService.copyPath(appDirName, "performanceTest");
+		Response openFolderPerform = utilService.copyPath(appDirName, "performanceTest", "");
 		Assert.assertEquals(200, openFolderPerform.getStatus());
-		Response openFolderBuild = utilService.copyPath(appDirName, "build");
+		Response openFolderBuild = utilService.copyPath(appDirName, "build", "");
 		Assert.assertEquals(200, openFolderBuild.getStatus());
-		Response openFolderDirFail = utilService.copyPath(appDirName, null);
+		Response openFolderDirFail = utilService.copyPath(appDirName, null, "");
 		Assert.assertEquals(200, openFolderDirFail.getStatus());
-		Response openFolderFail = utilService.copyPath(appDirName, "");
+		Response openFolderFail = utilService.copyPath(appDirName, "", "");
 		Assert.assertEquals(200, openFolderFail.getStatus());
 		
 	}

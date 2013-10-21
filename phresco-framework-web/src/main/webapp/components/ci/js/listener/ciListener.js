@@ -50,12 +50,14 @@ define([], function() {
 			}); 
 		},
 
-		editContinuousDeliveryConfigure : function(contDeliveryName) {
+		editContinuousDeliveryConfigure : function(contDeliveryName, envName) {
 			var self = this;			
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			commonVariables.navListener.getMyObj(commonVariables.continuousDeliveryConfigure, function(retVal){
-				retVal.name = contDeliveryName;
-				Clazz.navigationController.push(retVal, commonVariables.animation);
+				self.edit = retVal;
+				self.edit.name = contDeliveryName;
+				self.edit.envName = envName;
+				Clazz.navigationController.push(self.edit, commonVariables.animation);
 			}); 
 		},
 
@@ -639,10 +641,14 @@ define([], function() {
 		},
 
 		constructJobTemplate : function () {
+			var self=this;
 			var formObj = $("#jobTemplate"); 
 
 			var jobTemplate = $('#jobTemplate :input[name!=oldname][name!=features][name!=repoTypes]').serializeObject();
 
+			if(!self.isBlank($('input[name=name]').attr('module'))) {
+				jobTemplate.module = $('input[name=name]').attr('module');
+			}
 			jobTemplate.enableRepo = false;
 			jobTemplate.enableSheduler = false;
 			jobTemplate.enableEmailSettings = false;
@@ -751,8 +757,18 @@ define([], function() {
 			$("[name=oldname]").val(data.name);
 			$("[name=type]").selectpicker('val', data.type);
 			//AppIds
-			$("select[name=appIds]").selectpicker('val', data.appIds);
-			
+			if (self.isBlank(data.module)) {
+				$("select[name=appIds]").selectpicker('val', data.appIds);
+			} else {
+				$('select[name=appIds]').empty();
+				var obj = $('select[name=appIds]');
+				var opt = document.createElement("option");
+				opt.setAttribute('class',data.appIds);
+				opt.appendChild(document.createTextNode(data.appIds));
+				obj.append(opt);
+				$("select[name=appIds]").selectpicker('val', data.appIds);
+			}
+			$("select[name=appIds]").selectpicker('refresh');
 			$("[name=repoTypes]").val(data.repoTypes);
 			
 			var features = [];
@@ -770,6 +786,12 @@ define([], function() {
 			if(data.enableEmailSettings) {
 				features.push('enableEmailSettings');
 			} 
+			
+			if (!self.isBlank(data.module)) {
+				$("[name=name]").attr('module', data.module);
+			} else {
+				$("[name=name]").attr('module', '');
+			}
 			
 			//Uploaders
 			if(data.enableUploadSettings) {
@@ -1003,11 +1025,14 @@ define([], function() {
 			var appName = $(thisObj).attr("appname");
 			var appDirName = $(thisObj).attr("appDirName");
 			var jobtemplatename = $(thisObj).attr("jobtemplatename");
-
+			var templateJsonModule = templateJsonData.module;
+			var moduleName = self.isBlank(templateJsonModule) ? "" : templateJsonModule;
+			
 			// set corresponding job template name and their app name in configure button
 			$("[name=configure]").attr("appname", appName);
 			$("[name=configure]").attr("appDirName", appDirName);
 			$("[name=configure]").attr("jobtemplatename", jobtemplatename);
+			$("[name=configure]").attr("module", moduleName);
 
 
 			// Dynamic param
@@ -1035,6 +1060,8 @@ define([], function() {
 
 			commonVariables.phase = commonVariables.ciPhase + commonVariables.goal; // ci phase
 			commonVariables.appDirName = appDirName;
+			commonVariables.moduleName = moduleName;
+			
 			self.CroneExpression();
 			if (!self.isBlank(jobJsonData) && templateJsonData.enableSheduler) {
 				self.cronReverser(jobJsonData);
@@ -1571,6 +1598,9 @@ define([], function() {
  
 				// append the configureJob json (jobJson) in  job template name id
 				var jobConfiguration = $('#jonConfiguration').serializeObject();
+				if(!self.isBlank(templateJsonData.module)) {
+					jobConfiguration.module = templateJsonData.module;
+				}
 				jobConfiguration.operation = templateJsonData.type;
 				jobConfiguration.triggers = triggers;
 				jobConfiguration.templateName = templateJsonData.name;

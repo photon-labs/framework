@@ -490,6 +490,8 @@ public interface ResponseCodes {
 	String PHR810037 = "PHR810037"; // failed to get jenkins url
 	String PHR810038 = "PHR810038"; // job(s) have already been created using this job template with Repo
 	String PHR810039 = "PHR810039"; // job(s) have already been created using this job template for this App
+	String PHR800025 = "PHR800025"; // Returned list of modules successfully
+	String PHR810040 = "PHR810040"; // Failed to return multi modules
 	
 	/*
 	 * Upgrade Service
@@ -531,15 +533,18 @@ public interface ResponseCodes {
 	String PHRD000006 = "PHRD000006"; // Dashboard widget updated successfully
 	String PHRD000007 = "PHRD000007"; // All dashboard widgets listed successfully
 	String PHRD000008 = "PHRD000008"; // All application dashboards listed successfully
+	String PHRD000009 = "PHRD000009"; // Search results returned successfully
 
 	String PHRD010001 = "PHRD010001"; // Dashboard configuration failed
 	String PHRD010002 = "PHRD010002"; // Dashboard not found
 	String PHRD010003 = "PHRD010003"; // Dashboard updation failed
 	String PHRD010004 = "PHRD010004"; // Dashboard widget adding failed
-	String PHRD010005 = "PHRD010005"; // Dashboard widget retrieved not found
+	String PHRD010005 = "PHRD010005"; // Dashboard widget not found
 	String PHRD010006 = "PHRD010006"; // Dashboard widget updation failed
 	String PHRD010007 = "PHRD010007"; // No widgets present
 	String PHRD010008 = "PHRD010008"; // No dashboards present
+	String PHRD010009 = "PHRD100009"; // Unknown dashboard datatype passed
+	String PHRD010010 = "PHRD100010"; // Exception occurred during the search data
 
 
 

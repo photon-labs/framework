@@ -211,7 +211,8 @@ define(["application/listener/applicationListener"], function() {
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
 			setTimeout(function() {
-				self.editApplicationListener.getAppInfo(self.editApplicationListener.getRequestHeader(self.appDirName , "getappinfo"), function(response) {
+				var appDirName = self.isBlank($('.rootModule').val()) ? self.appDirName : $('.rootModule').val();
+				self.editApplicationListener.getAppInfo(self.editApplicationListener.getRequestHeader(appDirName , "getappinfo"), function(response) {
 					var projectlist = {};
 					projectlist.projectlist = response;
 					var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));

@@ -18,6 +18,7 @@
 package com.photon.phresco.framework.rest.api;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,7 +40,9 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.collections.CollectionUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.eclipse.core.runtime.jobs.Job;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.client.ClientProtocolException;
 
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.FrameworkConstants;
@@ -175,9 +178,34 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 		ResponseInfo<CIJobTemplate> responseData = new ResponseInfo<CIJobTemplate>();
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			List<CIJobTemplate> jobTemplates = Arrays.asList(ciJobTemplate);
+			
+			List<String> appIds = ciJobTemplate.getAppIds();
+			List<CIJobTemplate> templates = new ArrayList<CIJobTemplate>();
+			templates.add(ciJobTemplate);
 			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
-			ciManager.createJobTemplates(jobTemplates, false, appInfos);
+			for (String appName : appIds) {
+				for (ApplicationInfo appInfo : appInfos) {
+					if(appName.equals(appInfo.getName())) {
+						List<String> modules = FrameworkServiceUtil.getProjectModules(appInfo.getAppDirName());
+						if (CollectionUtils.isNotEmpty(modules)) {
+							for (String module : modules) {
+								CIJobTemplate tempModTemplate = new CIJobTemplate(ciJobTemplate);
+								String moduleName = tempModTemplate.getName() + appName + module;
+								tempModTemplate.setName(moduleName);
+								tempModTemplate.setAppIds(Arrays.asList(appName));
+								tempModTemplate.setModule(module);
+								templates.add(tempModTemplate);
+							}
+						}
+					} 
+				}
+			}
+			
+			for (CIJobTemplate template : templates) {
+				List<CIJobTemplate> jobTemplates = Arrays.asList(template);
+//				List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+				ciManager.createJobTemplates(jobTemplates, false, appInfos);
+			}
 			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, ciJobTemplate, RESPONSE_STATUS_SUCCESS, PHR800016);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (Exception e) {
@@ -282,10 +310,11 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 	}
 
 	private boolean validate(String name, List<CIJobTemplate> jobTemplates, String projId, List<ApplicationInfo> appInfos, String operation, CIJobTemplate ciJobTemplate, String appName) throws PhrescoException {
-		CIJobTemplate jobTemplate = new CIJobTemplate();
-		for (CIJobTemplate ciJobTemplate2 : jobTemplates) {
-			if(ciJobTemplate2.getName().equals(name)) {
-				jobTemplate = ciJobTemplate2;
+		CIJobTemplate jobTemplatz = new CIJobTemplate();
+		
+		for (CIJobTemplate jobtemplate : jobTemplates) {
+			if(name.equals(jobtemplate.getName())) {
+				jobTemplatz = jobtemplate;
 			}
 		}
 		CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
@@ -310,8 +339,8 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 				}
 			}
 		}
-		
-		List<String> appIds = jobTemplate.getAppIds();
+
+		List<String> appIds = jobTemplatz.getAppIds();
 		for (String appId : appIds) {
 			for (ApplicationInfo appInfo : appInfos) {
 				if(appInfo.getName().equals(appId)){
