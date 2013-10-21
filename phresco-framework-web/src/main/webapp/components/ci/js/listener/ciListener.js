@@ -898,6 +898,7 @@ define([], function() {
 		
 		showConfigureJob : function(thisObj) {
 			$('input[name=jobName]').removeClass('errormessage');
+			$("input[name=jobName]").attr('placeholder','Enter Name');
 			$('input[name=jobName]').val('');
 			$('#errMsg').html('');
 			$('#errMsg').removeClass('errormessage');
