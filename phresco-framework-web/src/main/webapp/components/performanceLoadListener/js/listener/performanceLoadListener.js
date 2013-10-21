@@ -626,6 +626,8 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			requestBody.phase = phase;
 			requestBody.queryString = queryString;
 			self.performAction(self.getActionHeader(requestBody, "validation"), function(response) {
+				//To enable template contents
+				$('.templates').find('input ,select,textarea').prop('disabled', false);
 				if ((response.errorFound) || (response.status === "error") || (response.status === "failure")){
 					if (response.configErr) {
 						commonVariables.api.showError(response.responseCode ,"error", true)
@@ -688,6 +690,8 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 				formJsonStr = formJsonStr + ',' + templJsonStr + '}';
 			}
 			var json = JSON.parse('{' + templJsonStr + '}');
+			//To disable template contents
+				$('.templates').find('input ,select,textarea').prop('disabled', true);
 			self.executeTest($('#loadForm :input[name!=parameterValue]').serialize(), json, 'load', $("#loadPopup"),function(response) {
 				commonVariables.api.localVal.setSession('loadConsole', $('#testConsole').html());
 				$('.progress_loading').hide();
@@ -745,6 +749,8 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 				formJsonStr = formJsonStr + ',' + templJsonStr + '}';
 			}
 			var json = JSON.parse('{' + templJsonStr + '}');
+			//To disable template contents
+			$('.templates').find('input ,select,textarea').prop('disabled', true);
 			self.executeTest($('#performanceForm :input[name!=parameterValue]').serialize(), json, 'performance', $("#performancePopup"),function(response) {
 				commonVariables.api.localVal.setSession('performanceConsole', $('#testConsole').html());
 				$('.progress_loading').hide();
