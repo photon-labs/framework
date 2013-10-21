@@ -444,6 +444,8 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			self.customScroll($(".consolescrolldiv")); 
 			
 			$("#performanceRun").click(function() {
+				//To disable template contents
+				$('.templates').find('input ,select,textarea').prop('disabled', true);
 				self.validation.dispatch("performance-test", $('#performanceForm :input[name!=parameterValue]').serialize(), self.dynamicpage);
 			});
 			
