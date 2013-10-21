@@ -149,15 +149,19 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 
 			// List job templates by environment from all applications
 			self.onLoadEnvironmentEvent.dispatch(function(params) {
-					self.getAction(self.ciRequestBody, 'getJobTemplatesByEnvironment', params, function(response) {
-						self.ciListener.constructJobTemplateViewByEnvironment(response, function() {
-							if(self.name !== null) {
-								self.ciListener.getHeaderResponse(self.ciListener.getRequestHeader(self.ciRequestBody, 'editContinuousView', self.name), function (response) {
-									self.editContinuousViewTable.dispatch(response);
-								});
-							} 
-						});
+				if(!self.isBlank(self.envName)) {
+					params.envName = self.envName;
+					self.envName = "";
+				}
+				self.getAction(self.ciRequestBody, 'getJobTemplatesByEnvironment', params, function(response) {
+					self.ciListener.constructJobTemplateViewByEnvironment(response, function() {
+						if(self.name !== null) {
+							self.ciListener.getHeaderResponse(self.ciListener.getRequestHeader(self.ciRequestBody, 'editContinuousView', self.name), function (response) {
+								self.editContinuousViewTable.dispatch(response);
+							});
+						} 
 					});
+				});
 			});
 			
 		},

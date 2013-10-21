@@ -198,7 +198,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 
    			$("a[name=editContinuousDelivery]").click(function() {
    				var contName = $(this).attr("continuousName");
-				self.continuousDeliveryConfigureEditEvent.dispatch(contName);
+   				var envName = $(this).attr("envName");
+				self.continuousDeliveryConfigureEditEvent.dispatch(contName, envName);
    			});
    			clearInterval(self.interval);
    			self.interval = setInterval(function() {   
@@ -265,6 +266,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 			});
 			
 			$('.closeDyn').click(function(){
+				flag =   flag > 0? 0 :  1;
+				flag1 =  flag1 > 0? 0 : 1;
 				$(this).closest('div[id=datetime_status]').hide();
 				$(this).closest('div[id=ci_info]').hide();
 			}) ;

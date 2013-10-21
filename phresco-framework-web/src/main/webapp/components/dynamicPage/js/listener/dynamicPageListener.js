@@ -1409,6 +1409,11 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             } else {
             	appDirName = commonVariables.appDirName;
             }
+            
+            if (self.isBlank(moduleParam)) {
+            	moduleParam = self.isBlank(commonVariables.moduleName) ? "" : '&moduleName='+ commonVariables.moduleName;
+            }
+            
             var header = {
                 contentType: "application/json",
                 dataType: "json",

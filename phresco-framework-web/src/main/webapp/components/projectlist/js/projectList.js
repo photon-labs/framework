@@ -270,6 +270,11 @@ define(["projectlist/listener/projectListListener"], function() {
 						self.projectslistListener.getProjectList(self.projectslistListener.getActionHeader(actionBody, "checkMachine"), function(response) {
 							commonVariables.api.localVal.setSession("checkMachine", JSON.stringify(response));
 						});
+						if (!self.isBlank(module)) {
+							$('li[id=continuousDeliveryView]').hide();
+						} else {
+							$('li[id=continuousDeliveryView]').show();
+						}
 					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
 						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 					}	

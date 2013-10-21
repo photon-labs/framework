@@ -490,6 +490,8 @@ public interface ResponseCodes {
 	String PHR810037 = "PHR810037"; // failed to get jenkins url
 	String PHR810038 = "PHR810038"; // job(s) have already been created using this job template with Repo
 	String PHR810039 = "PHR810039"; // job(s) have already been created using this job template for this App
+	String PHR800025 = "PHR800025"; // Returned list of modules successfully
+	String PHR810040 = "PHR810040"; // Failed to return multi modules
 	
 	/*
 	 * Upgrade Service

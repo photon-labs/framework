@@ -1003,12 +1003,20 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 				technology = serviceManager.getTechnology(appInfo.getTechInfo().getId());
 			}
-			
+			String prebuildCmd = "";
+			String operationName = "";
 			if (BUILD.equalsIgnoreCase(operation)) {
 				// enable archiving
 				job.setEnableArtifactArchiver(true);
 				// if the enable build release option is choosed in UI, the file pattenr value will be used
-				job.setCollabNetFileReleasePattern(CI_BUILD_EXT);
+				List<String> modules = FrameworkServiceUtil.getProjectModules(job.getAppDirName());
+				if (StringUtils.isNotEmpty(job.getModule())) {
+					job.setCollabNetFileReleasePattern(job.getModule()+"/do_not_checkin/build/*.zip");
+				} else if (CollectionUtils.isEmpty(modules)) {
+					job.setCollabNetFileReleasePattern(CI_BUILD_EXT);
+				} else {
+					job.setEnableArtifactArchiver(false);
+				}
 				File phrescoPluginInfoFilePath = new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_PACKAGE, job.getAppDirName()));
 				if(phrescoPluginInfoFilePath.exists()) {
 					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
@@ -1017,16 +1025,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				}
 				ActionType actionType = ActionType.BUILD;
 				mvncmd =  actionType.getActionType().toString();
-
-				String buildPrebuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PACKAGE +
-				CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
-
-				if(!Constants.POM_NAME.equals(pomFileName)) {
-					buildPrebuildCmd = buildPrebuildCmd + " -f " + pomFileName; 
-				}
-				// To handle multi module project
-				buildPrebuildCmd = buildPrebuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
-				preBuildStepCmds.add(buildPrebuildCmd);
+				operationName = Constants.PHASE_PACKAGE;
 			} else if (DEPLOY.equals(operation)) {
 				File phrescoPluginInfoFilePath = new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_DEPLOY, job.getAppDirName()));
 				if (phrescoPluginInfoFilePath.exists()) {
@@ -1036,15 +1035,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				}
 				ActionType actionType = ActionType.DEPLOY;
 				mvncmd =  actionType.getActionType().toString();
-
-				String deployPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_DEPLOY +
-				CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
-				if(!POM_NAME.equals(pomFileName)) {
-					deployPreBuildCmd = deployPreBuildCmd + " -f " + pomFileName; 
-				}
-				// To handle multi module project
-				deployPreBuildCmd = deployPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
-				preBuildStepCmds.add(deployPreBuildCmd);
+				operationName = Constants.PHASE_DEPLOY;
 			} else if (PDF_REPORT.equals(operation)) {
 				// for pdf report attachment patterns
 				// based on test report type, it should be specified
@@ -1057,8 +1048,15 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				String attachPattern = "do_not_checkin/archives/" + attacheMentPattern + "/*.pdf";
 				job.setAttachmentsPattern(attachPattern); //do_not_checkin/archives/cumulativeReports/*.pdf
 				// if the enable build release option is choosed in UI, the file pattenr value will be used
-				job.setCollabNetFileReleasePattern(attachPattern);
-
+				
+				List<String> modules = FrameworkServiceUtil.getProjectModules(job.getAppDirName());
+				if (StringUtils.isNotEmpty(job.getModule())) {
+					job.setCollabNetFileReleasePattern(job.getModule()+ "/" + attachPattern);
+				} else if (CollectionUtils.isEmpty(modules)) {
+					job.setCollabNetFileReleasePattern(attachPattern);
+				} else {
+					job.setEnableArtifactArchiver(false);
+				}
 				// here we can set necessary values in request and we can change object value as well...
 				// getting sonar url
 				
@@ -1085,15 +1083,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				}
 				ActionType actionType = ActionType.PDF_REPORT;
 				mvncmd =  actionType.getActionType().toString();
-
-				String pdfPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PDF_REPORT +
-				CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
-				if(!POM_NAME.equals(pomFileName)) {
-					pdfPreBuildCmd = pdfPreBuildCmd + " -f " + pomFileName; 
-				}
-				// To handle multi module project
-				pdfPreBuildCmd = pdfPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
-				preBuildStepCmds.add(pdfPreBuildCmd);
+				operationName = Constants.PHASE_PDF_REPORT;
 			} else if (CODE_VALIDATION.equals(operation)) {
 				File phrescoPluginInfoFilePath = new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_VALIDATE_CODE, job.getAppDirName()));
 				if (phrescoPluginInfoFilePath.exists()) {
@@ -1103,15 +1093,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				}
 				ActionType actionType = ActionType.CODE_VALIDATE;
 				mvncmd =  actionType.getActionType().toString();
-
-				String deployPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_VALIDATE_CODE +
-				CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
-				if(!POM_NAME.equals(pomFileName)) {
-					deployPreBuildCmd = deployPreBuildCmd + " -f " + pomFileName; 
-				}
-				// To handle multi module project
-				deployPreBuildCmd = deployPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
-				preBuildStepCmds.add(deployPreBuildCmd);
+				operationName = Constants.PHASE_VALIDATE_CODE;
 			} else if (UNIT_TEST.equals(operation)) {
 				File phrescoPluginInfoFilePath = new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_UNIT_TEST, job.getAppDirName()));
 				if (phrescoPluginInfoFilePath.exists()) {
@@ -1121,15 +1103,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				}
 				ActionType actionType = ActionType.UNIT_TEST;
 				mvncmd =  actionType.getActionType().toString();
-
-				String unitTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_UNIT_TEST +
-				CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
-				if(!POM_NAME.equals(pomFileName)) {
-					unitTestPreBuildCmd = unitTestPreBuildCmd + " -f " + pomFileName; 
-				}
-				// To handle multi module project
-				unitTestPreBuildCmd = unitTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
-				preBuildStepCmds.add(unitTestPreBuildCmd);
+				operationName = Constants.PHASE_UNIT_TEST;
 				if (job.isCoberturaPlugin()) {
 					job.setEnablePostBuildStep(true);
 					List<String> postBuildStepCmds = new ArrayList<String>();
@@ -1152,14 +1126,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				}
 				ActionType actionType = ActionType.FUNCTIONAL_TEST;
 				mvncmd =  actionType.getActionType().toString();
-				String functionalTestPrebuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_FUNCTIONAL_TEST +
-				CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
-				if(!POM_NAME.equals(pomFileName)) {
-					functionalTestPrebuildCmd = functionalTestPrebuildCmd + " -f " + pomFileName; 
-				}
-				// To handle multi module project
-				functionalTestPrebuildCmd = functionalTestPrebuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
-				preBuildStepCmds.add(functionalTestPrebuildCmd);
+				operationName = Constants.PHASE_FUNCTIONAL_TEST;
 			} else if (LOAD_TEST.equals(operation)) {
 				File phrescoPluginInfoFilePath = new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_LOAD_TEST, job.getAppDirName()));
 				if (phrescoPluginInfoFilePath.exists()) {
@@ -1169,15 +1136,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				}
 				ActionType actionType = ActionType.LOAD_TEST;
 				mvncmd =  actionType.getActionType().toString();
-
-				String loadTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_LOAD_TEST +
-				CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
-				if(!POM_NAME.equals(pomFileName)) {
-					loadTestPreBuildCmd = loadTestPreBuildCmd + " -f " + pomFileName; 
-				}
-				// To handle multi module project
-				loadTestPreBuildCmd = loadTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
-				preBuildStepCmds.add(loadTestPreBuildCmd);
+				operationName = Constants.PHASE_LOAD_TEST;
 			} else if (PERFORMANCE_TEST_CI.equals(operation)) {
 				File phrescoPluginInfoFilePath = new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_PERFORMANCE_TEST, job.getAppDirName()));
 				if (phrescoPluginInfoFilePath.exists()) {
@@ -1187,15 +1146,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				}
 				ActionType actionType = ActionType.PERFORMANCE_TEST;
 				mvncmd =  actionType.getActionType().toString();
-
-				String performanceTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PERFORMANCE_TEST +
-				CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
-				if(!POM_NAME.equals(pomFileName)) {
-					performanceTestPreBuildCmd = performanceTestPreBuildCmd + " -f " + pomFileName; 
-				}
-				// To handle multi module project
-				performanceTestPreBuildCmd = performanceTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
-				preBuildStepCmds.add(performanceTestPreBuildCmd);
+				operationName = Constants.PHASE_PERFORMANCE_TEST;
 			} else if (COMPONENT_TEST_CI.equals(operation)) {
 				File phrescoPluginInfoFilePath = new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_COMPONENT_TEST, job.getAppDirName()));
 				if (phrescoPluginInfoFilePath.exists()) {
@@ -1205,15 +1156,19 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				}
 				ActionType actionType = ActionType.COMPONENT_TEST;
 				mvncmd =  actionType.getActionType().toString();
-
-				String componentTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_COMPONENT_TEST +
-				CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
-				if(!POM_NAME.equals(pomFileName)) {
-					componentTestPreBuildCmd = componentTestPreBuildCmd + " -f " + pomFileName; 
-				}
-				// To handle multi module project
-				componentTestPreBuildCmd = componentTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
-				preBuildStepCmds.add(componentTestPreBuildCmd);
+				operationName = Constants.PHASE_COMPONENT_TEST;
+			}
+			prebuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + operationName +
+			CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
+			if(!POM_NAME.equals(pomFileName)) {
+				prebuildCmd = prebuildCmd + " -f " + pomFileName; 
+			}
+			// To handle multi module project
+			prebuildCmd = prebuildCmd + FrameworkConstants.SPACE + HYPHEN_N; 
+			
+			if(StringUtils.isNotEmpty(job.getModule())) {
+				mvncmd = mvncmd + FrameworkConstants.SPACE  + DMODULE_NAME+job.getModule();
+				prebuildCmd = prebuildCmd + FrameworkConstants.SPACE  + DMODULE_NAME+job.getModule();
 			}
 
 
@@ -1233,7 +1188,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if (BUILD.equals(operation) || PDF_REPORT.equals(operation)) {
 				mvncmd = CI_PROFILE + mvncmd;
 			}
-
+			preBuildStepCmds.add(prebuildCmd);
 			// To handle multi module project
 			mvncmd = mvncmd + FrameworkConstants.SPACE + HYPHEN_N;
 			job.setMvnCommand(mvncmd);
