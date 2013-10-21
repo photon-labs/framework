@@ -642,7 +642,7 @@ a.dropdown-toggle b.caret  {
 
 .cust_sel ul li a{
 	padding-left:5px;
-	color:#000;
+	color:#000 !important;
 	text-decoration:none;
 }
 
@@ -4868,4 +4868,131 @@ textarea[name="regex"] {
 
 :-moz-placeholder { 
   color: #999999 !important;
+}
+
+#add_widget tr td textarea, .settings_textarea {
+	width:95%;
+}
+#add_widget tr td select {
+	margin-bottom:0px;
+	width: 100% !important;
+}
+
+#firstsettings tr td select {
+	margin-bottom:0px;
+	margin-left:10px;
+}
+
+#noc_config tr td select {
+	width: 100% !important;
+}
+
+.noc_view {
+	width:98%;
+	height:260px;
+	border:1px solid #CDCDCD;
+	border-radius:8px;
+	float:left;
+	margin:10px;
+}
+
+.tab_div {
+	background:background: #ededed; /* Old browsers */
+background: -moz-linear-gradient(top,  #ededed 8%, #e2e2e2 96%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(8%,#ededed), color-stop(96%,#e2e2e2)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  #ededed 8%,#e2e2e2 96%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  #ededed 8%,#e2e2e2 96%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  #ededed 8%,#e2e2e2 96%); /* IE10+ */
+background: linear-gradient(to bottom,  #ededed 8%,#e2e2e2 96%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', endColorstr='#e2e2e2',GradientType=0 ); /* IE6-9 */
+	padding-top:10px;
+	border-radius:8px 8px 0px 0px;
+} 
+.tab_div ul li {
+	padding-right:6px;
+	outline:none;
+}
+
+.tab_div ul li:first-child {
+	padding-left:10px !important;
+}
+
+.tab_div ul li a {
+	color:#FFF;
+	background:#ed7940;
+	border-radius:8px 8px 0px 0px;
+	padding:4px 15px;
+}   
+
+.tab_div ul li a:hover {
+	background:#ed7940;
+}
+
+.tab_div ul li a:focus{
+	outline:none;
+}
+
+.tab_btn {
+	float:right;
+	margin-right: 10px;
+    margin-top: -4px;
+}
+
+.tab_btn input:first-child {
+	margin-right:4px;
+}
+
+.settings_btn {
+	background:url(../../images/Phresco/noc_settings.png) #ed7940 no-repeat 6px 6px !important;
+	padding-right:17px !important;
+	
+}
+
+.enlarge_btn {
+	background:url(../../images/Phresco/enlarge_icon.png) #ed7940 no-repeat 7px 8px !important;
+	padding-right:16px !important;
+}
+
+.cssforchart {
+	height: 200px !important;
+    margin: -9px 22px !important;
+    width: 88% !important;
+}
+
+.noc_table {
+	margin:10px;
+	border:1px solid #CDCDCD !important;
+	height:190px;
+	overflow:auto;
+	border-radius:6px !important;
+}
+
+.firstsettings {
+	z-index: 2 !important;
+}
+
+.firstsettings  table tr td input[type="radio"] {
+	margin:-3px 3px 0 12px;
+}
+
+.firstsettings table tr:first-child td {
+	padding-bottom:8px;
+}
+
+.forlistingdash {
+	background: none repeat scroll 0 0 #EF7B43;
+    border-radius: 6px;
+    color: #ffffff;
+    float: left;
+    height: 25px !important;
+    margin: 0px 6px 0 !important;
+    min-width: 34px;
+    padding: 4px 0 0 8px;
+	width:auto;
+}
+
+.dash_ul  li a{
+	padding: 0 0 9px 4px !important;
+	text-shadow:none !important;
+	color:#ffffff !important;
 }

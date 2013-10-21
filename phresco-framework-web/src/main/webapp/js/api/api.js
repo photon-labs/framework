@@ -250,9 +250,13 @@ define(["framework/base", "api/localStorageAPI"], function(){
 						} else if(response.exception.message !== null && response.exception.message !== undefined) {
 							$(".modal-body").append(response.exception.message+'<br>');
 						}
-						$.each(response.exception.stackTrace, function(index, value){
-							$(".modal-body").append(' '+value.className+' '+value.fileName+' '+' '+value.lineNumber+' '+value.methodName);
-						});
+						if(response.exception.stackTrace !== undefined) {
+							$.each(response.exception.stackTrace, function(index, value){
+								$(".modal-body").append(' '+value.className+' '+value.fileName+' '+' '+value.lineNumber+' '+value.methodName);
+							}); 
+						} else {
+							$(".modal-body").append(response.exception);
+						}
 					}
 					$("#errpopup").modal();	
 					setTimeout(function() {

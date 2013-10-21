@@ -94,6 +94,8 @@ var commonVariables = {
 
 	downloads : "downloads",
 	
+	dashboard : "dashboard",
+	
 	customerTheme : null,
 	defaultcustomer : "Photon",
 	customerInfoContext : "technology/customerinfo?customerName=",

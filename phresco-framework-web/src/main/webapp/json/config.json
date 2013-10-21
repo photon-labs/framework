@@ -137,6 +137,11 @@
 			"path" : "../components/downloads/js"
 		},
 		
+		"dashboard" : {
+			"moduleName":"dashboard",
+			"path" : "../components/dashboard/js"
+		},
+		
 		"testResult" : {
 			"moduleName":"testResult",
 			"path" : "../components/testResult/js"

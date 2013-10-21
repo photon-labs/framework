@@ -224,6 +224,7 @@
 	 	"PHR10LUR001" : "Commit in progress. ",
 		"PHR10LCR001" : "Update in progress. ",
 		"PHR10LIM001" : "Import in progress. ",
+		"PHRD010008" : "No Dashboards Exist.",
 		"enteruniquename" : "Enter Unique Name",
 		"configureatleastonejob" : "Configure atleast one Job!",
 		"hasdependencies" : "Feature has dependencies.",
@@ -299,7 +300,8 @@
 			"apprepourl" : "Application Repo URL",
 			"testcheckout" : "Test Checkout",
 			"testrepourl" : "Test Repo Url",
-			"processlockby" : "The process has been locked by "
+			"processlockby" : "The process has been locked by ",
+			"dashboard" : "Dashboard"
  		}
 	},
 	"codequality" : {

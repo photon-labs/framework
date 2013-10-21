@@ -18,6 +18,7 @@ define([], function() {
 		editproject : null,
 		settings : null,
 		downloads : null,
+		dashboard : null,
 		unitTest : null,
 		functionalTest : null,
 		componentTest : null,
@@ -253,6 +254,18 @@ define([], function() {
 						}else{
 							callback(self.integrationTest);
 						}
+						
+						break;
+						
+					case commonVariables.dashboard :
+						if(self.dashboard === null) {
+							require(["dashboard/dashboard"], function() {
+								self.dashboard = new Clazz.com.components.dashboard.js.Dashboard();
+								callback(self.dashboard);	
+							});
+						}else{
+							callback(self.dashboard);
+						}	
 						
 						break;
 						
@@ -737,7 +750,14 @@ define([], function() {
 					currentObj = returnVal;
 					self.myTabRenderFunction(currentObj, keyword);
 				});
-			}
+			}  else if (keyword === commonVariables.dashboard) {
+				self.getMyObj(commonVariables.dashboard, function(returnVal){
+					currentObj = returnVal;
+					currentObj.clicked = false;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
+			}	
+						
 
 		},
 		

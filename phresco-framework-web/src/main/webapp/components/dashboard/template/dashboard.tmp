@@ -1,0 +1,153 @@
+ <div id="main">
+	<div class="optiontitle">
+		<div class="unit_text">Dashboard</div>
+    	<div class="code_anal">
+			<div class="forlistingdash navbar navbar-static">
+				<ul class="nav dash_ul">
+					<li id="fat-menu" class="dropdown open">
+					<a id="click_listofdash" class="dropdown-toggle" value="click" data-toggle="dropdown" role="button" href="javascript:void(0)">
+					Dashboard
+					<b class="caret"></b>
+					</a>
+					<div class="dropdown-menu cust_sel" id="dashlist" aria-labelledby="reportOptionsDrop" role="menu">
+						<ul class="dashboardslist">
+						</ul>
+					</div>
+					</li>
+				</ul>
+			</div>
+            <input type="submit" id="config_noc" value="Configure" class="btn btn_style">
+                <div id="noc_config" class="dyn_popup popup_bg">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="5">     
+                        <tr>
+							<td>Dashboard Name<sup>*</sup></td>
+							<td><input type="text" id="dashboard_name"></td>
+						</tr>
+						<tr>
+							<td>Data Type</td>
+							<td>
+								<select id="data_type">
+									<option>Splunk</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>Username<sup>*</sup></td>
+							<td><input id="conf_username" type="text"></td>
+						</tr>
+						<tr>
+							<td>Password<sup>*</sup></td>
+							<td><input id="conf_password" type="text"></td>
+						</tr>
+						<tr>
+							<td>Splunk URL<sup>*</sup></td>
+							<td><input id="conf_url" type="text"></td>
+						</tr>
+						<tr>
+							<td>Select Application</td>
+							<td><select class="appdirnamedropdown"></select></td>
+						</tr>
+                    </table>
+                            <div class="flt_right">
+                                <input id="configure_widget" type="button" value="Configure" class="btn btn_style">
+                                <input type="button" value="Close" class="btn btn_style dyn_popup_close">
+                            </div>
+                 </div>
+             <input type="submit" id="add_wid" value="Add Widget" class="btn btn_style">
+             	<div id="add_widget" class="dyn_popup popup_bg">          				
+				<table width="100%" border="0" cellspacing="0" cellpadding="5">     
+				<tr>
+				<td>Widget Name<sup>*</sup></td>
+				<td><input type="text" id="nameofwidget"></td>
+				</tr>
+                <tr>
+                	<td>Query<sup>*</sup></td>
+                </tr>
+                <tr>
+                	<td colspan="3"><textarea id="query_add"></textarea></td>
+                </tr>
+				<tr>
+					<td>Auto-Refresh</td>
+					<td><input id="timeout" type="checkbox"></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><input id="timeoutval" type="textbox"></td>
+				</tr>
+                </table>
+				
+                <div class="flt_right">
+                                <input id="widgetadd" type="button" value="Add" class="btn btn_style">
+                                <input type="button" value="Close" class="btn btn_style dyn_popup_close">
+                </div>
+                </div>
+        	<!--code_anal div ends here -->
+        </div>
+    	<!--second_title div ends here -->
+    </div>
+    
+    <section class="features_content_main">
+            
+			<div id="firstsettings" class="dyn_popup firstsettings">
+				<table width="100%" border="0" cellspacing="0" cellpadding="5">                
+                <tr>
+                	<td>Default Widget Type</td>
+                    <td><input checked type="radio" name="widgettype" value="graph">&nbsp;Graph&nbsp;
+                    	<input type="radio" name="widgettype" value="table">&nbsp;Table&nbsp;
+                    </td>
+                </tr>
+				<tr>
+                	<td>Chart Type</td>          
+                    <td><select class="configwidgetdatatype">
+								<option value="linechart">Line Chart</option>
+								<option value="piechart">Pie Chart</option>
+								<option value="barchart">Bar Chart</option>
+						</select>
+                    </td>
+                </tr>               
+                <tr>
+                	<td>Query<sup>*</sup></td>
+                </tr>
+                <tr>
+                	<td colspan="3"><textarea class="settings_textarea"></textarea></td>
+                </tr>
+				<tr>
+					<td>X-Axis</td>
+					<td><select class="xaxis"></select></td>
+				</tr>
+				<tr>
+					<td>Y-Axis</td>
+					<td><select class="yaxis"></select></td>
+				</tr>
+				<tr>
+					<td>Percentage Value</td>
+					<td><select class="percentval"></select></td>
+				</tr>
+				<tr>
+					<td>Legend Value</td>
+					<td><select class="legendval"></select></td>
+				</tr>
+				<tr>
+					<td>X-axis</td>
+					<td><select class="baraxis"></select></td>
+				</tr>
+                </table>
+				<table id="tabforbar" class="table table-striped table_border table-bordered fetchSql_table border_div" cellpadding="0" cellspacing="0" border="0">
+					<thead>
+						<tr><th colspan="2">Select Bar Chart Inputs</th></tr>
+					</thead>
+					<tbody>
+						<tr><td><ul name="sortable1" class="sortable1 connectedSortable"></ul></td><td><ul name="sortable2" class="sortable2 connectedSortable"></ul></td></tr>
+					</tbody>
+				</table>
+				<div class="flt_right">
+					<input id="execute_query" type="button" value="Execute Query" class="btn btn_style">
+					<input id="update_tab" type="button" value="Update" class="btn btn_style okclass">
+					<input type="button" value="Close" class="btn btn_style dyn_popup_close closeset">
+				</div>
+			</div>
+            
+
+
+    </section>
+</div>
