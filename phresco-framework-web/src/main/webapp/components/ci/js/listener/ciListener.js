@@ -118,7 +118,6 @@ define([], function() {
 			} else if(commonVariables.projectLevel){
 				projectId = $('.hProjectId').val();
 			}
-			
 			header = {
 				contentType: "application/json",
 				dataType: "json",
@@ -1560,7 +1559,8 @@ define([], function() {
 					} else {
 						testAction = "performance";
 					}
-					ciRequestBody.data = $('#jonConfiguration :input[name!=parameterValue]').serialize()+"&appDirName="+appDirName+"&testAction="+testAction;
+					var moduleParam = self.isBlank(templateJsonData.module) ? "" : '&moduleName='+templateJsonData.module;
+					ciRequestBody.data = $('#jonConfiguration :input[name!=parameterValue]').serialize()+"&appDirName="+appDirName+"&testAction="+testAction+moduleParam;
 					ciRequestBody.jsondata = json;
 					$("#contextDivParent").remove();
 					self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'writeJson'), function (response) {

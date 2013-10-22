@@ -28,8 +28,8 @@ define([], function() {
 			var self = this;
 			commonVariables.projectId = projectId;
 			commonVariables.navListener.getMyObj(commonVariables.dashboard, function(editprojectObject) {
-				/* commonVariables.projectLevel = true;
-				$('.hProjectId').val(projectId); */
+				commonVariables.projectLevel = true;
+				$('.hProjectId').val(projectId); 
 				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 				Clazz.navigationController.push(editprojectObject, commonVariables.animation);
 				$("#editprojectTab").css("display", "block");
