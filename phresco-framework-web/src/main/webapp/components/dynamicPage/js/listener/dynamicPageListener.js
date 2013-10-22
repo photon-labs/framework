@@ -380,7 +380,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                 if (!self.isBlank(hideCtrls) && hideCtrls !== params) {
                     hide = hideCtrls;
                 }
-                
+
                 selectCtrl.append('<option value="'+optionValue+'" hide="'+hide+'" additionalParam="' + additionalParam + '" '+selected+'>'+value.value+'</option>');
             });
         },
@@ -530,14 +530,16 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                 }
             }); 
 
-            // if (!self.isBlank(allDependencies) && !self.isBlank(hideControls)) {
-            //     allDependenciesArr = allDependencies.split(',');
-            //     hideCtrlsArray = hideControls.split(',');
-            //     $.each(allDependenciesArr, function(index, dependency) {
-            //         hideCtrlsArray.splice($.inArray(dependency, hideCtrlsArray), 1);
-            //     });
-            //     hideControls = hideCtrlsArray.join(',');
-            // }
+            if (!self.isBlank(allDependencies) && !self.isBlank(hideControls)) {
+                allDependenciesArr = allDependencies.split(',');
+                hideCtrlsArray = hideControls.split(',');
+                $.each(allDependenciesArr, function(index, dependency) {
+                    if ($.inArray(dependency, hideCtrlsArray) !== -1) {
+                        hideCtrlsArray.splice($.inArray(dependency, hideCtrlsArray), 1);
+                    }
+                });
+                hideControls = hideCtrlsArray.join(',');
+            }
             return hideControls;
         },
         
