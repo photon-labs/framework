@@ -373,9 +373,10 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                 if (!self.isBlank(params)) {
                     additionalParam = "dependency=" + params;
                 }
-                var hideCtrls = self.getHideControls(possibleValues, value);
+                var hideCtrls = self.getHideControls(possibleValues, value, params);
                 
                 var hide = "";
+
                 if (!self.isBlank(hideCtrls) && hideCtrls !== params) {
                     hide = hideCtrls;
                 }
@@ -515,8 +516,8 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         }, 
         
         //returns controls to be hide
-        getHideControls : function (values, currentValue) {
-            var self = this, hideControls = "", comma = "";
+        getHideControls : function (values, currentValue, allDependencies) {
+            var self = this, hideControls = "", comma = "", allDependenciesArr = [], hideCtrlsArray = [];
             $.each(values, function(index, value) {
                 if (!self.isBlank(value.dependency) && !self.isBlank(value.key) &&  !self.isBlank(currentValue.key) 
                          &&  value.key !== currentValue.key && value.dependency !== currentValue.dependency) {
@@ -528,7 +529,16 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                     comma = ",";
                 }
             }); 
-            
+
+            if (!self.isBlank(allDependencies) && !self.isBlank(hideControls)) {
+                allDependenciesArr = allDependencies.split(',');
+                hideCtrlsArray = hideControls.split(',');
+                $.each(allDependenciesArr, function(index, dependency) {
+                    hideCtrlsArray.splice($.inArray(dependency, hideCtrlsArray), 1);
+                });
+                hideControls = hideCtrlsArray.join(',');
+            }
+
             return hideControls;
         },
         
