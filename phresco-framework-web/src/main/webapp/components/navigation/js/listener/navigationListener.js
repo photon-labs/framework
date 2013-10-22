@@ -1037,7 +1037,11 @@ define([], function() {
 			actionBody = importdata;
 			action = "importpost";
 			commonVariables.hideloading = true;
+			$("#project_list_import").find('input').attr('disabled','disabled');
+			$("#project_list_import").find('select').attr('disabled','disabled');
 			self.navigationActionForImport(self.getActionHeader(actionBody, action), function(response){
+				$("#project_list_import").find('input').removeAttr('disabled');
+				$("#project_list_import").find('select').removeAttr('disabled');
 				$("#importloading").hide();
 				if (response.exception === null) {
 					$("#project_list_import").hide();	

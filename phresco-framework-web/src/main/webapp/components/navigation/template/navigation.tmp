@@ -56,7 +56,7 @@
 	                <table>
 	                	<tbody>
 	                		<tr>
-	                            <td><span data-i18n="navigation.application.testrepourl"></span></td>
+	                            <td><span data-i18n="navigation.application.testrepourl"></span><sup>*</sup></td>
 	                            <td><input type="text" id="testRepoUrl" data-i18n="[placeholder]navigation.application.testrepourl"></td>
 	                        </tr>
 	                        <tr>

@@ -120,6 +120,9 @@ define(["navigation/listener/navigationListener"], function() {
 			$("#importApp").unbind("click");
 			$("#importApp").click(function() {
 				var currentPrjName = "";
+				$("#project_list_import").find('input').removeAttr('disabled');
+				$("#project_list_import").find('select').removeAttr('disabled');
+				
 				/* if(counter === 1) {
 					$('#importUserName').val('');
 					$('#importPassword').val('');
