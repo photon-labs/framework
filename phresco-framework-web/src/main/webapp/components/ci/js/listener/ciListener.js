@@ -1083,6 +1083,14 @@ define([], function() {
 					if (!self.isBlank(jobJsonData)) {
 						$('input[name=jobName]').val(jobJsonData.jobName);
 						self.restoreFormValues($("#jonConfiguration"), jobJsonData);
+						if (jobJsonData.confluencePublish === true || jobJsonData.confluencePublish === "true") {
+							$("#Publish").val("true");
+							$("#Publish").attr('checked', true);
+						} 
+						if (jobJsonData.confluenceArtifacts === true || jobJsonData.confluenceArtifacts === "true") {
+							$("#archive").val("true");
+							$("#archive").attr('checked', true);
+						} 
 						var fetchSql = true;
 						if (jobJsonData.fetchSql === "{}") {
 							fetchSql = false;

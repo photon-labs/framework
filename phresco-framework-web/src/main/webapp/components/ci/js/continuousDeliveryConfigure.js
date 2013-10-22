@@ -197,6 +197,25 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 				this.value = this.value.replace(/[^-_a-zA-Z0-9 ]/g, '');
 			});
 	  		
+	  		$( "#jobConfigure" ).delegate( "#Publish", "click", function() {
+	  			if ($("#Publish").is(':checked')) {
+	  				$("#Publish").val("true");
+	  			} else {
+	  				$("#Publish").val("false");
+	  			}
+	  				
+	  			
+			});
+	  		
+	  		$( "#jobConfigure" ).delegate( "#archive", "click", function() {
+  				if ($("#archive").is(':checked')) {
+  					$("#archive").val("true");
+	  			} else {
+	  				$("#archive").val("false");
+	  			}
+			});
+	  		
+	  		
 			$(function() {
 				// sortable1 functionality
 				$( "#sortable1" ).sortable({

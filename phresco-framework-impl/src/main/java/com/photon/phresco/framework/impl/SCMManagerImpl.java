@@ -1161,7 +1161,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		SVNWCClient wcClient = cm.getWCClient();
 		File[] comittableFiles = listModifiedFiles.toArray(new File[listModifiedFiles.size()]);
 
-		SVNCommitClient cc = SVNClientManager.newInstance().getCommitClient(); 
+		SVNCommitClient cc = cm.getCommitClient(); 
 		cc.setCommitParameters(new ISVNCommitParameters() { 
 
 			// delete even those files 
