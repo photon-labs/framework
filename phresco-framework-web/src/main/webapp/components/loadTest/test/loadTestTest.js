@@ -190,7 +190,7 @@ define(["loadTest/loadTest"], function(LoadTest) {
 					start();
 					equal($(".dynamicControls").find(".ctrl").size(), 18, "Load dynamic controls render test");
 					equal($(".contextDivParent").find(".contextDivClass").size(), 1, "Context URL template render test");
-					self.runAddContextUrlTest(loadTest);
+					self.runTriggerLoadTest(loadTest);
 					
 				},1800);
 			});

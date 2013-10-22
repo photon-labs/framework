@@ -1206,14 +1206,14 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         
         /********************************** TEMPLATE METHODS STARTS ***********************************************/
          bindTemplateEvents : function () {
-            var self = this, i = 1, contextUrlsRowId = "";
-            $("#contextAdd").unbind("click");
-            $("#contextAdd").click(function() {
+            var self = this;
+            $(".contextAdd").unbind("click");
+            $(".contextAdd").click(function() {
                 self.addContext('contextDiv');
             }) ;
 
-            $("#dbContextAdd").unbind("click");
-            $("#dbContextAdd").click(function() {
+            $(".dbContextAdd").unbind("click");
+            $(".dbContextAdd").click(function() {
                 self.addContext('dbContextDiv');
             }) ;
 
@@ -1287,10 +1287,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             $("#"+contextUrlsRowId).find('input[name=defaultValue]').val('NOT FOUND');
 
             self.showHideMinus($("#"+contextUrlsRowId).find('.addParameter'), 1);
-            self.bindRemoveContextEvent();      
-            self.bindContextEvents();
-            self.enableDisableDeleteContext('contextDivClass', 'removeContext');
-            self.enableDisableDeleteContext('dbContextDivClass', 'removeDBContext');
+            self.bindTemplateEvents();
         },
 
         removeContext : function (obj, divClass, delIcon) {

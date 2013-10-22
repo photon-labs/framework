@@ -255,7 +255,7 @@
 					equal($(".dynamicControls").find(".ctrl").size(), 16, "Performance dynamic controls render test");
 					equal($(".contextDivParent").find(".contextDivClass").size(), 1, "Context URL template render test");
 					equal($("#dbContextDivParent").find(".dbContextDivClass").size(), 1, "DB Context template render test");
-					self.runAddContextUrlTest(performanceTest);
+					self.runMandatoryValidationTest(performanceTest);
 				},1800);
 			});
 		},
