@@ -228,6 +228,7 @@ define([], function() {
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
+						commonVariables.api.localVal.setJson('functionalFrameworkInfo', response.data.projectInfo.appInfos[0].functionalFrameworkInfo);
 						var data = {};
 							data.appdetails = response;
 							if (response){$('.hProjectId').val(response.data.projectInfo.appInfos[0].id);}
