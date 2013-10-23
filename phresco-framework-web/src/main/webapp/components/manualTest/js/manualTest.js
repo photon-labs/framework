@@ -142,6 +142,15 @@ define(["manualTest/listener/manualTestListener", "testResult/listener/testResul
 				commonVariables.navListener.openFolder(paramJson);
 			});
 			
+
+			$("input[name='pdfName']").unbind('input');
+			$("input[name='pdfName']").bind('input propertychange', function(){
+				var str = $(this).val();
+				str = str.replace(/[^a-zA-Z 0-9\-\_]+/g, '');
+				str = str.replace(/\s+/g, '');
+				$(this).val(str);
+			});
+			
 			//To copy the path of unit test directory
 			$('#copyPath').unbind('click');
 			$("#copyPath").click(function() {

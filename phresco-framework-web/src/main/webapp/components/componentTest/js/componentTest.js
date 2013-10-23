@@ -102,6 +102,14 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 				});	
 			});
 			
+			$("input[name='pdfName']").unbind('input');
+			$("input[name='pdfName']").bind('input propertychange', function(){
+				var str = $(this).val();
+				str = str.replace(/[^a-zA-Z 0-9\-\_]+/g, '');
+				str = str.replace(/\s+/g, '');
+				$(this).val(str);
+			});
+			
 			$("#testSuites").css("display", "none");
 			$("#testCases").css("display", "none");
 			$("#unitTestTab").css("display", "block");
