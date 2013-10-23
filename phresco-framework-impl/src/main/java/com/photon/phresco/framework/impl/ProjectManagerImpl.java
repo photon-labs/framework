@@ -90,6 +90,8 @@ import java.util.UUID;
 import java.util.Map.Entry;
 
 import java.lang.reflect.Type;
+import java.net.MalformedURLException;
+
 import javax.ws.rs.QueryParam;
 import org.eclipse.ui.internal.handlers.WidgetMethodHandler;
 import org.json.JSONObject;
@@ -977,6 +979,34 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	}
 	
 	@Override
+	public Boolean deleteDashboardConfig(DashboardInfo dashboardInfo) throws PhrescoException {
+		Gson gson =new Gson();
+		Dashboards dashboards;
+		String json;
+		HashMap<String, Dashboard> dashboardMap;
+		Dashboard dashboard = new Dashboard();
+		try {
+			File dashboardInfoFile = new File(getProjectPhresoFolder(dashboardInfo.getAppdirname()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			if( dashboardInfoFile.exists()) {
+				json = FileUtils.readFileToString(dashboardInfoFile);
+				dashboards = gson.fromJson(json, Dashboards.class);
+				dashboardMap = dashboards.getDashboards();
+				if (dashboardMap.containsKey(dashboardInfo.getDashboardid())) {
+					dashboardMap.remove(dashboardInfo.getDashboardid());
+					dashboards.setDashboards(dashboardMap);
+					json = gson.toJson(dashboards, Dashboards.class);
+					FileUtils.writeStringToFile(dashboardInfoFile, json);
+					return true;
+				}
+				return false;
+			} 
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	@Override
 	public String addDashboardWidgetConfig(DashboardInfo dashboardInfo) throws PhrescoException {
 		Gson gson =new Gson();
 		Dashboards dashboards;
@@ -1114,6 +1144,38 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	}
 	
 	@Override
+	public Boolean deleteDashboardWidgetConfig(DashboardInfo dashboardInfo) throws PhrescoException {
+		Gson gson =new Gson();
+		Dashboards dashboards;
+		String json;
+		HashMap<String, Dashboard> dashboardMap;
+		HashMap<String, String[]> widProperties = new HashMap<String, String[]>();
+		try {
+			File dashboardInfoFile = new File(getProjectPhresoFolder(dashboardInfo.getAppdirname()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			if( dashboardInfoFile.exists()) {
+				json = FileUtils.readFileToString(dashboardInfoFile);
+				dashboards = gson.fromJson(json, Dashboards.class);
+				dashboardMap = dashboards.getDashboards();
+				if (dashboardMap.containsKey(dashboardInfo.getDashboardid())) {
+					if (dashboardMap.get(dashboardInfo.getDashboardid()).getWidgets() != null) {
+						if (dashboardMap.get(dashboardInfo.getDashboardid()).getWidgets().containsKey(dashboardInfo.getWidgetid())) {
+							dashboardMap.get(dashboardInfo.getDashboardid()).getWidgets().remove(dashboardInfo.getWidgetid());
+							dashboards.setDashboards(dashboardMap);
+							json = gson.toJson(dashboards, Dashboards.class);
+							FileUtils.writeStringToFile(dashboardInfoFile, json);
+							return true;
+						} 
+					} 
+				}
+				return false;
+			} 
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	@Override
 	public JSONObject getdata(DashboardSearchInfo dashboardsearchinfo)
 			throws PhrescoException {
 		if(dashboardsearchinfo.getDatatype() != null && !("null".equalsIgnoreCase(dashboardsearchinfo.getDatatype())) && SPLUNK_DATATYPE.equalsIgnoreCase(dashboardsearchinfo.getDatatype())){
@@ -1127,6 +1189,15 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			throws PhrescoException {
 		try {
 			System.out.println("Get splunk data");
+			try{
+			String arr1[] = dashboardsearchinfo.getUrl().split("//");
+			String arr2[] = arr1[1].split(":");
+			dashboardsearchinfo.setHost(arr2[0]);
+			String arr3[] = arr2[1].split("/");
+			dashboardsearchinfo.setPort(Integer.parseInt(arr3[0]));
+			} catch (Exception e) {
+				throw new PhrescoException("Exception while parsing the URL");
+			}
 			ServiceArgs loginArgs = new ServiceArgs();
 			loginArgs.setUsername(dashboardsearchinfo.getUsername());
 			loginArgs.setPassword(dashboardsearchinfo.getPassword());

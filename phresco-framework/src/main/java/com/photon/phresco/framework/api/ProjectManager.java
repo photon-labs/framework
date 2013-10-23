@@ -180,6 +180,20 @@ public interface ProjectManager {
 	Dashboards listDashboardWidgetConfig(String projectid, String appdirname) throws PhrescoException;
 	
 	/**
+	 * @param dashboardInfo
+	 * @return
+	 * @throws PhrescoException
+	 */
+	Boolean deleteDashboardConfig(DashboardInfo dashboardInfo) throws PhrescoException;
+	
+	/**
+	 * @param dashboardInfo
+	 * @return
+	 * @throws PhrescoException
+	 */
+	Boolean deleteDashboardWidgetConfig(DashboardInfo dashboardInfo) throws PhrescoException;
+	
+	/**
 	 * This method returns the Search result of the given Dashboard query for a project
 	 * @param projectId
 	 * @param customerId
