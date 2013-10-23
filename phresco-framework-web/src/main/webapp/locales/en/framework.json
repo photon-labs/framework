@@ -531,7 +531,8 @@
              "test"           : "Test",
              "tableview"      : "Table View",
              "graphview"      : "Graph View",
-			 "module"  	      : "Module" 	
+			 "module"  	      : "Module",
+			 "dashboard"  	  : "Dashboard"	
 		},
 		"errormessage" : {
 			"serviceerror" : "Service Error"
