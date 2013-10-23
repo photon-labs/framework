@@ -534,6 +534,8 @@ public interface ResponseCodes {
 	String PHRD000007 = "PHRD000007"; // All dashboard widgets listed successfully
 	String PHRD000008 = "PHRD000008"; // All application dashboards listed successfully
 	String PHRD000009 = "PHRD000009"; // Search results returned successfully
+	String PHRD000011 = "PHRD000011"; // Dashboard deleted successfully
+	String PHRD000012 = "PHRD000012"; // Widget deleted successfully
 
 	String PHRD010001 = "PHRD010001"; // Dashboard configuration failed
 	String PHRD010002 = "PHRD010002"; // Dashboard not found
@@ -545,6 +547,9 @@ public interface ResponseCodes {
 	String PHRD010008 = "PHRD010008"; // No dashboards present
 	String PHRD010009 = "PHRD100009"; // Unknown dashboard datatype passed
 	String PHRD010010 = "PHRD100010"; // Exception occurred during the search data
+	String PHRD010011 = "PHRD010011"; // Dashboard deletion failed
+	String PHRD010012 = "PHRD010012"; // Widget deletion failed
+	
 
 
 
