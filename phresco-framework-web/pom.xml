@@ -277,6 +277,19 @@
 			<type>js</type>
 		</dependency>
 		
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>flot-time</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>flotpie</artifactId>
+			<version>2.0</version>
+			<type>js</type>
+		</dependency>
+		
 		 <!-- CometD insertions start -->
 	   
         

@@ -105,6 +105,58 @@ define(["framework/base", "api/localStorageAPI"], function(){
 			});
 		},
 		
+		ajaxRequestDashboard : function(header, callbackFunction, errorHandler){
+			var self = this;
+			$.support.cors = true;
+			
+			//cancel/abort existing ajax call
+			if(commonVariables.dashboardAjaxXhr && commonVariables.dashboardAjaxXhr.readyState != 4){
+				commonVariables.dashboardAjaxXhr.abort();
+			}
+
+			commonVariables.dashboardAjaxXhr = $.ajax({
+				url: header.webserviceurl,
+				type : header.requestMethod,
+				dataType : header.dataType,
+				header : "Access-Control-Allow-Headers: x-requested-with",
+				contentType : header.contentType,
+				data : header.requestPostBody,
+				timeout : 1000000,
+				crossDomain : true,
+				cache : false,
+				async : false,
+				
+				beforeSend : function(){
+					self.successResponse = null;
+					$('section#serviceError').remove();
+				},
+				
+				success : function(response, e ,xhr){
+					if(response === undefined || response === null){
+						self.showError("PHR000000", 'error', false);
+					}else if((response.status === "error" || response.status === "failure")){
+						self.showError(response.responseCode, 'error', false);
+					}
+					if ((response !== undefined && response !== null && response.status !== "error")) {
+						self.successResponse = response;
+					} else {self.errorpopupshow(response);}
+				},
+				
+				error : function(jqXHR, textStatus, errorThrown){
+					self.successResponse = null;
+					self.showError("PHR000000", 'error', false);
+					if (errorHandler){
+						errorHandler(jqXHR.responseText);
+					}
+				},
+				
+				complete : function(response, e ,xhr){
+					if(self.successResponse !== undefined && self.successResponse !== null && self.successResponse.status !== "error"){
+						callbackFunction(self.successResponse);
+					}else if(self.successResponse === null || self.successResponse.status === "error"){self.errorpopupshow(response);}
+				}
+			});
+		},
 		
 		ajaxRequestForScm : function(header, callbackFunction, errorHandler){
 			var self = this;

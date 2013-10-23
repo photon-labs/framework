@@ -81,6 +81,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					var templateProvider = new Clazz.TemplateProvider({ templateEngine : this.templateProvider});
 					templateProvider.merge(this.templateUrl, data, function(element) {
 						$(whereToRender).html(element);
+						self.clearSetVals();
 						self.renderlocales(whereToRender);
 						self.bindUI();
 						self.doMore(element);
@@ -89,7 +90,14 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					});
 				}
 			},
-			
+	
+			clearSetVals : function(){
+				try{
+					$.each(commonVariables.clearInterval, function(key, val){ clearInterval(key);});
+					commonVariables.clearInterval = {};
+				}catch(exception){
+				}
+			},
 				
 			/***
 			 * To apply the custom scrollbar style to the table
