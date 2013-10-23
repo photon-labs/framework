@@ -503,6 +503,11 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				var header = self.getActionHeader(requestBody, "downloadPdfReport");
 				window.open(header.webserviceurl, '_self');
 			});
+			
+			$("input[name='pdfName']").unbind('input');
+			$("input[name='pdfName']").bind('input propertychange', function(){
+				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
+			});
 		},
 		
 		showPopupLoading : function(obj) {
