@@ -168,6 +168,11 @@
 			<artifactId>splunk</artifactId>
 			<version>1.2</version>
 		</dependency>
+		<dependency>
+		<groupId>org.apache.wink</groupId>
+	 	  	 <artifactId>wink-json4j</artifactId>
+          	 <version>1.4</version>
+		</dependency>
     </dependencies>
     
     <build>

@@ -61,6 +61,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.wink.json4j.OrderedJSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -1176,7 +1177,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	}
 	
 	@Override
-	public JSONObject getdata(DashboardSearchInfo dashboardsearchinfo)
+	public OrderedJSONObject getdata(DashboardSearchInfo dashboardsearchinfo)
 			throws PhrescoException {
 		if(dashboardsearchinfo.getDatatype() != null && !("null".equalsIgnoreCase(dashboardsearchinfo.getDatatype())) && SPLUNK_DATATYPE.equalsIgnoreCase(dashboardsearchinfo.getDatatype())){
 			return getsplunkdata(dashboardsearchinfo);
@@ -1185,7 +1186,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		}
 	}
 	
-	public JSONObject getsplunkdata(DashboardSearchInfo dashboardsearchinfo)
+	public OrderedJSONObject getsplunkdata(DashboardSearchInfo dashboardsearchinfo)
 			throws PhrescoException {
 		try {
 			System.out.println("Get splunk data");
@@ -1221,10 +1222,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		    }
 		    reader.close();
 		    results_oneshot.close();
-		    JSONObject search_result = new JSONObject(JSONResponse);
-		    
+		    OrderedJSONObject search_result = new OrderedJSONObject(JSONResponse);
 		    return search_result;
-		
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new PhrescoException("Exception occured while trying to retrieve the search result");

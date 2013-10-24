@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.wink.json4j.OrderedJSONObject;
 import org.json.JSONObject;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -201,5 +202,5 @@ public interface ProjectManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	JSONObject getdata(DashboardSearchInfo dashboardsearchinfo) throws PhrescoException;
+	OrderedJSONObject getdata(DashboardSearchInfo dashboardsearchinfo) throws PhrescoException;
 }

@@ -32,6 +32,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
+import org.apache.wink.json4j.OrderedJSONObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -385,14 +386,14 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 	@Consumes(MediaType.APPLICATION_JSON)
 	public String searchData(DashboardSearchInfo dashboardSearchInfo) throws JSONException {
 		try {
-			JSONObject reponsedata = PhrescoFrameworkFactory.getProjectManager().getdata(dashboardSearchInfo);
+			OrderedJSONObject reponsedata = PhrescoFrameworkFactory.getProjectManager().getdata(dashboardSearchInfo);
 			System.out.println("Reponse data obatined is "+reponsedata);
 			LOGGER.info("Reponse data obatined is "+reponsedata);
 			if (reponsedata != null) {
 
 				status = RESPONSE_STATUS_SUCCESS;
 				successCode = PHRD000009;
-				JSONObject finalOutput = new JSONObject();
+				OrderedJSONObject finalOutput = new OrderedJSONObject();
 				finalOutput.put("data",reponsedata);
 				finalOutput.put("exception","null");
 				finalOutput.put("responseCode",successCode);
