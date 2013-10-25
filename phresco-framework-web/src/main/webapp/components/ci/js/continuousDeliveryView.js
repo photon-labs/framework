@@ -95,6 +95,16 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 			self.listEnvironmentsEvent.add(ciListener.listEnvironment, ciListener);
 			self.ciStatusEvent.add(ciListener.ciStatus, ciListener);
 			self.jenkinsStatus.add(ciListener.jenkinsStatus, ciListener);
+			
+			 // Handle bars
+			Handlebars.registerHelper('appendNames', function(jobName, operation) {
+				var returnVal = jobName + "-" + operation;
+				if (returnVal.length > 13) {
+					returnVal = returnVal.substring(0, 13);
+					returnVal = returnVal + "...";
+				} 
+				return returnVal;
+			});
 		},
 		/***
 		 * Called in once the login is success
