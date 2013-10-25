@@ -377,6 +377,21 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			throw new PhrescoException("No unit test logs obatined");
 		}
 	}
+	
+	public ActionResponse runIntegrationTest(HttpServletRequest request) throws PhrescoException {
+		this.request = request;
+		BufferedInputStream server_logs=null;
+		String displayName = request.getParameter("displayName");
+		String projectCode = request.getParameter("projectCode");;
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		server_logs = runIntegrationTest(unique_key, displayName, projectCode);
+		if (server_logs != null) {
+			return generateResponse(server_logs, unique_key);
+		} else {
+			throw new PhrescoException("No integration test logs obatined");
+		}
+	}
 
 	public ActionResponse runComponentTest(HttpServletRequest request) throws PhrescoException {
 		printLogs();
@@ -792,6 +807,37 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			if (isDebugEnabled) {
 				S_LOGGER.error("Exception occured in the unit test process()" + FrameworkUtil.getStackTraceAsString(e));
 				throw new PhrescoException("Exception occured in the unit test process");
+			}
+		}
+
+		return reader;
+	}
+	
+	public BufferedInputStream runIntegrationTest(String uniqueKey, String displayName, String projectCode) throws PhrescoException {
+		if (isDebugEnabled) {
+			S_LOGGER.debug("Entering Method MavenFunctions.runIntegrationTest()");
+		}
+		BufferedInputStream reader = null;
+		try {
+			String directory = projectCode + "-integrationtest";
+			String phrescoIntegrationTestInfoFilePath = Utility.getProjectHome() + directory + File.separatorChar + INTEGRATION_TEST_INFO_FILE;
+			List<String> buildArgCmds = new ArrayList<String>();
+			if (new File(phrescoIntegrationTestInfoFilePath).exists()) {
+				MojoProcessor mojo = new MojoProcessor(new File(phrescoIntegrationTestInfoFilePath));
+				persistValuesToXml(mojo, PHASE_INTEGRATION_TEST);
+				List<Parameter> parameters = getMojoParameters(mojo, PHASE_INTEGRATION_TEST);
+				buildArgCmds = getMavenArgCommands(parameters);
+				buildArgCmds.add(HYPHEN_N);
+			}
+			
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			reader = applicationManager.performAction(null, ActionType.INTEGRATION_TEST, buildArgCmds, Utility.getWorkingDirectoryPath(directory));
+			 //To generate the lock for the particular operation
+//			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), UNIT, displayName, uniqueKey)), true);
+		} catch (PhrescoException e) {
+			if (isDebugEnabled) {
+				S_LOGGER.error("Exception occured in the integration test process()" + FrameworkUtil.getStackTraceAsString(e));
+				throw new PhrescoException("Exception occured in the integration test process");
 			}
 		}
 

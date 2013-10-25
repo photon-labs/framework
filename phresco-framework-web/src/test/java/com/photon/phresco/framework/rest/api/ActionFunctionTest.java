@@ -263,6 +263,47 @@ public class ActionFunctionTest implements ActionServiceConstant  {
     }
 	
 	@Test
+	public void testIntegrationTestTest() throws PhrescoException {
+		
+			System.out.println("********************* Running the Integration test *************************************");
+ 
+			ClientConfig cfg = new DefaultClientConfig();
+			cfg.getClasses().add(JacksonJsonProvider.class);
+			Client client = Client.create(cfg);
+ 
+			WebResource webResource = client.resource("http://localhost:2468/framework/rest/api/app/runIntegrationTest");
+		
+			
+		   MultivaluedMap queryParams = new MultivaluedMapImpl();
+		   queryParams.add("username", "admin");
+		   queryParams.add("projectCode", "TestJquery");
+		   queryParams.add("environment", "suresh");
+
+		   ClientResponse response = webResource.queryParams(queryParams).type("application/x-www-form-urlencoded").post(ClientResponse.class );
+		
+		   if (response.getStatus() != 200) {
+			   throw new RuntimeException("Failed : HTTP error code : "
+					   + response.getStatus());
+		   }
+		   
+		   ActionResponse output = response.getEntity(ActionResponse.class);
+ 
+		   System.out.println("Integration Test Output from Server .... \n");
+		   System.out.println("response.getType()"+response.getType());
+		   System.out.println("response.getStatus()"+response.getStatus());
+		   System.out.println("output.getStatus()"+output.getStatus());
+		   System.out.println("output.getUniquekey()"+output.getUniquekey());
+		   System.out.println("output.getService_exception()"+output.getService_exception());
+		   System.out.println("output.getLog()"+output.getLog());
+		   
+		   assertEquals("Integration Test failed",STARTED,output.getStatus());
+		   
+		   System.out.println("---------Log Start---------------");
+		   printLogs(output.getUniquekey());
+		
+    }
+	
+	@Test
 	public void testcodeValidate() throws PhrescoException {
 		
 			System.out.println("********************* Running the Code Validate test *************************************");

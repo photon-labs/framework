@@ -184,6 +184,33 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 	}
 	
 	/**
+	 * Run unit test.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
+	@POST
+	@Path("/runIntegrationTest")
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response runIntegrationTest(@Context HttpServletRequest request) throws PhrescoException  {
+		ActionFunction actionFunction = new ActionFunction();
+		ActionResponse response = new ActionResponse();
+		try	{
+			response = actionFunction.runIntegrationTest(request);
+			response.setResponseCode(PHRQ700001);
+		} catch (Exception e) {
+			S_LOGGER.error(e.getMessage());
+			response.setStatus(RESPONSE_STATUS_ERROR);
+			response.setLog("");
+			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+			response.setUniquekey("");
+			response.setResponseCode(PHRQ710001);
+		}
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+	}
+	
+	/**
 	 * Run component test.
 	 *
 	 * @param request the request
