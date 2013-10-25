@@ -211,6 +211,7 @@
 		"PHR810033" : "Job(s) have already been created using this job template",
 		"PHR810038" : "Job(s) have already been created using this job template with Repo",
 		"PHR810039" : "Job(s) have already been created using this job template for this App",
+		"PHR810041" : "Name already Exists",
 		"PHR10LC0001" : "Code validation in progress. ",
 		"PHR10LB0001" : "Build in progress. ",
 		"PHR10LR0001" : "Run against source in progress. ",
@@ -223,6 +224,7 @@
 	 	"PHR10LAR001" : "Add to repo in progress. ",
 	 	"PHR10LUR001" : "Commit in progress. ",
 		"PHR10LCR001" : "Update in progress. ",
+		"PHR10LMIN01" : "Minification in progress. ",
 		"PHR10LIM001" : "Import in progress. ",
 		"PHRD010008" : "No Dashboards Exist.",
 		"enteruniquename" : "Enter Unique Name",
@@ -531,7 +533,8 @@
              "test"           : "Test",
              "tableview"      : "Table View",
              "graphview"      : "Graph View",
-			 "module"  	      : "Module" 	
+			 "module"  	      : "Module",
+			 "dashboard"  	  : "Dashboard"	
 		},
 		"errormessage" : {
 			"serviceerror" : "Service Error"

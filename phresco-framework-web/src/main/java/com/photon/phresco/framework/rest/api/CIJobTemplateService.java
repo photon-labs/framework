@@ -145,7 +145,18 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 			@QueryParam(REST_QUERY_NAME) String name, @QueryParam(REST_QUERY_OLDNAME) String oldName) {
 		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
 		try {
-			boolean status = true;
+			boolean validName = validName(projectId, customerId, name, oldName);
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, validName, RESPONSE_STATUS_SUCCESS, PHR800015);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+		} catch (Exception e) {
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810022);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+		}
+	}
+	
+	private boolean validName(String projectId, String customerId, String name, String oldName) throws PhrescoException {
+		boolean status = true;
+		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			List<CIJobTemplate> jobTemplates = null;
 			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
@@ -157,12 +168,10 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 					}
 				}
 			}
-			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, status, RESPONSE_STATUS_SUCCESS, PHR800015);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (Exception e) {
-			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810022);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+			throw new PhrescoException(e);
 		}
+		return status;
 	}
 
 	/**
@@ -176,34 +185,50 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response add(CIJobTemplate ciJobTemplate, @QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
 		ResponseInfo<CIJobTemplate> responseData = new ResponseInfo<CIJobTemplate>();
+		boolean errorFound = false;
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			
 			List<String> appIds = ciJobTemplate.getAppIds();
 			List<CIJobTemplate> templates = new ArrayList<CIJobTemplate>();
-			templates.add(ciJobTemplate);
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<String> singleMods =  new ArrayList<String>();
 			for (String appName : appIds) {
-				for (ApplicationInfo appInfo : appInfos) {
-					if(appName.equals(appInfo.getName())) {
-						List<String> modules = FrameworkServiceUtil.getProjectModules(appInfo.getAppDirName());
-						if (CollectionUtils.isNotEmpty(modules)) {
-							for (String module : modules) {
-								CIJobTemplate tempModTemplate = new CIJobTemplate(ciJobTemplate);
-								String moduleName = tempModTemplate.getName() + appName + module;
-								tempModTemplate.setName(moduleName);
-								tempModTemplate.setAppIds(Arrays.asList(appName));
-								tempModTemplate.setModule(module);
-								templates.add(tempModTemplate);
-							}
-						}
-					} 
+				String[] split = appName.split("#SEP#");
+				if (split.length == 2) {
+					String appNameSplitted = split[0];
+					String appModuleName = split[1];
+					CIJobTemplate tempModTemplate = new CIJobTemplate(ciJobTemplate);
+					
+					String moduleName = tempModTemplate.getName() + HYPHEN + appModuleName;
+						tempModTemplate.setName(moduleName);
+						tempModTemplate.setAppIds(Arrays.asList(appNameSplitted));
+						tempModTemplate.setModule(appModuleName);
+						templates.add(tempModTemplate);
+				} else if (split.length == 1) {
+					singleMods.add(split[0]);
 				}
+			}
+			if (CollectionUtils.isNotEmpty(singleMods)) {
+				ciJobTemplate.setAppIds(singleMods);
+				templates.add(ciJobTemplate);
+			}
+				
+			for (CIJobTemplate template : templates) {
+				boolean validName = validName(projectId, customerId, template.getName(), "");
+				if (!validName) {
+					errorFound = true;
+				}
+			}
+			
+			if (errorFound) {
+				ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null,
+						null, RESPONSE_STATUS_SUCCESS, PHR810041);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+						ALL_HEADER).build();
 			}
 			
 			for (CIJobTemplate template : templates) {
 				List<CIJobTemplate> jobTemplates = Arrays.asList(template);
-//				List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+				List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
 				ciManager.createJobTemplates(jobTemplates, false, appInfos);
 			}
 			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, ciJobTemplate, RESPONSE_STATUS_SUCCESS, PHR800016);
@@ -232,7 +257,7 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projId);
 			
 			List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByProjId(projId, appInfos);
-			boolean validate = validate(ciJobTemplate.getName(), jobTemplates, projId, appInfos, "update", ciJobTemplate, null);
+			boolean validate = validate(ciJobTemplate.getName(), jobTemplates, projId, appInfos, "update", ciJobTemplate, null, oldName);
 			if(validate) {
 				boolean updateJobTemplate = ciManager.updateJobTemplate(ciJobTemplate, oldName, projId, appInfos);
 				if (!updateJobTemplate) {
@@ -267,7 +292,7 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projId);
 			List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByProjId(projId, appInfos);
-			boolean validate = validate(name, jobTemplates, projId, appInfos, "delete", null, null);
+			boolean validate = validate(name, jobTemplates, projId, appInfos, "delete", null, null, "");
 			if(validate) {
 				boolean deleteJobTemplate = ciManager.deleteJobTemplate(name, projId, appInfos);
 				if (deleteJobTemplate) {
@@ -299,7 +324,7 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
 			List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByProjId(projectId, appInfos);
-			boolean validate = validate(name, jobTemplates, projectId, appInfos, "appNameValidate", null, appName);
+			boolean validate = validate(name, jobTemplates, projectId, appInfos, "appNameValidate", null, appName, "");
 			String msg = appName + "#SEP#" + validate;
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, msg, RESPONSE_STATUS_SUCCESS, PHR800015);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
@@ -309,7 +334,11 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 		}
 	}
 
-	private boolean validate(String name, List<CIJobTemplate> jobTemplates, String projId, List<ApplicationInfo> appInfos, String operation, CIJobTemplate ciJobTemplate, String appName) throws PhrescoException {
+	private boolean validate(String templateName, List<CIJobTemplate> jobTemplates, String projId, List<ApplicationInfo> appInfos, String operation, CIJobTemplate ciJobTemplate, String appName, String oldName) throws PhrescoException {
+		String name = templateName;
+		if (StringUtils.isNotEmpty(oldName)) {
+			name = oldName;
+		}
 		CIJobTemplate jobTemplatz = new CIJobTemplate();
 		
 		for (CIJobTemplate jobtemplate : jobTemplates) {
@@ -410,7 +439,7 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		}
 	}
-
+	
 	private void getJobTemplateByAppDir(String envName,
 			Map<JSONObject, List<CIJobTemplate>> jobTemplateMap,
 			CIManager ciManager, ApplicationInfo applicationInfo)

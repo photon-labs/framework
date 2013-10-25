@@ -4,7 +4,7 @@
      <parent>
         <groupId>com.photon.phresco.framework</groupId>
         <artifactId>phresco-framework-root</artifactId>
-        <version>3.1.0.3002-SNAPSHOT</version>
+        <version>3.1.0.3004-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
    
@@ -167,6 +167,11 @@
 			<groupId>com.splunk</groupId>
 			<artifactId>splunk</artifactId>
 			<version>1.2</version>
+		</dependency>
+		<dependency>
+		<groupId>org.apache.wink</groupId>
+	 	  	 <artifactId>wink-json4j</artifactId>
+          	 <version>1.4</version>
 		</dependency>
     </dependencies>
     

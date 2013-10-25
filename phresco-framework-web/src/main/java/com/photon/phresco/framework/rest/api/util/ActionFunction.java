@@ -505,10 +505,12 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	public ActionResponse minification(HttpServletRequest request, List<MinifyInfo> files) throws PhrescoException, IOException {
 		printLogs();
 		BufferedInputStream server_logs=null;
+		String displayName = request.getParameter("displayName");
+		initModuleName(request);
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
 		String minifyParam = request.getParameter("minifyAll");
-		server_logs = minification(files, minifyParam);
+		server_logs = minification(files, minifyParam, unique_key, displayName);
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
@@ -1016,20 +1018,20 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return reader;
 	}
 
-	public BufferedInputStream minification(List<MinifyInfo> files, String minifyParam) throws PhrescoException {
+	public BufferedInputStream minification(List<MinifyInfo> files, String minifyParam, String uniqueKey ,String displayName) throws PhrescoException {
 
 		BufferedInputStream reader = null;
 		try {
+			String directory = getAppDirBasedOnMultiModule(getModule());
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(directory);
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
-			String pomPath = Utility.getProjectHome() + File.separator + applicationInfo.getAppDirName() + File.separator + POM_FILE;
+			String pomPath = Utility.getProjectHome() + File.separator + applicationInfo.getAppDirName() + File.separator + Utility.getPhrescoPomFile(applicationInfo);
 			PomProcessor pomProcessor = new PomProcessor(new File(pomPath));
 			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
 			Document doc = docBuilder.newDocument();
 			List<Element> configList = new ArrayList<Element>();
-//			List<String> files = getMinifyFileNames();
 			createExcludesTagInPom(doc, configList);
 			if (Boolean.parseBoolean(minifyParam) && CollectionUtils.isEmpty(files)) { // Only Minify all is selected
 				configList.add(createElement(doc, POM_OUTPUTDIR, POM_SOURCE_DIRECTORY));
@@ -1047,9 +1049,12 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			pomProcessor.addConfiguration(MINIFY_PLUGIN_GROUPID, MINIFY_PLUGIN_ARTFACTID, configList);
 			pomProcessor.save();
 
-			String workingDirectory = getAppDirectoryPath(applicationInfo);
 
-			reader = applicationManager.performAction(projectInfo, ActionType.MINIFY, null, workingDirectory);
+			reader = applicationManager.performAction(projectInfo, ActionType.MINIFY, null,  Utility.getWorkingDirectoryPath(getAppDirName()));
+			
+			 //To generate the lock for the particular operation
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), "minify", displayName, uniqueKey)), true);
+			
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of MavenFunctions.minification()"+ FrameworkUtil.getStackTraceAsString(e));
 			throw new PhrescoException("Exception occured in the MavenFunctions.minification process");

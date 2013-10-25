@@ -2,8 +2,10 @@
 	<div class="optiontitle">
 		<div class="unit_text">Dashboard</div>
     	<div class="code_anal">
-			<div class="forlistingdash navbar navbar-static">
-				<ul class="nav dash_ul">
+		<div class="code_report code_dash" data-i18n="commonlabel.label.dashboard">
+            </div>
+			<div class="forlistingdash navbar navbar-static code_func">
+				<ul class="nav">
 					<li id="fat-menu" class="dropdown open">
 					<a id="click_listofdash" class="dropdown-toggle" value="click" data-toggle="dropdown" role="button" href="javascript:void(0)">
 					Dashboard
@@ -37,11 +39,11 @@
 						</tr>
 						<tr>
 							<td>Password<sup>*</sup></td>
-							<td><input id="conf_password" type="text"></td>
+							<td><input id="conf_password" type="password"></td>
 						</tr>
 						<tr>
 							<td>Splunk URL<sup>*</sup></td>
-							<td><input id="conf_url" type="text"></td>
+							<td><input id="config_url" type="text"></td>
 						</tr>
 						<tr>
 							<td>Select Application</td>
@@ -68,11 +70,7 @@
                 </tr>
 				<tr>
 					<td>Auto-Refresh</td>
-					<td><input id="timeout" type="checkbox"></td>
-				</tr>
-				<tr>
-					<td></td>
-					<td><input id="timeoutval" type="textbox"></td>
+					<td><input id="timeout" type="checkbox"><input id="timeoutval" type="text" style="margin-left:6px; width:187px;"></td>
 				</tr>
                 </table>
 				
@@ -111,6 +109,10 @@
                 <tr>
                 	<td colspan="3"><textarea class="settings_textarea"></textarea></td>
                 </tr>
+				<tr>
+					<td>Auto-Refresh</td>
+					<td><input id="timeout_update" type="checkbox"><input id="timeoutval_update" class="timeout_update" type="text" style="margin-left:6px; width:187px;"></td>
+				</tr>
 				<tr>
 					<td>X-Axis</td>
 					<td><select class="xaxis"></select></td>

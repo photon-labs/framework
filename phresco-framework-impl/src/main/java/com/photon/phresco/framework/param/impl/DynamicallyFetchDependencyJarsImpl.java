@@ -18,32 +18,23 @@
 package com.photon.phresco.framework.param.impl;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.xml.sax.SAXException;
 
-import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.model.ApplicationInfo;
-import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
-import com.phresco.pom.exception.PhrescoPomException;
-import com.phresco.pom.model.Model.Modules;
-import com.phresco.pom.util.PomProcessor;
 
 public class DynamicallyFetchDependencyJarsImpl implements DynamicParameter,
 		Constants {
@@ -66,9 +57,8 @@ public class DynamicallyFetchDependencyJarsImpl implements DynamicParameter,
 				value.setValue(module);
 				possibleValues.getValue().add(value);
 			}
-			return possibleValues;
 		}
-		return null;
+		return possibleValues;
 	}
 
 	private StringBuilder getDependencyJarPath(String appDirName, boolean isMultiModule, String rootModule) {
@@ -94,13 +84,11 @@ public class DynamicallyFetchDependencyJarsImpl implements DynamicParameter,
 				for (File nextFile : dir.listFiles()) {
 					fileList.add(nextFile.getName());
 				}
-				return fileList;
 			}
-
+			return fileList;
 		} catch (Exception e) {
 			throw new PhrescoException(e);
 		}
-		return null;
 	}
 
 }

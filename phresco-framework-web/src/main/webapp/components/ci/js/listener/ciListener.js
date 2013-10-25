@@ -513,36 +513,39 @@ define([], function() {
 			if (status) {
 				var self = this;
 				self.ciRequestBody = {};
-				self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'validate'), function (response) {
-					
 					// save or update operation
-					if (!self.isBlank(response) && response.data) {	
-						 if (operation === 'save') {
-							self.addJobTemplate(function(response) {
-								self.ciRequestBody = response;
-								self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'add'), function(response){
-									callback(response); 
-								});
-							});	
-						} else if (operation === 'update') {
+				 if (operation === 'save') {
+					self.addJobTemplate(function(response) {
+						self.ciRequestBody = response;
+						self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'add'), function(response){
+							if(!self.isBlank(response.data)) {
+								callback(response); 
+							} else {
+								commonVariables.api.showError(response.responseCode ,"error", true, false, true);
+							}
+						});
+					});	
+				} else if (operation === 'update') {
+					self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'validate'), function (response) {
+						//update operation
+						if (!self.isBlank(response) && response.data) {	
 							self.updateJobTemplate(function(response) {
 								self.ciRequestBody = response;
 								self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'update'), function(response) {
 									callback(response);
 								});								
 							});
-						} 
-					} else {
-						$("input[name='name']").focus();
-						$("input[name='name']").val('');
-						$("input[name='name']").attr('placeholder','Name Already Exists');
-						$("input[name='name']").addClass("errormessage");
-						$("input[name='name']").bind('keypress', function() {
-						$(this).removeClass("errormessage");
-				});
-					}
-					
-				});
+						} else {
+							$("input[name='name']").focus();
+							$("input[name='name']").val('');
+							$("input[name='name']").attr('placeholder','Name Already Exists');
+							$("input[name='name']").addClass("errormessage");
+							$("input[name='name']").bind('keypress', function() {
+								$(this).removeClass("errormessage");
+							});
+						}
+					});
+				} 
 			}
 		}, 
 
@@ -645,9 +648,6 @@ define([], function() {
 
 			var jobTemplate = $('#jobTemplate :input[name!=oldname][name!=features][name!=repoTypes]').serializeObject();
 
-			if(!self.isBlank($('input[name=name]').attr('module'))) {
-				jobTemplate.module = $('input[name=name]').attr('module');
-			}
 			jobTemplate.enableRepo = false;
 			jobTemplate.enableSheduler = false;
 			jobTemplate.enableEmailSettings = false;
@@ -657,6 +657,11 @@ define([], function() {
 			$('select[name=appIds] :selected').each(function(i, selected) {
 				jobTemplate.appIds.push(this.value);
 			});
+			if(!self.isBlank($('input[name=name]').attr('module'))) {
+				jobTemplate.module = $('input[name=name]').attr('module');
+				var option = $('select[name=appIds]').find('optgroup').attr('label');
+				jobTemplate.appIds.push(option);
+			}
 
 			var features = $("select[name=features]").val();
 			if (features !== null) {
@@ -756,16 +761,23 @@ define([], function() {
 			$("[name=oldname]").val(data.name);
 			$("[name=type]").selectpicker('val', data.type);
 			//AppIds
+			var obj = $('select[name=appIds]');
 			if (self.isBlank(data.module)) {
 				$("select[name=appIds]").selectpicker('val', data.appIds);
 			} else {
-				$('select[name=appIds]').empty();
-				var obj = $('select[name=appIds]');
-				var opt = document.createElement("option");
-				opt.setAttribute('class',data.appIds);
-				opt.appendChild(document.createTextNode(data.appIds));
-				obj.append(opt);
-				$("select[name=appIds]").selectpicker('val', data.appIds);
+				obj.html('');
+				optGroup = document.createElement('optgroup');
+				optGroup.label = data.appIds;
+				
+				objOption=document.createElement("option");
+				objOption.innerHTML = data.module;
+				objOption.value = data.module;
+				objOption.appName = data.appIds;
+				objOption.setAttribute('selected', 'selected');
+				objOption.setAttribute('disabled', 'disabled');
+				optGroup.appendChild(objOption);
+				
+				obj.append(optGroup);
 			}
 			$("select[name=appIds]").selectpicker('refresh');
 			$("[name=repoTypes]").val(data.repoTypes);

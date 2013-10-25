@@ -389,6 +389,8 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 			actionCode = PHR10LUR001;
 		} else if (actionType.equals(IMPORT)) {
 			actionCode = PHR10LIM001;
+		}  else if (actionType.equals(MINIFY)) {
+			actionCode = PHR10LMIN01;
 		} 
 		
 		return actionCode;

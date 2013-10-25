@@ -107,6 +107,17 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 			self.changeOperationEvent.add(ciListener.changeOperation, ciListener);
 			self.changeFeaturesEvent.add(ciListener.changeFeatures, ciListener);
 			self.removeDangerEvent.add(ciListener.removeDangerClass, ciListener);
+		
+			Handlebars.registerHelper('appendMods', function(appIds, module) {
+				var returnVal = appIds;
+				if (!self.isBlank(module)) {
+					returnVal = appIds+" ("+module+")";
+				} 
+				return returnVal;
+			});
+		
+		
+		
 		},
 		/***
 		 * Called in once the login is success
@@ -175,21 +186,74 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 			$form.find('input:text, input:password, input:file, select, textarea').val('');
 			$form.find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');
 		},
+		
+		getHeaderResponse : function (header, callback) {
+			var self = this;
+			try {
+				commonVariables.api.ajaxRequestDashboard(header, function(response) {
+					if (response !== null && (response.status !== "error" || response.status !== "failure")) {
+							callback(response);
+					} else {
+							$(".content_end").show();
+							$(".msgdisplay").removeClass("success").addClass("error");
+							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+							self.renderlocales(commonVariables.contentPlaceholder);	
+							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+							setTimeout(function() {
+								$(".content_end").hide();
+							},2500);
+						}
+					},
 
-		constructApplicationsHtml : function(jobTemplateName, callback) {
+					function(textStatus) {						
+					$(".content_end").show();
+					$(".msgdisplay").removeClass("success").addClass("error");
+					$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+					self.renderlocales(commonVariables.contentPlaceholder);		
+					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+					setTimeout(function() {
+						$(".content_end").hide();
+					},2500);
+					}
+				);
+			} catch(exception) {
+				callback({ "status" : "service exception"});
+			}
+		},
+
+		constructApplicationsHtml : function(jobTemplateName, action, callback) {
 				var self = this;
 				// show applications names in popup
-				self.getAction(self.ciRequestBody, 'getAppInfos', '', function(response) {
+				self.getAction(self.ciRequestBody, 'getAppInfos', '', function(appInfos) {
 					// empty the applist element
 					$('select[name=appIds]').html('');
-
-					if (!self.isBlank(response.data)) {
-						$.each(response.data, function(key, value) {
-							var obj = $('select[name=appIds]');
-							var opt = document.createElement("option");
-							opt.setAttribute('class',value.name);
-							opt.appendChild(document.createTextNode(value.name));
-							obj.append(opt);
+					var obj = $('select[name=appIds]');
+					if (!self.isBlank(appInfos.data)) {
+						$.each(appInfos.data, function(key, value) {
+							if (self.isBlank(value.modules) || action === 'edit') {
+								var opt = document.createElement("option");
+								opt.setAttribute('class',value.name);
+								opt.value = value.name;
+								opt.appendChild(document.createTextNode(value.name));
+								obj.append(opt);
+							} else {
+								optGroup = document.createElement('optgroup');
+								optGroup.label = value.name;
+								//appendin option for root module
+								rootModule = document.createElement("option") ;
+								rootModule.innerHTML = value.name;
+								rootModule.value = value.name;
+								rootModule.appName = value.name;
+								optGroup.appendChild(rootModule);
+								$.each(value.modules, function(moduleIndex, module) {
+									objOption=document.createElement("option");
+									objOption.innerHTML = module.code;
+									objOption.value = value.name + "#SEP#" + module.code;
+									objOption.appName = value.name;
+									optGroup.appendChild(objOption);
+								});
+								obj.append(optGroup);
+							}
 						});
 					}
 
@@ -225,7 +289,7 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 				$('input[name=update]').prop("value", "Create");
 				$('input[name=update]').prop("name", "save");			
 				// show applications names in popup
-				self.constructApplicationsHtml('', function() {
+				self.constructApplicationsHtml('','add', function() {
 					self.preOpenEvent.dispatch( function() {});
 				});
 				self.opencc(this, $(this).attr('name'));				
@@ -248,7 +312,7 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 				var name = $(this).attr('value');
 				jobTemplateName.name = name;
 				// Construct applications names
-				self.constructApplicationsHtml(jobTemplateName, function() {
+				self.constructApplicationsHtml(jobTemplateName, 'edit', function() {
 					self.preEditEvent.dispatch( function() {	
 						// show edit popup
 						self.openccci(thisElem, "jobTemplatePopup", "jobTemplates");

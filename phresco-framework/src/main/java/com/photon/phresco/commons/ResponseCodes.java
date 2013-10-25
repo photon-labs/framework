@@ -492,6 +492,7 @@ public interface ResponseCodes {
 	String PHR810039 = "PHR810039"; // job(s) have already been created using this job template for this App
 	String PHR800025 = "PHR800025"; // Returned list of modules successfully
 	String PHR810040 = "PHR810040"; // Failed to return multi modules
+	String PHR810041 = "PHR810041"; // Name already exists after module appending
 	
 	/*
 	 * Upgrade Service
@@ -521,6 +522,7 @@ public interface ResponseCodes {
 	String PHR10LUR001 = "PHR10LUR001"; // commit in progress
 	String PHR10LCR001 = "PHR10LCR001"; // update in progress
 	String PHR10LIM001 = "PHR10LIM001"; // import in progress
+	String PHR10LMIN01 = "PHR10LMIN01"; //minification in progress
 	
 	/*
 	 * Dashboard Service
@@ -534,6 +536,8 @@ public interface ResponseCodes {
 	String PHRD000007 = "PHRD000007"; // All dashboard widgets listed successfully
 	String PHRD000008 = "PHRD000008"; // All application dashboards listed successfully
 	String PHRD000009 = "PHRD000009"; // Search results returned successfully
+	String PHRD000011 = "PHRD000011"; // Dashboard deleted successfully
+	String PHRD000012 = "PHRD000012"; // Widget deleted successfully
 
 	String PHRD010001 = "PHRD010001"; // Dashboard configuration failed
 	String PHRD010002 = "PHRD010002"; // Dashboard not found
@@ -545,6 +549,9 @@ public interface ResponseCodes {
 	String PHRD010008 = "PHRD010008"; // No dashboards present
 	String PHRD010009 = "PHRD100009"; // Unknown dashboard datatype passed
 	String PHRD010010 = "PHRD100010"; // Exception occurred during the search data
+	String PHRD010011 = "PHRD010011"; // Dashboard deletion failed
+	String PHRD010012 = "PHRD010012"; // Widget deletion failed
+	
 
 
 

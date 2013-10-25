@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.photon.phresco.framework</groupId>
         <artifactId>phresco-framework-root</artifactId>
-        <version>3.1.0.3002-SNAPSHOT</version>
+        <version>3.1.0.3004-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
    
@@ -274,6 +274,19 @@
 			<groupId>jslibraries.files</groupId>
 			<artifactId>flotresize</artifactId>
 			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>flot-time</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>flotpie</artifactId>
+			<version>2.0</version>
 			<type>js</type>
 		</dependency>
 		
@@ -746,7 +759,12 @@
 	        <groupId>springframework</groupId>
 	        <artifactId>spring</artifactId>
 	        <version>1.1.2</version>
-      </dependency>
+   		 </dependency>
+     	 <dependency>
+			<groupId>org.apache.wink</groupId>
+	 	  	<artifactId>wink-json4j</artifactId>
+          	<version>1.4</version>
+		 </dependency>
      </dependencies>
     
     <build>

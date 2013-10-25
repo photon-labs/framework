@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.wink.json4j.OrderedJSONObject;
 import org.json.JSONObject;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -180,6 +181,20 @@ public interface ProjectManager {
 	Dashboards listDashboardWidgetConfig(String projectid, String appdirname) throws PhrescoException;
 	
 	/**
+	 * @param dashboardInfo
+	 * @return
+	 * @throws PhrescoException
+	 */
+	Boolean deleteDashboardConfig(DashboardInfo dashboardInfo) throws PhrescoException;
+	
+	/**
+	 * @param dashboardInfo
+	 * @return
+	 * @throws PhrescoException
+	 */
+	Boolean deleteDashboardWidgetConfig(DashboardInfo dashboardInfo) throws PhrescoException;
+	
+	/**
 	 * This method returns the Search result of the given Dashboard query for a project
 	 * @param projectId
 	 * @param customerId
@@ -187,5 +202,5 @@ public interface ProjectManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	JSONObject getdata(DashboardSearchInfo dashboardsearchinfo) throws PhrescoException;
+	OrderedJSONObject getdata(DashboardSearchInfo dashboardsearchinfo) throws PhrescoException;
 }
