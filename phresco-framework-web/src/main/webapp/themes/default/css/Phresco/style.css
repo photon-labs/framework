@@ -5004,3 +5004,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', end
 	margin:11px 0px 0px 0px;
 	cursor:pointer;
 }
+
+#jobTemplate .dropdown-menu .divider {
+	margin: 0 !important;
+	height:0 !important;
+}

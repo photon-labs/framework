@@ -92,7 +92,7 @@
                     <tr>
                       <td>{{name}}</td>  
                       <td>{{type}}</td>
-                      <td>{{appIds}}</td>
+                      <td>{{#appendMods appIds module}}{{/appendMods}}</td>
                       <td>
                           <a value="{{name}}" data-original-title="Edit" id="edit_{{name}}" name="editpopup" href="javascript:void(0)" data-toggle="tooltip" data-placement="bottom" title="" class="tooltiptop"><img border="0" alt="" src="themes/default/images/Phresco/edit_icon.png"></a>
                       </td>

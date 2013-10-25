@@ -211,6 +211,7 @@
 		"PHR810033" : "Job(s) have already been created using this job template",
 		"PHR810038" : "Job(s) have already been created using this job template with Repo",
 		"PHR810039" : "Job(s) have already been created using this job template for this App",
+		"PHR810041" : "Name already Exists",
 		"PHR10LC0001" : "Code validation in progress. ",
 		"PHR10LB0001" : "Build in progress. ",
 		"PHR10LR0001" : "Run against source in progress. ",
