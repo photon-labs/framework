@@ -12,6 +12,7 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 		testResultListener : null,
 		onDynamicPageEvent : null,
 		onRunUnitTestEvent : null,
+		validation : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -37,6 +38,12 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 				self.onRunUnitTestEvent = new signals.Signal();
 			}
 			self.onRunUnitTestEvent.add(self.unitTestListener.runUnitTest, self.unitTestListener);
+			
+			if (self.validation === null) {
+				self.validation = new signals.Signal();
+			}
+			self.validation.add(self.testResultListener.mandatoryValidation, self.testResultListener);
+			
 			self.registerEvents(self.unitTestListener);
 		},
 		
@@ -188,13 +195,17 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 			//To run the unit test
 			$("#runUnitTest").unbind("click");
 			$("#runUnitTest").click(function() {
-				self.onRunUnitTestEvent.dispatch(function() {
-					commonVariables.logContent = $('#testConsole').html();
-					$('#testResult').empty();
-					Clazz.navigationController.jQueryContainer = '#testResult';
-					Clazz.navigationController.push(self.testsuiteResult, false);
+				self.validation.dispatch("unit-test", "unit-test", $("#unitTestForm").serialize(), function (status) {
+					if (status) {
+						self.onRunUnitTestEvent.dispatch(function() {
+							commonVariables.logContent = $('#testConsole').html();
+							$('#testResult').empty();
+							Clazz.navigationController.jQueryContainer = '#testResult';
+							Clazz.navigationController.push(self.testsuiteResult, false);
+						});
+						$("#unit_popup").toggle();
+					}
 				});
-				$("#unit_popup").toggle();
 			});
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;

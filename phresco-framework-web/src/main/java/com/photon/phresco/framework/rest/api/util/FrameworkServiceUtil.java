@@ -712,6 +712,10 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 			List<BuildInfo> builds = applicationManager.getBuildInfos(new File(getBuildInfosFilePath(appDirName)));
 			File infoFile = new File(getPhrescoPluginInfoFilePath(goal, null ,appDirName));
 			MojoProcessor mojo = new MojoProcessor(infoFile);
+			if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
+				String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
+				goal = goal + HYPHEN + functionalTestFramework;
+			}
 			List<Parameter> parameters = getMojoParameters(mojo, goal);
 			List<String> eventDependencies = new ArrayList<String>();
 			List<String> dropDownDependencies = null;
@@ -910,7 +914,8 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 		}
 	   
 	   private static ActionResponse textSingleSelectValidate(Parameter parameter, String lableTxt, HttpServletRequest request, ActionResponse actionResponse) {
-			if (StringUtils.isEmpty(request.getParameter(parameter.getKey())) && Boolean.parseBoolean(parameter.getRequired())) {
+			String paramValue = request.getParameter(parameter.getKey());
+			if (StringUtils.isEmpty(paramValue) && Boolean.parseBoolean(parameter.getRequired())) {
 				actionResponse.setErrorFound(true);
 				actionResponse.setConfigErrorMsg(lableTxt + " " + "is missing"); 
 				actionResponse.setParameterKey(parameter.getKey());

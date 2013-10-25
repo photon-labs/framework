@@ -370,8 +370,30 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				header.requestMethod = "PUT";
 				header.requestPostBody = JSON.stringify(requestBody);
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + "/testcases?appDirName=" + appDirName+"&testSuiteName=" + requestBody.testSuite + moduleParam;
+			} else if (action === "validation") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + "util/validation?appDirName="+appDirName+"&customerId="+self.getCustomer()+"&phase="+requestBody.phase+"&"+requestBody.queryString + moduleParam;
 			}
 			return header;
+		},
+		
+		mandatoryValidation : function (phase, goal, queryString, callback) {
+			var self = this, requestBody = {};
+			requestBody.phase = phase;
+			requestBody.goal = goal;
+			requestBody.queryString = queryString;
+			self.performAction(self.getActionHeader(requestBody, "validation"), function(response) {
+				if ((response.errorFound) || (response.status === "error") || (response.status === "failure")){
+					if (response.configErr) {
+						commonVariables.api.showError(response.responseCode ,"error", true)
+					} else {
+						self.showDynamicErrors(response);
+					}
+					callback(false);
+				} else {
+					callback(true);
+				}
+			}); 
 		},
 		
 		performAction : function(header, callback) {

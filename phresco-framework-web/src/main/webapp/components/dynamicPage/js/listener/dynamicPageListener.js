@@ -227,8 +227,12 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         },
 		
 		constructFileBrowseCtrl : function (parameter, whereToRender, goal) {
-			var self=this;
-			whereToRender.append('<li id="'+parameter.key+'Li" class="ctrl"><label>'+parameter.name.value[0].value+'</label><input type="text" name="'+parameter.key+'" id="'+parameter.key+'" style="width: 120px ! important;"><a href="javascript:void(0)" name="browse"><img src="themes/default/images/Phresco/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="browse" class="dyn_popup" style="display:none"><div id="keystoreValue"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div></li>');
+			var self = this, optionalAttrs = {}, textBoxValue = "";
+            if (!self.isBlank(parameter.value)) {
+                textBoxValue = parameter.value;
+            }
+            optionalAttrs = self.getOptionalAttr(parameter, optionalAttrs);
+			whereToRender.append('<li id="'+parameter.key+'Li" class="ctrl"><label>'+parameter.name.value[0].value+optionalAttrs.required+'</label><input type="text" name="'+parameter.key+'" value="'+textBoxValue+'" id="'+parameter.key+'" style="width: 120px ! important;"><a href="javascript:void(0)" name="browse"><img src="themes/default/images/Phresco/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="browse" class="dyn_popup" style="display:none"><div id="keystoreValue"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div></li>');
 			self.signingFileTreeEvent($("#"+parameter.key), $("#keystoreValue"));
 		},
 
@@ -266,7 +270,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             var self = this, inputType = self.getInputType(parameter.type), textBoxValue = "", optionalAttrs = {};
             if (!self.isBlank(parameter.value)) {
                 textBoxValue = parameter.value;
-            } 
+            }
             optionalAttrs = self.getOptionalAttr(parameter, optionalAttrs);
             whereToRender.append('<li class="ctrl textCtrl '+columnClass+'" ' +optionalAttrs.show+'  id="'+parameter.key+'Li"><label>'+parameter.name.value[0].value+optionalAttrs.required+'</label>' + 
                                  '<input type="'+inputType+'" parameterType="'+ parameter.type+'" showHide="'+parameter.show+'" name="'+ parameter.key +'" value="'+textBoxValue+'" id="'+parameter.key+'" ' +optionalAttrs.editable+' maxlength="253" /></li>');

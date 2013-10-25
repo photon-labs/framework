@@ -14,6 +14,7 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 		onPerformActionEvent : null,
 		onStopHubEvent : null,
 		onStopNodeEvent : null,
+		validation : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -39,6 +40,11 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 				self.onPerformActionEvent = new signals.Signal();
 			}
 			self.onPerformActionEvent.add(self.functionalTestListener.performAction, self.functionalTestListener);
+			
+			if (self.validation === null) {
+				self.validation = new signals.Signal();
+			}
+			self.validation.add(self.testResultListener.mandatoryValidation, self.testResultListener);
 			
 			self.registerEvents();
 		},
@@ -194,11 +200,15 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			//To run the Functional test
 			$("#runFunctionalTest").unbind("click");
 			$("#runFunctionalTest").click(function() {
-				self.onPerformActionEvent.dispatch("runFunctionalTest", function() {
-					commonVariables.logContent = $('#testConsole').html();
-					$('#testResult').empty();
-					Clazz.navigationController.jQueryContainer = '#testResult';
-					Clazz.navigationController.push(self.testsuiteResult, false);
+				self.validation.dispatch("functional-test", "functional-test", $('#functionalTestForm').serialize(), function (status) {
+					if (status) {
+						self.onPerformActionEvent.dispatch("runFunctionalTest", function() {
+							commonVariables.logContent = $('#testConsole').html();
+							$('#testResult').empty();
+							Clazz.navigationController.jQueryContainer = '#testResult';
+							Clazz.navigationController.push(self.testsuiteResult, false);
+						});
+					}
 				});
 			});
 			
