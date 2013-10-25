@@ -451,44 +451,55 @@ define(["build/listener/buildListener"], function() {
 			//Minifier click event
 			$("#btnMinifer").unbind("click");
 			$("#btnMinifer").click(function() {
-				var finalArray = [], fileInfo = {}, type = '', compressName = '', files = '', path = '',validation = false;
-				
-				$.each($('#build_minifier table'), function(tIndex, tCurrent){
-					$.each($(tCurrent).find('tbody tr'), function(rIndex, rCurrent){
-						fileInfo = {}, type = $(rCurrent).find('input[name=fileType]').val().trim(),
-						compressName = $(rCurrent).find('input[name='+ type +'MinName]').val().trim(),
-						files = $(rCurrent).find('input[name='+ type +'MinFiles]').val().trim(),
-						path = $(rCurrent).find('input[name='+ type +'filePath]').val().trim().replace(($(rCurrent).find('input[name='+ type +'filePath]').val().trim().split('\\').pop()), '');
+				self.checkForLock("minify", '', function(response) {
+					if (response.status === "success" && response.responseCode === "PHR10C00002") {
+						var finalArray = [], fileInfo = {}, type = '', compressName = '', files = '', path = '', queryStr = '',validation = false;
 						
-						if(type !== '' && files !== '' && path !== ''){
-							if(compressName === ''){
-								$(rCurrent).find('input[name='+ type +'MinName]').addClass('errormessage')
-								validation = true;
+						$.each($('#build_minifier table'), function(tIndex, tCurrent){
+							$.each($(tCurrent).find('tbody tr'), function(rIndex, rCurrent){
+								fileInfo = {}, type = $(rCurrent).find('input[name=fileType]').val().trim(),
+								compressName = $(rCurrent).find('input[name='+ type +'MinName]').val().trim(),
+								files = $(rCurrent).find('input[name='+ type +'MinFiles]').val().trim(),
+								path = $(rCurrent).find('input[name='+ type +'filePath]').val().trim().replace(($(rCurrent).find('input[name='+ type +'filePath]').val().trim().split('\\').pop()), '');
+								
+								if(type !== '' && files !== '' && path !== ''){
+									if(compressName === ''){
+										$(rCurrent).find('input[name='+ type +'MinName]').addClass('errormessage')
+										validation = true;
+										return true;
+									}else{
+										fileInfo.fileType = type;
+										fileInfo.compressName = compressName;
+										fileInfo.csvFileName = files;
+										fileInfo.opFileLoc = path;
+										finalArray.push(fileInfo);
+									}
+								}
+							});
+							
+							if(validation){
 								return true;
-							}else{
-								fileInfo.fileType = type;
-								fileInfo.compressName = compressName;
-								fileInfo.csvFileName = files;
-								fileInfo.opFileLoc = path;
-								finalArray.push(fileInfo);
 							}
+						});
+						
+						if(!validation){
+							$('#build_minifier').hide();
+							self.clearLogContent();
+							var displayName="", userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+							if (userInfo !== null) {
+								displayName = userInfo.displayName;
+							}
+							queryStr += '&displayName=' + displayName;
+							queryStr += self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
+							self.onMavenServiceEvent.dispatch('mvnMinification', queryStr, $('#minAllchk').is(':checked'),  finalArray, function(response){
+								$('.progress_loading').css('display','none');
+							});
 						}
-					});
-					
-					if(validation){
-						return true;
-					}
-				});
-				
-				if(!validation){
-					$('#build_minifier').hide();
-					self.clearLogContent();
-					self.onMavenServiceEvent.dispatch('mvnMinification', queryStr, $('#minAllchk').is(':checked'),  finalArray, function(response){
-						$('.progress_loading').css('display','none');
-					});
-				}
+					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
+						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
+					}	
+				}); 
 			});
-
 			self.addJSMinRow();	
 		},
 		
@@ -722,20 +733,28 @@ define(["build/listener/buildListener"], function() {
 			//Minifier popup click event
 			$("input[name=build_minifier]").unbind("click");
 			$("input[name=build_minifier]").click(function() {
-				$("#build_minifier").html('<input type="checkbox" id="minAllchk"> Compress All Files <table id="jsmin" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0" style="margin-top:8px;"><thead><tr><th colspan="2">JS Minification</th></tr></thead><tbody></tbody></table><table id="cssmin" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0"><thead><tr><th colspan="2">CSS Minification</th></tr></thead><tbody></tbody></table><div class="flt_right"><input type="button" value="Minify" data-i18n="[value]build.label.minify" class="btn btn_style" name="btnMinifer" id="btnMinifer"><input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close"></div>');
-				self.appendMinifyRow({"opFileLoc": "", "csvFileName": "", "compressName": "", "fileType": "js", 'minusImg': true});
-				self.appendMinifyRow({"opFileLoc": "", "csvFileName": "", "compressName": "", "fileType": "css", 'minusImg': true});
-				
-				self.buildListener.getInfo(self.buildListener.getRequestHeader("", '', 'minifyList'), function(response){
-					if(response !== null && response.data !== null){
-						$.each(response.data, function(index, current){
-							self.appendMinifyRow(current);
+				var openccObj = this;
+				var openccObjName = $(this).attr('name');
+				self.checkForLock("minify", '', function(response) {
+					if (response.status === "success" && response.responseCode === "PHR10C00002") {
+						$("#build_minifier").html('<input type="checkbox" id="minAllchk"> Compress All Files <table id="jsmin" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0" style="margin-top:8px;"><thead><tr><th colspan="2">JS Minification</th></tr></thead><tbody></tbody></table><table id="cssmin" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0"><thead><tr><th colspan="2">CSS Minification</th></tr></thead><tbody></tbody></table><div class="flt_right"><input type="button" value="Minify" data-i18n="[value]build.label.minify" class="btn btn_style" name="btnMinifer" id="btnMinifer"><input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close"></div>');
+						self.appendMinifyRow({"opFileLoc": "", "csvFileName": "", "compressName": "", "fileType": "js", 'minusImg': true});
+						self.appendMinifyRow({"opFileLoc": "", "csvFileName": "", "compressName": "", "fileType": "css", 'minusImg': true});
+						
+						self.buildListener.getInfo(self.buildListener.getRequestHeader("", '', 'minifyList'), function(response){
+							if(response !== null && response.data !== null){
+								$.each(response.data, function(index, current){
+									self.appendMinifyRow(current);
+								});
+							}
 						});
+		
+						self.miniferClickEvents();
+						self.opencc(openccObj, openccObjName);
+					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
+						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 					}
-				});
-
-				self.miniferClickEvents();
-				self.opencc(this, $(this).attr('name'));
+				});		
 			});
 			
 			//Log console div click event

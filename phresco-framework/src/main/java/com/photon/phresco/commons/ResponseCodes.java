@@ -521,6 +521,7 @@ public interface ResponseCodes {
 	String PHR10LUR001 = "PHR10LUR001"; // commit in progress
 	String PHR10LCR001 = "PHR10LCR001"; // update in progress
 	String PHR10LIM001 = "PHR10LIM001"; // import in progress
+	String PHR10LMIN01 = "PHR10LMIN01"; //minification in progress
 	
 	/*
 	 * Dashboard Service

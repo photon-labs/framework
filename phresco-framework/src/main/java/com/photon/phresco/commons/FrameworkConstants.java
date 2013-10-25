@@ -98,6 +98,7 @@ public interface FrameworkConstants {
     String PROCESS_BUILD = "Process_Build";
     String EMBED_APPLICATION = "Embed_Application";
     String IMPORT = "import";
+    String MINIFY = "minify";
     String FEATURE_CONFIG = "FeatureConfig"; 
     
     String REQ_CUSTOMER_ID = "customerId";

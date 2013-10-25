@@ -673,7 +673,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
     	String passVal = cell.getTextValue();
     	if(StringUtils.isNotEmpty(passVal)) {
 	    	float pass=Float.parseFloat(passVal);
-	    	testSuite.setTests(pass);
+	    	testSuite.setSuccess(pass);
     	}
     	
     	cell = sheet.getCellAt(3, nRowIndex);
@@ -775,7 +775,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
     			success =Float.parseFloat(value);
-	    		testSuite.setTests(success);
+	    		testSuite.setSuccess(success);
     		}
     	}
     	float failure = 0;
@@ -874,7 +874,6 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 						         for (int j = 0; j < numberOfSheets; j++) {
 						        	 HSSFSheet mySheet = myWorkBook.getSheetAt(j);
 						        	 if(mySheet.getSheetName().equals(fileName)) {
-						        		 Iterator<Row> rowIterator;
 						        		 readTestFromSheet(tstCase, testCases, mySheet);
 						    	         if (StringUtils.isNotEmpty(tstCase.getTestCaseId())) {
 						    	        	 updateIndexPage(fileName, tstCase,
@@ -955,9 +954,9 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 		     			String testCaseStatus = testCase.getStatus();
 		     			String testId = tstCase.getTestCaseId();
 						String status = tstCase.getStatus();
-		     			if(testCaseStatus.equalsIgnoreCase("Pass") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
+		     			if(testCaseStatus.equalsIgnoreCase("success") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
 							totalPass = totalPass + 1;
-						} else if (testCaseStatus.equalsIgnoreCase("Fail") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
+						} else if (testCaseStatus.equalsIgnoreCase("failure") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
 							totalFail = totalFail + 1;
 						} else if (testCaseStatus.equalsIgnoreCase("notApplicable") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
 							totalNotApplicable = totalNotApplicable + 1;
@@ -965,13 +964,11 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 							totalBlocked = totalBlocked + 1;
 						}
 						
-						if (testCase.getTestCaseId().equals(testId) && !testCase.getStatus().equalsIgnoreCase("Pass") 
-								&& !testCase.getStatus().equalsIgnoreCase("success")
-								&& status.equalsIgnoreCase("Pass") || status.equalsIgnoreCase("success")) {
+						if (testCase.getTestCaseId().equals(testId) && !testCase.getStatus().equalsIgnoreCase("success")
+								&& status.equalsIgnoreCase("success")) {
 							totalPass = totalPass +1;
-						} else if (testCase.getTestCaseId().equals(testId)&& !testCase.getStatus().equalsIgnoreCase("Fail") 
-								&& !testCase.getStatus().equalsIgnoreCase("failure")
-								&& status.equalsIgnoreCase("Fail") || status.equalsIgnoreCase("failure")) {
+						} else if (testCase.getTestCaseId().equals(testId) && !testCase.getStatus().equalsIgnoreCase("failure")
+								&& status.equalsIgnoreCase("failure")) {
 							totalFail = totalFail + 1;
 						}  else if (testCase.getTestCaseId().equals(testId)&& !testCase.getStatus().equalsIgnoreCase("notApplicable") 
 								&& status.equalsIgnoreCase("notApplicable")) {
@@ -995,7 +992,6 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 				SpreadSheet indexSpreadSheet = indexSheet.getSpreadSheet();
 	     		org.jopendocument.dom.spreadsheet.Sheet sheet2 = indexSpreadSheet.getSheet(0);
 	     		List<TestSuite> testSuites = new ArrayList<TestSuite>();
-	     		int indexColCount = sheet2.getColumnCount();
 				int indexRowCount = sheet2.getRowCount();
 				org.jopendocument.dom.spreadsheet.Cell indexCell = null;
 				for(int rowIndex = 3; rowIndex < indexRowCount; rowIndex++) {
@@ -1155,15 +1151,13 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 					float totalFail = 0;
 					float totalNotApplicable = 0;
 					float totalBlocked = 0;
-					float notExecuted = 0;
-					float totalTestCases = 0;
 		     		for (TestCase testCase: testCases) {
 		     			String testCaseStatus = testCase.getStatus();
 		     			String testId = tstCase.getTestCaseId();
 						String status = tstCase.getStatus();
-		     			if(testCaseStatus.equalsIgnoreCase("Pass") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
+		     			if(testCaseStatus.equalsIgnoreCase("success") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
 							totalPass = totalPass + 1;
-						} else if (testCaseStatus.equalsIgnoreCase("Fail") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
+						} else if (testCaseStatus.equalsIgnoreCase("failure") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
 							totalFail = totalFail + 1;
 						} else if (testCaseStatus.equalsIgnoreCase("notApplicable") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
 							totalNotApplicable = totalNotApplicable + 1;
@@ -1171,13 +1165,11 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 							totalBlocked = totalBlocked + 1;
 						}
 						
-						if (testCase.getTestCaseId().equals(testId) && !testCase.getStatus().equalsIgnoreCase("Pass") 
-								&& !testCase.getStatus().equalsIgnoreCase("success")
-								&& status.equalsIgnoreCase("Pass") || status.equalsIgnoreCase("success")) {
+						if (testCase.getTestCaseId().equals(testId)	&& !testCase.getStatus().equalsIgnoreCase("success")
+								&& status.equalsIgnoreCase("success")) {
 							totalPass = totalPass +1;
-						} else if (testCase.getTestCaseId().equals(testId)&& !testCase.getStatus().equalsIgnoreCase("Fail") 
-								&& !testCase.getStatus().equalsIgnoreCase("failure")
-								&& status.equalsIgnoreCase("Fail") || status.equalsIgnoreCase("failure")) {
+						} else if (testCase.getTestCaseId().equals(testId) && !testCase.getStatus().equalsIgnoreCase("failure")
+								&& status.equalsIgnoreCase("failure")) {
 							totalFail = totalFail + 1;
 						}  else if (testCase.getTestCaseId().equals(testId)&& !testCase.getStatus().equalsIgnoreCase("notApplicable") 
 								&& status.equalsIgnoreCase("notApplicable")) {
@@ -1186,7 +1178,6 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 								&& status.equalsIgnoreCase("blocked")) {
 							totalBlocked = totalBlocked + 1;
 						}
-						totalTestCases = totalPass + totalFail + notExecuted + totalNotApplicable + totalBlocked;
 						XSSFSheet mySheet1 = myWorkBook.getSheetAt(0);
 						rowIterator = mySheet1.rowIterator();
 						 for (int i = 0; i <=2; i++) {
@@ -1225,38 +1216,31 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 			float totalFail = 0;
 			float totalNotApplicable = 0;
 			float totalBlocked = 0;
-			float notExecuted = 0;
-			float totalTestCases = 0;
 			for (TestCase testCase: testCases) {
 				String testCaseStatus = testCase.getStatus();
 				String testId = tstCase.getTestCaseId();
 				String status = tstCase.getStatus();
-				if(testCaseStatus.equalsIgnoreCase("Pass") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
+				if(testCaseStatus.equalsIgnoreCase("success") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
 					totalPass = totalPass + 1;
-				} else if (testCaseStatus.equalsIgnoreCase("Fail") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
+				} else if (testCaseStatus.equalsIgnoreCase("failure") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
 					totalFail = totalFail + 1;
 				} else if (testCaseStatus.equalsIgnoreCase("notApplicable") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
 					totalNotApplicable = totalNotApplicable + 1;
 				} else if (testCaseStatus.equalsIgnoreCase("blocked") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
 					totalBlocked = totalBlocked + 1;
 				}
-				
-				if (testCase.getTestCaseId().equals(testId) && !testCase.getStatus().equalsIgnoreCase("Pass") 
-						&& !testCase.getStatus().equalsIgnoreCase("success")
-						&& status.equalsIgnoreCase("Pass") || status.equalsIgnoreCase("success")) {
+				if (testCase.getTestCaseId().equalsIgnoreCase(testId)&& !testCase.getStatus().equalsIgnoreCase("success") && status.equalsIgnoreCase("success")) {
 					totalPass = totalPass +1;
-				} else if (testCase.getTestCaseId().equals(testId)&& !testCase.getStatus().equalsIgnoreCase("Fail") 
-						&& !testCase.getStatus().equalsIgnoreCase("failure")
-						&& status.equalsIgnoreCase("Fail") || status.equalsIgnoreCase("failure")) {
+				} else if (testCase.getTestCaseId().equalsIgnoreCase(testId) && !testCase.getStatus().equalsIgnoreCase("failure") && status.equalsIgnoreCase("failure")) {
 					totalFail = totalFail + 1;
-				}  else if (testCase.getTestCaseId().equals(testId)&& !testCase.getStatus().equalsIgnoreCase("notApplicable") 
+				}  else if (testCase.getTestCaseId().equalsIgnoreCase(testId)&& !testCase.getStatus().equalsIgnoreCase("notApplicable") 
 						&& status.equalsIgnoreCase("notApplicable")) {
 					totalNotApplicable = totalNotApplicable + 1;
-				} else if (testCase.getTestCaseId().equals(testId)&& !testCase.getStatus().equalsIgnoreCase("blocked") 
+				} else if (testCase.getTestCaseId().equalsIgnoreCase(testId)&& !testCase.getStatus().equalsIgnoreCase("blocked") 
 						&& status.equalsIgnoreCase("blocked")) {
 					totalBlocked = totalBlocked + 1;
 				}
-				totalTestCases = totalPass + totalFail + notExecuted + totalNotApplicable + totalBlocked;
+			}
 				HSSFSheet mySheet1 = myWorkBook.getSheetAt(0);
 				rowIterator = mySheet1.rowIterator();
 				 for (int i = 0; i <=2; i++) {
@@ -1266,7 +1250,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 		    		Row next1 = rowIterator.next();
 		    		if (StringUtils.isNotEmpty(getValue(next1.getCell(2))) && !getValue(next1.getCell(2)).equalsIgnoreCase("Total")) {
 		    			TestSuite createObject = createObject(next1);
-		            	if (StringUtils.isNotEmpty(testId) && createObject.getName().equals(fileName)) {
+		            	if (StringUtils.isNotEmpty(tstCase.getTestCaseId()) && createObject.getName().equals(fileName)) {
 		     				updateIndex(
 									totalPass,
 									totalFail,
@@ -1276,7 +1260,6 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 		     			}
 		    		}
 		        }
-			}
 	}
 
 	private void updateIndex(float totalPass, float totalFail,
@@ -1691,7 +1674,6 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 			ODPackage createFromFile = ODPackage.createFromFile(file);
 			SpreadSheet spreadSheet = createFromFile.getSpreadSheet();
 			sheet = spreadSheet.getSheet(0);
-			int nColCount = sheet.getColumnCount();
 			int nRowCount = sheet.getRowCount();
 			
 			org.jopendocument.dom.spreadsheet.Cell cell = null;
@@ -1728,7 +1710,6 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 			int cellno = 0;
 			CellStyle tryStyle[] = new CellStyle[20];
 			//String cellValue[] = {"",featureId,"",testCaseId,testDesc,testSteps,testCaseType,priority,expectedResult,actualResult,status,"","",bugComment};
-			Iterator<Row> rowIterator = null;
 			File testDir = new File(filePath);
       		StringBuilder sb = new StringBuilder(filePath);
    	        if(testDir.isDirectory()) {
@@ -1805,9 +1786,9 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 					org.jopendocument.dom.spreadsheet.Cell cell1 = sheet.getCellAt(10,nRowIndex);
 					String value = cell1.getTextValue();
 					if (StringUtils.isNotEmpty(value)) {
-						if (value.equalsIgnoreCase("pass") || value.equalsIgnoreCase("success")) {
+						if (value.equalsIgnoreCase("success")) {
 							totalPass = totalPass + 1;
-						} else if(value.equalsIgnoreCase("fail") || value.equalsIgnoreCase("failure")) {
+						} else if(value.equalsIgnoreCase("failure")) {
 							totalFail = totalFail + 1;
 						} else if(value.equalsIgnoreCase("notApplicable")) {
 							totalNotApp = totalNotApp + 1;
@@ -1833,9 +1814,9 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 				}
 				
 			}
-			if (status.equalsIgnoreCase("pass") || status.equalsIgnoreCase("success")) {
+			if (status.equalsIgnoreCase("success")) {
 				totalPass = totalPass + 1;
-			} else if (status.equalsIgnoreCase("fail") || status.equalsIgnoreCase("failure")) {
+			} else if (status.equalsIgnoreCase("failure")) {
 				totalFail = totalFail + 1;
 			} else if (status.equalsIgnoreCase("notApplicable")) {
 				totalNotApp = totalNotApp + 1;
@@ -1924,9 +1905,9 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 					if (StringUtils.isNotEmpty(getValue(next.getCell(1))) && !getValue(next.getCell(0)).equalsIgnoreCase("S.NO")) {
 						String value = getValue(next.getCell(10));
 						if (StringUtils.isNotEmpty(value)) {
-							if (value.equalsIgnoreCase("pass") || value.equalsIgnoreCase("success")) {
+							if (value.equalsIgnoreCase("success")) {
 								totalPass = totalPass + 1;
-							} else if(value.equalsIgnoreCase("fail") || value.equalsIgnoreCase("failure")) {
+							} else if(value.equalsIgnoreCase("failure")) {
 								totalFail = totalFail + 1;
 							} else if(value.equalsIgnoreCase("notApplicable")) {
 								totalNotApp = totalNotApp + 1;
@@ -1939,9 +1920,9 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 					}
 				} while (rowIterator.hasNext());
 				//to update the status in the index page 
-				if (status.equalsIgnoreCase("pass") || status.equalsIgnoreCase("success")) {
+				if (status.equalsIgnoreCase("success")) {
 					totalPass = totalPass + 1;
-				} else if (status.equalsIgnoreCase("fail") || status.equalsIgnoreCase("failure")) {
+				} else if (status.equalsIgnoreCase("failure")) {
 					totalFail = totalFail + 1;
 				} else if (status.equalsIgnoreCase("notApplicable")) {
 					totalNotApp = totalNotApp + 1;
@@ -2000,7 +1981,6 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 		Iterator<Row> rowIterator;
 		FileInputStream myInput = new FileInputStream(sb.toString());
 		HSSFWorkbook myWorkBook = new HSSFWorkbook(myInput);
-		HSSFSheet mySheet;
 		int numberOfSheets = myWorkBook.getNumberOfSheets();
 		 for (int j = 0; j < numberOfSheets; j++) {
 				HSSFSheet myHssfSheet = myWorkBook.getSheetAt(j);
@@ -2025,9 +2005,9 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 						if (StringUtils.isNotEmpty(getValue(next.getCell(1))) && !getValue(next.getCell(0)).equalsIgnoreCase("S.NO")) {
 							String value = getValue(next.getCell(10));
 							if (StringUtils.isNotEmpty(value)) {
-								if (value.equalsIgnoreCase("pass") || value.equalsIgnoreCase("success")) {
+								if (value.equalsIgnoreCase("success")) {
 									totalPass = totalPass + 1;
-								} else if(value.equalsIgnoreCase("fail") || value.equalsIgnoreCase("failure")) {
+								} else if(value.equalsIgnoreCase("failure")) {
 									totalFail = totalFail + 1;
 								}  else if(value.equalsIgnoreCase("notApplicable")) {
 									totalNotApp = totalNotApp + 1;
@@ -2040,9 +2020,9 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 						}
 					} while (rowIterator.hasNext());
 					//to update the status in the index page 
-					if (status.equalsIgnoreCase("pass") || status.equalsIgnoreCase("success")) {
+					if (status.equalsIgnoreCase("success")) {
 						totalPass = totalPass + 1;
-					} else if (status.equalsIgnoreCase("fail") || status.equalsIgnoreCase("failure")) {
+					} else if (status.equalsIgnoreCase("failure")) {
 						totalFail = totalFail + 1;
 					} else if (status.equalsIgnoreCase("notApplicable")) {
 						totalNotApp = totalNotApp + 1;
