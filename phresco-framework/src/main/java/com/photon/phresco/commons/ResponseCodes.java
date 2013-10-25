@@ -492,6 +492,7 @@ public interface ResponseCodes {
 	String PHR810039 = "PHR810039"; // job(s) have already been created using this job template for this App
 	String PHR800025 = "PHR800025"; // Returned list of modules successfully
 	String PHR810040 = "PHR810040"; // Failed to return multi modules
+	String PHR810041 = "PHR810041"; // Name already exists after module appending
 	
 	/*
 	 * Upgrade Service
