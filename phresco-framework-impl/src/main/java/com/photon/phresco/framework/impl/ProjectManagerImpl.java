@@ -1208,6 +1208,16 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			// Set the parameters for the search:
 			Args oneshotSearchArgs = new Args();
 			oneshotSearchArgs.put(DASHBOARD_RESULT_OUTPUT_MODE, JobResultsArgs.OutputMode.JSON);
+			if (dashboardsearchinfo.getEarliest_time() != null && !dashboardsearchinfo.getEarliest_time().isEmpty() ) {
+				oneshotSearchArgs.put(DASHBOARD_RESULT_EARLIEST_TIME, dashboardsearchinfo.getEarliest_time());
+				if (dashboardsearchinfo.getLatest_time() != null && !dashboardsearchinfo.getLatest_time().isEmpty() ) {
+					oneshotSearchArgs.put(DASHBOARD_RESULT_LATEST_TIME, dashboardsearchinfo.getLatest_time());
+				} 
+			} else {
+				if (dashboardsearchinfo.getLatest_time() != null && !dashboardsearchinfo.getLatest_time().isEmpty() ) {
+					throw new PhrescoException("Earliest time not set");
+				}
+			}
 			String oneshotSearchQuery = dashboardsearchinfo.getQuery();
 			System.out.println("Query changed to "+oneshotSearchQuery);
 
