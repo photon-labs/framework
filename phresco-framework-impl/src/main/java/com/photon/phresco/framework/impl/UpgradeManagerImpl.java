@@ -189,12 +189,12 @@ public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   
 			}
 			if(upgradeproperties.containsValue(feature)) {
 				features.add(feature);
-			} else {
+			} /*else {
 				ArtifactGroup artifactGroup = serviceManager.getFeatureById(feature);
 				if(artifactGroup != null) {
 					features.add(feature);
 				}
-			}
+			}*/
 		}
 		return features;
 	}
