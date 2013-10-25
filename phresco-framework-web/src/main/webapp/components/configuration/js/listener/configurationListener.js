@@ -85,7 +85,7 @@ define(["croneExpression/croneExpression"], function() {
 					function(response) {
 						self.hidePopupLoad();
 						if (response !== null && (response.status !== "error" || response.status !== "failure")) {
-							if(response.responseCode === "PHR600006" || response.responseCode === "PHR600015") {
+							if(response.responseCode === "PHR600006" || response.responseCode === "PHR600015" || response.responseCode === "PHR610024") {
 								commonVariables.api.showError(response.responseCode ,"success", true, false, true);
 								setTimeout(function() {
 									callback(response);

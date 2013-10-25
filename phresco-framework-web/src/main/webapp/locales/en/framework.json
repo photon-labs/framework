@@ -274,7 +274,8 @@
 		"envalreadyexists" : "Environment Already Exists",
 		"chooseserver" : "Choose the Server Type from App Info",
 		"choosedb" : "Choose the DB Type from App Info",
-		"PHR500005" : "Report not available"
+		"PHR500005" : "Report not available",
+		"PHR610024" : "Name already Exists"
 
 	},
 	"navigation" : {

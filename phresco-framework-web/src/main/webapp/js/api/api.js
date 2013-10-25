@@ -290,6 +290,8 @@ define(["framework/base", "api/localStorageAPI"], function(){
 		
 		errorpopupshow : function(response) {
 			var self = this;
+			$("#project_list_import").find('input').removeAttr('disabled');	
+			$("#project_list_import").find('select').removeAttr('disabled');
 			if(response.responseCode !== undefined) {
 				$('#errpopup').remove();					
 				if(response.status !== 0) {
