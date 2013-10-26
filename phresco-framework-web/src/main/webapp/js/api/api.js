@@ -110,9 +110,9 @@ define(["framework/base", "api/localStorageAPI"], function(){
 			$.support.cors = true;
 			
 			//cancel/abort existing ajax call
-			if(commonVariables.dashboardAjaxXhr && commonVariables.dashboardAjaxXhr.readyState != 4){
+			/*if(commonVariables.dashboardAjaxXhr && commonVariables.dashboardAjaxXhr.readyState != 4){
 				commonVariables.dashboardAjaxXhr.abort();
-			}
+			}*/
 
 			commonVariables.dashboardAjaxXhr = $.ajax({
 				url: header.webserviceurl,
@@ -124,7 +124,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				timeout : 1000000,
 				crossDomain : true,
 				cache : false,
-				async : false,
+				async : true,
 				
 				beforeSend : function(){
 					self.successResponse = null;

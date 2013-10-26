@@ -1758,6 +1758,7 @@ img[name="close"] {
 }
 
 .dyn_popup table tr td {
+	border-top: none;
 	width: auto !important;	
 }
 
@@ -4870,30 +4871,39 @@ textarea[name="regex"] {
   color: #999999 !important;
 }
 
-#add_widget tr td textarea, .settings_textarea {
-	width:100%;
-}
-#add_widget tr td select {
-	margin-bottom:0px;
-	width: 100% !important;
+/* *************************************************************** STYLES FOR NOC DASHBOARD *************************************************************** */
+
+#add_widget tr td input[type="text"], #add_widget tr td select {
+	margin-bottom:0;
 }
 
-#firstsettings tr td select {
-	margin-bottom:0px;
-	margin-left:10px;
+#add_widget tr td textarea {
+	width:97%;
 }
 
 #noc_config tr td select {
 	width: 100% !important;
 }
 
+#add_widget tr td input[type="checkbox"] {
+	margin:0 5px 4px 4px;
+}
+
+ #add_widget tr td {
+	width:50px !important;
+ }
+ 
+ #add_widget tr {
+	width:50px !important;
+ }
+
 .noc_view {
-	width:98%;
-	height:290px;
+	/*width:98%;*/
+	height:45%;
 	border:1px solid #CDCDCD;
 	border-radius:8px;
 	float:left;
-	margin:10px;
+	margin:5px;
 }
 
 .tab_div {
@@ -4940,6 +4950,12 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', end
 
 .tab_btn input:first-child {
 	margin-right:6px !important;
+}
+
+.wid_name {
+	font-size: 14px;
+    font-weight: bold;
+    margin: 5px 12px;
 }
 
 .settings_btn {
@@ -5008,4 +5024,127 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', end
 #jobTemplate .dropdown-menu .divider {
 	margin: 0 !important;
 	height:0 !important;
+}
+
+.close_widget {
+	background:url(../../images/Phresco/close_white_icon.png) #ed7940 no-repeat 8px 9px !important;
+	padding-right:16px !important;
+	margin-right: 5px;
+}
+
+.center-bar
+{
+	position:absolute;
+	text-align:right;
+	width:100%;
+	color:#FFF;
+	border-top-left-radius:8px;
+	border-top-right-radius:8px;
+	padding: 7px 0;
+}
+.center-bar a
+{
+	display:inline-block;
+	margin: -2px 2px;
+}
+
+.graph_table {
+	margin:4px;	
+	text-align:center;
+	height: 97%;
+}
+
+#noc_config1 {
+	z-index:1;
+}
+
+.show-he-view {
+	visibility:visible;
+}
+
+.noc_view:hover {
+	-webkit-box-shadow: 0px 0px 7px 0px #b8b8b8;
+	box-shadow: 0px 0px 7px 0px #b8b8b8;
+}
+
+#add_widget .dropdown-menu {
+	margin-top:8px;
+}
+
+#add_widget .dropdown-menu li {
+	padding-left:5px !important;
+}
+
+#add_widget .dropdown-menu li span {
+	padding-left:5px !important;
+}
+
+.dashboard_popup {
+	width:400px !important;
+	padding:3px 7px 8px 5px !important;
+}
+
+.dashboard_popup table td {
+	padding:4px !important;
+	vertical-align:top !important;
+}
+
+.dashboard_popup table textarea, .bootstrap-select.btn-group, .bootstrap-select.btn-group[class*="span"] {
+	width:96.5% !important;
+	margin:0 !important;
+}
+
+.dashboard_popup label {
+	font-size:12px;
+	margin-bottom:2px;
+	margin-top:4px;
+}
+
+.dashboard_popup [type="text"] {
+	width:178px !important;
+	margin-bottom:0 !important;
+}
+
+.dashboard_popup textarea {
+	height:35px !important;
+}
+
+.dashboard_popup [type="password"] {
+	width:158px !important;
+}
+
+.dashboard_popup .bootstrap-select > .btn {
+	width:192px !important;
+	margin-bottom:0 !important;
+	font-size:12px !important;
+	background:none !important;
+	box-shadow:none !important;
+	border:1px solid #ccc !important;
+}
+
+.dashboard_popup .dropdown-menu {
+	margin:0 !important;
+	min-width:192px !important;
+}
+
+.dashboard_popup .dropdown-menu a span.text:hover, .dashboard_popup .dropdown-menu a {
+	color:#333 !important;
+	display:block;
+}
+
+.dashboard_popup table {
+	margin-bottom:3px !important;
+}
+
+.axis_div table td {
+	padding:7px 9px !important;
+}
+
+.axis_div [type="text"], .dashboard_popup select {
+	width:172px !important;
+	margin-bottom:0 !important;
+}
+
+.pick_color {
+	background:url(../../images/Phresco/pick_color.png) no-repeat right #FFFFFF !important;
 }
