@@ -211,6 +211,9 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 			
 			$('#add_wid').click(function() {
 				self.openccpl(this,'add_widget');
+				$("#update_tab").val('Add');
+				$("#nameofwidget").removeAttr('disabled');
+				$("#nameofwidget").val('');
 				self.dashboardListener.addwidgetflag = 1;
 				$('.he-view').removeAttr('style');
 				window.hoverFlag = 0;

@@ -377,6 +377,9 @@ define([], function() {
 			} else if(action === "addwidget") {
 				header.requestMethod = "POST";	
 				projectRequestBody.projectid = commonVariables.projectId;
+				projectRequestBody.properties.x = self.properties.x;
+				projectRequestBody.properties.y = self.properties.y;
+				projectRequestBody.properties.type = self.properties.type;
 				projectRequestBody.appdirname = self.currentappname;
 				projectRequestBody.dashboardid = self.currentdashboardid;
 				header.requestPostBody = JSON.stringify(projectRequestBody);
@@ -765,7 +768,7 @@ define([], function() {
 				newXdata.push([yData[dataadder],new_data[dataadder]]);
 				self.piechartdata_new = newXdata;
 			}
-			self.highChartPie(widgetKey, newXdata,-30,-5);	//self.highchartpie(widgetKey, newXdata,-40,-5);	
+			self.highChartPie(widgetKey, newXdata,-10,-5);	//self.highchartpie(widgetKey, newXdata,-40,-5);	
 			var dat = commonVariables.api.localVal.getSession(widgetKey);
 			}catch(exception){
 			
@@ -1091,10 +1094,29 @@ define([], function() {
 				}else{
 					self.actionBody = {};
 					self.actionBody.name = nameofwid.val();
-					self.actionBody.query = query_add.val();
-					self.actionBody.autorefresh = ($('#timeout').is(':checked') && $('#timeoutval').val().trim() !== "" ? $('#timeoutval').val().trim() : null);
+					self.actionBody.query = query_add.val();					
+					var autoref = ($('#timeout').is(':checked') && $('#timeoutval').val().trim() !== "" ? $('#timeoutval').val().trim() : null);
+					self.actionBody.autorefresh = autoref;
 					self.actionBody.starttime = $("#fromTime").val();
 					self.actionBody.endtime = $("#toTime").val();
+					self.actionBody.properties = {};
+					if($("#widgetType option:selected").val() === 'linechart'){					
+						self.properties.type = ['linechart'];
+						self.properties.x = $.makeArray($("select.xaxis option:selected").val());
+						self.properties.y = $.makeArray( $("select.yaxis option:selected").val());
+					}else if($("#widgetType option:selected").val() === 'piechart'){
+						self.properties.x = $.makeArray( $("select.percentval option:selected").val());
+						self.properties.y = $.makeArray( $("select.legendval option:selected").val());
+						self.properties.type = ['piechart'];
+					}else if($("#widgetType option:selected").val() === 'barchart'){
+						var SelectedItems = [];
+						$(".sortable2").children('li').each(function(index, current) {
+							SelectedItems.push($(current).text());
+						});
+						self.properties.x = $.makeArray($("select.baraxis option:selected").val());
+						self.properties.y = SelectedItems;
+						self.properties.type = ['barchart'];
+					}
 			
 					self.graphAction(self.getActionHeader(self.actionBody, "addwidget"), function(response) {
 						self.currentwidgetid = response.data;
@@ -1108,10 +1130,9 @@ define([], function() {
 						self.actionBody.dashboardname = self.dashboardname;
 						//self.actionBody.url = self.dashboardListener.dashboardURL;
 						self.actionBody.widgetname = nameofwid.val();
-						
-						self.getWidgetDataInfo(response.data, {name : nameofwid.val()}, self.actionBody, true);
+						self.getWidgetDataInfo(response.data, {name : nameofwid.val(),properties : {type : self.properties.type, x : self.properties.x, y :self.properties.y},autoRefresh : autoref}, self.actionBody, true);
 						$('#add_widget').hide();
-						var chartinfo = {},indexforx,indexfory,SelectedItems = [];	
+						/* var chartinfo = {},indexforx,indexfory,SelectedItems = [];	
 						if($("#widgetType option:selected").val() === 'linechart') {
 						indexforx = $("select.xaxis option:selected").val();
 						indexfory = $("select.yaxis option:selected").val();
@@ -1135,6 +1156,12 @@ define([], function() {
 							chartinfo.properties.y = SelectedItems;
 							chartinfo.properties.type = ['barchart'];
 							self.generateBarChart(self.currentwidgetid, chartinfo, self.dataforbarchart, '');
+						} */	
+						var count = $('.noc_view').length;
+						if(count == 1){
+							$('.noc_view').css('width','98%');
+						} else if (count >=2) {
+							$('.noc_view').css('width','48%');
 						}	
 					});
 				}
@@ -1220,7 +1247,7 @@ define([], function() {
 					flagg = 1;
 					
 					if($(this).attr('proptype') === 'piechart') {
-						self.highChartPie(placeval, self.piechartdata_new, -30, 0);	
+						self.highChartPie(placeval, self.piechartdata_new, -10, 0);	
 					}  else if($(this).attr('proptype') === 'barchart') {
 						self.highChartBar(placeval,self.totalArrforbar, self.xDataforbar);
 					} else if($(this).attr('proptype') === 'linechart') {
@@ -1239,7 +1266,7 @@ define([], function() {
 					}	 
 					flagg = 0;
 					if($(this).attr('proptype') === 'piechart') {
-						self.highChartPie(placeval, self.piechartdata_new, -40, 5);	
+						self.highChartPie(placeval, self.piechartdata_new, -10, 5);	
 					} else if($(this).attr('proptype') === 'barchart') {
 						self.highChartBar(placeval,self.totalArrforbar, self.xDataforbar);
 					} else if($(this).attr('proptype') === 'linechart') {
@@ -1260,7 +1287,8 @@ define([], function() {
 				self.addwidgetflag = 0;
 				var heView = $(this).closest('.he-view');
 				heView.css('visibility', 'visible');
-				self.openccdashboardsettings(this,'firstsettings');
+				self.openccdashboardsettings(this,'add_widget');
+				$("#update_tab").val('Update');
 				
 				$("#timeoutval_update").bind('keypress',function(e) {
 				if((e.which >= 48 && e.which <= 57) || (e.which === 8)){
@@ -1274,11 +1302,13 @@ define([], function() {
 				//self.actionBody.widgetid = $(this).parents('div.noc_view').attr('dynid');
 				
 				self.getWidgetInfo($(this).parents('div.noc_view').attr('dynid'), function(result){
-					$(".settings_textarea").val(result.data.query);
+					$("#query_add").val(result.data.query);
+					$("#nameofwidget").attr('disabled','disabled');
+					$("#nameofwidget").val(result.data.name);
 					if(result.data.properties) {
-						$(".configwidgetdatatype").val(result.data.properties.type.toString());
+						$("#widgetType").val(result.data.properties.type.toString());
 					}	
-					if(result.data.autorefresh) {
+					/* if(result.data.autorefresh) {
 						$("#timeoutval_update").show();
 						$("#timeoutval_update").val(result.data.autorefresh);
 						$('#timeout_update').prop('checked', true);
@@ -1286,20 +1316,20 @@ define([], function() {
 					} else {
 						$("#timeoutval_update").hide();
 						$('#timeout_update').prop('checked', false);
-					}
+					} */
 				});
 				
 				/* self.graphAction(self.getActionHeader(self.actionBody, "widgetget"), function(response) {
 
 				}); */
 				//$(".settings_textarea").val(self.query);				
-				$("select.xaxis").parent().parent().hide();
+				/* $("select.xaxis").parent().parent().hide();
 				$("select.yaxis").parent().parent().hide();
 				$("select.percentval").parent().parent().hide();
 				$("select.legendval").parent().parent().hide();
 				$("select.baraxis").parent().parent().hide();
-				$("#tabforbar").hide();
-				if(($("#widgetType option:selected").val() === 'linechart')) {
+				$("#tabforbar").hide(); */
+				/* if(($("#widgetType option:selected").val() === 'linechart')) {
 					$("#update_tab").attr('disabled','disabled');
 					if(!($("select.xaxis option:selected").val()== undefined)) {
 						$("select.xaxis").parent().parent().show();
@@ -1322,9 +1352,9 @@ define([], function() {
 					}
 				} else {
 					$("#update_tab").removeAttr('disabled');
-				}	
+				} */	
 				var dyn_id = $(this).parents('div.noc_view').attr('dynid');
-				$("#firstsettings").attr('dynid',dyn_id);
+				$("#add_widget").attr('dynid',dyn_id);
 			});
 			
 			/* $("input[name='widgettype']").unbind('change');
@@ -1432,7 +1462,7 @@ define([], function() {
 			
 			$('.closeset').unbind('click');
 			$('.closeset').click(function() {
-				$("#firstsettings").hide();
+				$("#add_widget").hide();
 			});
 			
 			$('#update_tab').unbind('click');
@@ -1441,7 +1471,7 @@ define([], function() {
 				var widgetKey = $(this).parent().parent().attr('dynid'), tempdata=[], tempvalue=[], i=0, flag=0, j=0, currentWidget = {}, indexforx, indexfory;
 				var typeofwidget = $('input[name="widgettype"]:checked').val();
 				var widgetdatatype = $('#widgetType option:selected').val();	
-				var widgetId = $("#update_tab").parents('#firstsettings').attr('dynid');
+				var widgetId = $("#update_tab").parents('#add_widget').attr('dynid');
 				var dataforx = [], datafory = [], dataforchart = [], countforx = 0, countfory = 0, sum = 0;
 				var SelectedItems = [], collection = {}, totalArr = [], xVal = [],datafory = [];
 
@@ -1499,7 +1529,7 @@ define([], function() {
 								currentWidget.data.autorefresh = ($('#timeout_update').is(':checked') && $('#timeoutval_update').val().trim() !== "" ? $('#timeoutval_update').val().trim() : null);
 								
 								self.actionBody = {};
-								self.actionBody.query = $(".settings_textarea").val();
+								self.actionBody.query = $("#query_add").val();
 								self.actionBody.applicationname = self.currentappname;
 								self.actionBody.dashboardname = self.dashboardname;
 								self.actionBody.widgetname = $("#content_"+widgetId).parent().attr('widgetname');
@@ -1517,7 +1547,7 @@ define([], function() {
 							//table update
 							self.createwidgetTable(widgetKey,null, self.datafortable, false);
 							
-							$("#firstsettings").hide();	
+							$("#add_widget").hide();	
 							if(typeofwidget === 'table') {
 								$('#tableview_'+widgetKey).parent('li').addClass('active');
 								$('#graphview_'+widgetKey).parent('li').removeClass('active');	

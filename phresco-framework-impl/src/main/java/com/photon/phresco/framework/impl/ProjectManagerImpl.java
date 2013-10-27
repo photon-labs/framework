@@ -1015,6 +1015,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		HashMap<String, Dashboard> dashboardMap;
 		Widget widget;
 		HashMap<String, Widget> widgets;
+		HashMap<String, String[]> widProperties = new HashMap<String, String[]>();
 		try {
 			File dashboardInfoFile = new File(getProjectPhresoFolder(dashboardInfo.getAppdirname()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 			if( dashboardInfoFile.exists()) {
@@ -1035,6 +1036,16 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					widget.setAutorefresh(dashboardInfo.getAutorefresh());
 					widget.setStarttime(dashboardInfo.getStarttime());
 					widget.setEndtime(dashboardInfo.getEndtime());
+					if (dashboardInfo.getProperties() != null &&  widget.getProperties() == null) {
+						widProperties = dashboardInfo.getProperties();
+					} else {
+						widProperties = widget.getProperties();
+						Set<String> keys = dashboardInfo.getProperties().keySet();  
+						for (String key : keys) {  
+							widProperties.put(key, dashboardInfo.getProperties().get(key));
+						} 
+					}
+					widget.setProperties(widProperties);
 					widgets.put(widgetId, widget);
 					dashboardMap.get(dashboardInfo.getDashboardid()).setWidgets(widgets);
 					dashboards.setDashboards(dashboardMap);
