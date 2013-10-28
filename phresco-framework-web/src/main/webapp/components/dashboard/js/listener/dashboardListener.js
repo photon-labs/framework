@@ -41,283 +41,7 @@ define([], function() {
 			var self = this;	
 		},
 		
-		lineChart : function(placeholderindex,dataforx,datafory) {
-			if($("#placeholder_"+placeholderindex).length > 0){
-				var dataCollection = [], plot = '', placeholder = '', lineOptions = '';
-				
-				for (var i = 0; i < dataforx.length; i++) {
-					dataCollection.push([dataforx[i], datafory[i]]);
-				}
-
-				placeholder = $("#placeholder_"+placeholderindex);
-
-				lineOptions = {
-					series: {
-						lines: {
-							show: true
-						},
-						points: {
-							show: true
-						}
-					},
-					grid: {
-						hoverable: true,
-						clickable: true
-					} ,
-					yaxis: {
-						min: 0
-					},
-					xaxis: {
-					  mode: "time",
-					  timeformat: "%y/%m/%d %H:%M"
-					}
-				};
-				
-				plot = $.plot(placeholder, [dataCollection], lineOptions);
-
-				function showTooltip(x, y, contents) {
-					$('<div id="tooltip_'+placeholderindex+'">' + contents + '</div>').css({
-						position: 'absolute',
-						top: y + 5,
-						left: x + 5,
-						border: '1px solid #fdd',
-						padding: '2px',
-						'background-color': '#fee',
-						opacity: 0.80
-					}).appendTo("body");//.fadeIn(200);
-				}
-				
-				$("#placeholder_"+placeholderindex).bind("plothover", function (event, pos, item) {
-					if (item) {
-						if ($(this).data('previous-post') != item.seriesIndex) {						
-							$(this).data('previous-post', item.seriesIndex);
-						}
-						$("#tooltip_"+placeholderindex).remove();
-						var x = item.datapoint[0].toFixed(2), y = item.datapoint[1].toFixed(2);
-						z = " of " + x + " = " + y;
-						showTooltip(pos.pageX, pos.pageY,'Value' + z);
-						$("#tooltip_"+placeholderindex).css('z-index','4');
-					} else {
-						$("#tooltip_"+placeholderindex).css('display','none');
-					}	
-				});
-			}
-		},
 		
-		barChart : function(placeholderindex) {
-			var d1 = [];
-			for (var i = 0; i <= 10; i += 1) {
-				d1.push([i, parseInt(Math.random() * 30)]);
-			}
-
-			var d2 = [];
-			for (var i = 0; i <= 10; i += 1) {
-				d2.push([i, parseInt(Math.random() * 30)]);
-			}
-
-			var d3 = [];
-			for (var i = 0; i <= 10; i += 1) {
-				d3.push([i, parseInt(Math.random() * 30)]);
-			}
-			var placeholder = $("#placeholder_"+placeholderindex);
-
-			var stack = 0,
-				bars = true,
-				lines = false,
-				steps = false;
-
-			function plotWithOptions() {
-				$.plot("#placeholder_"+placeholderindex+"", [ d1,d2,d3], {
-					series: {
-						stack: stack,
-						lines: {
-							show: lines,
-							steps: steps
-						},
-						bars: {
-							show: bars,
-							fill: 1,
-							barWidth: 0.6
-						}
-					},
-					grid: {
-							hoverable: true
-						}
-				});
-			}
-
-			plotWithOptions();
-
-			$(".stackControls button").click(function (e) {
-				e.preventDefault();
-				stack = $(this).text() == "With stacking" ? true : null;
-				plotWithOptions();
-			});
-		
-			/* placeholder.resize(function () {
-				$(".message").text("Placeholder is now "
-					+ $(this).width() + "x" + $(this).height()
-					+ " pixels");
-			});
-
-			$(".demo-container").resizable({
-				maxWidth: 900,
-				maxHeight: 500,
-				minWidth: 450,
-				minHeight: 250,
-			}); */
-
-			function showTooltip(x, y, contents) {
-				$('<div id="tooltip_'+placeholderindex+'">' + contents + '</div>').css( {
-					position: 'absolute',
-					top: y + 5,
-					left: x + 5,
-					border: '1px solid #fdd',
-					padding: '2px',
-					'background-color': '#fee',
-					opacity: 0.80
-				}).appendTo("body");//.fadeIn(200);
-			 }
-			 
-			 $("#placeholder_"+placeholderindex).bind("plothover", function (event, pos, item) {
-				if (item) {
-					if ($(this).data('previous-post') != item.seriesIndex) {						
-						$(this).data('previous-post', item.seriesIndex);
-					}
-					$("#tooltip_"+placeholderindex).remove();
-					var x = item.datapoint[0].toFixed(2), y = item.datapoint[1].toFixed(2);
-					z = " of " + x + " = " + y;
-					showTooltip(pos.pageX, pos.pageY, item.series.label + z);
-					$("#tooltip_"+placeholderindex).css('z-index','4');
-				} else {
-					$("#tooltip_"+placeholderindex).css('display','none');
-				}	
-			});		
-
-		},
-		
-		pieChart : function(placeholderindex,datatosend,seriesvalue) {
-			var data = [],
-			//series = Math.floor(Math.random() * 6) + 3;
-			  series = datatosend.length;
-			for (var i = 0; i < series; i++) {
-				data[i] = {
-					label: seriesvalue[i] + '(' + datatosend[i] + ')',
-					//data: Math.floor(Math.random() * 100) + 1
-					data: datatosend[i]
-				}
-			}
-
-			var placeholder = $("#placeholder_"+placeholderindex);
-			$.plot(placeholder, data, {
-				series: {
-					pie: { 
-						show: true
-					}
-					},
-					grid: {
-						hoverable: true
-					}
-			});
-			
-			/* placeholder.resize(function () {
-				$(".message").text("Placeholder is now "
-					+ $(this).width() + "x" + $(this).height()
-					+ " pixels");
-			});
-
-			$(".demo-container").resizable({
-				maxWidth: 900,
-				maxHeight: 500,
-				minWidth: 450,
-				minHeight: 250,
-			}); */
-	
-			function showTooltip(x, y, contents) {
-				$('<div id="tooltip_'+placeholderindex+'">' + contents + '</div>').css( {
-					position: 'absolute',
-					top: y + 5,
-					left: x + 5,
-					border: '1px solid #fdd',
-					padding: '2px',
-					'background-color': '#fee',
-					opacity: 0.80
-				}).appendTo("body");//.fadeIn(200);
-			 }
-
-			$("#placeholder_"+placeholderindex).bind("plothover", function (event, pos, item) {
-				if (item) {
-					if ($(this).data('previous-post') != item.seriesIndex) {
-						$(this).data('previous-post', item.seriesIndex);
-					}
-					$("#tooltip_"+placeholderindex).remove();
-					y = 'Percent ' + ': ' + item.datapoint;
-					showTooltip(pos.pageX, pos.pageY, item.series.label + " " + y);
-					$("#tooltip_"+placeholderindex).css('z-index','4');
-				} else {
-					$("#tooltip_"+placeholderindex).css('display','none');
-				}	
-			});		
-			$("#tooltip_"+placeholderindex).css('display','none');
-		},
-		
-		newbarchart : function(placeholderindex,totalArr, xlabelVal) {
-			/* var d1 = [{"label":"count","data":[[1,25],[2,5],[3,3],[4,2]]},
-                 {"label":"percentage","data":[[1,71.428571],[2,14.285714],[3,8.571429],[4,5.714286]]}];
-                 //{"label":"CAR","data":[[1,5],[2,10],[3,15],[4,20],[5,25],[6,5],[7,10],[8,15],[9,20],[10,25]]}];
-		 var ms_ticks = [[1,"127.0.0.1"],[2,"172.16.22.107"],[3,"172.16.23.25"],[4,"172.16.17.228"]]; */
-			
-			var option={
-				bars: { 
-					show: true, 
-					barWidth: 0.10, 
-					series_spread: true, 
-					align: "center", 
-					order: 1 
-				},
-				xaxis: { 
-					ticks: xlabelVal, 
-					autoscaleMargin: .01 
-				},
-				grid: { 
-					hoverable: true, 
-					clickable: true 
-				}
-			};
-
-		function plotWithOptions() {
-			$.plot("#placeholder_"+placeholderindex, totalArr, option);
-		}
-		plotWithOptions();
-		
-		function showTooltip(x, y, contents) {
-				$('<div id="tooltip_'+placeholderindex+'">' + contents + '</div>').css( {
-					position: 'absolute',
-					top: y + 5,
-					left: x + 5,
-					border: '1px solid #fdd',
-					padding: '2px',
-					'background-color': '#fee',
-					opacity: 0.80
-				}).appendTo("body");//.fadeIn(200);
-			 }
-
-			$("#placeholder_"+placeholderindex).bind("plothover", function (event, pos, item) {
-				if (item) {
-					if ($(this).data('previous-post') != item.seriesIndex) {
-						$(this).data('previous-post', item.seriesIndex);
-					}
-					$("#tooltip_"+placeholderindex).remove();
-					y = 'Value ' + ': ' + item.datapoint[1];
-					showTooltip(pos.pageX, pos.pageY, item.series.label + " " + y);
-					$("#tooltip_"+placeholderindex).css('z-index','4');
-				} else {
-					$("#tooltip_"+placeholderindex).css('display','none');
-				}	
-			});		
-			$("#tooltip_"+placeholderindex).css('display','none');
-
-		},
 		
 		graphAction : function(header, callback) {
 			var self = this;
@@ -665,6 +389,9 @@ define([], function() {
 					},
 					min: 0
 				},
+				scrollbar: {
+					enabled: true
+				},
 				tooltip: {
 					formatter: function() {
 							return '<b>'+ this.series.name +'</b><br/>'+
@@ -928,6 +655,8 @@ define([], function() {
 					text: null
 				},
 				xAxis: {
+					min: 0,
+					max: 3,
 					categories: xData
 				},
 				yAxis: {
@@ -935,6 +664,9 @@ define([], function() {
 					title: {
 						text: null
 					}
+				},
+				scrollbar: {
+					enabled: true
 				},
 				tooltip: {
 					headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
@@ -1273,14 +1005,6 @@ define([], function() {
 				self.openccdashboardsettings(this,'add_widget');
 				$("#update_tab").val('Update');
 				
-				$("#timeoutval_update").bind('keypress',function(e) {
-				if((e.which >= 48 && e.which <= 57) || (e.which === 8)){
-					return true;
-				} else {
-					e.preventDefault();
-				}
-				});
-				
 				//self.actionBody = {};
 				//self.actionBody.widgetid = $(this).parents('div.noc_view').attr('dynid');
 				
@@ -1463,7 +1187,7 @@ define([], function() {
 
 				self.actionBody = {};
 				self.actionBody.query = $("#query_add").val();
-				self.actionBody.autorefresh = ($('#timeout_update').is(':checked') && $('#timeoutval_update').val().trim() !== "" ? $('#timeoutval_update').val().trim() : null);
+				self.actionBody.autorefresh = ($('#timeout').is(':checked') && $('#timeoutval').val().trim() !== "" ? $('#timeoutval').val().trim() : null);
 				self.actionBody.starttime = '';
 				self.actionBody.endtime = '';
 				self.actionBody.widgetid = $("#content_"+widgetId).attr('widgetid');
@@ -1516,7 +1240,7 @@ define([], function() {
 								currentWidget.data.properties = {};
 								currentWidget.data.properties.x = $.makeArray(indexforx);
 								currentWidget.data.properties.y = $.makeArray(indexfory);
-								currentWidget.data.autorefresh = ($('#timeout_update').is(':checked') && $('#timeoutval_update').val().trim() !== "" ? $('#timeoutval_update').val().trim() : null);
+								currentWidget.data.autorefresh = ($('#timeout').is(':checked') && $('#timeoutval').val().trim() !== "" ? $('#timeoutval').val().trim() : null);
 								
 								self.actionBody = {};
 								self.actionBody.query = $("#query_add").val();
@@ -1530,7 +1254,7 @@ define([], function() {
 								currentWidget.data.properties = {};
 								currentWidget.data.properties.x = $.makeArray($("select.baraxis option:selected").val());
 								currentWidget.data.properties.y = SelectedItems;
-								currentWidget.data.autorefresh = ($('#timeout_update').is(':checked') && $('#timeoutval_update').val().trim() !== "" ? $('#timeoutval_update').val().trim() : null);
+								currentWidget.data.autorefresh = ($('#timeout').is(':checked') && $('#timeoutval').val().trim() !== "" ? $('#timeoutval').val().trim() : null);
 								self.generateBarChart(widgetKey, currentWidget.data, self.dataforbarchart, self.actionBody);
 							} else if(widgetdatatype === 'table'){
 								self.generateTable(widgetKey, self.datafortable.data.results);
