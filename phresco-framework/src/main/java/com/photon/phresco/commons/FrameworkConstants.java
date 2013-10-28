@@ -501,6 +501,8 @@ public interface FrameworkConstants {
     String COMPONENT = "component";
     String LOAD = "load";
     String PERFORMACE = "performance";
+    String INTEGRATION = "integration";
+    String INTEGRATION_TEST = "-integrationtest";
     String WEBSERVICE = "WebService";
     String EMAIL = "Email";
     String WEBSERVICES_DIR = "WebServices";

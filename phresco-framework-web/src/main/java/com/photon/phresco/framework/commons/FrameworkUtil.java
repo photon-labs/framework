@@ -374,6 +374,22 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
     }
     
     
+    public PomProcessor getPomProcessorForIntegration(String projectCode) throws PhrescoException {
+    	try {
+    		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+    		builder.append(projectCode);
+    		builder.append(File.separatorChar);
+    		builder.append(POM_FILE);
+    		S_LOGGER.debug("builder.toString() " + builder.toString());
+    		File pomPath = new File(builder.toString());
+    		S_LOGGER.debug("file exists " + pomPath.exists());
+    		return new PomProcessor(pomPath);
+    	} catch (Exception e) {
+    		throw new PhrescoException(e);
+    	}
+    }
+    
+    
 	// get server Url for sonar
 	public String getSonarHomeURL() throws PhrescoException {
 		FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
