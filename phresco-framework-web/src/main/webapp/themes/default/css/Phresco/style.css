@@ -5056,6 +5056,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', end
 	height: 86%;
 }
 
+.placeholder {
+	height: 90%;
+	overflow-y: auto;
+}
+
 #noc_config1 {
 	z-index:1;
 }

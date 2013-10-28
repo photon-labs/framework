@@ -468,7 +468,7 @@ define([], function() {
 					tbody += '<tr>' + tColums + '</tr>';
 				});
 				
-				var nocTable = $('<table id="widTab_'+ widgetKey +'" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0"><thead><tr></tr></thead><tbody></tbody></table>');
+				var nocTable = $('<table id="widTab_'+ widgetKey +'" class="table table-striped table_border table-bordered" style="height:50%"><thead><tr></tr></thead><tbody></tbody></table>');
 				$('#placeholder_' + widgetKey).append(nocTable);
 				$('#widTab_' + widgetKey +' thead tr').html(thead);
 				$('#widTab_' + widgetKey +' tbody').html(tbody);
@@ -485,7 +485,7 @@ define([], function() {
 
 				nocview.append($('<div class="wid_name">'+currentWidget.name+'</div>'));
 				var graph = $('<div class="graph_table"></div>');
-				graph.append($('<div id="placeholder_' + widgetKey + '" class="placeholder"> </div>'));
+				graph.append($('<div id="placeholder_' + widgetKey + '" class="placeholder" style="height:90%"> </div>'));
 				nocview.append(graph);
 
 				var graphType = currentWidget.properties === null ? '' : currentWidget.properties.type.toString();
@@ -1146,12 +1146,7 @@ define([], function() {
 							chartinfo.properties.type = ['barchart'];
 							self.generateBarChart(self.currentwidgetid, chartinfo, self.dataforbarchart, '');
 						} */	
-						var count = $('.noc_view').length;
-						if(count == 1){
-							$('.noc_view').css('width','98%');
-						} else if (count >=2) {
-							$('.noc_view').css('width','48%');
-						}	
+						$('.noc_view').css('width','48%');
 					});
 				}
 		 },
@@ -1241,18 +1236,15 @@ define([], function() {
 						self.highChartBar(placeval,self.totalArrforbar, self.xDataforbar);
 					} else if($(this).attr('proptype') === 'linechart') {
 						self.highChartLine(placeval);
+					} else if($(this).attr('proptype') === 'table') {
+						$('.placeholder').css('height','100%');
 					}
 				} else {
 					$("#content_"+placeval).children(".demo-container1").addClass('cssforchart');						
 					$('.noc_view').show();
 					var count = $('.noc_view').length;
-					if(count == 1){
-						$('.noc_view').css('height','97%');
-						$('.noc_view').css('width','98%');
-					} else if (count >=2) {
-						$('.noc_view').css('height','45%');
-						$('.noc_view').css('width','48%');
-					}	 
+					$('.noc_view').css('height','45%');
+					$('.noc_view').css('width','48%');
 					flagg = 0;
 					if($(this).attr('proptype') === 'piechart') {
 						self.highChartPie(placeval, self.piechartdata_new, -10, 5);	
@@ -1260,6 +1252,8 @@ define([], function() {
 						self.highChartBar(placeval,self.totalArrforbar, self.xDataforbar);
 					} else if($(this).attr('proptype') === 'linechart') {
 						self.highChartLine(placeval);
+					} else if($(this).attr('proptype') === 'table') {
+						$('.placeholder').css('height','90%');
 					}
 				}														
 			});
