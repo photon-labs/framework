@@ -214,6 +214,7 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 				$("#update_tab").val('Add');
 				$("#nameofwidget").removeAttr('disabled');
 				$("#nameofwidget").val('');
+				self.dashboardListener.optionsshowhide($("#widgetType option:selected").val());
 				self.dashboardListener.addwidgetflag = 1;
 				$('.he-view').removeAttr('style');
 				window.hoverFlag = 0;
