@@ -119,7 +119,7 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 			var self = this;
 			asyncTest("Functional Test Run Start Hub Btn Click Test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl+"app/startHub?appDirName=test&username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&port=4444&newSessionWaitTimeout=-1&servlets=&prioritizer=&capabilityMatcher=org.openqa.grid.internal.utils.DefaultCapabilityMatcher&throwOnCapabilityNotPresent=on&nodePolling=5000&cleanUpCycle=5000&timeout=300000&browserTimeout=0&maxSession=5",
+					url: commonVariables.webserviceurl+"app/startHub?appDirName=test&username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&port=4444&newSessionWaitTimeout=-1&servlets=&prioritizer=&capabilityMatcher=org.openqa.grid.internal.utils.DefaultCapabilityMatcher&throwOnCapabilityNotPresent=true&nodePolling=5000&cleanUpCycle=5000&timeout=300000&browserTimeout=0&maxSession=5",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",
@@ -378,6 +378,17 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 				  	status: 200,
 				  	response : function() {
 					  	this.responseText = JSON.stringify({"responseCode":"PHRQ300004","status":"COMPLETED","log":"STARTED","connectionAlive":false,"errorFound":false,"configErr":false,"parameterKey":null,"uniquekey":"23b53d9f-5519-4318-bc09-15aaa7403b37","service_exception":"","configErrorMsg":null});
+				  	}
+				});
+				
+				$.mockjax({
+					url: commonVariables.webserviceurl+"util/validation?appDirName=test&customerId=photon&phase=functional-test&devices=usb&serialNumber=",
+				  	type: "GET",
+				  	dataType: "json",
+				  	contentType: "application/json",
+				  	status: 200,
+				  	response : function() {
+					  	this.responseText = JSON.stringify({"responseCode":"PHR9C00001","status":"success","log":null,"connectionAlive":false,"errorFound":false,"configErr":false,"parameterKey":null,"uniquekey":null,"service_exception":null,"configErrorMsg":null});
 				  	}
 				});
 

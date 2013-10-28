@@ -17,7 +17,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 				});
 
 				self.testsuitesMock = $.mockjax({
-					url: commonVariables.webserviceurl+commonVariables.qualityContext+"/testsuites?appDirName=test&testType=unit&techReport=js&moduleName=phresco-framework",
+					url: commonVariables.webserviceurl+commonVariables.qualityContext+"/testsuites?appDirName=test&testType=unit&moduleName=phresco-framework&techReport=js",
 				  	type: "GET",
 				  	dataType: "json",
 				  	contentType: "application/json",
@@ -94,7 +94,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 
 				$.mockjaxClear(self.testsuitesMock);
 				self.testsuitesMock = $.mockjax({
-					url: commonVariables.webserviceurl+commonVariables.qualityContext+"/testsuites?appDirName=test&testType=unit&techReport=js&moduleName=phresco-framework",
+					url: commonVariables.webserviceurl+commonVariables.qualityContext+"/testsuites?appDirName=test&testType=unit&moduleName=phresco-framework&techReport=js",
 				  	type: "GET",
 				  	dataType: "json",
 				  	contentType: "application/json",
@@ -169,6 +169,18 @@ define(["unitTest/unitTest"], function(UnitTest) {
 		moduleOptionChangeTest : function() {
 			var self = this;
 			asyncTest("Unit Test Module Options Change Test", function() {
+				
+				$.mockjax({
+					url: commonVariables.webserviceurl+commonVariables.qualityContext+"/techOptions?moduleName=phresco-framework&appDirName=test",
+				  	type: "GET",
+				  	dataType: "json",
+				  	contentType: "application/json",
+				  	status: 200,
+				  	response : function() {
+					  	this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ100001","data":["js"],"status":"success"});
+				  	}
+				});
+				
 				$('#testResult').html("");
 				$(commonVariables.contentPlaceholder).find('.projectModule:first').click();
 				setTimeout(function() {
@@ -269,6 +281,17 @@ define(["unitTest/unitTest"], function(UnitTest) {
 				  	}
 				});
 				
+				$.mockjax({
+					url: commonVariables.webserviceurl+"util/validation?appDirName=test&customerId=photon&phase=unit-test&testAgainst=java&environmentName=Production&moduleName=phresco-framework",
+				  	type: "GET",
+				  	dataType: "json",
+				  	contentType: "application/json",
+				  	status: 200,
+				  	response : function() {
+					  	this.responseText = JSON.stringify({"responseCode":"PHR9C00001","status":"success","log":null,"connectionAlive":false,"errorFound":false,"configErr":false,"parameterKey":null,"uniquekey":null,"service_exception":null,"configErrorMsg":null});
+				  	}
+				});
+				
 				commonVariables.api.localVal.setSession('username', "admin");
 				$(commonVariables.contentPlaceholder).find("#runUnitTest").click();
 				setTimeout(function() {
@@ -299,7 +322,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 					start();
 					equal($('.dyn_popup').css("display"), "none", "Unit test no parameters tested");
 					self.testcasesRenderTest();
-				}, 2000);
+				}, 4000);
 			});
 		},
 
@@ -307,13 +330,13 @@ define(["unitTest/unitTest"], function(UnitTest) {
 			var self = this;
 			asyncTest("Unit Test Testcases Render Test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl+commonVariables.qualityContext+"/testreports?appDirName=test&testType=unit&testSuite=SampleUnitTest&techReport=js&moduleName=phresco-framework",
+					url: commonVariables.webserviceurl+commonVariables.qualityContext+"/testreports?appDirName=test&testType=unit&testSuite=SampleUnitTest&moduleName=phresco-framework&techReport=js",
 				 	type: "GET",
 				  	dataType: "json",
 				  	contentType: "application/json",
 				  	status: 200,
 				  	response : function() {
-					  	this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ000002","data":[{"name":"hello","file":null,"time":"0.015","assertions":0.0,"testClass":"com.photon.phresco.service.TestCase","line":0.0,"testCaseFailure":null,"testCaseError":null}],"status":"success"});
+					  	this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ000002","data":[{"name":"hello","file":null,"time":"0.015","testClass":"com.photon.phresco.service.TestCase","assertions":0.0,"line":0.0,"testCaseFailure":null,"testCaseError":null}],"status":"success"});
 				  	}
 				});
 
