@@ -64,7 +64,9 @@ define([], function() {
 		editContinuousViewTable : function (response) {		
 			var self = this;			
 			var data = response.data;
-			$("input[type=submit][value=Add]").attr("value","Update");					
+			$("input[type=submit][value=Add]").attr("data-i18n","[value]common.btn.update");	
+			$("input[type=submit][value=Add]").attr("value","Update");	
+			
 			if (!self.isBlank(data)) {
 				var sort = $(commonVariables.contentPlaceholder).find('#sortable2');
 				sort.empty();
@@ -621,9 +623,6 @@ define([], function() {
 						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
 						self.renderlocales(commonVariables.contentPlaceholder);		
 						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".content_end").hide();
-						},2500);
 					}
 				);
 			} catch(exception) {
