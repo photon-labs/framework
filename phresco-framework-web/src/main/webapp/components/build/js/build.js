@@ -224,6 +224,10 @@ define(["build/listener/buildListener"], function() {
 			$("#buildConsole").attr('data-flag','false');
 		},
 		
+		openCloseConsole : function(){
+			if(!commonVariables.consoleError){self.closeConsole();}
+		},
+		
 		refreshContent : function(loadContent){
 			var self = this;
 
@@ -312,6 +316,7 @@ define(["build/listener/buildListener"], function() {
 										$(current).closest('tr').find('form[name=deployForm]').show();
 										self.showErrorPopUp(response.responseCode);
 									}
+									self.openCloseConsole();
 								});
 							});
 						}else{
@@ -355,6 +360,7 @@ define(["build/listener/buildListener"], function() {
 						$(current).closest('tr').find('form[name=deployForm]').show();
 						self.showErrorPopUp(response.responseCode);
 					}
+					self.openCloseConsole();
 				});
 			});
 			
@@ -418,14 +424,14 @@ define(["build/listener/buildListener"], function() {
 				self.clearLogContent();
 				$(".dyn_popup").hide();
 				self.onMavenServiceEvent.dispatch('mvnProcessBuild', $(this).closest('tr').find('form[name=prcBForm]').serialize(), '', '', function(response){
-				$('.progress_loading').css('display','none');
-				if(response !== null && response.errorFound === true){
-					$('.alert_div').hide();
-					self.closeConsole();
-					self.showErrorPopUp(response.responseCode);
-				}else if(response !== null && response.errorFound === false){
-					self.refreshContent(true);
-				}
+					$('.progress_loading').css('display','none');
+					if(response !== null && response.errorFound === true){
+						$('.alert_div').hide();
+						self.showErrorPopUp(response.responseCode);
+					}else if(response !== null && response.errorFound === false){
+						self.refreshContent(true);
+					}
+					self.openCloseConsole();
 				});
 			});
 			
@@ -637,10 +643,8 @@ define(["build/listener/buildListener"], function() {
 							$('.progress_loading').css('display','none');
 							if(response.errorFound && response.status === "error" && response.status === "failure"){
 								self.showErrorPopUp(response.responseCode);
-							}else{ 	
-								self.runAgainSourceStatus();
-								self.closeConsole();
-							}
+							}else{self.runAgainSourceStatus();}
+							self.openCloseConsole();
 						});
 					}
 				});
@@ -655,9 +659,10 @@ define(["build/listener/buildListener"], function() {
 					$("#restart").addClass("btn_style_off");
 					var queryStr = self.isBlank($('.moduleName').val()) ? "" : 'moduleName='+$('.moduleName').val();
 					self.clearLogContent();
-					self.onMavenServiceEvent.dispatch('mvnStopServer', queryStr, '', '', function(response){
+					self.onMavenServiceEvent.dispatch('mvnStopServer', '', '', '', function(response){
 						$('.progress_loading').css('display','none');
 						self.runAgainSourceStatus();
+						self.openCloseConsole();
 					});					
 				}
 			});		
@@ -672,9 +677,10 @@ define(["build/listener/buildListener"], function() {
 					
 					self.clearLogContent();
 					var queryStr = self.isBlank($('.moduleName').val()) ? "" : 'moduleName='+$('.moduleName').val();
-					self.onMavenServiceEvent.dispatch('mvnRestartServer', queryStr, '', '', function(response){
+					self.onMavenServiceEvent.dispatch('mvnRestartServer', '', '', '', function(response){
 						$('.progress_loading').css('display','none');
-						self.runAgainSourceStatus();						
+						self.runAgainSourceStatus();	
+						self.openCloseConsole();
 					});
 				}
 			});
@@ -724,6 +730,7 @@ define(["build/listener/buildListener"], function() {
 							$('.progress_loading').css('display','none');
 							if (!response.errorFound && response.status !== "error" && response.status !== "failure"){
 								self.refreshContent(true);
+								self.openCloseConsole();
 							}
 						});
 					}

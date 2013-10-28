@@ -102,6 +102,7 @@ var commonVariables = {
 	customerInfoContext : "technology/customerinfo?customerName=",
 	
 	build : "build",
+	consoleError : false,
 
 	megabyte : "MB",
 	kilobyte : "KB",
@@ -261,35 +262,24 @@ $(document).ready(function(){
 		
 		require(["framework/class", "framework/base", "framework/widget", "common/loading", "api/api",  "framework/widgetWithTemplate", "framework/navigationController", "login/login"], function () {
 		 	Clazz.config = data;
-			Clazz.navigationController = new Clazz.NavigationController({
-				mainContainer : "basepage\\:widget",
-				transitionType : Clazz.config.navigation.transitionType,
-				cancelTransitionType : Clazz.config.navigation.cancelTransitionType,
-				isNative : Clazz.config.navigation.isNative
-			});
 
 			//Apply customer based theme
 			if(localStorage.getItem('customertheme') !== null && localStorage.getItem('customertheme') !== ""){
 				JSS.css(eval('(' + localStorage.getItem('customertheme') + ')'));
 			}
 			
-			commonVariables.loadingScreen =new Clazz.com.js.widget.common.Loading();
-			commonVariables.api = new Clazz.com.js.api.API();
+			setTimeout(function(){
+				Clazz.navigationController = new Clazz.NavigationController({
+					mainContainer : "basepage\\:widget",
+					transitionType : Clazz.config.navigation.transitionType,
+					cancelTransitionType : Clazz.config.navigation.cancelTransitionType,
+					isNative : Clazz.config.navigation.isNative
+				});
+				commonVariables.loadingScreen =new Clazz.com.js.widget.common.Loading();
+				commonVariables.api = new Clazz.com.js.api.API();
 			
-			/* $(document).ajaxStart(function() {
-				if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading && !commonVariables.hideloading){
-					commonVariables.loadingScreen.showLoading($(commonVariables.contentPlaceholder));
-				}
-			}); 
-			
-			$(document).ajaxStop(function() {
-				if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading){
-					commonVariables.hideloading = false;
-					commonVariables.loadingScreen.removeLoading();
-				}
-			});*/
-			
-			app.initialize();
+				app.initialize();
+			}, 400);
 		});
 	}, "json");
 });
