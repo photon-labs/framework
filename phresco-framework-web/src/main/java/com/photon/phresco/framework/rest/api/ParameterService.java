@@ -65,6 +65,7 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.Customer;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
@@ -117,14 +118,24 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	public Response getParameter(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam("iphoneDeploy") String iphoneDeploy,
 			@QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_PHASE) String phase, 
 			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,  @QueryParam("buildNumber") String buildNumber,
-			@QueryParam(REST_QUERY_MODULE_NAME) String module) {
+			@QueryParam(REST_QUERY_MODULE_NAME) String module, @QueryParam(REST_QUERY_PROJECT_CODE) String projectCode) {
 		ResponseInfo<List<Parameter>> responseData = new ResponseInfo<List<Parameter>>();
 		try {
 			String rootModule = appDirName;
+			if (StringUtils.isNotEmpty(projectCode)) {
+				appDirName = projectCode + "-integrationtest";
+			}
 			if (StringUtils.isNotEmpty(module)) {
 				appDirName = appDirName + File.separator + module;
 			}
-			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDirName);
+			ApplicationInfo appInfo = null;
+			if (projectInfo != null) {
+				appInfo = projectInfo.getAppInfos().get(0);
+			}
+			if (StringUtils.isEmpty(projectCode)) {
+				projectCode = projectInfo.getProjectCode();
+			}
 			List<Parameter> parameters = null;
 			String filePath = getInfoFileDir(appDirName, goal, phase);
 			File file = new File(filePath);
@@ -134,11 +145,20 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 					String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
 					goal = goal + HYPHEN + functionalTestFramework;
 				}
-				getValues(iphoneDeploy, appInfo, mojo, goal);
+				getValues(iphoneDeploy, mojo, goal);
 				parameters = mojo.getParameters(goal);
 				Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
-
-				setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, goal, userId, customerId, buildNumber, module, rootModule);
+				
+				ParameterValues parameterValues = new ParameterValues();
+				parameterValues.setMojoProcessor(mojo);
+				parameterValues.setGoal(goal);
+				parameterValues.setUserId(userId);
+				parameterValues.setCustomerId(customerId);
+				parameterValues.setBuildNumber(buildNumber);
+				parameterValues.setModule(module);
+				parameterValues.setRootModule(rootModule);
+				parameterValues.setProjectCode(projectCode);
+				setPossibleValuesInReq(appInfo, parameters, watcherMap, parameterValues);
 				
 				ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null,
 						parameters, RESPONSE_STATUS_SUCCESS, PHR1C00001);
@@ -160,7 +180,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 		}
 	}
 
-	public static void getValues(String iphoneDeploy, ApplicationInfo appInfo, MojoProcessor mojo, String goal) throws PhrescoException {
+	public static void getValues(String iphoneDeploy, MojoProcessor mojo, String goal) throws PhrescoException {
 		try {
 			if(StringUtils.isEmpty(iphoneDeploy)) {
 				return;
@@ -679,9 +699,17 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	 * @param goal
 	 * @throws PhrescoException
 	 */
-	private void setPossibleValuesInReq(MojoProcessor mojo, ApplicationInfo appInfo, List<Parameter> parameters, 
-    		Map<String, DependantParameters> watcherMap, String goal, String userId, String customerId, String buildNumber, String module, String rootModule) throws PhrescoException {
+	private void setPossibleValuesInReq(ApplicationInfo appInfo, List<Parameter> parameters, 
+    		Map<String, DependantParameters> watcherMap, ParameterValues parameterValues) throws PhrescoException {
         try {
+        	MojoProcessor mojo = parameterValues.getMojoProcessor();
+        	String goal = parameterValues.getGoal();
+        	String userId = parameterValues.getUserId();
+        	String customerId = parameterValues.getCustomerId();
+        	String buildNumber = parameterValues.getBuildNumber();
+        	String module = parameterValues.getModule();
+        	String rootModule = parameterValues.getRootModule();
+        	String projectCode = parameterValues.getProjectCode();
             if (CollectionUtils.isNotEmpty(parameters)) {
                 StringBuilder paramBuilder = new StringBuilder();
 				ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
@@ -693,6 +721,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
                         constructMapForDynVals.put(REQ_MOJO, mojo);
                         constructMapForDynVals.put(REQ_GOAL, goal);
 						constructMapForDynVals.put(REQ_SERVICE_MANAGER, serviceManager);
+						constructMapForDynVals.put("projectCode", projectCode);
 						setModuleInfoInMap(rootModule, module, constructMapForDynVals);
 						
                         // Get the values from the dynamic parameter class
@@ -770,7 +799,11 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
             			templateMap.put(appInfo.getId() + parameter.getKey(), templateDetails);
             		}
                 }
-                valueMap.put(appInfo.getId() + goal, watcherMap);
+                String appId = "";
+                if (appInfo != null) {
+                	appId = appInfo.getId();
+                }
+                valueMap.put(appId + goal, watcherMap);
             }
         } catch (Exception e) {
         	throw new PhrescoException(e);

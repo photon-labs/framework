@@ -365,6 +365,8 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			UUID uniqueKey = UUID.randomUUID();
 			unique_key = uniqueKey.toString();
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), FrameworkConstants.FEATURE_UPDATE, displayName, unique_key)), true);
+			Technology technology = serviceManager.getTechnology(applicationInfo.getTechInfo().getId());
+			List<String> archetypeFeatures = technology.getArchetypeFeatures();
 			if (CollectionUtils.isNotEmpty(selectedFeaturesFromUI)) {
 				for (SelectedFeature selectedFeatureFromUI : selectedFeaturesFromUI) {
 					String artifactGroupId = selectedFeatureFromUI.getModuleId();
@@ -377,10 +379,19 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					List<CoreOption> appliesTo = artifactGroup.getAppliesTo();
 					if (CollectionUtils.isNotEmpty(appliesTo)) {
 						for (CoreOption coreOption : appliesTo) {
+							
 							if (coreOption.getTechId().equals(applicationInfo.getTechInfo().getId())) {
 								artifactGroup.setAppliesTo(Collections.singletonList(coreOption));
 								listArtifactGroup.add(artifactGroup);
 								break;
+							} else if(CollectionUtils.isNotEmpty(archetypeFeatures)) {
+								for (String archetypeFeature : archetypeFeatures) {
+									if(archetypeFeature.equalsIgnoreCase(coreOption.getTechId())){
+										artifactGroup.setAppliesTo(Collections.singletonList(coreOption));
+										listArtifactGroup.add(artifactGroup);
+										break;
+									}
+								}
 							}
 						}
 					}
@@ -404,7 +415,10 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			MojoProcessor mojo = new MojoProcessor(filePath);
 			ApplicationHandler applicationHandler = mojo.getApplicationHandler();
 			// To write selected Features into phresco-application-Handler-info.xml
+			System.out.println("listArtifactGroup==="+listArtifactGroup);
+			System.out.println("=================================");
 			String artifactGroup = gson.toJson(listArtifactGroup);
+			System.out.println("artifactGroup==="+artifactGroup);
 			applicationHandler.setSelectedFeatures(artifactGroup);
 
 			// To write Deleted Features into phresco-application-Handler-info.xml

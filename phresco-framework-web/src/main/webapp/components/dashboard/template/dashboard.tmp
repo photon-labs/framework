@@ -19,66 +19,51 @@
 				</ul>
 			</div>
             <input type="submit" id="config_noc" value="Configure" class="btn btn_style">
-                <div id="noc_config" class="dyn_popup popup_bg">
-                    <table width="100%" border="0" cellspacing="0" cellpadding="5">     
-                        <tr>
-							<td>Dashboard Name<sup>*</sup></td>
-							<td><input type="text" id="dashboard_name"></td>
-						</tr>
-						<tr>
-							<td>Data Type</td>
-							<td>
-								<select id="data_type">
-									<option>Splunk</option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td>Username<sup>*</sup></td>
-							<td><input id="conf_username" type="text"></td>
-						</tr>
-						<tr>
-							<td>Password<sup>*</sup></td>
-							<td><input id="conf_password" type="password"></td>
-						</tr>
-						<tr>
-							<td>Splunk URL<sup>*</sup></td>
-							<td><input id="config_url" type="text"></td>
-						</tr>
-						<tr>
-							<td>Select Application</td>
-							<td><select class="appdirnamedropdown"></select></td>
-						</tr>
-                    </table>
-                            <div class="flt_right">
-                                <input id="configure_widget" type="button" value="Configure" class="btn btn_style">
-                                <input type="button" value="Close" class="btn btn_style dyn_popup_close">
-                            </div>
+                <div id="noc_config" class="dyn_popup dashboard_popup">
+                    <table cellspacing="0" cellpadding="0" border="0" class="table">
+                        	<tbody>
+                            	<tr>
+	                                <td>
+                                    	<label>Dashboard Name</label>
+                                    	<input type="text" id="dashboard_name">
+                                    </td>
+                                    <td>
+                                    	<label>Data Type</label>
+                                        <select id="data_type">
+                                        	<option>Splunk</option>
+                                        </select>
+                                    </td>
+                    			</tr>
+                                <tr>
+	                                <td>
+                                    	<label>Username<sup>*</sup></label>
+                                    	<input type="text" id="conf_username">
+                                    </td>
+                                    <td>
+                                    	<label>Password<sup>*</sup></label>
+                                        <input type="password" id="conf_password">
+                                    </td>
+                    			</tr>
+                                <tr>
+	                                <td>
+                                    	<label>Source URL<sup>*</sup></label>
+                                    	<input type="text" id="config_url">
+                                    </td>
+                                    <td>
+                                    	<label>Select Application</label>
+                                        <select class="appdirnamedropdown">
+                                        </select>
+                                    </td>
+                    			</tr>
+                            </tbody>
+                        </table>
+						<div class="flt_right">
+							<input type="button" id="configure_widget" class="btn btn_style" value="Configure">
+							<input type="button" class="btn btn_style dyn_popup_close" value="Close">
+						</div>
                  </div>
              <input type="submit" id="add_wid" value="Add Widget" class="btn btn_style">
-             	<div id="add_widget" class="dyn_popup popup_bg">          				
-				<table width="100%" border="0" cellspacing="0" cellpadding="5">     
-				<tr>
-				<td>Widget Name<sup>*</sup></td>
-				<td><input type="text" id="nameofwidget"></td>
-				</tr>
-                <tr>
-                	<td>Query<sup>*</sup></td>
-                </tr>
-                <tr>
-                	<td colspan="3"><textarea id="query_add"></textarea></td>
-                </tr>
-				<tr>
-					<td>Auto-Refresh</td>
-					<td><input id="timeout" type="checkbox"><input id="timeoutval" type="text" style="margin-left:6px; width:187px;"></td>
-				</tr>
-                </table>
-				
-                <div class="flt_right">
-                                <input id="widgetadd" type="button" value="Add" class="btn btn_style">
-                                <input type="button" value="Close" class="btn btn_style dyn_popup_close">
-                </div>
-                </div>
+             	
         	<!--code_anal div ends here -->
         </div>
     	<!--second_title div ends here -->
@@ -86,6 +71,150 @@
     
     <section class="features_content_main">
             
+			<div id="add_widget" class="dyn_popup dashboard_popup">          				
+				<table cellspacing="0" cellpadding="0" border="0" class="table">     
+					<tbody>
+						<tr>
+							<td>
+								<label>Widget Name<sup>*</sup></label>
+								<input type="text" id="nameofwidget">
+							</td>
+							<td>
+								<label>Widget Type</label>
+								<select id="widgetType" class="selectpicker">
+									<option style="background:url(themes/default/images/Phresco/dashboard_table.png) no-repeat 2px 6px !important;" value="table">Table</option>
+									<option style="background:url(themes/default/images/Phresco/dashboard_line.png) no-repeat 2px 6px !important;" value="linechart">Line Chart</option>
+									<option style="background:url(themes/default/images/Phresco/dashboard_pie.png) no-repeat 2px 6px !important;" value="piechart">Pie Chart</option>
+									<option style="background:url(themes/default/images/Phresco/dashboard_bar.png) no-repeat 2px 6px !important;" value="barchart">Bar Chart</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<label>Query<sup>*</sup></label>
+								<textarea id="query_add"></textarea>	
+							</td>
+						</tr>
+						<tr>
+							<td><input type="checkbox" id="timeout">Autorefresh</td>
+							<td><input type="text" id="timeoutval"></td>
+						</tr>
+						<tr>
+							<td>
+								<label>Time Range From</label>
+								<input type="text" id="fromTime">
+							</td>
+							<td>
+								<label>Time Range To</label>
+								<input type="text" id="toTime">
+							</td>
+						</tr>
+						<tr id="lineChartOpt" style="display:block;">
+							<td colspan="2">
+								<div class="axis_div">
+									<table cellspacing="0" cellpadding="3" border="0" class="table table-striped table_border table-bordered browser_table">
+									<thead>
+										<tr>
+											<th colspan="2">Line Chart</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>
+												<select class="xaxis"></select>
+											</td>											
+											<td>
+												<input id="cp1" class="pick_color" placeholder="Pick Color" type="text">
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<select class="yaxis"></select>
+											</td>											
+											<td>
+												<input id="cp2" class="pick_color" placeholder="Pick Color" type="text">
+											</td>
+										</tr>
+									</tbody>
+								  </table>
+								</div>
+							</td>
+						</tr>
+						<tr id="pieChartOpt" style="display:none;">
+							<td colspan="2">
+								<div class="axis_div">
+									<table cellspacing="0" cellpadding="3" border="0" class="table table-striped table_border table-bordered browser_table">
+									<thead>
+										<tr>
+											<th colspan="2">Pie Chart</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>
+													<select class="percentval"></select>
+											</td>
+											<td>
+													<select class="legendval"></select>
+											</td>
+										</tr>
+									</tbody>
+								  </table>
+								</div>
+							</td>
+						</tr>
+						<tr id="barChartOpt" style="display:none;">
+							<td colspan="2">
+								<div class="axis_div">
+									<table cellspacing="0" cellpadding="3" border="0" class="table table-striped table_border table-bordered browser_table">
+									<thead>
+										<tr>
+											<th colspan="2">Bar Chart</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td colspan="2">
+												
+													<select class="baraxis"></select>
+												
+											</td>
+										</tr>
+										<tr>
+											<td colspan="2">
+												<table id="tabforbar" class="table table-striped table_border table-bordered fetchSql_table border_div" cellpadding="0" cellspacing="0" border="0">
+													<thead>
+														<tr>
+															<th colspan="2">Select Bar Chart Inputs</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr>
+															<td>
+																<ul name="sortable1" class="sortable1 connectedSortable"></ul>
+															</td>
+															<td>
+																<ul name="sortable2" class="sortable2 connectedSortable"></ul>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</td>
+										</tr>
+									</tbody>
+								  </table>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+                </table>
+                <div class="flt_right">
+					<input name="execute_query" type="button" value="Execute Query" class="btn btn_style">
+					<input id="update_tab" type="button" value="Add" class="btn btn_style">
+					<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+                </div>
+			</div>
+			
 			<div id="firstsettings" class="dyn_popup firstsettings">
 				<table width="100%" border="0" cellspacing="0" cellpadding="5">                
                 <tr>
@@ -143,13 +272,10 @@
 					</tbody>
 				</table>
 				<div class="flt_right">
-					<input id="execute_query" type="button" value="Execute Query" class="btn btn_style">
+					<input name="execute_query" type="button" value="Execute Query" class="btn btn_style">
 					<input id="update_tab" type="button" value="Update" class="btn btn_style okclass">
 					<input type="button" value="Close" class="btn btn_style dyn_popup_close closeset">
 				</div>
 			</div>
-            
-
-
     </section>
 </div>

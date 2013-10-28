@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.photon.phresco.framework</groupId>
         <artifactId>phresco-framework-root</artifactId>
-        <version>3.1.0.3004-SNAPSHOT</version>
+        <version>3.1.0.4001-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
    
@@ -711,6 +711,30 @@
 			<version>1.0</version>
 			<type>js</type>
 		</dependency>
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>exporting</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>highcharts</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>jquery_hover</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>require-jquery</artifactId>
+			<version>2.1.5</version>
+			<type>js</type>
+		</dependency>
 		
 		<dependency>
 		    <groupId>org.codehaus.mojo</groupId>
@@ -765,7 +789,9 @@
 	 	  	<artifactId>wink-json4j</artifactId>
           	<version>1.4</version>
 		 </dependency>
+
      </dependencies>
+	 
     
     <build>
 		<sourceDirectory>${phresco.source.directory}</sourceDirectory>

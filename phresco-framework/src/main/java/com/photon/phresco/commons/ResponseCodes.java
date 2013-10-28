@@ -425,6 +425,12 @@ public interface ResponseCodes {
 	String PHRQ610003 = "PHRQ610003"; // could not perform load test
 	
 	/*
+	 * Integration Test
+	 */
+	String PHRQ700001 = "PHRQ700001"; // integration test started successfully
+	String PHRQ710001 = "PHRQ710001"; // could not perform integration test
+	
+	/*
 	 * CI Page
 	 */
 	String PHR800001 = "PHR800001"; // builds returned successfully

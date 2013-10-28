@@ -38,7 +38,7 @@ public class BuildInfoTest extends RestBaseTest {
 		String goal = "package";
 		String phase = "package";
 		
-		Response response = parameterservice.getParameter(appDirName, "", goal, phase, userId, customerId,"","");
+		Response response = parameterservice.getParameter(appDirName, "", goal, phase, userId, customerId,"","", "");
 		assertEquals(200, response.getStatus());
 	}
 	
@@ -305,10 +305,10 @@ public class BuildInfoTest extends RestBaseTest {
 		uniqueKey = entity.getUniquekey();
 		assertEquals("STARTED", entity.getStatus());
 		
-		Response deployDev = parameterService.getParameter(appDirName, "false", "deploy", "deploy", userId, customerId, "", "");
+		Response deployDev = parameterService.getParameter(appDirName, "false", "deploy", "deploy", userId, customerId, "", "", "");
 		Assert.assertEquals(200, deployDev.getStatus());
 		
-		Response deployDevice = parameterService.getParameter(appDirName, "true", "deploy", "deploy", userId, customerId, "", "");
+		Response deployDevice = parameterService.getParameter(appDirName, "true", "deploy", "deploy", userId, customerId, "", "", "");
 		Assert.assertEquals(200, deployDevice.getStatus());
 		
 		}

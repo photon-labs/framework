@@ -110,9 +110,9 @@ define(["framework/base", "api/localStorageAPI"], function(){
 			$.support.cors = true;
 			
 			//cancel/abort existing ajax call
-			if(commonVariables.dashboardAjaxXhr && commonVariables.dashboardAjaxXhr.readyState != 4){
+			/*if(commonVariables.dashboardAjaxXhr && commonVariables.dashboardAjaxXhr.readyState != 4){
 				commonVariables.dashboardAjaxXhr.abort();
-			}
+			}*/
 
 			commonVariables.dashboardAjaxXhr = $.ajax({
 				url: header.webserviceurl,
@@ -124,7 +124,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				timeout : 1000000,
 				crossDomain : true,
 				cache : false,
-				async : false,
+				async : true,
 				
 				beforeSend : function(){
 					self.successResponse = null;
@@ -290,6 +290,8 @@ define(["framework/base", "api/localStorageAPI"], function(){
 		
 		errorpopupshow : function(response) {
 			var self = this;
+			$("#project_list_import").find('input').removeAttr('disabled');	
+			$("#project_list_import").find('select').removeAttr('disabled');
 			if(response.responseCode !== undefined) {
 				$('#errpopup').remove();					
 				if(response.status !== 0) {

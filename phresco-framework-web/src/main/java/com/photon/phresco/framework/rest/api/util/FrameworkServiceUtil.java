@@ -108,11 +108,14 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	public static ApplicationInfo getApplicationInfo(String appDirName) throws PhrescoException {
 		try {
 			ProjectInfo projectInfo = getProjectInfo(appDirName);
-			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
-			return applicationInfo;
+			if (projectInfo != null) {
+				ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+				return applicationInfo;
+			}
 		} catch (JsonIOException e) {
 			throw new PhrescoException(e);
 		}
+		return null;
 	}
 	
 	/**
@@ -130,6 +133,10 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 		.append(File.separatorChar)
 		.append(PROJECT_INFO_FILE);
 		try {
+			File projectInfoFile = new File(builder.toString());
+			if (!projectInfoFile.exists()) {
+				return null;
+			}
 			BufferedReader bufferedReader = new BufferedReader(new FileReader(builder.toString()));
 			Gson gson = new Gson();
 			ProjectInfo projectInfo = gson.fromJson(bufferedReader, ProjectInfo.class);

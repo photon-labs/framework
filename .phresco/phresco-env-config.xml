@@ -1,19 +1,4 @@
 <environments>
-    
-    
-	
-    
-    
-
-
-
-    
-
-
-    
-    
-    
-    
 <environment appliesTo="" default="false" desc="" name="Production">
         <Server name="server">
             <context>framework</context>
@@ -86,9 +71,9 @@
         <WebService name="webservice">
             <port>7070</port>
             <password/>
-            <context>service-testing</context>
+            <context>service-test</context>
             <additional_context>/rest/api</additional_context>
-            <host>172.16.8.250</host>
+            <host>172.16.17.117</host>
             <protocol>http</protocol>
             <username/>
         </WebService>
