@@ -219,6 +219,7 @@ define([], function() {
 		mvnlogService : function(key, divId, callback){
 			try{
 				var self = this, header = self.getRequestHeader("GET", "", commonVariables.mvnlogService, 'uniquekey=' + key);
+				commonVariables.consoleError = false;
 				$('.progress_loading').css('display','block');
 				commonVariables.hideloading = true;
 				commonVariables.api.ajaxRequest(header, 
@@ -335,16 +336,18 @@ define([], function() {
 		
 			if(logStr !== null){
 				if(logStr.match("ERROR") || logStr.match("FAILURE")){
+					commonVariables.consoleError = true;
 					return "#B40404";
 				}else if(logStr.match("WARNING")){
 					return "#FFBF00";
 				}else if(logStr.match("SUCCESS")){
 					return "green";
+				}else if(logStr.toLowerCase().match("server running at https://") ||
+					logStr.toLowerCase().match("server running at http://")){
+					return "green";
 				}else{
 					return "block";
 				}
-			}else{
-				return "block";
 			}
 		}
 	});

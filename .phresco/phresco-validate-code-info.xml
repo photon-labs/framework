@@ -124,7 +124,7 @@
 						<groupId>com.photon.phresco.commons</groupId>
 						<artifactId>phresco-commons</artifactId>
 						<type>jar</type>
-						<version>2.3.1.6000</version>
+						<version>3.1.0.3001</version>
 					</dependency>
 				</dependencies>
 			</dynamicParameter>

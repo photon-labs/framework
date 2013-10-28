@@ -73,7 +73,7 @@
 		<dependency>
 			<groupId>jslibraries.files</groupId>
 			<artifactId>require-jquery</artifactId>
-			<version>2.1.5</version>
+			<version>2.1.5.1</version>
 			<type>js</type>
 		</dependency>
 		
@@ -727,12 +727,6 @@
 			<groupId>jslibraries.files</groupId>
 			<artifactId>jquery_hover</artifactId>
 			<version>1.0</version>
-			<type>js</type>
-		</dependency>
-		<dependency>
-			<groupId>jslibraries.files</groupId>
-			<artifactId>require-jquery</artifactId>
-			<version>2.1.5</version>
 			<type>js</type>
 		</dependency>
 		

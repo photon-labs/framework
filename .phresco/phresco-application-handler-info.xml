@@ -3,7 +3,7 @@
     <applicationHandler>
 		<groupId>com.photon.phresco.commons</groupId>
 		<artifactId>phresco-commons</artifactId>
-		<version>2.3.1.6000</version>
+		<version>3.1.0.3001</version>
 		<class>com.photon.phresco.impl.HtmlApplicationProcessor</class>
 </applicationHandler>
 </mojos>
