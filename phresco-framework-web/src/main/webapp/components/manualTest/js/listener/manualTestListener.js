@@ -110,8 +110,8 @@ define(["lib/fileuploader-2.4"], function() {
 				data.testSuiteName = testSuiteVal;
 				self.manualRequestBody = data;
 				self.getManualTestReport(self.getActionHeader(self.manualRequestBody, "addTestSuite"), function(response) {
+					commonVariables.navListener.onMytabEvent("manualTest");
 				});
-				commonVariables.navListener.onMytabEvent("manualTest");
 			}
 		},
 		

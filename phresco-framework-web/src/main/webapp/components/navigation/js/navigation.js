@@ -120,8 +120,8 @@ define(["navigation/listener/navigationListener"], function() {
 			$("#importApp").unbind("click");
 			$("#importApp").click(function() {
 				var currentPrjName = "";
-				$("#project_list_import").find('input').removeAttr('disabled');
-				$("#project_list_import").find('select').removeAttr('disabled');
+				$("#importUserName").attr('disabled','disabled');
+				$("#importPassword").attr('disabled','disabled');
 				
 				/* if(counter === 1) {
 					$('#importUserName').val('');
@@ -244,11 +244,15 @@ define(["navigation/listener/navigationListener"], function() {
 			checkbox.unbind("change");
 			checkbox.on("change", function(){	
 				if(checkbox.is(':checked')) {
-					$('#importUserName').removeAttr('readonly');
-					$('#importPassword').removeAttr('readonly');
+					console.info("checkbox", checkbox.is(':checked'));
+					$('#importUserName').removeAttr('disabled','disabled');
+					$('#importPassword').removeAttr('disabled','disabled');
+					$('#importUserName').removeAttr('readonly','readonly');
+					$('#importPassword').removeAttr('readonly','readonly');
 					$('#importUserName').val('');
 					$('#importPassword').val('');
 				} else {
+					console.info("checkbox", checkbox.is(':checked'));
 					$('#importUserName').val(data.id);
 					//$('#importPassword').val(data.password);
 					$('#importUserName').attr('readonly','readonly');
