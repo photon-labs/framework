@@ -27,6 +27,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -75,6 +76,7 @@ import com.photon.phresco.commons.model.CertificateInfo;
 import com.photon.phresco.commons.model.CoreOption;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.FeatureConfigure;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.commons.model.SettingsTemplate;
@@ -82,6 +84,8 @@ import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FileBrowseInfo;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.model.AddCertificateInfo;
@@ -119,17 +123,34 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	 * @param appDirName the app dir name
 	 * @param environments the environments
 	 * @return the response
+	 * @throws PhrescoException 
 	 */
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response addEnvironment(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName, List<Environment> environments) {
+	public Response addEnvironment(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, 
+			@QueryParam(REST_QUERY_MODULE_NAME) String moduleName, List<Environment> environments,
+			@QueryParam(REST_QUERY_PROJECT_CODE) String projectCode, @QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId) throws PhrescoException {
 		if (StringUtils.isNotEmpty(moduleName)) {
 			appDirName = appDirName + File.separator + moduleName;
 		}
 		ResponseInfo<Environment> responseData = new ResponseInfo<Environment>();
 		try {
-			String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
+			boolean duplicateEnvironment = validateEnvironment(projectId, customerId, environments, appDirName);	
+			if (duplicateEnvironment) {
+				ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null,
+						duplicateEnvironment, ERROR_DUPLICATE_NAME_IN_CONFIGURATIONS, PHR610042);
+				return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			}
+			
+			String configFileDir = "";
+			if (StringUtils.isNotEmpty(projectCode)) {
+				configFileDir = FrameworkServiceUtil.getGlobalConfigFileDir(projectCode);
+			} else if (StringUtils.isNotEmpty(appDirName)) {
+				configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
+			} else {
+				throw new ConfigurationException("Project Code Or AppDirName Should Not be Empty");
+			}
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFileDir));
 			if(configManager.getEnvironments().size() == environments.size()) {
 				configManager.addEnvironments(environments);
@@ -159,7 +180,8 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response listEnvironments(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_ENV_NAME) String envName, @QueryParam("isEnvSpecific") String isEnvSpecific, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName, @QueryParam("configName") String configName) {
+			@QueryParam(REST_QUERY_ENV_NAME) String envName, @QueryParam("isEnvSpecific") String isEnvSpecific, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName,
+			@QueryParam("configName") String configName,@QueryParam(REST_QUERY_PROJECT_CODE) String projectCode) {
 		if (StringUtils.isNotEmpty(moduleName)) {
 			appDirName = appDirName + File.separator + moduleName;
 		}
@@ -173,7 +195,15 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 						configurations, RESPONSE_STATUS_SUCCESS, PHR600002);
 				return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 			}
-			String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
+			
+			String configFileDir = "";
+			if (StringUtils.isNotEmpty(projectCode)) {
+				configFileDir = FrameworkServiceUtil.getGlobalConfigFileDir(projectCode);
+			} else if (StringUtils.isNotEmpty(appDirName)) {
+				configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
+			} else {
+				throw new ConfigurationException("Project Code Or AppDirName Should Not be Empty");
+			}
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFileDir));
 			if (StringUtils.isNotEmpty(envName)) {
 				List<Environment> environments = configManager.getEnvironments(Arrays.asList(envName));
@@ -210,7 +240,8 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@GET
 	@Path("allEnvironments")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllEnvironments(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName, @QueryParam("isEnvSpecific") String isEnvSpecific, @QueryParam("configType") String configType) {
+	public Response getAllEnvironments(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName, @QueryParam("isEnvSpecific") String isEnvSpecific, @QueryParam("configType") String configType,
+			@QueryParam(REST_QUERY_PROJECT_CODE) String projectCode) {
 		if (StringUtils.isNotEmpty(moduleName)) {
 			appDirName = appDirName + File.separator + moduleName;
 		} 
@@ -225,7 +256,15 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 						configurations, RESPONSE_STATUS_SUCCESS, PHR600002);
 				return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 			}
-			String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
+			
+			String configFileDir = "";
+			if (StringUtils.isNotEmpty(projectCode)) {
+				configFileDir = FrameworkServiceUtil.getGlobalConfigFileDir(projectCode);
+			} else if (StringUtils.isNotEmpty(appDirName)) {
+				configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
+			} else {
+				throw new ConfigurationException("Project Code Or AppDirName Should Not be Empty");
+			}
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFileDir));
 			List<Environment> environments = configManager.getEnvironments();
 			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
@@ -251,16 +290,25 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	 * @param appDirName the app dir name
 	 * @param envName the env name
 	 * @return the response
+	 * @throws ConfigurationException 
 	 */
 	@DELETE
 	@Path("/deleteEnv")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteEnv(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_ENV_NAME) String envName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) {
+			@QueryParam(REST_QUERY_ENV_NAME) String envName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName,
+			@QueryParam(REST_QUERY_PROJECT_CODE) String projectCode) throws ConfigurationException {
 		if (StringUtils.isNotEmpty(moduleName)) {
 			appDirName = appDirName + File.separator + moduleName;
 		}
-		String configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
+		String configFile = "";
+		if (StringUtils.isNotEmpty(projectCode)) {
+			configFile = FrameworkServiceUtil.getGlobalConfigFileDir(projectCode);
+		} else if (StringUtils.isNotEmpty(appDirName)) {
+			configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
+		} else {
+			throw new ConfigurationException("Project Code Or AppDirName Should Not be Empty");
+		}
 		ResponseInfo<Environment> responseData = new ResponseInfo<Environment>();
 		try {
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
@@ -317,7 +365,6 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 
 	/**
 	 * Gets the settings template.
-	 *
 	 * @param appDirName the app dir name
 	 * @param techId the tech id
 	 * @param userId the user id
@@ -329,7 +376,9 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSettingsTemplate(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName,
 			@QueryParam(REST_QUERY_TECHID) String techId, @QueryParam(REST_QUERY_USERID) String userId,
-			@QueryParam(REST_QUERY_TYPE) String type) {
+			@QueryParam(REST_QUERY_TYPE) String type,@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+			@QueryParam(REST_QUERY_PROJECTID) String projectId) {
+		
 		if (StringUtils.isNotEmpty(moduleName)) {
 			appDirName = appDirName + File.separator + moduleName;
 		}
@@ -343,10 +392,38 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			}
-			SettingsTemplate settingsTemplate = serviceManager.getConfigTemplateByTechId(techId, type);
-			Map<String, List<String>> downloadInfo = getDownloadInfo(serviceManager, appDirName, userId, type);
-			templateMap.put("settingsTemplate", settingsTemplate);
-			templateMap.put("downloadInfo", downloadInfo);
+			SettingsTemplate settingsTemplate = null;
+			List<SettingsTemplate> settingsTemplates = new ArrayList<SettingsTemplate>();
+			if (StringUtils.isEmpty(techId)) {
+				List<String> techIds = getTechId(customerId, projectId);
+				 if (CollectionUtils.isNotEmpty(techIds)) {
+					 for (String tech_Id : techIds) {
+						settingsTemplate = serviceManager.getConfigTemplateByTechId(tech_Id, type);
+						settingsTemplates.add(settingsTemplate);
+					 }
+					 settingsTemplate  = removeDuplicatePropertyTemplates(settingsTemplates);
+				 }
+			} else {
+				settingsTemplate = serviceManager.getConfigTemplateByTechId(techId, type);
+			}
+			if (StringUtils.isEmpty(appDirName)) {
+				Map<String, Map<String, List<String>>> downloadInfos = new HashMap<String, Map<String,List<String>>>();
+				List<String> appDirNameList = getAppDirNameList(projectId, customerId);
+				if (CollectionUtils.isNotEmpty(appDirNameList)) {
+					Map<String, List<String>> nameMap = new HashMap<String, List<String>>();
+					for (String appdirName: appDirNameList) {
+						getDownloadInfo(serviceManager, appdirName, userId, type, nameMap);
+					}
+					templateMap.put("downloadInfo", nameMap);
+				}
+			} else {
+				Map<String, List<String>> nameMap = new HashMap<String, List<String>>();
+				getDownloadInfo(serviceManager, appDirName, userId, type, nameMap);
+				templateMap.put("downloadInfo", nameMap);
+			}
+			if (settingsTemplate != null) {
+				templateMap.put("settingsTemplate", settingsTemplate);
+			}
 			ResponseInfo<List<SettingsTemplate>> finalOutput = responseDataEvaluation(responseData, null,
 					templateMap, RESPONSE_STATUS_SUCCESS, PHR600004);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
@@ -357,7 +434,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					.build();
 		}
 	}
-
+	
 	/**
 	 * Gets the config types.
 	 *
@@ -370,7 +447,8 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Path("/types")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getConfigTypes(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_TECHID) String techId) {
+			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_TECHID) String techId,
+			@QueryParam(REST_QUERY_PROJECTID) String projectId) {
 		ResponseInfo<List<TemplateInfo>> responseData = new ResponseInfo<List<TemplateInfo>>();
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
@@ -381,7 +459,19 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 						"*").build();
 			}
 			List<TemplateInfo> settingsTypes = new ArrayList<TemplateInfo>();
-			List<SettingsTemplate> settingsTemplates = serviceManager.getConfigTemplates(customerId, techId);
+			List<SettingsTemplate> settingsTemplates = new ArrayList<SettingsTemplate>();
+			if (StringUtils.isEmpty(techId)) {
+				 List<String> techIds  = getTechId(customerId, projectId);
+				 if (CollectionUtils.isNotEmpty(techIds)) {
+					 for (String tech_Id : techIds) {
+						 List<SettingsTemplate> configTemplates = serviceManager.getConfigTemplates("", tech_Id);
+						 settingsTemplates.addAll(configTemplates);
+					 }
+					 settingsTemplates = removeDuplicateSettingsTemplate(settingsTemplates);
+				 }
+			} else {
+				settingsTemplates = serviceManager.getConfigTemplates(customerId, techId);
+			}
 			if (CollectionUtils.isNotEmpty(settingsTemplates)) {
 				for (SettingsTemplate settingsTemplate : settingsTemplates) {
 					TemplateInfo template = new TemplateInfo();
@@ -401,10 +491,144 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					.build();
 		}
 	}
+	
+	
+	/**
+	 * @param projectId
+	 * @param customerId
+	 * @return
+	 * @throws PhrescoException
+	 */
+	private List<String> getAppDirNameList(String projectId, String customerId) throws PhrescoException {
+		try {
+			List<String> appDirNameList = new ArrayList<String>();
+			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+			ProjectInfo project = projectManager.getProject(projectId, customerId);
+			if (project != null) {
+				List<ApplicationInfo> appInfos = project.getAppInfos();
+				if (CollectionUtils.isNotEmpty(appInfos)) {
+					for (ApplicationInfo appInfo : appInfos) {
+						String appDirName = appInfo.getAppDirName();
+						appDirNameList.add(appDirName);
+					}
+				}
+			}
+			return appDirNameList;
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	
+	/**
+	 * @param customerId
+	 * @param projectId
+	 * @return List<String>
+	 * @throws PhrescoException
+	 */
+	private List<String> getTechId(String customerId, String projectId) throws PhrescoException {
+		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+		ProjectInfo project = projectManager.getProject(projectId, customerId);
+		if (project != null) {
+			List<ApplicationInfo> appInfos = project.getAppInfos();
+			List<String> techIds = new ArrayList<String>();
+			if (CollectionUtils.isNotEmpty(appInfos)) {
+				for (ApplicationInfo info : appInfos) {
+					String tech_Id = info.getTechInfo().getId();
+					techIds.add(tech_Id);
+				}
+			}
+			return techIds;
+		}
+		return null;
+	}
+
+	
+	/**
+	 * @param settingsTemplates
+	 * @return unique settingTemplate
+	 */
+	private List<SettingsTemplate> removeDuplicateSettingsTemplate(List<SettingsTemplate> settingsTemplates) {
+		if (CollectionUtils.isNotEmpty(settingsTemplates)) {
+			Map<String, SettingsTemplate> settinsTplsMap = new HashMap<String, SettingsTemplate>();
+			List<SettingsTemplate> settingsTpls = new ArrayList<SettingsTemplate>();
+			for (SettingsTemplate settingsTemplate : settingsTemplates) {
+				settinsTplsMap.put(settingsTemplate.getName() , settingsTemplate);
+			}
+			Collection<SettingsTemplate> values = settinsTplsMap.values();
+			for (SettingsTemplate settingsTemplate : values) {
+				settingsTpls.add(settingsTemplate);
+			}
+			return settingsTpls;
+		}
+		return null;
+	}
+	
+	
+	/**
+	 * @param settingsTemplates
+	 * @return 
+	 */
+	private SettingsTemplate removeDuplicatePropertyTemplates(List<SettingsTemplate> settingsTemplates) {
+		if (CollectionUtils.isNotEmpty(settingsTemplates)) {
+			SettingsTemplate settingsTpl = settingsTemplates.get(0);
+			if (settingsTpl != null) {
+				List<PropertyTemplate> properties2 = settingsTpl.getProperties();
+				List<PropertyTemplate> properties3 = new ArrayList<PropertyTemplate>();
+				settingsTemplates.remove(settingsTpl);
+				for (SettingsTemplate settingsTemplate : settingsTemplates) {
+					if (settingsTemplate != null) {
+						List<PropertyTemplate> propertyTemplates  = settingsTemplate.getProperties();
+						if (CollectionUtils.isNotEmpty(propertyTemplates)){
+							for (PropertyTemplate propertyTemplate1 : propertyTemplates) {
+								if (CollectionUtils.isNotEmpty(properties2)) {
+									for (PropertyTemplate propertyTemplate2 : properties2) {
+										if (!propertyTemplate1.getName().equalsIgnoreCase(propertyTemplate2.getName())) {
+											properties3.add(propertyTemplate1);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				properties3.addAll(properties2);
+				Set<PropertyTemplate> set = new HashSet<PropertyTemplate>();
+				for (PropertyTemplate propertyTemplate : properties3) {
+					set.add(propertyTemplate);
+				}
+				properties3.clear();
+				for (PropertyTemplate propertyTemplate : set) {
+					properties3.add(propertyTemplate);
+				}
+				settingsTpl.setProperties(properties3);
+				return settingsTpl;
+			}
+		}
+		return null;
+	}
+
+	
+	/**
+	 * @param customerId
+	 * @param projectId
+	 * @return AppDirName
+	 * @throws PhrescoException
+	 */
+	private String getAppDirName(String customerId, String projectId) throws PhrescoException {
+		String appDirName = "";
+		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+		ProjectInfo project = projectManager.getProject(projectId, customerId);
+		List<ApplicationInfo> appInfos = project.getAppInfos();
+		if (CollectionUtils.isNotEmpty(appInfos)) {
+			appDirName = appInfos.get(0).getAppDirName();
+			return appDirName;
+		}
+		return appDirName;
+	}
 
 	/**
 	 * Connection alive check.
-	 *
 	 * @param url the url
 	 * @return the response
 	 */
@@ -446,6 +670,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	 * @param envName the env name
 	 * @param configurationlist the configurationlist
 	 * @return the response
+	 * @throws ConfigurationException 
 	 */
 	@POST
 	@Path("/updateConfig")
@@ -456,17 +681,22 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_ENV_NAME) String envName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName,
 			@QueryParam("oldEnvName") String oldEnvName, @QueryParam("defaultEnv") String defaultEnv,
 			List<Configuration> configurationlist, @QueryParam("isEnvSpecific") String isEnvSpecific,
-			@QueryParam("configName") String configName, @QueryParam("desc") String desc , @QueryParam("isfavoric") String isfavoric,@QueryParam("favtype") String favtype ) {
-		if (StringUtils.isNotEmpty(moduleName)) {
-			appDirName = appDirName + File.separator + moduleName;
-		}
+			@QueryParam("configName") String configName, @QueryParam("desc") String desc , @QueryParam("isfavoric") String isfavoric,@QueryParam("favtype") String favtype,
+			@QueryParam(REST_QUERY_PROJECT_CODE) String projectCode, @QueryParam(REST_QUERY_PROJECTID) String projectId) throws ConfigurationException {
 		Environment env = new Environment();
-		String configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
+		String configFile = "";
+		if (StringUtils.isNotEmpty(projectCode)) {
+			configFile = FrameworkServiceUtil.getGlobalConfigFileDir(projectCode);
+		} else if (StringUtils.isNotEmpty(appDirName)) {
+			configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
+		} else {
+			throw new ConfigurationException("Project Code Or AppDirName Should Not be Empty");
+		}
 		ResponseInfo<Configuration> responseData = new ResponseInfo<Configuration>();
 		try {
 			if (StringUtils.isEmpty(isEnvSpecific)) {
 				ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
-				String validateConfiguration = validateConfiguration(userId, customerId, appDirName, configurationlist);
+				String validateConfiguration = validateConfiguration(userId, customerId, appDirName, configurationlist, projectId);
 				if (StringUtils.isNotEmpty(validateConfiguration)) {
 					ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null,
 							validateConfiguration, RESPONSE_STATUS_FAILURE, PHR610024);
@@ -500,43 +730,48 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					}
 				}
 			} else {
-				String nonEnvConfigFie = FrameworkServiceUtil.getnonEnvConfigFileDir(appDirName);
-				NonEnvConfigManager nonConfigManager = new NonEnvConfigManagerImpl(new File(nonEnvConfigFie));
-				if (StringUtils.isEmpty(configName)) {
-					Configuration config = configurationlist.get(0);
-					Configuration addFilesToConfigFile = addFilesToConfigFile(appDirName, config);
-					nonConfigManager.createConfiguration(addFilesToConfigFile);
-					ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, "Success",
-							RESPONSE_STATUS_SUCCESS, PHR600015);
-					return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
-				} else {
-					Configuration config = configurationlist.get(0);
-					Configuration addFilesToConfigFile = addFilesToConfigFile(appDirName, config);
-					nonConfigManager.updateConfiguration(configName, addFilesToConfigFile);
+				if (StringUtils.isNotEmpty(appDirName)) {
+					String nonEnvConfigFie = FrameworkServiceUtil.getnonEnvConfigFileDir(appDirName);
+					NonEnvConfigManager nonConfigManager = new NonEnvConfigManagerImpl(new File(nonEnvConfigFie));
+					if (StringUtils.isEmpty(configName)) {
+						Configuration config = configurationlist.get(0);
+						Configuration addFilesToConfigFile = addFilesToConfigFile(appDirName, config);
+						nonConfigManager.createConfiguration(addFilesToConfigFile);
+
+						ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, "Success",
+								RESPONSE_STATUS_SUCCESS, PHR600015);
+						return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+					} else {
+						Configuration config = configurationlist.get(0);
+						Configuration addFilesToConfigFile = addFilesToConfigFile(appDirName, config);
+						nonConfigManager.updateConfiguration(configName, addFilesToConfigFile);
+					}
 				}
 			}
-			String pluginInfoFile = FrameworkServiceUtil.getPluginInfoPath(appDirName);
-			MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
-			String className = mojoProcessor.getApplicationHandler().getClazz();
-			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
-			Customer customer = serviceManager.getCustomer(customerId);
-			RepoInfo repoInfo = customer.getRepoInfo();
-			List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
-			ArtifactGroup artifactGroup = new ArtifactGroup();
-			artifactGroup.setGroupId(mojoProcessor.getApplicationHandler().getGroupId());
-			artifactGroup.setArtifactId(mojoProcessor.getApplicationHandler().getArtifactId());
-			// To set the versions of Artifact Group.
-			List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
-			ArtifactInfo artifactInfo = new ArtifactInfo();
-			artifactInfo.setVersion(mojoProcessor.getApplicationHandler().getVersion());
-			artifactInfos.add(artifactInfo);
-			artifactGroup.setVersions(artifactInfos);
+			if (StringUtils.isNotEmpty(appDirName)) {
+				String pluginInfoFile = FrameworkServiceUtil.getPluginInfoPath(appDirName);
+				MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
+				String className = mojoProcessor.getApplicationHandler().getClazz();
+				ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+				Customer customer = serviceManager.getCustomer(customerId);
+				RepoInfo repoInfo = customer.getRepoInfo();
+				List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
+				ArtifactGroup artifactGroup = new ArtifactGroup();
+				artifactGroup.setGroupId(mojoProcessor.getApplicationHandler().getGroupId());
+				artifactGroup.setArtifactId(mojoProcessor.getApplicationHandler().getArtifactId());
+				// To set the versions of Artifact Group.
+				List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
+				
+				ArtifactInfo artifactInfo = new ArtifactInfo();
+				artifactInfo.setVersion(mojoProcessor.getApplicationHandler().getVersion());
+				artifactInfos.add(artifactInfo);
+				artifactGroup.setVersions(artifactInfos);
 
-			artifactGroups.add(artifactGroup);
-			PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, artifactGroups);
-			ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(className);
-			applicationProcessor.postConfiguration(FrameworkServiceUtil.getApplicationInfo(appDirName),
-					configurationlist);
+				artifactGroups.add(artifactGroup);
+				PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, artifactGroups);
+				ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(className);
+				applicationProcessor.postConfiguration(FrameworkServiceUtil.getApplicationInfo(appDirName),	configurationlist);
+			}
 			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, "Success",
 					RESPONSE_STATUS_SUCCESS, PHR600006);
 			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
@@ -549,7 +784,6 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					RESPONSE_STATUS_ERROR, PHR610010);
 			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		}
-
 	}
 
 
@@ -560,17 +794,26 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	 * @param envName the env name
 	 * @param cloneEnvironment the clone environment
 	 * @return the response
+	 * @throws ConfigurationException 
 	 */
 	@POST
 	@Path("/cloneEnvironment")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response cloneEnvironment(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_ENV_NAME) String envName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName, Environment cloneEnvironment) {
+			@QueryParam(REST_QUERY_ENV_NAME) String envName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName, Environment cloneEnvironment,
+			@QueryParam(REST_QUERY_PROJECT_CODE) String projectCode) throws ConfigurationException {
 		if (StringUtils.isNotEmpty(moduleName)) {
 			appDirName = appDirName + File.separator + moduleName;
 		}
-		String configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
+		String configFile = "";
+		if (StringUtils.isNotEmpty(projectCode)) {
+			configFile = FrameworkServiceUtil.getGlobalConfigFileDir(projectCode);
+		} else if (StringUtils.isNotEmpty(appDirName)) {
+			configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
+		} else {
+			throw new ConfigurationException("Project Code Or AppDirName Should Not be Empty");
+		}
 		Environment clonedEnvironment = null;
 		ResponseInfo<Configuration> responseData = new ResponseInfo<Configuration>();
 		try {
@@ -729,13 +972,21 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Path("/environmentList")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEnvironmentList(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) {
-		if (StringUtils.isNotEmpty(moduleName)) {
+			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName,
+			@QueryParam(REST_QUERY_PROJECT_CODE) String projectCode) {
+		if (StringUtils.isNotEmpty(moduleName) && StringUtils.isNotEmpty(appDirName)) {
 			appDirName = appDirName + File.separator + moduleName;
 		}
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
-			String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
+			String configFileDir = "";
+			if (StringUtils.isNotEmpty(projectCode)) {
+				configFileDir = FrameworkServiceUtil.getGlobalConfigFileDir(projectCode);
+			} else if (StringUtils.isNotEmpty(appDirName)) {
+				configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
+			} else {
+				throw new ConfigurationException("Project Code Or AppDirName Should Not be Empty");
+			}
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFileDir));
 			List<Environment> environments = configManager.getEnvironments();
 			Set<String> environmentSet = new HashSet<String>();
@@ -764,33 +1015,37 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@GET
 	@Path("/returnCertificate")
 	@Produces(MediaType.APPLICATION_JSON)
-	 public Response authenticateServer(@QueryParam("host") String host, @QueryParam("port") String port, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
+	public Response authenticateServer(@QueryParam("host") String host, @QueryParam("port") String port, 
+			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
 		if (StringUtils.isNotEmpty(moduleName)) {
 			appDirName = appDirName + File.separator + moduleName;
 		}
 		ResponseInfo<RemoteCertificateInfo> responseData = new ResponseInfo<RemoteCertificateInfo>();
-	    		RemoteCertificateInfo remoteCertificateInfo = new RemoteCertificateInfo();
-	    		int portValue = Integer.parseInt(port);
-	    		boolean connctionAlive = Utility.isConnectionAlive("https", host, portValue);
-	    		boolean isCertificateAvailable = false;
-	    		String projectLocation = "";
-    			projectLocation = Utility.getProjectHome() + appDirName;
-	    		if (connctionAlive) {
-	    			List<CertificateInfo> certificates = FrameworkServiceUtil.getCertificate(host, portValue);
-	    			if (CollectionUtils.isNotEmpty(certificates)) {
-	    				isCertificateAvailable = true;
-	    				remoteCertificateInfo.setCertificates(certificates);
-	    				remoteCertificateInfo.setProjectLocation(projectLocation);
-	    				remoteCertificateInfo.setCertificateAvailable(isCertificateAvailable);
-	    				ResponseInfo<RemoteCertificateInfo> finalOutput = responseDataEvaluation(responseData, null,
-	    						remoteCertificateInfo, RESPONSE_STATUS_SUCCESS, PHR600009);
-	    				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-	    			}
-	    		}
-	    		ResponseInfo<RemoteCertificateInfo> finalOutput = responseDataEvaluation(responseData, null,
-						null, RESPONSE_STATUS_SUCCESS, PHR600016);
+		RemoteCertificateInfo remoteCertificateInfo = new RemoteCertificateInfo();
+		int portValue = Integer.parseInt(port);
+		boolean connctionAlive = Utility.isConnectionAlive("https", host, portValue);
+		boolean isCertificateAvailable = false;
+		String projectLocation = "";
+		projectLocation = Utility.getProjectHome() + File.separator;
+		if (StringUtils.isNotEmpty(appDirName)) {
+			projectLocation = projectLocation + appDirName;
+		}
+		if (connctionAlive) {
+			List<CertificateInfo> certificates = FrameworkServiceUtil.getCertificate(host, portValue);
+			if (CollectionUtils.isNotEmpty(certificates)) {
+				isCertificateAvailable = true;
+				remoteCertificateInfo.setCertificates(certificates);
+				remoteCertificateInfo.setProjectLocation(projectLocation);
+				remoteCertificateInfo.setCertificateAvailable(isCertificateAvailable);
+				ResponseInfo<RemoteCertificateInfo> finalOutput = responseDataEvaluation(responseData, null,
+						remoteCertificateInfo, RESPONSE_STATUS_SUCCESS, PHR600009);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-	    }
+			}
+		}
+		ResponseInfo<RemoteCertificateInfo> finalOutput = responseDataEvaluation(responseData, null,
+				null, RESPONSE_STATUS_SUCCESS, PHR600016);
+		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+	}
 
 	@POST
 	@Path("/addCertificate")
@@ -872,7 +1127,10 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		}
 		ResponseInfo<DOMSource> responseData = new ResponseInfo<DOMSource>();
 		try {
-			String browsePath = Utility.getProjectHome()  + appDirName;
+			String browsePath = Utility.getProjectHome() + File.separator;
+			if (StringUtils.isNotEmpty(appDirName)) {
+				browsePath = browsePath + appDirName;
+			}
 			DOMSource outputContent = createXML(browsePath, fileType);
 			if(outputContent == null) {
 				ResponseInfo<DOMSource> finalOuptut = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_FAILURE, PHR610021);
@@ -1048,28 +1306,30 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		}
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
-			if (getTargetDir(configType, appDirName) != null) {
+			if (StringUtils.isNotEmpty(appDirName) && getTargetDir(configType, appDirName) != null) {
 				StringBuilder sb = getTargetDir(configType, appDirName).append(File.separator).append(fileName);
 				FileUtil.delete(new File(sb.toString()));
 			} else {
-				StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName)).append(
-						File.separator).append(DO_NOT_CHECKIN_DIR).append(File.separator).append(envName);
-				File envNameDir = new File(sb.toString());
-				sb.append(File.separator).append(configName);
-				File configNameDir = new File(sb.toString());
-				sb.append(File.separator).append(propName);
-				File propNameDir = new File(sb.toString());
-				sb.append(File.separator).append(fileName);
-				File file = new File(sb.toString());
-				FileUtil.delete(file);
-				if (ArrayUtils.isEmpty(propNameDir.listFiles())) {
-					FileUtil.delete(propNameDir);
-				}
-				if (ArrayUtils.isEmpty(configNameDir.listFiles())) {
-					FileUtil.delete(configNameDir);
-				}
-				if (ArrayUtils.isEmpty(envNameDir.listFiles())) {
-					FileUtil.delete(envNameDir);
+				if (StringUtils.isNotEmpty(appDirName)) {
+					StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName)).append(
+							File.separator).append(DO_NOT_CHECKIN_DIR).append(File.separator).append(envName);
+					File envNameDir = new File(sb.toString());
+					sb.append(File.separator).append(configName);
+					File configNameDir = new File(sb.toString());
+					sb.append(File.separator).append(propName);
+					File propNameDir = new File(sb.toString());
+					sb.append(File.separator).append(fileName);
+					File file = new File(sb.toString());
+					FileUtil.delete(file);
+					if (ArrayUtils.isEmpty(propNameDir.listFiles())) {
+						FileUtil.delete(propNameDir);
+					}
+					if (ArrayUtils.isEmpty(configNameDir.listFiles())) {
+						FileUtil.delete(configNameDir);
+					}
+					if (ArrayUtils.isEmpty(envNameDir.listFiles())) {
+						FileUtil.delete(envNameDir);
+					}
 				}
 			}
 			ResponseInfo finalOuptut = responseDataEvaluation(responseData, null, false, RESPONSE_STATUS_SUCCESS, PHR600027);
@@ -1438,11 +1698,12 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	 * @param customerId the customer id
 	 * @param appDirName the app dir name
 	 * @param configurationlist the configurationlist
+	 * @param projectId 
 	 * @return 
 	 * @throws PhrescoException the phresco exception
 	 */
 	private String validateConfiguration(String userId, String customerId, String appDirName,
-			List<Configuration> configurationlist) throws PhrescoException {
+			List<Configuration> configurationlist, String projectId) throws PhrescoException {
 		ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 		int serverCount = 0;
 		int emailCount = 0;
@@ -1451,7 +1712,9 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		String isRemote = "false";
 		String dynamicError = "";
 		
-		String techId = FrameworkServiceUtil.getApplicationInfo(appDirName).getTechInfo().getId();
+		
+		
+//		String techId = FrameworkServiceUtil.getApplicationInfo(appDirName).getTechInfo().getId();
 		for (int i = 0; i < configurationlist.size(); i++) {
 			if (StringUtils.isEmpty(configurationlist.get(i).getName())) {
 				return "Name is Empty";
@@ -1499,81 +1762,147 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			if (emailCount > 1) {
 				return "Email Configuration type Already Exists";
 			}
+			List<String> techIds = new ArrayList<String>();
+			if (StringUtils.isNotEmpty(appDirName)) {
+				String techId = FrameworkServiceUtil.getApplicationInfo(appDirName).getTechInfo().getId();
+				techIds.add(techId);
+			} else {
+				techIds = getTechId(customerId, projectId);
+			}
+			if (CollectionUtils.isNotEmpty(techIds)) {
+				for (String techId : techIds) {
+					if (!FrameworkConstants.OTHER.equals(configuration.getType())) {
+						SettingsTemplate configTemplateByType = serviceManager.getConfigTemplateByTechId(techId, configuration.getType());
+						if (configTemplateByType != null) {
+							List<PropertyTemplate> properties = configTemplateByType.getProperties();
+							for (PropertyTemplate propertyTemplate : properties) {
+								String propKey = propertyTemplate.getKey();
+								if(FrameworkConstants.SERVER.equals(configuration.getType())) {
+									if(propKey.equals(FrameworkConstants.REMOTE_DEPLOYMENT)) {
+										isRemote = configuration.getProperties().getProperty(propKey);
+									}
+								}
+								String propValue = configuration.getProperties().getProperty(propKey);
+								if (FrameworkConstants.REQ_TYPE.equals(propKey)
+										&& FrameworkConstants.NODEJS_SERVER.equals(propValue)
+										|| FrameworkConstants.NODEJS_MAC_SERVER.equals(propValue)
+										|| FrameworkConstants.SHAREPOINT_SERVER.equals(propValue)
+										|| FrameworkConstants.IIS_SERVER.equals(propValue)) {
+									// If nodeJs and sharepoint server selected , there should not be validation for deploy dir.
+									serverTypeValidation = true;
+								}
 
-			if (!FrameworkConstants.OTHER.equals(configuration.getType())) {
-				SettingsTemplate configTemplateByType = serviceManager.getConfigTemplateByTechId(techId, configuration
-						.getType());
-				List<PropertyTemplate> properties = configTemplateByType.getProperties();
-				for (PropertyTemplate propertyTemplate : properties) {
-					String propKey = propertyTemplate.getKey();
-					if(FrameworkConstants.SERVER.equals(configuration.getType())) {
-						if(propKey.equals(FrameworkConstants.REMOTE_DEPLOYMENT)) {
-							isRemote = configuration.getProperties().getProperty(propKey);
+								if (techId != null && techId.equals(FrameworkConstants.TECH_SITE_CORE)) {
+									if (FrameworkConstants.DEPLOY_DIR.equals(propKey)) {
+										isRequired = false;
+									}
+								}
+
+								if (serverTypeValidation && FrameworkConstants.DEPLOY_DIR.equals(propKey)) {
+									isRequired = false;
+								}
+
+								// validation for UserName & Password for RemoteDeployment
+
+								if (FrameworkConstants.TRUE.equals(isRemote)) {
+									if (FrameworkConstants.ADMIN_USERNAME.equals(propKey)
+											|| FrameworkConstants.ADMIN_PASSWORD.equals(propKey)) {
+										isRequired = true;
+									}
+									if (FrameworkConstants.DEPLOY_DIR.equals(propKey)) {
+										isRequired = false;
+									}
+								}
+
+								if (isRequired && StringUtils.isEmpty(propValue)) {
+									String field = propertyTemplate.getName();
+									dynamicError += propKey + Constants.STR_COLON + field + "is missing" + Constants.STR_COMMA;
+								}
+
+								if (StringUtils.isNotEmpty(dynamicError)) {
+									dynamicError = dynamicError.substring(0, dynamicError.length() - 1);
+									return dynamicError;
+								}
+
+//								Version Validation for Server and Database configuration types
+//								if (FrameworkConstants.SERVER.equals(configuration.getType())
+//										|| FrameworkConstants.DATABASE.equals(configuration.getType())) {
+//									if (StringUtils.isEmpty(configuration.getProperties().getProperty(FrameworkConstants.VERSION))) {
+//										return "Version is Empty";
+//									}
+//								}
+
+								// Site Core installation path check
+								if (techId.equals(FrameworkConstants.TECH_SITE_CORE)
+										&& FrameworkConstants.SERVER.equals(configuration.getType())
+										&& StringUtils.isEmpty(configuration.getProperties().getProperty(
+												FrameworkConstants.SETTINGS_TEMP_SITECORE_INST_PATH))) {
+									return "SiteCore Installation path Location is missing";
+								}
+							}
 						}
-					}
-					String propValue = configuration.getProperties().getProperty(propKey);
-					if (FrameworkConstants.REQ_TYPE.equals(propKey)
-							&& FrameworkConstants.NODEJS_SERVER.equals(propValue)
-							|| FrameworkConstants.NODEJS_MAC_SERVER.equals(propValue)
-							|| FrameworkConstants.SHAREPOINT_SERVER.equals(propValue)
-							|| FrameworkConstants.IIS_SERVER.equals(propValue)) {
-						// If nodeJs and sharepoint server selected , there should not be validation for deploy dir.
-						serverTypeValidation = true;
-					}
-
-					if (techId != null && techId.equals(FrameworkConstants.TECH_SITE_CORE)) {
-						if (FrameworkConstants.DEPLOY_DIR.equals(propKey)) {
-							isRequired = false;
-						}
-					}
-
-					if (serverTypeValidation && FrameworkConstants.DEPLOY_DIR.equals(propKey)) {
-						isRequired = false;
-					}
-
-					// validation for UserName & Password for RemoteDeployment
-
-					if (FrameworkConstants.TRUE.equals(isRemote)) {
-						if (FrameworkConstants.ADMIN_USERNAME.equals(propKey)
-								|| FrameworkConstants.ADMIN_PASSWORD.equals(propKey)) {
-							isRequired = true;
-						}
-						if (FrameworkConstants.DEPLOY_DIR.equals(propKey)) {
-							isRequired = false;
-						}
-					}
-
-					if (isRequired && StringUtils.isEmpty(propValue)) {
-						String field = propertyTemplate.getName();
-						dynamicError += propKey + Constants.STR_COLON + field + "is missing" + Constants.STR_COMMA;
-					}
-
-					if (StringUtils.isNotEmpty(dynamicError)) {
-						dynamicError = dynamicError.substring(0, dynamicError.length() - 1);
-						return dynamicError;
-					}
-
-					// Version Validation for Server and Database configuration types
-//					if (FrameworkConstants.SERVER.equals(configuration.getType())
-//							|| FrameworkConstants.DATABASE.equals(configuration.getType())) {
-//						if (StringUtils.isEmpty(configuration.getProperties().getProperty(FrameworkConstants.VERSION))) {
-//							return "Version is Empty";
-//						}
-//					}
-					
-					// Site Core installation path check
-					if (techId.equals(FrameworkConstants.TECH_SITE_CORE)
-							&& FrameworkConstants.SERVER.equals(configuration.getType())
-							&& StringUtils.isEmpty(configuration.getProperties().getProperty(
-									FrameworkConstants.SETTINGS_TEMP_SITECORE_INST_PATH))) {
-						return "SiteCore Installation path Location is missing";
 					}
 				}
 			}
+			
 		}
 		return null;
 	}
 
+	
+	/**
+     * To validate the Environment Name
+	 * @param projectCode2 
+	 * @param appDirName 
+     * @return
+     * @throws PhrescoException 
+     * @throws ConfigurationException 
+     */
+	
+	private boolean validateEnvironment(String projectId, String customerId, List<Environment> enviroments, String appDirName) throws PhrescoException, ConfigurationException {
+		boolean environmentExists = false;
+		try {
+			if (StringUtils.isEmpty(appDirName)) {
+				List<String> appDirNameList = getAppDirNameList(projectId, customerId);
+				if (CollectionUtils.isNotEmpty(appDirNameList)) {
+					for (String appDirectoryName: appDirNameList) {
+						File path = new File(Utility.getProjectHome() + File.separator + appDirectoryName + File.separator + FOLDER_DOT_PHRESCO + File.separator + CONFIGURATION_INFO_FILE_NAME);
+						ConfigManagerImpl configImpl = new ConfigManagerImpl(path);
+						List<Environment> configenvs = configImpl.getEnvironments();
+						for (Environment environment : enviroments) {
+							for (Environment env : configenvs) {
+								if(environment.getName().equalsIgnoreCase(env.getName())) {
+									environmentExists = true;
+									throw new PhrescoException(ERROR_DUPLICATE_NAME_IN_CONFIGURATIONS);
+								}
+							}
+						}
+					}
+				}
+			} else {
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDirName);
+				String projectCode = projectInfo.getProjectCode();
+				String globalConfigFileDir = FrameworkServiceUtil.getGlobalConfigFileDir(projectCode);
+				ConfigManagerImpl configImpl = new ConfigManagerImpl(new File(globalConfigFileDir));
+				List<Environment> configenvs = configImpl.getEnvironments();
+				for (Environment environment : enviroments) {
+					for (Environment env : configenvs) {
+						if(environment.getName().equalsIgnoreCase(env.getName())) {
+							environmentExists = true;
+							throw new PhrescoException(ERROR_DUPLICATE_NAME_IN_CONFIGURATIONS);
+						}
+					}
+				}
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return environmentExists;
+	}
+	
+	
+	
 	/**
 	 * Emailvalidation.
 	 *
@@ -1646,11 +1975,10 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	 * @return the download info
 	 * @throws PhrescoException the phresco exception
 	 */
-	private Map<String, List<String>> getDownloadInfo(ServiceManager serviceManager, String appDirName, String userId,
-			String type) throws PhrescoException {
+	private void getDownloadInfo(ServiceManager serviceManager, String appDirName, String userId,
+			String type, Map<String, List<String>> nameMap) throws PhrescoException {
 		ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 		List<ArtifactGroupInfo> artifactGroupInfos = null;
-		Map<String, List<String>> nameMap = new HashMap<String, List<String>>();
 
 		if (Constants.SETTINGS_TEMPLATE_SERVER.equals(type)) {
 			artifactGroupInfos = appInfo.getSelectedServers();
@@ -1659,18 +1987,25 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		}
 		if (CollectionUtils.isNotEmpty(artifactGroupInfos)) {
 			for (ArtifactGroupInfo artifactGroupInfo : artifactGroupInfos) {
-				ArtifactGroup artifactGroup = serviceManager.getArtifactGroupInfo(artifactGroupInfo
-						.getArtifactGroupId());
+				ArtifactGroup artifactGroup = serviceManager.getArtifactGroupInfo(artifactGroupInfo	.getArtifactGroupId());
 				List<String> artifactInfoIds = artifactGroupInfo.getArtifactInfoIds();
 				List<String> verstions = new ArrayList<String>();
 				for (String artifactInfoId : artifactInfoIds) {
 					ArtifactInfo artifactInfo = serviceManager.getArtifactInfo(artifactInfoId);
-					verstions.add(artifactInfo.getVersion());
+					List<String> list = null;
+					if (nameMap.containsKey(artifactGroup.getName())) {
+						list = nameMap.get(artifactGroup.getName());
+						if (!list.contains(artifactInfo.getVersion())) {
+							list.add(artifactInfo.getVersion());
+							verstions.addAll(list);
+						}
+					} else {
+						verstions.add(artifactInfo.getVersion());
+					}
 				}
 				nameMap.put(artifactGroup.getName(), verstions);
 			}
 		}
-		return nameMap;
 	}
 	
 	private Configuration addFilesToConfigFile(String appDirName, Configuration config) throws PhrescoException {

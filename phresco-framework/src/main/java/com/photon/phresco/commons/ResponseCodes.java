@@ -285,6 +285,7 @@ public interface ResponseCodes {
 	String PHR610040 = "PHR610040"; // unable to get configuartion
 	String PHR600027 = "PHR600027"; // upload File removed successfully
 	String PHR610041 = "PHR610041"; // unable to remove the uploaded file
+	String PHR610042 = "PHR610042"; // Duplicate configurations
 	
 	/*
 	 * Build Page

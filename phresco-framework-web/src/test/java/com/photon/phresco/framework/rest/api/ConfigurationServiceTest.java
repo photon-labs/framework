@@ -64,9 +64,9 @@ public class ConfigurationServiceTest extends LoginServiceTest {
     	pomProcessor.save();
     }
 	
-	@Test
+	/*@Test
 	public void getAllEnvironmentsTest() {
-		Response response = configurationService.getAllEnvironments(appDirName, "", "true","");
+		Response response = configurationService.getAllEnvironments(appDirName, "", "true","","");
 		Assert.assertEquals(200, response.getStatus());
 //		Response responseFail = configurationService.getAllEnvironments(null);
 //		ResponseInfo<List<Environment>> entity = (ResponseInfo<List<Environment>>)responseFail.getEntity();
@@ -75,7 +75,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	
 	@Test
 	public void getAllEnvironmentsTestError() {
-		Response response = configurationService.getAllEnvironments("dfgdfg", "", "false","");
+		Response response = configurationService.getAllEnvironments("dfgdfg", "", "false","","");
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
@@ -87,7 +87,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	}
 	
 	@Test
-	public void addEnvironmentTest() {
+	public void addEnvironmentTest() throws PhrescoException {
 		List<Environment> environments = new ArrayList<Environment>();
 		List<Configuration> configList = new ArrayList<Configuration>();
 		List<Configuration> configList1 = new ArrayList<Configuration>();
@@ -200,21 +200,21 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		environments.add(env);
 		environments.add(devEnv);
 		environments.add(environment);
-		Response response = configurationService.addEnvironment(appDirName, "", environments);
-		ResponseInfo<List<Environment>> environmentList = (ResponseInfo<List<Environment>>) configurationService.getAllEnvironments(appDirName, "", "true", "").getEntity();
+		Response response = configurationService.addEnvironment(appDirName, "", environments,"","","");
+		ResponseInfo<List<Environment>> environmentList = (ResponseInfo<List<Environment>>) configurationService.getAllEnvironments(appDirName, "", "true", "","").getEntity();
 		List<Environment> data = environmentList.getData();
 		Assert.assertEquals(200, response.getStatus());
 		Assert.assertEquals(3, data.size());
 		
-		Response responseSame = configurationService.addEnvironment(appDirName, "", environments);
+		Response responseSame = configurationService.addEnvironment(appDirName, "", environments,"","","");
 		Assert.assertEquals(200, responseSame.getStatus());
 		
-		Response responseFail = configurationService.addEnvironment("", "", environments);
+		Response responseFail = configurationService.addEnvironment("", "", environments,"","","");
 		Assert.assertEquals(200, responseFail.getStatus());
 	}
-	
+	*/
 	@Test
-	public void addNonEnvConfigTest() {
+	public void addNonEnvConfigTest() throws ConfigurationException {
 		List<Configuration> configList = new ArrayList<Configuration>();
 		Configuration prodConfigServer = new Configuration();
 		prodConfigServer.setName("serverconfig");
@@ -233,7 +233,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		propProd.setProperty("context", "serverprtod");
 		prodConfigServer.setProperties(propProd);
 		configList.add(prodConfigServer);
-		Response response = configurationService.updateConfiguration(userId, customerId, appDirName, "", "", "", "", configList, "false", "", "", "false", "");
+		Response response = configurationService.updateConfiguration(userId, customerId, appDirName, "", "", "", "", configList, "false", "", "", "false", "", "", "");
 		Assert.assertEquals(200, response.getStatus());
 		
 		
@@ -256,7 +256,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		prodConfigServer1.setProperties(propPro1);
 		configList1.add(prodConfigServer1);
 		
-		Response responseUp = configurationService.updateConfiguration(userId, customerId, appDirName, "","", "", "", configList1, "false", "serverconfig", "", "false", "");
+		Response responseUp = configurationService.updateConfiguration(userId, customerId, appDirName, "","", "", "", configList1, "false", "serverconfig", "", "false", "","","");
 		Assert.assertEquals(200, responseUp.getStatus());
 		
 		List<Configuration> configList2 = new ArrayList<Configuration>();
@@ -277,7 +277,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		propProd2.setProperty("context", "serverprtod");
 		prodConfigServer2.setProperties(propProd2);
 		configList2.add(prodConfigServer2);
-		Response responseNonEnv = configurationService.updateConfiguration(userId, customerId, appDirName, "","", "", "", configList2, "false", "","", "false", "");
+		Response responseNonEnv = configurationService.updateConfiguration(userId, customerId, appDirName, "","", "", "", configList2, "false", "","", "false", "","","");
 		Assert.assertEquals(200, responseNonEnv.getStatus());
 		
 		
@@ -285,41 +285,41 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	
 	@Test
 	public void listEnvironmentTest() {
-		Response response = configurationService.listEnvironments(appDirName, "Production", "", "", "");
+		Response response = configurationService.listEnvironments(appDirName, "Production", "", "", "","");
 		ResponseInfo<Environment> responseInfo = (ResponseInfo<Environment>) response.getEntity();
 		Environment environment = responseInfo.getData();
 		Assert.assertEquals("Production", environment.getName());
 		
-		Response responseNon = configurationService.listEnvironments(appDirName, "", "false", "", "serverconfig");
+		Response responseNon = configurationService.listEnvironments(appDirName, "", "false", "", "serverconfig","");
 		Assert.assertEquals(200, responseNon.getStatus());
 		
-		Response responseNonEnvList = configurationService.getAllEnvironments(appDirName, "", "false", "Server");
+		Response responseNonEnvList = configurationService.getAllEnvironments(appDirName, "", "false", "Server","");
 		Assert.assertEquals(200, responseNonEnvList.getStatus());
 		
-		Response environmentList = configurationService.getEnvironmentList(customerId, appDirName, "");
+		Response environmentList = configurationService.getEnvironmentList(customerId, appDirName, "","");
 		Assert.assertEquals(200, environmentList.getStatus());
 		
 	}
 	
 	@Test
 	public void listEnvironmentTestFail() {
-		Response response = configurationService.listEnvironments(appDirName, "","","", "");
+		Response response = configurationService.listEnvironments(appDirName, "","","", "","");
 		Assert.assertEquals(200, response.getStatus());
-		Response responseFail = configurationService.listEnvironments("", "Production","","", "");
+		Response responseFail = configurationService.listEnvironments("", "Production","","", "","");
 		Assert.assertEquals(200, responseFail.getStatus());
 		
 	}
 	
 	@Test
 	public void listEnvironmentError() {
-		Response response = configurationService.listEnvironments("dnf", "Production", "false","", "");
+		Response response = configurationService.listEnvironments("dnf", "Production", "false","", "","");
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
 	@Test
-	public void deleteEnvTestFail() {
+	public void deleteEnvTestFail() throws ConfigurationException {
 		String envName = "Production";
-		Response response = configurationService.deleteEnv(appDirName, envName, "");
+		Response response = configurationService.deleteEnv(appDirName, envName, "", "");
 		ResponseInfo<Environment> responseInfo = (ResponseInfo<Environment>) response.getEntity();
 		Assert.assertEquals("failure", responseInfo.getStatus());
 //		Response responseFail = configurationService.deleteEnv(appDirName, "");
@@ -327,15 +327,15 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	}
 	
 	@Test
-	public void deleteEnvTest() {
-		String envName = "Testing";
-		Response response = configurationService.deleteEnv(appDirName, envName, "");
+	public void deleteEnvTest() throws ConfigurationException {
+		String envName = "Production";
+		Response response = configurationService.deleteEnv(appDirName, envName, "","");
 		Assert.assertEquals(200, response.getStatus());
 		
 //		Response responseFail = configurationService.deleteEnv(appDirName, envName);
 //		Assert.assertEquals(200, responseFail.getStatus());
 		
-		Response responsedel = configurationService.deleteConfiguraion(appDirName, "", "Configs");
+		Response responsedel = configurationService.deleteConfiguraion(appDirName, "", "serverconfig");
 		Assert.assertEquals(200, responsedel.getStatus());
 		
 		
@@ -343,13 +343,13 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	
 	@Test
 	public void  getSettingsTemplateTest() {
-		Response templateLoginFail = configurationService.getSettingsTemplate(appDirName, "", techId, "sample", "Server");
+		Response templateLoginFail = configurationService.getSettingsTemplate(appDirName, "", techId, "sample", "Server","","");
 		Assert.assertEquals(200, templateLoginFail.getStatus());
-		Response templateServer = configurationService.getSettingsTemplate(appDirName, "", techId, userId, "Server");
+		Response templateServer = configurationService.getSettingsTemplate(appDirName, "", techId, userId, "Server","","");
 		Assert.assertEquals(200, templateServer.getStatus());
-		Response responseDb = configurationService.getSettingsTemplate(appDirName, "", techId, userId, "Database");
+		Response responseDb = configurationService.getSettingsTemplate(appDirName, "", techId, userId, "Database","","");
 		Assert.assertEquals(200, responseDb.getStatus());
-		Response responseServer = configurationService.getSettingsTemplate(appDirName, "", techId, userId, "Email");
+		Response responseServer = configurationService.getSettingsTemplate(appDirName, "", techId, userId, "Email","","");
 		Assert.assertEquals(200, responseServer.getStatus());
 //		Response settingsTempFail = configurationService.getSettingsTemplate(appDirName, "", userId, "");
 //		Assert.assertEquals(400, settingsTempFail.getStatus());
@@ -489,16 +489,16 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	
 	@Test
 	public void getConfigTypeTest() {
-		Response responseLoginFail = configurationService.getConfigTypes(customerId, "sample", techId);
+		Response responseLoginFail = configurationService.getConfigTypes(customerId, "sample", techId, "");
 		Assert.assertEquals(200, responseLoginFail.getStatus());
-		Response response = configurationService.getConfigTypes(customerId, userId, techId);
+		Response response = configurationService.getConfigTypes(customerId, userId, techId, "");
 		Assert.assertEquals(200, response.getStatus());
 //		Response responseConfigType = configurationService.getConfigTypes("", userId, "");
 //		Assert.assertEquals(400, responseConfigType.getStatus());
 	}
 	
 	@Test
-	public void configurationValidationTest() {
+	public void configurationValidationTest() throws ConfigurationException {
 		Properties propertiesServer = new Properties();
 		Properties propertiesSerDupl = new Properties();
 		Properties propertiesEmail = new Properties();
@@ -618,14 +618,14 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		configListName.add(configurationEmailDup);
 		
 		
-		Response failName = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListServer,"","" , "dev env", "false", "");
+		Response failName = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListServer,"","" , "dev env", "false", "","","");
 		Assert.assertEquals(200, failName.getStatus());
 		
 		Configuration configurationServer1 = new Configuration("Server2", "serverconfig", "dev", "rett", propertiesServer);
 		List<Configuration> configListServer1 = new ArrayList<Configuration>();
 		configListServer1.add(configurationServerDuplicate);
 		configListServer1.add(configurationServer1);
-		Response failType = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListServer1,"","", "dev env", "false", "");
+		Response failType = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListServer1,"","", "dev env", "false", "","","");
 		Assert.assertEquals(200, failType.getStatus());
 		Properties propertiesServer1 = new Properties();
 		propertiesServer1.setProperty("context", "CometDTesting");
@@ -645,14 +645,14 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		List<Configuration> configListServer2 = new ArrayList<Configuration>();
 		configListServer2.add(configurationServer2);
 		configListServer2.add(configurationServerDuplicate);
-		Response failmailEmp = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListServer2,"","", "dev env", "false", "");
+		Response failmailEmp = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListServer2,"","", "dev env", "false", "","","");
 		Assert.assertEquals(200, failmailEmp.getStatus());
 		
 		Configuration configurationServer3 = new Configuration("Serverconfig", "serverconfig", "dev", "Server", propertiesServer);
 		List<Configuration> configListServer3 = new ArrayList<Configuration>();
 		configListServer3.add(configurationServer3);
 		configListServer3.add(configurationEmailDup);
-		Response failmailEmp3 = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListServer3,"","", "dev env", "false", "");
+		Response failmailEmp3 = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListServer3,"","", "dev env", "false", "","","");
 		Assert.assertEquals(200, failmailEmp3.getStatus());
 		
 		
@@ -660,11 +660,11 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		List<Configuration> configListServer6 = new ArrayList<Configuration>();
 		configListServer6.add(configurationServer6);
 		configListServer6.add(configurationServerDuplicate);
-		Response failmailEmp6 = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListServer6,"","", "dev env", "false", "");
+		Response failmailEmp6 = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListServer6,"","", "dev env", "false", "","","");
 		Assert.assertEquals(200, failmailEmp6.getStatus());
 		
 		
-		Response failmailEmp7 = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListEmail,"","", "dev env", "false", "");
+		Response failmailEmp7 = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListEmail,"","", "dev env", "false", "","","");
 		Assert.assertEquals(200, failmailEmp7.getStatus());
 		
 		
@@ -681,7 +681,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		Configuration configurationEmail1 = new Configuration("Email", "Emailconfig", "dev", "Email", propertiesEmail1);
 		configListEmail3.add(configurationEmail1);
 		configListEmail3.add(configurationEmailDuplicate);
-		Response failmailVal = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListEmail3,"","", "dev env", "false", "");
+		Response failmailVal = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListEmail3,"","", "dev env", "false", "","","");
 		Assert.assertEquals(200, failmailVal.getStatus());
 		
 		List<Configuration> configListEmail4 = new ArrayList<Configuration>();
@@ -698,33 +698,33 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		Configuration configurationEmail2 = new Configuration("Email", "Emailconfig", "dev", "Email", propertiesEmail2);
 		configListEmail4.add(configurationEmailDuplicate);
 		configListEmail4.add(configurationEmail2);
-		Response responseServer = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListEmail4,"","", "dev env", "false", "");
+		Response responseServer = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListEmail4,"","", "dev env", "false", "","","");
 		Assert.assertEquals(200, responseServer.getStatus());
 		Configuration configurationEmail3 = new Configuration("Email", "Emailconfig", "dev", "Email", propertiesEmail2);
 		List<Configuration> configListEmail5 = new ArrayList<Configuration>();
 		configListEmail5.add(configurationEmail3);
 		configListEmail5.add(configurationEmailDuplicate);
 		
-		Response responseEmail = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListEmail5,"","", "dev env", "false", "");
+		Response responseEmail = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListEmail5,"","", "dev env", "false", "","","");
 		Assert.assertEquals(200, responseEmail.getStatus());
 		
 		
-		Response responseSiteCore = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListSiteCore,"","", "dev env", "false", "");
+		Response responseSiteCore = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListSiteCore,"","", "dev env", "false", "","","");
 		Assert.assertEquals(200, responseSiteCore.getStatus());
 		
 		
-		Response responseName = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListName,"","", "dev env", "false", "");
+		Response responseName = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListName,"","", "dev env", "false", "","","");
 		Assert.assertEquals(200, responseName.getStatus());
 		
 		
-		Response responsePass = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListPass,"","", "dev env", "false", "");
+		Response responsePass = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", "", "dev", "false", configListPass,"","", "dev env", "false", "","","");
 		Assert.assertEquals(200, responsePass.getStatus());
 		
 	}
 	
 	
 //	@Test
-	public void addProdEnvironmentTest() {
+	public void addProdEnvironmentTest() throws PhrescoException {
 		List<Environment> environments = new ArrayList<Environment>();
 		List<Configuration> configList = new ArrayList<Configuration>();
 		List<Configuration> finalList = new ArrayList<Configuration>();
@@ -803,8 +803,8 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		devEnv.setConfigurations(finalList);
 		environments.add(env);
 		environments.add(devEnv);
-		Response response = configurationService.addEnvironment(appDirName, "", environments);
-		ResponseInfo<List<Environment>> environmentList = (ResponseInfo<List<Environment>>) configurationService.getAllEnvironments(appDirName, "", "true", "").getEntity();
+		Response response = configurationService.addEnvironment(appDirName, "", environments, "", "", "");
+		ResponseInfo<List<Environment>> environmentList = (ResponseInfo<List<Environment>>) configurationService.getAllEnvironments(appDirName, "", "true", "", "").getEntity();
 		Assert.assertEquals(200, response.getStatus());
 	}
 
@@ -822,11 +822,11 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	}
 	
 	@Test
-	public void cloneEnvironmentTest() {
+	public void cloneEnvironmentTest() throws ConfigurationException {
 		Environment cloneEnvironment = new Environment();
 		cloneEnvironment.setName("clone");
 		cloneEnvironment.setDefaultEnv(false);
-		Response response = configurationService.cloneEnvironment(appDirName, "Production", "", cloneEnvironment);
+		Response response = configurationService.cloneEnvironment(appDirName, "Production", "", cloneEnvironment, "");
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
@@ -1020,31 +1020,31 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	
 	@Test
 	public void removeFileError() {
-		Response removeConfigFile = configurationService.removeConfigFile("hdsf", "content", "sample", "", "test.zip", "Production", "Server");
+		Response removeConfigFile = configurationService.removeConfigFile("TestProject", "content", "sample", "", "test.zip", "Production", "ServerConfig");
 		Assert.assertEquals(200, removeConfigFile.getStatus());
 	}
 	
 	@Test
 	public void showPropertiesFeaturesTest() {
-		Response names = configurationService.showProperties("admin", "Features", "TestJquery", "", "photon");
+		Response names = configurationService.showProperties("admin", "Features", "TestProject", "", "photon");
 		Assert.assertEquals(200, names.getStatus());
 	}
 	
 	@Test
 	public void showPropertiesComponentsTest() throws PhrescoException, FileNotFoundException, IOException, ParseException {
-		Response names = configurationService.showProperties("admin", "Components", "TestJquery", "", "photon");
+		Response names = configurationService.showProperties("admin", "Components", "TestProject", "", "photon");
 		Assert.assertEquals(200, names.getStatus());
 	}
 	
 	@Test
 	public void showPropertiesFeaturesErrorTest() {
-		Response names = configurationService.showProperties("admin", "Features", "dfhgdf", "", "photon");
+		Response names = configurationService.showProperties("admin", "Features", "TestProject", "", "photon");
 		Assert.assertEquals(200, names.getStatus());
 	}
 	
 	@Test
 	public void showFeatureConfigsNonEmptyTest() throws PhrescoException {
-		ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo("TestJquery");
+		ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo("TestProject");
 		List<Configuration> configurations = new ArrayList<Configuration>();
 		Configuration config = new Configuration();
 		config.setEnvName("production");
@@ -1073,16 +1073,16 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		jsonDir.mkdirs();
 		writeToJson.postConfiguration(appInfo, configurations);
 		writeToJson.postConfiguration(appInfo, configurations2);
-		Response names = configurationService.showFeatureConfigs("admin", "photon", "testComponent", "TestJquery", "production", "");
+		Response names = configurationService.showFeatureConfigs("admin", "photon", "testComponent", "TestProject", "production", "");
 		Assert.assertEquals(200, names.getStatus());
 	}
 	
 	@Test
 	public void showFeatureConfigsErrorTest() throws PhrescoException {
-		Response names = configurationService.showFeatureConfigs("admin", "photon", "testFeature", "dsfd", "production", "");
+		Response names = configurationService.showFeatureConfigs("admin", "photon", "testFeature", "TestProject", "production", "");
 		Assert.assertEquals(200, names.getStatus());
 	}
-
+	
 	private String getConnectionUrl(String envName, String type, String configName) throws PhrescoException {
 		String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
 		try {

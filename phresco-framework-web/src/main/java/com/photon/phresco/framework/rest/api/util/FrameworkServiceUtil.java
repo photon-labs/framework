@@ -296,6 +296,21 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	
 	
 	/**
+	 * @param projectCode
+	 * @return
+	 */
+	public static String getGlobalConfigFileDir(String projectCode) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(Utility.getProjectHome())
+		.append(projectCode)
+		.append(Constants.STR_HYPHEN)
+		.append(Constants.CONFIGURATION_FILE);
+		return builder.toString();
+	}
+	
+	
+	
+	/**
 	 * To get the load test report directory
 	 * @param appDirName
 	 * @return
