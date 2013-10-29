@@ -561,7 +561,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			serverUrl = frameworkUtil.getSonarHomeURL();
 			StringBuilder reportPath = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
 			if (StringUtils.isNotEmpty(validateAgainst) && FUNCTIONALTEST.equals(validateAgainst)) {
-				reportPath.append(frameworkUtil.getFunctionalTestDir(appInfo));
+				reportPath.append(frameworkUtil.getFunctionalTestDir(appDirName));
 			}
 			reportPath.append(File.separatorChar);
 			reportPath.append(POM_XML);
