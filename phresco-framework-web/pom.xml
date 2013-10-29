@@ -727,7 +727,7 @@
 		<dependency>
 			<groupId>jslibraries.files</groupId>
 			<artifactId>highstock</artifactId>
-			<version>1.0</version>
+			<version>1.3.7</version>
 			<type>js</type>
 		</dependency>
 		<dependency>
