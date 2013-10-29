@@ -600,7 +600,7 @@ define([], function() {
 
 											self.graphAction(self.getActionHeader(objactionBody, "searchdashboard"), function(response){
 												//chart update
-												self.constructPieInfo(widgetKey, widgetInfo.properties.x.toString(), widgetInfo.properties.y.toString(), response.data.results, function(dataVal){
+												self.constructBarInfo(widgetKey, widgetInfo.properties.x.toString(), widgetInfo.properties.y.toString(), response.data.results, function(dataVal){
 													series.setData(dataVal);
 												});
 											});
