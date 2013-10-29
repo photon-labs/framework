@@ -5161,7 +5161,7 @@ textarea[name="regex"] {
 	background-repeat: no-repeat;
 	cursor: pointer;
 	white-space: normal;
-	padding: 7px 20px 7px 4px;
+	padding: 7px 20px 7px 7px;
 }
 .tablesorter-default thead .headerSortUp,
 .tablesorter-default thead .tablesorter-headerSortUp,
@@ -5183,6 +5183,7 @@ textarea[name="regex"] {
 	background-color: #fff;
 	border-bottom: #dddddd 1px solid;
 	padding: 4px;
+	padding-left:7px !important;
 	vertical-align: top;
 	color:#313131;
 	border-right:1px solid #FFF !important;
@@ -5232,6 +5233,10 @@ textarea[name="regex"] {
 	font-size:12px !important;
 	color:#333333 !important;
 	border-right:1px solid #FFF !important;
+}
+
+.tablesorter-default th:last-child, .tablesorter-default td:last-child {
+	border-right:none !important;
 }
 
 
