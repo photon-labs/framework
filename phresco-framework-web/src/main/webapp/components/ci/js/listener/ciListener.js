@@ -1579,9 +1579,10 @@ define([], function() {
 						testAction = "performance";
 					}
 					var moduleParam = self.isBlank(templateJsonData.module) ? "" : '&moduleName='+templateJsonData.module;
+					$("#contextDivParent").remove();
 					ciRequestBody.data = $('#jonConfiguration :input[name!=parameterValue]').serialize()+"&appDirName="+appDirName+"&testAction="+testAction+moduleParam;
 					ciRequestBody.jsondata = json;
-					$("#contextDivParent").remove();
+					
 					self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'writeJson'), function (response) {
 						
 					});
