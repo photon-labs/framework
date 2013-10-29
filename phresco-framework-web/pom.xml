@@ -738,8 +738,15 @@
 		
 		<dependency>
 			<groupId>jslibraries.files</groupId>
+			<artifactId>bootstrap-colorpicker-min</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jslibraries.files</groupId>
 			<artifactId>highstock</artifactId>
-			<version>1.3.7</version>
+			<version>1.3.7.1</version>
 			<type>js</type>
 		</dependency>
 		<dependency>

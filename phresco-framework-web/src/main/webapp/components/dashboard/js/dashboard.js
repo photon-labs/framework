@@ -203,7 +203,13 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 					$('.noc_view').css('width','98%');
 				} else if (count >=2) {
 					$('.noc_view').css('width','48%');
-				}	
+				}
+				$('.selectpicker').selectpicker({
+				});
+				
+				$('#cp1').colorpicker();
+				$('#cp2').colorpicker();
+				
 			//$("select.xaxis").parent().parent().hide();
 			//$("select.yaxis").parent().parent().hide();
 			//$("select.percentval").parent().parent().hide();

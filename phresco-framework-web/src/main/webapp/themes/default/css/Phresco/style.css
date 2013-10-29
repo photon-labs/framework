@@ -4875,10 +4875,12 @@ textarea[name="regex"] {
 
 #add_widget tr td input[type="text"], #add_widget tr td select {
 	margin-bottom:0;
+	width:202px !important;
 }
 
 #add_widget tr td textarea {
-	width:97%;
+	width:100%;
+	height:55px !important;
 }
 
 #noc_config tr td select {
@@ -4886,7 +4888,7 @@ textarea[name="regex"] {
 }
 
 #add_widget tr td input[type="checkbox"] {
-	margin:0 5px 4px 4px;
+	margin:-3px 5px 0px 2px;
 }
 
  #add_widget tr td {
@@ -4905,52 +4907,6 @@ textarea[name="regex"] {
 	float:left;
 	margin:5px;
 	width: 48%; 
-}
-
-.tab_div {
-	background:background: #ededed; /* Old browsers */
-background: -moz-linear-gradient(top,  #ededed 8%, #e2e2e2 96%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, left bottom, color-stop(8%,#ededed), color-stop(96%,#e2e2e2)); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(top,  #ededed 8%,#e2e2e2 96%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(top,  #ededed 8%,#e2e2e2 96%); /* Opera 11.10+ */
-background: -ms-linear-gradient(top,  #ededed 8%,#e2e2e2 96%); /* IE10+ */
-background: linear-gradient(to bottom,  #ededed 8%,#e2e2e2 96%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', endColorstr='#e2e2e2',GradientType=0 ); /* IE6-9 */
-	padding-top:10px;
-	/*border-radius:8px 8px 0px 0px;*/
-} 
-.tab_div ul li {
-	padding-right:6px;
-	outline:none;
-}
-
-.tab_div ul li:first-child {
-	padding-left:10px !important;
-}
-
-.tab_div ul li a {
-	color:#FFF;
-	background:#ed7940;
-	border-radius:8px 8px 0px 0px;
-	padding:4px 15px;
-}   
-
-.tab_div ul li a:hover {
-	background:#ed7940;
-}
-
-.tab_div ul li a:focus{
-	outline:none;
-}
-
-.tab_btn {
-	float:right;
-	margin-right: 10px;
-    margin-top: -4px;
-}
-
-.tab_btn input:first-child {
-	margin-right:6px !important;
 }
 
 .wid_name {
@@ -4975,14 +4931,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', end
 	height: 200px !important;
     margin: -9px 22px !important;
     width: 88% !important;
-}
-
-.noc_table {
-	margin:10px;
-	border:1px solid #CDCDCD !important;
-	height:187px;
-	overflow:auto;
-	border-radius:6px !important;
 }
 
 .firstsettings {
@@ -5087,8 +5035,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', end
 }
 
 .dashboard_popup {
-	width:400px !important;
+	width:438px !important;
 	padding:3px 7px 8px 5px !important;
+}
+
+.add_wid_table {
+	max-height:400px;
+	overflow:auto;
+	overflow-x:hidden;
 }
 
 .dashboard_popup table td {
@@ -5096,7 +5050,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', end
 	vertical-align:top !important;
 }
 
-.dashboard_popup table textarea, .bootstrap-select.btn-group, .bootstrap-select.btn-group[class*="span"] {
+.bootstrap-select.btn-group, .bootstrap-select.btn-group[class*="span"] {
 	width:96.5% !important;
 	margin:0 !important;
 }
@@ -5107,21 +5061,12 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', end
 	margin-top:4px;
 }
 
-.dashboard_popup [type="text"] {
-	width:178px !important;
-	margin-bottom:0 !important;
-}
-
-.dashboard_popup textarea {
-	height:35px !important;
-}
-
 .dashboard_popup [type="password"] {
-	width:158px !important;
+	width:216px !important;
 }
 
 .dashboard_popup .bootstrap-select > .btn {
-	width:192px !important;
+	width:202px !important;
 	margin-bottom:0 !important;
 	font-size:12px !important;
 	background:none !important;
@@ -5131,7 +5076,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', end
 
 .dashboard_popup .dropdown-menu {
 	margin:0 !important;
-	min-width:192px !important;
+	min-width:190px !important;
+	max-height:128px !important;
 }
 
 .dashboard_popup .dropdown-menu a span.text:hover, .dashboard_popup .dropdown-menu a {
@@ -5147,8 +5093,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', end
 	padding:7px 9px !important;
 }
 
-.axis_div [type="text"], .dashboard_popup select {
-	width:172px !important;
+#add_widget .axis_div  input[type="text"], #add_widget .axis_div .browser_table select {
+	width:188px !important;
 	margin-bottom:0 !important;
 }
 
@@ -5156,6 +5102,40 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', end
 	background:url(../../images/Phresco/pick_color.png) no-repeat right #FFFFFF !important;
 }
 
+#tabforbar ul li {
+	width:96% !important;
+	line-height:35px !important;
+}
+
+#tabforbar ul {
+	overflow-x:hidden !important;
+}
+
+#tabforbar ul li:last-child {
+	border-bottom:none;
+}
+
+.bar_radio {
+	border-right: 1px solid #CCCCCC;
+    float: left;
+    padding: 15px 6px 11px 1px;
+    text-align: center;
+    width: 22px;
+}
+
+.bar_name {
+	padding-left: 38px;
+}
+
+#add_widget #tabforbar .colorpick {
+	margin: -30px 2px 5px 0px !important;
+    width: 95px !important;
+	border-radius:0px
+}
+
+#add_widget #tabforbar .colorbar_div {
+	text-align:right;
+}
 
 
 /***************************** STYLES FOR THE TABLE SORTING STARTS *************************************/

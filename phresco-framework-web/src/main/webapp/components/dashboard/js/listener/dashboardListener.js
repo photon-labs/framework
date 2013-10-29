@@ -23,14 +23,14 @@ define([], function() {
 		dashboardpassword : null,
 		dashboardusername : null,
 		datafortable : null,
-		piechartdata_new : null,
-		totalArrforbar : null,
-		xDataforbar : null,
+		piechartdata_new : {},
+		totalArrforbar : {},
+		xDataforbar : {},
 		addwidgetflag : null,
-		lineLegentName : null,
-		totalArr : null,
-		xVal : null,
-		yVal : null,
+		lineLegentName : {},
+		totalArr : {},
+		xVal : {},
+		yVal : {},
 		
 		/***
 		 * Called in initialization time of this class 
@@ -332,15 +332,15 @@ define([], function() {
 			var self = this, xData, yData = '', totalArr = [];
 			try{
 				$.each(results, function(index, value) {
-					if(xVal === '_time'){ console.info('xdart' ,value[xVal]);xData = Date.parse(value[xVal]);}else{xData = value[xVal];}	
+					if(xVal === '_time'){ xData = Date.parse(value[xVal]);}else{xData = value[xVal];}	
 					try{yData = parseInt(value[yVal],10) === NaN ? null : parseInt(value[yVal],10) ;}catch(ex){ yData =null;}
 					totalArr.push([xData,yData])
 				});
 				
-				self.lineLegentName=currentWidget.name;
-				self.totalArr=totalArr;
-				self.xVal=xVal;
-				self.yVal=yVal;
+				self.lineLegentName[widgetKey]=currentWidget.name;
+				self.totalArr[widgetKey]=totalArr;
+				self.xVal[widgetKey]=xVal;
+				self.yVal[widgetKey]=yVal;
 				self.highChartLine(widgetKey);
 			}catch(exception){
 			
@@ -380,12 +380,12 @@ define([], function() {
 						} 
 					},
 					title: {
-						text: self.xVal
+						text: self.xVal[widgetKey]
 					}
 				},
 				yAxis: {
 					title: {
-						text: self.yVal
+						text: self.yVal[widgetKey]
 					},
 					min: 0
 				},
@@ -400,8 +400,8 @@ define([], function() {
 				},
 				
 				series: [{
-					name: self.lineLegentName,
-					data: self.totalArr
+					name: self.lineLegentName[widgetKey],
+					data: self.totalArr[widgetKey]
 				}]
 			});
 		},
@@ -473,7 +473,7 @@ define([], function() {
 			for(var dataadder=0;dataadder<new_data.length;dataadder++) {
 				new_data[dataadder] = (new_data[dataadder]/sum) * 100;
 				newXdata.push([yData[dataadder],new_data[dataadder]]);
-				self.piechartdata_new = newXdata;
+				self.piechartdata_new[widgetKey] = newXdata;
 			}
 			self.highChartPie(widgetKey, newXdata,-10,-5);	//self.highchartpie(widgetKey, newXdata,-40,-5);	
 			var dat = commonVariables.api.localVal.getSession(widgetKey);
@@ -631,8 +631,8 @@ define([], function() {
 					temp['data'] = temparr; 
 					totalArr.push(temp);
 				});
-				self.totalArrforbar = totalArr;
-				self.xDataforbar = xData;
+				self.totalArrforbar[widgetKey] = totalArr;
+				self.xDataforbar[widgetKey] = xData;
 				self.highChartBar(widgetKey,totalArr, xData);
 				
 				
@@ -732,12 +732,12 @@ define([], function() {
 						}										
 					});
 					queryflag = 1;	
-				});
-			self.optionsshowhide('pieChartOpt');
+				});			
 				for(var z=0;z<querydata.length;z++) {
 					$("select.percentval").append('<option value='+querydata[z]+'>'+querydata[z]+'</option>');
 					$("select.legendval").append('<option value='+querydata[z]+'>'+querydata[z]+'</option>');						
 				}
+				self.optionsshowhide('pieChartOpt');
 				$("#update_tab").removeAttr('disabled');	
 			}catch(exception){
 				//Exception
@@ -754,20 +754,22 @@ define([], function() {
 				$.each(response.data.results,function(index,value) {
 					$.each(value,function(index1,value1) {							
 						if(queryflag !==1) {
-						$('ul[name="sortable1"]').append('<li class="ui-state-default" value='+index1+'>'+index1+'</li>');	
+						$('ul[name="sortable1"]').append('<li value='+index1+'><div class="bar_radio"><input type="checkbox" name="optionsRadiosfd" value='+index1+'></div><div name="envListName" class="bar_name">'+index1+'</div><div class="colorbar_div"><input class="pick_color colorpick" placeholder="Pick Color" type="text"></li>');	
+						
 						querydata[querycount] = index1;								
 						querycount++;
 						}										
 					});
+					
 					queryflag = 1;	
 				});
+				$('.colorpick').colorpicker();
 				for(var z=0;z<querydata.length;z++) {
 					$("select.baraxis").append('<option value='+querydata[z]+'>'+querydata[z]+'</option>');
 				}
 				self.optionsshowhide('barChartOpt');							
-				$('.connectedSortable').sortable({
-					connectWith: '.connectedSortable',
-					cancel: ".ui-state-disabled"
+				$('.connected').sortable({
+					connectWith: '.connected'
 				});
 			}catch(exception){
 				//Exception
@@ -780,7 +782,9 @@ define([], function() {
 			$("#pieChartOpt").hide();
 			$("#barChartOpt").hide();
 			if(tr_toshow !== '' && tr_toshow !== 'table') {
-				$("#"+tr_toshow).show();
+				if($("#"+tr_toshow).find('select').children().length) {
+					$("#"+tr_toshow).show();
+				}	
 				$("input[name='execute_query']").removeAttr('disabled');
 				$("#update_tab").attr('disabled','disabled');
 			} else {
@@ -831,8 +835,8 @@ define([], function() {
 						self.properties.type = ['piechart'];
 					}else if($("#widgetType option:selected").val() === 'barchart'){
 						var SelectedItems = [];
-						$(".sortable2").children('li').each(function(index, current) {
-							SelectedItems.push($(current).text());
+						$('input[name="optionsRadiosfd"]:checked').each(function(i){
+						  SelectedItems[i] = $(this).val();
 						});
 						self.properties.x = $.makeArray($("select.baraxis option:selected").val());
 						self.properties.y = SelectedItems;
@@ -903,6 +907,7 @@ define([], function() {
 			var hoverFlag=0;
 			var self = this, flagg = 0, placeval;
 			
+			$("#widgetType").unbind('change');
 			$("#widgetType").change(function() {
 				var typeofchart = $(this).children('option:selected').val();
 				if(typeofchart === 'table') {
@@ -965,9 +970,9 @@ define([], function() {
 					flagg = 1;
 					
 					if($(this).attr('proptype') === 'piechart') {
-						self.highChartPie(placeval, self.piechartdata_new, -10, 0);	
+						self.highChartPie(placeval, self.piechartdata_new[placeval], -10, 0);	
 					}  else if($(this).attr('proptype') === 'barchart') {
-						self.highChartBar(placeval,self.totalArrforbar, self.xDataforbar);
+						self.highChartBar(placeval,self.totalArrforbar[placeval], self.xDataforbar[placeval]);
 					} else if($(this).attr('proptype') === 'linechart') {
 						self.highChartLine(placeval);
 					} else if($(this).attr('proptype') === 'table') {
@@ -981,9 +986,9 @@ define([], function() {
 					$('.noc_view').css('width','48%');
 					flagg = 0;
 					if($(this).attr('proptype') === 'piechart') {
-						self.highChartPie(placeval, self.piechartdata_new, -10, 5);	
+						self.highChartPie(placeval, self.piechartdata_new[placeval], -10, 5);	
 					} else if($(this).attr('proptype') === 'barchart') {
-						self.highChartBar(placeval,self.totalArrforbar, self.xDataforbar);
+						self.highChartBar(placeval,self.totalArrforbar[placeval], self.xDataforbar[placeval]);
 					} else if($(this).attr('proptype') === 'linechart') {
 						self.highChartLine(placeval);
 					} else if($(this).attr('proptype') === 'table') {
@@ -1016,6 +1021,7 @@ define([], function() {
 					$("#nameofwidget").val(result.data.name);
 					if(result.data.properties) {
 						$("#widgetType").val(result.data.properties.type.toString());
+						$(".filter-option").text(result.data.properties.type.toString());
 					}	
 					self.optionsshowhide($("#widgetType").val());
 					$("input[name='execute_query']").removeAttr('disabled');
@@ -1211,9 +1217,9 @@ define([], function() {
 					self.properties.y = $.makeArray(indexfory);
 					self.properties.type = ['piechart'];
 				}else if(widgetdatatype === 'barchart'){
-					$(".sortable2").children('li').each(function(index, current) {
-						SelectedItems.push($(current).text());
-					});
+					$('input[name="optionsRadiosfd"]:checked').each(function(i){
+						  SelectedItems[i] = $(this).val();
+						});
 					self.properties.x = $.makeArray($("select.baraxis option:selected").val());
 					self.properties.y = SelectedItems;
 					self.properties.type = ['barchart'];
@@ -1276,6 +1282,7 @@ define([], function() {
 							}
 						});
 					}
+					$("#content_"+widgetKey).find('.enlarge_btn').attr('proptype',widgetdatatype);
 					$('.he-view').removeAttr('style');
 					window.hoverFlag = 0;
 				});
