@@ -540,8 +540,8 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				
 				if (clicked.offset().top < halfheight && clicked.offset().left < halfwidth) {
 					$(target).css({"left":clicked.offset().left ,"margin-top":10,"right": "auto"});
-					if(placeId === 'firstsettings') {
-						var BottomHeight = clicked.position().top + clicked.height() +4 ;
+					if(placeId === 'add_widget') {
+						var BottomHeight = clicked.position().top + clicked.height() + 8 ;
 						$(target).css({"left":clicked.offset().left-15,"margin-top":10,"top": BottomHeight});		
 					}
 					$(target).toggle();
@@ -558,14 +558,11 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					} else if ($(ee).attr('name') === 'updateManualTestCase_popup') {
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 48;
 						$(target).css({"right":d ,"margin-top":10,"left": "auto","top": "auto"});
-					} else if(placeId === 'firstsettings') {
+					} else if(placeId === 'add_widget') {
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 4;
 						var BottomHeight = clicked.position().top + clicked.height() + 8 ;
 						$(target).css({"right":d,"left": "auto","margin-top":10,"top": BottomHeight});		
-					} else if(placeId === 'add_widget') {
-						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) + 32;
-						$(target).css({"right":d,"margin-top":10,"left": "auto","top": "auto"});
-					} else if(placeId === 'noc_config') {
+					}  else if(placeId === 'noc_config') {
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) + 32;
 						$(target).css({"right":d,"margin-top":10,"left": "auto","top": "auto"});
 					} else {		
@@ -579,6 +576,10 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(target).css({"left": clicked.offset().left,"top": BottomHeight ,"right": "auto"});
 					$(target).toggle();
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstyletopright').addClass('speakstylebottomleft').addClass('dyn_popup');	
+					if(placeId === 'add_widget') {
+						BottomHeight = clicked.position().top + clicked.height() + 40 ;
+						$(target).css({"right":"auto","top": BottomHeight});		
+					}
 				} else if (clicked.offset().top > halfheight && clicked.offset().left > halfwidth){
 					var d = null,BottomHeight = null;
 					d = ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 15;
@@ -598,6 +599,11 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
 						$(target).toggle();
 						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
+						
+						if(placeId === 'add_widget') {
+							BottomHeight = clicked.position().top + clicked.height() + 40 ;
+							$(target).css({"top": BottomHeight});		
+						}
 					}
 				} 
 
@@ -655,13 +661,10 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					} else if ($(ee).attr('name') === 'updateManualTestCase_popup') {
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 48;
 						$(target).css({"right":d ,"margin-top":10,"left": "auto","top": "auto"});
-					} else if(placeId === 'firstsettings') {
-						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 4;
-						var BottomHeight = clicked.position().top + clicked.height() + 8 ;
-						$(target).css({"right":d,"left": "auto","margin-top":10,"top": BottomHeight});		
 					} else if(placeId === 'add_widget') {
-						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) + 32;
-						$(target).css({"right":d,"margin-top":10,"left": "auto","top": "auto"});
+						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 4;
+						var BottomHeight = clicked.position().top + clicked.height() - 23 ;
+						$(target).css({"right":d,"left": "auto","margin-top":10,"top": BottomHeight});		
 					} else if(placeId === 'noc_config') {
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) + 32;
 						$(target).css({"right":d,"margin-top":10,"left": "auto","top": "auto"});

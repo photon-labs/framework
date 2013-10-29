@@ -112,47 +112,47 @@ public class UnitServiceTest extends RestBaseTest {
 
 	@Test
 	public void testGetTestSuites() throws PhrescoException, IOException {
-		Response response = service.getTestSuites(appDirName, "unit", "java", "");
+		Response response = service.getTestSuites(appDirName, "unit", "java", "", "");
 		ResponseInfo<List<String>> responseInfo =  (ResponseInfo<List<String>>) response.getEntity();
-		Assert.assertEquals(200, response.getStatus() );
+		Assert.assertEquals(200, response.getStatus());
 	}
 	
 	
 	@Test
 	public void testGetTestSuitesWithOutAppDir() throws PhrescoException, IOException {
-		Response response = service.getTestSuites("", "unit", "java", "");
+		Response response = service.getTestSuites("", "unit", "java", "", "");
 		ResponseInfo<List<String>> responseInfo =  (ResponseInfo<List<String>>) response.getEntity();
-		Assert.assertEquals(200, response.getStatus() );
+		Assert.assertEquals(200, response.getStatus());
 	}
 
 	
 	@Test
 	public void testGetTestSuitesWithOutTestType() throws PhrescoException, IOException {
-		Response response = service.getTestSuites(appDirName, "", "java", "");
+		Response response = service.getTestSuites(appDirName, "", "java", "", "");
 		ResponseInfo<List<String>> responseInfo =  (ResponseInfo<List<String>>) response.getEntity();
-		Assert.assertEquals(200, response.getStatus() );
+		Assert.assertEquals(200, response.getStatus());
 	}
 	
 	
 	@Test
 	public void testGetTestSuitesWithOutTestReport() throws PhrescoException, IOException {
-		Response response = service.getTestSuites(appDirName, "unit", "", "");
+		Response response = service.getTestSuites(appDirName, "unit", "", "", "");
 		ResponseInfo<List<String>> responseInfo =  (ResponseInfo<List<String>>) response.getEntity();
-		Assert.assertEquals(200, response.getStatus() );
+		Assert.assertEquals(200, response.getStatus());
 	}
 	
 	
 	
 	@Test
 	public void testGetTestReports() throws PhrescoException, IOException {
-		Response response = service.getTestReports(appDirName, "unit", "java", "", "com.photon.phresco.service.TestCase");
+		Response response = service.getTestReports(appDirName, "unit", "java", "", "com.photon.phresco.service.TestCase", "");
 		ResponseInfo<List<TestCase>> responseInfo =  (ResponseInfo<List<TestCase>>) response.getEntity();
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
 	@Test
 	public void testGetTestReportsAll() throws PhrescoException, IOException {
-		Response response = service.getTestReports(appDirName, "unit", "java", "", "All");
+		Response response = service.getTestReports(appDirName, "unit", "java", "", "All", "");
 		ResponseInfo<List<TestCase>> responseInfo =  (ResponseInfo<List<TestCase>>) response.getEntity();
 		Assert.assertEquals(200, response.getStatus());
 	}

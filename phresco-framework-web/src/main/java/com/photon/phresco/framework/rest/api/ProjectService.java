@@ -415,10 +415,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			MojoProcessor mojo = new MojoProcessor(filePath);
 			ApplicationHandler applicationHandler = mojo.getApplicationHandler();
 			// To write selected Features into phresco-application-Handler-info.xml
-			System.out.println("listArtifactGroup==="+listArtifactGroup);
-			System.out.println("=================================");
 			String artifactGroup = gson.toJson(listArtifactGroup);
-			System.out.println("artifactGroup==="+artifactGroup);
 			applicationHandler.setSelectedFeatures(artifactGroup);
 
 			// To write Deleted Features into phresco-application-Handler-info.xml

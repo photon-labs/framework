@@ -41,283 +41,7 @@ define([], function() {
 			var self = this;	
 		},
 		
-		lineChart : function(placeholderindex,dataforx,datafory) {
-			if($("#placeholder_"+placeholderindex).length > 0){
-				var dataCollection = [], plot = '', placeholder = '', lineOptions = '';
-				
-				for (var i = 0; i < dataforx.length; i++) {
-					dataCollection.push([dataforx[i], datafory[i]]);
-				}
-
-				placeholder = $("#placeholder_"+placeholderindex);
-
-				lineOptions = {
-					series: {
-						lines: {
-							show: true
-						},
-						points: {
-							show: true
-						}
-					},
-					grid: {
-						hoverable: true,
-						clickable: true
-					} ,
-					yaxis: {
-						min: 0
-					},
-					xaxis: {
-					  mode: "time",
-					  timeformat: "%y/%m/%d %H:%M"
-					}
-				};
-				
-				plot = $.plot(placeholder, [dataCollection], lineOptions);
-
-				function showTooltip(x, y, contents) {
-					$('<div id="tooltip_'+placeholderindex+'">' + contents + '</div>').css({
-						position: 'absolute',
-						top: y + 5,
-						left: x + 5,
-						border: '1px solid #fdd',
-						padding: '2px',
-						'background-color': '#fee',
-						opacity: 0.80
-					}).appendTo("body");//.fadeIn(200);
-				}
-				
-				$("#placeholder_"+placeholderindex).bind("plothover", function (event, pos, item) {
-					if (item) {
-						if ($(this).data('previous-post') != item.seriesIndex) {						
-							$(this).data('previous-post', item.seriesIndex);
-						}
-						$("#tooltip_"+placeholderindex).remove();
-						var x = item.datapoint[0].toFixed(2), y = item.datapoint[1].toFixed(2);
-						z = " of " + x + " = " + y;
-						showTooltip(pos.pageX, pos.pageY,'Value' + z);
-						$("#tooltip_"+placeholderindex).css('z-index','4');
-					} else {
-						$("#tooltip_"+placeholderindex).css('display','none');
-					}	
-				});
-			}
-		},
 		
-		barChart : function(placeholderindex) {
-			var d1 = [];
-			for (var i = 0; i <= 10; i += 1) {
-				d1.push([i, parseInt(Math.random() * 30)]);
-			}
-
-			var d2 = [];
-			for (var i = 0; i <= 10; i += 1) {
-				d2.push([i, parseInt(Math.random() * 30)]);
-			}
-
-			var d3 = [];
-			for (var i = 0; i <= 10; i += 1) {
-				d3.push([i, parseInt(Math.random() * 30)]);
-			}
-			var placeholder = $("#placeholder_"+placeholderindex);
-
-			var stack = 0,
-				bars = true,
-				lines = false,
-				steps = false;
-
-			function plotWithOptions() {
-				$.plot("#placeholder_"+placeholderindex+"", [ d1,d2,d3], {
-					series: {
-						stack: stack,
-						lines: {
-							show: lines,
-							steps: steps
-						},
-						bars: {
-							show: bars,
-							fill: 1,
-							barWidth: 0.6
-						}
-					},
-					grid: {
-							hoverable: true
-						}
-				});
-			}
-
-			plotWithOptions();
-
-			$(".stackControls button").click(function (e) {
-				e.preventDefault();
-				stack = $(this).text() == "With stacking" ? true : null;
-				plotWithOptions();
-			});
-		
-			/* placeholder.resize(function () {
-				$(".message").text("Placeholder is now "
-					+ $(this).width() + "x" + $(this).height()
-					+ " pixels");
-			});
-
-			$(".demo-container").resizable({
-				maxWidth: 900,
-				maxHeight: 500,
-				minWidth: 450,
-				minHeight: 250,
-			}); */
-
-			function showTooltip(x, y, contents) {
-				$('<div id="tooltip_'+placeholderindex+'">' + contents + '</div>').css( {
-					position: 'absolute',
-					top: y + 5,
-					left: x + 5,
-					border: '1px solid #fdd',
-					padding: '2px',
-					'background-color': '#fee',
-					opacity: 0.80
-				}).appendTo("body");//.fadeIn(200);
-			 }
-			 
-			 $("#placeholder_"+placeholderindex).bind("plothover", function (event, pos, item) {
-				if (item) {
-					if ($(this).data('previous-post') != item.seriesIndex) {						
-						$(this).data('previous-post', item.seriesIndex);
-					}
-					$("#tooltip_"+placeholderindex).remove();
-					var x = item.datapoint[0].toFixed(2), y = item.datapoint[1].toFixed(2);
-					z = " of " + x + " = " + y;
-					showTooltip(pos.pageX, pos.pageY, item.series.label + z);
-					$("#tooltip_"+placeholderindex).css('z-index','4');
-				} else {
-					$("#tooltip_"+placeholderindex).css('display','none');
-				}	
-			});		
-
-		},
-		
-		pieChart : function(placeholderindex,datatosend,seriesvalue) {
-			var data = [],
-			//series = Math.floor(Math.random() * 6) + 3;
-			  series = datatosend.length;
-			for (var i = 0; i < series; i++) {
-				data[i] = {
-					label: seriesvalue[i] + '(' + datatosend[i] + ')',
-					//data: Math.floor(Math.random() * 100) + 1
-					data: datatosend[i]
-				}
-			}
-
-			var placeholder = $("#placeholder_"+placeholderindex);
-			$.plot(placeholder, data, {
-				series: {
-					pie: { 
-						show: true
-					}
-					},
-					grid: {
-						hoverable: true
-					}
-			});
-			
-			/* placeholder.resize(function () {
-				$(".message").text("Placeholder is now "
-					+ $(this).width() + "x" + $(this).height()
-					+ " pixels");
-			});
-
-			$(".demo-container").resizable({
-				maxWidth: 900,
-				maxHeight: 500,
-				minWidth: 450,
-				minHeight: 250,
-			}); */
-	
-			function showTooltip(x, y, contents) {
-				$('<div id="tooltip_'+placeholderindex+'">' + contents + '</div>').css( {
-					position: 'absolute',
-					top: y + 5,
-					left: x + 5,
-					border: '1px solid #fdd',
-					padding: '2px',
-					'background-color': '#fee',
-					opacity: 0.80
-				}).appendTo("body");//.fadeIn(200);
-			 }
-
-			$("#placeholder_"+placeholderindex).bind("plothover", function (event, pos, item) {
-				if (item) {
-					if ($(this).data('previous-post') != item.seriesIndex) {
-						$(this).data('previous-post', item.seriesIndex);
-					}
-					$("#tooltip_"+placeholderindex).remove();
-					y = 'Percent ' + ': ' + item.datapoint;
-					showTooltip(pos.pageX, pos.pageY, item.series.label + " " + y);
-					$("#tooltip_"+placeholderindex).css('z-index','4');
-				} else {
-					$("#tooltip_"+placeholderindex).css('display','none');
-				}	
-			});		
-			$("#tooltip_"+placeholderindex).css('display','none');
-		},
-		
-		newbarchart : function(placeholderindex,totalArr, xlabelVal) {
-			/* var d1 = [{"label":"count","data":[[1,25],[2,5],[3,3],[4,2]]},
-                 {"label":"percentage","data":[[1,71.428571],[2,14.285714],[3,8.571429],[4,5.714286]]}];
-                 //{"label":"CAR","data":[[1,5],[2,10],[3,15],[4,20],[5,25],[6,5],[7,10],[8,15],[9,20],[10,25]]}];
-		 var ms_ticks = [[1,"127.0.0.1"],[2,"172.16.22.107"],[3,"172.16.23.25"],[4,"172.16.17.228"]]; */
-			
-			var option={
-				bars: { 
-					show: true, 
-					barWidth: 0.10, 
-					series_spread: true, 
-					align: "center", 
-					order: 1 
-				},
-				xaxis: { 
-					ticks: xlabelVal, 
-					autoscaleMargin: .01 
-				},
-				grid: { 
-					hoverable: true, 
-					clickable: true 
-				}
-			};
-
-		function plotWithOptions() {
-			$.plot("#placeholder_"+placeholderindex, totalArr, option);
-		}
-		plotWithOptions();
-		
-		function showTooltip(x, y, contents) {
-				$('<div id="tooltip_'+placeholderindex+'">' + contents + '</div>').css( {
-					position: 'absolute',
-					top: y + 5,
-					left: x + 5,
-					border: '1px solid #fdd',
-					padding: '2px',
-					'background-color': '#fee',
-					opacity: 0.80
-				}).appendTo("body");//.fadeIn(200);
-			 }
-
-			$("#placeholder_"+placeholderindex).bind("plothover", function (event, pos, item) {
-				if (item) {
-					if ($(this).data('previous-post') != item.seriesIndex) {
-						$(this).data('previous-post', item.seriesIndex);
-					}
-					$("#tooltip_"+placeholderindex).remove();
-					y = 'Value ' + ': ' + item.datapoint[1];
-					showTooltip(pos.pageX, pos.pageY, item.series.label + " " + y);
-					$("#tooltip_"+placeholderindex).css('z-index','4');
-				} else {
-					$("#tooltip_"+placeholderindex).css('display','none');
-				}	
-			});		
-			$("#tooltip_"+placeholderindex).css('display','none');
-
-		},
 		
 		graphAction : function(header, callback) {
 			var self = this;
@@ -374,26 +98,37 @@ define([], function() {
 				header.requestMethod = "POST";				
 				header.requestPostBody = JSON.stringify(projectRequestBody);
 				header.webserviceurl = commonVariables.webserviceurl + "dashboard/search";
-			} else if(action === "addwidget") {
+			} else if(action === "addwidget" || action === "widgetupdate") {
 				header.requestMethod = "POST";	
+				if(action === "widgetupdate"){header.requestMethod = "PUT";}
+				
 				projectRequestBody.projectid = commonVariables.projectId;
-				projectRequestBody.properties.x = self.properties.x;
-				projectRequestBody.properties.y = self.properties.y;
-				projectRequestBody.properties.type = self.properties.type;
+				if(self.properties){
+					projectRequestBody.properties.x = self.properties.x;
+					projectRequestBody.properties.y = self.properties.y;
+					projectRequestBody.properties.type = self.properties.type;
+				}
 				projectRequestBody.appdirname = self.currentappname;
 				projectRequestBody.dashboardid = self.currentdashboardid;
 				header.requestPostBody = JSON.stringify(projectRequestBody);
 				header.webserviceurl = commonVariables.webserviceurl + "dashboard/widget";
-			}  else if(action === "widgetupdate") {
+				
+			}  /* else if(action === "widgetupdate") {
 				header.requestMethod = "PUT";	
 				projectRequestBody.projectid = commonVariables.projectId;
-				projectRequestBody.properties.x = self.properties.x;
-				projectRequestBody.properties.y = self.properties.y;
-				projectRequestBody.properties.type = self.properties.type;
+				if(self.properties){
+					projectRequestBody.properties.x = self.properties.x;
+					projectRequestBody.properties.y = self.properties.y;
+					projectRequestBody.properties.type = self.properties.type;
+				}else{
+					projectRequestBody.properties.x = null;
+					projectRequestBody.properties.y = null;
+					projectRequestBody.properties.type = null;
+				}
 				header.requestPostBody = JSON.stringify(projectRequestBody);
 				header.webserviceurl = commonVariables.webserviceurl + "dashboard/widget";
 
-			} else if(action === 'widgetget') {
+			} */ else if(action === 'widgetget') {
 				header.requestMethod = "GET";	
 				header.webserviceurl = commonVariables.webserviceurl + "dashboard/widget/"+projectRequestBody.widgetid+"?projectId="+commonVariables.projectId+""+"&appDirName="+self.currentappname+""+"&dashboardid="+self.currentdashboardid+"";
 			} else if(action === 'deletewidget') {
@@ -410,85 +145,82 @@ define([], function() {
 		getWidgetDataInfo : function(widgetKey,currentWidget, actionBody, isCreated){
 			var self = this, regId = '', theadArr = [],thead = [], tbody = '', tColums = '';
 			try{
-				//table creation
-				self.createwidgetTable(widgetKey,currentWidget,'', isCreated);
+				//create widget layout
+				self.createwidgetLayout(widgetKey,currentWidget);
+				
 				self.graphAction(self.getActionHeader(actionBody, "searchdashboard"), function(response){
-					if(response && response.data && response.data.results){
+					if(response && response.data && response.data.results && currentWidget.properties){
 						commonVariables.api.localVal.setJson(widgetKey, currentWidget);
+
 						//chart creation
-						if(currentWidget.properties){
-							if(currentWidget.properties.type.toString() === "linechart"){
-								self.generateLineChart(widgetKey, currentWidget, response.data.results);
-							}else if(currentWidget.properties.type.toString() === "piechart"){
-								self.generatePieChart(widgetKey, currentWidget, response.data.results, self.actionBody);
-							}else if(currentWidget.properties.type.toString() === "barchart"){
-								self.generateBarChart(widgetKey, currentWidget, response.data.results, self.actionBody);
-							}
-						} else {
-						//result set
-							$.each(response.data.results, function(index,currentVal){
-								tColums = '';
-								//looping key values
-								$.each(currentVal, function(key, val){
-									if($.inArray(key, theadArr) < 0){
-										theadArr.push(key);
-										thead += '<th>' + key + '</th>';
-									}
-									
-									tColums += '<td>'+ val +'</td>';
-								});
-								tbody += '<tr>' + tColums + '</tr>';
-							});
-							
-							var nocTable = $('<table id="widTab_'+ widgetKey +'" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0"><thead><tr></tr></thead><tbody></tbody></table>');
-							/*var nocview = $('<div class="he-wrap noc_view" widgetid="' + widgetKey + '" widgetname="'+currentWidget.name+'" dynid="' + widgetKey + '" id="content_' + widgetKey + '"></div>');
-							$('.features_content_main').prepend(nocview);*/
-							
-							$('#placeholder_' + widgetKey).append(nocTable);
-							$('#widTab_' + widgetKey +' thead tr').html(thead);
-							$('#widTab_' + widgetKey +' tbody').html(tbody);
+						if(currentWidget.properties.type.toString() === "linechart"){
+							self.generateLineChart(widgetKey, currentWidget, response.data.results);
+						}else if(currentWidget.properties.type.toString() === "piechart"){
+							self.generatePieChart(widgetKey, currentWidget, response.data.results, self.actionBody);
+						}else if(currentWidget.properties.type.toString() === "barchart"){
+							self.generateBarChart(widgetKey, currentWidget, response.data.results, self.actionBody);
+						}else if(currentWidget.properties.type.toString() === "table"){
+							self.generateTable(widgetKey, response.data.results);
 						}
+					
 						//Click event for widget
+						self.clickFunction();
 					}
 				});
-				self.clickFunction();
+				
 			}catch(exception){
 				//exception
 			}
 		},
 		
-		createwidgetTable : function(widgetKey,currentWidget, actionBody, create){
-			var self = this, theadArr = [], thead = [], tbody = '', tColums = '', toappend = '';
+		
+		generateTable : function(widgetKey, results){
+			var self = this, theadArr = [],thead = [], tbody = '', tColums = '';
 			try{
+				//result set
+				$.each(results, function(index,currentVal){
+					tColums = '';
+					//looping key values
+					$.each(currentVal, function(key, val){
+						if($.inArray(key, theadArr) < 0){
+							theadArr.push(key);
+							thead += '<th>' + key + '</th>';
+						}
+						
+						tColums += '<td>'+ val +'</td>';
+					});
+					tbody += '<tr>' + tColums + '</tr>';
+				});
 				
-				//commonVariables.api.localVal.setJson(widgetKey, currentWidget);
-				if(create){
-					nocview = $('<div class="he-wrap noc_view" widgetid="' + widgetKey + '" widgetname="'+currentWidget.name+'" dynid="' + widgetKey + '" id="content_' + widgetKey + '"></div>');
-					$('.features_content_main').prepend(nocview);
+				var nocTable = $('<table id="widTab_'+ widgetKey +'" class="table table-striped table_border table-bordered" style="height:50%"><thead><tr></tr></thead><tbody></tbody></table>');
+				$('#placeholder_' + widgetKey).append(nocTable);
+				$('#widTab_' + widgetKey +' thead tr').html(thead);
+				$('#widTab_' + widgetKey +' tbody').html(tbody);
+			}catch(ec){
+				//ex
+			}
+		},
+		
+		createwidgetLayout : function(widgetKey,currentWidget){
+			var self = this;
+			try{
+				nocview = $('<div class="he-wrap noc_view" widgetid="' + widgetKey + '" widgetname="'+currentWidget.name+'" dynid="' + widgetKey + '" id="content_' + widgetKey + '"></div>');
+				$('.features_content_main').prepend(nocview);
 
-					nocview.append($('<div class="wid_name">'+currentWidget.name+'</div>'));
-					var graph = $('<div class="graph_table"></div>');
-					graph.append($('<div id="placeholder_' + widgetKey + '" class="placeholder"> </div>'));
-					nocview.append(graph);
+				nocview.append($('<div class="wid_name">'+currentWidget.name+'</div>'));
+				var graph = $('<div class="graph_table"></div>');
+				graph.append($('<div id="placeholder_' + widgetKey + '" class="placeholder" style="height:90%"> </div>'));
+				nocview.append(graph);
 
-					var graphType = currentWidget.properties === null ? '' : currentWidget.properties.type.toString();
-					var heview = $('<div class="he-view"></div>');
-					var heviewChild = $('<div class="a0" data-animate="fadeIn"><div class="center-bar"><a href="#" class="a0" data-animate="rotateInLeft"><input type="submit" value="" class="btn btn_style settings_btn settings_img"></a><a href="#" class="a1" data-animate="rotateInLeft"><input type="submit" value="" class="btn btn_style enlarge_btn" proptype="'+graphType+'"></a><a href="#" class="a2" data-animate="rotateInLeft"><input type="submit" value="" class="btn btn_style close_widget" name="close_widget" ></a></div>');
-					heview.append(heviewChild);
-					nocview.append(heview);
+				var graphType = currentWidget.properties === null ? '' : currentWidget.properties.type.toString();
+				var heview = $('<div class="he-view"></div>');
+				var heviewChild = $('<div class="a0" data-animate="fadeIn"><div class="center-bar"><a href="#" class="a0" data-animate="rotateInLeft"><input type="submit" value="" class="btn btn_style settings_btn settings_img"></a><a href="#" class="a1" data-animate="rotateInLeft"><input type="submit" value="" class="btn btn_style enlarge_btn" proptype="'+graphType+'"></a><a href="#" class="a2" data-animate="rotateInLeft"><input type="submit" value="" class="btn btn_style close_widget" name="close_widget" ></a></div>');
+				heview.append(heviewChild);
+				nocview.append(heview);
 
-					//CSS changes for widget
-					if($('.noc_view').length == 1){
-						$('.noc_view').css('width','98%');
-					} else if ($('.noc_view').length >=2) {
-						$('.noc_view').css('width','48%');
-					}
-					$('.features_content_main').show();
-
-				} else {
-					//
-				}
-				
+				//CSS changes for widget
+				//$('.noc_view').css('width','48%');
+				//$('.features_content_main').show();
 			}catch(exception){
 			 //exception
 			}
@@ -584,7 +316,7 @@ define([], function() {
 					
 					self.graphAction(self.getActionHeader(objactionBody, "searchdashboard"), function(response){
 						//table update
-						self.createwidgetTable(widgetKey,null, response, false);
+						self.createwidgetLayout(widgetKey,null, response, false);
 						//chart update
 						self.constructLineInfo(widgetKey, currentWidget, widgetInfo.data.properties.x, widgetInfo.data.properties.y, response.data.results);
 					});
@@ -596,42 +328,12 @@ define([], function() {
 		},
 		
 		constructLineInfo : function(widgetKey, currentWidget, xVal, yVal, results){
-			var self = this, totalArr = [], xData = [], yData = [], countforx = 0,countfory = 0;
+			var self = this, xData, yData = '', totalArr = [];
 			try{
-				/* $.each(results, function(key, value) {
-					console.info(key,value);
-					if(xVal == '_time' && key === "_time"){
-						var tempVal = new Date(value[xVal]);
-						xData.push(tempVal);
-					}else{xData.push(value[xVal]);}	
-
-					yData.push(value[yVal]);
-				}); */
-				
-				$.each(results,function(index,value) {
-					tempArr = [],
-					$.each(value,function(index1,value1) {	
-						if(index1 === xVal) {
-							var tempVal = value1;
-							
-							if(index1 === "_time"){
-								/* tempVal = value1.split('T')[0] + ' ' + value1.split('T')[1].split('+')[0];
-								tempVal = tempVal.slice(0,16).replace('-','/');
-								tempVal = tempVal.replace('-','/'); */
-								tempVal = Date.parse(tempVal);
-								//tempVal = new Date(tempVal.getTime() - ((-5.5*60)*60000));
-							}
-							tempArr.push(tempVal);
-							//xData[countforx] = tempVal;
-							//countforx++;
-						}
-						if(index1 === yVal) {
-							tempArr.push(value1);
-							yData[countfory] = value1;
-							countfory++;
-						}	
-					});
-					totalArr.push(tempArr);
+				$.each(results, function(index, value) {
+					if(xVal === '_time'){ console.info('xdart' ,value[xVal]);xData = Date.parse(value[xVal]);}else{xData = value[xVal];}	
+					try{yData = parseInt(value[yVal],10) === NaN ? null : parseInt(value[yVal],10) ;}catch(ex){ yData =null;}
+					totalArr.push([xData,yData])
 				});
 				
 				self.lineLegentName=currentWidget.name;
@@ -646,7 +348,8 @@ define([], function() {
 		
 		highChartLine : function(widgetKey){
 			var self=this;
-			$('#placeholder_' + widgetKey).highcharts({
+				
+			self.objlineChart = $('#placeholder_' + widgetKey).highcharts({
 				chart: {
 					type: 'spline',
 					plotBackgroundColor: null,
@@ -670,9 +373,10 @@ define([], function() {
 					gridLineWidth: 1,
 					labels: {
 						formatter: function () {
-							var date = new Date(this.value)
-							//return Highcharts.dateFormat('%H:%M:%S', this.value);
-							return ('0' + date.getHours()).slice(-2)+':'+('0'+date.getMinutes()).slice(-2)+':'+('0'+date.getSeconds()).slice(-2);
+							var date = new Date(this.value);
+							console.info('date',date);
+							return Highcharts.dateFormat('%e. %b', date);
+							//return date;/*('0' + date.getDate()).slice(-2)+'-'+('0' + date.getMonth()).slice(-2)+' ' + ('0' + date.getHours()).slice(-2)+':'+('0'+date.getMinutes()).slice(-2)+':'+('0'+date.getSeconds()).slice(-2);*/
 						} 
 					},
 					title: {
@@ -684,6 +388,9 @@ define([], function() {
 						text: self.yVal
 					},
 					min: 0
+				},
+				scrollbar: {
+					enabled: true
 				},
 				tooltip: {
 					formatter: function() {
@@ -728,7 +435,7 @@ define([], function() {
 					
 					self.graphAction(self.getActionHeader(objactionBody, "searchdashboard"), function(response){
 						//table update
-						self.createwidgetTable(objwidgetKey,null, response, false);
+						self.createwidgetLayout(objwidgetKey,null, response, false);
 						//chart update
 						self.constructPieInfo(objwidgetKey, objxVal, objyVal, response.data.results);
 					});
@@ -784,8 +491,8 @@ define([], function() {
 					plotBorderWidth: null,
 					backgroundColor: null,
 					plotShadow: false,
-					height: $('#placeholder_'+widgetKey).parent().height() - 20,
-					width: $('#placeholder_' + widgetKey).width(),
+					height: $('#placeholder_'+widgetKey).parent().height()+30,
+					width: $('#placeholder_' + widgetKey).parent().width(),
 					marginTop: chartMarginTop, //-40,
 					marginLeft: -150
 				},
@@ -863,7 +570,7 @@ define([], function() {
 					
 					self.graphAction(self.getActionHeader(objactionBody, "searchdashboard"), function(response){
 						//table update
-						self.createwidgetTable(objwidgetKey,null, response, false);
+						self.createwidgetLayout(objwidgetKey,null, response, false);
 						//chart update
 						self.constructBarInfo(objwidgetKey, objxVal, objyVal, response.data.results);
 					});
@@ -948,6 +655,8 @@ define([], function() {
 					text: null
 				},
 				xAxis: {
+					min: 0,
+					max: 3,
 					categories: xData
 				},
 				yAxis: {
@@ -955,6 +664,9 @@ define([], function() {
 					title: {
 						text: null
 					}
+				},
+				scrollbar: {
+					enabled: true
 				},
 				tooltip: {
 					headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
@@ -1065,8 +777,15 @@ define([], function() {
 			$("#lineChartOpt").hide();
 			$("#pieChartOpt").hide();
 			$("#barChartOpt").hide();
-			if(tr_toshow !== '') {
+			if(tr_toshow !== '' && tr_toshow !== 'table') {
 				$("#"+tr_toshow).show();
+				$("input[name='execute_query']").removeAttr('disabled');
+				$("#update_tab").attr('disabled','disabled');
+			} else {
+				if(!($("#update_tab").val() === 'Update')) {
+					$("input[name='execute_query']").attr('disabled','disabled');
+					$("#update_tab").removeAttr('disabled');
+				}	
 			}	
 		 },
 		 
@@ -1116,6 +835,8 @@ define([], function() {
 						self.properties.x = $.makeArray($("select.baraxis option:selected").val());
 						self.properties.y = SelectedItems;
 						self.properties.type = ['barchart'];
+					}else if($("#widgetType option:selected").val() === 'table'){
+						self.properties.type = ['table'];
 					}
 			
 					self.graphAction(self.getActionHeader(self.actionBody, "addwidget"), function(response) {
@@ -1157,12 +878,7 @@ define([], function() {
 							chartinfo.properties.type = ['barchart'];
 							self.generateBarChart(self.currentwidgetid, chartinfo, self.dataforbarchart, '');
 						} */	
-						var count = $('.noc_view').length;
-						if(count == 1){
-							$('.noc_view').css('width','98%');
-						} else if (count >=2) {
-							$('.noc_view').css('width','48%');
-						}	
+						$('.noc_view').css('width','48%');
 					});
 				}
 		 },
@@ -1252,18 +968,15 @@ define([], function() {
 						self.highChartBar(placeval,self.totalArrforbar, self.xDataforbar);
 					} else if($(this).attr('proptype') === 'linechart') {
 						self.highChartLine(placeval);
+					} else if($(this).attr('proptype') === 'table') {
+						$('.placeholder').css('height','100%');
 					}
 				} else {
 					$("#content_"+placeval).children(".demo-container1").addClass('cssforchart');						
 					$('.noc_view').show();
 					var count = $('.noc_view').length;
-					if(count == 1){
-						$('.noc_view').css('height','97%');
-						$('.noc_view').css('width','98%');
-					} else if (count >=2) {
-						$('.noc_view').css('height','45%');
-						$('.noc_view').css('width','48%');
-					}	 
+					$('.noc_view').css('height','45%');
+					$('.noc_view').css('width','48%');
 					flagg = 0;
 					if($(this).attr('proptype') === 'piechart') {
 						self.highChartPie(placeval, self.piechartdata_new, -10, 5);	
@@ -1271,6 +984,8 @@ define([], function() {
 						self.highChartBar(placeval,self.totalArrforbar, self.xDataforbar);
 					} else if($(this).attr('proptype') === 'linechart') {
 						self.highChartLine(placeval);
+					} else if($(this).attr('proptype') === 'table') {
+						$('.placeholder').css('height','90%');
 					}
 				}														
 			});
@@ -1290,14 +1005,6 @@ define([], function() {
 				self.openccdashboardsettings(this,'add_widget');
 				$("#update_tab").val('Update');
 				
-				$("#timeoutval_update").bind('keypress',function(e) {
-				if((e.which >= 48 && e.which <= 57) || (e.which === 8)){
-					return true;
-				} else {
-					e.preventDefault();
-				}
-				});
-				
 				//self.actionBody = {};
 				//self.actionBody.widgetid = $(this).parents('div.noc_view').attr('dynid');
 				
@@ -1308,6 +1015,8 @@ define([], function() {
 					if(result.data.properties) {
 						$("#widgetType").val(result.data.properties.type.toString());
 					}	
+					self.optionsshowhide($("#widgetType").val());
+					$("input[name='execute_query']").removeAttr('disabled');
 					/* if(result.data.autorefresh) {
 						$("#timeoutval_update").show();
 						$("#timeoutval_update").val(result.data.autorefresh);
@@ -1449,15 +1158,16 @@ define([], function() {
 					self.graphAction(self.getActionHeader(self.actionBody, "searchdashboard"), function(response) {
 						self.chartdata = response.data.results;
 						self.datafortable = response;
-						if($('#widgetType').val() === 'linechart') {
+						if($('#widgetType option:selected').val() === 'linechart') {
 							self.lineChartQueryExe(response);
-						} else if($('#widgetType').val() === 'piechart') {
+						} else if($('#widgetType option:selected').val() === 'piechart') {
 							self.pieChartQueryExe(response);							
-						} else if($('#widgetType').val() === 'barchart') {
+						} else if($('#widgetType option:selected').val() === 'barchart') {
 							self.barChartQueryExe(response);
 						}	
 					});		
 				}	
+				$("#update_tab").removeAttr('disabled');
 			});
 			
 			$('.closeset').unbind('click');
@@ -1477,7 +1187,7 @@ define([], function() {
 
 				self.actionBody = {};
 				self.actionBody.query = $("#query_add").val();
-				self.actionBody.autorefresh = ($('#timeout_update').is(':checked') && $('#timeoutval_update').val().trim() !== "" ? $('#timeoutval_update').val().trim() : null);
+				self.actionBody.autorefresh = ($('#timeout').is(':checked') && $('#timeoutval').val().trim() !== "" ? $('#timeoutval').val().trim() : null);
 				self.actionBody.starttime = '';
 				self.actionBody.endtime = '';
 				self.actionBody.widgetid = $("#content_"+widgetId).attr('widgetid');
@@ -1505,6 +1215,8 @@ define([], function() {
 					self.properties.x = $.makeArray($("select.baraxis option:selected").val());
 					self.properties.y = SelectedItems;
 					self.properties.type = ['barchart'];
+				} else if(widgetdatatype === 'table'){
+					self.properties.type = ['table'];
 				}
 				
 				self.graphAction(self.getActionHeader(self.actionBody, "widgetupdate"), function(response) {
@@ -1519,6 +1231,8 @@ define([], function() {
 									return true;
 								}
 							});
+
+							$('#placeholder_' + widgetKey).empty();
 							
 							if(widgetdatatype === 'linechart'){
 								self.generateLineChart(widgetKey, currentWidget.data, self.dataforlinechart);
@@ -1526,7 +1240,7 @@ define([], function() {
 								currentWidget.data.properties = {};
 								currentWidget.data.properties.x = $.makeArray(indexforx);
 								currentWidget.data.properties.y = $.makeArray(indexfory);
-								currentWidget.data.autorefresh = ($('#timeout_update').is(':checked') && $('#timeoutval_update').val().trim() !== "" ? $('#timeoutval_update').val().trim() : null);
+								currentWidget.data.autorefresh = ($('#timeout').is(':checked') && $('#timeoutval').val().trim() !== "" ? $('#timeoutval').val().trim() : null);
 								
 								self.actionBody = {};
 								self.actionBody.query = $("#query_add").val();
@@ -1540,12 +1254,11 @@ define([], function() {
 								currentWidget.data.properties = {};
 								currentWidget.data.properties.x = $.makeArray($("select.baraxis option:selected").val());
 								currentWidget.data.properties.y = SelectedItems;
-								currentWidget.data.autorefresh = ($('#timeout_update').is(':checked') && $('#timeoutval_update').val().trim() !== "" ? $('#timeoutval_update').val().trim() : null);
+								currentWidget.data.autorefresh = ($('#timeout').is(':checked') && $('#timeoutval').val().trim() !== "" ? $('#timeoutval').val().trim() : null);
 								self.generateBarChart(widgetKey, currentWidget.data, self.dataforbarchart, self.actionBody);
+							} else if(widgetdatatype === 'table'){
+								self.generateTable(widgetKey, self.datafortable.data.results);
 							}
-							
-							//table update
-							self.createwidgetTable(widgetKey,null, self.datafortable, false);
 							
 							$("#add_widget").hide();	
 							if(typeofwidget === 'table') {
@@ -1561,59 +1274,12 @@ define([], function() {
 							}
 						});
 					}
+					$('.he-view').removeAttr('style');
+					window.hoverFlag = 0;
 				});
 			} else {
 				self.createwidgetfunction();
 			}	
-				
-				
-				
-				
-				/* $("#table_"+widgetKey).empty();
-				var tabdata = '<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0"> <thead><tr></tr></thead><tbody></tbody></table>';
-				$("#table_"+widgetKey).append(tabdata);
-				$.each(self.chartdata,function(index,value) {
-					$("#table_"+widgetKey).find('tbody').append('<tr></tr>');
-					$.each(value,function(index1,value1) {
-						if(flag !==1) {
-							tempdata[i] = index1;								
-							i++;
-						}	
-						$("#table_"+widgetKey).find('tbody tr:last').append('<td>'+value1+'</td>');
-						j++;
-					});
-					j = 0;
-					flag = 1;
-				});					
-				for(var ii=0;ii<tempdata.length;ii++) {
-					$("#table_"+widgetKey).find('thead tr').append('<th>'+tempdata[ii]+'</th>');
-				} */
-				
-				/* self.actionBody = {};       
-				self.actionBody.query = $("#query_add").val();
-				self.actionBody.autorefresh = ($('#timeout_update').is(':checked') && $('#timeoutval_update').val().trim() !== "" ? $('#timeoutval_update').val().trim() : null);
-				self.actionBody.starttime = '';
-				self.actionBody.endtime = '';
-				self.actionBody.widgetid = $("#content_"+widgetId).parent().attr('widgetid');
-				self.actionBody.name = $("#content_"+widgetId).parent().attr('widgetname');
-				self.actionBody.appdirname = self.currentappname;
-				self.actionBody.dashboardid = self.currentdashboardid;
-				self.actionBody.properties = {};
-				self.graphAction(self.getActionHeader(self.actionBody, "widgetupdate"), function(response) {
-
-					$("#firstsettings").hide();	
-					if(typeofwidget === 'table') {
-						$('#tableview_'+widgetKey).parent('li').addClass('active');
-						$('#graphview_'+widgetKey).parent('li').removeClass('active');	
-						$("#table_"+widgetKey).show();
-						$("#content_"+widgetKey).hide();	
-					} else {
-						$('#tableview_'+widgetKey).parent('li').removeClass('active');
-						$('#graphview_'+widgetKey).parent('li').addClass('active');	
-						$("#table_"+widgetKey).hide();
-						$("#content_"+widgetKey).show();	
-					}
-				}); */
 			});
 		},
 		

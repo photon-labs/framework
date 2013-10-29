@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.photon.phresco.framework</groupId>
         <artifactId>phresco-framework-root</artifactId>
-        <version>3.1.0.4001-SNAPSHOT</version>
+        <version>3.1.0.4002-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
    
@@ -717,9 +717,16 @@
 			<version>1.0</version>
 			<type>js</type>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>jslibraries.files</groupId>
 			<artifactId>highcharts</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency> -->
+		
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>highstock</artifactId>
 			<version>1.0</version>
 			<type>js</type>
 		</dependency>

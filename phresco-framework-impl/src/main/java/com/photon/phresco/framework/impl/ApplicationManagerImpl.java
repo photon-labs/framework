@@ -194,7 +194,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
 	private StringBuilder createPomArg(ProjectInfo projectInfo, StringBuilder builder) {
 		if(projectInfo != null) {
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
-			String pomFileName = Utility.getPomFileName(applicationInfo);
+			String pomFileName = Utility.getPhrescoPomFile(applicationInfo);
 			builder.append(Constants.SPACE);
 			builder.append("-f");
 			builder.append(Constants.SPACE);

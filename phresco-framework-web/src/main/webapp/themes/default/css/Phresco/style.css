@@ -4904,6 +4904,7 @@ textarea[name="regex"] {
 	border-radius:8px;
 	float:left;
 	margin:5px;
+	width: 48%; 
 }
 
 .tab_div {
@@ -4956,6 +4957,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', end
 	font-size: 14px;
     font-weight: bold;
     margin: 5px 12px;
+	height: 28px;
 }
 
 .settings_btn {
@@ -5051,7 +5053,12 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', end
 .graph_table {
 	margin:4px;	
 	text-align:center;
-	height: 97%;
+	height: 86%;
+}
+
+.placeholder {
+	height: 90%;
+	overflow-y: auto;
 }
 
 #noc_config1 {
