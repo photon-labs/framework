@@ -374,7 +374,6 @@ define([], function() {
 					labels: {
 						formatter: function () {
 							var date = new Date(this.value);
-							console.info('date',date);
 							return Highcharts.dateFormat('%e. %b', date);
 							//return date;/*('0' + date.getDate()).slice(-2)+'-'+('0' + date.getMonth()).slice(-2)+' ' + ('0' + date.getHours()).slice(-2)+':'+('0'+date.getMinutes()).slice(-2)+':'+('0'+date.getSeconds()).slice(-2);*/
 						} 
@@ -485,6 +484,7 @@ define([], function() {
 		highChartPie : function(widgetKey,newXdata,chartMarginTop,legendX) {
 			//$('#content_' + widgetKey).empty();
 			var width = $('#placeholder_' + widgetKey).width() / 4;
+			var height = $('#placeholder_' + widgetKey).parent().height()-40;
 			$('#placeholder_' + widgetKey).highcharts({
 				chart: {
 					plotBackgroundColor: null,
@@ -515,6 +515,7 @@ define([], function() {
 					itemStyle: {
 						lineHeight: '14px'
 					},
+					maxHeight: height,
 					x: width-legendX //width - 5,
 					
 				},
