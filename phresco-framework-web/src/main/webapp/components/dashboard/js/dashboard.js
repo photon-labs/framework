@@ -24,6 +24,12 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 				self.onLoginEvent = new signals.Signal();
 			}
 			if(self.dashboardListener === null){
+				$.extend($.tablesorter.defaults, {
+				widthFixed: true,
+				widgets : ['zebra','columns'],
+				//sortList : [ [0,0],[1,0],[2,0] ]
+				});
+					
 				self.dashboardListener = new Clazz.com.components.dashboard.js.listener.DashboardListener();
 				
 				// Radialize the colors - it should initialize only once since this block is here.

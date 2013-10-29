@@ -192,10 +192,11 @@ define([], function() {
 					tbody += '<tr>' + tColums + '</tr>';
 				});
 				
-				var nocTable = $('<table id="widTab_'+ widgetKey +'" class="table table-striped table_border table-bordered" style="height:50%"><thead><tr></tr></thead><tbody></tbody></table>');
+				var nocTable = $('<div class="minitable"><table id="widTab_'+ widgetKey +'" class="table table_border border_div table-bordered tablesorter-default" style="height:50%; width:98%;" align="center"><thead><tr></tr></thead><tbody></tbody></table></div>');
 				$('#placeholder_' + widgetKey).append(nocTable);
 				$('#widTab_' + widgetKey +' thead tr').html(thead);
 				$('#widTab_' + widgetKey +' tbody').html(tbody);
+				$('.border_div').tablesorter();
 			}catch(ec){
 				//ex
 			}

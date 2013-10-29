@@ -5155,3 +5155,106 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', end
 .pick_color {
 	background:url(../../images/Phresco/pick_color.png) no-repeat right #FFFFFF !important;
 }
+
+
+
+/***************************** STYLES FOR THE TABLE SORTING STARTS *************************************/
+.tablesorter-default {
+	border-radius:8px;
+}
+
+.tablesorter-default th,
+.tablesorter-default thead td {
+	color: #fff;
+	border-co1lapse: collapse;
+	padding: 0;
+	text-transform:capitalize;
+}
+.tablesorter-default tfoot th,
+.tablesorter-default tfoot td {
+	border: 0;
+}
+.tablesorter-default .header,
+.tablesorter-default .tablesorter-header {
+	background-image: url(data:image/gif;base64,R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==);
+	background-position: center right;
+	background-repeat: no-repeat;
+	cursor: pointer;
+	white-space: normal;
+	padding: 7px 20px 7px 4px;
+}
+.tablesorter-default thead .headerSortUp,
+.tablesorter-default thead .tablesorter-headerSortUp,
+.tablesorter-default thead .tablesorter-headerAsc {
+	background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7);
+}
+.tablesorter-default thead .headerSortDown,
+.tablesorter-default thead .tablesorter-headerSortDown,
+.tablesorter-default thead .tablesorter-headerDesc {
+	background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7);
+}
+.tablesorter-default thead .sorter-false {
+	background-image: none;
+	padding: 4px;
+}
+
+/* tbody */
+.tablesorter-default td {
+	background-color: #fff;
+	border-bottom: #dddddd 1px solid;
+	padding: 4px;
+	vertical-align: top;
+	color:#313131;
+	border-right:1px solid #FFF !important;
+}
+
+/* hovered row colors */
+.tablesorter-default tbody > tr:hover > td,
+.tablesorter-default tbody > tr.even:hover > td,
+.tablesorter-default tbody > tr.odd:hover > td {
+	background: #fff;
+	color: #000;
+}
+
+/* table processing indicator */
+.tablesorter-default .tablesorter-processing {
+	background-position: center center !important;
+	background-repeat: no-repeat !important;
+	background-image: url('data:image/gif;base64,R0lGODlhFAAUAKEAAO7u7lpaWgAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQBCgACACwAAAAAFAAUAAACQZRvoIDtu1wLQUAlqKTVxqwhXIiBnDg6Y4eyx4lKW5XK7wrLeK3vbq8J2W4T4e1nMhpWrZCTt3xKZ8kgsggdJmUFACH5BAEKAAIALAcAAAALAAcAAAIUVB6ii7jajgCAuUmtovxtXnmdUAAAIfkEAQoAAgAsDQACAAcACwAAAhRUIpmHy/3gUVQAQO9NetuugCFWAAAh+QQBCgACACwNAAcABwALAAACE5QVcZjKbVo6ck2AF95m5/6BSwEAIfkEAQoAAgAsBwANAAsABwAAAhOUH3kr6QaAcSrGWe1VQl+mMUIBACH5BAEKAAIALAIADQALAAcAAAIUlICmh7ncTAgqijkruDiv7n2YUAAAIfkEAQoAAgAsAAAHAAcACwAAAhQUIGmHyedehIoqFXLKfPOAaZdWAAAh+QQFCgACACwAAAIABwALAAACFJQFcJiXb15zLYRl7cla8OtlGGgUADs=') !important;
+}
+
+/* Zebra Widget - row alternating colors */
+.tablesorter-default tr.odd td {
+	background-color: #f9f9f9;
+}
+.tablesorter-default tr.even td {
+	background-color: #f6f6f6;
+}
+
+/* Column Widget - column sort colors */
+.tablesorter-default tr.odd td.primary {
+	background-color: #f1f1f1;
+}
+.tablesorter-default td.primary,
+.tablesorter-default tr.even td.primary {
+	background-color: #ececec;
+}
+
+.tablesorter-default th {
+	background: #eeeeee; /* Old browsers */
+	background: -moz-linear-gradient(top,  #eeeeee 0%, #d2d2d2 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eeeeee), color-stop(100%,#d2d2d2)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #eeeeee 0%,#d2d2d2 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #eeeeee 0%,#d2d2d2 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #eeeeee 0%,#d2d2d2 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #eeeeee 0%,#d2d2d2 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#d2d2d2',GradientType=0 ); /* IE6-9 */
+	font-size:12px !important;
+	color:#333333 !important;
+	border-right:1px solid #FFF !important;
+}
+
+
+
+
+/***************************** STYLES FOR THE TABLE SORTING ENDS *************************************/
