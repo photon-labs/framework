@@ -426,6 +426,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 
 		getDynamicTemplate : function (parameter, whereToRender) {
             var templateDiv =  $('<div class="'+parameter.key+'_Template"></div>'), self = this;
+            self.showDynamicPopupLoading();
             templateDiv.empty();
             whereToRender.parent().find('.templates').append(templateDiv);
             self.queryDynamicTemplate(self.getRequestHeader("", parameter.key, "", "template"), parameter, templateDiv, function(response) {

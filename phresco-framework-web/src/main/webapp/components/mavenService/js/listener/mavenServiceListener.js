@@ -160,7 +160,7 @@ define([], function() {
 					function(response){
 						if(response !==  undefined && response !==  null){
 							commonVariables.loadingScreen.removeLoading();
-
+							self.removeContentEndHeight();
 							if(response.status.toUpperCase() === 'STARTED'){
 								$(divId).append(response.status + '<br>');
 								self.mvnlogService(response.uniquekey, divId, function(retVal){
@@ -186,6 +186,7 @@ define([], function() {
 								},2500); 
 								callback(response);
 							}else if(response.status === null){
+								self.setContentEndHeight();
 								callback(response);
 							}
 							
@@ -251,23 +252,29 @@ define([], function() {
 									response.log.toLowerCase().match("server running at https://") ||
 									response.log.toLowerCase().match("server running at http://")) {
 									//For start node
+									self.setContentEndHeight();
 									callback(response);
 								} else if (response.log.indexOf("tomcatProcess stopped.") != -1) {
+									self.setContentEndHeight();
 									$('.progress_loading').css('display','none');
 									callback(response);
 								} else {
 									self.mvnlogService(response.uniquekey, divId, callback);
 								}
 							}else if(response.status.toUpperCase() === 'COMPLETED'){
+								self.setContentEndHeight();
 								callback(response);
 							}else if(response.status.toUpperCase() === 'ERROR'){
+								self.setContentEndHeight();
 								$(divId).append('<font style = "color:red">' + response.service_exception + '</font><br>');
 								$('.progress_loading').css('display','none');
 								callback(response);
 							}else if(response.status.toUpperCase() === 'SUCCESS'){
+								self.setContentEndHeight();
 								$('.progress_loading').css('display','none');
 								callback(response);
 							}else if(response.status.toUpperCase() === 'FAILURE'){
+								self.setContentEndHeight();
 								$(".content_end").show();
 								$(".msgdisplay").removeClass("success").addClass("error");
 								$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
@@ -278,10 +285,12 @@ define([], function() {
 								},2500); 
 								callback(response);
 							}else if(response.status === null){
+								self.setContentEndHeight();
 								$('.progress_loading').css('display','none');
 								callback(response);
 							}
 						}else {
+							self.setContentEndHeight();
 							$('.progress_loading').css('display','none');
 							$(".content_end").show();
 							$(".msgdisplay").removeClass("success").addClass("error");
@@ -295,6 +304,7 @@ define([], function() {
 						}
 					}, 
 					function(serviceerror){
+						self.setContentEndHeight();
 						commonVariables.hideloading = false;
 						$('.progress_loading').css('display','none');
 						$(".content_end").show();

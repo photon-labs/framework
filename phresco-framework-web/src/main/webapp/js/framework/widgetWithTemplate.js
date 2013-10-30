@@ -940,7 +940,15 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					return true;
 				}
 			},
-		
+			
+			setContentEndHeight : function() {
+				$('.content_end').css('height', '34px');
+			},
+
+			removeContentEndHeight : function() {
+				$('.content_end').css('height', 'auto');
+			},
+
 			// Open console window - Added by sudhakar
 			openConsole : function() {
 				var self = this;
