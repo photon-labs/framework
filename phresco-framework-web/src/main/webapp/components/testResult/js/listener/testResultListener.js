@@ -334,6 +334,9 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 					header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + "/testsuites?appDirName=" + appDirName + moduleParam;
 				} else {
 					header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/testsuites?appDirName=" + appDirName + "&testType=" + testType + moduleParam;
+					if ("integrationTest" === currentTab) {
+						header.webserviceurl = header.webserviceurl + "&projectCode=" + commonVariables.projectCode;
+					}
 				}
 				
 				if (techReport !== undefined) {
@@ -346,6 +349,9 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				} else {
 					header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/testreports?appDirName=" + appDirName +
 					"&testType=" + testType+ "&testSuite=" + requestBody.testSuite + moduleParam;
+					if ("integrationTest" === currentTab) {
+						header.webserviceurl = header.webserviceurl + "&projectCode=" + commonVariables.projectCode;
+					}
 				}
 				
 				if (techReport !== undefined) {

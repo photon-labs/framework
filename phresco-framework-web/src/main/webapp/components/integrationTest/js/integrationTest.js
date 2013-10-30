@@ -12,8 +12,8 @@ define(["integrationTest/listener/integrationTestListener", "testResult/listener
 		testResultListener : null,
 		// onTabularViewEvent : null,
 		// onGraphicalViewEvent : null,
-		onRunIntegrationTestEvent : null,
 		onDynamicPageEvent : null,
+		onRunIntegrationTestEvent : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -32,7 +32,7 @@ define(["integrationTest/listener/integrationTestListener", "testResult/listener
 			if (self.onDynamicPageEvent === null) {
 				self.onDynamicPageEvent = new signals.Signal();
 			}
-			//self.onDynamicPageEvent.add(self.integrationTestListener.getDynamicParams, self.integrationTestListener);
+			self.onDynamicPageEvent.add(self.integrationTestListener.getDynamicParams, self.integrationTestListener);
 
 			if (self.onRunIntegrationTestEvent === null) {
 				self.onRunIntegrationTestEvent = new signals.Signal();
@@ -50,11 +50,6 @@ define(["integrationTest/listener/integrationTestListener", "testResult/listener
 		 * Called in once the login is success
 		 *
 		 */
-		loadPage : function(needAnimation) {
-			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
-			Clazz.navigationController.push(this, needAnimation);
-		},
-		
 		/***
 		 * Called after the preRender() and bindUI() completes. 
 		 * Override and add any preRender functionality here
@@ -94,14 +89,15 @@ define(["integrationTest/listener/integrationTestListener", "testResult/listener
 				advanced:{ updateOnContentResize: true}
 			});
 			
-			$("#ntegrationTestBtn").unbind("click");
-			$("#ntegrationTestBtn").click(function() {
+			$("#integrationTestBtn").unbind("click");
+			$("#integrationTestBtn").click(function() {
 				self.onDynamicPageEvent.dispatch(this, function() {
 					self.testResult.logContent = $('#testConsole').html();
 					$('#testResult').empty();
 					Clazz.navigationController.jQueryContainer = '#testResult';
 					Clazz.navigationController.push(self.testResult, false);
 				});
+				self.copyLog();
 			});
 			
 			$("#testSuites").css("display", "none");
@@ -109,80 +105,35 @@ define(["integrationTest/listener/integrationTestListener", "testResult/listener
 			$("#unitTestTab").css("display", "block");
 			$(".unit_view").css("display", "none");
 			$("#graphView").css("display", "none");
-			
-			//Change event of the report type to get the report
-			$('.projectModule').click(function() {
-				$('#modulesDrop').attr("value", $(this).children().text());
-				$('#modulesDrop').html($(this).children().text() + '<b class="caret"></b>');
-				
-				$('#testResult').empty();
-				Clazz.navigationController.jQueryContainer = '#testResult';
-				Clazz.navigationController.push(self.testResult, false);
-			});
-			
-			//Change event of the report type to get the report
-			$('.reportOption').click(function() {
-				$('#reportOptionsDrop').attr("value", $(this).children().text());
-				$('#reportOptionsDrop').html($(this).children().text() + '<b class="caret"></b>');
-				
-				$('#testResult').empty();
-				Clazz.navigationController.jQueryContainer = '#testResult';
-				Clazz.navigationController.push(self.testResult, false);
-			});
 
-			$(".table2").unbind("click");
-			$(".table2").click(function() {
-				$("#graphicalView").hide();
-				$("#tabularView").show();
-				$("#graphView").hide();
-				$("#testSuites").show();
-			});
-			
-			//Shows the graphical view of the test result
-			$(".graph1").unbind("click");
-			$(".graph1").click(function() {
-				var top = $('.header-background').offset().top;
-				$("#testSuites").hide();
-				$("#testSuites").append('<input type="hidden" id="topHidden" value="'+top+'">');
-				$("#graphView").show();
-				$("#tabularView").hide();
-				$("#graphicalView").show();
-			});
-			
-			//To open the Integration test directory
-			$('#openFolder').unbind('click');
-			$("#openFolder").click(function() {
+			//To open the unit test directory
+			$('#OpenFolder').unbind('click');
+			$("#OpenFolder").click(function() {
+				commonVariables.hideloading = true;
 				var paramJson = {};
 				paramJson.type =  commonVariables.typeIntegrationTest;
 				commonVariables.navListener.openFolder(paramJson);
 			});
 			
-			//To copy the path of Integration test directory
-			$('#copyPath').unbind('click');
-			$("#copyPath").click(function() {
+			//To copy the path of unit test directory
+			$('#CopyPath').unbind('click');
+			$("#CopyPath").click(function() {
+				commonVariables.hideloading = true;
 				var paramJson = {};
 				paramJson.type =  commonVariables.typeIntegrationTest;
 				commonVariables.navListener.copyPath(paramJson);
 			});
-
-			/*$('#integrationTestBtn').unbind('click');
-			$("#integrationTestBtn").click(function() {
-				var openccObj = this;
-				console.info("$('#integrationTestDynCtrls'):::::", $('#integrationTestDynCtrls'));
-				console.info("commonVariables.intergrationTestGoal:::", commonVariables.integrationTestGoal);
-				self.onDynamicPageEvent.dispatch(openccObj, $('#integrationTestDynCtrls'), 'integration_popup', commonVariables.intergrationTestGoal);
-			});*/
 			
-			//To run the unit test
+			//To run the Integration test
 			$("#runIntegrationTest").unbind("click");
 			$("#runIntegrationTest").click(function() {
-				self.onRunUnitTestEvent.dispatch(function() {
-					self.testResult.logContent = $('#testConsole').html();
+				self.onRunIntegrationTestEvent.dispatch(function() {
+					commonVariables.logContent = $('#testConsole').html();
 					$('#testResult').empty();
 					Clazz.navigationController.jQueryContainer = '#testResult';
-					Clazz.navigationController.push(self.testResult, false);
+					Clazz.navigationController.push(self.testsuiteResult, false);
 				});
-				$("#unit_popup").toggle();
+				$("#integration_popup").toggle();
 			});
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;

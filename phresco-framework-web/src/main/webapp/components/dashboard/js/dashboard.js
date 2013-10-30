@@ -72,6 +72,11 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 				$("#editprojecttitle").html("Edit - " +response.data.name);
 				$.each(response.data.appInfos,function(index,value) {
 					$(".appdirnamedropdown").append('<option id='+value.id+' code='+value.code+' appDirName='+value.appDirName+' value='+value.name+'>'+value.name+'</option>');	
+					if (response.data.integrationTest === true) {
+						$("#integrationTest").hide();
+					} else {
+						$("#integrationTest").show();
+					}
 				});
 
 				var headervalue = $('#header').height();

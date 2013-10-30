@@ -68,47 +68,9 @@
                     </map>
             </span>
         </div>
-    	<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/Phresco/openfolder_icon.png" ></a></div>
-		<div class="icon_images copy_path_icon"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/Phresco/copypath_icon.png" ></a></div>	
+    	<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Open Folder" id="OpenFolder"><img src="themes/default/images/Phresco/openfolder_icon.png" ></a></div>
+		<div class="icon_images copy_path_icon"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Copy Path" id="CopyPath"><img src="themes/default/images/Phresco/copypath_icon.png" ></a></div>	
             
-        {{#if projectModules}}
-            <div class="code_report">
-            	Module
-            </div>
-            <div class="navbar navbar-static code_func module">
-                <ul class="nav">
-                    <li id="fat-menu" class="dropdown">
-						<a href="javascript:void(0)" id="modulesDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" 
-							value="{{#modules projectModules true}}{{/modules}}">{{#modules projectModules true}}{{/modules}}<b class="caret"></b></a>
-                      	<div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="modulesDrop">
-	                      	<ul>
-	                      		{{#modules projectModules false}}{{/modules}}
-                        	</ul>
-						</div>
-                    </li>
-                </ul>
-            </div>
-        {{/if}}
-    
-        {{#if reportOptions}}
-            <div class="code_report">
-            	Technology
-            </div>
-            <div class="navbar navbar-static code_func">
-                <ul class="nav">
-                    <li id="fat-menu" class="dropdown">
-						<a href="javascript:void(0)" id="reportOptionsDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" 
-							value="{{#report reportOptions true}}{{/report}}">{{#report reportOptions true}}{{/report}}<b class="caret"></b></a>
-						<div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="reportOptionsDrop">
-	                      	<ul>
-	                      		{{#report reportOptions false}}{{/report}}
-	                        </ul>
-						</div>
-                    </li>
-                </ul>
-            </div>
-        {{/if}}
-           
         <div class="code_anal">
         	{{#if userPermissions.manageTests}}
             	<input type="button" data-i18n="[value]commonlabel.label.test" id="integrationTestBtn" class="btn btn_style">
@@ -117,8 +79,8 @@
         	{{/if}}
 			
 			<form id="integrationTestForm">
-				<div id="integration_popup" class="dyn_popup hideContent dynamic_cont" style="width:310px;">
-					<ul class="row dynamicControls id="integrationTestDynCtrls">
+				<div id="integration_popup" class="dyn_popup hideContent dynamic_cont">
+					<ul class="row dynamicControls">
 					</ul>
 					<div class="dynamicPopupLoading" style="display:none;">&nbsp</div>
 					<div class="hiddenControls"></div>

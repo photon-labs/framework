@@ -248,7 +248,14 @@ define(["projectlist/listener/projectListListener"], function() {
 			$("#editprojectTab").css("display", "none");
 			$("img[name=editproject]").unbind("click");
 			$("img[name=editproject]").click(function(){
-				self.onProjectEditEvent.dispatch($(this).attr('key'));
+				commonVariables.api.localVal.setSession('projectCode', $(this).attr('projectcode'));
+				commonVariables.api.localVal.setSession('projectId', $(this).attr('projectId'));
+				self.onProjectEditEvent.dispatch($(this).attr('key'), $(this).attr('projectId'));
+				commonVariables.projectCode = commonVariables.api.localVal.getSession('projectCode');
+				var actionBody = {};
+				self.projectslistListener.getProjectList(self.projectslistListener.getActionHeader(actionBody, "checkMachine"), function(response) {
+					commonVariables.api.localVal.setSession("checkMachine", JSON.stringify(response));
+				});
 			});	
 			
 			$("#myTab li a").removeClass("act");
@@ -278,7 +285,8 @@ define(["projectlist/listener/projectListListener"], function() {
 					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
 						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 					}	
-				});		
+				});	
+				commonVariables.projectCode = "";
 			});
 
 			$(".tooltiptop").unbind("click");

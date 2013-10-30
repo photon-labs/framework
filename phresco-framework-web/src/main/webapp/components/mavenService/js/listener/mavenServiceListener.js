@@ -33,6 +33,11 @@ define([], function() {
 			self.mvnService(header, divId, callback);
 		},
 		
+		mvnIntegrationTest : function(paramData, divId, callback){
+			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnIntegrationTest, paramData);
+			self.mvnService(header, divId, callback);
+		},
+		
 		mvnCiSetup : function(paramData, divId, callback){
 			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnCiSetup, paramData);
 			self.mvnService(header, divId, callback);

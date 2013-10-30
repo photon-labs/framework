@@ -794,10 +794,18 @@ define([], function() {
 			self.act=action;
 			if (action === "openFolder") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.openFolderContext + "?type=" + type + "&appDirName=" + appDirName + moduleParam;				
+				if (type === "integrationTest") {
+					header.webserviceurl = commonVariables.webserviceurl + commonVariables.openFolderContext + "?type=" + type + "&appDirName=" + commonVariables.projectCode +"-integrationTest" + moduleParam;
+				} else {
+					header.webserviceurl = commonVariables.webserviceurl + commonVariables.openFolderContext + "?type=" + type + "&appDirName=" + appDirName + moduleParam;
+				}
 			} else if (action === "copyPath") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.copyPathContext + "?type=" + type + "&appDirName=" + appDirName + moduleParam;
+				if (type === "integrationTest") {
+					header.webserviceurl = commonVariables.webserviceurl + commonVariables.copyPathContext + "?type=" + type + "&appDirName=" + commonVariables.projectCode +"-integrationTest" + moduleParam;
+				} else {
+					header.webserviceurl = commonVariables.webserviceurl + commonVariables.copyPathContext + "?type=" + type + "&appDirName=" + appDirName + moduleParam;
+				}
 			} else if(action === "importpost") {
 				var displayName="", userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 				if (userInfo !== null) {

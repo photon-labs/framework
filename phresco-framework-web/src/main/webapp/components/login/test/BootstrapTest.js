@@ -74,6 +74,7 @@ var commonVariables = {
 	testcaseResult	: "testcaseResult",
 	componentTest : "componentTest",
 	mvnUnitTest : "app/runUnitTest",
+	mvnIntegrationTest : "app/runIntegrationTest",
 	mvnComponentTest : "app/runComponentTest",
 	mvnFunctionalTest : "app/runFunctionalTest",
 	logContent : "",

@@ -94,7 +94,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             var self = this, show = "",  required = "", editable = "", multiple = "", sort = "", checked = "", additionalParam = "",
                 additionalparamSel = "", dependencyVal = "", psblDependency = "", showFlag = "", enableOnchangeFunction = "", columnClass = "";
             self.dynamicParameters =  $.merge([], response.data);
-            if (!self.isBlank(goal) && "validate-code" === goal) {
+            if (!self.isBlank(goal) && ("validate-code" === goal || "integration-test" === goal)) {
                 columnClass = "singleColumn";
             } else {
                 columnClass = "doubleColumn";
@@ -1438,16 +1438,25 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 				
 				if(goal === "deploy"){
 					buildNumber = "&buildNumber="+ commonVariables.buildNo+"&iphoneDeploy=" + (commonVariables.iphoneDeploy == null ? "" : commonVariables.iphoneDeploy);
-				} 
-				
-                header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dynamicPageContext + "?appDirName="+appDirName+"&goal="+ goal+"&phase="+phase+"&customerId="+customerId+"&userId="+userId+buildNumber+moduleParam;
+				}
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dynamicPageContext + "?appDirName="+appDirName+"&goal="+ goal+"&phase="+phase+"&customerId="+customerId+"&userId="+userId+buildNumber+moduleParam;
+				if (goal === commonVariables.integrationTestGoal) {
+					header.webserviceurl = header.webserviceurl + "&projectCode=" + commonVariables.projectCode;
+				}
+                
             } else if (action === "updateWatcher") {
                 header.requestMethod = "POST";
                 header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + "updateWatcher" + "?appDirName="+appDirName+"&goal="+ goal+"&key="+key+"&value="+selectedOption+moduleParam;
+				if (goal === commonVariables.integrationTestGoal) {
+					header.webserviceurl = header.webserviceurl + "&projectCode=" + commonVariables.projectCode;
+				}
             } else if(action === "dependency" && key !== ""){
                 header.requestMethod = "POST";
                 header.requestPostBody = projectRequestBody;
                 header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dependencyContext + "?appDirName="+appDirName+"&goal="+ goal+"&phase="+phase+"&customerId="+customerId+"&userId="+userId+"&key="+ key+moduleParam;
+				if (goal === commonVariables.integrationTestGoal) {
+					header.webserviceurl = header.webserviceurl + "&projectCode=" + commonVariables.projectCode;
+				}
             } else if (action === "template") {
                 header.requestMethod = "GET";
                 header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.templateContext + "?appDirName="+appDirName+"&goal="+ goal+"&phase="+phase+"&customerId="+customerId+"&userId="+userId+"&parameterKey="+ key+moduleParam;                

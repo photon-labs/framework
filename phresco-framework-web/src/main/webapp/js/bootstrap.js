@@ -170,6 +170,7 @@ var commonVariables = {
 	performanceTestGoal : "performance-test",
 	loadTestGoal : "load-test",
 	pdfReportGoal : "pdf-report",
+	projectCode : "",
 
 	startHubGoal : "start-hub",
 	startNodeGoal : "start-node",
@@ -180,6 +181,7 @@ var commonVariables = {
 	mvnDeploy : "app/deploy",
 	mvnProcessBuild : "app/processBuild",
 	mvnUnitTest : "app/runUnitTest",
+	mvnIntegrationTest : "app/runIntegrationTest",
 	mvnComponentTest : "app/runComponentTest",
 	mvnCodeValidation : "app/codeValidate",
 	mvnRunagainstSource : "app/runAgainstSource",
