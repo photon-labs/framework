@@ -21,6 +21,7 @@ define(["croneExpression/croneExpression"], function() {
 		nonEnvEditConfigurations : null,
 		desc : null,
 		favourite : null,
+		editSettings : null,
 	
 		/***
 		 * Called in initialization time of this class 
@@ -36,19 +37,36 @@ define(["croneExpression/croneExpression"], function() {
 			commonVariables.environmentName = envName;
 			envSpecific = (envSpecificVal === "true") ? true : false;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			if(self.editConfigurations  === null) {
-				commonVariables.navListener.getMyObj(commonVariables.editConfiguration, function(retVal) {
-					self.editConfigurations = retVal;
+			if(commonVariables.navListener.currentTab !== commonVariables.projectSettings) {
+				if(self.editConfigurations  === null) {
+					commonVariables.navListener.getMyObj(commonVariables.editConfiguration, function(retVal) {
+						self.editConfigurations = retVal;
+						self.editConfigurations.envSpecificVal = envSpecific;
+						self.editConfigurations.favourite = self.favourite;
+						self.editConfigurations.configClick = "EditConfiguration";
+						Clazz.navigationController.push(self.editConfigurations, commonVariables.animation);
+					});
+				} else {
 					self.editConfigurations.envSpecificVal = envSpecific;
 					self.editConfigurations.favourite = self.favourite;
 					self.editConfigurations.configClick = "EditConfiguration";
 					Clazz.navigationController.push(self.editConfigurations, commonVariables.animation);
-				});
-			} else {
-				self.editConfigurations.envSpecificVal = envSpecific;
-				self.editConfigurations.favourite = self.favourite;
-				self.editConfigurations.configClick = "EditConfiguration";
-				Clazz.navigationController.push(self.editConfigurations, commonVariables.animation);
+				}
+		    } else {
+				if(self.editSettings === null) {
+					commonVariables.navListener.getMyObj(commonVariables.editprojectSettings, function(retVal) {
+						self.editSettings = retVal;
+						/* self.editSettings.envSpecificVal = envSpecific;
+						self.editSettings.configClick = "EditSettings"; */
+						self.editSettings.favourite = self.favourite;
+						Clazz.navigationController.push(self.editSettings, commonVariables.animation);
+					});
+				} else {
+					/* self.editSettings.envSpecificVal = envSpecific;
+					self.editSettings.configClick = "EditSettings"; */
+					self.editSettings.favourite = self.favourite;
+					Clazz.navigationController.push(self.editSettings, commonVariables.animation);
+				}	
 			}
 		},
 
@@ -126,12 +144,16 @@ define(["croneExpression/croneExpression"], function() {
 		},
 		
 		getRequestHeader : function(configRequestBody, action, deleteEnv) {
-			var self = this, header, appDirName, techId;
+			var self = this, header, appDirName, techId, projectCode, projectId;
 			var customerId = self.getCustomer();
 			customerId = (customerId === "") ? "photon" : customerId;
+			projectCode = commonVariables.api.localVal.getSession('projectCode');
+			projectId = commonVariables.api.localVal.getSession('projectId');
 			var moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
 			var projectInfo = commonVariables.api.localVal.getProjectInfo();
-			techId = projectInfo.data.projectInfo.appInfos[0].techInfo.id;
+			if(projectInfo !== null || projectInfo !== undefined){
+				techId = projectInfo.data.projectInfo.appInfos[0].techInfo.id;
+			}
 			if (!self.isBlank(moduleParam)) {
 				appDirName = $('.rootModule').val()
 			} else if(commonVariables.api.localVal.getProjectInfo() !== null){
@@ -149,77 +171,131 @@ define(["croneExpression/croneExpression"], function() {
 				requestMethod : "GET",
 				webserviceurl : ''
 			};
-			if (action === 'list') {
-				if (configRequestBody.envSpecific === false && configRequestBody.configType !== "") {
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName="+appDirName+"&isEnvSpecific="+configRequestBody.envSpecific+"&configType="+configRequestBody.configType+moduleParam;
-				} else {				
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName="+appDirName+moduleParam;
-				}
-			} else if (action === 'edit') {
-				if (configRequestBody.envSpecific === false) {
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName+"&configName="+commonVariables.environmentName+"&isEnvSpecific="+configRequestBody.envSpecific+moduleParam;
-				} else {
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName+"&envName="+commonVariables.environmentName+moduleParam;
-				}
-			}else if (action === 'configTypes') {
-				self.bcheck = true;
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/types?customerId="+customerId+"&userId="+userId+"&techId="+techId+moduleParam;
-			} else if (action === 'delete') {
-				self.bcheck = true;
-				header.requestMethod = "DELETE";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/deleteEnv?appDirName="+appDirName+"&envName="+deleteEnv+moduleParam;
-			} else if (action === "deleteConfig") {
-				header.requestMethod = "DELETE";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/deleteConfig?appDirName="+appDirName+"&configName="+deleteEnv+moduleParam;
-			} else if (action === "template") {
+			
+			if(commonVariables.navListener.currentTab !== commonVariables.projectSettings) {
+				if (action === 'list') {
+					if (configRequestBody.envSpecific === false && configRequestBody.configType !== "") {
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName="+appDirName+"&isEnvSpecific="+configRequestBody.envSpecific+"&configType="+configRequestBody.configType;
+					} else {				
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName="+appDirName;
+					}
+				} else if (action === 'edit') {
+					if (configRequestBody.envSpecific === false) {
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName+"&configName="+commonVariables.environmentName+"&isEnvSpecific="+configRequestBody.envSpecific;
+					} else {
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName+"&envName="+commonVariables.environmentName;
+					}
+				}else if (action === 'configTypes') {
 					self.bcheck = true;
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName="+appDirName+"&customerId="+customerId+"&userId="+userId+"&type="+deleteEnv+"&techId="+techId+moduleParam;
-			} else if (action === "saveEnv") {
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/types?customerId="+customerId+"&userId="+userId+"&techId="+techId;
+				} else if (action === 'delete') {
+					self.bcheck = true;
+					header.requestMethod = "DELETE";
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/deleteEnv?appDirName="+appDirName+"&envName="+deleteEnv;
+				} else if (action === "deleteConfig") {
+					header.requestMethod = "DELETE";
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/deleteConfig?appDirName="+appDirName+"&configName="+deleteEnv;
+				} else if (action === "template") {
+						self.bcheck = true;
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName="+appDirName+"&customerId="+customerId+"&userId="+userId+"&type="+deleteEnv+"&techId="+techId;
+				} else if (action === "saveEnv") {
+						header.requestMethod = "POST";
+						header.requestPostBody = JSON.stringify(configRequestBody);
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName;
+				} else if (action === "saveConfig") {
+						header.requestMethod = "POST";
+						header.requestPostBody = JSON.stringify(configRequestBody);
+						if (deleteEnv === "false") {
+							header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&isEnvSpecific="+deleteEnv+"&configName="+commonVariables.updateConfigName+"&customerId="+customerId+"&userId="+userId+moduleParam;
+						} else {
+							header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&envName="+deleteEnv+"&customerId="+customerId+"&userId="+userId+"&oldEnvName="+self.oldEnvName+"&defaultEnv="+self.defaultEnv+"&desc="+self.desc+"&isfavoric="+self.favourite+"&favtype="+commonVariables.favConfig+moduleParam;
+						}
+				} else if (action === "cloneEnv") {
+						header.requestMethod = "POST";
+						header.requestPostBody = JSON.stringify(configRequestBody);
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/cloneEnvironment?appDirName="+appDirName+"&envName="+deleteEnv;
+				} else if (action === "isAliveCheck") {
+						header.requestMethod = "GET";
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/connectionAliveCheck?url="+configRequestBody.protocol+","+configRequestBody.host+","+configRequestBody.port;
+				} else if (action === "listUploadedFiles") {
+						header.requestMethod = "GET";
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/listUploadedFiles?appDirName="+appDirName+"&isEnvSpecific="+commonVariables.envSpecifig+"&configName="+configRequestBody.name+"&envName="+configRequestBody.envName+"&configType="+configRequestBody.type;
+				} else if (action === "deleteFile") {
+						header.requestMethod = "GET";
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/removeFile?appDirName="+appDirName+"&configType="+configRequestBody.configType+"&propName="+configRequestBody.propertyName+"&fileName="+configRequestBody.fileName+"&envName="+configRequestBody.envName+"&configName="+configRequestBody.configName;
+				} else if (action === "fileBrowse") {
+						header.requestMethod = "GET";
+						header.dataType = "xml";
+						header.contentType = "application/xml",
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/fileBrowse?&appDirName="+appDirName;
+				} else if (action === "certificate") {
+						header.requestMethod = "GET";
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/returnCertificate?host="+configRequestBody.host+"&port="+configRequestBody.port+"&appDirName="+appDirName;
+				} else if (action === "addCertificate") {
+						header.requestMethod = "POST";
+						header.requestPostBody = JSON.stringify(configRequestBody);
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/addCertificate";
+				} else if(action === "configType") {
+						header.requestMethod = "POST";
+						header.requestPostBody = {};
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/configType?userId="+userId+"&type="+deleteEnv+"&customerId="+customerId+"&appDirName="+appDirName;
+				} else if(action === "showFeatureConfigs") {
+						header.requestMethod = "POST";
+						header.requestPostBody = {};
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/showFeatureConfigs?userId="+userId+"&customerId="+customerId+"&appDirName="+appDirName+"&envName="+deleteEnv+"&featureName="+ configRequestBody;
+				}
+			} else {
+				if (action === 'list') {
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?projectCode="+projectCode;
+				} else if (action === "saveEnv") {
+						header.requestMethod = "POST";
+						header.requestPostBody = JSON.stringify(configRequestBody);
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?projectCode="+projectCode+"&projectId="+projectId+"&customerId="+customerId;
+				} else if (action === 'edit') {
+					if (configRequestBody.envSpecific === false) {
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?projectCode="+projectCode+"&configName="+commonVariables.environmentName+"&isEnvSpecific="+configRequestBody.envSpecific;
+					} else {
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?projectCode="+projectCode+"&envName="+commonVariables.environmentName;
+					} 
+				} else if (action === "template") {
+					self.bcheck = true;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?projectId="+projectId+"&customerId="+customerId+"&userId="+userId+"&type="+deleteEnv;
+				} else if(action === "configType") {
+					header.requestMethod = "POST";
+					header.requestPostBody = {};
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/configType?userId="+userId+"&type="+deleteEnv+"&customerId="+customerId+"projectCode="+projectCode;
+				} else if (action === "cloneEnv") {
 					header.requestMethod = "POST";
 					header.requestPostBody = JSON.stringify(configRequestBody);
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName+moduleParam;
-			} else if (action === "saveConfig") {
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/cloneEnvironment?projectCode="+projectCode+"&envName="+deleteEnv;
+				} else if (action === 'delete') {
+					self.bcheck = true;
+					header.requestMethod = "DELETE";
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/deleteEnv?projectCode="+projectCode+"&envName="+deleteEnv;
+				} else if (action === "deleteConfig") {
+					header.requestMethod = "DELETE";
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/deleteConfig?projectCode="+projectCode+"&configName="+deleteEnv;
+				} else if (action === "saveConfig") {
 					header.requestMethod = "POST";
 					header.requestPostBody = JSON.stringify(configRequestBody);
 					if (deleteEnv === "false") {
-						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&isEnvSpecific="+deleteEnv+"&configName="+commonVariables.updateConfigName+"&customerId="+customerId+"&userId="+userId+moduleParam;
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&isEnvSpecific="+deleteEnv+"&configName="+commonVariables.updateConfigName+"&customerId="+customerId+"&userId="+userId+moduleParam+"&projectId="+projectId;
 					} else {
-						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&envName="+deleteEnv+"&customerId="+customerId+"&userId="+userId+"&oldEnvName="+self.oldEnvName+"&defaultEnv="+self.defaultEnv+"&desc="+self.desc+"&isfavoric="+self.favourite+"&favtype="+commonVariables.favConfig+moduleParam;
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?projectCode="+projectCode+"&envName="+deleteEnv+"&customerId="+customerId+"&userId="+userId+"&oldEnvName="+self.oldEnvName+"&defaultEnv="+self.defaultEnv+"&desc="+self.desc+"&isfavoric="+self.favourite+"&projectId="+projectId;
 					}
-			} else if (action === "cloneEnv") {
-					header.requestMethod = "POST";
-					header.requestPostBody = JSON.stringify(configRequestBody);
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/cloneEnvironment?appDirName="+appDirName+"&envName="+deleteEnv+moduleParam;
-			} else if (action === "isAliveCheck") {
+				} else if (action === "isAliveCheck") {
 					header.requestMethod = "GET";
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/connectionAliveCheck?url="+configRequestBody.protocol+","+configRequestBody.host+","+configRequestBody.port+moduleParam;
-			} else if (action === "listUploadedFiles") {
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/connectionAliveCheck?url="+configRequestBody.protocol+","+configRequestBody.host+","+configRequestBody.port;
+				} else if (action === "certificate") {
 					header.requestMethod = "GET";
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/listUploadedFiles?appDirName="+appDirName+"&isEnvSpecific="+commonVariables.envSpecifig+"&configName="+configRequestBody.name+"&envName="+configRequestBody.envName+"&configType="+configRequestBody.type+moduleParam;
-			} else if (action === "deleteFile") {
-					header.requestMethod = "GET";
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/removeFile?appDirName="+appDirName+"&configType="+configRequestBody.configType+"&propName="+configRequestBody.propertyName+"&fileName="+configRequestBody.fileName+"&envName="+configRequestBody.envName+"&configName="+configRequestBody.configName+moduleParam;
-			} else if (action === "fileBrowse") {
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/returnCertificate?host="+configRequestBody.host+"&port="+configRequestBody.port+"&appDirName="+appDirName;
+				} else if (action === "fileBrowse") {
 					header.requestMethod = "GET";
 					header.dataType = "xml";
 					header.contentType = "application/xml",
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/fileBrowse?&appDirName="+appDirName+moduleParam;
-			} else if (action === "certificate") {
-					header.requestMethod = "GET";
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/returnCertificate?host="+configRequestBody.host+"&port="+configRequestBody.port+"&appDirName="+appDirName+moduleParam;
-			} else if (action === "addCertificate") {
-					header.requestMethod = "POST";
-					header.requestPostBody = JSON.stringify(configRequestBody);
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/addCertificate"+moduleParam;
-			} else if(action === "configType") {
-					header.requestMethod = "POST";
-					header.requestPostBody = {};
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/configType?userId="+userId+"&type="+deleteEnv+"&customerId="+customerId+"&appDirName="+appDirName+moduleParam;
-			} else if(action === "showFeatureConfigs") {
-					header.requestMethod = "POST";
-					header.requestPostBody = {};
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/showFeatureConfigs?userId="+userId+"&customerId="+customerId+"&appDirName="+appDirName+"&envName="+deleteEnv+"&featureName="+ configRequestBody+moduleParam;
-			}
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/fileBrowse";
+				}
+			}	
 			return header;
 		},
 		

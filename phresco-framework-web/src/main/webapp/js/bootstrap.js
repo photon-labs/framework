@@ -90,8 +90,9 @@ var commonVariables = {
 	continuousDeliveryView : "continuousDeliveryView",
 	continuousDeliveryConfigure : "continuousDeliveryConfigure",
 	
-	settings : "settings", 
-
+	settings : "settings",
+	projectSettings : "projectsettings",
+	editprojectSettings : "editSettings",
 	downloads : "downloads",
 	
 	dashboard : "dashboard",

@@ -121,6 +121,16 @@
 			"path" : "components/configuration/test/configurationTest"
 		},
 		
+		"settings" : {
+			"moduleName":"settings",
+			"path" : "components/configuration/js"
+		},
+		
+		"settingsTest" : {
+			"moduleName":"settingsTest",
+			"path" : "components/configuration/test/settingsTest"
+		},
+		
 		"croneExpression" : {
 			"moduleName":"croneExpression",
 			"path" : "components/croneExpression/js"
@@ -139,6 +149,11 @@
 		"editConfigurationTest" : {
 			"moduleName":"configurationTest",
 			"path" : "components/configuration/test/editConfigurationTest"
+		},
+		
+		"editSettingsTest" : {
+			"moduleName":"configurationTest",
+			"path" : "components/configuration/test/editSettingsTest"
 		},
 		
 		"codequalityTest" : {
@@ -284,6 +299,11 @@
 		"downloadsTest" : {
 			"moduleName":"downloadsTests",
 			"path" : "components/downloads/test/downloadsTest"
+		},
+		
+		"dashboard" : {
+			"moduleName":"dashboard",
+			"path" : "components/dashboard/js"
 		}
 		
 	}

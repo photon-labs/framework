@@ -24,17 +24,21 @@ define([], function() {
 			var self = this;
 		},
 		
-		onEditProject : function(projectId) {
+		onEditProject : function(projectId, projectCode) {
 			var self = this;
 			commonVariables.projectId = projectId;
-			commonVariables.navListener.getMyObj(commonVariables.dashboard, function(editprojectObject) {
-				commonVariables.projectLevel = true;
-				$('.hProjectId').val(projectId); 
-				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-				Clazz.navigationController.push(editprojectObject, commonVariables.animation);
-				$("#editprojectTab").css("display", "block");
-				$("#dashboard a").addClass('act');
-				self.dynamicrenderlocales(commonVariables.contentPlaceholder);
+			self.projectRequestBody.projectId = projectCode;
+			self.projectListAction(self.getActionHeader(self.projectRequestBody, "configTypes"), "", function(response) {	
+				commonVariables.api.localVal.setJson('configTypes', response.data);
+				commonVariables.navListener.getMyObj(commonVariables.dashboard, function(editprojectObject) {
+					commonVariables.projectLevel = true;
+					$('.hProjectId').val(projectId); 
+					Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+					Clazz.navigationController.push(editprojectObject, commonVariables.animation);
+					$("#editprojectTab").css("display", "block");
+					$("#dashboard a").addClass('act');
+					self.dynamicrenderlocales(commonVariables.contentPlaceholder);
+				});
 			});
 		},
 		
@@ -170,8 +174,9 @@ define([], function() {
 		 * @return: returns the contructed header
 		 */
 		getActionHeader : function(projectRequestBody, action) {
-			var self=this, header, data = {}, userId;
+			var self=this, header, data = {}, userId, projectId;
 			var customerId = self.getCustomer();
+			projectId = commonVariables.api.localVal.getSession('projectId');
 			customerId = (customerId === "") ? "photon" : customerId;
 			data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			if(data !== undefined && data !== null && data !== "") { userId = data.id; }
@@ -224,8 +229,13 @@ define([], function() {
 				header.requestPostBody = JSON.stringify(addupdate);
 				header.webserviceurl = commonVariables.webserviceurl + "repository/updateImportedApplication?appDirName="+projectRequestBody.appdirname+"&displayName="+data.displayName;
 			} else if (action === "configTypes") {
-				self.bcheck = true;
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/types?customerId="+customerId+"&userId="+userId+"&techId="+projectRequestBody.techid;
+				if(projectId !== null){
+					self.bcheck = true;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/types?customerId="+customerId+"&userId="+userId+"&projectId="+projectId;
+				} else {
+					self.bcheck = true;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/types?customerId="+customerId+"&userId="+userId+"&techId="+projectRequestBody.techid;
+				}
 			} 
 			if(action === "generateReport") {
 				var moduleParam = self.isBlank(projectRequestBody.moduleName) ? "" : '&moduleName='+projectRequestBody.moduleName;

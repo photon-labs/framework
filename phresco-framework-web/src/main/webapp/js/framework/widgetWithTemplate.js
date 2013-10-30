@@ -822,7 +822,10 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				
 				var checkout = $('#endDate').datepicker({
 					onRender: function(date) {return date.valueOf() <= checkin.date.valueOf() ? '' : '';}
-				}).on('changeDate', function(ev) {checkout.hide();}).data('datepicker');
+				}).on('changeDate', function(ev) {checkout.hide();
+					$('#endDate').removeAttr('placeholder');
+					$('#endDate').removeClass('errormessage');
+				}).data('datepicker');
 				$("#startDate").bind('keydown', function(e) { 
   					var keyCode = e.keyCode || e.which; 
  			 		if (keyCode === 9){

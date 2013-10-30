@@ -746,6 +746,16 @@ define(["projectlist/projectList"], function(ProjectList) {
 					}
 				});
 				
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.configuration+"/types?customerId=photon&userId=admin&projectId=a58a5358-fa43-4fac-9b98-9bf94b7c4d1f",
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":"confuguration Template Fetched successfully","exception":null,"responseCode":null,"data":[{"envSpecific":true,"favourite":false,"templateName":"Scheduler"},{"envSpecific":true,"favourite":false,"templateName":"Server"},{"envSpecific":true,"favourite":false,"templateName":"Database"},{"envSpecific":true,"favourite":false,"templateName":"Email"},{"envSpecific":false,"favourite":false,"templateName":"SAP"}],"status":null});
+					}
+				});
+				
 				
 				$.mockjax({
 					url:  commonVariables.webserviceurl+"project/editApplication?appDirName=wordpress-WordPress",

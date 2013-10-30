@@ -17,6 +17,8 @@ define([], function() {
 		manualTest : null,
 		editproject : null,
 		settings : null,
+		editProjectSettings : null,
+		projectSettings : null,
 		downloads : null,
 		dashboard : null,
 		unitTest : null,
@@ -431,6 +433,31 @@ define([], function() {
 						}
 						
 						break;
+						
+					case commonVariables.projectSettings :
+						if(self.projectSettings === null) {
+							require(["configuration/settings"], function(){
+								self.projectSettings = new Clazz.com.components.configuration.js.ProjectSettings();
+								callback(self.projectSettings);	
+							});
+						}else{
+							callback(self.projectSettings);
+						}
+						
+						break;
+						
+					case commonVariables.editprojectSettings :
+						if(self.editProjectSettings === null) {
+							require(["configuration/editSettings"], function(){
+								self.editProjectSettings = new Clazz.com.components.configuration.js.EditSettings();
+								callback(self.editProjectSettings);	
+							});
+						}else{
+							callback(self.editProjectSettings);
+						}
+						
+						break;
+					
 				}
 		},
 
@@ -754,6 +781,12 @@ define([], function() {
 				self.getMyObj(commonVariables.dashboard, function(returnVal){
 					currentObj = returnVal;
 					currentObj.clicked = false;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
+			} else if (keyword === commonVariables.projectSettings) {
+				self.getMyObj(commonVariables.projectSettings, function(returnVal){
+					currentObj = returnVal;
+					currentObj.favourite = false;
 					self.myTabRenderFunction(currentObj, keyword);
 				});
 			}	

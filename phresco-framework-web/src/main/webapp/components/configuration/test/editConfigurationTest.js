@@ -742,9 +742,9 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($("#configurationPage").attr('id'), "configurationPage", "Cancel Event Configuration Tested");
-				/* require(["unitTestTest"], function(unitTestTest){
-					unitTestTest.runTests();
-				}); */
+				require(["settingsTest"], function(settingsTest){
+					settingsTest.runTests();
+				});
 			}, 1500);
 		}); 
 	},

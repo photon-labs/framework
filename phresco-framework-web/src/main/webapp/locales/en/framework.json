@@ -119,7 +119,7 @@
 		"PHR610027" : "Failed to get environments from phresco-fav-config.xml",
 		"PHR610028" : "Unable to fetch environments",
 		"PHR610029" : "Failed to clone environment during manipulation of phresco-env-config.xml",
-		"PHR610030" : "Failed to read zip file while uploading", 
+		"PHR610030" : "Failed to read zip file while uploading",
 		"PHR710001" : "No build available",
 		"PHR710002" : "Buildinfo list failed",
 		"PHR710003" : "Failed to read zipped buildinfo file",
@@ -275,8 +275,8 @@
 		"chooseserver" : "Choose the Server Type from App Info",
 		"choosedb" : "Choose the DB Type from App Info",
 		"PHR500005" : "Report not available",
-		"PHR610024" : "Name already Exists"
-
+		"PHR610024" : "Name already Exists",
+		"PHR610042"	: "Name already exists in configurations of the project"
 	},
 	"navigation" : {
 		"application" : {
@@ -297,6 +297,7 @@
 			"component" : "Component",
 			"projectinfo" : "Project Info",
 			"integrationtest" : "Integration Test",
+			"settings" : "Settings",
 			"continuousintegration" : "Continuous Integration",
 			"jobs" : "Jobs",
 			"apistatus" : "API Status",
