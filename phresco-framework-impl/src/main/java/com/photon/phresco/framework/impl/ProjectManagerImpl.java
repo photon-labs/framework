@@ -1016,6 +1016,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		Widget widget;
 		HashMap<String, Widget> widgets;
 		HashMap<String, String[]> widProperties = new HashMap<String, String[]>();
+		HashMap<String, HashMap<String, String>> colorcodes = new HashMap<String, HashMap<String,String>>();
+
 		try {
 			File dashboardInfoFile = new File(getProjectPhresoFolder(dashboardInfo.getAppdirname()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 			if( dashboardInfoFile.exists()) {
@@ -1046,6 +1048,10 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						} 
 					}
 					widget.setProperties(widProperties);
+					if (dashboardInfo.getColorcodes() != null &&  widget.getColorcodes() == null) {
+						colorcodes = dashboardInfo.getColorcodes();
+					} 
+					widget.setColorcodes(colorcodes);
 					widgets.put(widgetId, widget);
 					dashboardMap.get(dashboardInfo.getDashboardid()).setWidgets(widgets);
 					dashboards.setDashboards(dashboardMap);
@@ -1096,6 +1102,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		String json;
 		HashMap<String, Dashboard> dashboardMap;
 		HashMap<String, String[]> widProperties = new HashMap<String, String[]>();
+		HashMap<String, HashMap<String, String>> colorcodes = new HashMap<String, HashMap<String,String>>();
 		try {
 			File dashboardInfoFile = new File(getProjectPhresoFolder(dashboardInfo.getAppdirname()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 			if( dashboardInfoFile.exists()) {
@@ -1121,7 +1128,19 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 								}  
 							}
 							}
+							if (dashboardInfo.getColorcodes() != null) {
+								if (dashboardMap.get(dashboardInfo.getDashboardid()).getWidgets().get(dashboardInfo.getWidgetid()).getColorcodes() == null) {
+									colorcodes = dashboardInfo.getColorcodes();
+								} else {
+									colorcodes = dashboardMap.get(dashboardInfo.getDashboardid()).getWidgets().get(dashboardInfo.getWidgetid()).getColorcodes();
+									Set<String> keys = dashboardInfo.getColorcodes().keySet();  
+									for (String key : keys) {  
+										colorcodes.put(key, dashboardInfo.getColorcodes().get(key));
+									}  
+								}
+								}
 							dashboardMap.get(dashboardInfo.getDashboardid()).getWidgets().get(dashboardInfo.getWidgetid()).setProperties(widProperties);
+							dashboardMap.get(dashboardInfo.getDashboardid()).getWidgets().get(dashboardInfo.getWidgetid()).setColorcodes(colorcodes);
 							dashboards.setDashboards(dashboardMap);
 							json = gson.toJson(dashboards, Dashboards.class);
 							FileUtils.writeStringToFile(dashboardInfoFile, json);
@@ -1250,4 +1269,5 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			throw new PhrescoException("Exception occured while trying to retrieve the search result");
 		}
 	}
+	
 }

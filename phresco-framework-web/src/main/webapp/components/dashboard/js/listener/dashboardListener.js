@@ -17,6 +17,7 @@ define([], function() {
 		flag_d : null,
 		arrayy : null,
 		properties : {},
+		colorcodes : {},
 		query : null,
 		dashboardURL : '',
 		dashboardname : null,
@@ -169,11 +170,11 @@ define([], function() {
 					tbody += '<tr>' + tColums + '</tr>';
 				});
 				
-				var nocTable = $('<div class="minitable"><table id="widTab_'+ widgetKey +'" class="table table_border border_div table-bordered tablesorter-default" style="height:50%; width:98%;" align="center"><thead><tr></tr></thead><tbody></tbody></table></div>');
+				var nocTable = $('<div class="minitable"><table id="widTab_'+ widgetKey +'" class="table table_border new_tab border_div table-bordered tablesorter-default" style="height:50%; width:98%;" align="center"><thead><tr></tr></thead><tbody></tbody></table></div>');
 				$('#placeholder_' + widgetKey).append(nocTable);
 				$('#widTab_' + widgetKey +' thead tr').html(thead);
 				$('#widTab_' + widgetKey +' tbody').html(tbody);
-				$('.border_div').tablesorter();
+				$('.new_tab').tablesorter();
 			}catch(ec){
 				//ex
 			}
@@ -225,7 +226,7 @@ define([], function() {
 					self.dashboardURL = $(this).parent().attr('url_url');
 					self.dashboardusername = $(this).parent().attr('username');
 					self.dashboardpassword = $(this).parent().attr('password');
-					self.dashboardname = $(this).val();
+					self.dashboardname = $(this).text();
 					self.graphAction(self.getActionHeader(self.actionBody, "dashboardget"), function(response) {
 					$("#dashlist").hide();
 					self.flag_d = 1;
@@ -245,7 +246,7 @@ define([], function() {
 								self.actionBody.widgetname = currentWidget.name;
 								self.actionBody.earliest_time = currentWidget.starttime;
 								self.actionBody.latest_time = currentWidget.endtime;
-								self.actionBody.properties = {};
+								//self.actionBody.properties = {};
 								self.getWidgetDataInfo(widgetKey, currentWidget, self.actionBody, true);
 								
 							});
@@ -527,18 +528,22 @@ define([], function() {
 		
 		generateBarChart : function(widgetKey, currentWidget, results, actionBody) {
 			var self = this, graphdata = '<div class="demo-container1" id="placeholder_' + widgetKey + '"></div>',
-			xVal, yVal = [];
+			xVal, yVal = [], yColorCodes;
 			
 			$("#content_" + widgetKey).children('.graph_table').empty();
 			$("#content_" + widgetKey).find('.graph_table').append(graphdata);
 			
+			yColorCodes = null;
+			if(currentWidget.colorcodes !== null) yColorCodes=currentWidget.colorcodes.y;
+			else yColorCodes = null;
+			
 			xVal = currentWidget.properties.x;
 			yVal = currentWidget.properties.y;
 			
-			self.constructBarInfo(widgetKey, xVal, yVal, results);
+			self.constructBarInfo(widgetKey, xVal, yVal, yColorCodes, results);
 		},
 		
-		constructBarInfo : function(widgetKey, xVal, yVal, result, callback){
+		constructBarInfo : function(widgetKey, xVal, yVal, yColorCodes, result, callback){
 			var self = this, xData = [], yData = [], indexforx, collection = {}, totalArr = [], temparr = [];
 			try{				
 				indexforx = xVal[0];
@@ -551,6 +556,11 @@ define([], function() {
 				
 				$.each(yVal, function(index,currentItem) {
 					var temp = {};
+					if (yColorCodes != null) {
+						temp['color'] = yColorCodes[currentItem];
+					} else {
+						temp['color'] = null;
+					}
 					temp['name'] = currentItem;
 					temparr = [];
 					$.each(result, function(key,currentResult){
@@ -672,8 +682,9 @@ define([], function() {
 				});
 				
 				$("select.xaxis").html(drOpt);
+				$("select.xaxis").prepend('<option selected disabled>X-Axis</option>');
 				$("select.yaxis").html(drOpt);
-				
+				$("select.yaxis").prepend('<option selected disabled>Y-Axis</option>');
 				self.optionsshowhide('lineChartOpt');
 				$("#update_tab").removeAttr('disabled');
 			}catch(exception){
@@ -700,6 +711,8 @@ define([], function() {
 					$("select.percentval").append('<option value='+querydata[z]+'>'+querydata[z]+'</option>');
 					$("select.legendval").append('<option value='+querydata[z]+'>'+querydata[z]+'</option>');						
 				}
+				$("select.percentval").prepend('<option selected disabled>Percent Value</option>');
+				$("select.legendval").prepend('<option selected disabled>Legend Value</option>');
 				self.optionsshowhide('pieChartOpt');
 				$("#update_tab").removeAttr('disabled');	
 			}catch(exception){
@@ -717,7 +730,7 @@ define([], function() {
 				$.each(response.data.results,function(index,value) {
 					$.each(value,function(index1,value1) {							
 						if(queryflag !==1) {
-						$('ul[name="sortable1"]').append('<li value='+index1+'><div class="bar_radio"><input type="checkbox" name="optionsRadiosfd" value='+index1+'></div><div name="envListName" class="bar_name">'+index1+'</div><div class="colorbar_div"><input class="pick_color colorpick" placeholder="Pick Color" type="text"></li>');	
+						$('ul[name="sortable1"]').append('<li value='+index1+'><div class="bar_radio"><input type="checkbox" name="optionsRadiosfd" value='+index1+'></div><div name="envListName" class="bar_name">'+index1+'</div><div class="colorbar_div"><input class="pick_color colorpick" placeholder="Pick Color" type="text" name="'+index1+'"></li>');	
 						
 						querydata[querycount] = index1;								
 						querycount++;
@@ -734,6 +747,7 @@ define([], function() {
 				$('.connected').sortable({
 					connectWith: '.connected'
 				});
+				$("select.baraxis").prepend('<option selected disabled>Bar Axis</option>');
 			}catch(exception){
 				//Exception
 			}
@@ -787,6 +801,8 @@ define([], function() {
 				self.actionBody.starttime = $("#fromTime").val();
 				self.actionBody.endtime = $("#toTime").val();
 				self.actionBody.properties = {};
+				self.actionBody.colorcodes = {};
+				self.colorcodes["y"]= {};
 
 				if($("#widgetType option:selected").val() === 'linechart'){					
 					self.properties.type = ['linechart'];
@@ -800,7 +816,10 @@ define([], function() {
 					var SelectedItems = [];
 					$('input[name="optionsRadiosfd"]:checked').each(function(i){
 						  SelectedItems[i] = $(this).val();
+						  var ycolor = $('input[name="'+SelectedItems[i]+'"]').val();
+						  self.colorcodes.y[SelectedItems[i]]=ycolor;
 					});
+					self.actionBody.colorcodes=self.colorcodes;
 					self.properties.x = $.makeArray($("select.baraxis option:selected").val());
 					self.properties.y = SelectedItems;
 					self.properties.type = ['barchart'];
@@ -956,6 +975,15 @@ define([], function() {
 					if(result.data.properties) {
 						$("#widgetType").val(result.data.properties.type.toString());
 						$(".filter-option").text(result.data.properties.type.toString());
+						if(result.data.properties.type.toString() === 'barchart') {
+							$(".filter-option").text('Bar Chart');
+						} else if(result.data.properties.type.toString() === 'linechart') {
+							$(".filter-option").text('Line Chart');
+						} else if(result.data.properties.type.toString() === 'piechart') {
+							$(".filter-option").text('Pie Chart');
+						} else if(result.data.properties.type.toString() === 'table') {
+							$(".filter-option").text('Table');
+						}
 					}	
 					self.optionsshowhide($("#widgetType").val());
 					$("input[name='execute_query']").removeAttr('disabled');
@@ -967,7 +995,6 @@ define([], function() {
 						$("#timeoutval").hide();
 						$('#timeout').prop('checked', false);
 					}
-					
 					var dyn_id = $(currentObj).parents('div.noc_view').attr('dynid');
 					$("#add_widget").attr('dynid',dyn_id);
 					
@@ -1036,8 +1063,8 @@ define([], function() {
 			$('#update_tab').click(function() {
 			if(self.addwidgetflag !==1) {
 				var widgetKey = $(this).parent().parent().attr('dynid'), indexforx, indexfory, SelectedItems = [],
-				widgetdatatype = $('#widgetType option:selected').val(), widgetId = $("#update_tab").parents('#add_widget').attr('dynid');
-
+				widgetdatatype = $('#widgetType option:selected').val(), widgetId = $("#update_tab").parents('#add_widget').attr('dynid'),colorcodes = {};
+				colorcodes["y"]= {};
 				self.actionBody = {};
 				self.actionBody.query = $("#query_add").val();
 				self.actionBody.autorefresh = ($('#timeout').is(':checked') && $('#timeoutval').val().trim() !== "" ? $('#timeoutval').val().trim() : null);
@@ -1048,6 +1075,7 @@ define([], function() {
 				self.actionBody.appdirname = self.currentappname;
 				self.actionBody.dashboardid = self.currentdashboardid;
 				self.actionBody.properties = {};
+				self.actionBody.colorcodes = {};
 				
 				if(widgetdatatype === 'linechart'){
 					indexforx = $("select.xaxis option:selected").val();
@@ -1064,7 +1092,10 @@ define([], function() {
 				}else if(widgetdatatype === 'barchart'){
 					$('input[name="optionsRadiosfd"]:checked').each(function(i){
 						SelectedItems[i] = $(this).val();
+						var ycolor = $('input[name="'+SelectedItems[i]+'"]').val();
+						colorcodes.y[SelectedItems[i]]=ycolor;
 					});
+					self.actionBody.colorcodes=colorcodes;
 					self.properties.x = $.makeArray($("select.baraxis option:selected").val());
 					self.properties.y = SelectedItems;
 					self.properties.type = ['barchart'];
