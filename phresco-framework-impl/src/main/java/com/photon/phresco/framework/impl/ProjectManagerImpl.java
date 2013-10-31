@@ -132,10 +132,10 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			        	continue;
 			        }
 			        File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
-			        if (ArrayUtils.isEmpty(dotProjectFiles)) {
-			            throw new PhrescoException("project.info file not found in .phresco of project " + dotPhrescoFolders[0].getParent());
+			        if (!ArrayUtils.isEmpty(dotProjectFiles)) {
+			        	  projectInfosMap = fillProjects(dotProjectFiles[0], customerId, projectInfosMap);
+//			        	throw new PhrescoException("project.info file not found in .phresco of project " + dotPhrescoFolders[0].getParent());
 			        }
-			        projectInfosMap = fillProjects(dotProjectFiles[0], customerId, projectInfosMap);
 			    }
 			}
 
@@ -170,10 +170,11 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	            	continue;
 	            }
 	            File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
-	            if (ArrayUtils.isEmpty(dotProjectFiles)) {
-	                throw new PhrescoException("project.info file not found in .phresco of project " + dotPhrescoFolders[0].getParent());
+	            if (!ArrayUtils.isEmpty(dotProjectFiles)) {
+	            	 fillProjects(dotProjectFiles[0], projectInfos);
+//	                throw new PhrescoException("project.info file not found in .phresco of project " + dotPhrescoFolders[0].getParent());
 	            }
-	            fillProjects(dotProjectFiles[0], projectInfos);
+	           
 	        }
 	    }
 
