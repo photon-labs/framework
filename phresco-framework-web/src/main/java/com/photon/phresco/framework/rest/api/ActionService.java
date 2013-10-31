@@ -877,8 +877,6 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 				appDirName = appDirName + File.separator + moduleName;
 			}
 			
-			// module app info
-			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			
 			// is sonar report available
 			if ((FrameworkConstants.ALL).equals(fromPage)) {
