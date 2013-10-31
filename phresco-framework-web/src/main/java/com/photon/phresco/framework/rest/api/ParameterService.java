@@ -564,7 +564,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				reportPath.append(frameworkUtil.getFunctionalTestDir(appDirName));
 			}
 			reportPath.append(File.separatorChar);
-			reportPath.append(POM_XML);
+			reportPath.append(Utility.getPhrescoPomFile(appInfo));
 			File file = new File(reportPath.toString());
 			processor = new PomProcessor(file);
 			String groupId = processor.getModel().getGroupId();
