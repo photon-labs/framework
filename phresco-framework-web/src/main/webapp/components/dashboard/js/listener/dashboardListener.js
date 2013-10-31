@@ -196,6 +196,7 @@ define([], function() {
 				var heviewChild = $('<div class="a0" data-animate="fadeIn"><div class="center-bar"><a href="#" class="a0" data-animate="rotateInLeft"><input type="submit" value="" class="btn btn_style settings_btn settings_img"></a><a href="#" class="a1" data-animate="rotateInLeft"><input type="submit" value="" class="btn btn_style enlarge_btn" proptype="'+graphType+'"></a><a href="#" class="a2" data-animate="rotateInLeft"><input type="submit" value="" class="btn btn_style close_widget" name="close_widget" ></a></div>');
 				heview.append(heviewChild);
 				nocview.append(heview);
+				nocview.append('<div style="display:none;" id="deletewidget_'+widgetKey+'" class="delete_msg tohide">Are you sure to delete ?<div><input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style" name="delwidget"><input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close"></div></div>');
 			}catch(exception){
 			 //exception
 			}
@@ -212,6 +213,10 @@ define([], function() {
 					if(e.which === 27){
 						$("#dashlist").hide();
 					}
+			});
+			
+			$(document).click(function() {
+				$("#dashlist").hide();
 			});
 			
 			$(".dashboardslist li a").click(function() {
@@ -842,7 +847,7 @@ define([], function() {
 								
 								self.getWidgetDataInfo(self.currentwidgetid, result.data, self.actionBody, true);
 								$('#add_widget').hide();
-								$('.noc_view').css('width','48%');
+								$('.noc_view').css('width','49%');
 							}
 						});
 					}
@@ -898,19 +903,24 @@ define([], function() {
 			$('input[name="close_widget"]').click(function() {
 				var widgetKey = $(this).parents('div.noc_view').attr('widgetid');
 				var obj =  $(this).parents('div.noc_view');
-				self.actionBody = {};
-				self.actionBody.dashboardid = self.currentdashboardid;
-				self.actionBody.widgetid = 	widgetKey;
-				self.actionBody.appdirname = self.currentappname;
-				self.graphAction(self.getActionHeader(self.actionBody, "deletewidget"), function(response) {
-					$(obj).remove();
-					var count = $('.noc_view').length;
-					if(count == 1){
-						$('.noc_view').css('width','98%');
-					} else if (count >=2) {
-						$('.noc_view').css('width','48%');
-					}	
+				
+				
+				self.openccdashboardsettings(this, 'deletewidget_'+widgetKey);
+				
+				$('input[name="delwidget"]').unbind('click');
+				$('input[name="delwidget"]').click(function() {
+					self.actionBody = {};
+					self.actionBody.dashboardid = self.currentdashboardid;
+					self.actionBody.widgetid = 	widgetKey;
+					self.actionBody.appdirname = self.currentappname;
+					self.graphAction(self.getActionHeader(self.actionBody, "deletewidget"), function(response) {
+						$(obj).remove();
+						$('.noc_view').css('width','49%');
+					}); 
+					$('.he-view').removeAttr('style');
+					window.hoverFlag = 0;
 				});
+				
 			});
 			
 			$('.enlarge_btn').unbind('click');
@@ -1010,6 +1020,7 @@ define([], function() {
 				$("select.yaxis").empty();
 				$("select.percentval").empty();
 				$("select.legendval").empty();
+				$("select.baraxis").empty();
 				$("#tabforbar").find('ul').empty();
 				textareaval = $("#query_add");
 				nameofwid = $("#nameofwidget");

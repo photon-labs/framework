@@ -543,31 +543,23 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					if(placeId === 'add_widget') {
 						var BottomHeight = clicked.position().top + clicked.height() + 8 ;
 						$(target).css({"left":clicked.offset().left-15,"margin-top":10,"top": BottomHeight});		
+					} else {
+						var BottomHeight = clicked.position().top + clicked.height() +4 ;
+						var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 765;
+						$(target).css({"left":"auto" ,"margin-top":10,"right": d,"top": BottomHeight});
 					}
 					$(target).toggle();
 					$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
 				} else if (clicked.offset().top < halfheight && clicked.offset().left > halfwidth){
 					var d = null;
-					if(act === 'Delete Pdf') {
-						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 300;
-						$(target).css({"right":d,"left": "auto","top": BottomHeight});						
-					} else if(($(ee).parent('td').attr('class')!='delimages') && (act === "Delete "+currentPrjName)) {
-						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 18;
-						var BottomHeight = clicked.position().top + clicked.height() ;
-						$(target).css({"right":d,"left": "auto","top": BottomHeight});
-					} else if ($(ee).attr('name') === 'updateManualTestCase_popup') {
-						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 48;
-						$(target).css({"right":d ,"margin-top":10,"left": "auto","top": "auto"});
-					} else if(placeId === 'add_widget') {
+					if(placeId === 'add_widget') {
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 4;
 						var BottomHeight = clicked.position().top + clicked.height() + 8 ;
 						$(target).css({"right":d,"left": "auto","margin-top":10,"top": BottomHeight});		
-					}  else if(placeId === 'noc_config') {
-						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) + 32;
-						$(target).css({"right":d,"margin-top":10,"left": "auto","top": "auto"});
-					} else {		
-						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 18;
-						$(target).css({"right":d ,"margin-top":10,"left": "auto","top": "auto"});
+					}  else {
+						var BottomHeight = clicked.position().top + clicked.height() +4 ;
+						var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 25;
+						$(target).css({"left":"auto" ,"margin-top":10,"right": d,"top": BottomHeight});
 					}
 					$(target).toggle();
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopright').addClass('dyn_popup');
@@ -579,31 +571,25 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					if(placeId === 'add_widget') {
 						BottomHeight = clicked.position().top + clicked.height() + 40 ;
 						$(target).css({"right":"auto","top": BottomHeight});		
+					} else {
+						BottomHeight = clicked.position().top + clicked.height() -90 ;
+						var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) -765;
+						$(target).css({"left":"auto" ,"margin-top":10,"right": d,"top": BottomHeight});
 					}
 				} else if (clicked.offset().top > halfheight && clicked.offset().left > halfwidth){
 					var d = null,BottomHeight = null;
 					d = ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 15;
-					if(act === 'Delete Pdf') {
-						d = ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 300;
-						BottomHeight = clicked.position().top - 70;
-						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
-						$(target).toggle();
-						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
-					} else if(($(ee).parent('td').attr('class')!='delimages') && (act === "Delete "+currentPrjName)) {
-						BottomHeight = clicked.position().top - 70;
-						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
+					if(placeId === 'add_widget') {
+						BottomHeight = clicked.position().top + clicked.height() + 40 ;
+						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});		
 						$(target).toggle();
 						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
 					} else {
-						BottomHeight = clicked.position().top - (target.height() + 28 );
-						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
+						BottomHeight = clicked.position().top + clicked.height() - 90;
+						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 20;
+						$(target).css({"left":"auto" ,"margin-top":10,"right": d,"top": BottomHeight});
 						$(target).toggle();
 						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
-						
-						if(placeId === 'add_widget') {
-							BottomHeight = clicked.position().top + clicked.height() + 40 ;
-							$(target).css({"top": BottomHeight});		
-						}
 					}
 				} 
 

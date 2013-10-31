@@ -103,7 +103,6 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 
 									//looping all the dashboard list
 									$.each(currentApp.dashboards,function(dashBkey,currentdashB){
-										
 										dashBoardListItems += '<li class="dropdown" url_url='+ currentdashB.url + ' appdirname=' + key + ' username=' + currentdashB.username +' password=' + currentdashB.password + ' id=' + dashBkey +'><a href="javascript:void(0)" value=' + currentdashB.dashboardname +'>' + currentdashB.dashboardname + '</a></li>';
 										
 										if(!bChech) {
@@ -156,9 +155,9 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 										}
 									});
 									
-									$("ul.dashboardslist").append(dashBoardListItems);
-									$("#click_listofdash").text($(".dashboardslist").children(0).children('a').attr('value'));
-									$("#click_listofdash").append('<b class="caret"></b>');
+									//$("ul.dashboardslist").append(dashBoardListItems);
+									//$("#click_listofdash").text($(".dashboardslist").children(0).children('a').attr('value'));
+									//$("#click_listofdash").append('<b class="caret"></b>');
 									//}
 									//appcount = 1;
 								//}
@@ -167,9 +166,13 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 							
 							return true;
 						});	
+						$("ul.dashboardslist").append(dashBoardListItems);
+						$("#click_listofdash").text($(".dashboardslist").children(0).children('a').attr('value'));
+						$("#click_listofdash").append('<b class="caret"></b>');
 					} else {
 						$(".forlistingdash").hide();
 						$(".code_report").hide();
+						$("#add_wid").attr('disabled','disabled');
 					}	
 					self.dashboardListener.dropdownclick();	
 				});
@@ -284,11 +287,13 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 					$("#conf_username").val($(".dashboardslist").children(0).attr('username'));
 					$("#conf_password").val($(".dashboardslist").children(0).attr('password'));
 					$("#config_url").val($(".dashboardslist").children(0).attr('url_url'));
+					$(".appdirnamedropdown").val($(".dashboardslist").children(0).attr('appdirname'));
 				} else {
 					$("#dashboard_name").val(self.dashboardListener.arrayy.dashboardname);	
 					$("#conf_username").val(self.dashboardListener.arrayy.username);	
 					$("#conf_password").val(self.dashboardListener.arrayy.password);	
 					$("#config_url").val(self.dashboardListener.arrayy.url);	
+					$(".appdirnamedropdown").val(self.dashboardListener.currentappname);
 				}	
 			});
 			
@@ -354,6 +359,7 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 						$("#noc_config").hide();
 						if(response.status === 'success') {							
 							self.dashboardListener.currentdashboardid = response.data;
+							$("#add_wid").removeAttr('disabled');
 						}	
 					});
 				}
