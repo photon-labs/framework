@@ -224,6 +224,8 @@ public interface FrameworkConstants {
     String FEATURE_UPDATE = "featureUpdate";
     String CONFIG_UPDATE = "configUpdate";
     String EDIT_APPLN = "editAppln";
+    String NO = "no";
+	String STRICT_HOST_KEY_CHECKING = "StrictHostKeyChecking";
     
     String REMOTE = "remote";
     String ORIGIN = "origin";

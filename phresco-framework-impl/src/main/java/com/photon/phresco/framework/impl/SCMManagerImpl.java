@@ -24,15 +24,19 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.ConnectException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -53,6 +57,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.UnsupportedCredentialItem;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.StoredConfig;
+import org.eclipse.jgit.lib.TextProgressMonitor;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.CredentialItem;
 import org.eclipse.jgit.transport.CredentialsProvider;
@@ -88,17 +93,10 @@ import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 import org.tmatesoft.svn.core.wc.SVNWCClient;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
-
-
-
 import com.google.gson.Gson;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
 import com.perforce.p4java.client.IClient;
-import com.perforce.p4java.client.IClientSummary.IClientOptions;
-import com.perforce.p4java.core.ChangelistStatus;
-import com.perforce.p4java.core.IChangelist;
-import com.perforce.p4java.core.IChangelistSummary;
 import com.perforce.p4java.core.file.FileSpecBuilder;
 import com.perforce.p4java.core.file.FileSpecOpStatus;
 import com.perforce.p4java.core.file.IFileSpec;
@@ -108,15 +106,8 @@ import com.perforce.p4java.exception.RequestException;
 import com.perforce.p4java.impl.generic.client.ClientOptions;
 import com.perforce.p4java.impl.generic.client.ClientView;
 import com.perforce.p4java.impl.generic.client.ClientView.ClientViewMapping;
-import com.perforce.p4java.impl.generic.core.Changelist;
 import com.perforce.p4java.impl.mapbased.client.Client;
-import com.perforce.p4java.impl.mapbased.server.Server;
-import com.perforce.p4java.option.client.AddFilesOptions;
-import com.perforce.p4java.option.client.EditFilesOptions;
-import com.perforce.p4java.option.client.GetDiffFilesOptions;
-import com.perforce.p4java.option.client.ReopenFilesOptions;
 import com.perforce.p4java.option.client.SyncOptions;
-import com.perforce.p4java.option.server.GetChangelistsOptions;
 import com.perforce.p4java.server.IOptionsServer;
 import com.perforce.p4java.server.ServerFactory;
 import com.photon.phresco.commons.FrameworkConstants;
@@ -523,7 +514,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	private void importFromGit(RepoDetail repodetail, File gitImportTemp)throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importFromGit()");
-		}		
+		}	
 			if (StringUtils.isEmpty(repodetail.getBranch())) {
 				repodetail.setBranch(MASTER);
 			}
@@ -545,17 +536,51 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	        	        @Override
 	        	        public boolean get(URIish uri, CredentialItem... items) throws UnsupportedCredentialItem {
 	        	            for (CredentialItem item : items) {
-	        	                ((CredentialItem.StringType) item).setValue(passwordPhrase);
+	        	            	if (item instanceof CredentialItem.StringType) {
+	        	            		((CredentialItem.StringType) item).setValue(passwordPhrase);
+	        	            	}
 	        	            }
 	        	            return true;
 	        	        }
 	        	    };
 	        	    UserInfo userInfo = new CredentialsProviderUserInfo(session, provider);
+	        	    // Unknown host key for ssh
+	        	    java.util.Properties config = new java.util.Properties(); 
+	        	    config.put(STRICT_HOST_KEY_CHECKING, NO);
+	        	    session.setConfig(config);
+	        	    
 	        	    session.setUserInfo(userInfo);
 	        	}
         	};
         	
         	SshSessionFactory.setInstance(sessionFactory);
+			
+        	/*
+        	 * Enable clone of https url by trusting those urls
+        	 */
+			// Create a trust manager that does not validate certificate chains
+			TrustManager[] trustAllCerts = new TrustManager[] { 
+			    new X509TrustManager() {     
+			        public java.security.cert.X509Certificate[] getAcceptedIssuers() { 
+			            return null;
+			        } 
+			        public void checkClientTrusted( 
+			            java.security.cert.X509Certificate[] certs, String authType) {
+			            } 
+			        public void checkServerTrusted( 
+			            java.security.cert.X509Certificate[] certs, String authType) {
+			        }
+			    } 
+			}; 
+
+			// Install the all-trusting trust manager
+			try {
+			    SSLContext sc = SSLContext.getInstance("SSL"); 
+			    sc.init(null, trustAllCerts, new java.security.SecureRandom()); 
+			    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+			} catch (GeneralSecurityException e) {
+				e.getLocalizedMessage();
+			} 
 			
 			UsernamePasswordCredentialsProvider userCredential = new UsernamePasswordCredentialsProvider(repodetail.getUserName(), repodetail.getPassword());
 			Git r = Git.cloneRepository().setDirectory(gitImportTemp)
