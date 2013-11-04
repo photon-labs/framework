@@ -449,9 +449,11 @@ define([], function() {
 					self.hasError = true;
 			    } else if(errorJson.hasError) {
 					if (errorJson.errorIn == "startDate") {
+						$("#startDate").val('');
 						$("#startDate").attr('placeholder', errorJson.errorMsg);
 						$("#startDate").addClass("errormessage");
 					} else if (errorJson.errorIn == "endDate") {
+						$("#endDate").val('');
 						$("#endDate").attr('placeholder', errorJson.errorMsg);
 						$("#endDate").addClass("errormessage");
 					}
