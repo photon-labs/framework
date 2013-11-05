@@ -171,19 +171,18 @@ define(["croneExpression/croneExpression"], function() {
 				requestMethod : "GET",
 				webserviceurl : ''
 			};
-			
 			if(commonVariables.navListener.currentTab !== commonVariables.projectSettings) {
 				if (action === 'list') {
 					if (configRequestBody.envSpecific === false && configRequestBody.configType !== "") {
-						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName="+appDirName+"&isEnvSpecific="+configRequestBody.envSpecific+"&configType="+configRequestBody.configType;
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName="+appDirName+"&isEnvSpecific="+configRequestBody.envSpecific+"&configType="+configRequestBody.configType + moduleParam;
 					} else {				
-						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName="+appDirName;
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName="+appDirName + moduleParam;
 					}
 				} else if (action === 'edit') {
 					if (configRequestBody.envSpecific === false) {
-						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName+"&configName="+commonVariables.environmentName+"&isEnvSpecific="+configRequestBody.envSpecific;
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName+"&configName="+commonVariables.environmentName+"&isEnvSpecific="+configRequestBody.envSpecific + moduleParam;
 					} else {
-						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName+"&envName="+commonVariables.environmentName;
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName+"&envName="+commonVariables.environmentName + moduleParam;
 					}
 				}else if (action === 'configTypes') {
 					self.bcheck = true;
@@ -197,7 +196,7 @@ define(["croneExpression/croneExpression"], function() {
 					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/deleteConfig?appDirName="+appDirName+"&configName="+deleteEnv;
 				} else if (action === "template") {
 						self.bcheck = true;
-						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName="+appDirName+"&customerId="+customerId+"&userId="+userId+"&type="+deleteEnv+"&techId="+techId;
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName="+appDirName+"&customerId="+customerId+"&userId="+userId+"&type="+deleteEnv+"&techId="+techId+moduleParam;
 				} else if (action === "saveEnv") {
 						header.requestMethod = "POST";
 						header.requestPostBody = JSON.stringify(configRequestBody);
