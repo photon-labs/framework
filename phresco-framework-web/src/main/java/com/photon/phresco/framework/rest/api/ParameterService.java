@@ -472,12 +472,17 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	@GET
 	@Path("/sonarUrl")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getSonarUrl(@Context HttpServletRequest request) {
+	public Response getSonarUrl(@Context HttpServletRequest request, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
 		FrameworkUtil frameworkUtil = new FrameworkUtil(request);
 		 ResponseInfo<String> responseData = new ResponseInfo<String>();
+		 String url = "";
 			try {
-				URL sonarURL = new URL(frameworkUtil.getSonarURL());
-				String url = sonarURL.toString();
+				PomProcessor pomProcessor = FrameworkServiceUtil.getPomProcessor(appDirName);
+	            String validateReportUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_VALIDATE_REPORT);
+	    		if (StringUtils.isEmpty(validateReportUrl)) {
+	    			URL sonarURL = new URL(frameworkUtil.getSonarURL());
+					url = sonarURL.toString();
+	    		}
 				ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
 						url, RESPONSE_STATUS_SUCCESS, PHR500004);
 				return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
@@ -487,6 +492,11 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 		            return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 		                    .build();
 			} catch (PhrescoException e) {
+				 ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e,
+		                    null, RESPONSE_STATUS_ERROR, PHR510011);
+		            return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+		                    .build();
+			} catch (PhrescoPomException e) {
 				 ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e,
 		                    null, RESPONSE_STATUS_ERROR, PHR510011);
 		            return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
