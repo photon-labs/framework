@@ -32,6 +32,7 @@ define([], function() {
 		totalArr : {},
 		xVal : {},
 		yVal : {},
+		LineType : {},
 		
 		/***
 		 * Called in initialization time of this class 
@@ -116,6 +117,10 @@ define([], function() {
 				header.requestMethod = "DELETE";	
 				header.requestPostBody = JSON.stringify(projectRequestBody);
 				header.webserviceurl = commonVariables.webserviceurl + "dashboard/widget";
+			} else if(action === 'deletedashboard') {
+				header.requestMethod = "DELETE";
+				header.requestPostBody = JSON.stringify(projectRequestBody);
+				header.webserviceurl = commonVariables.webserviceurl + "dashboard" ;
 			}
 			return header;
 		},
@@ -259,6 +264,20 @@ define([], function() {
 					}	
 				});
 			});
+			
+			$(".dashboard_delete").unbind('click');
+			$(".dashboard_delete").click(function() {
+				var obj = this;
+				self.actionBody = {};
+				self.actionBody.appdirname = $(obj).parent('li').attr('appdirname');
+				self.actionBody.dashboardid = $(obj).parent('li').attr('id');
+				self.graphAction(self.getActionHeader(self.actionBody, "deletedashboard"), function(response) {
+					if($("#click_listofdash").text() === $(obj).prev().text()) {
+						$(".noc_view").remove();
+					}
+					$(obj).parent('li').remove();
+				});
+			});
 		},
 		
 		//clearing exist service call
@@ -272,7 +291,7 @@ define([], function() {
 		
 		generateLineChart : function(widgetKey, currentWidget, results) {
 			var self = this, graphdata = '<div class="demo-container1" id="placeholder_' + widgetKey + '"></div>',
-			xVal, yVal;
+			xVal, yVal, lineType;
 			
 			$("#content_" + widgetKey).children('.graph_table').empty();
 			$("#content_" + widgetKey).find('.graph_table').append(graphdata);
@@ -283,19 +302,39 @@ define([], function() {
 		},
 		
 		constructLineInfo : function(widgetKey, currentWidget, xVal, yVal, results, callback){
-			var self = this, xData, yData = '', totalArr = [];
+			var self = this, xData, yData = '', totalArr = [], temp;
 			try{
 				$.each(results, function(index, value) {
-					if(xVal === '_time'){xData = Date.parse(value[xVal]);}else{xData = value[xVal];}	
+					if(xVal === '_time'){xData = Date.parse(value[xVal]);lineType = 'time';}
+					else {
+						xData = parseInt(value[xVal],10) === NaN ? null : parseInt(value[xVal],10);
+						lineType = 'other';
+					}	
 					try{yData = parseInt(value[yVal],10) === NaN ? null : parseInt(value[yVal],10) ;}catch(ex){ yData =null;}
 					totalArr.push([xData,yData])
 				});
+				
+				if(lineType === 'other') {
+					 for(var loopdata = 0;loopdata<totalArr.length;loopdata++) {
+						for(var loopdata2 = loopdata+1;loopdata2<totalArr.length;loopdata2++) {
+							if(totalArr[loopdata][0]>totalArr[loopdata2][0]) {
+								temp = totalArr[loopdata];
+								totalArr[loopdata] = totalArr[loopdata2];
+								totalArr[loopdata2] = temp;
+							}
+						}	
+					} 
+					console.info(totalArr);
+				}
 				
 				self.lineLegentName[widgetKey]=currentWidget.name;
 				self.totalArr[widgetKey]=totalArr;
 				self.xVal[widgetKey]=xVal;
 				self.yVal[widgetKey]=yVal;
-				if(callback){callback(totalArr);}else{self.highChartLine(widgetKey);}
+				self.LineType[widgetKey]=lineType;
+				if(callback){callback(totalArr);}else {
+					self.highChartLine(widgetKey);
+				}
 			}catch(exception){
 				//ex
 			}
@@ -303,8 +342,9 @@ define([], function() {
 		
 		highChartLine : function(widgetKey, enlarge){
 			var self=this;
-			$('#placeholder_' + widgetKey).highcharts({
-				chart: {
+			self.constructOptionForLineChart(widgetKey, enlarge,function(response) {
+			$('#placeholder_' + widgetKey).highcharts(response);
+				/* chart: {
 					type: 'spline',
 					plotBackgroundColor: null,
 					plotBorderWidth: null,
@@ -362,7 +402,6 @@ define([], function() {
 						formatter: function () {
 						var date = new Date(this.value);
 						return Highcharts.dateFormat('%H:%M:%S <br/>%e, %b', date);
-						//return date;/*('0' + date.getDate()).slice(-2)+'-'+('0' + date.getMonth()).slice(-2)+' ' + ('0' + date.getHours()).slice(-2)+':'+('0'+date.getMinutes()).slice(-2)+':'+('0'+date.getSeconds()).slice(-2);-*/
 						}
 					},
 					title: {
@@ -375,9 +414,6 @@ define([], function() {
 					},
 					min: 0
 				},
-				/*scrollbar: {
-					enabled: false
-				},*/
 				tooltip: {
 					formatter: function() {
 						return '<b>'+ this.series.name +'</b><br/>'+
@@ -388,8 +424,109 @@ define([], function() {
 				series: [{
 					name: self.lineLegentName[widgetKey],
 					data: self.totalArr[widgetKey]
-				}]
-			});
+				}] */
+		});	
+		},
+		
+		constructOptionForLineChart : function(widgetKey, enlarge,callback){
+			var self = this;
+			try{
+				var options = {
+					chart: {
+						type: 'spline',
+						plotBackgroundColor: null,
+						plotBorderWidth: null,
+						backgroundColor: null,
+						plotShadow: false,
+						height: $('#placeholder_'+widgetKey).parent().height() - 20,
+						width: $('#placeholder_' + widgetKey).width(),
+						events: {
+							load: function(){
+								if(!enlarge){
+									// set up the updating of the chart each second
+									var widInfo = commonVariables.api.localVal.getJson(widgetKey),
+									appName = self.currentappname, dashName = self.dashboardname;
+									series = this.series[0];
+									
+									if(widInfo.autorefresh){
+										var regId = setInterval(function(){
+											var widgetInfo = commonVariables.api.localVal.getJson(widgetKey), objactionBody = {};
+											if(widgetInfo){
+												objactionBody.query = widgetInfo.query;
+												objactionBody.widgetname = widgetInfo.name;
+												objactionBody.applicationname = appName;
+												objactionBody.dashboardname = dashName;
+												objactionBody.earliest_time = widgetInfo.starttime;
+												objactionBody.latest_time = widgetInfo.endtime;
+
+												self.graphAction(self.getActionHeader(objactionBody, "searchdashboard"), function(response){
+													//chart update
+													self.constructLineInfo(widgetKey, widgetInfo, widgetInfo.properties.x.toString(), widgetInfo.properties.y.toString(), response.data.results, function(dataVal){
+														series.setData(dataVal);
+													});
+												});
+											}
+										},widInfo.autorefresh);
+										commonVariables.clearInterval[regId] = widgetKey;
+									}
+								}
+							}
+						}
+					},
+					title: {
+						text: null
+					},
+					subtitle: {
+						text: null
+					},
+					exporting: {
+						enabled: false
+					},
+					xAxis: {
+						gridLineWidth: 1,
+						labels: {
+							overflow: 'justify'
+						},
+						title: {
+							text: self.xVal[widgetKey]
+						}
+					},
+					yAxis: {
+						title: {
+							text: self.yVal[widgetKey]
+						},
+						min: 0
+					},
+					
+					tooltip : {},
+					
+					series: [{
+						name: self.lineLegentName[widgetKey],
+						data: self.totalArr[widgetKey]
+					}]
+				};
+			
+				if(self.LineType[widgetKey] === 'time'){
+					options.xAxis.type = 'datetime';
+					options.tooltip.formatter = function(){
+							return '<b>'+ this.series.name +'</b><br/>'+
+							Highcharts.dateFormat('%e. %b', this.x) +': '+ this.y +' m';
+					}
+					options.xAxis.labels.formatter = function () {
+						var date = new Date(this.value);
+						return Highcharts.dateFormat('%H:%M:%S <br/>%e, %b', date);
+						//return date;/*('0' + date.getDate()).slice(-2)+'-'+('0' + date.getMonth()).slice(-2)+' ' + ('0' + date.getHours()).slice(-2)+':'+('0'+date.getMinutes()).slice(-2)+':'+('0'+date.getSeconds()).slice(-2);-*/
+					}
+				} else {
+					options.tooltip.formatter = function(){
+							return '<b>'+ this.series.name +'</b><br/>'+
+							': '+ this.y;
+					}
+				}
+				callback(options);
+			}catch(ex){
+				callback(null);
+			}
 		},
 		
 		generatePieChart : function(widgetKey, currentWidget, results, actionBody) {
@@ -735,16 +872,20 @@ define([], function() {
 				$.each(response.data.results,function(index,value) {
 					$.each(value,function(index1,value1) {							
 						if(queryflag !==1) {
-						$('ul[name="sortable1"]').append('<li value='+index1+'><div class="bar_radio"><input type="checkbox" name="optionsRadiosfd" value='+index1+'></div><div name="envListName" class="bar_name">'+index1+'</div><div class="colorbar_div"><input class="pick_color colorpick" placeholder="Pick Color" type="text" name="'+index1+'"></li>');	
+						$('ul[name="sortable1"]').append('<li value='+index1+'><div class="bar_radio"><input type="checkbox" name="optionsRadiosfd" value='+index1+'></div><div name="envListName" class="bar_name">'+index1+'</div><div class="colorbar_div"><div class="btn-group"><input id="selectedcolor_'+index1+'" name='+index1+' class="pick_color"><a data-toggle="dropdown"><img src="themes/default/images/Phresco/pick_color.png" class="colorpickbar"></a><ul class="dropdown-menu"><li><div id="colorpalette_'+index1+'"></div></li></ul></div></li>');	
 						
 						querydata[querycount] = index1;								
 						querycount++;
+						$('#colorpalette_'+index1).colorPalette()
+						  .on('selectColor', function(e) {
+							$('#selectedcolor_'+index1).val(e.color);
+						  });
 						}										
 					});
 					
 					queryflag = 1;	
 				});
-				$('.colorpick').colorpicker();
+				  
 				for(var z=0;z<querydata.length;z++) {
 					$("select.baraxis").append('<option value='+querydata[z]+'>'+querydata[z]+'</option>');
 				}
@@ -767,11 +908,11 @@ define([], function() {
 				if($("#"+tr_toshow).find('select').children().length) {
 					$("#"+tr_toshow).show();
 				}	
-				$("input[name='execute_query']").removeAttr('disabled');
+				$("img[name='execute_query']").show();
 				$("#update_tab").attr('disabled','disabled');
 			} else {
 				if(!($("#update_tab").val() === 'Update')) {
-					$("input[name='execute_query']").attr('disabled','disabled');
+					$("img[name='execute_query']").hide();
 					$("#update_tab").removeAttr('disabled');
 				}	
 			}	
@@ -886,19 +1027,6 @@ define([], function() {
 				}
 			});
 			
-			$('.tabchange li').unbind('click');
-			$('.tabchange li').click(function() {
-				placeval = $(this).parents('div.noc_view').attr('dynid');
-				var temp = $(this).children('a').attr('id');
-				if(temp === 'tableview_'+placeval+'') {
-					$("#table_"+placeval).show();
-					$("#content_"+placeval).hide();
-				} else if(temp === 'graphview_'+placeval+'') {
-					$("#table_"+placeval).hide();
-					$("#content_"+placeval).show();
-				}
-			});
-			
 			$('input[name="close_widget"]').unbind('click');
 			$('input[name="close_widget"]').click(function() {
 				var widgetKey = $(this).parents('div.noc_view').attr('widgetid');
@@ -942,7 +1070,8 @@ define([], function() {
 					}  else if($(this).attr('proptype') === 'barchart') {
 						self.highChartBar(placeval, true);
 					} else if($(this).attr('proptype') === 'linechart') {
-						self.highChartLine(placeval, true);
+						self.highChartLine(placeval,true);
+						
 					} else if($(this).attr('proptype') === 'table') {
 						$('.placeholder').css('height','100%');
 					}
@@ -958,7 +1087,7 @@ define([], function() {
 					} else if($(this).attr('proptype') === 'barchart') {
 						self.highChartBar(placeval, true);
 					} else if($(this).attr('proptype') === 'linechart') {
-						self.highChartLine(placeval, true);
+						self.highChartLine(placeval,true);					
 					} else if($(this).attr('proptype') === 'table') {
 						$('.placeholder').css('height','90%');
 					}
@@ -974,6 +1103,13 @@ define([], function() {
 			$('.settings_img').click(function() {
 				var dyn_id = '', currentObj = this;
 				
+				$("select.xaxis").empty();				
+				$("select.yaxis").empty();
+				$("select.percentval").empty();
+				$("select.legendval").empty();
+				$("select.baraxis").empty();
+				$("#tabforbar").find('ul').empty();
+				
 				self.addwidgetflag = 0;
 				$("#update_tab").val('Update');
 				$(currentObj).closest('.he-view').css('visibility', 'visible');
@@ -987,16 +1123,28 @@ define([], function() {
 						$(".filter-option").text(result.data.properties.type.toString());
 						if(result.data.properties.type.toString() === 'barchart') {
 							$(".filter-option").text('Bar Chart');
+							$.each(result.data.properties.y,function(index,value) {	
+								 $('ul[name="sortable1"]').append('<li value='+value+'><div class="bar_radio"><input type="checkbox" name="optionsRadiosfd" value='+value+'></div><div name="envListName" class="bar_name">'+value+'</div><div class="colorbar_div"><input class="pick_color colorpick" placeholder="Pick Color" type="text" value="'+result.data.colorcodes.y[value]+'" name="'+value+'"></li>');	 
+							});
+							$("select.baraxis").append('<option value='+result.data.properties.x.toString()+'>'+result.data.properties.x.toString()+'</option>');
+							self.optionsshowhide('barChartOpt');
 						} else if(result.data.properties.type.toString() === 'linechart') {
 							$(".filter-option").text('Line Chart');
+							$("select.xaxis").append('<option value='+result.data.properties.x.toString()+'>'+result.data.properties.x.toString()+'</option>');
+							$("select.yaxis").append('<option value='+result.data.properties.y.toString()+'>'+result.data.properties.y.toString()+'</option>');
+							self.optionsshowhide('lineChartOpt');
 						} else if(result.data.properties.type.toString() === 'piechart') {
 							$(".filter-option").text('Pie Chart');
+							$("select.percentval").append('<option value='+result.data.properties.x.toString()+'>'+result.data.properties.x.toString()+'</option>');
+							$("select.legendval").append('<option value='+result.data.properties.y.toString()+'>'+result.data.properties.y.toString()+'</option>');
+							self.optionsshowhide('pieChartOpt');
 						} else if(result.data.properties.type.toString() === 'table') {
 							$(".filter-option").text('Table');
+							self.optionsshowhide('table');
 						}
 					}	
-					self.optionsshowhide($("#widgetType").val());
-					$("input[name='execute_query']").removeAttr('disabled');
+					//self.optionsshowhide($("#widgetType").val());
+					$("img[name='execute_query']").show();
 					if(result.data.autorefresh) {
 						$("#timeoutval").show();
 						$("#timeoutval").val(result.data.autorefresh);
@@ -1012,8 +1160,8 @@ define([], function() {
 				});
 			});
 			
-			$("input[name='execute_query']").unbind('click');
-			$("input[name='execute_query']").click(function() {
+			$("img[name='execute_query']").unbind('click');
+			$("img[name='execute_query']").click(function() {
 				self.actionBody = {};
 				var queryflag = 0, querydata=[], querycount = 0, textareaval, nameofwid = '';
 				$("select.xaxis").empty();				

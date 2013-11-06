@@ -63,7 +63,7 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 		 * @element: Element as the result of the template + data binding
 		 */
 		postRender : function(element) {	
-			var self = this, p=0, collection = {}, i =0, j=0, kl = 0, dashBoardListItems = '', bChech = false;
+			var self = this, p=0, collection = {}, i =0, j=0, kl = 0, dashBoardListItems = '', bChech = false, flag_dashboardsexist;
 
 			// Radialize the colors
 			
@@ -96,14 +96,11 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 							self.dashboardListener.currentappname = key;
 							
 							//looping comparing first app from the list
-							//$(".appdirnamedropdown option").each(function() {
 							
-								//if(index === $(this).val()) {									
-									//widgetcount = 0;		
-
 									//looping all the dashboard list
 									$.each(currentApp.dashboards,function(dashBkey,currentdashB){
-										dashBoardListItems += '<li class="dropdown" url_url='+ currentdashB.url + ' appdirname=' + key + ' username=' + currentdashB.username +' password=' + currentdashB.password + ' id=' + dashBkey +'><a href="javascript:void(0)" value=' + currentdashB.dashboardname +'>' + currentdashB.dashboardname + '</a></li>';
+										flag_dashboardsexist = 1;
+										dashBoardListItems += '<li class="dropdown" url_url='+ currentdashB.url + ' appdirname=' + key + ' username=' + currentdashB.username +' password=' + currentdashB.password + ' id=' + dashBkey +'><a href="javascript:void(0)" value=' + currentdashB.dashboardname +'>' + currentdashB.dashboardname + '</a><span class="dashboard_delete">x</span></li>';
 										
 										if(!bChech) {
 											bChech = true;
@@ -132,22 +129,15 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 													self.actionBody.widgetname = currentWidget.name;
 													self.widgetnametemp = currentWidget.name;
 													
+													self.actionBody.earliest_time = currentWidget.starttime;
+													self.actionBody.latest_time = currentWidget.endtime;
+													
 													self.dashboardListener.dashboardURL = currentdashB.url;
 													self.dashboardListener.dashboardusername = currentdashB.username;
 													self.dashboardListener.dashboardpassword = currentdashB.password;
 
 													//self.dashboardListener.createwidgetTable(widgetKey,currentWidget, self.actionBody, true);
 													self.dashboardListener.getWidgetDataInfo(widgetKey,currentWidget, self.actionBody, true);
-													
-													 /*  self.dashboardListener.graphAction(self.dashboardListener.getActionHeader(self.actionBody, "searchdashboard"), function(response) {
-														
-													}); */ 
-													/* collection['"' +index1 + '"'].push([index2,value2.autorefresh]);
-													collection['"' +index1 + '"'].push([index2,value2.endtime]);
-													collection['"' +index1 + '"'].push([index2,value2.name]);
-													collection['"' +index1 + '"'].push([index2,value2.properties]);
-													collection['"' +index1 + '"'].push([index2,value2.query]);
-													collection['"' +index1 + '"'].push([index2,value2.starttime]); */		
 												});		
 											}	
 											//widgetcount = 1;
@@ -169,6 +159,12 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 						$("ul.dashboardslist").append(dashBoardListItems);
 						$("#click_listofdash").text($(".dashboardslist").children(0).children('a').attr('value'));
 						$("#click_listofdash").append('<b class="caret"></b>');
+						
+						if(flag_dashboardsexist !== 1) {
+							$(".forlistingdash").hide();
+							$(".code_report").hide();
+							$("#add_wid").attr('disabled','disabled');
+						}
 					} else {
 						$(".forlistingdash").hide();
 						$(".code_report").hide();
@@ -205,7 +201,15 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 		 
 		bindUI : function(){
 			var self = this;
+			$(".tooltiptop").tooltip();
 			self.dashboardListener.clickFunction();
+			
+			$('#datetimepicker1').datetimepicker({
+			});
+				  
+			$('#datetimepicker2').datetimepicker({
+			});
+			
 			var flag=0, toappend, counter = 0, placeholderval;
 				var count = $('.noc_view').length;
 				if(count == 1){
@@ -216,8 +220,15 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 				$('.selectpicker').selectpicker({
 				});
 				
-				$('#cp1').colorpicker();
-				$('#cp2').colorpicker();
+				$('#colorpalette1').colorPalette()
+						  .on('selectColor', function(e) {
+							$('#selectedcolor1').val(e.color);
+						  });
+						  
+				$('#colorpalette2').colorPalette()
+						  .on('selectColor', function(e) {
+							$('#selectedcolor2').val(e.color);
+						  });		  
 				
 			//$("select.xaxis").parent().parent().hide();
 			//$("select.yaxis").parent().parent().hide();
@@ -235,6 +246,15 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 				$("#update_tab").val('Add');
 				$("#nameofwidget").removeAttr('disabled');
 				$("#nameofwidget").val('');
+				$("#query_add").val('');
+				
+				$("select.xaxis").empty();				
+				$("select.yaxis").empty();
+				$("select.percentval").empty();
+				$("select.legendval").empty();
+				$("select.baraxis").empty();
+				$("#tabforbar").find('ul').empty();
+				
 				self.dashboardListener.optionsshowhide($("#widgetType option:selected").val());
 				self.dashboardListener.addwidgetflag = 1;
 				$('.he-view').removeAttr('style');

@@ -92,7 +92,8 @@
 						</tr>
 						<tr>
 							<td colspan="2">
-								<label>Query<sup>*</sup></label>
+								<label>Query<sup>*</sup></label><a href="javascript:void(0)" class="tooltiptop flt_right" title="" data-placement="bottom" data-toggle="tooltip"  data-original-title="Execute Query"><img name="execute_query" src="themes/default/images/Phresco/execute_txt_icon.png"></a>
+								
 								<textarea id="query_add"></textarea>	
 							</td>
 						</tr>
@@ -103,11 +104,23 @@
 						<tr>
 							<td>
 								<label>Time Range From</label>
-								<input type="text" id="fromTime">
+								<div id="datetimepicker1" class="input-append date">
+									<input id="fromTime" data-format="dd/MM/yyyy hh:mm:ss" type="text"></input>
+									<span class="add-on">
+									  <i data-time-icon="icon-time" data-date-icon="icon-calendar">
+									  </i>
+									</span>
+								</div>
 							</td>
 							<td>
 								<label>Time Range To</label>
-								<input type="text" id="toTime">
+								<div id="datetimepicker2" class="input-append date">
+									<input id="toTime" data-format="dd/MM/yyyy hh:mm:ss" type="text"></input>
+									<span class="add-on">
+									  <i data-time-icon="icon-time" data-date-icon="icon-calendar">
+									  </i>
+									</span>
+								</div>
 							</td>
 						</tr>
 						<tr id="lineChartOpt" style="display:block;">
@@ -121,20 +134,17 @@
 									</thead>
 									<tbody>
 										<tr>
-											<td>
+											<td><label>X-Axis</label>
 												<select class="xaxis"></select>
 											</td>											
 											<td>
-												<input id="cp1" class="pick_color" placeholder="Pick Color" type="text">
+												<div class="btn-group"><input id="selectedcolor1" class="pick_color_line"><a data-toggle="dropdown"><img class="pickcolorlineimg" src="themes/default/images/Phresco/pick_color.png"></a><ul class="dropdown-menu"><li><div id="colorpalette1"></div></li></ul></div>
 											</td>
 										</tr>
 										<tr>
-											<td>
+											<td><label>Y-Axis</label>
 												<select class="yaxis"></select>
 											</td>											
-											<td>
-												<input id="cp2" class="pick_color" placeholder="Pick Color" type="text">
-											</td>
 										</tr>
 									</tbody>
 								  </table>
@@ -209,7 +219,6 @@
                 </table>
 				</div>
                 <div class="flt_right">
-					<input name="execute_query" type="button" value="Execute Query" class="btn btn_style">
 					<input id="update_tab" type="button" value="Add" class="btn btn_style">
 					<input type="button" value="Close" class="btn btn_style dyn_popup_close">
                 </div>

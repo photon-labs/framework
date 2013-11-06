@@ -904,6 +904,10 @@ ul.nav li.dropdown:hover > .test_options{
 	margin:0 !important;
 }
 
+.projectlist_delete {
+	padding-right: 3px;
+}
+
 .table_border tr.proj_title td:last-child {
 	text-align:right !important;
 }
@@ -1099,7 +1103,7 @@ ul.nav li.dropdown:hover > .test_options{
 #project_list_import table tr td {
 	border-top: none;
 	padding: 4px 0;
-	width:58% !important;
+	width:50% !important;
 }
 
 #project_list_import table tr td:first-child input[type="text"], #project_list_import table tr td:first-child select {
@@ -1162,7 +1166,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 #project_list_import .scroll-bar{
-	width:3px !important;
+	width:6px !important;
 }
 
 .left_add_repo{
@@ -2184,7 +2188,7 @@ img[name="close"] {
 /* *************************************************************************** STYLES FOR DIV SCROLL ************************************************************************** */
 
 .scroll-bar {
-    width:4px !important;
+    width:6px !important;
 }
 
 .scroll-up {
@@ -2200,7 +2204,7 @@ img[name="close"] {
     background-position:center;
     top:7px;
 	/*background:#929292;*/
-	width:3px !important;
+	width:6px !important;
 	/*opacity:.6;*/
 	margin-top:-7px;
 }
@@ -2518,10 +2522,6 @@ form[name="deployForm"] li input[type="checkbox"]{
 form[name="deployForm"] {
 	margin-bottom:7px !important;
 	width:384px;
-}
-
-.browse_table tr td input[type="text"]{
-	width:53px !important;
 }
 /* ****************************************************************** STYLES FOR CONFIGUARATION PAGE ************************************************************************** */
 
@@ -3840,11 +3840,6 @@ html>body tbody.scrollContent {
 	padding-bottom: 0px;
 }
 
-.browser_table tr td:last-child img
-{
-	padding: 0px 0px 10px 0px;
-}
-
 .browser_table tr td:last-child a img {
 	margin-left: 10px;
 	margin-right: 0px !important;	
@@ -4879,7 +4874,7 @@ textarea[name="regex"] {
 
 #add_widget tr td input[type="text"], #add_widget tr td select {
 	margin-bottom:0;
-	width:202px !important;
+	width:212px !important;
 }
 
 #add_widget tr td textarea {
@@ -5039,7 +5034,7 @@ textarea[name="regex"] {
 }
 
 .dashboard_popup {
-	width:438px !important;
+	width:504px !important;
 	padding:3px 7px 8px 5px !important;
 }
 
@@ -5055,7 +5050,6 @@ textarea[name="regex"] {
 }
 
 .bootstrap-select.btn-group, .bootstrap-select.btn-group[class*="span"] {
-	width:96.5% !important;
 	margin:0 !important;
 }
 
@@ -5070,7 +5064,7 @@ textarea[name="regex"] {
 }
 
 .dashboard_popup .bootstrap-select > .btn {
-	width:202px !important;
+	width:238px !important;
 	margin-bottom:0 !important;
 	font-size:12px !important;
 	background:none !important;
@@ -5080,7 +5074,7 @@ textarea[name="regex"] {
 
 .dashboard_popup .dropdown-menu {
 	margin:0 !important;
-	min-width:190px !important;
+	min-width:235px !important;
 	max-height:128px !important;
 }
 
@@ -5100,10 +5094,6 @@ textarea[name="regex"] {
 #add_widget .axis_div  input[type="text"], #add_widget .axis_div .browser_table select {
 	width:188px !important;
 	margin-bottom:0 !important;
-}
-
-.pick_color {
-	background:url(../../images/Phresco/pick_color.png) no-repeat right #FFFFFF !important;
 }
 
 #tabforbar ul li {
@@ -5139,6 +5129,65 @@ textarea[name="regex"] {
 
 #add_widget #tabforbar .colorbar_div {
 	text-align:right;
+}
+
+#add_widget tr td img {
+    margin: -18px 3px 5px 0 !important;
+}
+
+.dashboard_delete {
+	cursor: pointer;
+    float: right;
+    font-size: 15px;
+    font-weight: bold;
+    margin: 1px 6px 0;
+}
+
+.pick_color {
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    color: #555555;
+    height: 30px;
+    margin: -42px -23px 0 0;
+    padding: 4px 6px;
+    vertical-align: middle;
+    width: 188px;
+}
+
+.pick_color_line {
+	border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    color: #555555;
+    height: 30px;
+    padding: 4px 6px;
+    vertical-align: middle;
+    width: 188px;
+}
+
+#add_widget .browser_table .pickcolorlineimg {
+	margin: 0 2px -1px -22px !important;
+	cursor:pointer;
+}
+
+#add_widget .browser_table .colorpickbar{
+	cursor: pointer;
+    margin: -24px 0 15px 3px !important;
+}
+
+.bootstrap-colorpalette .btn-color {
+	width:22px !important;
+}
+
+#add_widget .input-append {
+	margin-bottom:0px !important;
+}
+
+#add_widget .input-append input[type="text"] {
+	width:207px !important;
+}
+
+#add_widget .input-append span {
+	padding: 5px 4px 3px 11px !important;
 }
 
 

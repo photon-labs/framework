@@ -25,7 +25,7 @@
                     		</a> 
                     		{{#if ../userPermissions.manageApplication}}
 	                    		<a name="{{id}}" appIds="{{#csvAppIds appInfos}}{{/csvAppIds}}" class="tooltiptop del_project" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete {{name}}">
-	                    			<img src="themes/default/images/Phresco/delete_row_icon.png" width="29" height="23" border="0" alt="0">
+	                    			<img src="themes/default/images/Phresco/delete_row_icon.png" class="projectlist_delete" width="29" height="23" border="0" alt="0">
 	                			</a>
                 			{{else}}
                 				<img src="themes/default/images/Phresco/delete_row_icon_off.png" width="29" height="23" border="0" alt="0">

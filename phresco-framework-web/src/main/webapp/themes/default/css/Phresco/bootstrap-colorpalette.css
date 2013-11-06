@@ -1,0 +1,41 @@
+.bootstrap-colorpalette {
+    padding-left:4px;
+    padding-right:4px;
+    white-space: normal;
+    line-height:1;
+}
+
+.bootstrap-colorpalette div {
+    line-height:0;
+}
+
+.bootstrap-colorpalette .btn-color {
+    width: 17px;
+    height: 17px;
+    border: 1px solid #fff;
+    margin: 0;
+    padding: 0;
+}
+
+.bootstrap-colorpalette .btn-color:hover {
+    border: 1px solid #000;
+}
+
+input {
+    width: 80px;
+}
+
+ul.dropdown-menu {
+    min-width: 144px;
+}
+
+#selected-color2 i {
+    display: inline-block;
+    font-weight: bold;
+    width: 20px;
+    text-align: center;
+}
+
+section>div{
+    margin-bottom:5px;
+}
