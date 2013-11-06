@@ -685,6 +685,9 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			@QueryParam(REST_QUERY_PROJECT_CODE) String projectCode, @QueryParam(REST_QUERY_PROJECTID) String projectId) throws ConfigurationException {
 		Environment env = new Environment();
 		String configFile = "";
+		if (StringUtils.isNotEmpty(moduleName)) {
+			appDirName = appDirName + File.separator + moduleName;
+		}
 		if (StringUtils.isNotEmpty(projectCode)) {
 			configFile = FrameworkServiceUtil.getGlobalConfigFileDir(projectCode);
 		} else if (StringUtils.isNotEmpty(appDirName)) {
