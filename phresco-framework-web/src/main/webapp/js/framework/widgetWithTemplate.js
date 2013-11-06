@@ -440,7 +440,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				self.closeAll(placeId);
 			},
 			
-			openccci : function(ee, placeId, paramVal) {
+			openccci : function(ee, placeId, paramVal, recurse) {
 				var self=this;
 				$(".dyn_popup").hide();
 				
@@ -451,14 +451,24 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				var t= clicked.offset().top + 33;
 				var halfheight= window.innerHeight/2;
 				var halfwidth= window.innerWidth/2;
-				
+				var minuValue = 16;
+				if (paramVal === 'jobTemplates') {
+					minuValue = 5;
+				} 
 				if (clicked.offset().top < halfheight && clicked.offset().left < halfwidth) {
 					$(target).css({"left":clicked.offset().left ,"margin-top":10,"right": "auto"});
 					$(target).toggle();
 					$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
 				} else if (clicked.offset().top < halfheight && clicked.offset().left > halfwidth){
-					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth()))-11;
-					var BottomHeight = clicked.position().top + clicked.height() +  (paramVal === undefined ? 10 : 97 );
+					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth()) - minuValue);
+					var dynamicValue = 10;
+					if (paramVal === 'jobTemplates') {
+						dynamicValue = -121
+					}
+					var BottomHeight = clicked.offset().top + clicked.height() +  dynamicValue;
+					if (paramVal !== 'jobTemplates') {
+						BottomHeight = clicked.position().top + clicked.height() +  dynamicValue;
+					}
 					$(target).css({"right":d,"left": "auto","top": BottomHeight});
 					$(target).toggle();
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopright').addClass('dyn_popup');
@@ -469,13 +479,22 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstyletopright').addClass('speakstylebottomleft').addClass('dyn_popup');	
 				} else if (clicked.offset().top > halfheight && clicked.offset().left > halfwidth){
 					var d = null,BottomHeight = null;
-					d= ($(window).width() - (clicked.offset().left + clicked.outerWidth()))-11;
-					BottomHeight = clicked.position().top - (target.height() + (paramVal === undefined ? 30 : (-57)));
+					d= ($(window).width() - (clicked.offset().left + clicked.outerWidth()) - minuValue);
+					var dynamicValue = 30;
+					if (paramVal === 'jobTemplates') {
+						dynamicValue = 162
+					}
+					BottomHeight = clicked.offset().top - (target.height() + dynamicValue);
+					if (paramVal !== 'jobTemplates') {
+						BottomHeight = clicked.position().top - (target.height() + dynamicValue);
+					}
 					$(target).css({"right":d,"left": "auto","top": BottomHeight});
 					$(target).toggle();
 					$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
 				} 
-
+				if (recurse && !self.isBlank(recurse)) {
+					self.openccci(ee, placeId, paramVal, false);
+				}
 				self.closeAll(placeId);
 			},
 			

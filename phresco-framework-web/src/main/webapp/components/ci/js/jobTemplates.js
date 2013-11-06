@@ -315,7 +315,10 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 				self.constructApplicationsHtml(jobTemplateName, 'edit', function() {
 					self.preEditEvent.dispatch( function() {	
 						// show edit popup
-						self.openccci(thisElem, "jobTemplatePopup", "jobTemplates");
+						setTimeout(function() {
+							self.openccci(thisElem, "jobTemplatePopup", "jobTemplates");
+						},1500);
+						
 					});
 				});
    			});
@@ -343,7 +346,7 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
    			// job template delete poppup
    			$("a[name=deleteconfirm]").unbind("click");
 			$("a[name=deleteconfirm]").click(function() {
-				self.opencc(this, "yesnopopup_" + $(this).attr('value'));
+				self.openccci(this, "yesnopopup_" + $(this).attr('value'),"deleteJobTemplate", true);
 			});
 			
 			$("input[name=name]").on("keypress keyup paste", function(e) {
