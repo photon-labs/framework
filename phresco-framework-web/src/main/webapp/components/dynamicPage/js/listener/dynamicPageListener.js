@@ -121,6 +121,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 						self.consDragnDropcnt(parameter, columnClass, whereToRender);
                     } else if (type === "packagefilebrowse") {
                         // package file browse template
+						self.packageFileBrowswCtrl(parameter, whereToRender, goal);
                     } else if (type === "map") {
                     	self.constructMapControls(parameter, whereToRender);
                     } else if (type === "dynamicpageparameter") {
@@ -436,9 +437,51 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                  self.bindTemplateEvents();
             });
         },
+		
+		packageFileBrowswCtrl : function(parameter, whereToRender, goal) {
+			var self=this;
+			whereToRender.append('<table class="table table-striped table_border table-bordered browse_table" cellpadding="0" cellspacing="0" border="0" id="package_browse"><thead><tr><th>Target Folder</th><th>File/Folder</th></thead><tbody><tr><td><input type="text" class="browse_build" name="targetFolder"></td><td><input type="text" class="browse_build" name="selectedFileOrFolderValue" disabled><input type="hidden" name="selectedFileOrFolder" value=""><input type="button" class="btn btn_style" value="Browse" name="browseFile"><a href="#"><img name=jsAdd src="themes/default/images/Phresco/plus_icon.png" alt=""></a><a name="remove"></a><div id="browseFile" class="dyn_popup" style="display:none"><div name="treeContent"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div></td></tr></tbody></table>');
+			
+			self.packageBrowseEvents();
+		},
         
         /********************* Controls construction methods ends**********************************/
-        getOptionalAttr : function(parameter, optionalAttrs) {
+        
+		packageBrowseEvents : function(){
+			var self = this, addImage = '<img src="plus_icon.png" border="0" alt="">';
+			
+			$('img[name=jsAdd]').unbind('click');
+			$('img[name=jsAdd]').click(function(){
+				$(this).html('');
+				whereToAppend = $(this).parents('tr:last');
+				var removeImage = '<img src="themes/default/images/Phresco/minus_icon.png" border="0" alt="">', val = '<tr><th>Target Folder</th><th>File/Folder</th></thead><tbody><tr><td><input type="text" class="browse_build" name="targetFolder"></td><td><input type="text" class="browse_build" name="selectedFileOrFolderValue" disabled><input type="hidden" name="selectedFileOrFolder" value=""><input type="button" value="Browse" class="btn btn_style" name="browseFile"><a href="#"><img name=jsAdd src="themes/default/images/Phresco/plus_icon.png" alt=""></a><a name="remove"><img src="themes/default/images/Phresco/minus_icon.png" border="0" alt=""></a><div id="browseFile" class="dyn_popup" style="display:none"><div name="treeContent"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div></td></tr>';
+				
+				$(val).insertAfter(whereToAppend);
+				if($(this).parent().siblings('a[name=remove]').html() === ''){
+					$(this).parent().siblings('a[name=remove]').html(removeImage);
+				}
+				self.packageBrowseEvents();
+			});
+			
+			$('a[name=remove]').unbind('click');
+			$('a[name=remove]').click(function(){
+				$(this).parents('tr').remove();
+				$("#package_browse tbody tr").find('a[name=add]').html('');
+				$("#package_browse tbody tr").last().find('a[name=add]').html(addImage);
+				if($("#package_browse tbody tr").length === 1) {
+					$("#package_browse tbody tr").find('a[name=add]').html(addImage);
+					$("#package_browse tbody tr").find('a[name=remove]').html('');
+				}
+			});
+			
+			$('input[name=browseFile]').unbind("click");
+			$('input[name=browseFile]').click(function(){
+				self.loadTree(this, $(this).closest('tr').find('input[name=selectedFileOrFolderValue]'), $(this).closest('tr').find('div[name=treeContent]'), null, $(this).closest('tr').find('input[name=selectedFileOrFolder]'), false);
+			});
+			
+		},	
+		
+		getOptionalAttr : function(parameter, optionalAttrs) {
             if(!parameter.show || parameter.type.toLowerCase() === "hidden"){
                 optionalAttrs.show = ' style="display:none;"';
             } else {
@@ -1092,6 +1135,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 			});
 		},
 		
+		
 		loadTree : function(current, placeCnt, divId, fileType, hiddenCnt, minify){
 			var self = this;
 			self.configRequestBody = {};
@@ -1108,14 +1152,14 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 									"theme": "default",
 									"dots": false,
 									"icons": false,
-									"url": "themes/default/css/Helios/style.css"
+									"url": "themes/default/css/Phresco/style.css"
 								}
 								}).bind("init.jstree", function(event, data){ 
 								}).bind("loaded.jstree", function (event, data) {
 									divId.append(temptree);
 									
 									if(minify){self.minifyTreeclickEvent(current, divId, placeCnt, hiddenCnt);}else{
-										self.treeclickEvent(placeCnt);	
+										self.treeclickEvent(placeCnt, hiddenCnt);	
 									}
 										
 									self.popupforTree(current, $(current).attr('name'));
@@ -1150,22 +1194,26 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 		
 		}, 
 		
-		treeclickEvent : function(placeCnt) {
+		treeclickEvent : function(placeCnt, hiddenCnt) {
 			var self=this;
 			$('span.folder, span.file').click(function(e){
 				$("span.folder a, span.file a").removeClass("selected");
 				$(this).find("a").attr("class", "selected");
 				var path = $(this).parent().attr('value');
 				path = path.replace(/\+/g,' ');
-				self.saveFilePath(placeCnt, path);
+				self.saveFilePath(placeCnt, hiddenCnt, path);
 			});
 		},
 		
-		saveFilePath : function(placeCnt, path) {
+		saveFilePath : function(placeCnt, hiddenCnt, path) {
 			var self=this;
 			$("input[name=selectFilePath]").click(function() {
 				placeCnt.val(path);
+				hiddenCnt.val(path);
 				$("#browse").hide();
+				$("#browseFile").hide();
+				$('#header').css('z-index','7');
+				$('.content_title').css('z-index','6');
 			});
 		},
 		

@@ -2519,6 +2519,10 @@ form[name="deployForm"] {
 	margin-bottom:7px !important;
 	width:384px;
 }
+
+.browse_table tr td input[type="text"]{
+	width:53px !important;
+}
 /* ****************************************************************** STYLES FOR CONFIGUARATION PAGE ************************************************************************** */
 
 .env_border {

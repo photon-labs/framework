@@ -689,10 +689,11 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				});	
 				
 				$("img[name=editproject]").click();
+				$("li#editproject").click();
+
 				setTimeout(function() {
 					start();
 					var projectname = $("#editPrjprojectname").val();
-					var mobLayersDisplay = $("input[name=mobLayers]").css('display');
 					equal(projectname, "Test", "Edit Project - UI Tested");
 					self.runEditInputFromStorageBtnTest();
 				}, 1500);
@@ -728,10 +729,11 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				});	
 				
 				$("img[name=editproject]").click();
+				$("li#editproject").click();
+				
 				setTimeout(function() {
 					start();
 					var projectname = $("#editPrjprojectname").val();
-					var mobLayersDisplay = $("input[name=mobLayers]").css('display');
 					equal(projectname, "Test", "Edit Project - UI Tested");
 					self.runEditInputBtnTest();
 				}, 1500);
@@ -760,7 +762,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					equal(applnLayer, "hidden", "Edit Project - Edit Project Close Image Test");
 					require(["applicationTest"], function(applicationTest){
 						applicationTest.runTests();
-					});  
+					});
 				}, 1500);
 			});
 		}

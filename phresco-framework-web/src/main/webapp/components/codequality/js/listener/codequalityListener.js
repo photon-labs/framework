@@ -114,7 +114,8 @@ define([], function() {
 			}
 			
 			if(action === "sonarurl"){
-				header.webserviceurl = commonVariables.webserviceurl+"parameter/sonarUrl";
+				var appDirName = commonVariables.api.localVal.getSession('appDirName');
+				header.webserviceurl = commonVariables.webserviceurl+"parameter/sonarUrl?appDirName="+appDirName;
 			}
 			
 			if(action === "iframereport"){

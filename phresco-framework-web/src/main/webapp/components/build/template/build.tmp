@@ -31,18 +31,19 @@
 				{{else}}	
 					<input type="submit" data-i18n="[value]build.label.generatebuild" name="build_genbuild" class="btn btn_style" disabled>
 				{{/if}}
-				<form name="buildForm">
-                    <div id="build_genbuild" class="dyn_popup dynamic_cont" style="display:none;width:310px;">
-                        <ul class="row dynamicControls">
-                        </ul>
-                        <div class="dynamicPopupLoading" style="display:none;">&nbsp</div>
+				
+				<div id="build_genbuild" class="dyn_popup dynamic_cont" style="display:none;width:310px;">
+					<form name="buildForm">
+						<ul class="row dynamicControls">
+						</ul>
+						<div class="dynamicPopupLoading" style="display:none;">&nbsp</div>
 						<div class="hiddenControls"></div>
-                        <div class="flt_right">
-                            <input id="buildRun" type="button" value="Build" data-i18n="[value]navigation.application.build" class="btn btn_style">
-                            <input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
-                        </div>
-                    </div>
-                </form>
+					</form>
+					<div class="flt_right">
+						<input id="buildRun" type="button" value="Build" data-i18n="[value]navigation.application.build" class="btn btn_style">
+						<input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
+					</div>
+				</div>
              </div>
              <div class="build_minifier">
 				{{#if userPermissions.manageBuilds}}	

@@ -698,6 +698,17 @@ define(["build/listener/buildListener"], function() {
 							commonVariables.goal = "package";
 							commonVariables.phase = "package";
 							self.dynamicpage.getHtml(whereToRender, openccObj, openccObjName, function(retVal){
+								var totalControls = whereToRender.find('li.ctrl').length;
+								/* if (totalControls > 7) {
+									var sectionHeight = $('.testSuiteTable').height()*3/4;
+									$('#build_genbuild').css("max-height", sectionHeight - 40 + 'px');
+									$('form[name=buildForm]').css("max-height", sectionHeight - 92 + 'px');
+									$("form[name=buildForm]").mCustomScrollbar({
+										autoHideScrollbar:true,
+										theme:"light-thin",
+										advanced:{ updateOnContentResize: true}
+									}); 
+								} */
 								$("#buildNumber").bind('keypress',function(e) {
 									if((e.which >= 48 && e.which <= 57) || (e.which === 8)){return true;}else {e.preventDefault();}
 								});
