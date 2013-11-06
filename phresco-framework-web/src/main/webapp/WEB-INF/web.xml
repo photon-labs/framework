@@ -50,12 +50,6 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	
-	<servlet>
-        <servlet-name>RemoveLockFile</servlet-name>
-        <servlet-class>com.photon.phresco.framework.servlets.RemoveLockFile</servlet-class>
-		<load-on-startup>100</load-on-startup>
-    </servlet>
-	
 	<servlet-mapping>
         <servlet-name>jersey-servlet</servlet-name>
         <url-pattern>/rest/api/*</url-pattern>
