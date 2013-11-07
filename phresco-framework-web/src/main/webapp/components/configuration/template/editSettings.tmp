@@ -1,0 +1,95 @@
+<section class="add_config">
+		<div class="second_title">
+				<!--<input type="submit" value="Add Environment" data-i18n="[value]configuration.label.addenvironment" class="btn btn_style"> -->
+				
+				<div class="navbar navbar-static flt_right">
+					<ul class="nav">
+						<li id="fat-menu" class="dropdown">
+							<a href="javascript:void(0)" id="drop3" role="button" class="dropdown-toggle drop-qual" data-toggle="dropdown">
+								{{#if userPermissions.manageConfiguration}}
+									<input type="submit" data-i18n="[value]configuration.label.addconfig" class="btn btn_style arrow_down_icon">
+								{{else}}
+									<input type="submit" data-i18n="[value]configuration.label.addconfig" class="btn btn_style arrow_down_icon" disabled>
+								{{/if}}
+							</a>
+							<div class="dropdown-menu cust_sel fix_height popup_scroll" role="menu" aria-labelledby="drop3" id="configurationListScroll">
+								<ul name="configurations">
+									{{#each configType}}
+										{{#if envSpecific}}
+											<li name="{{templateName}}"><a href="javascript:void(0)">{{templateName}}</a></li>
+										{{else}}
+											<li name="{{templateName}}" style="display:none"><a href="javascript:void(0)">{{templateName}}</a></li>
+										{{/if}}
+									{{/each}}
+									<li name="Other"><a href="javascript:void(0)">Other</a></li>
+								</ul>
+							</div>
+						</li>
+					</ul>
+				</div>
+				<div id="msgdisplay" align="center"> </div>
+			<!--second_title div ends here -->
+		</div>
+		
+		<section class="features_content_main tab_line testSuiteTable">
+			<div class="qual_unit_main unit_info" style="width:98%">
+				<div class="scrolldiv">
+				<table class="table table_border table-bordered edit_config_tab" cellpadding="0" cellspacing="0" border="0">  
+					<tbody name="ConfigurationLists"> 
+						<tr>
+							{{#configurations}}
+								<td>Name</td>
+								<td><input type="text" name="EnvName" maxlength="30" title="30 Characters only" value="{{name}}"/></td>
+								<td>Description</td>
+								<td colspan="3"><input name="EnvDesc" type="text"  maxlength="150" title="150 Characters only" value="{{desc}}"/></td>
+							{{/configurations}}
+						</tr>
+					</tbody>
+				</table>
+				</div>
+			</div>
+			
+			<!--features_content_main div ends here -->
+				<div id="validationConsole" style="display:none">
+					<div class="unit_close">
+						<a href="javascript:void(0)" data-flag="true" id="themeValidation">
+							<img src="themes/default/images/Phresco/console_img.png" width="33" height="92" border="0" alt="">
+							<div class="progress_loading" style="display:none;"><img src="themes/default/images/Phresco/progress_load.gif" border="0"></div>
+						</a>
+					</div>
+					<div class="unit_progress build_progress">
+						<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
+							<thead>
+								<tr>
+									<td>
+										<div class="flt_right">
+											<input type="button" class="btn btn_style kill_btn" value="Kill Process" data-i18n="[value]build.label.killprocess">
+											<a href="javascript:void(0)" title="" href="javascript:void(0)" id="buildCopyLog">
+												<img src="themes/default/images/Phresco/buildreport_icon.png" width="15" height="18" border="0" alt="">
+											</a>
+										</div>
+										<div class="flt_left" data-i18n="build.label.progress"></div>
+									</td>
+								</tr>
+							 </thead>
+						</table>
+						<div class="consolescrolldiv" autoscroll="true">
+							<div id="logContent" class="console_pad">
+							</div>
+						</div>
+					</div>
+				</div>
+		</section>
+		<section class="content_end" name="configContent">
+			<div class="flt_right">
+				{{#if userPermissions.manageConfiguration}}
+					<input type="submit" name="UpdateConfiguration" value="Update" data-i18n="[value]common.btn.update" class="btn btn_style update_btn">
+				{{else}}
+					<input type="submit" name="UpdateConfiguration" value="Update" data-i18n="[value]common.btn.update" class="btn btn_style update_btn" disabled>
+				{{/if}}
+				<input id="cancelEditConfig"" type="submit" value="Cancel" data-i18n="[value]common.btn.close" class="btn btn_style cancel_icon_btn">
+			</div>
+			<div class="msgdisplay"></div>
+			<!--content_title ends here -->
+		</section>
+	</section> 
