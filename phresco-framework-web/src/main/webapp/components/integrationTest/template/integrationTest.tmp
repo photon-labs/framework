@@ -5,7 +5,7 @@
     <div class="flt_right">
 		<div class="unit_view hideContent">
 			<div class="code_report_icon" id="pdfDiv">
-				<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/Phresco/pdf_icon_white.png" ></a>
+				<!-- <div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/Phresco/pdf_icon_white.png" ></a>-->
 				<!--Pdf report popup starts here -->
 				<div id="pdf_report" class="dyn_popup hideContent">
 					<div id="noPdfReport" class="noReport"></div>
@@ -51,7 +51,7 @@
            			</form>
 				</div>
 				<!--Pdf report popup ends here -->	
-			</div>
+			<!--</div>-->	
 			</div>
             <span id="tabularView" class="table" style="cursor: pointer;">
             	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/Phresco/table_active.png" width="213" height="29" border="0" alt="" usemap="#tabularViewMap"></a>
