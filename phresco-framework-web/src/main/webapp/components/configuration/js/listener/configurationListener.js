@@ -151,7 +151,7 @@ define(["croneExpression/croneExpression"], function() {
 			projectId = commonVariables.api.localVal.getSession('projectId');
 			var moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
 			var projectInfo = commonVariables.api.localVal.getProjectInfo();
-			if(projectInfo !== null || projectInfo !== undefined){
+			if(projectInfo !== undefined && projectInfo !== null){
 				techId = projectInfo.data.projectInfo.appInfos[0].techInfo.id;
 			}
 			if (!self.isBlank(moduleParam)) {

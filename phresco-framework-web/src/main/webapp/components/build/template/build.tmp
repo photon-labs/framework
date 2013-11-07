@@ -1,6 +1,7 @@
  <section class="optiontitle buildtitle">
-        <div class="alert_div" style="display:none;" data-i18n="build.label.ProgressMsg"></div>
-        
+        <div id="build_alert_div" class="alert_div" style="display:none;" data-i18n="build.label.ProgressMsg"></div>
+        <div id="run_against_src_alert_div" class="alert_div" style="display:none;" data-i18n="build.label.RunAgainstSrcProgressMsg"></div>
+		
         <div class="flt_right">
             <div class="icon_images"><a title="" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Open Folder" href="javascript:void(0)" id="openFolder"><img src="themes/default/images/Phresco/openfolder_icon.png" ></a></div>
 			<div class="icon_images copy_path_icon"><a title=""  class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Copy Path" href="javascript:void(0)" id="copyPath"><img src="themes/default/images/Phresco/copypath_icon.png" ></a></div>	
@@ -170,7 +171,7 @@
 						<td>
 							<div class="flt_right">
 								<input type="button" class="btn btn_style kill_btn" value="Kill Process" data-i18n="[value]build.label.killprocess">
-								<a href="javascript:void(0)"  id="buildCopyLog">
+								<a href="javascript:void(0)"  id="buildCopyLog" style="cursor:pointer;">
 									<img src="themes/default/images/Phresco/buildreport_icon.png" width="15" height="18" border="0" alt="">
 								</a>
 							</div>

@@ -560,6 +560,12 @@ define([], function() {
 				$(this).val(str);
 			});
 			
+			$("#projectdescription").keypress(function(e){
+				if (e.which === 60 || e.which === 62) {
+					e.preventDefault();
+				}
+			});
+
 			$(".appln-appcode, .web-appcode, .mobile-appcode").focusout(function(){
 				var totalLength = $(this).val().length;
 				if($(this).val().match(/[._-]/g) !== null){ 

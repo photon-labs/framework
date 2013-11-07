@@ -127,6 +127,7 @@ define(["build/listener/buildListener"], function() {
 			if($("input[name=build_runagsource]").is(':visible')){
 				self.buildListener.getInfo(self.buildListener.getRequestHeader("", '', 'serverstatus'), function(response){
 					self.changeBtnStatus(response);
+					$('#run_against_src_alert_div').hide();
 					if(bootup){self.retainLogcontent(response.data);}
 				});
 			}
@@ -187,6 +188,7 @@ define(["build/listener/buildListener"], function() {
 				hide = "btn_style";
 			}
 			
+			$('#run_against_src_alert_div').hide();
 			$("input[name=build_runagsource]").removeClass(show);
 			$("#stop").removeClass(hide);
 			$("#restart").removeClass(hide);
@@ -231,7 +233,7 @@ define(["build/listener/buildListener"], function() {
 		refreshContent : function(loadContent){
 			var self = this;
 
-			$('.alert_div').hide();
+			$('#build_alert_div').hide();
 			if(loadContent){
 				self.buildListener.getInfo(self.buildListener.getRequestHeader("", '', 'getList'), function(response) {
 					if(response !== undefined && response !== null && response.data !== null && response.data.length > 0){
@@ -426,7 +428,7 @@ define(["build/listener/buildListener"], function() {
 				self.onMavenServiceEvent.dispatch('mvnProcessBuild', $(this).closest('tr').find('form[name=prcBForm]').serialize(), '', '', function(response){
 					$('.progress_loading').css('display','none');
 					if(response !== null && response.errorFound === true){
-						$('.alert_div').hide();
+						$('#build_alert_div').hide();
 						self.showErrorPopUp(response.responseCode);
 					}else if(response !== null && response.errorFound === false){
 						self.refreshContent(true);
@@ -633,6 +635,7 @@ define(["build/listener/buildListener"], function() {
 					if (!response.errorFound && response.status !== "error" && response.status !== "failure"){
 						$("form[name=runAgainstForm] #build_runagsource").hide();
 						$(".dyn_popup").hide();
+						$('#run_against_src_alert_div').show();
 						self.clearLogContent();
 						
 						$("input[name=build_runagsource]").addClass("btn_style_off");
@@ -735,7 +738,7 @@ define(["build/listener/buildListener"], function() {
 				self.onValidationEvent.dispatch('package', queryStr, function(response){
 					if (!response.errorFound && response.status !== "error" && response.status !== "failure"){
 						$("form[name=buildForm]").hide();
-						$('.alert_div').show();
+						$('#build_alert_div').show();
 						self.clearLogContent();
 						self.onMavenServiceEvent.dispatch('mvnBuild', queryStr, '', '', function(response){
 							$('.progress_loading').css('display','none');

@@ -246,6 +246,8 @@ define(["projectlist/listener/projectListListener"], function() {
 			
 			$("#applicationedit").css("display", "none");
 			$("#editprojectTab").css("display", "none");
+			$("#editprojectTab li a").removeClass("act");
+			
 			$("img[name=editproject]").unbind("click");
 			$("img[name=editproject]").click(function(){
 				commonVariables.api.localVal.setSession('projectCode', $(this).attr('projectcode'));

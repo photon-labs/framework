@@ -594,6 +594,7 @@
 			"killprocess" : "Kill Process",
 			"restart" : "Restart",
 			"ProgressMsg" : "Build in progress... Do not perform any action or refresh the page.",
+			"RunAgainstSrcProgressMsg" : "Run Against Source in progress... Do not perform any action or refresh the page.",
 			"deleteConform" :"Are you sure to delete this?",
 			"run" : "Run",
 			"close" : "Close",
