@@ -591,6 +591,7 @@ define(["croneExpression/croneExpression"], function() {
 				$("a[name=removeConfig]").unbind("click");
 				self.removeConfiguration();
 				self.spclCharValidation();
+				self.restrictSpaceInOthersKey();
 				if (fCheck === true) {
 					var strFile = '';
 					var configFileData = '';
@@ -610,6 +611,7 @@ define(["croneExpression/croneExpression"], function() {
 				var appendTo = $(this).parent().parent().parent("."+addConfig+":last");
 				$(this).html('');
 				self.addConfigValue(value, appendTo, addConfig);
+				self.restrictSpaceInOthersKey();
 			});
 			
 			$("a[name=remove"+addConfig+"]").click(function(){	
@@ -1289,7 +1291,7 @@ define(["croneExpression/croneExpression"], function() {
 						
 						var configKey = $(this).children().find('.ConfigKey').val();
 						var configKeyValue = $(this).children().find('.ConfigKeyValue').val();
-						if (configKey !== undefined && configKeyValue !== undefined) {
+						if (configKey !== undefined && configKey !== "" && configKeyValue !== undefined) {
 							properties[configKey] = configKeyValue;
 							configJson.properties = properties;
 						}
@@ -1325,6 +1327,16 @@ define(["croneExpression/croneExpression"], function() {
 			}
 		},
 		
+		restrictSpaceInOthersKey : function () {
+			$(".ConfigKey").unbind('input');
+			$(".ConfigKey").bind('input propertychange', function(){
+				var str = $(this).val();
+				str = str.replace(/[^a-zA-Z 0-9\-\_]+/g, '');
+				str = str.replace(/\s+/g, '');
+				$(this).val(str);
+			});
+		},
+
 		validation : function() {
 			var self = this, bCheck = true;
 			$.each($(".row_bg"), function(index, value) {
