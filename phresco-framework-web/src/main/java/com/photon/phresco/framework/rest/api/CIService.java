@@ -985,7 +985,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 
 			String mvncmd = "";
 
-			String pomFileName = Utility.getPomFileName(appInfo);
+			String pomFileName = Utility.getPhrescoPomFile(appInfo);
 			job.setPomLocation(pomFileName);
 
 			InetAddress thisIp = InetAddress.getLocalHost();
