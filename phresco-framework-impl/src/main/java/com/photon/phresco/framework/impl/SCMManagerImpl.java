@@ -430,85 +430,100 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				S_LOGGER.debug("Repository Root: " + repository.getRepositoryRoot(true));
 				S_LOGGER.debug("Repository UUID: " + repository.getRepositoryUUID(true));
 			}
-			boolean valid = validateDir(repository, "", repodetail.getRevision(), svnURL, true, displayName, uniqueKey);
-			return valid;
+			return recurseMethod(repository, "", repodetail.getRevision(), svnURL, displayName, uniqueKey, true);
 	}
-
-	private boolean validateDir(SVNRepository repository, String path,
-			String revision, SVNURL svnURL, boolean recursive, String displayName, String uniqueKey)throws Exception {
-		if(debugEnabled){
-			S_LOGGER.debug("Entering Method  SCMManagerImpl.validateDir()");
-		}
-		// first level check
-			Collection entries = repository.getDir(path, -1, null, (Collection) null);
-			Iterator iterator = entries.iterator();
-			if(debugEnabled){
-				S_LOGGER.debug("Entry size " + entries.size());
+	
+	boolean recurseMethod(SVNRepository repository, String path, String revision, SVNURL svnURL, String displayName, String uniqueKey, boolean recursive) throws Exception {
+		Collection entries = repository.getDir(path, -1, null, (Collection) null);
+		ApplicationInfo appInfo = dotPhrescoEvaluator(entries, revision, svnURL);
+		if(appInfo != null) {
+			boolean checkoutSVN = checkoutSVN(appInfo, revision, svnURL, displayName, uniqueKey);
+			if(checkoutSVN) {
+				dotphresco = true;
 			}
+		} else if (recursive) {
+			Iterator iterator = entries.iterator();
 			if (entries.size() != 0) {
 				while (iterator.hasNext()) {
 					SVNDirEntry entry = (SVNDirEntry) iterator.next();
-					if ((entry.getName().equals(FOLDER_DOT_PHRESCO))
-							&& (entry.getKind() == SVNNodeKind.DIR)) {
-						if(debugEnabled){
-							S_LOGGER.debug("Entry name " + entry.getName());
-							S_LOGGER.debug("Entry Path " + entry.getURL());
-						}
-						ProjectInfo projectInfo = getSvnAppInfo(revision, svnURL);
-						
-						if(debugEnabled){
-							S_LOGGER.debug("AppInfo " + projectInfo);
-						}
-						SVNUpdateClient uc = cm.getUpdateClient();
-						if (projectInfo == null) {
-							if(debugEnabled){
-								S_LOGGER.debug("ProjectInfo is Empty");
-							}
-							throw new PhrescoException(INVALID_FOLDER);
-						}
-						List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
-						if (appInfos == null) {
-							if(debugEnabled){
-								S_LOGGER.debug("AppInfo is Empty");
-							}
-							throw new PhrescoException(INVALID_FOLDER);
-						}
-						ApplicationInfo appInfo = appInfos.get(0);
-						File file = new File(Utility.getProjectHome(), appInfo.getAppDirName());
-						if (file.exists()) {
-							throw new PhrescoException(PROJECT_ALREADY);
-			            } else {
-			            	//generate import lock
-			            	String appId = appInfo.getId();
-			            	LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appId, FrameworkConstants.IMPORT, displayName, uniqueKey)), true);
-			            }
-						if(debugEnabled){
-							S_LOGGER.debug("Checking out...");
-						}
-						uc.doCheckout(svnURL, file, SVNRevision.UNDEFINED,
-								SVNRevision.parse(revision), SVNDepth.UNKNOWN,
-								false);
-						if(debugEnabled){
-							S_LOGGER.debug("updating pom.xml");
-						}
-						// update connection url in pom.xml
-						updateSCMConnection(appInfo,
-								svnURL.toDecodedString());
-						dotphresco = true;
-						return dotphresco;
-					} else if (entry.getKind() == SVNNodeKind.DIR && recursive) {
-						// second level check (only one iteration)
+					if ((entry.getKind() == SVNNodeKind.DIR)) {
 						SVNURL svnnewURL = svnURL.appendPath(FORWARD_SLASH + entry.getName(), true);
 						if(debugEnabled){
 							S_LOGGER.debug("Appended SVNURL for subdir " + svnURL);
 							S_LOGGER.debug("checking subdirectories");
 						}
-						validateDir(repository,(path.equals("")) ? entry.getName() : path
-										+ FORWARD_SLASH + entry.getName(), revision,svnnewURL, false, displayName, uniqueKey);
+						boolean recurseMethod = recurseMethod(repository,(path.equals("")) ? entry.getName() : path
+								+ FORWARD_SLASH + entry.getName(), revision,svnnewURL, displayName, uniqueKey, false);
 					}
 				}
 			}
+		} 
 		return dotphresco;
+	}
+	
+	ApplicationInfo dotPhrescoEvaluator(Collection entries, String revision, SVNURL svnURL) throws Exception {
+		Iterator iterator = entries.iterator();
+		if(debugEnabled){
+			S_LOGGER.debug("Entry size " + entries.size());
+		}
+		if (entries.size() != 0) {
+			while (iterator.hasNext()) {
+				SVNDirEntry entry = (SVNDirEntry) iterator.next();
+				if ((entry.getName().equals(FOLDER_DOT_PHRESCO))
+						&& (entry.getKind() == SVNNodeKind.DIR)) {
+					if(debugEnabled){
+						S_LOGGER.debug("Entry name " + entry.getName());
+						S_LOGGER.debug("Entry Path " + entry.getURL());
+					}
+					return retrieveAppInfo(revision, svnURL);
+				}
+			}
+		}
+		return null;
+	}
+	
+	ApplicationInfo retrieveAppInfo(String revision, SVNURL svnURL) throws Exception {
+		ProjectInfo projectInfo = getSvnAppInfo(revision, svnURL);
+		if (projectInfo == null) {
+			if(debugEnabled){
+				S_LOGGER.debug("ProjectInfo is Empty");
+			}
+			return null;
+		}
+		List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
+		if (appInfos == null) {
+			if(debugEnabled){
+				S_LOGGER.debug("AppInfo is Empty");
+			}
+			return null;
+		}
+		ApplicationInfo appInfo = appInfos.get(0);
+		return appInfo;
+	}
+	
+	boolean checkoutSVN(ApplicationInfo appInfo, String revision, SVNURL svnURL, String displayName, String uniqueKey) throws Exception {
+		SVNUpdateClient uc = cm.getUpdateClient();
+		File file = new File(Utility.getProjectHome(), appInfo.getAppDirName());
+		if (file.exists()) {
+			throw new PhrescoException(PROJECT_ALREADY);
+        } else {
+        	//generate import lock
+        	String appId = appInfo.getId();
+        	LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appId, FrameworkConstants.IMPORT, displayName, uniqueKey)), true);
+        }
+		if(debugEnabled){
+			S_LOGGER.debug("Checking out...");
+		}
+		uc.doCheckout(svnURL, file, SVNRevision.UNDEFINED,
+				SVNRevision.parse(revision), SVNDepth.UNKNOWN,
+				false);
+		if(debugEnabled){
+			S_LOGGER.debug("updating pom.xml");
+		}
+		// update connection url in pom.xml
+		updateSCMConnection(appInfo,
+				svnURL.toDecodedString());
+		return true;
 	}
 
 	private void importFromGit(RepoDetail repodetail, File gitImportTemp)throws Exception {
@@ -1306,7 +1321,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			}catch (ArrayIndexOutOfBoundsException e) {
 				throw new RequestException();
 			}
-			System.out.println(server.createClient(client));
 			if (client != null) {	
 				List<IFileSpec> syncList = client.sync(FileSpecBuilder.makeFileSpecList(stream+"/..."),new SyncOptions());
 				for (IFileSpec fileSpec : syncList) {

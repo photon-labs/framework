@@ -10,7 +10,7 @@ import com.photon.phresco.framework.model.LockDetail;
 import com.photon.phresco.util.Constants;
 
 public class LockUtil implements Constants {
-	public static List<LockDetail> staticLockDetails = new ArrayList<LockDetail>();
+	public static List<LockDetail> LOCK_DETAILS = new ArrayList<LockDetail>();
 	public static LockDetail getLockDetail(String appid, String actionType, String displayName, String uniqueKey) throws PhrescoException {
 		try {
 			LockDetail lockDetail = new LockDetail(appid, actionType, displayName, uniqueKey);
@@ -28,7 +28,7 @@ public class LockUtil implements Constants {
 			if (toGenerate && CollectionUtils.isNotEmpty(availableLockDetails)) {
 				newLockDetails.addAll(availableLockDetails);
 			}
-			staticLockDetails.addAll(newLockDetails);
+			LOCK_DETAILS.addAll(newLockDetails);
 		} catch (Exception e) {
 			throw new PhrescoException(e);
 		}
@@ -48,8 +48,8 @@ public class LockUtil implements Constants {
 						availableLockDetails.add(lockDetail);
 					} 
 				}
-				staticLockDetails.clear();
-				staticLockDetails.addAll(availableLockDetails);
+				LOCK_DETAILS.clear();
+				LOCK_DETAILS.addAll(availableLockDetails);
 			}
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
@@ -57,6 +57,6 @@ public class LockUtil implements Constants {
 	}
 	
 	public static List<LockDetail> getLockDetails() throws PhrescoException {
-		return staticLockDetails;
+		return LOCK_DETAILS;
 	}
 }
