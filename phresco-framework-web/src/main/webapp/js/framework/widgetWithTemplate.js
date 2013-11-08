@@ -984,7 +984,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			},
 
 			// Open console window - Added by sudhakar
-			openConsole : function() {
+			openConsole : function(isFromSettings) {
 				var self = this;
 				$('.testSuiteTable').append('<div class="mask"></div>');
 				$('.mask').show();
@@ -1008,7 +1008,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				var footervalue = $('.footer_section').height();
 				resultvalue = resultvalue + footervalue + 200;
 				finalHeight = height - resultvalue;
-				$(".unit_progress").css("height", finalHeight + 10);
+				isFromSettings ? $(".unit_progress").css("height", finalHeight + 40) : $(".unit_progress").css("height", finalHeight + 10);
 				//$('.unit_progress').find('#logContent').css("height", finalHeight - 20);
 				self.copyLog();
 			},

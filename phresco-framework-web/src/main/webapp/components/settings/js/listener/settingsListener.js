@@ -151,17 +151,25 @@ define([], function() {
 			var queryString = '';
 						
 			$('#testConsole').html('');
-			self.openConsole();//To open the console
+			self.openConsole(true);//To open the console
 			if (self.mavenServiceListener === null) {
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 					self.mavenServiceListener = retVal;
 					self.mavenServiceListener.mvnCiSetup(queryString, '#testConsole', function(response) {
 						self.closeConsole();
+						if (response !== undefined && response.status === "COMPLETED") {
+							$('input[name=setup]').attr('disabled', "disabled");	
+						}					
+						$('.progress_loading').hide();
 					});
 				});
 			} else {
 				self.mavenServiceListener.mvnCiSetup(queryString, '#testConsole', function(response) {
 					self.closeConsole();
+					if (response !== undefined && response.status === "COMPLETED") {
+						$('input[name=setup]').attr('disabled', "disabled");	
+					}					
+					$('.progress_loading').hide();
 				});
 			}
 		},
@@ -171,17 +179,19 @@ define([], function() {
 			var queryString = '';
 						
 			$('#testConsole').html('');
-			self.openConsole();//To open the console
+			self.openConsole(true);//To open the console
 			if (self.mavenServiceListener === null) {
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 					self.mavenServiceListener = retVal;
 					self.mavenServiceListener.mvnCiStart(queryString, '#testConsole', function(response) {
 						self.closeConsole();
+						$('.progress_loading').hide();
 					});
 				});
 			} else {
 				self.mavenServiceListener.mvnCiStart(queryString, '#testConsole', function(response) {
 					self.closeConsole();
+					$('.progress_loading').hide();
 				});
 			}
 		},
@@ -191,17 +201,19 @@ define([], function() {
 			var queryString = '';
 						
 			$('#testConsole').html('');
-			self.openConsole();//To open the console
+			self.openConsole(true);//To open the console
 			if (self.mavenServiceListener === null) {
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 					self.mavenServiceListener = retVal;
 					self.mavenServiceListener.mvnCiStop(queryString, '#testConsole', function(response) {
 						self.closeConsole();
+						$('.progress_loading').hide();
 					});
 				});
 			} else {
 				self.mavenServiceListener.mvnCiStop(queryString, '#testConsole', function(response) {
 					self.closeConsole();
+					$('.progress_loading').hide();
 				});
 			}
 		},
@@ -301,10 +313,9 @@ define([], function() {
 			var self = this;
 			var check = $('#consoleImg').attr('data-flag');
 			if (check === "true") {
-				self.openConsole();
+				self.openConsole(true);
 			} else {
 				self.closeConsole();
-				$('.progress_loading').hide();
 			}
 		},
 				

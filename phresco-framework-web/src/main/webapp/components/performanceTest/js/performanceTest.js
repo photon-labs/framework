@@ -372,12 +372,6 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 				commonVariables.navListener.copyPath(paramJson);
 			});
 
-			//To copy the console log content to the clip-board
-			/* $('#copyLog').unbind("click");
-			$('#copyLog').click(function() {
-				commonVariables.navListener.copyToClipboard($('#testConsole'));
-			}); */
-
 			//To show the print as pdf popup
 			$('.performancePDF').unbind("click");
 			$('.performancePDF').click(function() {
@@ -449,13 +443,6 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 				self.validation.dispatch("performance-test", $('#performanceForm :input[name!=parameterValue]').serialize(), self.dynamicpage);
 			});
 			
-			//To copy the console log content to the clip-board
-			/* $('#copyLog').unbind("click");
-			$('#copyLog').click(function() {
-				commonVariables.hideloading = true;
-				commonVariables.navListener.copyToClipboard($('#testConsole'));
-			}); */
-
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}
 	});
