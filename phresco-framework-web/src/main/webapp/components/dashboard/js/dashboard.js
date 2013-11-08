@@ -27,7 +27,7 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 				$.extend($.tablesorter.defaults, {
 				widthFixed: true,
 				widgets : ['zebra','columns'],
-				sortList: [[0,0],[2,0]]
+				//sortList: [[0,0],[2,0]]
 				//sortList : [ [0,0],[1,0],[2,0] ]
 				});
 					
@@ -63,7 +63,7 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 		 * @element: Element as the result of the template + data binding
 		 */
 		postRender : function(element) {	
-			var self = this, p=0, collection = {}, i =0, j=0, kl = 0, dashBoardListItems = '', bChech = false, flag_dashboardsexist;
+			var self = this, p=0, collection = {}, i =0, j=0, kl = 0, dashBoardListItems = '', bChech = false, flag_dashboardsexist, flag_app = 0;
 
 			// Radialize the colors
 			
@@ -92,8 +92,10 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 						
 						//looping list of application info
 						$.each(response.data,function(key,currentApp) {
-							
-							self.dashboardListener.currentappname = key;
+							if(flag_app === 0) {
+								self.dashboardListener.currentappname = key;
+								flag_app = 1;
+							}	
 							
 							//looping comparing first app from the list
 							

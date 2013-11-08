@@ -968,7 +968,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						if(dashboardInfoFile.exists()) {
 						String json = FileUtils.readFileToString(dashboardInfoFile);
 						Dashboards dashboards =  gson.fromJson(json, Dashboards.class);
-						appDashboards.put(dashboards.getAppcode(), dashboards);
+						appDashboards.put(dashboards.getAppname(), dashboards);
 						}
 					} catch (IOException e) {
 						e.printStackTrace();
