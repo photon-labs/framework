@@ -1090,15 +1090,15 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				if(responseData !== null && responseData !== undefined && responseData.data !== null && responseData.data !== "false"){
 					$('.icon_images #openFolder').parent().show();
 					$('.icon_images #copyPath').parent().show();
-					$('#buildCopyLog').show();
+					/*$('#buildCopyLog').show();
 					$('#codeLog').show();
-					$('#copyLog').show();
+					$('#copyLog').show();*/
 				}else{
 					$('.icon_images #openFolder').parent().hide();
 					$('.icon_images #copyPath').parent().hide();
-					$('#buildCopyLog').hide();
+					/*$('#buildCopyLog').hide();
 					$('#codeLog').hide();
-					$('#copyLog').hide();
+					$('#copyLog').hide();*/
 				}
 
 			},

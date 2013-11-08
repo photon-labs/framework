@@ -280,7 +280,7 @@ define(["croneExpression/croneExpression"], function() {
 					if (deleteEnv === "false") {
 						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&isEnvSpecific="+deleteEnv+"&configName="+commonVariables.updateConfigName+"&customerId="+customerId+"&userId="+userId+moduleParam+"&projectId="+projectId;
 					} else {
-						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?projectCode="+projectCode+"&envName="+deleteEnv+"&customerId="+customerId+"&userId="+userId+"&oldEnvName="+self.oldEnvName+"&defaultEnv="+self.defaultEnv+"&desc="+self.desc+"&isfavoric="+self.favourite+"&projectId="+projectId;
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?projectCode="+projectCode+"&envName="+deleteEnv+"&customerId="+customerId+"&userId="+userId+"&oldEnvName="+self.oldEnvName+"&defaultEnv="+self.defaultEnv+"&desc="+self.desc+"&isfavoric="+false+"&projectId="+projectId;
 					}
 				} else if (action === "isAliveCheck") {
 					header.requestMethod = "GET";

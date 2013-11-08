@@ -897,6 +897,11 @@ define([], function() {
 							if(response.responseCode === 'PHR210050' || response.responseCode === 'PHR210049') {
 								$("#importloading").hide();
 							}
+							
+							if(response.responseCode === 'PHR210026') {
+								commonVariables.api.showError("prjtexists" ,"error", true);
+								$('.popuploading').hide();
+							}
 						}
 					},
 					function(textStatus) {
