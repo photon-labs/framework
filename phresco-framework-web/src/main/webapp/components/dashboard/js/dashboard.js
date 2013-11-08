@@ -27,7 +27,7 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 				$.extend($.tablesorter.defaults, {
 				widthFixed: true,
 				widgets : ['zebra','columns'],
-				sortList: [[0,0],[2,0]]
+				//sortList: [[0,0],[2,0]]
 				//sortList : [ [0,0],[1,0],[2,0] ]
 				});
 					
