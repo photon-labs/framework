@@ -540,7 +540,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				
 			
 			openccdashboardsettings : function(ee, placeId, currentPrjName) {
-				var self=this;
+				var self=this, flag = 0;
 				window.hoverFlag = 1;
 				$('.features_content_main').removeClass('z_index');
 				var act = $(ee).attr("data-original-title");
@@ -557,15 +557,24 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				$(target).attr('currentPrjName',currentPrjName);
 				var style;
 				
+				if($(ee).parent().attr('id') !== undefined) {
+					flag = 1;
+				}
 				if (clicked.offset().top < halfheight && clicked.offset().left < halfwidth) {
 					$(target).css({"left":clicked.offset().left ,"margin-top":10,"right": "auto"});
 					if(placeId === 'add_widget') {
 						var BottomHeight = clicked.position().top + clicked.height() + 8 ;
 						$(target).css({"left":clicked.offset().left-15,"margin-top":10,"top": BottomHeight});		
 					} else {
-						var BottomHeight = clicked.position().top + clicked.height() +4 ;
-						var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 765;
-						$(target).css({"left":"auto" ,"margin-top":10,"right": d,"top": BottomHeight});
+						if(flag === 0) {
+							var BottomHeight = clicked.position().top + clicked.height() +4 ;
+							var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 765;
+							$(target).css({"left":"auto" ,"margin-top":10,"right": d,"top": BottomHeight});
+						} else {
+							var BottomHeight = clicked.position().top + clicked.height() +4 ;
+							var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 765;
+							$(target).css({"left":"auto" ,"margin-top":10,"right": d,"top": BottomHeight});
+						}	
 					}
 					$(target).toggle();
 					$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
@@ -576,9 +585,15 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						var BottomHeight = clicked.position().top + clicked.height() + 8 ;
 						$(target).css({"right":d,"left": "auto","margin-top":10,"top": BottomHeight});		
 					}  else {
-						var BottomHeight = clicked.position().top + clicked.height() +4 ;
-						var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 25;
-						$(target).css({"left":"auto" ,"margin-top":10,"right": d,"top": BottomHeight});
+						if(flag === 0) {
+							var BottomHeight = clicked.position().top + clicked.height() +4 ;
+							var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 25;
+							$(target).css({"left":"auto" ,"margin-top":10,"right": d,"top": BottomHeight});
+						} else {
+							var BottomHeight = clicked.offset().top + clicked.height() - 182 ;
+							var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 227;
+							$(target).css({"left":"auto" ,"margin-top":10,"right": d,"top": BottomHeight});
+						}	
 					}
 					$(target).toggle();
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopright').addClass('dyn_popup');
@@ -591,9 +606,15 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						BottomHeight = clicked.position().top + clicked.height() + 40 ;
 						$(target).css({"right":"auto","top": BottomHeight});		
 					} else {
-						BottomHeight = clicked.position().top + clicked.height() -90 ;
-						var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) -765;
-						$(target).css({"left":"auto" ,"margin-top":10,"right": d,"top": BottomHeight});
+						if(flag ===0) {
+							BottomHeight = clicked.position().top + clicked.height() -90 ;
+							var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) -765;
+							$(target).css({"left":"auto" ,"margin-top":10,"right": d,"top": BottomHeight});
+						} else {
+							BottomHeight = clicked.position().top + clicked.height() -90 ;
+							var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) -765;
+							$(target).css({"left":"auto" ,"margin-top":10,"right": d,"top": BottomHeight});
+						}	
 					}
 				} else if (clicked.offset().top > halfheight && clicked.offset().left > halfwidth){
 					var d = null,BottomHeight = null;
@@ -604,11 +625,19 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						$(target).toggle();
 						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
 					} else {
-						BottomHeight = clicked.position().top + clicked.height() - 90;
-						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 20;
-						$(target).css({"left":"auto" ,"margin-top":10,"right": d,"top": BottomHeight});
-						$(target).toggle();
-						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
+						if(flag === 0) {
+							BottomHeight = clicked.position().top + clicked.height() - 90;
+							d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 20;
+							$(target).css({"left":"auto" ,"margin-top":10,"right": d,"top": BottomHeight});
+							$(target).toggle();
+							$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
+						} else {
+							BottomHeight = clicked.position().top + clicked.height() - 90;
+							d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 20;
+							$(target).css({"left":"auto" ,"margin-top":10,"right": d,"top": BottomHeight});
+							$(target).toggle();
+							$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
+						}	
 					}
 				} 
 
