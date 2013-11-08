@@ -430,9 +430,9 @@ define([], function() {
 					$('input[name=commitbtn]').removeClass("btn_style");		
 					$('.commit_data_'+dynamicId).show();
 					$('#commitRepourl_'+dynamicId).val(response.data.repoUrl);
-					commitableFiles += '<thead class="fixedHeader"><tr><th style="width: 5%;"><input dynamicId="'+ dynamicId +'" class="commitParentChk_'+ dynamicId +'"  type="checkbox"></th><th style="width: 71%;">File</th><th>Status</th></tr></thead><tbody class="commitFixed">';
+					commitableFiles += '<thead class="fixedHeader"><tr><th style="width: 5%;"><input checkVal="check" dynamicId="'+ dynamicId +'" class="commitParentChk_'+ dynamicId +'"  type="checkbox"></th><th style="width: 71%;">File</th><th>Status</th></tr></thead><tbody class="commitFixed">';
 					$.each(response.data.repoInfoFile, function(index, value) {
-						commitableFiles += '<tr><td><input dynamicId="'+ dynamicId +'" class="commitChildChk_' + dynamicId + '" type="checkbox" value="' + value.commitFilePath + '"></td>';
+						commitableFiles += '<tr><td><input checkVal="check" dynamicId="'+ dynamicId +'" class="commitChildChk_' + dynamicId + '" type="checkbox" value="' + value.commitFilePath + '"></td>';
 						commitableFiles += '<td style="width:300px !important;" title="'+ value.commitFilePath +'">"' + value.commitFilePath + '"</td>';
 						commitableFiles += '<td>"' + value.status + '"</td></tr>';
 					});

@@ -422,6 +422,12 @@ define(["projectlist/listener/projectListListener"], function() {
 								$('#updateRepourl_'+dynamicId).attr('placeholder','Repo Url');
 							}		
 						}
+						if(selectObj.val() === 'git') {
+							$("input[checkVal=check]").attr("disabled", true);
+						} else {
+							$("input[checkVal=check]").attr("disabled", false);
+						}
+
 					});
 				}
 				
