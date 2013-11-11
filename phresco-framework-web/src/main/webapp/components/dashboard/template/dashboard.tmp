@@ -19,7 +19,7 @@
 				</ul>
 			</div>
             <input type="submit" id="config_noc" value="Configure" class="btn btn_style">
-                <div id="noc_config" class="dyn_popup dashboard_popup">
+                <div id="noc_config" class="dyn_popup">
                     <table cellspacing="0" cellpadding="0" border="0" class="table">
                         	<tbody>
                             	<tr>
@@ -124,27 +124,25 @@
 							</td>
 						</tr>
 						<tr id="lineChartOpt" style="display:block;">
-							<td colspan="2">
+							<td colspan="3">
 								<div class="axis_div">
 									<table cellspacing="0" cellpadding="3" border="0" class="table table-striped table_border table-bordered browser_table border_div">
 									<thead>
 										<tr>
-											<th colspan="2">Line Chart</th>
+											<th colspan="3">Line Chart</th>
 										</tr>
 									</thead>
 									<tbody>
 										<tr>
-											<td><label>X-Axis</label>
-												<select class="xaxis"></select>
-											</td>											
+											<td><label style="width:35px;">X-Axis</label></td>
+											<td><select class="xaxis"></select></td>											
 											<td>
 												<div class="btn-group"><input id="selectedcolor1" class="pick_color_line"><a data-toggle="dropdown"><img class="pickcolorlineimg" src="themes/default/images/Phresco/pick_color.png"></a><ul class="dropdown-menu"><li><div id="colorpalette1"></div></li></ul></div>
 											</td>
 										</tr>
 										<tr>
-											<td><label>Y-Axis</label>
-												<select class="yaxis"></select>
-											</td>											
+											<td><label style="width:35px;">Y-Axis</label></td>
+											<td><select class="yaxis"></select></td>											
 										</tr>
 									</tbody>
 								  </table>
@@ -162,9 +160,13 @@
 									</thead>
 									<tbody>
 										<tr>
+											<td><label>Percent Value</label></td>
 											<td>
 													<select class="percentval"></select>
 											</td>
+										</tr>
+										<tr>
+											<td><label>Legend Value</label></td>
 											<td>
 													<select class="legendval"></select>
 											</td>
@@ -185,10 +187,9 @@
 									</thead>
 									<tbody>
 										<tr>
-											<td colspan="2">
-												
-													<select class="baraxis"></select>
-												
+											<td><label>Bar Axis</label></td>
+											<td>
+												<select class="baraxis"></select>
 											</td>
 										</tr>
 										<tr>

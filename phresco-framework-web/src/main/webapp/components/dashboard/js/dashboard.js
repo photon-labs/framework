@@ -27,7 +27,7 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 				$.extend($.tablesorter.defaults, {
 				widthFixed: true,
 				widgets : ['zebra','columns'],
-				sortList: [[0,0],[2,0]]
+				//sortList: [[0,0],[2,0]]
 				//sortList : [ [0,0],[1,0],[2,0] ]
 				});
 					
@@ -63,7 +63,7 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 		 * @element: Element as the result of the template + data binding
 		 */
 		postRender : function(element) {	
-			var self = this, p=0, collection = {}, i =0, j=0, kl = 0, dashBoardListItems = '', bChech = false, flag_dashboardsexist;
+			var self = this, p=0, collection = {}, i =0, j=0, kl = 0, dashBoardListItems = '', bChech = false, flag_dashboardsexist, flag_app = 0;
 
 			// Radialize the colors
 			
@@ -92,15 +92,17 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 						
 						//looping list of application info
 						$.each(response.data,function(key,currentApp) {
-							
-							self.dashboardListener.currentappname = key;
+							if(flag_app === 0) {
+								self.dashboardListener.currentappname = key;
+								flag_app = 1;
+							}	
 							
 							//looping comparing first app from the list
 							
 									//looping all the dashboard list
 									$.each(currentApp.dashboards,function(dashBkey,currentdashB){
 										flag_dashboardsexist = 1;
-										dashBoardListItems += '<li class="dropdown" url_url='+ currentdashB.url + ' appdirname=' + key + ' username=' + currentdashB.username +' password=' + currentdashB.password + ' id=' + dashBkey +'><a href="javascript:void(0)" value=' + currentdashB.dashboardname +'>' + currentdashB.dashboardname + '</a><span class="dashboard_delete">x</span></li>';
+										dashBoardListItems += '<li class="dropdown" url_url='+ currentdashB.url + ' appdirname=' + key + ' username=' + currentdashB.username +' password=' + currentdashB.password + ' id=' + dashBkey +'><a href="javascript:void(0)" value=' + currentdashB.dashboardname +'>' + currentdashB.dashboardname + '</a><span class="dashboard_delete">x</span></li><div style="display:none;" id="deletedashboard_'+dashBkey+'" class="delete_msg tohide dashb">Are you sure to delete ?<div><input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style" name="deldashboard"><input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close"></div></div>';
 										
 										if(!bChech) {
 											bChech = true;
@@ -224,11 +226,7 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 						  .on('selectColor', function(e) {
 							$('#selectedcolor1').val(e.color);
 						  });
-						  
-				$('#colorpalette2').colorPalette()
-						  .on('selectColor', function(e) {
-							$('#selectedcolor2').val(e.color);
-						  });		  
+						  	  
 				
 			//$("select.xaxis").parent().parent().hide();
 			//$("select.yaxis").parent().parent().hide();

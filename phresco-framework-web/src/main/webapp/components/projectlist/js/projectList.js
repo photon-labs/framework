@@ -422,6 +422,16 @@ define(["projectlist/listener/projectListListener"], function() {
 								$('#updateRepourl_'+dynamicId).attr('placeholder','Repo Url');
 							}		
 						}
+						if(selectObj.val() === 'git') {
+							$("input[checkVal=check]").attr("disabled", true);
+							$('input[name=commitbtn]').addClass("btn_style");
+							$('input[name=commitbtn]').prop("disabled", false);
+						} else {
+							$("input[checkVal=check]").attr("disabled", false);
+							$('input[name=commitbtn]').removeClass("btn_style");
+							$('input[name=commitbtn]').prop("disabled", true);
+						}
+
 					});
 				}
 				

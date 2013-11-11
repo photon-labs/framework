@@ -48,10 +48,11 @@
 									<th><span data-i18n="project.create.label.technology"></span></th>
 									<th><span data-i18n="project.create.label.version"></span></th>
 									<th></th>
+									<th></th>
 								</tr>
 							</thead>
 							<tbody class="applnlayer">
-								<tr class="applnlayercontent" name="staticApplnLayer">
+								<tr class="applnlayercontent" name="staticApplnLayer" position="1">
 									<td class="applnappcode"><input type="text" id="appcode"  maxlength="30" title="30 characters only" class="appln-appcode appCodeText" count=1></td>
 									<td name="frontEnd" class="frontEnd">
 										<select name="frontEnd" class="frontEnd selectpicker" title="Select Group">
@@ -71,8 +72,14 @@
 										   <option disabled value="Select Version">Select Version</option>
 										</select>
 									 </td>
+									<td>
+										<input type="button" value="Multi Module" class="btn btn_style add_icon_btn multi_module_btn hideContent" name="multiModuleBtn">
+									</td>
 									 <td>
-										<div class="flt_right icon_center"><a name="addApplnLayer" style="cursor:pointer;"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeApplnLayer"></a></div>
+										<div class="flt_right icon_center">
+											<a href="javascript:;" name="addApplnLayer" position="1"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a>
+											<a href="javascript:;" name="removeApplnLayer" class="hideContent"><img src="themes/default/images/Phresco/minus_icon.png" border="0" alt=""/></a>
+										</div>
 									 </td>
 							    </tr>
 						  </tbody>
@@ -96,10 +103,11 @@
 									<th><span data-i18n="project.create.label.technology"></span></th>
 									<th><span data-i18n="project.create.label.version"></span></th>
 									<th></th>
+									<th></th>
 								</tr>
 							</thead>
 							<tbody class="WebLayer">
-								<tr class="weblayercontent" name="staticWebLayer">
+								<tr class="weblayercontent" name="staticWebLayer" position="1">
 									<td class="webappcode"><input type="text" id="webappcode"  maxlength="30" title="30 characters only" class="web-appcode appCodeText" count=2></td>
 									<td name="web" class="web">
 										<select name="weblayer" class="weblayer selectpicker" title="Select Group">
@@ -119,8 +127,14 @@
 											<option disabled value="Select Version">Select Version</option>
 										</select>
 									 </td>
+									<td>
+										<input type="button" value="Multi Module" class="btn btn_style add_icon_btn multi_module_btn hideContent" name="multiModuleBtn">
+									</td>
 									 <td>
-										<div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer" style="cursor:pointer;"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeWebLayer"></a></div>
+										<div class="flt_right icon_center">
+											<a href="javascript:;" name="addWebLayer" position="1"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a>
+											<a href="javascript:;" name="removeWebLayer" class="hideContent"><img src="themes/default/images/Phresco/minus_icon.png" border="0" alt=""/></a>
+										</div>
 									 </td>
 								</tr>
 							</tbody>
@@ -147,8 +161,8 @@
 										<th></th>
 									</tr>
 								</thead>
-								<tbody>
-									<tr class="mobilelayercontent" name="staticMobileLayer">
+								<tbody class="cmsLayer">
+									<tr class="mobilelayercontent" name="staticMobileLayer" position="1">
 										<td class="mobileappcode"><input type="text" id="mobileappcode" maxlength="30" title="30 characters only" class="mobile-appcode appCodeText" count=3></td>
 										<td name="mobile" class="mobile">
 											<select name="mobile_layer" class="mobile_layer selectpicker" title="Select Model">
@@ -163,13 +177,19 @@
 											   <option disabled value="Select Technology">Select Technology</option>
 											</select>
 										 </td>
-										 <td colspan="2" name="mobileversion" class="mobileversion">
+										 <td name="mobileversion" class="mobileversion">
 											<select name="mobile_version" class="mobile_version selectpicker" title="Select Version">
 											   <option disabled value="Select Version">Select Version</option>
 											</select>
 										 </td>
+										<td>
+											<input type="button" value="Multi Module" class="btn btn_style add_icon_btn multi_module_btn hideContent" name="multiModuleBtn">
+										</td>
 										 <td>
-											<div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer" style="cursor:pointer;"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeMobileLayer"></a> </div>
+											<div class="flt_right icon_center">
+												<a href="javascript:;" name="addMobileLayer" position="1"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a>
+												<a href="javascript:;" name="removeMobileLayer" class="hideContent"><img src="themes/default/images/Phresco/minus_icon.png" border="0" alt=""/></a>
+											</div>
 										 </td>
 									</tr>
 							   </tbody>

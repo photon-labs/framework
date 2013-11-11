@@ -114,14 +114,12 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
    			$("input[name=switch]").click(function() {		
    				if ($(this).attr('value') === 'Start') {
    					$('input[name=switch]').attr('value', "Stop");
-   					$('input[name=setup]').attr('disabled', "disabled");
-					self.start.dispatch();
+   					self.start.dispatch();
    				} else if ($(this).attr('value') === 'Stop') {
 					$('input[name=switch]').attr('value', "Start");
 					$('input[name=setup]').attr('disabled', false);
 					self.stop.dispatch();
-					
-   				}
+				}
    				$("#unit_popup").toggle();
    			});
    			

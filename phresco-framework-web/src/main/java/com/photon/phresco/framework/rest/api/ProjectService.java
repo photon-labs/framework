@@ -44,6 +44,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
@@ -272,21 +273,29 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 						"*").build();
 			}
-			if(CollectionUtils.isNotEmpty(projectinfo.getAppInfos())) {
+			List<ApplicationInfo> appInfosFromPage = projectinfo.getAppInfos();
+			ProjectInfo availableProjectInfo = getProject(projectinfo.getId(), projectinfo.getCustomerIds().get(0));
+			if(CollectionUtils.isNotEmpty(appInfosFromPage)) {
+				List<ApplicationInfo> newlyAddedApps = findNewlyAddedApps(appInfosFromPage, availableProjectInfo.getAppInfos());
+				projectinfo.setAppInfos(newlyAddedApps);
+				projectinfo.setNoOfApps(newlyAddedApps.size());
 				projectInfo = PhrescoFrameworkFactory.getProjectManager().create(projectinfo, serviceManager);
-			} else {
-				ProjectInfo availableProjectInfo = getProject(projectinfo.getId(), projectinfo.getCustomerIds().get(0));
-				List<ApplicationInfo> appInfos = availableProjectInfo.getAppInfos();
-				for (ApplicationInfo applicationInfo : appInfos) {
-					projectinfo.setAppInfos(Collections.singletonList(applicationInfo));
-					StringBuilder sb = new StringBuilder(Utility.getProjectHome())
-					.append(applicationInfo.getAppDirName())
-					.append(File.separator)
-					.append(Constants.DOT_PHRESCO_FOLDER)
-					.append(File.separator)
-					.append(Constants.PROJECT_INFO_FILE);
-					ProjectUtils.updateProjectInfo(projectinfo, new File(sb.toString()));
+			}
+			if(projectinfo.isMultiModule()) {
+				projectinfo = createProjectInfo(availableProjectInfo, projectinfo);
+			}
+			for (ApplicationInfo applicationInfo : projectinfo.getAppInfos()) {
+				if(projectinfo.isMultiModule()) {
+					updateParentPom(applicationInfo);
 				}
+				projectinfo.setAppInfos(Collections.singletonList(applicationInfo));
+				StringBuilder sb = new StringBuilder(Utility.getProjectHome())
+				.append(applicationInfo.getAppDirName())
+				.append(File.separator)
+				.append(Constants.DOT_PHRESCO_FOLDER)
+				.append(File.separator)
+				.append(Constants.PROJECT_INFO_FILE);
+				ProjectUtils.updateProjectInfo(projectinfo, new File(sb.toString()));
 			}
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200006;
@@ -303,6 +312,104 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		}
 	}
 	
+	private void updateParentPom(ApplicationInfo applicationInfo) throws PhrescoException {
+		String pomPath = Utility.getProjectHome() +  
+			applicationInfo.getAppDirName() + File.separator + "pom.xml";
+		try {
+			PomProcessor pomProcessor = new PomProcessor(new File(pomPath));
+			Modules modules = pomProcessor.getModel().getModules();
+			List<String> moduleNames = new ArrayList<String>();
+			if(modules != null) {
+				moduleNames =  modules.getModule();
+				if(CollectionUtils.isNotEmpty(applicationInfo.getModules())) {
+					for (ModuleInfo moduleInfo : applicationInfo.getModules()) {
+						if(CollectionUtils.isNotEmpty(moduleNames)) {
+							if(!moduleNames.contains(moduleInfo.getCode())) {
+								moduleNames.add(moduleInfo.getCode());
+							}
+						} else {
+							moduleNames.add(moduleInfo.getCode());
+						}
+					}
+				}
+			}
+			if(CollectionUtils.isNotEmpty(moduleNames)) {
+				for (String moduleName : moduleNames) {
+					pomProcessor.addModule(moduleName);
+				}
+			}
+			pomProcessor.save();
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+
+	private ProjectInfo createProjectInfo(ProjectInfo availableProjectInfo, ProjectInfo updatedProjectInfo) {
+		List<ApplicationInfo> availableApInfos = availableProjectInfo.getAppInfos();
+		List<ApplicationInfo> updatedAppInfos = updatedProjectInfo.getAppInfos();
+		Map<String, ApplicationInfo> appMap = new HashMap<String, ApplicationInfo>();
+		for (ApplicationInfo applicationInfo : availableApInfos) {
+			appMap.put(applicationInfo.getAppDirName(), applicationInfo);
+		}
+		for (ApplicationInfo applicationInfo : updatedAppInfos) {
+			if(!appMap.containsKey(applicationInfo.getAppDirName())) {
+				appMap.put(applicationInfo.getAppDirName(), applicationInfo);
+				continue;
+			}
+			ApplicationInfo applicationInfo2 = appMap.get(applicationInfo.getAppDirName());
+			List<ModuleInfo> modules = applicationInfo2.getModules();
+			Map<String, ModuleInfo> moduleMap = new HashMap<String, ModuleInfo>();
+			if(CollectionUtils.isNotEmpty(modules)) {
+				for (ModuleInfo moduleInfo : modules) {
+					moduleMap.put(moduleInfo.getCode(), moduleInfo);
+				}
+			}
+			List<ModuleInfo> updatedModules = applicationInfo.getModules();
+			if(CollectionUtils.isNotEmpty(updatedModules)) {
+				for (ModuleInfo moduleInfo : updatedModules) {
+					moduleMap.put(moduleInfo.getCode(), moduleInfo);
+				}
+			}
+			if(!moduleMap.isEmpty()) {
+				modules = new ArrayList<ModuleInfo>(moduleMap.values());
+			}
+			applicationInfo.setModules(modules);
+			appMap.put(applicationInfo.getAppDirName(), applicationInfo);
+		}
+		availableProjectInfo.setAppInfos(new ArrayList<ApplicationInfo>(appMap.values()));
+		return availableProjectInfo;
+	}
+	
+	
+	private List<ApplicationInfo> findNewlyAddedApps(List<ApplicationInfo> appInfosFromPage, List<ApplicationInfo> oldApps) {
+		Map<String, ApplicationInfo> appMap = new HashMap<String, ApplicationInfo>();
+		for (ApplicationInfo applicationInfo : oldApps) {
+			appMap.put(applicationInfo.getAppDirName(), applicationInfo);
+		}
+		for (ApplicationInfo applicationInfo : appInfosFromPage) {
+			if(!appMap.containsKey(applicationInfo.getAppDirName())) {
+				appMap.put(applicationInfo.getAppDirName(), applicationInfo);
+				continue;
+			}
+			List<ModuleInfo> modules = applicationInfo.getModules();
+			if(CollectionUtils.isNotEmpty(modules)) {
+				List<ModuleInfo> newModules = new ArrayList<ModuleInfo>();
+				for (ModuleInfo moduleInfo : modules) {
+					if(!moduleInfo.isModified()) {
+						newModules.add(moduleInfo);
+					}
+				}
+				applicationInfo.setModules(newModules);
+			}
+			applicationInfo.setCreated(true);
+			appMap.put(applicationInfo.getAppDirName(), applicationInfo);
+		}
+		if(appMap.isEmpty()) {
+			return null;
+		}
+		return new ArrayList<ApplicationInfo>(appMap.values());
+	}
+
 	private ProjectInfo getProject(String projectId, String customerId) throws PhrescoException {
 		List<ProjectInfo> discover = PhrescoFrameworkFactory.getProjectManager().discover(customerId);
 		for (ProjectInfo projectInfo : discover) {

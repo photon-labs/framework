@@ -191,8 +191,11 @@ define(["framework/base", "api/localStorageAPI"], function(){
 					}else if((response.status === "error" || response.status === "failure") && (Clazz.navigationController.loadingActive || commonVariables.continueloading)){
 						self.showError(response.responseCode, 'error', false);
 					}
+
 					if ((response !== undefined && response !== null && response.status !== "error") || self.bCheck) {
 						self.successResponse = response;
+					} else if (response.exception.message === "import.project.already") {
+						callbackFunction(response);
 					} else {self.errorpopupshow(response);}
 				},
 				
@@ -212,7 +215,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 					}
 					if((self.successResponse !== undefined && self.successResponse !== null && self.successResponse.status !== "error") || self.bCheck){
 						callbackFunction(self.successResponse);
-					}else if(self.successResponse === null || self.successResponse.status === "error"){self.errorpopupshow(response);}
+					}  else if(self.successResponse === null || self.successResponse.status === "error"){self.errorpopupshow(response);}
 					self.bCheck = false;
 				}
 			});

@@ -1386,6 +1386,10 @@ img[name="close"] {
 	background-color:#DA4F49 !important;
 }
 
+.btn.btn-danger:hover, .btn.btn-danger:focus {
+	background:#DA4F49 !important;
+}
+
 .dropdown-scroll {
 	max-height:105px !important;
 	overflow:auto !important;
@@ -2793,6 +2797,10 @@ display : none;
 }
 .addConfluence, .delete  {
 	cursor:pointer;
+}
+
+.settingsContainer {
+	height : 80%;
 }
 
 
@@ -4882,8 +4890,22 @@ textarea[name="regex"] {
 	height:55px !important;
 }
 
-#noc_config tr td select {
-	width: 100% !important;
+#noc_config tr td select, #noc_config tr td input[type="password"] {
+	width:190px;
+	margin-bottom:0px;
+}
+
+#noc_config tr td input[type="text"] {
+	width:190px;
+	margin-right:10px;
+}
+
+#noc_config tr td {
+	padding: 0 0 7px;
+}
+
+#noc_config table {
+	margin-bottom:5px !important;
 }
 
 #add_widget tr td input[type="checkbox"] {
@@ -5161,7 +5183,7 @@ textarea[name="regex"] {
     height: 30px;
     padding: 4px 6px;
     vertical-align: middle;
-    width: 188px;
+    width: 209px;
 }
 
 #add_widget .browser_table .pickcolorlineimg {

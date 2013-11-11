@@ -163,6 +163,7 @@ define([], function() {
 							self.removeContentEndHeight();
 							if(response.status.toUpperCase() === 'STARTED'){
 								$(divId).append(response.status + '<br>');
+								commonVariables.consoleError = false;
 								self.mvnlogService(response.uniquekey, divId, function(retVal){
 									callback(retVal);
 								});
@@ -225,7 +226,6 @@ define([], function() {
 		mvnlogService : function(key, divId, callback){
 			try{
 				var self = this, header = self.getRequestHeader("GET", "", commonVariables.mvnlogService, 'uniquekey=' + key);
-				commonVariables.consoleError = false;
 				$('.progress_loading').css('display','block');
 				commonVariables.hideloading = true;
 				commonVariables.api.ajaxRequest(header, 

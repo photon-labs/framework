@@ -232,7 +232,8 @@
 		"hasdependencies" : "Feature has dependencies.",
 		"serviceerror" : "Service Error",
 		"serveralreadyadded" : "Server configuration already exist for this environment",
-		"emailalready" : "Email configuration already exist for this environment"
+		"emailalready" : "Email configuration already exist for this environment",
+		"prjtexists" : "Project already exists"
 	},
 	"successCodes" : {
 		"PHR200004" : "Project created successfully",

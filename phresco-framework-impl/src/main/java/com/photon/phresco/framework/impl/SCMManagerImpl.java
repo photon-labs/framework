@@ -67,6 +67,7 @@ import org.eclipse.jgit.transport.OpenSshConfig;
 import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.osgi.framework.FrameworkUtil;
 import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
@@ -363,8 +364,13 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				if(debugEnabled){
 					S_LOGGER.debug("processor.getSCM() exists and repo url "+ repoUrl);
 				}
-				processor.setSCM(repoUrl, "", "", "");
-				processor.save();
+			processor.setSCM(repoUrl, "", "", "");
+			processor.save();
+			
+			// To write in phresco-pom.xml
+			PomProcessor phrescoPomProcessor = getPhrescoPomProcessor(appInfo);
+			phrescoPomProcessor.setSCM(repoUrl, "", "", "");
+			phrescoPomProcessor.save();
 		} catch (Exception e) {
 			if(debugEnabled){
 				S_LOGGER.error("Entering catch block of updateSCMConnection()"+ e.getLocalizedMessage());
@@ -374,30 +380,31 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	}
 
 	private PomProcessor getPomProcessor(ApplicationInfo appInfo)throws Exception {
-		if(debugEnabled){
-			S_LOGGER.debug("Entering Method  SCMManagerImpl.getPomProcessor()");
-		}
 		try {
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 			builder.append(appInfo.getAppDirName());
 			builder.append(File.separatorChar);
 			builder.append(Utility.getPomFileName(appInfo));
-			if(debugEnabled){
-				S_LOGGER.debug("builder.toString() " + builder.toString());
-			}
 			File pomPath = new File(builder.toString());
-			if(debugEnabled){
-				S_LOGGER.debug("file exists " + pomPath.exists());
-			}
 			return new PomProcessor(pomPath);
 		} catch (Exception e) {
-			if(debugEnabled){
-				S_LOGGER.error("Entring into catch block of getPomProcessor() "+ e.getLocalizedMessage());
-			}
 			throw new PhrescoException(NO_POM_XML);
 		}
 	}
-
+	
+	private PomProcessor getPhrescoPomProcessor(ApplicationInfo appInfo)throws Exception {
+		try {
+			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+			builder.append(appInfo.getAppDirName());
+			builder.append(File.separatorChar);
+			builder.append(Utility.getPhrescoPomFile(appInfo));
+			File pomPath = new File(builder.toString());
+			return new PomProcessor(pomPath);
+		} catch (Exception e) {
+			throw new PhrescoException(NO_POM_XML);
+		}
+	}
+	
 	private static void setupLibrary() {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.setupLibrary()");
