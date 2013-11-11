@@ -97,8 +97,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 			self.jenkinsStatus.add(ciListener.jenkinsStatus, ciListener);
 			
 			 // Handle bars
-			Handlebars.registerHelper('appendNames', function(jobName, operation) {
-				var returnVal = jobName + "-" + operation;
+			Handlebars.registerHelper('appendNames', function(jobName) {
+				var returnVal = jobName;
 				if (returnVal.length > 13) {
 					returnVal = returnVal.substring(0, 13);
 					returnVal = returnVal + "...";

@@ -43,8 +43,8 @@
                 </h4>
     			<div class="widget_testing_env">
     			 {{#each jobs}}
-                    	<div id="{{jobName}}"class="pipeline_box" title={{jobName}}-{{operation}}>
-                            	<img class="img_process" src="themes/default/images/Phresco/queue_icon.png">{{#appendNames jobName operation}}{{/appendNames}}
+                    	<div id="{{jobName}}"class="pipeline_box" title={{jobName}}>
+                            	<img class="img_process" src="themes/default/images/Phresco/queue_icon.png">{{#appendNames jobName}}{{/appendNames}}
                           	<div >
 	                          	<span class="aliveOpts opts">
 	                                <a href="javascript:;" jobName="{{jobName}}" class="ci_info" temp="buildStatus"><img class="wait_button tooltiptop" title="" data-placement="bottom" data-toggle="tooltip"  data-original-title="LastBuildStatus" src="themes/default/images/Phresco/wait.png"></a>

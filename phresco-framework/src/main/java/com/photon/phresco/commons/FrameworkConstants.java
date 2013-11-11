@@ -226,6 +226,11 @@ public interface FrameworkConstants {
     String EDIT_APPLN = "editAppln";
     String NO = "no";
 	String STRICT_HOST_KEY_CHECKING = "StrictHostKeyChecking";
+	String HTTPS = "https";
+	String HTTP = "http";
+	String SSL = "SSL";
+	String HTTPS_PROXY = "https_proxy";
+	String HTTP_PROXY = "http_proxy";
     
     String REMOTE = "remote";
     String ORIGIN = "origin";

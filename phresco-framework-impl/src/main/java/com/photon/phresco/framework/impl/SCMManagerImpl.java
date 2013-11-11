@@ -24,8 +24,16 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.Proxy.Type;
+import java.net.ProxySelector;
+import java.net.SocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -57,7 +65,6 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.UnsupportedCredentialItem;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.StoredConfig;
-import org.eclipse.jgit.lib.TextProgressMonitor;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.CredentialItem;
 import org.eclipse.jgit.transport.CredentialsProvider;
@@ -67,7 +74,6 @@ import org.eclipse.jgit.transport.OpenSshConfig;
 import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
-import org.osgi.framework.FrameworkUtil;
 import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
@@ -257,6 +263,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.debug("updateDir GIT... " + updateDir);
 			}
+			//for https and ssh
+			additionalAuthentication("");
+			
 			Git git = Git.open(updateDir); // checkout is the folder with .git
 			git.pull().call(); // succeeds
 			git.getRepository().close();
@@ -540,69 +549,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if (StringUtils.isEmpty(repodetail.getBranch())) {
 				repodetail.setBranch(MASTER);
 			}
-			final String passwordPhrase = repodetail.getPassPhrase();
-			JschConfigSessionFactory sessionFactory = new JschConfigSessionFactory() {
-	        	@Override
-	        	protected void configure(OpenSshConfig.Host hc, Session session) {
-	        	    CredentialsProvider provider = new CredentialsProvider() {
-	        	        @Override
-	        	        public boolean isInteractive() {
-	        	            return false;
-	        	        }
-
-	        	        @Override
-	        	        public boolean supports(CredentialItem... items) {
-	        	            return true;
-	        	        }
-	        	        
-	        	        @Override
-	        	        public boolean get(URIish uri, CredentialItem... items) throws UnsupportedCredentialItem {
-	        	            for (CredentialItem item : items) {
-	        	            	if (item instanceof CredentialItem.StringType) {
-	        	            		((CredentialItem.StringType) item).setValue(passwordPhrase);
-	        	            	}
-	        	            }
-	        	            return true;
-	        	        }
-	        	    };
-	        	    UserInfo userInfo = new CredentialsProviderUserInfo(session, provider);
-	        	    // Unknown host key for ssh
-	        	    java.util.Properties config = new java.util.Properties(); 
-	        	    config.put(STRICT_HOST_KEY_CHECKING, NO);
-	        	    session.setConfig(config);
-	        	    
-	        	    session.setUserInfo(userInfo);
-	        	}
-        	};
-        	
-        	SshSessionFactory.setInstance(sessionFactory);
-			
-        	/*
-        	 * Enable clone of https url by trusting those urls
-        	 */
-			// Create a trust manager that does not validate certificate chains
-			TrustManager[] trustAllCerts = new TrustManager[] { 
-			    new X509TrustManager() {     
-			        public java.security.cert.X509Certificate[] getAcceptedIssuers() { 
-			            return null;
-			        } 
-			        public void checkClientTrusted( 
-			            java.security.cert.X509Certificate[] certs, String authType) {
-			            } 
-			        public void checkServerTrusted( 
-			            java.security.cert.X509Certificate[] certs, String authType) {
-			        }
-			    } 
-			}; 
-
-			// Install the all-trusting trust manager
-			try {
-			    SSLContext sc = SSLContext.getInstance("SSL"); 
-			    sc.init(null, trustAllCerts, new java.security.SecureRandom()); 
-			    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-			} catch (GeneralSecurityException e) {
-				e.getLocalizedMessage();
-			} 
+			// For https and ssh
+			additionalAuthentication(repodetail.getPassPhrase());
 			
 			UsernamePasswordCredentialsProvider userCredential = new UsernamePasswordCredentialsProvider(repodetail.getUserName(), repodetail.getPassword());
 			Git r = Git.cloneRepository().setDirectory(gitImportTemp)
@@ -612,6 +560,125 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			.setBranch(repodetail.getBranch())
 			.call();
 	        r.getRepository().close();      
+	}
+	
+	void additionalAuthentication(String passPhrase) {
+		final String passwordPhrase = passPhrase;
+		JschConfigSessionFactory sessionFactory = new JschConfigSessionFactory() {
+        	@Override
+        	protected void configure(OpenSshConfig.Host hc, Session session) {
+        	    CredentialsProvider provider = new CredentialsProvider() {
+        	        @Override
+        	        public boolean isInteractive() {
+        	            return false;
+        	        }
+
+        	        @Override
+        	        public boolean supports(CredentialItem... items) {
+        	            return true;
+        	        }
+        	        
+        	        @Override
+        	        public boolean get(URIish uri, CredentialItem... items) throws UnsupportedCredentialItem {
+        	            for (CredentialItem item : items) {
+        	            	if (item instanceof CredentialItem.StringType) {
+        	            		((CredentialItem.StringType) item).setValue(passwordPhrase);
+        	            	}
+        	            }
+        	            return true;
+        	        }
+        	    };
+        	    UserInfo userInfo = new CredentialsProviderUserInfo(session, provider);
+        	    // Unknown host key for ssh
+        	    java.util.Properties config = new java.util.Properties(); 
+        	    config.put(STRICT_HOST_KEY_CHECKING, NO);
+        	    session.setConfig(config);
+        	    
+        	    session.setUserInfo(userInfo);
+        	}
+    	};
+    	
+    	SshSessionFactory.setInstance(sessionFactory);
+    	
+    	/*
+    	 * Enable clone of https url by trusting those urls
+    	 */
+		// Create a trust manager that does not validate certificate chains
+		TrustManager[] trustAllCerts = new TrustManager[] { 
+		    new X509TrustManager() {     
+		        public java.security.cert.X509Certificate[] getAcceptedIssuers() { 
+		            return null;
+		        } 
+		        public void checkClientTrusted( 
+		            java.security.cert.X509Certificate[] certs, String authType) {
+		            } 
+		        public void checkServerTrusted( 
+		            java.security.cert.X509Certificate[] certs, String authType) {
+		        }
+		    } 
+		}; 
+		
+		final String https_proxy = System.getenv(HTTPS_PROXY);
+		final String http_proxy = System.getenv(HTTP_PROXY);
+		
+		ProxySelector.setDefault(new ProxySelector() {
+			final ProxySelector delegate = ProxySelector.getDefault();
+
+			@Override
+			public List<Proxy> select(URI uri) {
+				// Filter the URIs to be proxied
+				
+				
+				if (uri.toString().contains(HTTPS) && StringUtils.isNotEmpty(http_proxy) && http_proxy != null) {
+					try {
+						URI httpsUri = new URI(https_proxy);
+						String host = httpsUri.getHost();
+						int port = httpsUri.getPort();
+						return Arrays.asList(new Proxy(Type.HTTP, InetSocketAddress
+								.createUnresolved(host, port)));
+					} catch (URISyntaxException e) {
+						if(debugEnabled){
+							S_LOGGER.debug("Url exception caught in https block of additionalAuthentication()");
+						}	
+					}
+				}
+				
+				if (uri.toString().contains(HTTP) && StringUtils.isNotEmpty(http_proxy) && http_proxy != null) {
+					try {
+						URI httpUri = new URI(http_proxy);
+						String host = httpUri.getHost();
+						int port = httpUri.getPort();
+						return Arrays.asList(new Proxy(Type.HTTP, InetSocketAddress
+								.createUnresolved(host, port)));
+					} catch (URISyntaxException e) {
+						if(debugEnabled){
+							S_LOGGER.debug("Url exception caught in http block of additionalAuthentication()");
+						}					
+					}
+				}
+				
+				// revert to the default behaviour
+				return delegate == null ? Arrays.asList(Proxy.NO_PROXY)
+						: delegate.select(uri);
+			}
+
+			@Override
+			public void connectFailed(URI uri, SocketAddress sa,
+					IOException ioe) {
+				if (uri == null || sa == null || ioe == null) {
+					throw new IllegalArgumentException("Arguments can't be null.");
+				}
+			}
+		});
+
+		// Install the all-trusting trust manager
+		try {
+		    SSLContext sc = SSLContext.getInstance(SSL); 
+		    sc.init(null, trustAllCerts, new java.security.SecureRandom()); 
+		    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+		} catch (GeneralSecurityException e) {
+			e.getLocalizedMessage();
+		} 
 	}
 	
 	private ApplicationInfo importFromBitKeeper(String repoUrl, String displayName, String uniqueKey) throws PhrescoException {
@@ -878,6 +945,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			gitExists = true;
 		}
 		try {
+			//For https and ssh
+			additionalAuthentication("");
+			
 			CredentialsProvider cp = new UsernamePasswordCredentialsProvider(repodetail.getUserName(), repodetail.getPassword());
 			FileRepositoryBuilder builder = new FileRepositoryBuilder();
 			Repository repository = builder.setGitDir(appDir).readEnvironment().findGitDir().build();

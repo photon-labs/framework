@@ -1108,7 +1108,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			if (repoUrl.startsWith("bk")) {
 				setRepoExistForCommit = true;
 				repodetail.setRepoExist(setRepoExistForCommit);
-			} else if (repoUrl.endsWith(".git")) {
+			} else if (repoUrl.endsWith(".git") || repoUrl.contains("gerrit") || repoUrl.startsWith("ssh")) {
 				setRepoExistForCommit = checkGitProject(applicationInfo, setRepoExistForCommit);
 				repodetail.setRepoExist(setRepoExistForCommit);
 				repodetail = updateProjectPopup(appDirName, action, repodetail);
