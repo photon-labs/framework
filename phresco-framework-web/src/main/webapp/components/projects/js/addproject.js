@@ -176,6 +176,7 @@ define(["projects/listener/projectsListener"], function() {
 			
 			$("input[name='Create']").unbind('click');
 			$("input[name='Create']").bind('click', function(){
+				self.projectsListener.projectInfo = {}
 				self.onCreateEvent.dispatch('', 'create');
 			});
 			

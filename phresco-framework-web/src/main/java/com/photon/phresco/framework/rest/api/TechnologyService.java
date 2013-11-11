@@ -43,6 +43,7 @@ import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationType;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.TechnologyGroup;
+import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -250,6 +251,37 @@ public class TechnologyService extends RestBase implements ServiceConstants, Fra
 		} catch (PhrescoException e) {
 			ResponseInfo<List<TechnologyGroup>> finalOutput = responseDataEvaluation(responseData, e,
 					"technologyGroups of customer not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		}
+	}
+	
+	/**
+	 * To get the sub-modules of the given module
+	 * @param userId
+	 * @param techId
+	 * @return
+	 */
+	@GET
+	@Path(REST_API_TECHINFO)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSubModules(@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_TECHID) String techId) {
+		ResponseInfo<List<TechnologyInfo>> responseData = new ResponseInfo<List<TechnologyInfo>>();
+		try {
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			if (serviceManager == null) {
+				ResponseInfo<List<TechnologyInfo>> finalOutput = responseDataEvaluation(responseData, null,
+						"UnAuthorized User", null);
+				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
+						"*").build();
+			}
+			List<TechnologyInfo> technologyInfos = serviceManager.getTechnologyInfos(techId);
+			ResponseInfo<List<TechnologyInfo>> finalOutput = responseDataEvaluation(responseData, null,
+					"sub-modules of technology returned successfully", technologyInfos);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<List<TechnologyInfo>> finalOutput = responseDataEvaluation(responseData, e,
+					"sub-modules of technology not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}

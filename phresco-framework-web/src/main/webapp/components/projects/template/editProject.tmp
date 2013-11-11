@@ -13,7 +13,8 @@
                     <td data-i18n="project.create.label.version"></td>
                     <td><input type="text" name="projectversion" maxlength="20" title="20 Characters only" value="{{version}}"/></td>
                     <td data-i18n="project.create.label.description"></td>                              
-                    <td rowspan="2"><textarea class="popuptextarea" name="projectdescription"  maxlength="150" title="150 Characters only" data-i18n="[placeholder]project.create.label.description">{{description}}</textarea></td>
+                    <td rowspan="2" style="vertical-align: top;"><textarea class="popuptextarea" name="projectdescription"  maxlength="150" title="150 Characters only" data-i18n="[placeholder]project.create.label.description">{{description}}</textarea></td>
+                    <input type="hidden" id="isMultiModule" value="{{multiModule}}"/>
                 </tr>
                 <tr>
 					<td colspan="2">
@@ -39,9 +40,14 @@
 				    {{/if}}
                     <td data-i18n="project.create.label.enddate" name="enddate-lbl"></td>
 					{{#if preBuilt}}	
-						<td colspan="2" class="enddate" name="enddateholder"><input name="enddate" value="{{endDate}}" id="endDate" type="text" disabled><span class="add-on" disabled><span class="add-on"><img id="enddt" class="cal_img1" src="themes/default/images/Phresco/cal_icon.png" border="0" alt=""></span></span></td>
+						<td class="enddate" name="enddateholder"><input name="enddate" value="{{endDate}}" id="endDate" type="text" disabled><span class="add-on" disabled><span class="add-on"><img id="enddt" class="cal_img1" src="themes/default/images/Phresco/cal_icon.png" border="0" alt=""></span></span></td>
 					{{else}}
-						<td colspan="2" class="enddate" name="enddateholder"><input name="enddate" value="{{endDate}}" id="endDate" type="text"><span class="add-on"><span class="add-on"><img id="enddt" class="cal_img1" src="themes/default/images/Phresco/cal_icon.png" border="0" alt=""></span></span></td>
+						<td class="enddate" name="enddateholder"><input name="enddate" value="{{endDate}}" id="endDate" type="text"><span class="add-on"><span class="add-on"><img id="enddt" class="cal_img1" src="themes/default/images/Phresco/cal_icon.png" border="0" alt=""></span></span></td>
+				    {{/if}}
+				    {{#if integrationTest}}
+				    	<td colspan="2"><input type="checkbox" checked="checked" disabled="disabled" name="integrationTest">Integration Test</td>
+				    {{else}}
+				    	<td colspan="2"><input type="checkbox" name="integrationTest">Integration Test</td>
 				    {{/if}}
                 </tr>
 			{{/editProject}}
@@ -59,6 +65,7 @@
 										<th><span data-i18n="project.create.label.group"></span></th>
 										<th><span data-i18n="project.create.label.technology"></span></th>
 										<th><span data-i18n="project.create.label.version"></span></th>
+										<th></th>
 										<th></th>
 									</tr>
 								</thead>
@@ -89,8 +96,14 @@
 											</select>
 										 </td>
 										 <td>
-											<div class="flt_right icon_center"><a name="addApplnLayer"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeApplnLayer"></a></div>
-										 </td>
+											<input type="button" value="Multi Module" class="btn btn_style add_icon_btn multi_module_btn hideContent" name="multiModuleBtn">
+										</td>
+										<td>
+											<div class="flt_right icon_center">
+												<a href="javascript:;" name="addApplnLayer" position="1"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a>
+												<a href="javascript:;" name="removeApplnLayer" class="hideContent"><img src="themes/default/images/Phresco/minus_icon.png" border="0" alt=""/></a>
+											</div>
+										</td>
 								    </tr>
 								</tbody>
                            </table>
@@ -110,6 +123,7 @@
 										<th><span data-i18n="project.create.label.group"></span></th>
 										<th><span data-i18n="project.create.label.technology"></span></th>
 										<th><span data-i18n="project.create.label.version"></span></th>
+										<th></th>
 										<th></th>
 									</tr>
 								</thead>
@@ -134,13 +148,14 @@
 												<option value="Select Version">Select Version</option>
 											</select>
 										 </td>
-										 <td class="webdependencyTd">
-											<select class="selectpicker webdependencySelect" name="webdependencySelect" multiple data-selected-text-format="count>2" title="Select Dependency">
-											   <option disabled data-i18n="project.create.label.seldependency"></option>
-											</select>
-										 </td>
 										 <td>
-											<div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeWebLayer"></a></div>
+											<input type="button" value="Multi Module" class="btn btn_style add_icon_btn multi_module_btn hideContent" name="multiModuleBtn">
+										</td>
+									 	<td>
+											<div class="flt_right icon_center">
+												<a href="javascript:;" name="addWebLayer" position="1"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a>
+												<a href="javascript:;" name="removeWebLayer" class="hideContent"><img src="themes/default/images/Phresco/minus_icon.png" border="0" alt=""/></a>
+											</div>
 										 </td>
 									</tr>
 								</tbody>
@@ -165,7 +180,7 @@
 										<th></th>
 									</tr>
 								</thead>
-								<tbody class="MobLayer">
+								<tbody class="MobLayer cmsLayer">
 									<tr class="mobilelayercontent" name="staticMobileLayer" style="display:none;">
 										<td class="mobileappcode"><input type="text" id="mobileappcode" maxlength="30" title="30 Characters only" class="mobile-appcode appCodeText"></td>
 										<td name="mobile" class="mobile">
@@ -181,13 +196,19 @@
 											   <option value="Select Technology">Select Technology</option>
 											</select>
 										 </td>
-										 <td colspan="2" name="mobileversion" class="mobileversion">
+										 <td name="mobileversion" class="mobileversion">
 											<select name="mobile_version" class="mobile_version selectpicker" title="Select Version">
 											   <option value="Select Version">Select Version</option>
 											</select>
 										 </td>
 										 <td>
-											<div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeMobileLayer"></a> </div>
+											<input type="button" value="Multi Module" class="btn btn_style add_icon_btn multi_module_btn hideContent" name="multiModuleBtn">
+										</td>
+										 <td>
+											<div class="flt_right icon_center">
+												<a href="javascript:;" name="addMobileLayer" position="1"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a>
+												<a href="javascript:;" name="removeMobileLayer" class="hideContent"><img src="themes/default/images/Phresco/minus_icon.png" border="0" alt=""/></a>
+											</div>
 										 </td>
 									</tr>
 								</tbody>
