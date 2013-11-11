@@ -630,7 +630,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 				$('.templates').find('input ,select,textarea').prop('disabled', false);
 				if ((response.errorFound) || (response.status === "error") || (response.status === "failure")){
 					if (response.configErr) {
-						commonVariables.api.showError(response.responseCode ,"error", true)
+						commonVariables.api.showError(response.responseCode ,"error", true);
 					} else {
 						dynamicPageObject.showDynamicErrors(response);
 					}

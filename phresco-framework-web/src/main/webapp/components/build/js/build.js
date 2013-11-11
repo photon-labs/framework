@@ -227,7 +227,8 @@ define(["build/listener/buildListener"], function() {
 		},
 		
 		openCloseConsole : function(){
-			if(!commonVariables.consoleError){self.closeConsole();}
+			if(!commonVariables.consoleError) {self.closeConsole();}
+			commonVariables.consoleError = false;
 		},
 		
 		refreshContent : function(loadContent){

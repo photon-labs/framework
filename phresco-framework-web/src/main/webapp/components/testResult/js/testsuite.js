@@ -108,6 +108,12 @@ define(["testResult/listener/testResultListener"], function() {
 			
 			self.testResultListener.resizeTestResultDiv();
 			self.resizeConsoleWindow();
+			setTimeout(function() {
+				if ('functionalTest' === currentTab && commonVariables.consoleError !== undefined && commonVariables.consoleError) {
+					self.testResultListener.openConsoleDiv();
+					commonVariables.consoleError = false;
+				}
+			}, 100);	
 		},
 		
 		/***
