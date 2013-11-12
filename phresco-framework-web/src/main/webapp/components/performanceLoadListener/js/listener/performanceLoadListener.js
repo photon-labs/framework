@@ -446,8 +446,17 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			var self = this;
 			$('.donloadPdfReport').on("click", function() {
 				var appInfo = commonVariables.api.localVal.getProjectInfo();
-				var fileName = $(this).attr("fileName"), from=$(this).attr("from"), appDirName = appInfo.data.projectInfo.appInfos[0].appDirName;
-				var pdfDownloadUrl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName="+appDirName+"&reportFileName="+fileName+"&fromPage="+from;
+				var fileName = $(this).attr("fileName"), from=$(this).attr("from"), appDirName;
+				
+				var moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
+				if (!self.isBlank(moduleParam)) {
+					appDirName = $('.rootModule').val()
+				} else if(commonVariables.api.localVal.getProjectInfo() !== null) {
+					var projectInfo = commonVariables.api.localVal.getProjectInfo();
+					appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+				}
+				
+				var pdfDownloadUrl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName="+appDirName+"&reportFileName="+fileName+"&fromPage="+from + moduleParam;
 				window.open(pdfDownloadUrl, '_self');
 			});
 		},

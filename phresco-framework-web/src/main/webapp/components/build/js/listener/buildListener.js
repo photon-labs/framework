@@ -108,7 +108,7 @@ define([], function() {
 				if (self.isBlank($('.moduleName').val())) {
 					url = 'buildinfo/downloadBuild?appDirName=' + appdirName + '&buildNumber=' + buildInfo.buildNo;
 				} else {
-					url = 'buildinfo/downloadBuild?appDirName=' + appdirName + '\\' + $('.moduleName').val() + '&buildNumber=' + buildInfo.buildNo;
+					url = 'buildinfo/downloadBuild?appDirName=' + appdirName + '/' + $('.moduleName').val() + '&buildNumber=' + buildInfo.buildNo;
 				}
 				
 			} else if(action === "ipadownload") {
