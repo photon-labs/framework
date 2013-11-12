@@ -142,12 +142,18 @@
                                 <td></td>
                             </tr>
                             <tr>
-                                <td><span data-i18n="login.placeholder.username"></span><sup>*</sup></td>
-                                <td><span data-i18n="login.placeholder.password"></span><sup>*</sup></td>
+                                <td><span data-i18n="login.placeholder.username" name="username"></span><sup>*</sup></td>
+                                <td><span data-i18n="login.placeholder.password" name="password"></span><sup>*</sup></td>
                             </tr>
                             <tr>
-                                <td><input type="text" name="username" data-i18n="[placeholder]login.placeholder.username" id="uname_{{id}}" class="uname"></td>
-                                <td><input type="password" name="password" placeholder="Password" id="pwd_{{id}}" class="pwd"></td>
+                                <td><input type="text" name="username" mandatory=true data-i18n="[placeholder]login.placeholder.username" id="uname_{{id}}" class="uname"></td>
+                                <td><input type="password" name="password" mandatory=true placeholder="Password" id="pwd_{{id}}" class="pwd"></td>
+                            </tr>
+							<tr class="passPhrase" style="display:none">
+                                <td><label value="passPhrase">PassPhrase</label></td>
+                            </tr>
+							<tr class="passPhrase" style="display:none">
+                                <td><input type="text" id="repoPhrase_{{id}}"/></td>
                             </tr>
                             <tr>
                                 <td colspan="2">
@@ -193,13 +199,19 @@
                                         <td></td>
                                     </tr>
                                     <tr>
-                                        <td><span data-i18n="login.placeholder.username"></span><sup>*</sup></td>
-										<td><span data-i18n="login.placeholder.password"></span><sup>*</sup></td>
+                                        <td><span data-i18n="login.placeholder.username" name="username"></span><sup>*</sup></td>
+										<td><span data-i18n="login.placeholder.password" name="password"></span><sup>*</sup></td>
                                     </tr>
                                     <tr>
-                                        <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="commitUsername_{{id}}" class="uname" name="username"></td>
-                                        <td><input type="password" placeholder="Password" id="commitPassword_{{id}}" class="pwd" name="password"></td>
+                                        <td><input type="text" data-i18n="[placeholder]login.placeholder.username" mandatory=true id="commitUsername_{{id}}" class="uname" name="username"></td>
+                                        <td><input type="password" mandatory=true placeholder="Password" id="commitPassword_{{id}}" class="pwd" name="password"></td>
                                     </tr>
+									<tr class="passPhrase" style="display:none">
+										<td><label value="passPhrase">PassPhrase</label></td>
+									</tr>
+									<tr class="passPhrase" style="display:none">
+										<td><input type="text" id="commitPhrase_{{id}}"/></td>
+									</tr>
                                     <tr>
                                         <td colspan="2">
                                             <textarea class="popuptextarea" data-i18n="[placeholder]projectlist.label.message" id="commitMessage_{{id}}" name="commitMsg"></textarea>
@@ -248,16 +260,22 @@
                                         <td></td>
                                     </tr>
                                     <tr>
-                                        <td><span data-i18n="login.placeholder.username"></span><sup>*</sup></td>
-										<td><span data-i18n="login.placeholder.password"></span><sup>*</sup></td>
+                                        <td><span data-i18n="login.placeholder.username" name="username"></span><sup>*</sup></td>
+										<td><span data-i18n="login.placeholder.password" name="password"></span><sup>*</sup></td>
                                     </tr>
                                     <tr>
-                                        <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="updateUsername_{{id}}" class="uname" name="username"></td>
-                                        <td><input type="password" placeholder="Password" id="updatePassword_{{id}}" class="pwd" name="password"></td>
+                                        <td><input type="text" data-i18n="[placeholder]login.placeholder.username" mandatory=true id="updateUsername_{{id}}" class="uname" name="username"></td>
+                                        <td><input type="password" placeholder="Password" mandatory=true id="updatePassword_{{id}}" class="pwd" name="password"></td>
                                     </tr>
                                     <tr>
                                        <td colspan="2" data-i18n="projectlist.label.revision"></td>
                                     </tr>
+									<tr class="passPhrase" style="display:none">
+										<td><label value="passPhrase">PassPhrase</label></td>
+									</tr>
+									<tr class="passPhrase" style="display:none">
+										<td><input type="text" id="updatePhrase_{{id}}"/></td>
+									</tr>
                                     <tr>
                                         <td><input type="radio" name="revision" class="radioBtnClass" value="head" checked><span data-i18n="projectlist.label.headrevision"></span><input type="radio" name="revision" class="radioBtnClass" value=""><span data-i18n="projectlist.label.revision"></span></td>
                                         <td><input class="revision" type="text"></td>

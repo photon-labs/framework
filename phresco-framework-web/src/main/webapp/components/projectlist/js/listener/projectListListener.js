@@ -335,6 +335,7 @@ define([], function() {
 				repodata.appdirname = obj.parent("div").attr("appDirName");
 				repodata.appid = obj.parent("div").attr("appId");
 				repodata.projectid = obj.parent("div").attr("projectId");
+				repodata.passPhrase = $("#repoPhrase_"+dynid).val();
 				actionBody = repodata;
 				action = "repoget";
 				commonVariables.hideloading = true;
@@ -357,6 +358,7 @@ define([], function() {
 				commitdata.userName = $("#commitUsername_"+dynid).val();
 				commitdata.password = $("#commitPassword_"+dynid).val();
 				commitdata.commitMessage = $("#commitMessage_"+dynid).val();
+				commitdata.passPhrase = $("#commitPhrase_"+dynid).val();
 				$.each($('.commitChildChk_'+ dynid) , function(index, value){
 					if ($(this).is(':checked')) {
 						arrayCommitableFiles.push($(this).val());
@@ -653,6 +655,7 @@ define([], function() {
 				updatedata.repoUrl = $("#updateRepourl_"+dynid).val();
 				updatedata.userName = $("#updateUsername_"+dynid).val();
 				updatedata.password = $("#updatePassword_"+dynid).val();
+				updatedata.passPhrase = $("#updatePhrase_"+dynid).val();
 				updatedata.revision = revision;
 				updatedata.appdirname = obj.parent("div").attr("appDirName");
 				if('perforce' === updatedata.type) {
@@ -673,40 +676,50 @@ define([], function() {
 		
 		validation : function(dynid) {	
 				var self=this;	
-				var repourl, uname, pwd, commitRepourl, commitUsername, commitPassword, updateRepourl, updateUsername, updatePassword, revision;
+				var repourl, uname, pwd, commitRepourl, commitUsername, commitPassword, updateRepourl, updateUsername, updatePassword, revision, mandatoryUser, mandatoryPwd, mandatoryCommitUser, mandatoryCommitPwd, mandatoryUpdateUser, mandatoryUpdatePwd;
 				repourl = $("#repourl_"+dynid).val();
 				uname = $("#uname_"+dynid).val();
 				pwd = $("#pwd_"+dynid).val();
+				mandatoryUser = $("#uname_"+dynid).attr("mandatory");
+				mandatoryPwd = $("#pwd_"+dynid).attr("mandatory");
 				
 				commitRepourl = $("#commitRepourl_"+dynid).val();
 				commitUsername = $("#commitUsername_"+dynid).val();
 				commitPassword = $("#commitPassword_"+dynid).val();
+				mandatoryCommitUser = $("#commitUsername_"+dynid).attr("mandatory");
+				mandatoryCommitPwd = $("#commitPassword_"+dynid).attr("mandatory");
 				
 				updateRepourl = $("#updateRepourl_"+dynid).val();
 				updateUsername= $("#updateUsername_"+dynid).val();
 				updatePassword = $("#updatePassword_"+dynid).val();
+				mandatoryUpdateUser = $("#updateUsername_"+dynid).attr("mandatory");
+				mandatoryUpdatePwd = $("#updatePassword_"+dynid).attr("mandatory");
 				revision = $("#revision_"+dynid).val();
 				if(self.flag1 === 1)
 				{	
-					if(!self.isValidUrl(repourl)){
+					if(repourl === ''){
 						$("#repourl_"+dynid).focus();
 						$("#repourl_"+dynid).val('');
-						$("#repourl_"+dynid).attr('placeholder','Invalid Repourl');
+						$("#repourl_"+dynid).attr('placeholder','Enter URL');
 						$("#repourl_"+dynid).addClass("errormessage");
 						setTimeout(function() { 
 							$("#repourl_"+dynid).val(repourl); 
 						}, 4000);
 						self.hasError = true;
-					} else if(uname === ""){
-						$("#uname_"+dynid).focus();
-						$("#uname_"+dynid).attr('placeholder','Enter UserName');
-						$("#uname_"+dynid).addClass("errormessage");
-						self.hasError = true;
-					} else if(pwd === ""){
-						$("#pwd_"+dynid).focus();
-						$("#pwd_"+dynid).attr('placeholder','Enter Password');
-						$("#pwd_"+dynid).addClass("errormessage");
-						self.hasError = true;
+					} else if (mandatoryUser === "true") { 
+						if(uname === ""){
+							$("#uname_"+dynid).focus();
+							$("#uname_"+dynid).attr('placeholder','Enter UserName');
+							$("#uname_"+dynid).addClass("errormessage");
+							self.hasError = true;
+						} else if(pwd === ""){
+							$("#pwd_"+dynid).focus();
+							$("#pwd_"+dynid).attr('placeholder','Enter Password');
+							$("#pwd_"+dynid).addClass("errormessage");
+							self.hasError = true;
+						} else {
+							self.hasError=false;
+						}
 					} else {
 						self.hasError=false;
 					}
@@ -716,26 +729,30 @@ define([], function() {
 
 				else if(self.flag2 === 1)
 				{
-					if(!self.isValidUrl(commitRepourl)){
+					if(commitRepourl === ""){
 						$("#commitRepourl_"+dynid).focus();
 						$("#commitRepourl_"+dynid).val('');
-						$("#commitRepourl_"+dynid).attr('placeholder','Invalid Repourl');
+						$("#commitRepourl_"+dynid).attr('placeholder','Enter Repourl');
 						$("#commitRepourl_"+dynid).addClass("errormessage");
 						setTimeout(function() { 
 							$("#commitRepourl_"+dynid).val(repourl); 
 						}, 4000);
 						self.hasError = true;
-					} else if(commitUsername === ""){
-						$("#commitUsername_"+dynid).focus();
-						$("#commitUsername_"+dynid).attr('placeholder','Enter UserName');
-						$("#commitUsername_"+dynid).addClass("errormessage");
-						self.hasError = true;
-					} else if(commitPassword === ""){
-						$("#commitPassword_"+dynid).focus();
-						$("#commitPassword_"+dynid).attr('placeholder','Enter Password');
-						$("#commitPassword_"+dynid).addClass("errormessage");
-						self.hasError = true;
-					}else {
+					} else if (mandatoryUser === "true") {
+						if(commitUsername === ""){
+							$("#commitUsername_"+dynid).focus();
+							$("#commitUsername_"+dynid).attr('placeholder','Enter UserName');
+							$("#commitUsername_"+dynid).addClass("errormessage");
+							self.hasError = true;
+						} else if(commitPassword === ""){
+							$("#commitPassword_"+dynid).focus();
+							$("#commitPassword_"+dynid).attr('placeholder','Enter Password');
+							$("#commitPassword_"+dynid).addClass("errormessage");
+							self.hasError = true;
+						} else {
+							self.hasError=false;
+						}
+					} else {
 						self.hasError=false;
 					}
 					self.flag2=0;
@@ -745,27 +762,31 @@ define([], function() {
 				else if(self.flag3 === 1)
 				{	
 				if($("#updateType_"+dynid).val() !== 'perforce') {
-						if(!self.isValidUrl(updateRepourl)){
+						if(updateRepourl === ""){
 								$("#updateRepourl_"+dynid).focus();
 								$("#updateRepourl_"+dynid).val('');
-								$("#updateRepourl_"+dynid).attr('placeholder','Invalid Repourl');
+								$("#updateRepourl_"+dynid).attr('placeholder','Enter Repourl');
 								$("#updateRepourl_"+dynid).addClass("errormessage");
 								setTimeout(function() { 
 									$("#updateRepourl_"+dynid).val(updateRepourl); 
 								}, 4000);
 								self.hasError = true;
 			
-						} else if(updateUsername === ""){
-							$("#updateUsername_"+dynid).focus();
-							$("#updateUsername_"+dynid).attr('placeholder','Enter UserName');
-							$("#updateUsername_"+dynid).addClass("errormessage");
-							self.hasError = true;
-						} else if(updatePassword === ""){
+						} else if (mandatoryUser === "true") {
+							if(updateUsername === ""){
+								$("#updateUsername_"+dynid).focus();
+								$("#updateUsername_"+dynid).attr('placeholder','Enter UserName');
+								$("#updateUsername_"+dynid).addClass("errormessage");
+								self.hasError = true;
+							} else if(updatePassword === ""){
 								$("#updatePassword_"+dynid).focus();
 								$("#updatePassword_"+dynid).attr('placeholder','Enter Password');
 								$("#updatePassword_"+dynid).addClass("errormessage");
 								self.hasError = true;
-						}else {
+							} else {
+								self.hasError=false;
+							}
+						} else {
 							self.hasError=false;
 						}
 
@@ -792,7 +813,7 @@ define([], function() {
 			
 						} else if(updateUsername === ""){
 							if($("#updateRepourl_"+dynid).hasClass("errormessage")) 
-								$("#updateRepourl_"+dynid).removeClass("errormessage");
+							$("#updateRepourl_"+dynid).removeClass("errormessage");
 							$("#updateUsername_"+dynid).focus();
 							$("#updateUsername_"+dynid).attr('placeholder','Enter UserName');
 							$("#updateUsername_"+dynid).addClass("errormessage");
