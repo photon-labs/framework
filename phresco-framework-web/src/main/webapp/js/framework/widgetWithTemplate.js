@@ -582,7 +582,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					var d = null;
 					if(placeId === 'add_widget') {
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 4;
-						var BottomHeight = clicked.position().top + clicked.height() + 8 ;
+						var BottomHeight = clicked.position().top + clicked.height() - 12 ;
 						$(target).css({"right":d,"left": "auto","margin-top":10,"top": BottomHeight});		
 					}  else {
 						if(flag === 0) {
@@ -603,7 +603,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(target).toggle();
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstyletopright').addClass('speakstylebottomleft').addClass('dyn_popup');	
 					if(placeId === 'add_widget') {
-						BottomHeight = clicked.position().top + clicked.height() + 40 ;
+						BottomHeight = clicked.position().top + clicked.height() + 20 ;
 						$(target).css({"right":"auto","top": BottomHeight});		
 					} else {
 						if(flag ===0) {
@@ -620,7 +620,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					var d = null,BottomHeight = null;
 					d = ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 15;
 					if(placeId === 'add_widget') {
-						BottomHeight = clicked.position().top + clicked.height() + 40 ;
+						BottomHeight = clicked.position().top + clicked.height() + 20 ;
 						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});		
 						$(target).toggle();
 						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
@@ -1261,6 +1261,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						return $("#iframePart").text();
 					}
 				});
+				
 			},
 		}
 	);

@@ -5061,9 +5061,10 @@ textarea[name="regex"] {
 }
 
 .add_wid_table {
-	max-height:400px;
+	max-height:250px;
 	overflow:auto;
 	overflow-x:hidden;
+	margin-bottom: 10px;
 }
 
 .dashboard_popup table td {

@@ -145,15 +145,7 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 											//widgetcount = 1;
 											//}	
 										}
-									});
-									
-									//$("ul.dashboardslist").append(dashBoardListItems);
-									//$("#click_listofdash").text($(".dashboardslist").children(0).children('a').attr('value'));
-									//$("#click_listofdash").append('<b class="caret"></b>');
-									//}
-									//appcount = 1;
-								//}
-							//});				
+									});	
 														
 							
 							return true;
@@ -175,26 +167,10 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 					self.dashboardListener.dropdownclick();	
 				});
 				
-				/*console.info('place holder........', $(".placeholder"));
-				$(".placeholder").each(function() {
-					console.info("action "+ JSON.stringfy(self.actionBody));
-					console.info("place load height "+ $('#'+$(this).attr('id')), $('#'+$(this).attr('id')).height());
-				});*/
-				//var height = $(this).height();
-				
-				/*var resultvalue = 0;
-				$('.features_content_main').prevAll().each(function() {
-					var rv = $(this).height();
-					resultvalue = resultvalue + rv;
-				});*/
 				$('.features_content_main').css('overflow','auto');
 			});
 		},
 		
-		 /* preRender: function(whereToRender, renderFunction){
-		 	var self = this;
-			
-		},  */
 
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
@@ -227,15 +203,8 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 							$('#selectedcolor1').val(e.color);
 						  });
 						  	  
-				
-			//$("select.xaxis").parent().parent().hide();
-			//$("select.yaxis").parent().parent().hide();
-			//$("select.percentval").parent().parent().hide();
-			//$("select.legendval").parent().parent().hide();
-			//$("select.baraxis").parent().parent().hide();
 			$("#timeoutval_update").hide();
 			$("#timeoutval").hide();
-			//$("#tabforbar").hide();
 			$("#dashlist").hide();
 			$("#lineChartOpt").hide();
 			
@@ -270,14 +239,6 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 				}		
 			});
 			
-			$("#timeout_update").unbind('change');
-			$("#timeout_update").change(function() {
-				if($(this).is(':checked')) {
-					$("#timeoutval_update").show();
-				} else {
-					$("#timeoutval_update").hide();
-				}		
-			});
 			
 			$("#timeoutval").bind('keypress',function(e) {
 				if((e.which >= 48 && e.which <= 57) || (e.which === 8)){
@@ -300,7 +261,7 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 						$(this).val('');
 					}
 				});
-				if(self.dashboardListener.flag_d === 0) {					
+				if(self.dashboardListener.flag_d === 0) {			
 					$("#dashboard_name").val($(".dashboardslist").children(0).children('a').attr('value'));
 					$("#conf_username").val($(".dashboardslist").children(0).attr('username'));
 					$("#conf_password").val($(".dashboardslist").children(0).attr('password'));
@@ -349,7 +310,7 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 				} else if(url.val() === ''){
 				//} else if(self.isValidUrl(url.val())){
 					url.addClass("errormessage");
-					url.focus();						
+					url.focus();
 					url.attr('placeholder','Invalid URL');						
 					url.val('');
 					url.bind('keypress', function() {

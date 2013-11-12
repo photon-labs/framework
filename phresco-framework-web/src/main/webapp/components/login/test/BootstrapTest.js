@@ -17,6 +17,8 @@ var commonVariables = {
 	footer : "footer",
 	footerContext : "footer",
 	
+	dashboard : "dashboard",
+	
 	navigation : "navigation",
 	navigationContext : "",
 	mavenService : "mavenService",
@@ -115,6 +117,8 @@ var commonVariables = {
 	
 	paramaterContext : "parameter",
 	dependencyContext : "dependency",			
+	
+	clearInterval : {},
 
 	basePlaceholder : "basepage\\:widget",
 	headerPlaceholder : "<div id='header'></div>",
@@ -162,7 +166,7 @@ define([], function() {
 			// setup require.js
 			var requireConfig = requirejs.config(configJson);
 
-			require(["framework/class", "framework/widget", "lib/jslib_bootstrap_datepicker-1.0.0", "lib/bootstrap_select_min-3.1", "framework/widgetWithTemplate", "framework/navigationController", "common/loading", "api/api", "lib/jquery_mockjax-1.0", "lib/json2-1.0", "lib/jslib_jss_min-1.0.0", "lib/i18next-1.6.0", "lib/signal-1.0.1", "lib/signalbinding-1.0.1", "lib/main-2.1", "lib/scrollbars-1.0", "lib/jquery_mousewheel-1.0", "lib/jquery_mousehold-1.0", "lib/jquery_ba_resize_min-1.0", "lib/jquery_event_drag_min-2.0", "lib/jquery_mCustomScrollbar_concat_min-2.8.1", "lib/jquery_ui-1.10.3", "lib/jquery_magnific_popup_min-1.0", "lib/fileuploader-2.4", "lib/bootstrap_min-2.3.1", "lib/jquery_zclip-2.0", "lib/highcharts-1.0"], function () {
+			require(["framework/class", "framework/widget", "lib/jslib_bootstrap_datepicker-1.0.0", "lib/bootstrap_select_min-3.1", "framework/widgetWithTemplate", "framework/navigationController", "common/loading", "api/api", "lib/jquery_mockjax-1.0", "lib/json2-1.0", "lib/jslib_jss_min-1.0.0", "lib/i18next-1.6.0", "lib/signal-1.0.1", "lib/signalbinding-1.0.1", "lib/main-2.1", "lib/scrollbars-1.0", "lib/jquery_mousewheel-1.0", "lib/jquery_mousehold-1.0", "lib/jquery_ba_resize_min-1.0", "lib/jquery_event_drag_min-2.0", "lib/jquery_mCustomScrollbar_concat_min-2.8.1", "lib/jquery_ui-1.10.3", "lib/jquery_magnific_popup_min-1.0", "lib/fileuploader-2.4", "lib/bootstrap_min-2.3.1", "lib/jquery_zclip-2.0", "lib/highstock-1.3.7.1", "lib/jquery.tablesorter.min-1.0", "lib/bootstrap-colorpalette-1.0", "lib/bootstrap-datetimepicker.min-2.0"], function () {
 				Clazz.config = data;
 				Clazz.navigationController = new Clazz.NavigationController({
 					mainContainer : "basepage\\:widget",

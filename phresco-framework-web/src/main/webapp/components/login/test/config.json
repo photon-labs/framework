@@ -304,6 +304,11 @@
 		"dashboard" : {
 			"moduleName":"dashboard",
 			"path" : "components/dashboard/js"
+		},
+		
+		"dashboardTest" : {
+			"moduleName":"dashboardTest",
+			"path" : "components/dashboard/test/dashboardTest"
 		}
 		
 	}
