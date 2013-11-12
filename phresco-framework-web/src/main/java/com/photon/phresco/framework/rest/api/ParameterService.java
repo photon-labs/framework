@@ -158,7 +158,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				parameterValues.setModule(module);
 				parameterValues.setRootModule(rootModule);
 				parameterValues.setProjectCode(projectCode);
-				setPossibleValuesInReq(appInfo, parameters, watcherMap, parameterValues);
+				setPossibleValuesInReq(projectInfo, parameters, watcherMap, parameterValues);
 				
 				ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null,
 						parameters, RESPONSE_STATUS_SUCCESS, PHR1C00001);
@@ -323,9 +323,10 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				goal = goal + HYPHEN + functionalTestFramework;
 			}
 			
-			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDirName);
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			Map<String, DependantParameters> watcherMap = valueMap.get(applicationInfo.getId() + goal);
-			Map<String, Object> constructMapForDynVals = constructMapForDynVals(applicationInfo, watcherMap, key, customerId, null);
+			Map<String, Object> constructMapForDynVals = constructMapForDynVals(projectInfo, watcherMap, key, customerId, null);
 			String filePath = getInfoFileDir(appDirName, goal, phase);
 			MojoProcessor mojo = new MojoProcessor(new File(filePath));
 			Parameter dependentParameter = mojo.getParameter(goal, key);
@@ -338,7 +339,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
             	 finalOutput = responseDataEvaluation(responseData, null,
     					dependentPossibleValues, RESPONSE_STATUS_SUCCESS, PHR6C00001);
             } else if (TYPE_DYNAMIC_PAGE_PARAMETER.equalsIgnoreCase(dependentParameter.getType()) && dependentParameter.getDynamicParameter() != null) {
-            	Map<String, Object> dynamicPageParameterMap = getDynamicPageParameter(applicationInfo, watcherMap, dependentParameter, userId, customerId, module, rootModule);
+            	Map<String, Object> dynamicPageParameterMap = getDynamicPageParameter(projectInfo, watcherMap, dependentParameter, userId, customerId, module, rootModule);
     			List<? extends Object> dynamicPageParameter = (List<? extends Object>) dynamicPageParameterMap.get(REQ_VALUES_FROM_JSON);
     			List<PerformanceDetails> templateDetails = (List<PerformanceDetails>) dynamicPageParameter;
     			templateMap.put(applicationInfo.getId() + dependentParameter.getKey(), templateDetails);
@@ -709,9 +710,10 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	 * @param goal
 	 * @throws PhrescoException
 	 */
-	private void setPossibleValuesInReq(ApplicationInfo appInfo, List<Parameter> parameters, 
+	private void setPossibleValuesInReq(ProjectInfo projectInfo, List<Parameter> parameters, 
     		Map<String, DependantParameters> watcherMap, ParameterValues parameterValues) throws PhrescoException {
         try {
+        	ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
         	MojoProcessor mojo = parameterValues.getMojoProcessor();
         	String goal = parameterValues.getGoal();
         	String userId = parameterValues.getUserId();
@@ -727,11 +729,11 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
                     String parameterKey = parameter.getKey();
                     if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && parameter.getDynamicParameter() != null) {
                     	//Dynamic parameter
-                        Map<String, Object> constructMapForDynVals = constructMapForDynVals(appInfo, watcherMap, parameterKey, customerId, buildNumber);
+                        Map<String, Object> constructMapForDynVals = constructMapForDynVals(projectInfo, watcherMap, parameterKey, customerId, buildNumber);
                         constructMapForDynVals.put(REQ_MOJO, mojo);
                         constructMapForDynVals.put(REQ_GOAL, goal);
 						constructMapForDynVals.put(REQ_SERVICE_MANAGER, serviceManager);
-						constructMapForDynVals.put("projectCode", projectCode);
+						constructMapForDynVals.put(DynamicParameter.KEY_PROJECT_CODE, projectCode);
 						setModuleInfoInMap(rootModule, module, constructMapForDynVals);
 						
                         // Get the values from the dynamic parameter class
@@ -803,7 +805,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
                         paramBuilder.append("=");
                         paramBuilder.append("");
                     } else if(TYPE_DYNAMIC_PAGE_PARAMETER.equalsIgnoreCase(parameter.getType())) {
-            			Map<String, Object> dynamicPageParameterMap = getDynamicPageParameter(appInfo, watcherMap, parameter, userId, customerId, module, rootModule);
+            			Map<String, Object> dynamicPageParameterMap = getDynamicPageParameter(projectInfo, watcherMap, parameter, userId, customerId, module, rootModule);
             			List<? extends Object> dynamicPageParameter = (List<? extends Object>) dynamicPageParameterMap.get(REQ_VALUES_FROM_JSON);
             			List<PerformanceDetails> templateDetails = (List<PerformanceDetails>) dynamicPageParameter;
             			templateMap.put(appInfo.getId() + parameter.getKey(), templateDetails);
@@ -1009,10 +1011,11 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	 * @return
 	 * @throws PhrescoException
 	 */
-	private Map<String, Object> getDynamicPageParameter(ApplicationInfo appInfo, Map<String, DependantParameters> watcherMap, Parameter parameter, 
+	private Map<String, Object> getDynamicPageParameter(ProjectInfo projectInfo, Map<String, DependantParameters> watcherMap, Parameter parameter, 
 			String userId, String customerId, String module, String rootModule) throws PhrescoException {
 		String parameterKey = parameter.getKey();
-		Map<String, Object> paramsMap = constructMapForDynVals(appInfo, watcherMap, parameterKey, customerId, null);
+		ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+		Map<String, Object> paramsMap = constructMapForDynVals(projectInfo, watcherMap, parameterKey, customerId, null);
 		setModuleInfoInMap(rootModule, module, paramsMap);
 		String className = parameter.getDynamicParameter().getClazz();
 		DynamicPageParameter dynamicPageParameter;
@@ -1103,14 +1106,15 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	 * @param parameterKey
 	 * @return
 	 */
-	private Map<String, Object> constructMapForDynVals(ApplicationInfo appInfo, Map<String, DependantParameters> watcherMap, String parameterKey, String customerId, String buildNumber) {
+	private Map<String, Object> constructMapForDynVals(ProjectInfo projectInfo, Map<String, DependantParameters> watcherMap, String parameterKey, String customerId, String buildNumber) {
         Map<String, Object> paramMap = new HashMap<String, Object>(8);
         DependantParameters dependantParameters = watcherMap.get(parameterKey);
         if (dependantParameters != null) {
             paramMap.putAll(getDependantParameters(dependantParameters.getParentMap(), watcherMap));
         }
-        paramMap.put(DynamicParameter.KEY_APP_INFO, appInfo);
+        paramMap.put(DynamicParameter.KEY_APP_INFO, projectInfo.getAppInfos().get(0));
         paramMap.put(REQ_CUSTOMER_ID, customerId);
+        paramMap.put(DynamicParameter.KEY_PROJECT_CODE, projectInfo.getProjectCode());
         if (StringUtils.isNotEmpty(buildNumber)) {
         	paramMap.put(DynamicParameter.KEY_BUILD_NO, buildNumber);
         }

@@ -55,6 +55,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.dom.DOMSource;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -691,6 +692,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		if (StringUtils.isNotEmpty(projectCode)) {
 			configFile = FrameworkServiceUtil.getGlobalConfigFileDir(projectCode);
 		} else if (StringUtils.isNotEmpty(appDirName)) {
+			copyUploadedFilesToProj(appDirName);
 			configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
 		} else {
 			throw new ConfigurationException("Project Code Or AppDirName Should Not be Empty");
@@ -1184,13 +1186,18 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					}
 				}
 				if (!isNameExists) {
-					StringBuilder sb = new StringBuilder(Utility.getPhrescoTemp()).append(File.separator).append(
-							DO_NOT_CHECKIN_DIR).append(File.separator).append(envName).append(File.separator).append(
-							configName).append(File.separator).append(propName).append(File.separator).append(
-							request.getHeader("X-File-Name"));
+					StringBuilder sb = new StringBuilder(Utility.getPhrescoTemp()).append(DO_NOT_CHECKIN_DIR).append(File.separator);
+					if(StringUtils.isNotEmpty(envName) && !envName.equals("undefined")) {
+					sb.append(envName).append(File.separator);
+					}
+					sb.append(configName).append(File.separator).append(propName)
+					.append(File.separator).append(request.getHeader("X-File-Name"));
 					File file = new File(sb.toString());
+					if (!file.getParentFile().exists()) {
+						file.getParentFile().mkdirs();
+					}
 					if (!file.exists()) {
-						file.mkdirs();
+						file.createNewFile();
 					}
 					uploadZip(inputStream, file);
 					ResponseInfo finalOuptut = responseDataEvaluation(responseData, null, false,
@@ -2018,5 +2025,47 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		config.getProperties().setProperty("files", files);
 		return config;
 	}
+	
+	private void copyUploadedFilesToProj(String appDirName) {
+        StringBuilder srcSb = new StringBuilder(Utility.getPhrescoTemp())
+        .append(File.separator)
+        .append(DO_NOT_CHECKIN_DIR);
+        File srcDir = new File(srcSb.toString());
+        try {
+            if (srcDir.exists()) {
+                StringBuilder destSb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName))
+                .append(File.separator)
+                .append(DO_NOT_CHECKIN_DIR);
+                File destDir = new File(destSb.toString());
+                if (destDir.exists()) {
+                    File[] destFiles = destDir.listFiles();
+                    File[] srcFiles = srcDir.listFiles();
+                    for (File srcFile : srcFiles) {
+                        for (File destFile : destFiles) {
+                            if (srcFile.getName().equalsIgnoreCase(destFile.getName())) {
+                                srcSb.append(File.separator)
+                                .append(srcFile.getName())
+                                .append(File.separator);
+                                srcDir = new File(srcSb.toString());
+
+                                destSb.append(File.separator)
+                                .append(destFile.getName());
+                                destDir = new File(destSb.toString());
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+                FileUtils.copyDirectory(srcDir, destDir);
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        } finally {
+            if (srcDir.exists()) {
+                FileUtil.delete(srcDir);
+            }
+        }
+    }
 
 }
