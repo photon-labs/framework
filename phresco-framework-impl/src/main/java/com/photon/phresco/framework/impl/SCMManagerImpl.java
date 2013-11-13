@@ -264,7 +264,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				S_LOGGER.debug("updateDir GIT... " + updateDir);
 			}
 			//for https and ssh
-			additionalAuthentication("");
+			additionalAuthentication(repodetail.getPassPhrase());
 			
 			Git git = Git.open(updateDir); // checkout is the folder with .git
 			git.pull().call(); // succeeds
@@ -946,7 +946,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 		try {
 			//For https and ssh
-			additionalAuthentication("");
+			additionalAuthentication(repodetail.getPassPhrase());
 			
 			CredentialsProvider cp = new UsernamePasswordCredentialsProvider(repodetail.getUserName(), repodetail.getPassword());
 			FileRepositoryBuilder builder = new FileRepositoryBuilder();

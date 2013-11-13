@@ -402,13 +402,21 @@ define([], function() {
 			});
 		},
 		
-		getCommitableFiles : function(data, obj) {
+		getCommitableFiles : function(data, obj, usrObj, pwdObj, checkObj) {
 			var self = this;
 			var dynamicId = data.dynamicId;
 			self.openccpl(obj, $(obj).attr('name'), '');
 			$('#commitLoading_'+dynamicId).show();
 			commonVariables.hideloading = true;
 	      	self.projectListActionForScm(self.getActionHeader(data, "getCommitableFiles"), $('#commitLoading_'+dynamicId), function(response) {
+				$('#commitRepourl_'+dynamicId).val(response.data.repoUrl);
+				// For Type Selection based on response
+				$("#commitType_"+dynamicId).find('option').each(function(index, value){
+					if(response.data.type === $(value).val()){
+						$(value).attr('selected', 'selected');
+					}
+				});	
+				// End of Type Selection
 				var halfheight= window.innerHeight/2;
 				var halfwidth= window.innerWidth/2;
 				if ($(obj).offset().top > halfheight && $(obj).offset().left > halfwidth){
@@ -429,9 +437,8 @@ define([], function() {
 					$('.commitErr_'+dynamicId).show();
 				} else if (response.data !== undefined && response.data.repoInfoFile.length !== 0) {
 					$('input[name=commitbtn]').prop("disabled", true);
-					$('input[name=commitbtn]').removeClass("btn_style");		
+					$('input[name=commitbtn]').removeClass("btn_style");
 					$('.commit_data_'+dynamicId).show();
-					$('#commitRepourl_'+dynamicId).val(response.data.repoUrl);
 					commitableFiles += '<thead class="fixedHeader"><tr><th style="width: 5%;"><input checkVal="check" dynamicId="'+ dynamicId +'" class="commitParentChk_'+ dynamicId +'"  type="checkbox"></th><th style="width: 71%;">File</th><th>Status</th></tr></thead><tbody class="commitFixed">';
 					$.each(response.data.repoInfoFile, function(index, value) {
 						commitableFiles += '<tr><td><input checkVal="check" dynamicId="'+ dynamicId +'" class="commitChildChk_' + dynamicId + '" type="checkbox" value="' + value.commitFilePath + '"></td>';
@@ -459,17 +466,26 @@ define([], function() {
 					$('.commit_data_'+dynamicId).show();
 				}
 				commonVariables.hideloading = false;
+				self.hideShowCredentials(response.data.type, usrObj, pwdObj, checkObj);
+				self.typeChangeEvent($("#commitType_"+dynamicId), response.data.type, dynamicId);
 			});
 		},
 		
-		getUpdatableFiles : function(data, obj) {
+		getUpdatableFiles : function(data, obj, usrObj, pwdObj, checkObj) {
 			var self = this;
 			var dynamicId = data.dynamicId;
 			self.openccpl(obj, $(obj).attr('name'), '');
 			$('#updateLoading_'+dynamicId).show();
 			commonVariables.hideloading = true;
 	      	self.projectListActionForScm(self.getActionHeader(data, "getUpdatableFiles"), $('#updateLoading_'+dynamicId), function(response) {
-
+				$('#updateRepourl_'+dynamicId).val(response.data.repoUrl);
+				// Type Selection based on response
+				$("#updateType_"+dynamicId).find('option').each(function(index, value){
+					if(response.data.type === $(value).val()){
+						$(value).attr('selected', 'selected');
+					}
+				});
+				// End of Type Selection
 				var halfheight= window.innerHeight/2;
 				var halfwidth= window.innerWidth/2;
 				if ($(obj).offset().top > halfheight && $(obj).offset().left > halfwidth){
@@ -495,6 +511,8 @@ define([], function() {
 					$('.update_data_'+dynamicId).show();
 				}
 				commonVariables.hideloading = false;
+				self.hideShowCredentials(response.data.type, usrObj, pwdObj, checkObj);
+				self.typeChangeEvent($("#updateType_"+dynamicId), response.data.type, dynamicId);
 			});
 		},
 		
@@ -671,6 +689,67 @@ define([], function() {
 					}
 				commonVariables.hideloading = false;
 				});
+			}
+		},
+		
+		
+		hideShowCredentials : function(val, usrObj, pwdObj, checkObj){
+			if(val === 'svn') {
+				$(".seperatetd").parent().show();
+				$(".seperatetd").show();
+				if(!checkObj.is(':checked')) {
+					usrObj.attr('readonly','true');
+					pwdObj.attr('readonly','true');
+				}
+			} else {
+				$(".seperatetd").parent().hide();
+				$(".seperatetd").hide();
+				usrObj.removeAttr('readonly');
+				pwdObj.removeAttr('readonly');
+			}			
+		},
+		
+		typeChangeEvent : function(selectObj, selectedType, dynamicId) {
+			if($(selectObj).attr('id') === 'updateType_'+dynamicId) {
+				$('#temporary_'+dynamicId).remove();
+				$('.perforcedata').hide();
+				if(selectedType !== 'svn') {
+					$("#updatePassword_"+dynamicId).parent().parent().next('tr').hide();
+					$("#updatePassword_"+dynamicId).parent().parent().next('tr').next('tr').hide();
+					$("#updatePassword_"+dynamicId).parent().parent().append('<td id="temporary_'+dynamicId+'" style="height: 115px;"></td>');								
+				} else {
+					$("#updatePassword_"+dynamicId).parent().parent().next('tr').show();
+					$("#updatePassword_"+dynamicId).parent().parent().next('tr').next('tr').show();
+				}
+				if(selectedType === 'perforce') {
+					$('.perforcedata').show();
+					$('#temporary_'+dynamicId).hide();
+					$('#updateRepourl_'+dynamicId).attr('placeholder','host:portnumber');
+				} else {
+					$('#updateRepourl_'+dynamicId).attr('placeholder','Repo Url');
+				}		
+			}
+			
+			if(selectedType === 'git') {
+				$("input[checkVal=check]").prop('checked', true);
+				$("input[checkVal=check]").attr("disabled", true);
+				$('input[name=commitbtn]').addClass("btn_style");
+				$('input[name=commitbtn]').prop("disabled", false);
+				$(".passPhrase").show();
+				$(".uname").attr("mandatory", "false");
+				$(".pwd").attr("mandatory", "false");
+				$("span[name=username]").next().html("");
+				$("span[name=password]").next().html("");
+			} else {
+				$("input[checkVal=check]").attr("disabled", false);
+				$("input[checkVal=check]").prop('checked', false);
+				$('input[name=commitbtn]').removeClass("btn_style");
+				$('input[name=commitbtn]').prop("disabled", true);
+				$(".passPhrase").hide();
+				$(".uname").attr("mandatory", "true");
+				$(".pwd").attr("mandatory", "true");
+				$("span[name=username]").next().html("<sup>*</sup>");
+				$("span[name=password]").next().html("<sup>*</sup>");
 			}
 		},
 		

@@ -411,8 +411,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var getval = $(commonVariables.contentPlaceholder).find("#noReport_294187d7-f75a-4adc-bb25-ce9465e0e82f").text();
 					equal("No Reports are Available", getval, "Delete pdf successfully.");
-					//self.projectcommitVerification(projectlist);
-					self.projectcommitSucessVerification(projectlist);
+					self.updateuiver(projectlist);
 				}, 2500);
 			});
 		},
@@ -438,7 +437,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var getvalue = $(".msgdisplay,.success").text();
 					equal("Project committed successfully", getvalue, "Commit service call");
-					self.projectcommitSucessVerification(projectlist);
+					self.updateuiver(projectlist);
 				}, 2500);
 			});
 		},
@@ -636,7 +635,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				projectlist.projectslistListener.addUpdateEvent ($("input[name='updatebtn']"),"294187d7-f75a-4adc-bb25-ce9465e0e82f","");
 				$(".credential").attr('checked','checked');
 				$(".credential").click();
-				projectlist.hideShowCredentials('git',$("#updateUsername_294187d7-f75a-4adc-bb25-ce9465e0e82f"),$("#updatePassword_294187d7-f75a-4adc-bb25-ce9465e0e82f"),$("#updateCredential_294187d7-f75a-4adc-bb25-ce9465e0e82f"));
+				projectlist.projectslistListener.hideShowCredentials('git',$("#updateUsername_294187d7-f75a-4adc-bb25-ce9465e0e82f"),$("#updatePassword_294187d7-f75a-4adc-bb25-ce9465e0e82f"),$("#updateCredential_294187d7-f75a-4adc-bb25-ce9465e0e82f"));
 				$("input[name='revision']").attr('checked','true');
 				$("input[name='revision']").click();
 				setTimeout(function() {
@@ -772,9 +771,9 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();
 					equal("", "", 'Configuration type Test');
-					require(["applicationTest"], function(applicationTest){
-						applicationTest.runTests();
-					}); 
+					/* require(["configurationTest"], function(configurationTest){
+						configurationTest.runTests();
+					}); */ 
 				}, 1000);
 			});
 		}

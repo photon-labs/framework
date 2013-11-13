@@ -171,22 +171,6 @@ define(["projectlist/listener/projectListListener"], function() {
 			}
 		},
 		
-		hideShowCredentials : function(val,usrObj,pwdObj,checkObj){
-			if(val === 'svn') {
-				$(".seperatetd").parent().show();
-				$(".seperatetd").show();
-				if(!checkObj.is(':checked')) {
-					usrObj.attr('readonly','true');
-					pwdObj.attr('readonly','true');
-				}
-			} else {
-				$(".seperatetd").parent().hide();
-				$(".seperatetd").hide();
-				usrObj.removeAttr('readonly');
-				pwdObj.removeAttr('readonly');
-			}			
-		}, 
-		
 		makeCredReadOnly : function (checkObj, usrObj, pwdObj) {
 			if(!checkObj.is(':checked')) {
 				usrObj.attr('readonly','true');
@@ -399,49 +383,10 @@ define(["projectlist/listener/projectListListener"], function() {
 				}
 				
 				if(selectObj !== null  && selectObj !== undefined && selectObj !== '') {
-					self.hideShowCredentials(selectObj.val(),usrObj,pwdObj,checkObj);
 					selectObj.unbind("change");
 					selectObj.on("change", function(){				
-						self.hideShowCredentials(selectObj.val(),usrObj,pwdObj,checkObj);	
-						if($(selectObj).attr('id') === 'updateType_'+dynamicId) {
-							$('#temporary_'+dynamicId).remove();
-							$('.perforcedata').hide();
-							if(selectObj.val() !== 'svn') {
-								$("#updatePassword_"+dynamicId).parent().parent().next('tr').hide();
-								$("#updatePassword_"+dynamicId).parent().parent().next('tr').next('tr').hide();
-								$("#updatePassword_"+dynamicId).parent().parent().append('<td id="temporary_'+dynamicId+'" style="height: 115px;"></td>');								
-							} else {
-								$("#updatePassword_"+dynamicId).parent().parent().next('tr').show();
-								$("#updatePassword_"+dynamicId).parent().parent().next('tr').next('tr').show();
-							}
-							if(selectObj.val() === 'perforce') {
-								$('.perforcedata').show();
-								$('#temporary_'+dynamicId).hide();
-								$('#updateRepourl_'+dynamicId).attr('placeholder','host:portnumber');
-							} else {
-								$('#updateRepourl_'+dynamicId).attr('placeholder','Repo Url');
-							}		
-						}
-						if(selectObj.val() === 'git') {
-							$("input[checkVal=check]").attr("disabled", true);
-							$('input[name=commitbtn]').addClass("btn_style");
-							$('input[name=commitbtn]').prop("disabled", false);
-							$(".passPhrase").show();
-							$(".uname").attr("mandatory", "false");
-							$(".pwd").attr("mandatory", "false");
-							$("span[name=username]").next().html("");
-							$("span[name=password]").next().html("");
-						} else {
-							$("input[checkVal=check]").attr("disabled", false);
-							$('input[name=commitbtn]').removeClass("btn_style");
-							$('input[name=commitbtn]').prop("disabled", true);
-							$(".passPhrase").hide();
-							$(".uname").attr("mandatory", "true");
-							$(".pwd").attr("mandatory", "true");
-							$("span[name=username]").next().html("<sup>*</sup>");
-							$("span[name=password]").next().html("<sup>*</sup>");
-						}
-
+						self.projectslistListener.hideShowCredentials($(this).find(':selected').val(), usrObj, pwdObj, checkObj);
+						self.projectslistListener.typeChangeEvent(selectObj, $(this).find(':selected').val(), dynamicId);
 					});
 				}
 				
@@ -463,7 +408,7 @@ define(["projectlist/listener/projectListListener"], function() {
 							data.dynamicId = dynamicId;
 							$("#dummyCommit_"+dynamicId).css("height","10px");
 							commonVariables.loadingScreen.removeLoading();
-							self.projectslistListener.getCommitableFiles(data, openccObj);
+							self.projectslistListener.getCommitableFiles(data, openccObj, usrObj,pwdObj,checkObj);
 						} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
 							commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 						}	
@@ -477,7 +422,7 @@ define(["projectlist/listener/projectListListener"], function() {
 							data.appdirname = appDirName;
 							data.dynamicId = dynamicId;
 							$("#dummyUpdate_"+dynamicId).css("height","10px");
-							self.projectslistListener.getUpdatableFiles(data, openccObj);
+							self.projectslistListener.getUpdatableFiles(data, openccObj, usrObj, pwdObj, checkObj);
 						} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
 							commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 						}	
