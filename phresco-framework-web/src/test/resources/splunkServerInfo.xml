@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This is to override browser formatting; see server.conf[httpServer] to disable. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .-->
+<?xml-stylesheet type="text/xml" href="/static/atom.xsl"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:s="http://dev.splunk.com/ns/rest" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/">
+  <title>server-info</title>
+  <id>https://172.16.24.13:8089/services/server/info</id>
+  <updated>2013-11-12T10:41:27+05:30</updated>
+  <generator build="163460" version="5.0.3"/>
+  <author>
+    <name>Splunk</name>
+  </author>
+  <opensearch:totalResults>1</opensearch:totalResults>
+  <opensearch:itemsPerPage>30</opensearch:itemsPerPage>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <s:messages/>
+  <entry>
+    <title>server-info</title>
+    <id>https://172.16.24.13:8089/services/server/info/server-info</id>
+    <updated>2013-11-12T10:41:27+05:30</updated>
+    <link href="/services/server/info/server-info" rel="alternate"/>
+    <author>
+      <name>system</name>
+    </author>
+    <link href="/services/server/info/server-info" rel="list"/>
+    <content type="text/xml">
+      <s:dict>
+        <s:key name="build">163460</s:key>
+        <s:key name="cpu_arch">Intel</s:key>
+        <s:key name="eai:acl">
+          <s:dict>
+            <s:key name="app"></s:key>
+            <s:key name="can_list">0</s:key>
+            <s:key name="can_write">0</s:key>
+            <s:key name="modifiable">0</s:key>
+            <s:key name="owner">system</s:key>
+            <s:key name="perms">
+              <s:dict>
+                <s:key name="read">
+                  <s:list>
+                    <s:item>*</s:item>
+                  </s:list>
+                </s:key>
+                <s:key name="write">
+                  <s:list/>
+                </s:key>
+              </s:dict>
+            </s:key>
+            <s:key name="removable">0</s:key>
+            <s:key name="sharing">system</s:key>
+          </s:dict>
+        </s:key>
+        <s:key name="guid">E3F392CB-3F5C-443A-9965-1975114D3293</s:key>
+        <s:key name="isFree">0</s:key>
+        <s:key name="isTrial">1</s:key>
+        <s:key name="licenseKeys">
+          <s:list>
+            <s:item>A12F33DD64E8C4B6EB9D885C7E5856D638A40FD4A047869B3E4595A2DB762F7D</s:item>
+          </s:list>
+        </s:key>
+        <s:key name="licenseSignature">848bf06a5434911cf808823aa32c950c</s:key>
+        <s:key name="licenseState">OK</s:key>
+        <s:key name="license_labels">
+          <s:list>
+            <s:item>Splunk Enterprise Download Trial</s:item>
+          </s:list>
+        </s:key>
+        <s:key name="master_guid">E3F392CB-3F5C-443A-9965-1975114D3293</s:key>
+        <s:key name="mode">normal</s:key>
+        <s:key name="os_build">5</s:key>
+        <s:key name="os_name">Windows</s:key>
+        <s:key name="os_version">1</s:key>
+        <s:key name="rtsearch_enabled">1</s:key>
+        <s:key name="serverName">MOHAMED_AS</s:key>
+        <s:key name="startup_time">1384223712</s:key>
+        <s:key name="version">5.0.3</s:key>
+      </s:dict>
+    </content>
+  </entry>
+</feed>
