@@ -1618,7 +1618,7 @@ define([], function() {
 				$("input[name=triggers]").attr('disabled', true);
  
 				// append the configureJob json (jobJson) in  job template name id
-				var jobConfiguration = $('#jonConfiguration').serializeObject();
+				var jobConfiguration = $('#jonConfiguration :input[name!=targetFolder][name!=selectedFileOrFolder]').serializeObject();
 				if(!self.isBlank(templateJsonData.module)) {
 					jobConfiguration.module = templateJsonData.module;
 				}
