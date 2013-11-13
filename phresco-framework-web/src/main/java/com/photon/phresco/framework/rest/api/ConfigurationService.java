@@ -1242,7 +1242,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response listUploadedFiles(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName,
 			@QueryParam("envName") String envName, @QueryParam("configType") String configType,
-			@QueryParam("configName") String configName, @QueryParam("isEnvSpecific") String isEnvSpecific) {
+			@QueryParam("configName") String configName, @QueryParam("propName") String propName, @QueryParam("isEnvSpecific") String isEnvSpecific) {
 		if (StringUtils.isNotEmpty(moduleName)) {
 			appDirName = appDirName + File.separator + moduleName;
 		}
@@ -1277,9 +1277,13 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 							sb.append(File.separator);
 							sb.append(DO_NOT_CHECKIN_DIR);
 							sb.append(File.separator);
-							sb.append(envName);
+							if(StringUtils.isNotEmpty(envName) && !envName.equals("undefined")) {
+							sb.append(envName).append(File.separator);
+							}
 							sb.append(File.separator);
 							sb.append(configName);
+							sb.append(File.separator);
+							sb.append(propName);
 							sb.append(File.separator);
 						}
 						sb.append(split);

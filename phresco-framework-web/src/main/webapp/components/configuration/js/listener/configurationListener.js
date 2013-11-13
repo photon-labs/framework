@@ -218,7 +218,7 @@ define(["croneExpression/croneExpression"], function() {
 						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/connectionAliveCheck?url="+configRequestBody.protocol+","+configRequestBody.host+","+configRequestBody.port;
 				} else if (action === "listUploadedFiles") {
 						header.requestMethod = "GET";
-						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/listUploadedFiles?appDirName="+appDirName+"&isEnvSpecific="+commonVariables.envSpecifig+"&configName="+configRequestBody.name+"&envName="+configRequestBody.envName+"&configType="+configRequestBody.type+moduleParam;
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/listUploadedFiles?appDirName="+appDirName+"&isEnvSpecific="+commonVariables.envSpecifig+"&configName="+configRequestBody.name+"&envName="+configRequestBody.envName+"&configType="+configRequestBody.type+"&propName="+configRequestBody.propName+moduleParam;
 				} else if (action === "deleteFile") {
 						header.requestMethod = "GET";
 						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/removeFile?appDirName="+appDirName+"&configType="+configRequestBody.configType+"&propName="+configRequestBody.propertyName+"&fileName="+configRequestBody.fileName+"&envName="+configRequestBody.envName+"&configName="+configRequestBody.configName+moduleParam;
@@ -422,7 +422,7 @@ define(["croneExpression/croneExpression"], function() {
 					} else if (type === "Password") {
 						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" mandatory="'+required+'" type="password" temp="'+configTemplate.name+key+self.count+'" placeholder=""/>';
 					} else if (type === "FileType") {
-						inputCtrl = '<div id="file-uploader'+currentConfig+'" currentConfig="'+currentConfig+'" class="'+configTemplate.name+self.count+'Configuration" mandatory="'+required+'" class="file-uploader" propTempName="'+key+'"><noscript><p>Please enable JavaScript to use file uploader.</p><!-- or put a simple form for upload here --></noscript>  </div>';
+						inputCtrl = '<div fileUpload = "fileupload" id="file-uploader'+currentConfig+'" currentConfig="'+currentConfig+'" class="'+configTemplate.name+self.count+'Configuration" mandatory="'+required+'" class="file-uploader" propTempName="'+key+'"><noscript><p>Please enable JavaScript to use file uploader.</p><!-- or put a simple form for upload here --></noscript>  </div>';
 						fCheck = true;
 					} else if (type === "Actions") {
 						inputCtrl = '<input value="'+ label +'" validateButton="validate" class="'+configTemplate.name+self.count+'Configuration btn btn_style" name="'+key+'" mandatory="'+required+'" type="button" />';
@@ -537,7 +537,7 @@ define(["croneExpression/croneExpression"], function() {
 					var textBox = '<tr keyValue="keyValue'+configTemplate.name+self.count+'" name="'+configTemplate.name+'" class="'+configTemplate.name+self.count+'"><td><input configKey ="configKey'+configTemplate.name+'" class="ConfigKey" name="" temp="'+configTemplate.name+self.count+'" type="text" placeholder="Enter Key" /></td><td><input configKey ="configKey'+configTemplate.name+'" class="ConfigKeyValue" name="" temp="'+configTemplate.name+self.count+'" type="text" placeholder="Enter Value" /></td><td><div class="flt_right icon_center"><a href="javascript:;" name="add'+configTemplate.name+self.count+'"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="remove'+configTemplate.name+self.count+'"><img src="themes/default/images/Phresco/minus_icon.png" border="0" alt=""></a></div></td></tr>';
 					if (configuration.properties !== undefined) {
 						$.each(configuration.properties, function(keyVal, val) {
-							if ($.inArray(keyVal, propTempKeys) === -1) {
+							if (($.inArray(keyVal, propTempKeys) === -1) && (keyVal !== "files")) {
 								var textBoxAppend = '<tr keyValue="keyValue'+configTemplate.name+self.count+'" name="'+configTemplate.name+'" class="'+configTemplate.name+self.count+'"><td><input configKey ="configKey'+configTemplate.name+'" class="ConfigKey" name="" temp="'+configTemplate.name+self.count+'" type="text" value="'+keyVal+'" placeholder="Enter Key" /></td><td><input configKey ="configKey'+configTemplate.name+'" class="ConfigKeyValue" name="" temp="'+configTemplate.name+self.count+'" type="text" placeholder="Enter Value" value="'+val+'"/></td><td><div class="flt_right icon_center"><a href="javascript:;" name="add'+configTemplate.name+self.count+'"></a> <a href="javascript:;" name="remove'+configTemplate.name+self.count+'"><img src="themes/default/images/Phresco/minus_icon.png" border="0" alt=""></a></div></td></tr>';
 								content = content.concat(textBoxAppend);
 								bCheckVal = true;
@@ -677,6 +677,8 @@ define(["croneExpression/croneExpression"], function() {
 				var val = {};
 				val.name = configFileData.name;
 				val.type = configFileData.type;
+				val.propName = propertyName;
+				val.propName = propertyName;
 				if (configFileData.envName !== null) {
 					val.envName = configFileData.envName;
 				} else {
@@ -1266,6 +1268,10 @@ define(["croneExpression/croneExpression"], function() {
 						configJson.type = $(this).attr("name");
 					});
 				} else {
+						if ($("li span.qq-upload-file").text() !== '') {
+							properties.files = $("li span.qq-upload-file").text();
+							configJson.properties = properties;
+						}
 					$("." + type).each(function() {
 						if ($(this).children().find('.configName').val() !== undefined) {
 							configJson.name = $(this).children().find('.configName').val();
@@ -1378,6 +1384,7 @@ define(["croneExpression/croneExpression"], function() {
 								}
 								return bCheck;
 							}
+
 							var val = $(this).attr("name");
 							if(mandatory === 'true') {
 								if($(this).val() !== undefined && $(this).val() !== null && $.trim($(this).val()) !== ""){
@@ -1408,6 +1415,10 @@ define(["croneExpression/croneExpression"], function() {
 									$("input[temp='"+temp+"']").bind('keypress', function() {
 										$(this).removeClass("errormessage");
 									});
+									
+									if ($(this).attr("fileUpload") === "fileupload") {
+										bCheck = true;
+									}
 									return bCheck;
 								}
 							}
@@ -1437,7 +1448,7 @@ define(["croneExpression/croneExpression"], function() {
 					if(bCheck === false){
 						return bCheck;
 					}
-					
+
 					$('.otherKey').each(function() {
 						if($(this).val() !== undefined && $(this).val() !== null && $.trim($(this).val()) !== "") {
 							bCheck = true;
@@ -1452,7 +1463,6 @@ define(["croneExpression/croneExpression"], function() {
 							return bCheck;
 						}
 					});
-		
 					$('.otherKeyValue').each(function() {
 						if($(this).val() !== undefined && $(this).val() !== null && $.trim($(this).val()) !== "") {
 							bCheck = true;

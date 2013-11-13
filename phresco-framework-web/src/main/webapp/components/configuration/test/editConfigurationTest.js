@@ -689,7 +689,7 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			});
 		
 			self.editConfig = $.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/listUploadedFiles?appDirName=wordpress-WordPress&isEnvSpecific=false&configName=test&envName=&configType=Theme",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/listUploadedFiles?appDirName=wordpress-WordPress&isEnvSpecific=false&configName=test&envName=&configType=Theme&propName=theme",
 				type:'GET',
 				contentType: 'application/json',
 				status: 200,
