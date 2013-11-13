@@ -31,7 +31,7 @@ public class DashboardServiceTest  {
 	
 	@BeforeClass
 	public static void beforeClass() throws IOException {
-		mockServer = new MockServer(8089, "172.16.26.67");
+		mockServer = new MockServer(8089, "localhost");
 		mockServer.startServer();
 	}
 	@org.junit.Before
@@ -780,7 +780,7 @@ public class DashboardServiceTest  {
 		dashboardSearchInfo.setApplicationname("test");
 		dashboardSearchInfo.setDashboardname("test");
 		dashboardSearchInfo.setDatatype("splunk");
-		dashboardSearchInfo.setUrl("http://172.16.26.67:8089/");
+		dashboardSearchInfo.setUrl("http://localhost:8089/");
 		dashboardSearchInfo.setPassword("devsplunk");
 		dashboardSearchInfo.setQuery("search host=\"MOHAMED_AS\" | stats count(eval(method=\"POST\")) as total, count(eval(status=\"success\")) as success, count(eval(status=\"failure\")) as failure by serviceName | head 7");
 		dashboardSearchInfo.setUsername("test");
