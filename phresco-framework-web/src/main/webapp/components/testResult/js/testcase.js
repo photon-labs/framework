@@ -193,6 +193,18 @@ define(["testResult/listener/testResultListener"], function() {
 						self.testcaseResult = retVal;
 						Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
 						Clazz.navigationController.push(self.testcaseResult, false);
+						
+						var currentTab = commonVariables.navListener.currentTab;
+						self.testResultListener.getTestsuites(function(response) {
+							var data = {};
+							if ("manualTest" === currentTab) {
+								data.testSuites = response.data.testSuites;
+							} 
+							data.message = response.message;
+							commonVariables.testSuites = response.data;
+							
+						});
+						
 					});
 				});
 			});
