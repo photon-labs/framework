@@ -996,18 +996,18 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 
 	@Test
 	public void listFiles() {
-		Response listUploadedFiles = configurationService.listUploadedFiles(appDirName, "", "Production", "Server", "server", "true");
+		Response listUploadedFiles = configurationService.listUploadedFiles(appDirName, "", "Production", "Server", "server", "port", "true");
 		Assert.assertEquals(200, listUploadedFiles.getStatus());
-		Response listUploadedFile = configurationService.listUploadedFiles(appDirName, "", "Production", "Server", "serverconfig", "false");
+		Response listUploadedFile = configurationService.listUploadedFiles(appDirName, "", "Production", "Server", "serverconfig", "port", "false");
 		Assert.assertEquals(200, listUploadedFile.getStatus());
 		
 	}
 	
 	@Test
 	public void listFilesError() {
-		Response listUploadedFiles = configurationService.listUploadedFiles("dfsdf", "", "Production", "Server", "server", "true");
+		Response listUploadedFiles = configurationService.listUploadedFiles("dfsdf", "", "Production", "Server", "server", "port","true");
 		Assert.assertEquals(200, listUploadedFiles.getStatus());
-		Response listUploadedFile = configurationService.listUploadedFiles("dsfdsf", "", "Production", "Server", "serverconfig", "false");
+		Response listUploadedFile = configurationService.listUploadedFiles("dsfdsf", "", "Production", "Server", "serverconfig", "port", "false");
 		Assert.assertEquals(200, listUploadedFile.getStatus());
 		
 	}

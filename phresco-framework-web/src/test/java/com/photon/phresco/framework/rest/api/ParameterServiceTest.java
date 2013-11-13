@@ -73,7 +73,7 @@ public class ParameterServiceTest extends RestBaseTest {
 	 @Test
 	 public void getSonarUrl() {
 			MockHttpServletRequest request = new MockHttpServletRequest();
-			Response sonarUrl = parameterService.getSonarUrl(request,"");
+			Response sonarUrl = parameterService.getSonarUrl(request, appDirName);
 			Assert.assertEquals(200, sonarUrl.getStatus());
 	 }
 }
