@@ -233,7 +233,8 @@
 		"serviceerror" : "Service Error",
 		"serveralreadyadded" : "Server configuration already exist for this environment",
 		"emailalready" : "Email configuration already exist for this environment",
-		"prjtexists" : "Project already exists"
+		"prjtexists" : "Project already exists",
+		"PHRD100010" : "Unable to retrieve the search result."
 	},
 	"successCodes" : {
 		"PHR200004" : "Project created successfully",

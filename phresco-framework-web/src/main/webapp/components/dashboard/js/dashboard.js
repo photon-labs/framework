@@ -169,6 +169,7 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 				
 				$('.features_content_main').css('overflow','auto');
 			});
+			
 		},
 		
 
@@ -339,6 +340,7 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 						if(response.status === 'success') {							
 							self.dashboardListener.currentdashboardid = response.data;
 							$("#add_wid").removeAttr('disabled');
+							$(".content_end").hide();
 						}	
 					});
 				}

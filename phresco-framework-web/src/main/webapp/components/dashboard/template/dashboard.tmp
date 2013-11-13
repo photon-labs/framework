@@ -289,3 +289,6 @@
 			</div>
     </section>
 </div>
+<section class="content_end" style="display:none;">
+	<div class="msgdisplay error">/div>
+</section>

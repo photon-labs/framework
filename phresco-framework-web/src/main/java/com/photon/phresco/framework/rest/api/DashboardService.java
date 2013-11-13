@@ -412,7 +412,7 @@ public class DashboardService extends RestBase implements ServiceConstants, Fram
 			}
 		}catch (Exception e) {
 
-			status = RESPONSE_STATUS_ERROR;
+			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHRD010010;
 			JSONObject finalOutput = new JSONObject();
 			finalOutput.put("data","null");

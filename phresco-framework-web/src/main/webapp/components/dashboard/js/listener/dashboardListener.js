@@ -54,6 +54,12 @@ define([], function() {
 						} else {
 							//commonVariables.api.showError(response.responseCode ,"error", false);
 							callback(response);
+							if(response.responseCode === 'PHRD100010') {
+								$(".content_end").show();
+								setTimeout(function() {
+									$(".content_end").hide();
+								},5000);
+							}
 						}
 					},
 					function(textStatus) {
@@ -419,11 +425,11 @@ define([], function() {
 						width: $('#placeholder_' + widgetKey).width(),
 						events: {
 							load: function(){
+								series = this.series[0];	
 								if(!enlarge){
 									// set up the updating of the chart each second
 									var widInfo = commonVariables.api.localVal.getJson(widgetKey),
-									appName = self.currentappname, dashName = self.dashboardname;
-									series = this.series[0];
+									appName = self.currentappname, dashName = self.dashboardname;											
 									
 									if(widInfo.autorefresh){
 										var regId = setInterval(function(){
@@ -439,7 +445,8 @@ define([], function() {
 												self.graphAction(self.getActionHeader(objactionBody, "searchdashboard"), function(response){
 													//chart update
 													self.constructLineInfo(widgetKey, widgetInfo, widgetInfo.properties.x.toString(), widgetInfo.properties.y.toString(), response.data.results, function(dataVal){
-														series.setData(dataVal);
+													self.totalArr[widgetKey] = dataVal;
+													series.setData(dataVal);						
 													});
 												});
 											}
@@ -569,11 +576,11 @@ define([], function() {
 					marginLeft: -150,
 					events: {
 						load: function(){
-							if(!enlarge){
+							series = this.series[0];
+							if(!enlarge){								
 								// set up the updating of the chart each second
 								var widInfo = commonVariables.api.localVal.getJson(widgetKey),
-								appName = self.currentappname, dashName = self.dashboardname;
-								series = this.series[0];
+								appName = self.currentappname, dashName = self.dashboardname;								
 								
 								if(widInfo.autorefresh){
 									var regId = setInterval(function(){
@@ -589,6 +596,7 @@ define([], function() {
 											self.graphAction(self.getActionHeader(objactionBody, "searchdashboard"), function(response){
 												//chart update
 												self.constructPieInfo(widgetKey, widgetInfo.properties.x.toString(), widgetInfo.properties.y.toString(), response.data.results, function(dataVal){
+													//self.piechartdata_new[widgetKey] = dataVal;
 													series.setData(dataVal);
 												});
 											});
@@ -711,11 +719,11 @@ define([], function() {
 					backgroundColor: null,
 					events: {
 						load: function(){
+							series = this.series[0];
 							if(!enlarge){
 								// set up the updating of the chart each second
 								var widInfo = commonVariables.api.localVal.getJson(widgetKey),
-								appName = self.currentappname, dashName = self.dashboardname;
-								series = this.series[0];
+								appName = self.currentappname, dashName = self.dashboardname;								
 								
 								if(widInfo.autorefresh){
 									var regId = setInterval(function(){
@@ -730,7 +738,7 @@ define([], function() {
 
 											self.graphAction(self.getActionHeader(objactionBody, "searchdashboard"), function(response){
 												//chart update
-												self.constructBarInfo(widgetKey, widgetInfo.properties.x.toString(), widgetInfo.properties.y.toString(), response.data.results, function(dataVal){
+												self.constructBarInfo(widgetKey, widgetInfo.properties.x.toString(), widgetInfo.properties.y.toString(), response.data.results, function(dataVal){	
 													series.setData(dataVal);
 												});
 											});
