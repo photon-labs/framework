@@ -73,9 +73,9 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 				$.each(response.data.appInfos,function(index,value) {
 					$(".appdirnamedropdown").append('<option id='+value.id+' code='+value.code+' appDirName='+value.appDirName+' value='+value.name+'>'+value.name+'</option>');	
 					if (response.data.integrationTest === true) {
-						$("#integrationTest").hide();
-					} else {
 						$("#integrationTest").show();
+					} else {
+						$("#integrationTest").hide();
 					}
 				});
 
