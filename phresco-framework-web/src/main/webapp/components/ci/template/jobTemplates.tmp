@@ -39,6 +39,8 @@
 										<option value="enableRepo" data-i18n="ci.repo"></option>
 										<option value="enableSheduler" data-i18n="ci.scheduler"></option>
 										<option value="enableEmailSettings" data-i18n="ci.emailsettings"></option>
+										<option value="enableVersion" data-i18n="ci.version"></option>
+										<option value="enableParameters" data-i18n="ci.parameters"></option>
 										<option id="upload" value="enableUploadSettings" data-i18n="ci.uploadsettings" disabled="disabled"></option>
 									</select></td>
 								</tr>

@@ -954,6 +954,14 @@ define([], function() {
 				$(repoTypeTitleElem).html("Clonned workspace");
 			}
 			
+			if(!templateJsonData.enableVersion) {
+				$("#jonConfiguration").append('<label>Version</label><select><option>1</option></select>');
+			}
+			
+			if(!templateJsonData.enableParameters) {
+				$("#jonConfiguration").append('<label>Parameters</label><input type="text">');
+			}
+			
 			if(!templateJsonData.enableCriteria) {
 				$('#criteria').hide();
 			} else {
