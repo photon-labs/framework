@@ -45,11 +45,15 @@
 			<table id="unit_progress" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
 				<thead>
 					<tr>
-						<th data-i18n="build.label.progress"></th>
+						
 						<td>
+							<div class="flt_left" data-i18n="build.label.progress"></div>	
+							<div class="flt_right">
 							<a href="javascript:void(0)" id="codeLog">
 								<img src="themes/default/images/Phresco/buildreport_icon.png" width="15" height="18" border="0" alt="">
-							</a>	
+							</a>
+							</div>
+							
 						</td>
 					</tr>
 				</thead>
