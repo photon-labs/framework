@@ -2106,7 +2106,8 @@ img[name="close"] {
 	}
 	
 	#addproject .create_edit_table tr td select{
-		width:126px !important;
+		width:112px !important;
+		max-height:28px;
 }
 	
 	.optional_dropdown {
@@ -2198,7 +2199,7 @@ img[name="close"] {
 /* *************************************************************************** STYLES FOR DIV SCROLL ************************************************************************** */
 
 .scroll-bar {
-    width:6px !important;
+    width:8px !important;
 }
 
 .scroll-up {
@@ -2214,7 +2215,7 @@ img[name="close"] {
     background-position:center;
     top:7px;
 	/*background:#929292;*/
-	width:6px !important;
+	width:8px !important;
 	/*opacity:.6;*/
 	margin-top:-7px;
 }
@@ -2226,7 +2227,7 @@ img[name="close"] {
 .scroll-bar .scroll-slider {
     background-repeat:no-repeat;
     background-position:bottom;
-    width:7px   !important;
+    width:8px   !important;
     left:0px !important;
 	height:50% !important;
 }
@@ -2234,7 +2235,7 @@ img[name="close"] {
 .scroll-slider-inner {
     cursor:pointer;
     height:100%;
-    width:7px;
+    width:8px;
     left:0;
     overflow:hidden;
     position:absolute;
@@ -2246,7 +2247,7 @@ img[name="close"] {
 .scroll-slider-inner-stp {
     cursor:pointer;
     height:100%;
-    width:7px;
+    width:8px;
     left:0;
     overflow:hidden;
     position:absolute;

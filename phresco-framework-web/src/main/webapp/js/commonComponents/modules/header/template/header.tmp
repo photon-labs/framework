@@ -3,7 +3,7 @@
 	<div class="header_left">
 		<figure><img id="bannerlogo" src="" border="0"></figure>
 		<ul>
-			<li id="dashboardMenu"><a href="javascript:void(0)" id="dashboardd" data-i18n="header.menu.dashboard"></a></li>
+			<!-- <li id="dashboardMenu"><a href="javascript:void(0)" id="dashboardd" data-i18n="header.menu.dashboard"></a></li> -->
 			<li><a href="javascript:void(0)" id="pojectList" class="nav_active" data-i18n="header.menu.projects"></a></li>
 			<li id="settingsMenu"><a href="javascript:void(0)" id="settings" data-i18n="header.menu.settings"></a></li>
 			<li id="downloadsMenu"><a href="javascript:void(0)" id="downloads" data-i18n="header.menu.downloads"></a></li>
