@@ -1152,11 +1152,10 @@ define([], function() {
 
 		CroneExpression : function() {
 			var self=this;
+			$("#cronepassword").unbind("click");
 			$("#cronepassword").click(
-				
 				function openccvar() {
 				$('.content_main').addClass('z_index_ci');
-				
 				var clicked = $("#cronepassword");
 				var target = $("#crone_triggered");
 				var twowidth = window.innerWidth/1.5;
@@ -1184,10 +1183,8 @@ define([], function() {
 					});
 					
 					$(target).addClass('speakstyleright').removeClass('speakstyleleft');
-			
 				}
 				self.closeAll(target);
-				
 			});
 			
 			$("input[name=dyn_popupcon_close]").click(function() {

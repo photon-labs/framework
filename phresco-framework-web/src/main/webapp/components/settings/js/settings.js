@@ -148,7 +148,8 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 			
 			//this.customScroll($(".scrolldiv"));
 			
-			self.customScroll($(".consolescrolldiv"));
+//			self.customScroll($(".consolescrolldiv"));
+			self.tableScrollbar();
    			
 		}
 	});

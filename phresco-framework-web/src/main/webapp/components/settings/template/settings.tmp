@@ -1,81 +1,83 @@
 <section class="content_main proj_list testSuiteTable settingsContainer">
 		<div class="qual_unit_main unit_info">
-		<table class="table table-striped table_border table-bordered settings_tab border_div" cellpadding="0" cellspacing="0" border="0">
-            <thead>
-                <tr>
-                    <th>Continuous Integration</th>
-                </tr>
-            </thead>
-            <tbody> 
-                <tr>
-                	<td>
-                    	<table class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0">
-                            <thead>
-                                <tr>
-                                	<th>Jenkins Local Url</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><input type="text" name="jenkinsUrl" disabled></td>
-                                    <td><input type="button" name="setup" value="Setup" class="btn btn_style">&nbsp;&nbsp;<input type="button" name="switch" value="Start" class="btn btn_style"></td>
-                                </tr>
-                          </tbody>
-                       </table>
-                    </td>
-                </tr>
-                <tr>
-                	<td>
-                    	<table class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0">
-                            <thead>
-                                <tr>
-                                	<th colspan="3">Email Configuration</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><input type="text" name="username" placeholder="Username" temp="email"></td>
-                                    <td><input type="password" name="password" placeholder="Password" temp="email"></td>
-                                   <!-- <td><input type="button" value="Save" class="btn btn_style"></td> -->
-                                </tr>
-                          </tbody>
-                       </table>
-                    </td>
-                </tr>
-                
-                <tr>
-                	<td>
-                    	<table id="conflTable" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0">
-                            <thead>
-                                <tr>
-                                	<th colspan="5">Confluence Configuration &nbsp&nbsp&nbsp
-									<a align="right" class="addConfluence flt_right"><img  src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr id="prototype" class="hideContent">
-                                    <td><input type="text" name="url" placeholder="Server Based URL"></td>
-                                    <td><input type="text" name="username" placeholder="Username"></td>
-                                    <td><input type="password" name="password" placeholder="Password"></td>
-                                    <td>
-                                    	<a class="delete flt_right"><img src="themes/default/images/Phresco/minus_icon.png"  border="0" alt=""></a>
-                                    </td> 
-                                     
-                                </tr>
-                                
-                                <tr id="save"><td colspan="4" align="right"></td></tr>
-                          </tbody>
-                       </table>
-                    </td>
-                </tr>
-                
-                <tr id="save"><td colspan="4" align="right"><input type="button" value="Save" name="save" class="btn btn_style flt_right"></td></tr>    
-                    
-                    
-                     
-            </tbody>
-        </table>
+			<div class="fixed-table-container-inner">
+				<table class="table table-striped table_border table-bordered settings_tab border_div" cellpadding="0" cellspacing="0" border="0">
+					<thead>
+						<tr>
+							<th>Continuous Integration</th>
+						</tr>
+					</thead>
+					<tbody> 
+						<tr>
+							<td>
+								<table class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0">
+									<thead>
+										<tr>
+											<th>Jenkins Local Url</th>
+											<th>Actions</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td><input type="text" name="jenkinsUrl" disabled></td>
+											<td><input type="button" name="setup" value="Setup" class="btn btn_style">&nbsp;&nbsp;<input type="button" name="switch" value="Start" class="btn btn_style"></td>
+										</tr>
+								  </tbody>
+							   </table>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<table class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0">
+									<thead>
+										<tr>
+											<th colspan="3">Email Configuration</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td><input type="text" name="username" placeholder="Username" temp="email"></td>
+											<td><input type="password" name="password" placeholder="Password" temp="email"></td>
+										   <!-- <td><input type="button" value="Save" class="btn btn_style"></td> -->
+										</tr>
+								  </tbody>
+							   </table>
+							</td>
+						</tr>
+						
+						<tr>
+							<td>
+								<table id="conflTable" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0">
+									<thead>
+										<tr>
+											<th colspan="5">Confluence Configuration &nbsp&nbsp&nbsp
+											<a align="right" class="addConfluence flt_right"><img  src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr id="prototype" class="hideContent">
+											<td><input type="text" name="url" placeholder="Server Based URL"></td>
+											<td><input type="text" name="username" placeholder="Username"></td>
+											<td><input type="password" name="password" placeholder="Password"></td>
+											<td>
+												<a class="delete flt_right"><img src="themes/default/images/Phresco/minus_icon.png"  border="0" alt=""></a>
+											</td> 
+											 
+										</tr>
+										
+										<tr id="save"><td colspan="4" align="right"></td></tr>
+								  </tbody>
+							   </table>
+							</td>
+						</tr>
+						
+						<tr id="save"><td colspan="4" align="right"><input type="button" value="Save" name="save" class="btn btn_style flt_right"></td></tr>    
+							
+							
+							 
+					</tbody>
+				</table>
+			</div>
 		</div>
     	<!--content_main div ends here -->
     	<!-- Progress div starts here-->
