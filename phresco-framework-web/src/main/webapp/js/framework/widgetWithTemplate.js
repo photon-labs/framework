@@ -680,6 +680,9 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					if(placeId === 'firstsettings') {
 						var BottomHeight = clicked.position().top + clicked.height() +4 ;
 						$(target).css({"left":clicked.offset().left-15,"margin-top":10,"top": BottomHeight});		
+					} else if(placeId === 'version_popup') {
+						var BottomHeight = clicked.position().top + clicked.height() + 148 ;
+						$(target).css({"left":clicked.offset().left-15,"margin-top":10,"top": BottomHeight});	
 					}
 					$(target).toggle();
 					$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');

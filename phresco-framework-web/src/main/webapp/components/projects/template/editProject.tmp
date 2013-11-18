@@ -1,54 +1,63 @@
 <section id="editproject">   
-	
      <section class="content_main create_proj newcreate_proj">
           <div class="scrolldiv">
 		  <table class="table table-striped table_border table-bordered create_edit_table" cellpadding="0" cellspacing="0" border="0">  
             <tbody name="layercontents"> 
 				{{#editProject}}
-            	<tr>
+				<tr>
                     <td><span data-i18n="project.create.label.name"></span><sup>*</sup></td>
-                    <td><input type="text" value="{{name}}" preBuilt="{{preBuilt}}" id="editPrjprojectname" name="projectname" maxlength="30" title="30 Characters only" data-i18n="[placeholder]project.create.label.projectname" disabled/></td>
+                    <td class="right-align">
+                    	<input type="text" value="{{name}}" preBuilt="{{preBuilt}}" id="editPrjprojectname" name="projectname" maxlength="30" data-i18n="[placeholder]project.create.label.projectname" title="30 Characters only" disabled/>
+                	</td>
                     <td><span data-i18n="project.create.label.code"></span><sup>*</sup></td>
                     <td><input type="text" value="{{projectCode}}" name="projectcode" maxlength="30" title="30 Characters only" data-i18n="[placeholder]project.create.label.projectcode" disabled/></td>
-                    <td data-i18n="project.create.label.version"></td>
-                    <td><input type="text" name="projectversion" maxlength="20" title="20 Characters only" value="{{version}}"/></td>
-                    <td data-i18n="project.create.label.description"></td>                              
-                    <td rowspan="2" style="vertical-align: top;"><textarea class="popuptextarea" name="projectdescription"  maxlength="150" title="150 Characters only" data-i18n="[placeholder]project.create.label.description">{{description}}</textarea></td>
-                    <input type="hidden" id="isMultiModule" value="{{multiModule}}"/>
-                </tr>
-                <tr>
-					<td colspan="2">
-						 {{#if preBuilt}}
-							<select class="custon_dropdown" name="builtmyself" disabled>
-								<option value="prebuilt" data-i18n="project.create.label.prebuilt" selected></option>
-							</select>
-							<select class="custon_dropdown" name="" disabled>
-								<option value="" selected>{{displayName}}</option>
-							</select>
-						 {{else}}
+					<td colspan=2>
+						{{#if preBuilt}}
+                        	<select class="custon_dropdown" name="builtmyself" disabled>
+	                            <option value="prebuilt" data-i18n="project.create.label.prebuilt" selected></option>
+	                        </select>
+	                        <select class="optional_dropdown" name="">
+	                            <option data-i18n="project.create.label.selpilotproject"></option>
+	                        </select>
+                        {{else}}
 							<select class="custon_dropdown" name="builtmyself" disabled>
 								<option value="custom" data-i18n="project.create.label.custom" selected></option>
 							</select>
-						 {{/if}}	
+						 {{/if}}
+                    </td>
+					<td rowspan="2" style="vertical-align: top;">
+						<textarea class="popuptextarea" name="projectdescription" maxlength="150" title="150 Characters only" 
+							data-i18n="[placeholder]project.create.label.description">{{description}}</textarea>
 					</td>
-
+                </tr>
+                <tr>
+                    <td><span data-i18n="project.create.label.version"></span><sup>*</sup></td>
+                    <td>
+                    	<input type="text" name="projectversion" id="editprojectversion" readonly="readonly" style="cursor: pointer;" value="{{version}}" major="{{versionInfo.major}}" 
+                    		minor="{{versionInfo.minor}}" fixed="{{versionInfo.fix}}" iterationType="{{versionInfo.buildType}}" weekStart="{{versionInfo.weekStart}}"/>
+                    	<img class="dropdown_icon" src="themes/default/images/Phresco/dropdown_icon.png" id="versionImg">
+                	</td>
+					<td><span data-i18n="project.create.label.groupid"></span></td>
+                    <td>
+                    	<input type="text" value="{{groupId}}" name="groupId" id="groupId" maxlength="30" 
+                    		data-i18n="[placeholder]project.create.label.groupid" title="30 Characters only"/></td>
+					<td><input type="checkbox" name="integrationTest" value="">Integration Test</td>
+					<td></td>
+				</tr>
+				<tr>
                     <td data-i18n="project.create.label.startdate" name="startdate-lbl"></td>
-					{{#if preBuilt}}
-						<td class="startdate" name="startdateholder"><input name="startdate" type="text" value="{{startDate}}" id="startDate" disabled><span class="add-on" disabled><img id="strdt" src="themes/default/images/Phresco/cal_icon.png" border="0" alt=""></span></td>
-					{{else}}
-						<td class="startdate" name="startdateholder"><input name="startdate" type="text" value="{{startDate}}" id="startDate"><span class="add-on"><img id="strdt" src="themes/default/images/Phresco/cal_icon.png" border="0" alt=""></span></td>
-				    {{/if}}
+                    <td class="startdate" name="startdateholder">
+                    	<input name="startdate" type="text" value="{{startDate}}" id="startDate" disabled>
+                		<span class="add-on"><img id="strdt" src="themes/default/images/Phresco/cal_icon.png" border="0" alt=""></span>
+            		</td>
                     <td data-i18n="project.create.label.enddate" name="enddate-lbl"></td>
-					{{#if preBuilt}}	
-						<td class="enddate" name="enddateholder"><input name="enddate" value="{{endDate}}" id="endDate" type="text" disabled><span class="add-on" disabled><span class="add-on"><img id="enddt" class="cal_img1" src="themes/default/images/Phresco/cal_icon.png" border="0" alt=""></span></span></td>
-					{{else}}
-						<td class="enddate" name="enddateholder"><input name="enddate" value="{{endDate}}" id="endDate" type="text"><span class="add-on"><span class="add-on"><img id="enddt" class="cal_img1" src="themes/default/images/Phresco/cal_icon.png" border="0" alt=""></span></span></td>
-				    {{/if}}
-				    {{#if integrationTest}}
-				    	<td colspan="2"><input type="checkbox" checked="checked" disabled="disabled" name="integrationTest">Integration Test</td>
-				    {{else}}
-				    	<td colspan="2"><input type="checkbox" name="integrationTest">Integration Test</td>
-				    {{/if}}
+                    <td class="enddate" name="enddateholder">
+                    	<input name="enddate" id="endDate" type="text" value="{{endDate}}" disabled>
+                		<span class="add-on"><span class="add-on">
+                			<img id="enddt" src="themes/default/images/Phresco/cal_icon.png" border="0" alt="">
+            			</span>
+        			</td>
+					<td></td>
                 </tr>
 			{{/editProject}}
                <tr id="appLayaer" class="proj_title">
@@ -220,6 +229,137 @@
 			</div>
     	<!--content_main div ends here -->
     </section>
+    <div id="version_popup" style="display:none;" class="dyn_popup">
+		<form id="versionForm">
+			<table>
+	            <tr>
+	               	<td>Major</td>
+					<td>Minor</td>
+	                <td>Fixed</td>
+	            </tr>
+	            <tr>
+	            	<td>
+	                    <select id="majorVersion">
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+							<option value="11">11</option>
+							<option value="12">12</option>
+							<option value="13">13</option>
+							<option value="14">14</option>
+							<option value="15">15</option>
+							<option value="16">16</option>
+							<option value="17">17</option>
+							<option value="18">18</option>
+							<option value="19">19</option>
+							<option value="20">20</option>
+	                    </select>
+	                </td>
+	                <td>
+	                	<select id="minorVersion">
+	                		<option value="0">0</option>
+	                       	<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+							<option value="11">11</option>
+							<option value="12">12</option>
+							<option value="13">13</option>
+							<option value="14">14</option>
+							<option value="15">15</option>
+							<option value="16">16</option>
+							<option value="17">17</option>
+							<option value="18">18</option>
+							<option value="19">19</option>
+							<option value="20">20</option>
+	                    </select>
+	                </td>
+	                <td>
+	                	<select id="fixedVersion">
+	                		<option value="0">0</option>
+	                       	<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+							<option value="11">11</option>
+							<option value="12">12</option>
+							<option value="13">13</option>
+							<option value="14">14</option>
+							<option value="15">15</option>
+							<option value="16">16</option>
+							<option value="17">17</option>
+							<option value="18">18</option>
+							<option value="19">19</option>
+							<option value="20">20</option>
+	                    </select>
+	                </td>
+	            </tr>
+				<tr>
+					<td>Build Type</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+	                    <select class="type_build" id="iterationType">
+	                       	<option value="iteration">Iteration</option>
+	                       	<option value="sprint">Sprint</option>
+	                       	<option value="date">Date</option>
+	                    </select>
+	                </td>
+				</tr>
+				<tr>
+					<td>Week Start</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+	                    <select class="type_build" id="weekStart">
+	                       	<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+							<option value="11">11</option>
+							<option value="12">12</option>
+							<option value="13">13</option>
+							<option value="14">14</option>
+							<option value="15">15</option>
+							<option value="16">16</option>
+							<option value="17">17</option>
+							<option value="18">18</option>
+							<option value="19">19</option>
+							<option value="20">20</option>
+	                    </select>
+	                </td>
+				</tr>
+	        </table>
+        </form>
+        <div align="right">
+        	<input type="button" class="btn btn_style dyn_popup_close" value="OK" disabled id="submitVersion">
+    	</div>     
+    </div>
     <section class="content_end">
 		<div class="flt_left">
         	<input type="submit" name="appLayaer" value="{{applicationlayerData.name}}" class="btn btn_style app_layer_icon_btn hideContent">
