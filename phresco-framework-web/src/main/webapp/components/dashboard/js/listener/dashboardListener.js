@@ -1158,7 +1158,7 @@ define([], function() {
 					var dyn_id = $(currentObj).parents('div.noc_view').attr('dynid');
 					$("#add_widget").attr('dynid',dyn_id);
 					
-					self.openccdashboardsettings(currentObj,'add_widget');
+					self.openccdashboardsettings(currentObj,'add_widget',$("section.features_content_main").scrollTop());
 				});
 			});
 			

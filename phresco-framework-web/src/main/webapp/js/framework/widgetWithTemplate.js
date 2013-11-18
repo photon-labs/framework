@@ -539,7 +539,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				},
 				
 			
-			openccdashboardsettings : function(ee, placeId, currentPrjName) {
+			openccdashboardsettings : function(ee, placeId, scrollHeight) {
 				var self=this, flag = 0;
 				window.hoverFlag = 1;
 				$('.features_content_main').removeClass('z_index');
@@ -554,7 +554,6 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				var t= clicked.offset().top + 33;
 				var halfheight= window.innerHeight/2;
 				var halfwidth= window.innerWidth/2;
-				$(target).attr('currentPrjName',currentPrjName);
 				var style;
 				
 				if($(ee).parent().attr('id') !== undefined) {
@@ -563,7 +562,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				if (clicked.offset().top < halfheight && clicked.offset().left < halfwidth) {
 					$(target).css({"left":clicked.offset().left ,"margin-top":10,"right": "auto"});
 					if(placeId === 'add_widget') {
-						var BottomHeight = clicked.position().top + clicked.height() + 8 ;
+						var BottomHeight = clicked.position().top + clicked.height() + scrollHeight + 8 ;
 						$(target).css({"left":clicked.offset().left-15,"margin-top":10,"top": BottomHeight});		
 					} else {
 						if(flag === 0) {
@@ -582,7 +581,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					var d = null;
 					if(placeId === 'add_widget') {
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 4;
-						var BottomHeight = clicked.position().top + clicked.height() + 8 ;
+						var BottomHeight = clicked.position().top + clicked.height() + scrollHeight + 8 ;
 						$(target).css({"right":d,"left": "auto","margin-top":10,"top": BottomHeight});		
 					}  else {
 						if(flag === 0) {
@@ -603,7 +602,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(target).toggle();
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstyletopright').addClass('speakstylebottomleft').addClass('dyn_popup');	
 					if(placeId === 'add_widget') {
-						BottomHeight = clicked.position().top + clicked.height() + 20 ;
+						BottomHeight = clicked.offset().top + clicked.height() + scrollHeight - 490 ;
 						$(target).css({"right":"auto","top": BottomHeight});		
 					} else {
 						if(flag ===0) {
@@ -620,7 +619,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					var d = null,BottomHeight = null;
 					d = ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 15;
 					if(placeId === 'add_widget') {
-						BottomHeight = clicked.position().top + clicked.height() + 20 ;
+						BottomHeight = clicked.offset().top + clicked.height() + scrollHeight - 490 ;
 						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});		
 						$(target).toggle();
 						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
