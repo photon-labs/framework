@@ -444,6 +444,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		List<String> selectedFeatures = new ArrayList<String>();
 		List<String> selectedJsLibs = new ArrayList<String>();
 		List<String> selectedComponents = new ArrayList<String>();
+		Map<String, String> selectedFeatureMap = new HashMap<String, String>();
 		List<ArtifactGroup> listArtifactGroup = new ArrayList<ArtifactGroup>();
 		String unique_key = "";
 		try {
@@ -476,6 +477,8 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			List<String> archetypeFeatures = technology.getArchetypeFeatures();
 			if (CollectionUtils.isNotEmpty(selectedFeaturesFromUI)) {
 				for (SelectedFeature selectedFeatureFromUI : selectedFeaturesFromUI) {
+					String selectedScope = StringUtils.isNotEmpty(selectedFeatureFromUI.getScope()) ? selectedFeatureFromUI.getScope() : "";
+					selectedFeatureMap.put(selectedFeatureFromUI.getVersionID(), selectedScope);
 					String artifactGroupId = selectedFeatureFromUI.getModuleId();
 					ArtifactGroup artifactGroup = serviceManager.getArtifactGroupInfo(artifactGroupId);
 					ArtifactInfo artifactInfo = serviceManager.getArtifactInfo(selectedFeatureFromUI.getVersionID());
@@ -536,6 +539,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			applicationInfo.setSelectedModules(selectedFeatures);
 			applicationInfo.setSelectedJSLibs(selectedJsLibs);
 			applicationInfo.setSelectedComponents(selectedComponents);
+			applicationInfo.setSelectedFeatureMap(selectedFeatureMap);
 			applicationInfo.setCreated(true);
 			projectinfo.setAppInfos(Collections.singletonList(applicationInfo));
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
