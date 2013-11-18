@@ -162,12 +162,22 @@ define([], function() {
 					
 						//Click event for widget
 						self.clickFunction();
+						self.setHeaderPosition();
 					}
 				});
 				
 			}catch(exception){
 				//exception
 			}
+		},
+		
+		setHeaderPosition : function() {
+			var self = this;
+			$('.header-background').each(function() {
+				if ( $(this).offset() !== undefined && $(this).offset().top !== 0) {
+					$(this).parent().find('.th-inner').css('top', $(this).offset().top+'px');
+				}
+			});	
 		},
 		
 		autorefreshTable : function(widgetKey, results){
@@ -213,7 +223,7 @@ define([], function() {
 					$.each(currentVal, function(key, val){
 						if($.inArray(key, theadArr) < 0){
 							theadArr.push(key);
-							thead += '<th>' + key + '</th>';
+							thead += '<th><div class="th-inner tablesorter-header">' + key + '</div></th>';
 						}
 						
 						tColums += '<td>'+ val +'</td>';
@@ -222,13 +232,15 @@ define([], function() {
 				});
 				
 				if($('table#widTab_'+ widgetKey).length <=0 ){
-					nocTable = $('<div class="minitable"><table id="widTab_'+ widgetKey +'" class="table table_border new_tab border_div table-bordered tablesorter-default" style="height:50%; width:98%;" align="center"><thead><tr></tr></thead><tbody></tbody></table></div>');
+					nocTable = $('<div class="fixed-table-container"><div class="header-background"> </div><div class="fixed-table-container-inner"><div class="minitable"><table id="widTab_'+ widgetKey +'" class="table table-striped table_border new_tab border_div table-bordered tablesorter-default table-hover" align="center"><thead class="height_th"><tr></tr></thead><tbody></tbody></table></div></div></div>');
 					$('#placeholder_' + widgetKey).append(nocTable);
 					$('#widTab_' + widgetKey +' thead tr').html(thead);
 				}
 				
 				$('#widTab_' + widgetKey +' tbody').html(tbody);
 				$('.new_tab').tablesorter();
+				
+				this.customScroll($(".fixed-table-container-inner"));
 				
 			}catch(ec){
 				//ex
@@ -315,6 +327,7 @@ define([], function() {
 								
 							});
 						}
+						//self.setHeaderPosition();
 					}	
 				});
 			});
@@ -1009,6 +1022,10 @@ define([], function() {
 				}
 			});
 			
+			$("section.features_content_main").scroll(function() {
+				self.setHeaderPosition();
+			});
+			
 			$('input[name="close_widget"]').unbind('click');
 			$('input[name="close_widget"]').click(function() {
 				var widgetKey = $(this).parents('div.noc_view').attr('widgetid');
@@ -1041,6 +1058,7 @@ define([], function() {
 					$('.noc_view').hide();	 				 
 					parent.show();
 					parent.css({height:'97%',width:'98%'});
+					$(this).closest('.noc_view').find('.graph_table .scroll-line').css('height','93%');
 					$("#tooltip_"+placeval).css('display','none');
 					if($("#content_"+placeval).children(".demo-container1").hasClass('cssforchart')) {
 						$("#content_"+placeval).children(".demo-container1").removeClass('cssforchart');
@@ -1063,6 +1081,7 @@ define([], function() {
 					var count = $('.noc_view').length;
 					$('.noc_view').css('height','45%');
 					$('.noc_view').css('width','48%');
+					$(this).closest('.noc_view').find('.graph_table .scroll-line').css('height','36%');
 					flagg = 0;
 					if($(this).attr('proptype') === 'piechart') {
 						self.highChartPie(placeval, -10, 5, true);	
@@ -1073,7 +1092,8 @@ define([], function() {
 					} else if($(this).attr('proptype') === 'table') {
 						$('.placeholder').css('height','90%');
 					}
-				}														
+				}		
+				self.setHeaderPosition();
 			});
 			
 			$('.he-wrap').mouseenter(function(event){

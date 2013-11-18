@@ -2313,7 +2313,7 @@ img[name="close"] {
 }
 
 .scroll-content{
-	width: 100%;
+	width: 100% !important;
 }
 .table_border thead.height_th {
 	padding:0 !important;
@@ -2398,6 +2398,10 @@ img[name="close"] {
 .optional_dropdown {
 	 width: 186px;	
 }
+.graph_table .fixed-table-container-inner {
+	height:85% !important;
+}
+
 
 /* *************************************************************************** STYLES FOR BUILD PAGE ************************************************************************** */
 
@@ -5096,7 +5100,7 @@ textarea[name="regex"] {
 
 .placeholder {
 	height: 90%;
-	overflow-y: auto;
+	overflow-y: hidden;
 }
 
 #noc_config1 {
@@ -5278,6 +5282,7 @@ textarea[name="regex"] {
 #add_widget .input-append span {
 	padding: 5px 4px 3px 11px !important;
 }
+
 
 
 /***************************** STYLES FOR THE TABLE SORTING STARTS *************************************/
