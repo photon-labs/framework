@@ -286,8 +286,8 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response selectedFeatures(@QueryParam(REST_QUERY_USERID) String userId,
 			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module) throws PhrescoException {
-		ResponseInfo<List<SelectedFeature>> responseData = new ResponseInfo<List<SelectedFeature>>();
-		List<SelectedFeature> listFeatures = new ArrayList<SelectedFeature>();
+		ResponseInfo<Map<String, String>> responseData = new ResponseInfo<Map<String, String>>();
+//		List<SelectedFeature> listFeatures = new ArrayList<SelectedFeature>();
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
@@ -302,43 +302,17 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 				appDirName = appDirName + File.separator + module;
 			}
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
-			String selectedTechId = appInfo.getTechInfo().getId();
-			List<String> selectedModules = appInfo.getSelectedModules();
-			if (CollectionUtils.isNotEmpty(selectedModules)) {
-				for (String selectedModule : selectedModules) {
-					SelectedFeature selectFeature = createArtifactInformation(selectedModule, selectedTechId, appInfo,
-							serviceManager);
-					listFeatures.add(selectFeature);
-				}
-			}
-
-			List<String> selectedJSLibs = appInfo.getSelectedJSLibs();
-			if (CollectionUtils.isNotEmpty(selectedJSLibs)) {
-				for (String selectedJSLib : selectedJSLibs) {
-					SelectedFeature selectFeature = createArtifactInformation(selectedJSLib, selectedTechId, appInfo,
-							serviceManager);
-					listFeatures.add(selectFeature);
-				}
-			}
-
-			List<String> selectedComponents = appInfo.getSelectedComponents();
-			if (CollectionUtils.isNotEmpty(selectedComponents)) {
-				for (String selectedComponent : selectedComponents) {
-					SelectedFeature selectFeature = createArtifactInformation(selectedComponent, selectedTechId,
-							appInfo, serviceManager);
-					listFeatures.add(selectFeature);
-				}
-			}
+			Map<String, String> selectedFeatureMap = appInfo.getSelectedFeatureMap();
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR400004;
-			ResponseInfo<List<SelectedFeature>> finalOutput = responseDataEvaluation(responseData, null,
-					listFeatures, status, successCode);
+			ResponseInfo<Map<String, String>> finalOutput = responseDataEvaluation(responseData, null,
+					selectedFeatureMap, status, successCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 
 		} catch (Exception e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR410006;
-			ResponseInfo<List<SelectedFeature>> finalOutput = responseDataEvaluation(responseData, e,
+			ResponseInfo<Map<String, String>> finalOutput = responseDataEvaluation(responseData, e,
 					null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();

@@ -114,7 +114,6 @@ define(["features/listener/featuresListener"], function() {
 					fieldset = '<select class="jarscope"><option value="compile">Compile</option><option value="provided">Provided</option><option value="test">Test</option><option value="runtime">RunTime</option></select> ';
 				}
 				return fieldset;
-				
 			});
 			
 			Handlebars.registerHelper('idtrime', function(id) {
@@ -155,20 +154,25 @@ define(["features/listener/featuresListener"], function() {
 			//if(self.updateFlag === 1){
 				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "SELECTED"), function(response) {
 					var responseData = response.data;
-					$(".switchOn").each(function(index, currentVal) {
-						if($(currentVal).attr('id') !== 'search') {
-							$(currentVal).removeClass('switchOn').addClass('switchOff');
-						}	
-					});
-					$.each(response.data, function(index, value){
-						$("#feature_"+this.moduleId).addClass("switchOn").removeClass('switchOff');
-						$("#version_"+this.moduleId).show();		
-						$('#feature_'+value.moduleId+'').parent('li').children('div').children('.jarscope').val(value.scope);
-						if(value.packaging === 'zip') {
-							$('#feature_'+value.moduleId+'').parent('li').children('.settings_icon').show();
-						}
-						self.selectedCount();
-					});
+					if (responseData !== null) {
+						$(".switchOn").each(function(index, currentVal) {
+							if($(currentVal).attr('id') !== 'search') {
+								$(currentVal).removeClass('switchOn').addClass('switchOff');
+							}	
+						});
+						$.each(response.data, function(versionId, scope){
+							var versionSelectBox = $("option[value="+versionId+"]").parent();
+							var parentLI = versionSelectBox.closest('li');
+							parentLI.find('fieldset').addClass("switchOn").removeClass('switchOff');
+							versionSelectBox.parent().show();	
+							versionSelectBox.val(versionId);	
+							parentLI.children('div').children('.jarscope').val(scope);
+							if(parentLI.attr("packaging") === 'zip') {
+								parentLI.children('.settings_icon').show();
+							}
+							self.selectedCount();
+						});
+					}	
 				});
 			//}	
 			var i =0;		
