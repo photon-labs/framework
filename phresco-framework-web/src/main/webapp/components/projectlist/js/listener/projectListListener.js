@@ -422,10 +422,10 @@ define([], function() {
 				if ($(obj).offset().top > halfheight && $(obj).offset().left > halfwidth){
 					var temp = $(obj).attr('name');
 					if(response.responseCode === 'PHR200021') {
-						var temp2 = $(obj).position().top - 397;
+						var temp2 = $(obj).offset().top - 520;
 						$("#"+temp).css('top',temp2);
 					} else {
-						var temp2 = $(obj).position().top - 88;
+						var temp2 = $(obj).offset().top - 224;
 						$("#"+temp).css('top',temp2);
 					}	
 				}
@@ -491,10 +491,10 @@ define([], function() {
 				if ($(obj).offset().top > halfheight && $(obj).offset().left > halfwidth){
 					var temp = $(obj).attr('name');
 					if(response.responseCode === 'PHR200022') {
-						var temp2 = $(obj).position().top - 270;
+						var temp2 = $(obj).offset().top - 389;
 						$("#"+temp).css('top',temp2);
 					} else {
-						var temp2 = $(obj).position().top - 88;
+						var temp2 = $(obj).offset().top - 218;
 						$("#"+temp).css('top',temp2);
 					}	
 				} 

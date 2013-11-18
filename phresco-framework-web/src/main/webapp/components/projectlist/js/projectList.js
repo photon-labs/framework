@@ -307,7 +307,7 @@ define(["projectlist/listener/projectListListener"], function() {
 						}	
 					}); */
 				
-				if (action === "Add Repo") {   
+				if (action === "Add Repo") {   0
 					selectObj = $("#type_"+dynamicId);
 					checkObj = $("#repocredential_"+dynamicId);
 					usrObj = $("#uname_"+dynamicId);
@@ -409,6 +409,14 @@ define(["projectlist/listener/projectListListener"], function() {
 							$("#dummyCommit_"+dynamicId).css("height","10px");
 							commonVariables.loadingScreen.removeLoading();
 							self.projectslistListener.getCommitableFiles(data, openccObj, usrObj,pwdObj,checkObj);
+
+							// Popup Fix
+							var targetName = $(openccObj).attr('name');
+							var target = $('#' + targetName);
+							$('.content_main').prepend(target);
+							$('.content_title').css('z-index', '0');
+							$('.header_section').css('z-index', '0');
+							// End Popup Fix
 						} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
 							commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 						}	
@@ -423,6 +431,14 @@ define(["projectlist/listener/projectListListener"], function() {
 							data.dynamicId = dynamicId;
 							$("#dummyUpdate_"+dynamicId).css("height","10px");
 							self.projectslistListener.getUpdatableFiles(data, openccObj, usrObj, pwdObj, checkObj);
+
+							// Popup Fix
+							var targetName = $(openccObj).attr('name');
+							var target = $('#' + targetName);
+							$('.content_main').prepend(target);
+							$('.content_title').css('z-index', '0');
+							$('.header_section').css('z-index', '0');
+							// End Popup Fix
 						} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
 							commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 						}	
@@ -433,6 +449,10 @@ define(["projectlist/listener/projectListListener"], function() {
 					self.checkForLock(lockAction, applnids, function(response){
 						if (response.status === "success" && response.responseCode === "PHR10C00002") {
 							self.openccpl(openccObj, openccName, currentPrjName);
+							var target = $('#' + openccName);
+							$('.content_main').prepend(target);
+							$('.content_title').css('z-index', '0');
+							$('.header_section').css('z-index', '0');
 						} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
 							commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 						}	

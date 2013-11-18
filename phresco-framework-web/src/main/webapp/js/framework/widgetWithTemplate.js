@@ -582,7 +582,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					var d = null;
 					if(placeId === 'add_widget') {
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 4;
-						var BottomHeight = clicked.position().top + clicked.height() - 12 ;
+						var BottomHeight = clicked.position().top + clicked.height() + 8 ;
 						$(target).css({"right":d,"left": "auto","margin-top":10,"top": BottomHeight});		
 					}  else {
 						if(flag === 0) {
@@ -705,7 +705,20 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					} else if(placeId === 'noc_config') {
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) + 32;
 						$(target).css({"right":d,"margin-top":10,"left": "auto","top": "auto"});
-					} else {		
+					} else if($(target).hasClass('add_repo')) {
+						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 4;
+						var BottomHeight = clicked.offset().top + clicked.height() - 134 ;
+						$(target).css({"right":d,"left": "auto","margin-top":10,"top": BottomHeight});	
+					} else if($(target).hasClass('svn_update')) {
+						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 4;
+						var BottomHeight = clicked.offset().top + clicked.height() - 134 ;
+						$(target).css({"right":d,"left": "auto","margin-top":10,"top": BottomHeight});	
+					} else if($(target).hasClass('commit_table')) {
+						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 4;
+						var BottomHeight = clicked.offset().top + clicked.height() - 134 ;
+						$(target).css({"right":d,"left": "auto","margin-top":10,"top": BottomHeight});
+					}
+					else {		
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 18;
 						$(target).css({"right":d ,"margin-top":10,"left": "auto","top": "auto"});
 					}
@@ -730,7 +743,14 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
 						$(target).toggle();
 						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
-					} else {
+					} else if($(target).hasClass('add_repo')) {
+						d = ($(window).width() - (clicked.offset().left + clicked.outerWidth())) +2;
+						var BottomHeight = clicked.offset().top + clicked.height() - 416 ;
+						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});	
+						$(target).toggle();
+						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
+					}
+					else {
 						BottomHeight = clicked.position().top - (target.height() + 28 );
 						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
 						$(target).toggle();
@@ -835,6 +855,8 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(".repo_error1").hide();
 					$(".repo_error2").hide();
 					$(".repo_error3").hide();
+					$('.content_title').css('z-index', '6');
+					$('.header_section').css('z-index', '7');
 				});
 					
 			},
