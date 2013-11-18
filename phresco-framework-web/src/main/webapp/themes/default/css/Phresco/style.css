@@ -5131,6 +5131,7 @@ textarea[name="regex"] {
 .dashboard_popup {
 	width:504px !important;
 	padding:3px 7px 8px 5px !important;
+	z-index : 2 !important;
 }
 
 .add_wid_table {
