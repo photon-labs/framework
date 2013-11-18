@@ -156,6 +156,55 @@ define(["projects/listener/projectsListener"], function() {
 				self.onRemoveLayerEvent.dispatch($(this));
 			});
 			
+			$("#projectversion").unbind('click');
+			$("#projectversion").click(function() {
+				var majorVersion = $("#projectversion").attr("major");
+				var minorVersion = $("#projectversion").attr("minor");
+				var fixedVersion = $("#projectversion").attr("fixed");
+				var iterationType = $("#projectversion").attr("iterationType");
+				var weekStart = $("#projectversion").attr("weekStart");
+				
+				$("#majorVersion option[value=" + majorVersion +"]").attr("selected", true);
+				$("#minorVersion option[value=" + minorVersion +"]").attr("selected", true);
+				$("#fixedVersion option[value=" + fixedVersion +"]").attr("selected", true);
+				$("#iterationType option[value=" + iterationType +"]").attr("selected", true);
+				$("#weekStart option[value=" + weekStart +"]").attr("selected", true);
+				
+				self.openccpl(this,'version_popup');
+			});
+			
+			$("#submitVersion").unbind('click');
+			$("#submitVersion").click(function() {
+				var majorVersion = $("#majorVersion").val();
+				var minorVersion = $("#minorVersion").val();
+				var fixedVersion = $("#fixedVersion").val();
+				var iterationType = $("#iterationType").val();
+				var weekStart = Number($("#weekStart").val());
+				
+				var buildNumber = "1000";
+				if (iterationType === "iteration") {
+					buildNumber = weekStart * 1000;
+				}
+				if (iterationType === "sprint") {
+					var remainder = weekStart % 2;
+					if (remainder === 0) {
+						buildNumber = (weekStart / 2) * 1000 + 6;
+					}
+					if (remainder !== 0) {
+						buildNumber = Math.round(weekStart / 2) * 1000 + 1;
+					}
+				}
+				var version = majorVersion + "." + minorVersion + "." + fixedVersion + "." + buildNumber + "-SNAPSHOT"
+				$("#projectversion").val(version).attr("major", majorVersion).attr("minor", minorVersion);
+				$("#projectversion").attr("fixed", fixedVersion).attr("iterationType", iterationType).attr("weekStart", weekStart);
+			});
+			
+			$(document).keyup(function(e) {
+				if (e.keyCode == 27) {
+					$("#versionForm").trigger('reset');
+				}
+			});
+			
 			$("img[name='close']").dblclick(function(){
 				self.projectsListener.counter--;
 				$('img[name="close"]').show();
@@ -229,13 +278,6 @@ define(["projects/listener/projectsListener"], function() {
 				$(this).val(str);
 			});
 
-			$("input[name='projectversion']").bind('input propertychange', function() {
-				var str = $(this).val();
-				str = self.specialCharValidation(str);
-				str = str.replace(/\s+/g, '');
-				$(this).val(str);
-			});
-
 			$("input[name='projectcode']").focusout(function() {
 				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 				var totalLength = $(this).val().length;
@@ -254,10 +296,6 @@ define(["projects/listener/projectsListener"], function() {
 				});
 			});
 			
-			$("input[name='projectversion']").focusout(function() {
-				$("input[name='projectversion']").val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
-			});
-
 			$("#strdt").click(function() {
 				$("#startDate").focus();
 			});

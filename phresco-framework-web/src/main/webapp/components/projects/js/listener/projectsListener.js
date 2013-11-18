@@ -1811,10 +1811,16 @@ define([], function() {
 				var projectname = $("input[name='projectname']").val();
 				var projectcode = $("input[name='projectcode']").val();
 				var projectversion = $("input[name='projectversion']").val();
+				var majorVersion = $("#majorVersion").val();
+				var minorVersion = $("#minorVersion").val();
+				var fixedVersion = $("#fixedVersion").val();
+				var buildType = $("#iterationType").val();
+				var weekStart = $("#weekStart").val();
 				var projectdescription = $("textarea[name='projectdescription']").val();
 				var startdate = $("input[name='startdate']").val();
 				var enddate = $("input[name='enddate']").val();
 				var integrationTest = $("input[name=integrationTest]").is(":checked");
+				var groupId = $("#groupId").val();
 				var isMultiModule = false;
 				//To convert dd/mm//yyyy to (month date,year) format
 				if (startdate.length !== 0 && enddate.length !== 0) {
@@ -1840,6 +1846,15 @@ define([], function() {
 				self.projectInfo.preBuilt = preBuilt;
 				self.projectInfo.customerIds = self.customerIds;
 				self.projectInfo.integrationTest = integrationTest;
+				self.projectInfo.groupId = groupId;
+				
+				var versionInfo = {};
+				versionInfo.major = Number(majorVersion);
+				versionInfo.minor = Number(minorVersion);
+				versionInfo.fix = Number(fixedVersion);
+				versionInfo.buildType = buildType;
+				versionInfo.weekStart = Number(weekStart);
+				self.projectInfo.versionInfo = versionInfo;
 				
 				var multiModuleEleVal = Boolean($('#isMultiModule').val());
 				var frontEndTrNames = ["staticApplnLayer"];

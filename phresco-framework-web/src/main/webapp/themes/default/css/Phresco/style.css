@@ -1173,7 +1173,36 @@ ul.nav li.dropdown:hover > .test_options{
 	margin-left:0px !important;
 }
 
+<<<<<<< HEAD
 
+=======
+.addtorepo_tabdiv ul li a {
+	background: linear-gradient(to bottom, #F4F4F4 0%, #E3E3E3 100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
+    border: 1px solid #DDDDDD;
+    border-radius: 8px 8px 0 0;
+    color: #000000;
+    padding: 5px;
+    text-align: center;
+    width: 75px;
+}
+
+.add_repo .tab-content {
+	border:1px solid #DDDDDD;
+	border-top:none;
+	border-radius:5px;
+	padding: 6px;
+	margin-bottom: 10px;
+}
+
+.addtorepo_tabdiv .nav li {
+	padding-right:10px;
+}
+
+.addtorepo_tabdiv .nav li.active a, .nav li.focus a {
+	background: none repeat scroll 0 0 #FFFFFF;
+    outline: 0 none;
+}
+>>>>>>> 3.2.0
 
 .btn.disabled, .btn[disabled] {
 	height:28px;
@@ -1226,7 +1255,7 @@ img[name="close"] {
 	color: #747474;
 	text-align:left;
 	border:none;
-	width: 4%;
+	width: 9%;
 }
 
 .newcreate_proj table tr td {
@@ -1349,6 +1378,34 @@ img[name="close"] {
 	position:absolute;
 }
 
+.dropdown_icon {
+	margin: 1px 0 0 -16px !important;
+}
+
+#version_popup {
+	padding:7px;
+}
+
+#version_popup select{
+	width:65px;
+	margin-right:7px;
+}
+
+#version_popup tr:last-child td:last-child select {
+	margin-right:0px !important;
+}
+
+#version_popup input[type="button"] {
+	padding: 5px 8px !important;
+}
+
+#version_popup table {
+	margin-bottom:7px !important;
+}
+
+#version_popup .type_build {
+	width:213px;
+}
 
 /* *************************************************************************** CSS for App Info Page ************************************************************************** */
 
@@ -1973,10 +2030,13 @@ img[name="close"] {
 	}
 	
 	.create_proj table tr td {
-		 width: 0%;
+		 width: 12%;
 	}
 	
-		
+	#startDate, #endDate {
+	width:119 !important;
+}
+
 	.custon_dropdown  {
 		width:100px !important;
 	}
@@ -2060,9 +2120,6 @@ img[name="close"] {
 		text-align: right !important;
 	}
 		
-.create_proj table tr td {
-		width : 0%;
-	}
 	.optional_dropdown {
 		margin-left: 9px;
 		width:110px !important;
@@ -2107,8 +2164,7 @@ img[name="close"] {
 	
 	#addproject .create_edit_table tr td select{
 		width:112px !important;
-		max-height:28px;
-}
+    }
 	
 	.optional_dropdown {
 		margin-left: 11px;

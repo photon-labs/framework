@@ -220,6 +220,23 @@ define(["projects/listener/projectsListener"], function() {
 				$("#endDate").focus();
 			});
 			
+			$("#editprojectversion").unbind('click');
+			$("#editprojectversion").click(function() {
+				var majorVersion = $("#editprojectversion").attr("major");
+				var minorVersion = $("#editprojectversion").attr("minor");
+				var fixedVersion = $("#editprojectversion").attr("fixed");
+				var iterationType = $("#editprojectversion").attr("iterationType");
+				var weekStart = $("#editprojectversion").attr("weekStart");
+				
+				$("#majorVersion option[value=" + majorVersion +"]").attr("selected", true);
+				$("#minorVersion option[value=" + minorVersion +"]").attr("selected", true);
+				$("#fixedVersion option[value=" + fixedVersion +"]").attr("selected", true);
+				$("#iterationType option[value=" + iterationType +"]").attr("selected", true);
+				$("#weekStart option[value=" + weekStart +"]").attr("selected", true);
+				
+				self.openccpl(this,'version_popup');
+			});
+			
 			this.customScroll($(".scrolldiv"));
 		}
 	});
