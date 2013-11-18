@@ -239,6 +239,9 @@ define([], function() {
 			} else if(action === "jobValidation") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/validation?name="+ciRequestBody.jobName+"&flag="+ciRequestBody.flag+"&userId=" + userId; 
+			} else if (action === "getConfluence") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/confluence";
 			}
 
 			return header;
@@ -994,21 +997,47 @@ define([], function() {
 					} 
 
 					if (upload[i] === "Confluence") {
-						var uploadSettingsHtml = '<table id="confluenceUploadSettings" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">'+
-	                    '<thead><tr><th colspan="3">Confluence Upload Settings</th></tr></thead>'+
-	                    '<tbody>'+
-	                    '<tr>'+  
-                    	'<tr><td>Confluence Site<br><input name="confluenceSite" type="text" placeholder="Ip"></td></tr>'+
-	                    '<tr><td><input name="confluenceSpace" type="text" placeholder="Space"></td><td><input name="confluencePage" type="text" placeholder="Page"></td></tr>'+
-	                    '<tr><td><input name="confluenceOther" type="text" placeholder="Other files to attach"></td></tr>'+
-                    	'<td colspan="3">'+                                       
-                                        '<input id="Publish" name="confluencePublish" type="checkbox" value="">'+
-                                        '<span> Publish even if build is unstable</span>'+
-                                        '<input id="archive" name="confluenceArtifacts" type="checkbox" value="">Attach archived artifacts to page</td></tr>'+
-                       	'<input name="enableConfluence" type="hidden" value="true">'+
-                        '</tbody>'+
-	                	'</table>';
-						$(uploadSettingsElem).append(uploadSettingsHtml);
+						
+						var Ips = [];
+						self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'getConfluence'), function(confluence) {
+							for (i in confluence.data) {
+								var data = confluence.data[i];
+								var hostname = $('<a>').prop('href', data.repoUrl).prop('hostname');
+								Ips.push(hostname);
+							}
+							
+							var uploadSettingsHtml = '<table id="confluenceUploadSettings" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">'+
+		                    '<thead><tr><th colspan="3">Confluence Upload Settings</th></tr></thead>'+
+		                    '<tbody>'+
+		                    '<tr>'+  
+	                    	'<tr><td id="ipDiv">Confluence Site<br><select id="confluenceSite" name="confluenceSite" class="selectpicker" placeholder="Ip"></td></tr>'+
+		                    '<tr><td><input name="confluenceSpace" type="text" placeholder="Space"></td><td><input name="confluencePage" type="text" placeholder="Page"></td></tr>'+
+		                    '<tr><td><input name="confluenceOther" type="text" placeholder="Other files to attach"></td></tr>'+
+	                    	'<td colspan="3">'+                                       
+	                                        '<input id="Publish" name="confluencePublish" type="checkbox" value="">'+
+	                                        '<span> Publish even if build is unstable</span>'+
+	                                        '<input id="archive" name="confluenceArtifacts" type="checkbox" value="">Attach archived artifacts to page</td></tr>'+
+	                       	'<input name="enableConfluence" type="hidden" value="true">'+
+	                        '</tbody>'+
+		                	'</table>';
+							$(uploadSettingsElem).append(uploadSettingsHtml);
+						
+							if (!self.isBlank(Ips)) {
+								var select = document.createElement("select");
+								select.setAttribute("name", "confluenceSite");
+								select.setAttribute("id", "confluenceSite");
+								for (i in Ips) {
+									var option;
+									option = document.createElement("option");
+									option.setAttribute("value", Ips[i]);
+									option.innerHTML = Ips[i];
+									select.appendChild(option);
+								}
+								$('#ipDiv').html('');
+								$('#ipDiv').html(select);
+							}
+							
+						});						
 					}
 
 					if (upload[i] === "Cobertura") {
@@ -1102,6 +1131,9 @@ define([], function() {
 					if (!self.isBlank(jobJsonData)) {
 						$('input[name=jobName]').val(jobJsonData.jobName);
 						self.restoreFormValues($("#jonConfiguration"), jobJsonData);
+						if (!self.isBlank(jobJsonData.confluenceSite)) {
+							$("#confluenceSite").val(jobJsonData.confluenceSite);
+						}
 						if (jobJsonData.confluencePublish === true || jobJsonData.confluencePublish === "true") {
 							$("#Publish").val("true");
 							$("#Publish").attr('checked', true);
@@ -1511,7 +1543,8 @@ define([], function() {
 			confluence.each(function() {
 				if (self.isBlank(this.value) && (this.name === 'confluenceSite')) {
 					$('#errMsg').html('Select atleast One Site');
-					$('input[name=confluenceSite]').focus();
+					$('#confluenceSite').focus();
+					$('#confluenceSite').addClass("errormessage");
 					$('#errMsg').addClass("errormessage");
 					emptyFound = true;
 				} else if (self.isBlank(this.value)) {
