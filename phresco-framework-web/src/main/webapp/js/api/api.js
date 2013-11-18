@@ -367,6 +367,9 @@ define(["framework/base", "api/localStorageAPI"], function(){
 			commonVariables.continueloading = false;
 			commonVariables.hideloading = false;
 			commonVariables.loadingScreen.removeLoading();
+			if ($(".msgdisplay").attr("class") === "msgdisplay error") {
+				$(".msgdisplay").removeClass("error");
+			}
 			$("." + msgType).css("display", "block");
 			if($(commonVariables.contentPlaceholder).find('.content_end .msgdisplay').length > 0){	
 				if($(commonVariables.contentPlaceholder).find('.content_end').css("display") === "none") {
