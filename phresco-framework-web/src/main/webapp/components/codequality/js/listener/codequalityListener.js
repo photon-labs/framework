@@ -273,6 +273,7 @@ define([], function() {
 		onProjects : function() {
 			var self = this, validateAgainst ;
 			$("#reportUl li[name=selectType]").click(function() {
+				$('.dyn_popup').hide();
 				validateAgainst = $(this).attr('key');
 				$("#repTypes").html($(this).attr('data'));
 				$("#repTypes").attr("key",validateAgainst);
@@ -296,10 +297,10 @@ define([], function() {
 							});
 						} else {
 							if(iframereport.responseCode === 'PHR500005') {
-							$(".alert").show();
-							$('#content_div').html('<div class="alert" style="text-align: center; width:98%"></div>');
-							$(".alert").attr('data-i18n', 'successCodes.' + iframereport.responseCode);
-							self.renderlocales(commonVariables.contentPlaceholder);
+								$(".alert").show();
+								$('#content_div').html('<div class="alert" style="text-align: center; width:98%"></div>');
+								$(".alert").attr('data-i18n', 'successCodes.' + iframereport.responseCode);
+								self.renderlocales(commonVariables.contentPlaceholder);
 							} else if(iframereport.responseCode === "PHR510003" ) {
 								$(".alert").show();
 								$('#content_div').html('<div class="alert" style="text-align: center; width:98%"></div>');

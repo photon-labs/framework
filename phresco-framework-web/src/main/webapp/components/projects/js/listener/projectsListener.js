@@ -882,8 +882,7 @@ define([], function() {
 		
 			var self=this;
 			
-			$("input.appCodeText").unbind("blur");
-			$("input.appCodeText").bind("blur", function() {
+			$("input.appCodeText").keyup(function() {
 				var currentCount = $(this).attr('count');
 				var currentVal =  $(this).val();
 				var appCodeTextObj = $(this);
