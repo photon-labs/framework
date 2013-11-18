@@ -2187,6 +2187,7 @@ define([], function() {
 				var appInfos = $.merge($.merge($.merge([],self.appInfos), self.appInfosweb), self.appInfosmobile);
 				self.projectInfo.noOfApps = count;
 				self.projectInfo.appInfos = appInfos;
+				self.projectInfo.displayName = $("select[name='prebuiltapps']").val();
 				self.projectRequestBody = self.projectInfo;
 				if(action === "update") {
 					self.projectInfo.id = projectId;
