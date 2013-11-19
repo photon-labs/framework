@@ -104,6 +104,7 @@ define([], function() {
 			commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 				retVal.mvnUnitTest(queryString, '#testConsole', function(response) {
 					self.testResultListener.closeConsole();
+					commonVariables.consoleError = false;
 					callback(response);
 				});
 			});

@@ -145,6 +145,7 @@ define(["codequality/listener/codequalityListener"], function() {
 				var ipjson = $("#codeValidateForm").serialize();
 				self.readLogEvent.dispatch(ipjson , function(){
 					$('.progress_loading').css('display','none');
+					commonVariables.consoleError = false;
 				});
 			});
 			

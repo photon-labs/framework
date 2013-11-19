@@ -704,6 +704,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			self.executeTest($('#loadForm :input[name!=parameterValue]').serialize(), json, 'load', $("#loadPopup"),function(response) {
 				commonVariables.api.localVal.setSession('loadConsole', $('#testConsole').html());
 				$('.progress_loading').hide();
+				commonVariables.consoleError = false;
 				commonVariables.navListener.onMytabEvent(commonVariables.loadTest);
 			});
 		},
@@ -763,6 +764,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			self.executeTest($('#performanceForm :input[name!=parameterValue]').serialize(), json, 'performance', $("#performancePopup"),function(response) {
 				commonVariables.api.localVal.setSession('performanceConsole', $('#testConsole').html());
 				$('.progress_loading').hide();
+				commonVariables.consoleError = false;
 				commonVariables.navListener.onMytabEvent(commonVariables.performanceTest);
 			});
 		},
