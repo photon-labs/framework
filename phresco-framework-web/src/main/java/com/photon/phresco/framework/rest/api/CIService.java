@@ -1052,11 +1052,10 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				List<String> modules = FrameworkServiceUtil.getProjectModules(job.getAppDirName());
 				if (StringUtils.isNotEmpty(job.getModule())) {
 					job.setCollabNetFileReleasePattern(job.getModule()+ "/" + attachPattern);
-				} else if (CollectionUtils.isEmpty(modules)) {
-					job.setCollabNetFileReleasePattern(attachPattern);
 				} else {
-					job.setEnableArtifactArchiver(false);
+					job.setCollabNetFileReleasePattern(attachPattern);
 				}
+
 				// here we can set necessary values in request and we can change object value as well...
 				// getting sonar url
 				
