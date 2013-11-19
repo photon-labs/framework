@@ -523,15 +523,15 @@ define([], function() {
 				errorJson.hasError = true;
 			} else if (endYear < startYear && endMonth < startMonth && endDay < startDay) {
 				errorJson.errorIn = "endDate";
-				errorJson.errorMsg = "Start date should be greater than the end date";
+				errorJson.errorMsg = "Start date should be lesser than the end date";
 				errorJson.hasError = true;
 			} else if (endYear === startYear && endMonth < startMonth) {
 				errorJson.errorIn = "endDate";
-				errorJson.errorMsg = "Start date should be greater than the end date";
+				errorJson.errorMsg = "Start date should be lesser than the end date";
 				errorJson.hasError = true;
 			} else if (endYear === startYear && endMonth === startMonth && endDay < startDay) {
 				errorJson.errorIn = "endDate";
-				errorJson.errorMsg = "Start date should be greater than the end date";
+				errorJson.errorMsg = "Start date should be lesser than the end date";
 				errorJson.hasError = true;
 			} 
 			

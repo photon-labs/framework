@@ -1209,7 +1209,9 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 			var self=this;
 			$("input[name=selectFilePath]").click(function() {
 				placeCnt.val(path);
-				hiddenCnt.val(path);
+				if(hiddenCnt !== undefined) {
+					hiddenCnt.val(path);
+				}
 				$("#browse").hide();
 				$("#browseFile").hide();
 				$('#header').css('z-index','7');
