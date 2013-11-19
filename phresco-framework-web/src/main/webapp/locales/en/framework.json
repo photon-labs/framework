@@ -113,7 +113,7 @@
 		"PHR610021" : "File cannot be iterated",
 		"PHR610022" : "Unable to return entire file structure for browsing",
 		"PHR610023" : "Configuration not available to delete",
-		"PHR610024" : "Configurations fail on validation",
+		"PHR610024" : "Name already Exists",
 		"PHR610025" : "Failed to list environments for particular envName",
 		"PHR610026" : "Failed to read environments from phresco-env-config.xml",
 		"PHR610027" : "Failed to get environments from phresco-fav-config.xml",
@@ -277,7 +277,6 @@
 		"chooseserver" : "Choose the Server Type from App Info",
 		"choosedb" : "Choose the DB Type from App Info",
 		"PHR500005" : "Report not available",
-		"PHR610024" : "Name already Exists",
 		"PHR610042"	: "Name already exists in configurations of the project"
 	},
 	"navigation" : {
