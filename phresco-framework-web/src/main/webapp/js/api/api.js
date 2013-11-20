@@ -296,9 +296,9 @@ define(["framework/base", "api/localStorageAPI"], function(){
 			$("#project_list_import").find('input').removeAttr('disabled');	
 			$("#project_list_import").find('select').removeAttr('disabled');
 			if(response.responseCode !== undefined) {
-				$('#errpopup').remove();					
-				if(response.status !== 0) {
-					$(commonVariables.basePlaceholder).append('<div id="errpopup" class="modal fade" tabindex="-1" style="display: none;"><div class="modal-body temp"></div><div class="modal-footer"><div><a href="javascript:void(0)" title="" id="copytoclip" class="flt_left padding_img" href="javascript:void(0)"><img class="padding_img" src="themes/default/images/Phresco/buildreport_icon.png" width="15" height="18" border="0" alt=""></a><div class="errorpopuploading" id="copyloadicon" style="display:none;">&nbsp</div></div><button type="button" data-dismiss="modal" class="btn btn_style">Close</button></div></div>');
+				$('.errpopup, .modal-backdrop').remove();	
+				if(response.status !== 0 && $(".errpopup").size() < 1 && $(".errpopup").css('display') !== 'display') {
+					$(commonVariables.basePlaceholder).append('<div class="modal fade errpopup" tabindex="-1" style="display: none;"><div class="modal-body temp"></div><div class="modal-footer"><div><a href="javascript:void(0)" title="" id="copytoclip" class="flt_left padding_img" href="javascript:void(0)"><img class="padding_img" src="themes/default/images/Phresco/buildreport_icon.png" width="15" height="18" border="0" alt=""></a><div class="errorpopuploading" id="copyloadicon" style="display:none;">&nbsp</div></div><button type="button" data-dismiss="modal" class="btn btn_style">Close</button></div></div>');
 					if(response.service_exception !== null && response.service_exception !== undefined) { 
 						$(".modal-body").append(response.service_exception);
 					}else if(response.exception !== null && response.exception !== undefined) {
@@ -315,7 +315,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 							$(".modal-body").append(response.exception);
 						}
 					}
-					$("#errpopup").modal();	
+					$(".errpopup").modal();	
 					setTimeout(function() {
 						$("#copytoclip").zclip({
 							path: "lib/ZeroClipboard.swf",
