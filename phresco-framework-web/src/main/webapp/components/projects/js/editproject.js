@@ -87,7 +87,7 @@ define(["projects/listener/projectsListener"], function() {
 						} else {
 							responseData.endDate = "";
 						}
-						if(responseData.integrationTest === "false"){
+						if(responseData.integrationTest === false){
 							$('#integrationTest').hide();
 						}else
 							$('#integrationTest').show();
@@ -131,7 +131,7 @@ define(["projects/listener/projectsListener"], function() {
 							} else {
 								responseData.endDate = "";
 							}
-							if(responseData.integrationTest === "false"){
+							if(responseData.integrationTest === false){
 								$('#integrationTest').hide();
 							}else
 								$('#integrationTest').show();
