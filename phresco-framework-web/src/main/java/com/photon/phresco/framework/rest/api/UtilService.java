@@ -227,111 +227,34 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 			CheckLockInfo lockInfo = new CheckLockInfo();
 			if (CollectionUtils.isNotEmpty(lockDetails)) {
 				List<String> actionTypesToCheck = new ArrayList<String>();
-				if (actionType.equals(REQ_CODE)) {
-					actionTypesToCheck.add(ADD_TO_REPO);
-					actionTypesToCheck.add(COMMIT);
-					actionTypesToCheck.add(FrameworkConstants.UPDATE);
-					actionTypesToCheck.add(BUILD);
-					actionTypesToCheck.add(REQ_START);
-					actionTypesToCheck.add(UNIT);
-					actionTypesToCheck.add(REQ_CODE);
+				if (actionType.equals(REQ_CODE + HYPEN + FUNCTIONAL)) {
+					validateAgstFuncCheck(actionTypesToCheck);
+				} else if (actionType.equals(REQ_CODE + HYPEN + SOURCE)) {
+					validateAgstSrcCheck(actionTypesToCheck);
 				} else if (actionType.equals(BUILD)) {
-					actionTypesToCheck.add(ADD_TO_REPO);
-					actionTypesToCheck.add(COMMIT);
-					actionTypesToCheck.add(FrameworkConstants.UPDATE);
-					actionTypesToCheck.add(BUILD);
-					actionTypesToCheck.add(REQ_CODE);
-					actionTypesToCheck.add(REQ_START);
-					actionTypesToCheck.add(UNIT);
+					buildUnitCheck(actionTypesToCheck);
 				} else if (actionType.equals(REQ_START)) {
-					actionTypesToCheck.add(BUILD);
-					actionTypesToCheck.add(REQ_CODE);
-					actionTypesToCheck.add(ADD_TO_REPO);
-					actionTypesToCheck.add(COMMIT);
-					actionTypesToCheck.add(REQ_START);
-					actionTypesToCheck.add(FrameworkConstants.UPDATE);
+					runAgstSrcActionCheck(actionTypesToCheck);
 				} else if (actionType.equals(UNIT)) {
-					actionTypesToCheck.add(ADD_TO_REPO);
-					actionTypesToCheck.add(COMMIT);
-					actionTypesToCheck.add(FrameworkConstants.UPDATE);
-					actionTypesToCheck.add(BUILD);
-					actionTypesToCheck.add(REQ_CODE);
-					actionTypesToCheck.add(REQ_START);
-					actionTypesToCheck.add(UNIT);
+					buildUnitCheck(actionTypesToCheck);
 				} else if (actionType.equals(REQ_FROM_TAB_DEPLOY)) {
-					actionTypesToCheck.add(BUILD);
-					actionTypesToCheck.add(REQ_FROM_TAB_DEPLOY);
+					deployActionCheck(actionTypesToCheck);
 				} else if (actionType.equals(ADD_TO_REPO)) {
-					actionTypesToCheck.add(ADD_TO_REPO);
-					actionTypesToCheck.add(FrameworkConstants.UPDATE);
-					actionTypesToCheck.add(COMMIT);
-					actionTypesToCheck.add(BUILD);
-					actionTypesToCheck.add(REQ_CODE);
-					actionTypesToCheck.add(UNIT);
-					actionTypesToCheck.add(REQ_START);
+					addRepoCommitUpdateCheck(actionTypesToCheck);
 				} else if (actionType.equals(COMMIT)) {
-					actionTypesToCheck.add(ADD_TO_REPO);
-					actionTypesToCheck.add(FrameworkConstants.UPDATE);
-					actionTypesToCheck.add(COMMIT);
-					actionTypesToCheck.add(BUILD);
-					actionTypesToCheck.add(REQ_CODE);
-					actionTypesToCheck.add(UNIT);
-					actionTypesToCheck.add(REQ_START);
+					addRepoCommitUpdateCheck(actionTypesToCheck);
 				} else if (actionType.equals(FrameworkConstants.UPDATE)) {
-					actionTypesToCheck.add(ADD_TO_REPO);
-					actionTypesToCheck.add(COMMIT);
-					actionTypesToCheck.add(FrameworkConstants.UPDATE);
-					actionTypesToCheck.add(BUILD);
-					actionTypesToCheck.add(REQ_CODE);
-					actionTypesToCheck.add(UNIT);
-					actionTypesToCheck.add(REQ_START);
+					addRepoCommitUpdateCheck(actionTypesToCheck);
 				} else if (actionType.equals(FrameworkConstants.DELETE_APPLN)) {
-					actionTypesToCheck.add(REQ_CODE);
-					actionTypesToCheck.add(BUILD);
-					actionTypesToCheck.add(REQ_START);
-					actionTypesToCheck.add(UNIT);
-					actionTypesToCheck.add(REQ_FROM_TAB_DEPLOY);
-					actionTypesToCheck.add(ADD_TO_REPO);
-					actionTypesToCheck.add(FrameworkConstants.UPDATE);
-					actionTypesToCheck.add(COMMIT);
-					actionTypesToCheck.add(FrameworkConstants.DELETE_APPLN);
+					deleteApplnCheck(actionTypesToCheck);
 				} else if (actionType.equals(FrameworkConstants.DELETE_PROJ)) {
-					actionTypesToCheck.add(REQ_CODE);
-					actionTypesToCheck.add(BUILD);
-					actionTypesToCheck.add(REQ_START);
-					actionTypesToCheck.add(UNIT);
-					actionTypesToCheck.add(REQ_FROM_TAB_DEPLOY);
-					actionTypesToCheck.add(ADD_TO_REPO);
-					actionTypesToCheck.add(FrameworkConstants.UPDATE);
-					actionTypesToCheck.add(COMMIT);
-					actionTypesToCheck.add(FrameworkConstants.DELETE_PROJ);
+					deleteProjectCheck(actionTypesToCheck);
 				} else if (actionType.equals(FrameworkConstants.APPLN_UPDATE)) {
-					actionTypesToCheck.add(REQ_CODE);
-					actionTypesToCheck.add(BUILD);
-					actionTypesToCheck.add(REQ_START);
-					actionTypesToCheck.add(UNIT);
-					actionTypesToCheck.add(REQ_FROM_TAB_DEPLOY);
-					actionTypesToCheck.add(ADD_TO_REPO);
-					actionTypesToCheck.add(FrameworkConstants.UPDATE);
-					actionTypesToCheck.add(COMMIT);
+					applnFeatureConfigsUpdateCheck(actionTypesToCheck);
 				} else if (actionType.equals(FrameworkConstants.FEATURE_UPDATE)) {
-					actionTypesToCheck.add(REQ_CODE);
-					actionTypesToCheck.add(BUILD);
-					actionTypesToCheck.add(REQ_START);
-					actionTypesToCheck.add(UNIT);
-					actionTypesToCheck.add(REQ_FROM_TAB_DEPLOY);
-					actionTypesToCheck.add(ADD_TO_REPO);
-					actionTypesToCheck.add(FrameworkConstants.UPDATE);
-					actionTypesToCheck.add(COMMIT);
+					applnFeatureConfigsUpdateCheck(actionTypesToCheck);
 				} else if (actionType.equals(FrameworkConstants.CONFIG_UPDATE)) {
-					actionTypesToCheck.add(REQ_CODE);
-					actionTypesToCheck.add(BUILD);
-					actionTypesToCheck.add(REQ_START);
-					actionTypesToCheck.add(UNIT);
-					actionTypesToCheck.add(REQ_FROM_TAB_DEPLOY);
-					actionTypesToCheck.add(ADD_TO_REPO);
-					actionTypesToCheck.add(FrameworkConstants.UPDATE);
-					actionTypesToCheck.add(COMMIT);
+					applnFeatureConfigsUpdateCheck(actionTypesToCheck);
 				} else if (actionType.equals(FrameworkConstants.EDIT_APPLN)) {
 					actionTypesToCheck.add(IMPORT);
 				} else {
@@ -358,6 +281,80 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 		ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, null,
 				RESPONSE_STATUS_SUCCESS, PHR10C00002);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+	}
+
+	private void applnFeatureConfigsUpdateCheck(List<String> actionTypesToCheck) {
+		actionTypesToCheck.add(REQ_CODE);
+		actionTypesToCheck.add(BUILD);
+		actionTypesToCheck.add(REQ_START);
+		actionTypesToCheck.add(UNIT);
+		actionTypesToCheck.add(REQ_FROM_TAB_DEPLOY);
+		actionTypesToCheck.add(ADD_TO_REPO);
+		actionTypesToCheck.add(FrameworkConstants.UPDATE);
+		actionTypesToCheck.add(COMMIT);
+	}
+
+	private void deleteProjectCheck(List<String> actionTypesToCheck) {
+		applnFeatureConfigsUpdateCheck(actionTypesToCheck);
+		actionTypesToCheck.add(FrameworkConstants.DELETE_PROJ);
+	}
+
+	private void deleteApplnCheck(List<String> actionTypesToCheck) {
+		applnFeatureConfigsUpdateCheck(actionTypesToCheck);
+		actionTypesToCheck.add(FrameworkConstants.DELETE_APPLN);
+	}
+
+	private void addRepoCommitUpdateCheck(List<String> actionTypesToCheck) {
+		actionTypesToCheck.add(ADD_TO_REPO);
+		actionTypesToCheck.add(FrameworkConstants.UPDATE);
+		actionTypesToCheck.add(COMMIT);
+		actionTypesToCheck.add(BUILD);
+		actionTypesToCheck.add(REQ_CODE);
+		actionTypesToCheck.add(UNIT);
+		actionTypesToCheck.add(REQ_START);
+	}
+
+	private void deployActionCheck(List<String> actionTypesToCheck) {
+		actionTypesToCheck.add(BUILD);
+		actionTypesToCheck.add(REQ_FROM_TAB_DEPLOY);
+	}
+
+	private void runAgstSrcActionCheck(List<String> actionTypesToCheck) {
+		actionTypesToCheck.add(BUILD);
+		actionTypesToCheck.add(REQ_CODE);
+		actionTypesToCheck.add(ADD_TO_REPO);
+		actionTypesToCheck.add(COMMIT);
+		actionTypesToCheck.add(REQ_START);
+		actionTypesToCheck.add(FrameworkConstants.UPDATE);
+	}
+
+	private void buildUnitCheck(List<String> actionTypesToCheck) {
+		actionTypesToCheck.add(ADD_TO_REPO);
+		actionTypesToCheck.add(COMMIT);
+		actionTypesToCheck.add(FrameworkConstants.UPDATE);
+		actionTypesToCheck.add(BUILD);
+		actionTypesToCheck.add(REQ_CODE);
+		actionTypesToCheck.add(REQ_START);
+		actionTypesToCheck.add(UNIT);
+	}
+
+	private void validateAgstSrcCheck(List<String> actionTypesToCheck) {
+		actionTypesToCheck.add(ADD_TO_REPO);
+		actionTypesToCheck.add(COMMIT);
+		actionTypesToCheck.add(FrameworkConstants.UPDATE);
+		actionTypesToCheck.add(BUILD);
+		actionTypesToCheck.add(REQ_START);
+		actionTypesToCheck.add(UNIT);
+		actionTypesToCheck.add(REQ_CODE);
+	}
+
+	private void validateAgstFuncCheck(List<String> actionTypesToCheck) {
+		actionTypesToCheck.add(ADD_TO_REPO);
+		actionTypesToCheck.add(COMMIT);
+		actionTypesToCheck.add(FrameworkConstants.UPDATE);
+		actionTypesToCheck.add(BUILD);
+		actionTypesToCheck.add(UNIT);
+		actionTypesToCheck.add(REQ_CODE);
 	}
 	
 	private String getLockActionCode(String actionType) {

@@ -124,29 +124,30 @@ define(["codequality/listener/codequalityListener"], function() {
 			$(".dyn_popup").hide();
 			
 			$("#codeAnalysis").click(function() {
-				var openccObj = this;
-				self.checkForLock("code", '', function(response){
-					if (response.status === "success" && response.responseCode === "PHR10C00002") {
-						var whereToRender = $('#code_popup ul');
-		                commonVariables.goal = "validate-code";
-		                commonVariables.phase = "validate-code";
-		                self.dynamicpage.getHtml(whereToRender, openccObj, 'code_popup', function(response) {
-		                	commonVariables.api.hideLoading();
-		                });
-		             } else if (response.status === "success" && response.responseCode === "PHR10C00001") {
-						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
-					}	
-				});	   
+				var whereToRender = $('#code_popup ul');
+                commonVariables.goal = "validate-code";
+                commonVariables.phase = "validate-code";
+                self.dynamicpage.getHtml(whereToRender, this, 'code_popup', function(response) {
+                	commonVariables.api.hideLoading();
+                });
 			});
 			
 			$("#validate").click(function() {
-				$('.progress_loading').css('display','block');
-				$(".dyn_popup").hide();
-				var ipjson = $("#codeValidateForm").serialize();
-				self.readLogEvent.dispatch(ipjson , function(){
-					$('.progress_loading').css('display','none');
-					commonVariables.consoleError = false;
-				});
+				var against = $("#sonar").val();
+				self.checkForLock("code-"+against, '', function(response){
+					if (response.status === "success" && response.responseCode === "PHR10C00002") {
+						$('.progress_loading').css('display','block');
+						$(".dyn_popup").hide();
+						var ipjson = $("#codeValidateForm").serialize();
+						self.readLogEvent.dispatch(ipjson , function(){
+							$('.progress_loading').css('display','none');
+							commonVariables.consoleError = false;
+						});
+				 	} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
+						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
+					}	
+				});		
+				
 			});
 			
 			$("#codeValidateConsole").click(function() {
