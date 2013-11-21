@@ -1008,6 +1008,56 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		
 	}
 	
+	@GET
+	@Path("/readliquibaselog")
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response readLiquibaseLog(@Context HttpServletRequest request) throws PhrescoException  {
+		
+		ActionResponse response = new ActionResponse();		
+		String status="";
+		String uniquekey = request.getParameter(UNIQUE_KEY);
+		String log="";
+		
+		if (isDebugEnabled) {
+			S_LOGGER.debug("UNIQUE_KEY received :"+UNIQUE_KEY);
+		}
+		
+		
+		try {
+			log = BufferMap.readLiquibaseBufferReader(uniquekey);
+			
+			if(log == ""){
+				if (isDebugEnabled) {
+					S_LOGGER.debug("Log has finished and hence removing the bufferreader from the map");
+				}
+				BufferMap.removeBufferReader(uniquekey);
+				status=COMPLETED;
+				BufferMap.end = false;
+				LockUtil.removeLock(uniquekey);
+			}
+			else{
+				status=ActionServiceConstant.INPROGRESS;
+			}
+		} catch (IOException e) {
+			LockUtil.removeLock(uniquekey);
+			status=ERROR;
+			S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
+			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+		} catch (Exception e) {
+			LockUtil.removeLock(uniquekey);
+			status=ERROR;
+			S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
+			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+		}
+		
+		response.setStatus(status);
+		response.setLog(log);
+		response.setUniquekey(uniquekey);
+		
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+		
+	}
+
 	/**
 	 * Removes the log.
 	 *

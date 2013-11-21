@@ -28,17 +28,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
 import com.photon.phresco.api.ApplicationProcessor;
@@ -53,6 +64,7 @@ import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.commons.model.Technology;
+import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.ConfigurationInfo;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
@@ -62,6 +74,14 @@ import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.model.LiquibaseDbDocInfo;
+import com.photon.phresco.framework.model.LiquibaseDiffInfo;
+import com.photon.phresco.framework.model.LiquibaseRollbackCountInfo;
+import com.photon.phresco.framework.model.LiquibaseRollbackTagInfo;
+import com.photon.phresco.framework.model.LiquibaseRollbackToDateInfo;
+import com.photon.phresco.framework.model.LiquibaseStatusInfo;
+import com.photon.phresco.framework.model.LiquibaseTagInfo;
+import com.photon.phresco.framework.model.LiquibaseUpdateInfo;
 import com.photon.phresco.framework.model.LockDetail;
 import com.photon.phresco.framework.model.MinifyInfo;
 import com.photon.phresco.framework.model.PerformanceUrls;
@@ -116,6 +136,13 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	private String module = "";
 	HttpServletRequest request;
 
+	private LiquibaseRollbackCountInfo liquibaseRollbackCountInfo;
+	private LiquibaseRollbackToDateInfo liquibaseRollbackDateInfo;
+	private LiquibaseRollbackTagInfo liquibaseRollbackTagInfo;
+	private LiquibaseTagInfo liquibaseTagInfo;
+	private LiquibaseStatusInfo liquibaseStatusInfo;
+	private LiquibaseDbDocInfo liquibaseDbDocInfo;
+	
 	public void prePopulateModelData(HttpServletRequest request) throws PhrescoException {
 		try {
 			this.request = request;
@@ -277,6 +304,15 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 	}
 	
+	public void prePopulateLiquibaseData(HttpServletRequest request) throws PhrescoException {
+		try {
+			this.request = request;
+			initAppDirName(request);			
+		} catch (Exception e) {
+			throw new PhrescoException(e.getMessage());
+		}
+	}
+	
 	private void initAppDirName(HttpServletRequest request) throws PhrescoException {
 		String appDirName = request.getParameter(APPDIR);
 		if (StringUtils.isNotEmpty(appDirName)) {
@@ -332,7 +368,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No build logs obatined");
+			throw new PhrescoException("No build logs obtained");
 		}
 	}
 
@@ -347,7 +383,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No Deploy logs obatined");
+			throw new PhrescoException("No Deploy logs obtained");
 		}
 	}
 
@@ -360,7 +396,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No processBuild logs obatined");
+			throw new PhrescoException("No processBuild logs obtained");
 		}
 	}
 	
@@ -374,7 +410,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No unit test logs obatined");
+			throw new PhrescoException("No unit test logs obtained");
 		}
 	}
 	
@@ -389,7 +425,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No integration test logs obatined");
+			throw new PhrescoException("No integration test logs obtained");
 		}
 	}
 
@@ -403,7 +439,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No component test logs obatined");
+			throw new PhrescoException("No component test logs obtained");
 		}
 	}
 
@@ -417,7 +453,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No code validate logs obatined");
+			throw new PhrescoException("No code validate logs obtained");
 		}
 	}
 
@@ -431,7 +467,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No run against source logs obatined");
+			throw new PhrescoException("No run against source logs obtained");
 		}
 	}
 
@@ -444,7 +480,125 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No stopServer logs obatined");
+			throw new PhrescoException("No stopServer logs obtained");
+		}
+	}
+	
+	public ActionResponse liquibaseDbdoc(LiquibaseDbDocInfo liquibaseDbDocInfo, HttpServletRequest request) throws PhrescoException {
+		printLogs();
+		BufferedInputStream server_logs=null;
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		server_logs = liquibaseDbdoc(liquibaseDbDocInfo);
+		if (server_logs != null) {
+			return generateResponse(server_logs, unique_key);
+		} else {
+			throw new PhrescoException("No dbdoc logs obtained");
+		}
+	}
+	
+	public ActionResponse liquibaseUpdate(LiquibaseUpdateInfo liquibaseUpdateInfo, HttpServletRequest request) throws PhrescoException {
+		printLogs();
+		BufferedInputStream server_logs=null;
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		server_logs = liquibaseUpdate(liquibaseUpdateInfo);
+		if (server_logs != null) {
+			return generateResponse(server_logs, unique_key);
+		} else {
+			throw new PhrescoException("No update logs obtained");
+		}
+	}
+	
+	public ActionResponse liquibaseInstall(HttpServletRequest request) throws PhrescoException {
+		printLogs();
+		BufferedInputStream server_logs=null;
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		server_logs = liquibaseInstall();
+		if (server_logs != null) {
+			return generateResponse(server_logs, unique_key);
+		} else {
+			throw new PhrescoException("No install logs obtained");
+		}
+	}
+	
+	public ActionResponse liquibaseDiff(LiquibaseDiffInfo liquibaseDiffInfo, HttpServletRequest request) throws PhrescoException {
+		printLogs();
+		BufferedInputStream server_logs = null;
+		//String displayName = request.getParameter("displayName");
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		server_logs = liquibaseDiff(liquibaseDiffInfo);
+		if (server_logs != null) {
+			return generateResponse(server_logs, unique_key);
+		} else {
+			throw new PhrescoException("No diff logs obtained");
+		}
+	}
+	public ActionResponse liquibaseStatus(LiquibaseStatusInfo liquibaseStatusInfo,HttpServletRequest request) throws PhrescoException {
+		printLogs();
+		BufferedInputStream server_logs = null;
+		//String displayName = request.getParameter("displayName");
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		server_logs = liquibaseStatus(liquibaseStatusInfo);
+		if (server_logs != null) {
+			return generateResponse(server_logs, unique_key);
+		} else {
+			throw new PhrescoException("No status logs obtained");
+		}
+	}
+	public ActionResponse liquibaseRollbackCount(LiquibaseRollbackCountInfo liquibaseRollbackCountInfo, HttpServletRequest request) throws PhrescoException {
+		printLogs();
+		BufferedInputStream server_logs = null;
+		//String displayName = request.getParameter("displayName");
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		server_logs = liquibaseRollBackCount(liquibaseRollbackCountInfo);
+		if (server_logs != null) {
+			return generateResponse(server_logs, unique_key);
+		} else {
+			throw new PhrescoException("No rollback logs obtained");
+		}
+	}
+	public ActionResponse liquibaseRollbackToDate(LiquibaseRollbackToDateInfo liquibaseRollbackToDateInfo, HttpServletRequest request) throws PhrescoException {
+		printLogs();
+		BufferedInputStream server_logs = null;
+		//String displayName = request.getParameter("displayName");
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		server_logs = liquibaseRollbackToDate(liquibaseRollbackToDateInfo);
+		if (server_logs != null) {
+			return generateResponse(server_logs, unique_key);
+		} else {
+			throw new PhrescoException("No rollback logs obtained");
+		}
+	}
+	public ActionResponse liquibaseRollbackTag(LiquibaseRollbackTagInfo liquibaseRollbackTagInfo, HttpServletRequest request) throws PhrescoException {
+		printLogs();
+		BufferedInputStream server_logs = null;
+		//String displayName = request.getParameter("displayName");
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		server_logs = liquibaseRollbackTag(liquibaseRollbackTagInfo);
+		if (server_logs != null) {
+			return generateResponse(server_logs, unique_key);
+		} else {
+			throw new PhrescoException("No rollback logs obtained");
+		}
+	}
+	public ActionResponse liquibaseTag(LiquibaseTagInfo liquibaseTagInfo, HttpServletRequest request) throws PhrescoException {
+		printLogs();
+		BufferedInputStream server_logs = null;
+		//String displayName = request.getParameter("displayName");
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		server_logs = liquibaseTag(liquibaseTagInfo);
+		if (server_logs != null) {
+			return generateResponse(server_logs, unique_key);
+		} else {
+			throw new PhrescoException("No tag logs obtained");
 		}
 	}
 	
@@ -457,7 +611,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No validateTheme logs obatined");
+			throw new PhrescoException("No validateTheme logs obtained");
 		}
 	}
 
@@ -470,7 +624,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No validateContent logs obatined");
+			throw new PhrescoException("No validateContent logs obtained");
 		}
 	}
 
@@ -483,7 +637,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No restart server logs obatined");
+			throw new PhrescoException("No restart server logs obtained");
 		}
 	}
 
@@ -498,7 +652,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No performance test logs obatined");
+			throw new PhrescoException("No performance test logs obtained");
 		}
 	}
 
@@ -513,7 +667,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No loadtest logs obatined");
+			throw new PhrescoException("No loadtest logs obtained");
 		}
 	}
 
@@ -529,7 +683,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No minification logs obatined");
+			throw new PhrescoException("No minification logs obtained");
 		}
 	}
 
@@ -542,7 +696,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No startHub logs obatined");
+			throw new PhrescoException("No startHub logs obtained");
 		}
 	}
 
@@ -555,7 +709,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No startHub logs obatined");
+			throw new PhrescoException("No startHub logs obtained");
 		}
 	}
 
@@ -569,7 +723,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No startHub logs obatined");
+			throw new PhrescoException("No startHub logs obtained");
 		}
 	}
 
@@ -582,7 +736,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No startHub logs obatined");
+			throw new PhrescoException("No startHub logs obtained");
 		}
 	}
 
@@ -595,7 +749,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No startHub logs obatined");
+			throw new PhrescoException("No startHub logs obtained");
 		}
 	}
 
@@ -608,7 +762,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No startHub logs obatined");
+			throw new PhrescoException("No startHub logs obtained");
 		}
 	}
 
@@ -621,7 +775,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No startHub logs obatined");
+			throw new PhrescoException("No startHub logs obtained");
 		}
 	}
 
@@ -646,7 +800,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No generateSiteReport logs obatined");
+			throw new PhrescoException("No generateSiteReport logs obtained");
 		}
 	}
 
@@ -659,7 +813,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No setup logs obatined");
+			throw new PhrescoException("No setup logs obtained");
 		}
 	}
 
@@ -672,7 +826,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No ci startup logs obatined");
+			throw new PhrescoException("No ci startup logs obtained");
 		}
 	}
 
@@ -685,7 +839,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
-			throw new PhrescoException("No ci stop logs obatined");
+			throw new PhrescoException("No ci stop logs obtained");
 		}
 	}
 
@@ -901,6 +1055,576 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			}
 		}
 
+		return reader;
+	}
+	
+	public BufferedInputStream liquibaseDbdoc(LiquibaseDbDocInfo liquibaseDbDocInfo) throws PhrescoException {
+		BufferedInputStream reader=null;
+		try {
+			this.liquibaseDbDocInfo=liquibaseDbDocInfo;
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(LIQUIBASE)));
+			Configuration selectedConfiguration = getDbConfiguration(request.getParameter(ENV_NAME));
+			Properties dbProperties = selectedConfiguration.getProperties();
+			persistLiquibaseValuesToXml(mojo, L_DBDOC, dbProperties, null);
+			List<String> buildArgCmds = new ArrayList<String>();
+			buildArgCmds.add(ARG_COMMAND+L_DBDOC);
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			reader = applicationManager.performAction(projectInfo, ActionType.LIQUIBASE, buildArgCmds, workingDirectory);
+		} catch (Exception e) {
+			S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException("Exception occured in the build process"+e.getMessage());
+		}
+		return reader;
+	}
+	
+	private void persistLiquibaseValuesToXml(MojoProcessor mojo, String goal, Properties dbProperties, String installFile) throws PhrescoException {
+		try {
+			List<Parameter> parameters = getMojoParameters(mojo, goal);
+			if (CollectionUtils.isNotEmpty(parameters)) {
+				for (Parameter parameter : parameters) {
+					if (parameter.getKey() != null && dbProperties.getProperty(parameter.getKey()) != null) {
+						parameter.setValue(dbProperties.getProperty(parameter.getKey()));
+					} else if(parameter.getKey() != null && request.getParameter(parameter.getKey()) != null) {
+						parameter.setValue(request.getParameter(parameter.getKey()));
+					} else if(parameter.getKey().equalsIgnoreCase(ROLLBACK_COUNT_VALUE) ) {
+						parameter.setValue(liquibaseRollbackCountInfo.getRollbackCountValue());
+					} else if(parameter.getKey().equalsIgnoreCase(CHANGELOGPATH_ROLLBACK_COUNT_VALUE) ) {
+						parameter.setValue(liquibaseRollbackCountInfo.getChangeLogPathForRollbackCount());
+					} else if(parameter.getKey().equalsIgnoreCase(ROLLBACK_TO_DATE) ) {
+						parameter.setValue(liquibaseRollbackDateInfo.getRollbackDate());
+					} else if(parameter.getKey().equalsIgnoreCase(CHANGELOGPATH_ROLLBACK_DATE) ) {
+						parameter.setValue(liquibaseRollbackDateInfo.getChangeLogPathForRollbackDate());
+					} else if(parameter.getKey().equalsIgnoreCase(ROLLBACK_TAG) ) {
+						parameter.setValue(liquibaseRollbackTagInfo.getTag());
+					} else if(parameter.getKey().equalsIgnoreCase(CHANGELOGPATH_ROLLBACK_TAG) ) {
+						parameter.setValue(liquibaseRollbackTagInfo.getChangeLogPathForRollbackTag());
+					} else if(parameter.getKey().equalsIgnoreCase(CHANGELOGPATH_STATUS) ) {
+						parameter.setValue(liquibaseStatusInfo.getChangeLogPathForStatus());
+					} else if(parameter.getKey().equalsIgnoreCase(VERBOSE) ) {
+						parameter.setValue(liquibaseStatusInfo.getVerbose().toString());
+					} else if(parameter.getKey().equalsIgnoreCase(TAG) ) {
+						parameter.setValue(liquibaseTagInfo.getTag());
+					} else if(parameter.getKey().equalsIgnoreCase(CHANGELOGPATH_DBDOC) ) {
+						parameter.setValue(liquibaseDbDocInfo.getChangelogFileForDbDoc());
+					} else if(parameter.getKey().equalsIgnoreCase(L_INSTALL)) {
+						parameter.setValue(installFile);
+					}
+				}
+			}
+			mojo.save();
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
+
+	private Configuration getDbConfiguration(String environmentName) throws PhrescoException {
+		try {
+			ConfigManager configManager = null;
+			File baseDir = new File(Utility.getProjectHome() + getAppDirName());
+			configManager = new ConfigManagerImpl(new File(baseDir.getPath() + File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator + Constants.CONFIGURATION_INFO_FILE));
+			List<Configuration> configurations = configManager.getConfigurations(environmentName, Constants.SETTINGS_TEMPLATE_DB);
+			if (CollectionUtils.isNotEmpty(configurations)) {
+				for(Configuration configuration : configurations) {
+					if(configuration.getName().equalsIgnoreCase(request.getParameter(CONF_NAME))) {
+						return configuration;
+					}
+				}
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		return null;
+	}
+	
+	private Configuration getDbConfigurationForDiff(LiquibaseDiffInfo liquibaseDiffInfo,String environmentName) throws PhrescoException {
+		try {
+			ConfigManager configManager = null;
+			File baseDir = new File(Utility.getProjectHome() + getAppDirName());
+			configManager = new ConfigManagerImpl(new File(baseDir.getPath() + File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator + Constants.CONFIGURATION_INFO_FILE));
+			List<Configuration> configurations = configManager.getConfigurations(environmentName, Constants.SETTINGS_TEMPLATE_DB);
+			if (CollectionUtils.isNotEmpty(configurations)) {
+				for(Configuration configuration : configurations) {
+					if(configuration.getName().equalsIgnoreCase(liquibaseDiffInfo.getSrcConfigurationName())) {
+						return configuration;
+					} else if(configuration.getName().equalsIgnoreCase(liquibaseDiffInfo.getDestConfigurationName())) {
+						return configuration;
+					}
+				}
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		return null;
+	}
+	
+	public BufferedInputStream liquibaseUpdate(LiquibaseUpdateInfo liquibaseUpdateInfo) throws PhrescoException {
+		BufferedInputStream reader=null;
+		Boolean deleteFile = true;
+		File file = null;
+		Boolean masterFlag = null;
+		File master = null;
+		File backupMaster = null;
+		Boolean updateFlag = null;
+		File update = null;
+		Boolean installFlag = null;
+		File install = null;
+		Boolean noNewChangesets = true;
+		try {
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(LIQUIBASE)));
+			Configuration selectedConfiguration = getDbConfiguration(request.getParameter(ENV_NAME));
+			Properties dbProperties = selectedConfiguration.getProperties();
+			persistLiquibaseValuesToXml(mojo, L_UPDATE, dbProperties, null);
+			List<String> buildArgCmds = new ArrayList<String>();
+			buildArgCmds.add(ARG_COMMAND+L_UPDATE);
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			File changesDir = new File(workingDirectory+PATH_TO_LIQUIBASE+CHANGES_FOLDER);
+			changesDir.mkdirs();
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, YES);
+	 
+			// for changelog file
+			Document changelog = docBuilder.newDocument();
+			Element databaseChangeLog = changelog.createElement(DBCHANGELOG);
+			changelog.appendChild(databaseChangeLog);
+			Attr attr = changelog.createAttribute(XMLNS);
+			attr.setValue(DBCHANGELOG_ORG);
+			databaseChangeLog.setAttributeNode(attr);
+			databaseChangeLog.setAttributeNS(XML_SCHEMA_INSTANCE,
+				    SCHEMA_LOCATION, SCHEMA_DEFINITION);
+			if(liquibaseUpdateInfo.getSqlStatements() != null && liquibaseUpdateInfo.getRollbackStatements() != null) {
+				noNewChangesets = false;
+				List<String> sqlStatements = liquibaseUpdateInfo.getSqlStatements();
+				List<String> rollbackStatements = liquibaseUpdateInfo.getRollbackStatements();
+				int counter = 0;
+				for(String sqlStatement : sqlStatements) {
+					Element changeset = changelog.createElement(CHANGESET);
+					changeset.setAttribute(CHANGESET_ID, String.valueOf(counter));
+					changeset.setAttribute(CHANGESET_AUTHOR, liquibaseUpdateInfo.getAuthor());
+					databaseChangeLog.appendChild(changeset);
+			
+					Element sql = changelog.createElement(SQL);
+					sql.appendChild(changelog.createTextNode(sqlStatement));
+					changeset.appendChild(sql);
+			
+					Element rollback = changelog.createElement(ROLLBACK);
+					rollback.appendChild(changelog.createTextNode(rollbackStatements.get(counter)));
+					changeset.appendChild(rollback);
+			
+					counter++;
+				}
+				file = new File(changesDir+File.separator+liquibaseUpdateInfo.getFileName()+DOT+XML);
+				if (file.exists()) {
+					deleteFile = false;
+					throw new Exception("file name given for Liquibase Update already exists");					
+				}
+				file.createNewFile();			
+				DOMSource source = new DOMSource(changelog);
+				StreamResult result = new StreamResult(file.toURI().getPath());
+				transformer.transform(source, result);
+			}
+			if(!noNewChangesets) {
+				
+				// for master file
+				File versionDir = new File(workingDirectory+PATH_TO_LIQUIBASE+liquibaseUpdateInfo.getDbVersion()); 
+				versionDir.mkdirs();
+				master = new File(versionDir+MASTER_XML);
+				backupMaster = new File(versionDir+BACKUP_MASTER_XML);
+				backupMaster.createNewFile();
+				if(!master.exists()) {
+					masterFlag = false;
+					master.createNewFile();
+					Document masterXML = docBuilder.newDocument();
+					Element databaseChangeLogForMaster = masterXML.createElement(DBCHANGELOG);
+					masterXML.appendChild(databaseChangeLogForMaster);
+					Attr attrib = masterXML.createAttribute(XMLNS);
+					attrib.setValue(DBCHANGELOG_ORG);
+					databaseChangeLogForMaster.setAttributeNode(attrib);
+					databaseChangeLogForMaster.setAttributeNS(XML_SCHEMA_INSTANCE,
+							SCHEMA_LOCATION, SCHEMA_DEFINITION);
+					if(file.exists()) {
+						Element include = masterXML.createElement(INCLUDE_TAG);
+						include.setAttribute(FILE_ATTR, PATH_TO_LIQUIBASE.substring(1, PATH_TO_LIQUIBASE.length())+CHANGES_FOLDER+liquibaseUpdateInfo.getFileName()+DOT+XML);
+						databaseChangeLogForMaster.appendChild(include);
+					}
+					DOMSource sourceMaster = new DOMSource(masterXML);
+					StreamResult resultMaster = new StreamResult(master.toURI().getPath());
+					transformer.transform(sourceMaster, resultMaster);
+				} else {
+					masterFlag = true;
+					FileUtils.copyFile(master, backupMaster);
+					Document masterXML = docBuilder.parse(master);
+					Element databaseChangeLogForMaster = masterXML.getDocumentElement();
+					if(file.exists()) {
+						Element include = masterXML.createElement(INCLUDE_TAG);
+						include.setAttribute(FILE_ATTR, PATH_TO_LIQUIBASE.substring(1, PATH_TO_LIQUIBASE.length())+CHANGES_FOLDER+liquibaseUpdateInfo.getFileName()+DOT+XML);
+						databaseChangeLogForMaster.appendChild(include);
+						
+					}
+					DOMSource sourceMaster = new DOMSource(masterXML);
+					StreamResult resultMaster = new StreamResult(master.toURI().getPath());
+					transformer.transform(sourceMaster, resultMaster);
+				}
+				
+				// for update file
+				update = new File(workingDirectory+PATH_TO_LIQUIBASE+UPDATE_XML);
+				if(!update.exists()) {
+					updateFlag = false;
+					update.createNewFile();
+					Document updateXML = docBuilder.newDocument();
+					Element databaseChangeLogForUpdate = updateXML.createElement(DBCHANGELOG);
+					updateXML.appendChild(databaseChangeLogForUpdate);
+					Attr attrib = updateXML.createAttribute(XMLNS);
+					attrib.setValue(DBCHANGELOG_ORG);
+					databaseChangeLogForUpdate.setAttributeNode(attrib);
+					databaseChangeLogForUpdate.setAttributeNS(XML_SCHEMA_INSTANCE,
+							SCHEMA_LOCATION, SCHEMA_DEFINITION);
+					Element include = updateXML.createElement(INCLUDE_TAG);
+					include.setAttribute(FILE_ATTR, PATH_TO_LIQUIBASE.substring(1, PATH_TO_LIQUIBASE.length())+liquibaseUpdateInfo.getDbVersion()+MASTER_XML);
+					databaseChangeLogForUpdate.appendChild(include);
+					DOMSource sourceUpdate = new DOMSource(updateXML);
+					StreamResult resultUpdate = new StreamResult(update.toURI().getPath());
+					transformer.transform(sourceUpdate, resultUpdate);
+				}
+
+				//for install file
+				install = new File(workingDirectory+PATH_TO_LIQUIBASE+INSTALL_XML);
+				if(!install.exists()) {
+					installFlag = false;
+					install.createNewFile();
+					Document installXML = docBuilder.newDocument();
+					Element databaseChangeLogForInstall = installXML.createElement(DBCHANGELOG);
+					installXML.appendChild(databaseChangeLogForInstall);
+					Attr attrib = installXML.createAttribute(XMLNS);
+					attrib.setValue(DBCHANGELOG_ORG);
+					databaseChangeLogForInstall.setAttributeNode(attrib);
+					databaseChangeLogForInstall.setAttributeNS(XML_SCHEMA_INSTANCE,
+							SCHEMA_LOCATION, SCHEMA_DEFINITION);
+					DOMSource sourceUpdate = new DOMSource(installXML);
+					StreamResult resultUpdate = new StreamResult(install.toURI().getPath());
+					transformer.transform(sourceUpdate, resultUpdate);
+				}
+			}
+			reader = applicationManager.performAction(projectInfo, ActionType.LIQUIBASE, buildArgCmds, workingDirectory);
+		} catch (Exception e) {
+			S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException(flagChecks(file, master, backupMaster, update, install, masterFlag, updateFlag, installFlag, deleteFile, e));
+		}
+		if(backupMaster != null) {
+			backupMaster.delete();
+		}
+		return reader;
+	}
+	
+	private PhrescoException flagChecks(File file, File master, File backupMaster, File update, File install, Boolean masterFlag, Boolean updateFlag, Boolean installFlag, Boolean deleteFile, Exception e) {
+		Boolean renamed = null;
+		if(file.getPath() != null && deleteFile) {
+			file.delete();
+		}
+		if (masterFlag != null) {
+			if(masterFlag == false) {
+				master.delete();
+				backupMaster.delete();
+			} else {
+				master.delete();
+				renamed = backupMaster.renameTo(master);
+			}
+		}
+		if (updateFlag != null) {
+			if(updateFlag == false) {
+				update.delete();
+			}
+		}
+		if(installFlag != null) {
+			if(installFlag == false) {
+				install.delete();
+			}
+		}
+		if (renamed != null) {
+			if(renamed == false) {
+				return new PhrescoException("Failed to restore backup. Please rename backupmaster.xml to master.xml . Exception occured in the build process"+e.getMessage());
+			}
+		}
+		return new PhrescoException("Exception occured in the build process"+e.getMessage());
+	}
+	
+	public BufferedInputStream liquibaseInstall() throws PhrescoException {
+		BufferedInputStream reader=null;
+		BufferedInputStream generated=null;
+		String readerRecord = "";
+		try {
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(LIQUIBASE)));
+			Configuration selectedConfiguration = getDbConfiguration(request.getParameter(ENV_NAME));
+			Properties dbProperties = selectedConfiguration.getProperties();
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			File install = new File(workingDirectory+PATH_TO_LIQUIBASE+INSTALL_XML);
+    		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			Document installXML = docBuilder.parse(install);
+			NodeList includeTags = installXML.getElementsByTagName(INCLUDE_TAG);
+			String includeFile = null;
+			
+			if(includeTags.getLength()!= 0) {
+				for (int includeCounter = 0; includeCounter < includeTags.getLength(); includeCounter++) {
+					Node includeNode = includeTags.item(includeCounter);		 
+					if (includeNode.getNodeType() == Node.ELEMENT_NODE) {
+						Element includeElement = (Element) includeNode;
+						includeFile = includeElement.getAttribute(FILE_ATTR);
+						persistLiquibaseValuesToXml(mojo, L_INSTALL, dbProperties, includeFile);
+						List<String> buildArgCmds = new ArrayList<String>();
+						buildArgCmds.add(ARG_COMMAND+L_INSTALL);
+						reader = applicationManager.performAction(projectInfo, ActionType.LIQUIBASE, buildArgCmds, workingDirectory);
+						BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(reader));
+						String temp = bufferedReader.readLine();
+						while(temp != null)
+						{
+							readerRecord += NEWLINE +" "+ temp + NEWLINE;
+							temp = bufferedReader.readLine();
+							if(temp.contains(L_UPDATE_SUCCESS)) {
+								temp = INSTALL_COMPLETED_FOR+THIS_VERSION;
+								readerRecord += NEWLINE +" "+ temp + NEWLINE;
+								break;
+							}
+						}
+						reader=null;
+					}
+				}
+			}
+			persistLiquibaseValuesToXml(mojo, L_UPDATE, dbProperties, null);
+			List<String> buildArgCmds = new ArrayList<String>();
+			buildArgCmds.add(ARG_COMMAND+L_UPDATE);
+			reader = applicationManager.performAction(projectInfo, ActionType.LIQUIBASE, buildArgCmds, workingDirectory);
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(reader));
+			String temp = bufferedReader.readLine();
+			while(temp != null)
+			{
+				readerRecord += NEWLINE+" " + temp + NEWLINE;
+				temp = bufferedReader.readLine();
+				if(temp.contains(L_UPDATE_SUCCESS)) {
+					temp = UPDATE_COMPLETED_FOR + THIS_VERSION;
+					readerRecord += NEWLINE +" "+temp + NEWLINE;
+					break;
+				}
+			}
+			InputStream is = new ByteArrayInputStream(readerRecord.getBytes());
+			generated = new BufferedInputStream(is);
+		} catch (Exception e) {
+			S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException("Exception occured in the build process"+e.getMessage());
+		}
+		return generated;
+	}
+	
+	
+	public BufferedInputStream liquibaseDiff(LiquibaseDiffInfo liquibaseDiffInfo) throws PhrescoException {
+		BufferedInputStream reader=null;
+		try {
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(LIQUIBASE)));
+			Configuration sourceConfiguration = getDbConfigurationForDiff(liquibaseDiffInfo,liquibaseDiffInfo.getSrcEnvironmentName());
+			Properties sourceDbProperties = sourceConfiguration.getProperties();			
+			Configuration referenceConfiguration = getDbConfigurationForDiff(liquibaseDiffInfo,liquibaseDiffInfo.getDestEnvironmentName());
+			Properties referenceDbProperties = referenceConfiguration.getProperties();
+			persistLiquibaseDiffValuesToXml(mojo, L_DIFF, sourceDbProperties, referenceDbProperties);
+			List<Parameter> parameters = getMojoParameters(mojo, L_DIFF);
+			List<String> liquibaseArgCmds = getMavenArgCommands(parameters);			
+			liquibaseArgCmds.add(ARG_COMMAND+L_DIFF);			
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			reader = applicationManager.performAction(projectInfo, ActionType.LIQUIBASE, liquibaseArgCmds, workingDirectory);
+		} catch (Exception e) {
+			S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException("Exception occured in the liquibase process "+e.getMessage());
+		}
+		return reader;
+	}
+
+	private void persistLiquibaseDiffValuesToXml(MojoProcessor mojo,
+			String goal, Properties sourceDbProperties,
+			Properties referenceDbProperties) throws PhrescoException {
+		try {
+			List<Parameter> parameters = getMojoParameters(mojo, goal);
+			if (CollectionUtils.isNotEmpty(parameters)) {
+				for (Parameter parameter : parameters) {
+					if (parameter.getKey().equalsIgnoreCase(SOURCE_USERNAME)) {
+						parameter.setValue(sourceDbProperties.getProperty(REQ_USER_NAME));
+					}
+					if (parameter.getKey().equalsIgnoreCase(REFERENCE_USERNAME)) {
+						parameter.setValue(referenceDbProperties.getProperty(REQ_USER_NAME));
+					}
+					if (parameter.getKey().equalsIgnoreCase(SOURCE_PASSWORD)) {
+						parameter.setValue(sourceDbProperties.getProperty(REQ_PASSWORD));
+					}
+					if (parameter.getKey().equalsIgnoreCase(REFERENCE_PASSWORD)) {
+						parameter.setValue(referenceDbProperties.getProperty(REQ_PASSWORD));
+					}
+					if (parameter.getKey().equalsIgnoreCase(SOURCE_HOST)) {
+						parameter.setValue(sourceDbProperties.getProperty(HOST));
+					}
+					if (parameter.getKey().equalsIgnoreCase(REFERENCE_HOST)) {
+						parameter.setValue(referenceDbProperties.getProperty(HOST));
+					}
+					if (parameter.getKey().equalsIgnoreCase(SOURCE_PORT)) {
+						parameter.setValue(sourceDbProperties.getProperty(PORT));
+					}
+					if (parameter.getKey().equalsIgnoreCase(REFERENCE_PORT)) {
+						parameter.setValue(referenceDbProperties.getProperty(PORT));
+					}
+					if (parameter.getKey().equalsIgnoreCase(SOURCE_DBNAME)) {
+						parameter.setValue(sourceDbProperties.getProperty(DBNAME));
+					}
+					if (parameter.getKey().equalsIgnoreCase(REFERENCE_DBNAME)) {
+						parameter.setValue(referenceDbProperties.getProperty(DBNAME));
+					}
+					if (parameter.getKey().equalsIgnoreCase(DBTYPE)) {
+						parameter.setValue(sourceDbProperties.getProperty(parameter.getKey()));
+					}
+				}
+			}
+			mojo.save();
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
+
+	/*
+	 * Liquibase Status
+	 */
+	public BufferedInputStream liquibaseStatus(LiquibaseStatusInfo liquibaseStatusInfo) throws PhrescoException {
+		BufferedInputStream reader=null;
+		try {
+			this.liquibaseStatusInfo=liquibaseStatusInfo;
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(LIQUIBASE)));
+			Configuration selectedConfiguration = getDbConfiguration(request.getParameter(ENV_NAME));
+			Properties dbProperties = selectedConfiguration.getProperties();					
+			persistLiquibaseValuesToXml(mojo, L_STATUS, dbProperties, null);
+			List<Parameter> parameters = getMojoParameters(mojo, L_STATUS);
+			List<String> liquibaseArgCmds = getMavenArgCommands(parameters);			
+			liquibaseArgCmds.add(ARG_COMMAND+L_STATUS);			
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+            reader = applicationManager.performAction(projectInfo, ActionType.LIQUIBASE, liquibaseArgCmds, workingDirectory);
+		} catch (Exception e) {
+			S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException("Exception occured in the liquibase process "+e.getMessage());
+		}
+		return reader;
+	}
+
+	/*
+	 * Liquibase RollBackCount
+	 */
+	public BufferedInputStream liquibaseRollBackCount(LiquibaseRollbackCountInfo liquibaseRollbackCountInfo) throws PhrescoException {
+		BufferedInputStream reader=null;
+		try {
+			this.liquibaseRollbackCountInfo=liquibaseRollbackCountInfo;
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(LIQUIBASE)));
+			Configuration selectedConfiguration = getDbConfiguration(request.getParameter(ENV_NAME));
+			Properties dbProperties = selectedConfiguration.getProperties();			
+			persistLiquibaseValuesToXml(mojo, L_ROLLBACK_COUNT, dbProperties,null);		
+			List<String> liquibaseArgCmds = new ArrayList<String>();			
+			liquibaseArgCmds.add(ARG_COMMAND+L_ROLLBACK_COUNT);			
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			reader = applicationManager.performAction(projectInfo, ActionType.LIQUIBASE, liquibaseArgCmds, workingDirectory);
+		} catch (Exception e) {
+			S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException("Exception occured in the liquibase process "+e.getMessage());
+		}
+		return reader;
+	}
+	
+	/*
+	 * Liquibase RollBacktoDate
+	 */
+	public BufferedInputStream liquibaseRollbackToDate(LiquibaseRollbackToDateInfo liquibaseRollbackToDateInfo) throws PhrescoException {
+		BufferedInputStream reader=null;
+		try {
+			this.liquibaseRollbackDateInfo=liquibaseRollbackToDateInfo;
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(LIQUIBASE)));
+			Configuration selectedConfiguration = getDbConfiguration(request.getParameter(ENV_NAME));
+			Properties dbProperties = selectedConfiguration.getProperties();			
+			persistLiquibaseValuesToXml(mojo, L_ROLLBACK_TO_DATE, dbProperties, null);
+			List<Parameter> parameters = getMojoParameters(mojo, L_ROLLBACK_TO_DATE);
+			List<String> liquibaseArgCmds = getMavenArgCommands(parameters);			
+			liquibaseArgCmds.add(ARG_COMMAND+L_ROLLBACK_TO_DATE);			
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			reader = applicationManager.performAction(projectInfo, ActionType.LIQUIBASE, liquibaseArgCmds, workingDirectory);
+		} catch (Exception e) {
+			S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException("Exception occured in the liquibase process "+e.getMessage());
+		}
+		return reader;
+	}
+
+	/*
+	 * Liquibase RollBackTag
+	 */
+	public BufferedInputStream liquibaseRollbackTag(LiquibaseRollbackTagInfo liquibaseRollbackTagInfo) throws PhrescoException {
+		BufferedInputStream reader=null;
+		try {
+			this.liquibaseRollbackTagInfo=liquibaseRollbackTagInfo;
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(LIQUIBASE)));
+			Configuration selectedConfiguration = getDbConfiguration(request.getParameter(ENV_NAME));
+			Properties dbProperties = selectedConfiguration.getProperties();			
+			persistLiquibaseValuesToXml(mojo, L_ROLLBACK, dbProperties, null);
+			List<Parameter> parameters = getMojoParameters(mojo, L_ROLLBACK);
+			List<String> liquibaseArgCmds = getMavenArgCommands(parameters);			
+			liquibaseArgCmds.add(ARG_COMMAND+L_ROLLBACK);			
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			reader = applicationManager.performAction(projectInfo, ActionType.LIQUIBASE, liquibaseArgCmds, workingDirectory);
+		} catch (Exception e) {
+			S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException("Exception occured in the liquibase process "+e.getMessage());
+		}
+		return reader;
+	}
+
+	/*
+	 * Liquibase RollBackTag
+	 */
+	public BufferedInputStream liquibaseTag(LiquibaseTagInfo liquibaseTagInfo) throws PhrescoException {
+		BufferedInputStream reader=null;
+		try {
+			this.liquibaseTagInfo=liquibaseTagInfo;
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(LIQUIBASE)));
+			Configuration selectedConfiguration = getDbConfiguration(request.getParameter(ENV_NAME));
+			Properties dbProperties = selectedConfiguration.getProperties();			
+			persistLiquibaseValuesToXml(mojo, L_TAG, dbProperties, null);		
+			List<Parameter> parameters = getMojoParameters(mojo, L_TAG);
+			List<String> liquibaseArgCmds = getMavenArgCommands(parameters);			
+			liquibaseArgCmds.add(ARG_COMMAND+L_TAG);			
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			reader = applicationManager.performAction(projectInfo, ActionType.LIQUIBASE, liquibaseArgCmds, workingDirectory);
+		} catch (Exception e) {
+			S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException("Exception occured in the liquibase process "+e.getMessage());
+		}
 		return reader;
 	}
 

@@ -560,12 +560,33 @@ public interface ResponseCodes {
 	String PHRD010012 = "PHRD010012"; // Widget deletion failed
 	
 
-
-
-
-
-
-
-
+	/*
+	 * Liquibase Service
+	 */
+	String PHRL000001 = "PHRL000001"; // Liquibase DbDoc started successfully
+	String PHRL010001 = "PHRL010001"; // unable to execute Liquibase DbDoc
+	String PHRL000002 = "PHRL000002"; // Liquibase Update started successfully
+	String PHRL010002 = "PHRL010002"; // unable to execute Liquibase Update
+	String PHRL000003 = "PHRL000003"; // Liquibase Install started successfully
+	String PHRL010003 = "PHRL010003"; // unable to execute Liquibase Install
+	String PHRL000004 = "PHRL000004"; // Liquibase DbDiff started successfully
+	String PHRL010004 = "PHRL010004"; // unable to execute Liquibase DbDiff
+	String PHRL000005 = "PHRL000005"; // Liquibase Status started successfully
+	String PHRL010005 = "PHRL010005"; // unable to execute Liquibase Status
+	String PHRL000006 = "PHRL000006"; // Liquibase Rollback by Count started successfully
+	String PHRL010006 = "PHRL010006"; // unable to execute Liquibase Rollback by Count
+	String PHRL000007 = "PHRL000007"; // Liquibase Rollback to Date started successfully
+	String PHRL010007 = "PHRL010007"; // unable to execute Liquibase Rollback to Date
+	String PHRL000008 = "PHRL000008"; // Liquibase Rollback to Tag started successfully
+	String PHRL010008 = "PHRL010008"; // unable to execute Liquibase Rollback to Tag
+	String PHRL000009 = "PHRL000009"; // Liquibase Tag started successfully
+	String PHRL010009 = "PHRL010009"; // unable to execute Liquibase Tag
+	String PHRL000010 = "PHRL000010"; // environment names retrieved successfully
+	String PHRL010010 = "PHRL010010"; // unable to retrieve environment names from phresco-env-config.xml
+	String PHRL000011 = "PHRL000011"; // configuration names retrieved successfully
+	String PHRL010011 = "PHRL010011"; // unable to retrieve configuration names from phresco-env-config.xml
+	String PHRL010012 = "PHRL010012"; // unsupported database type
+	String PHRL000012 = "PHRL000012"; // database tags retrieved successfully
+	String PHRL010013 = "PHRL010013"; // unable to retrieve tags
 	
 }

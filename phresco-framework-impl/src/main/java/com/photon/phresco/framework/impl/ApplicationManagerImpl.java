@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PushbackInputStream;
+import java.io.SequenceInputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,6 +35,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.cli.CommandLineException;
@@ -101,7 +103,11 @@ public class ApplicationManagerImpl implements ApplicationManager {
 			}
 		}
 		StringBuilder command = buildMavenCommand(action, mavenArgCommands);
-    	return executeMavenCommand(projectInfo, action, command, workingDirectory);
+		if (action.equals(ActionType.LIQUIBASE)) {
+			return executeLiquibaseMavenCommand(projectInfo, action, command, workingDirectory);
+		} else {
+			return executeMavenCommand(projectInfo, action, command, workingDirectory);
+		}
 	}
 
 	@Override
@@ -186,6 +192,30 @@ public class ApplicationManagerImpl implements ApplicationManager {
         try {
             Process process = cl.execute();
             return new BufferedInputStream(new MyWrapper(process.getInputStream()));
+        } catch (CommandLineException e) {
+            throw new PhrescoException(e);
+        }
+    }
+
+	private BufferedInputStream executeLiquibaseMavenCommand(ProjectInfo projectInfo, ActionType action, StringBuilder command, String workingDirectory) throws PhrescoException {
+    	if (isDebugEnabled) {
+    		S_LOGGER.debug("Entering Method ApplicationManagerImpl.executeMavenCommand(Project project, ActionType action, StringBuilder command)");
+    		S_LOGGER.debug("executeMavenCommand() Project Code = " + projectInfo.getProjectCode());
+    		S_LOGGER.debug("executeMavenCommand() Command = " + command.toString());
+    		S_LOGGER.debug("executeMavenCommand() ActionType Name = " + action.getActionType());
+		}
+
+    	createPomArg(projectInfo, command);
+		Commandline cl = new Commandline(command.toString());
+        if (StringUtils.isNotEmpty(workingDirectory)) {
+            cl.setWorkingDirectory(workingDirectory);
+        } 
+        try {
+            Process process = cl.execute();
+            InputStream inputStream = process.getInputStream();
+            InputStream errorStream = process.getErrorStream();
+            SequenceInputStream sequenceInputStream = new SequenceInputStream(inputStream, errorStream);
+            return new BufferedInputStream(new MyWrapper(sequenceInputStream));
         } catch (CommandLineException e) {
             throw new PhrescoException(e);
         }
