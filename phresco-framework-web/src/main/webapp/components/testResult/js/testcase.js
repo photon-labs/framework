@@ -35,6 +35,30 @@ define(["testResult/listener/testResultListener"], function() {
 			Handlebars.registerHelper('removeDot', function(string) {
 				return string.replace(/\./g, '');
 			});
+		
+			Handlebars.registerHelper('statusUpdate', function(status) {
+				var successStatus = "";
+				var failStatus = "";
+				var notAppStatus = "";
+				var blockStatus = "";
+				var returnVal= "";
+				var sectedText = "";
+				if(status === "success") {
+					successStatus = "selected";
+				} else if(status === "failure") {
+					failStatus = "selected";
+				} else if(status === "notApplicable") {
+					notAppStatus = "selected";
+				} else if(status === "blocked") {
+					blockStatus = "selected";
+				} else {
+					sectedText  = "selected";
+				}
+				var returnVal = "<select name='status'> <option "+ sectedText +" disabled value=''>Select Status</option> <option value='success'"+ successStatus +">Success</option> <option value='failure'"+ failStatus +">Failure</option><option value='notApplicable'" +notAppStatus +">Not Applicable</option><option value='blocked'" + blockStatus+">Blocked</option>";
+				
+				return returnVal;
+			});
+			
 		},
 		
 		loadPage : function() {
@@ -83,10 +107,10 @@ define(["testResult/listener/testResultListener"], function() {
 				} else {
 					self.testResultListener.getPieChartGraphData(function(graphData) {
 						self.testResultListener.createPieChart(graphData);
-					});
-					if ("functionalTest" === currentTab) {
-						self.showScreenShot();
-					}
+				});
+				if ("functionalTest" === currentTab) {
+					self.showScreenShot();
+				}
 				}
 			} else {
 				$('.unit_view').hide();

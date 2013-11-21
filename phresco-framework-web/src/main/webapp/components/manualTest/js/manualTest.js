@@ -100,6 +100,12 @@ define(["manualTest/listener/manualTestListener", "testResult/listener/testResul
 			$("#addTestCase").click(function() {
 				self.openccpl(this, 'show_manualTestCase_popup','');
 				var currentTestsuiteName = commonVariables.testSuiteName;
+				$(this).next('div').find("form").find("textarea").val("");
+				$("#status").val('');
+				$("#featureId").val('');
+				$("#testCaseId").val('');
+				$("#status").selectpicker('refresh');
+//				$('#status').find('option:first').attr('selected', 'selected');
 				$('input[name=testSuiteName]').attr('value', currentTestsuiteName);
 			});
 			

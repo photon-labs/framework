@@ -66,17 +66,11 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				if (testSuites[i].name === commonVariables.testSuiteName) {
 					var graphData = {};
 					graphData.failures = Math.round(testSuites[i].failures);
-					console.info("testSuites[i].failures====",testSuites[i].failures)
 					graphData.success = Math.round(testSuites[i].success);
-					console.info("testSuites[i].success===",testSuites[i].success)
 					graphData.notApplicable = Math.round(testSuites[i].notApplicable);
-					console.info("testSuites[i].notApplicable====",testSuites[i].notApplicable)
 					graphData.blocked = Math.round(testSuites[i].blocked);
-					console.info("testSuites[i].blocked===", testSuites[i].blocked)
 					graphData.total = testSuites[i].total;
-					console.info("testSuites[i].total====", testSuites[i].total);
 					graphData.notExecuted = testSuites[i].notExecuted;
-					console.info(" testSuites[i].notExecuted=====",  testSuites[i].notExecuted);
 					callback(graphData);
 					break;
 				}

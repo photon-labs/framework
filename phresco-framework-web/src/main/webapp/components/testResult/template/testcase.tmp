@@ -127,12 +127,7 @@
 															<textarea name="actualResult">{{actualResult}}</textarea>
 														</td>
 														<td>Status<br>
-															<select name="status">
-																<option value="success">Success</option>
-																<option value="failure">Failure</option>
-																<option value="notApplicable">Not Applicable</option>
-																<option value="blocked">Blocked</option>
-															</select>
+															{{#statusUpdate status}}{{/statusUpdate}}
 														</td>
 													</tr>
 												</tbody>

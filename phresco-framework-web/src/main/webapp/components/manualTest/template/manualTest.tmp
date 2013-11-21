@@ -146,7 +146,8 @@
 										<input type="text" placeholder="Name of the TestCases" name="testCaseId" id="testCaseId" value="">
 									</td>
 									<td>Status<br>
-										<select name="status">
+										<select id="status" name="status">
+											<option selected disabled value="">Select Status</option>
 											<option value="success">Success</option>
 											<option value="failure">Failure</option>
 											<option value="notApplicable">Not Applicable</option>
