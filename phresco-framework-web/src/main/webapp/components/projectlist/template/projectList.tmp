@@ -138,7 +138,7 @@
                                 <td><input type="text" name="repoUrl" placeholder="Repo Url" id="repourl_{{id}}"></td>
                             </tr>
                             <tr>
-                                <td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="repocredential_{{id}}" repoDynid="{{id}}" class="credential"></td>
+                                <td class="seperatetdSvn"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="repocredential_{{id}}" repoDynid="{{id}}" class="credential"></td>
                                 <td></td>
                             </tr>
                             <tr>
@@ -195,7 +195,7 @@
                                         <td><input type="text" name="repoUrl" placeholder="Repo Url" id="commitRepourl_{{id}}"></td>
                                     </tr>
                                     <tr>
-                                        <td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="commitCredential_{{id}}" class="credential"></td>
+                                        <td class="seperatetdSvn"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="commitCredential_{{id}}" class="credential"></td>
                                         <td></td>
                                     </tr>
                                     <tr>
@@ -256,7 +256,7 @@
                                         <td><input type="text" placeholder="Repo Url" id="updateRepourl_{{id}}" name="repoUrl"></td>
                                     </tr>
                                     <tr>
-                                        <td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="updateCredential_{{id}}" class="credential"></td>
+                                        <td class="seperatetdSvn"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="updateCredential_{{id}}" class="credential"></td>
                                         <td></td>
                                     </tr>
                                     <tr>

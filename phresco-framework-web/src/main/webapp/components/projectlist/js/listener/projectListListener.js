@@ -695,15 +695,15 @@ define([], function() {
 		
 		hideShowCredentials : function(val, usrObj, pwdObj, checkObj){
 			if(val === 'svn') {
-				$(".seperatetd").parent().show();
-				$(".seperatetd").show();
+				$(".seperatetdSvn").parent().show();
+				$(".seperatetdSvn").show();
 				if(!checkObj.is(':checked')) {
 					usrObj.attr('readonly','true');
 					pwdObj.attr('readonly','true');
 				}
 			} else {
-				$(".seperatetd").parent().hide();
-				$(".seperatetd").hide();
+				$(".seperatetdSvn").parent().hide();
+				$(".seperatetdSvn").hide();
 				usrObj.removeAttr('readonly');
 				pwdObj.removeAttr('readonly');
 			}			
