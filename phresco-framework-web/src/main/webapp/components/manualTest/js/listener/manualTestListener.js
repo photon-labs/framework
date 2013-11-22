@@ -58,6 +58,9 @@ define(["lib/fileuploader-2.4"], function() {
 				header.requestMethod = "POST";
 				header.requestPostBody = JSON.stringify(requestBody);
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + '/testcases?testSuiteName=' + requestBody.testSuiteName + '&appDirName=' + appDirName + moduleParam;
+			} else if (action === "validateTestCase") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + '/testcaseValidation?testSuiteName=' + requestBody.testSuiteName + '&appDirName=' + appDirName + '&testCaseId=' + requestBody.testCaseId + moduleParam;
 			} else if (action === "downloadTemplate") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + "manual/manualTemplate?fileType="+requestBody.format  + moduleParam;
@@ -160,13 +163,27 @@ define(["lib/fileuploader-2.4"], function() {
 				data = $("#manualTestTestCaseForm").serializeObject();
 				self.manualRequestBody = data;
 				self.manualRequestBody.testSuiteName = testsuiteName;
-				$("#show_manualTestCase_popup").toggle();
-				self.getManualTestReport(self.getActionHeader(self.manualRequestBody, "addTestcase"), function(response) {
-					commonVariables.navListener.getMyObj(commonVariables.testcaseResult, function(retVal) {
-						self.testcaseResult = retVal;
-						Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
-						Clazz.navigationController.push(self.testcaseResult, false);
-					});
+				
+				self.getManualTestReport(self.getActionHeader(self.manualRequestBody, 'validateTestCase'), function (response) {
+					//update operation
+					if (!self.isBlank(response) && response.data) {	
+						$("#show_manualTestCase_popup").toggle();
+						self.getManualTestReport(self.getActionHeader(self.manualRequestBody, "addTestcase"), function(response) {
+							commonVariables.navListener.getMyObj(commonVariables.testcaseResult, function(retVal) {
+								self.testcaseResult = retVal;
+								Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
+								Clazz.navigationController.push(self.testcaseResult, false);
+							});
+						});
+					} else {
+						$("input[name='testCaseId']").focus();
+						$("input[name='testCaseId']").val('');
+						$("input[name='testCaseId']").attr('placeholder','TestCaseId Already Exists');
+						$("input[name='testCaseId']").addClass("errormessage");
+						$("input[name='testCaseId']").bind('keypress', function() {
+							$(this).removeClass("errormessage");
+						});
+					}
 				});
 			}
 		},

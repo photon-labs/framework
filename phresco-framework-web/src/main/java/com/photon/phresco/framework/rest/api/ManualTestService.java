@@ -218,6 +218,40 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 		}
 	}
 	
+	@GET
+	@Path(REST_API_TESTCASE_VALIDATION)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response testCaseValidation(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_TESTCASE_NAME) String testCaseId,
+			@QueryParam("testSuiteName") String testsuitename, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		List<com.photon.phresco.commons.model.TestCase> readTestCase = null;
+		boolean hasError = true;
+		try {
+			if (StringUtils.isNotEmpty(moduleName)) {
+				appDirName = appDirName + File.separator + moduleName;
+			}
+			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+			String manualTestDir = getManualTestReportDir(appDirName);
+			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(manualTestDir);
+			readTestCase = frameworkUtil.readManualTestCaseFile(sb.toString(), testsuitename, null);
+			for (com.photon.phresco.commons.model.TestCase testCase : readTestCase) {
+				if(testCase.getTestCaseId().equalsIgnoreCase(testCaseId)) {
+					hasError = false;
+					break;
+				}
+			}
+			
+			ResponseInfo<Boolean> finalOutput = 
+				responseDataEvaluation(responseData, null, hasError, RESPONSE_STATUS_SUCCESS, PHRQ400007);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (Exception e) {
+			ResponseInfo<Boolean> finalOutput = 
+				responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHRQ410009);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+	
+	
 	private ManualTestResult createManualTestResult(List<TestSuite> readManualTestSuiteFile) {
 		ManualTestResult mtr = new ManualTestResult();
 		float totalTestSuccess = 0;

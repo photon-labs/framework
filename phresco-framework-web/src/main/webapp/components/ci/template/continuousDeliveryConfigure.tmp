@@ -50,7 +50,7 @@
 						<table id="jobName" class="clonetable jobName" width="100%" border="0" cellspacing="0" cellpadding="0">
 							<tbody>
 									<tr>
-										<td><input name="jobName" type="text" data-i18n="[placeholder]ci.placeholder.jobname"></td>
+										<td><input name="jobName" maxlength="30" type="text" data-i18n="[placeholder]ci.placeholder.jobname"></td>
 									</tr>
 							 </tbody>
 						 </table>
