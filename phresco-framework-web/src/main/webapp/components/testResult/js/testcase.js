@@ -195,6 +195,12 @@ define(["testResult/listener/testResultListener"], function() {
 			$('a[name=updateManualTestCase_popup]').click(function() {
 				var dynClass = $(this).attr('class');
 				self.openccpl(this, dynClass, '');
+				var target = $('#' + dynClass);
+				console.info(target);
+				$('.features_content_main').prepend(target);
+				$('.content_title').css('z-index', '0');
+				$('.manualTemp').css('z-index', '0');
+				$('.header_section').css('z-index', '0');
 				var testsuiteName = commonVariables.testSuiteName;
 				$('#testSuiteId').val(testsuiteName);
 			});

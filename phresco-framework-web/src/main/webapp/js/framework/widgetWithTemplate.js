@@ -675,6 +675,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				var style;
 				
 				if (clicked.offset().top < halfheight && clicked.offset().left < halfwidth) {
+					console.info("1");
 					$(target).css({"left":clicked.offset().left ,"margin-top":10,"right": "auto"});
 					if(placeId === 'firstsettings') {
 						var BottomHeight = clicked.position().top + clicked.height() +4 ;
@@ -686,6 +687,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(target).toggle();
 					$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
 				} else if (clicked.offset().top < halfheight && clicked.offset().left > halfwidth){
+				console.info("2");
 					var d = null;
 					if(act === 'Delete Pdf') {
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 300;
@@ -695,8 +697,9 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						var BottomHeight = clicked.position().top + clicked.height() ;
 						$(target).css({"right":d,"left": "auto","top": BottomHeight});
 					} else if ($(ee).attr('name') === 'updateManualTestCase_popup') {
-						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 48;
-						$(target).css({"right":d ,"margin-top":10,"left": "auto","top": "auto"});
+						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())-5);
+						var BottomHeight = clicked.position().top + clicked.height() + 52 ;
+						$(target).css({"right":d,"left": "auto","top": BottomHeight});
 					} else if(placeId === 'add_widget') {
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 4;
 						var BottomHeight = clicked.position().top + clicked.height() - 23 ;
@@ -724,11 +727,13 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(target).toggle();
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopright').addClass('dyn_popup');
 				} else if (clicked.offset().top > halfheight && clicked.offset().left < halfwidth){
+				console.info("3");
 					var BottomHeight = clicked.position().top - (target.height() + 33 );
 					$(target).css({"left": clicked.offset().left,"top": BottomHeight ,"right": "auto"});
 					$(target).toggle();
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstyletopright').addClass('speakstylebottomleft').addClass('dyn_popup');	
 				} else if (clicked.offset().top > halfheight && clicked.offset().left > halfwidth){
+				console.info("4");
 					var d = null,BottomHeight = null;
 					d = ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 15;
 					if(act === 'Delete Pdf') {
@@ -748,8 +753,12 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});	
 						$(target).toggle();
 						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
-					}
-					else {
+					} else if ($(ee).attr('name') === 'updateManualTestCase_popup') {
+						var BottomHeight = clicked.offset().top + clicked.height() - 583 ;
+						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});	
+						$(target).toggle();
+						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
+					} else {
 						BottomHeight = clicked.position().top - (target.height() + 28 );
 						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
 						$(target).toggle();
@@ -856,6 +865,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(".repo_error3").hide();
 					$('.content_title').css('z-index', '6');
 					$('.header_section').css('z-index', '7');
+					$('.manualTemp').css('z-index', '1');
 				});
 					
 			},

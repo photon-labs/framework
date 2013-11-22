@@ -307,7 +307,7 @@ define(["projectlist/listener/projectListListener"], function() {
 						}	
 					}); */
 				
-				if (action === "Add Repo") {   0
+				if (action === "Add Repo") {
 					selectObj = $("#type_"+dynamicId);
 					checkObj = $("#repocredential_"+dynamicId);
 					usrObj = $("#uname_"+dynamicId);

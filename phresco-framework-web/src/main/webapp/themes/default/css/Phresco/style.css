@@ -610,6 +610,7 @@ a.dropdown-toggle b.caret  {
 	text-align:left;
 	margin-right: 0px !important;
 	border-bottom: 1px solid #d9d9d9;
+	cursor:pointer;
 }
 
 .cust_sel ul li:last-child {
@@ -2164,7 +2165,8 @@ img[name="close"] {
 	
 	#addproject .create_edit_table tr td select{
 		width:112px !important;
-    }
+		max-height:28px;
+}
 	
 	.optional_dropdown {
 		margin-left: 11px;
@@ -2223,9 +2225,9 @@ img[name="close"] {
 		width: 182px !important;	
 	}
 	
-	 .bootstrap-select .btn  {
-		width: 182px !important; 
-	 }
+	 /*.bootstrap-select .btn  {
+		width: 182px !important;
+	 }*/
 	 
 	 .custon_dropdown {
 		width: 141px !important;
