@@ -50,7 +50,8 @@ public class EnvironmentWebservicesImpl implements DynamicParameter, Constants {
     	String envName = (String) paramMap.get(KEY_ENVIRONMENT);
     	String customer = (String) paramMap.get("customerId");
     	//To search for db type in settings.xml
-    	ConfigManager configManager = new ConfigManagerImpl(new File(getSettingsPath(customer))); 
+    	String projectCode = (String) paramMap.get(KEY_PROJECT_CODE);
+    	ConfigManager configManager = new ConfigManagerImpl(new File(getSettingsPath(projectCode))); 
     	List<Configuration> configurations = configManager.getConfigurations(envName, Constants.SETTINGS_TEMPLATE_WEBSERVICE);
     	for (Configuration configuration : configurations) {
     	    Value value = new Value();
@@ -85,7 +86,7 @@ public class EnvironmentWebservicesImpl implements DynamicParameter, Constants {
 		 return builder;
 	 }
     
-    private String getSettingsPath(String customer) {
-    	return Utility.getProjectHome() + customer +"-settings.xml";
+    private String getSettingsPath(String projectCode) {
+    	return Utility.getProjectHome() + projectCode +"-settings.xml";
     }
 }
