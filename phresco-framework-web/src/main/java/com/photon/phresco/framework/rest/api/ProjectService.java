@@ -1271,14 +1271,14 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			return response;
 		}
 		for (ProjectInfo projectInfos : discoveredProjectInfos) {
-			if(StringUtils.isNotEmpty(projectinfo.getName().trim()) && projectInfos.getName().trim().equals(projectinfo.getName().trim())) {
+			if(StringUtils.isNotEmpty(projectinfo.getName().trim()) && projectInfos.getName().trim().equalsIgnoreCase(projectinfo.getName().trim())) {
 				response = new ResponseInfo();
 				response.setStatus(RESPONSE_STATUS_FAILURE);
 				response.setResponseCode(PHR210041);
 				return response;
 			}
 			if(StringUtils.isNotEmpty(projectinfo.getProjectCode().trim())) {
-				if(projectinfo.getProjectCode().trim().equals(projectInfos.getProjectCode().trim())) {
+				if(projectinfo.getProjectCode().trim().equalsIgnoreCase(projectInfos.getProjectCode().trim())) {
 					response = new ResponseInfo();
 					response.setStatus(RESPONSE_STATUS_FAILURE);
 					response.setResponseCode(PHR210042);
@@ -1289,13 +1289,13 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			List<ApplicationInfo> discoveredAppInfos = projectInfos.getAppInfos();
 			for(int i = 0; i < appInfos.size(); i++) {
 				for(int j = 0; j < discoveredAppInfos.size(); j++) {
-					if(appInfos.get(i).getCode().equals(discoveredAppInfos.get(j).getCode())) {
+					if(appInfos.get(i).getCode().equalsIgnoreCase(discoveredAppInfos.get(j).getCode())) {
 						response = new ResponseInfo();
 						response.setStatus(RESPONSE_STATUS_FAILURE);
 						response.setResponseCode(PHR210043);
 						return response;
 					}
-					if(appInfos.get(i).getAppDirName().equals(discoveredAppInfos.get(j).getAppDirName())) {
+					if(appInfos.get(i).getAppDirName().equalsIgnoreCase(discoveredAppInfos.get(j).getAppDirName())) {
 						response = new ResponseInfo();
 						response.setStatus(RESPONSE_STATUS_FAILURE);
 						response.setResponseCode(PHR210044);
@@ -1322,7 +1322,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			for (int i = 0; i < appInfos.size(); i++) {
 				if(appInfo.getAppDirName().equals(oldAppDirName)) {
 					continue;
-				} else if(appInfo.getAppDirName().equals(appInfos.get(i).getAppDirName())) {
+				} else if(appInfo.getAppDirName().equalsIgnoreCase(appInfos.get(i).getAppDirName())) {
 					response = new ResponseInfo();
 					response.setStatus(RESPONSE_STATUS_FAILURE);
 					response.setResponseCode(PHR210044);

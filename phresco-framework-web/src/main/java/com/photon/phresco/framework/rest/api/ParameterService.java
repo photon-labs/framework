@@ -332,6 +332,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			Parameter dependentParameter = mojo.getParameter(goal, key);
 			constructMapForDynVals.put(REQ_MOJO, mojo);
             constructMapForDynVals.put(REQ_GOAL, goal);
+            constructMapForDynVals.put(DynamicParameter.KEY_PROJECT_CODE, projectInfo.getProjectCode());
             setModuleInfoInMap(rootModule, module, constructMapForDynVals);
             List<Value> dependentPossibleValues = new ArrayList<Value>();
             if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(dependentParameter.getType()) && dependentParameter.getDynamicParameter() != null) {

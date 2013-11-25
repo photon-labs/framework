@@ -45,18 +45,20 @@ public class DynamicDataBaseImpl implements DynamicParameter, Constants {
 		try {
 			ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
 			String envName = (String) paramMap.get(KEY_ENVIRONMENT);
-			String customer = (String) paramMap.get(KEY_CUSTOMER_ID);
 			boolean isMultiModule = (Boolean) paramMap.get(KEY_MULTI_MODULE);
         	String rootModule = (String) paramMap.get(KEY_ROOT_MODULE);
+        	String projectCode = (String) paramMap.get(KEY_PROJECT_CODE);
 			//To search for db type in settings.xml
-			String settingsPath = getSettingsPath(customer);
+			String settingsPath = getSettingsPath(projectCode);
 			ConfigManager configManager = new ConfigManagerImpl(new File(settingsPath)); 
 			List<Configuration> configurations = configManager.getConfigurations(envName, Constants.SETTINGS_TEMPLATE_DB);
+			if(CollectionUtils.isNotEmpty(configurations)) {
 			for (Configuration configuration : configurations) {
 				Value value = new Value();
 				value.setValue(configuration.getProperties().getProperty("type").toLowerCase());
 				possibleValues.getValue().add(value);
 			}
+		}
 			
 			//To search for db type in phresco-env-config.xml if it doesn't exist in settings.xml
 			if (CollectionUtils.isEmpty(possibleValues.getValue())) {
@@ -64,6 +66,7 @@ public class DynamicDataBaseImpl implements DynamicParameter, Constants {
 				String configPath = getConfigurationPath(appDirectory, isMultiModule, rootModule).toString();
 				configManager = new ConfigManagerImpl(new File(configPath)); 
 				configurations = configManager.getConfigurations(envName, Constants.SETTINGS_TEMPLATE_DB);
+				if(CollectionUtils.isNotEmpty(configurations)) {
 				for (Configuration configuration : configurations) {
 					String dbType = configuration.getProperties().getProperty("type");
 					List<Value> availableValues = possibleValues.getValue();
@@ -82,6 +85,7 @@ public class DynamicDataBaseImpl implements DynamicParameter, Constants {
 			    		possibleValues.getValue().add(value);
 					}
 				}
+			}
 			}
 		} catch (ConfigurationException e) {
 			throw new PhrescoException(e);
@@ -103,7 +107,7 @@ public class DynamicDataBaseImpl implements DynamicParameter, Constants {
 		 return builder;
 	 }
     
-    private String getSettingsPath(String customer) {
-    	return Utility.getProjectHome() + customer + "-settings.xml";
+    private String getSettingsPath(String projectCode) {
+    	return Utility.getProjectHome() + projectCode + "-settings.xml";
     }
 }

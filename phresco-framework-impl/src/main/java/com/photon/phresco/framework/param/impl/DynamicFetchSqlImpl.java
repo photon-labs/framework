@@ -53,9 +53,9 @@ public class DynamicFetchSqlImpl implements DynamicParameter, Constants {
 			String appDirectory = applicationInfo.getAppDirName();
 			String envName = (String) map.get(KEY_ENVIRONMENT);
 			String dbname = (String) map.get(KEY_DATABASE);
-			String customer = (String) map.get(KEY_CUSTOMER_ID);
+			String projectCode = (String) map.get(KEY_PROJECT_CODE);
         	String configPath = getConfigurationPath(appDirectory, isMultiModule, rootModule).toString();
-			String settingsPath = getSettingsPath(customer);
+			String settingsPath = getSettingsPath(projectCode);
 			ConfigManager configManager = new ConfigManagerImpl(new File(settingsPath)); 
 			List<Configuration> settingsconfig = configManager.getConfigurations(envName, Constants.SETTINGS_TEMPLATE_DB);
 			if(CollectionUtils.isNotEmpty(settingsconfig)) {
@@ -82,7 +82,7 @@ public class DynamicFetchSqlImpl implements DynamicParameter, Constants {
 		String path = "";
 		for (Configuration configuration : configurations) {
 			String dbType = configuration.getProperties().getProperty(DB_TYPE).toLowerCase();
-			if (dbname.equals(dbType)) { 
+			if (dbType.equals(dbname)) { 
 				dbVersion =configuration.getProperties().getProperty(DB_VERSION);
 				StringBuilder sb = new StringBuilder(Utility.getProjectHome());
 				if (isMultiModule) {
@@ -140,7 +140,7 @@ public class DynamicFetchSqlImpl implements DynamicParameter, Constants {
 		return sqlFilePath;
 	}
 	
-	 private String getSettingsPath(String customer) {
-	    	return Utility.getProjectHome() + customer + Constants.SETTINGS_XML;
+	 private String getSettingsPath(String projectCode) {
+	    	return Utility.getProjectHome() + projectCode + Constants.SETTINGS_XML;
 	    }
 }
