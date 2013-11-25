@@ -272,7 +272,7 @@ public class BuildInfoTest extends RestBaseTest {
 	
 	@Test
 	public void getminifiedFiles() {
-		Response minifer = buildinfoservice.minifer("TestJquery");
+		Response minifer = buildinfoservice.minifer("TestJquery", "");
 		Assert.assertEquals(200, minifer.getStatus());
 	}
 	

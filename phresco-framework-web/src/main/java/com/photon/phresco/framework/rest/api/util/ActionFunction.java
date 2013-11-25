@@ -1796,7 +1796,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(directory);
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
-			String pomPath = Utility.getProjectHome() + File.separator + applicationInfo.getAppDirName() + File.separator + Utility.getPhrescoPomFile(applicationInfo);
+			String pomPath = FrameworkServiceUtil.getAppPom(directory);
 			PomProcessor pomProcessor = new PomProcessor(new File(pomPath));
 			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
@@ -1814,13 +1814,13 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 					dynamicIncludeDir = POM_OUTPUT_DIRECTORY;
 					configList.add(createElement(doc, POM_OUTPUTDIR, POM_OUTPUT_DIRECTORY));
 				}
-				createAggregationTagInPom(applicationInfo, doc, configList, files, dynamicIncludeDir);
+				createAggregationTagInPom(doc, configList, files, dynamicIncludeDir);
 			}
 			pomProcessor.addConfiguration(MINIFY_PLUGIN_GROUPID, MINIFY_PLUGIN_ARTFACTID, configList);
 			pomProcessor.save();
 
 
-			reader = applicationManager.performAction(projectInfo, ActionType.MINIFY, null,  Utility.getWorkingDirectoryPath(getAppDirName()));
+			reader = applicationManager.performAction(projectInfo, ActionType.MINIFY, null,  Utility.getWorkingDirectoryPath(directory));
 			
 			 //To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), "minify", displayName, uniqueKey)), true);
@@ -2452,9 +2452,10 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	 * @param files
 	 * @param dynamicIncludeDir
 	 */
-	private void createAggregationTagInPom(ApplicationInfo applicationInfo, Document doc, List<Element> configList, List<MinifyInfo> files,
+	private void createAggregationTagInPom(Document doc, List<Element> configList, List<MinifyInfo> files,
 			String dynamicIncludeDir) throws PhrescoException {
 		Element aggregationsElement = doc.createElement(POM_AGGREGATIONS);
+		String applnFolderName = StringUtils.isNotEmpty(getModule()) ? getModule() : getAppDirName();
 		for (MinifyInfo file : files) {
 			String newFileName = ""; 
 			String extension = "";
@@ -2471,7 +2472,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 				agrigationElement.appendChild(includesElement);
 			}
 			String location = file.getOpFileLoc();
-			String[] splitted = location.split(applicationInfo.getAppDirName());
+			String[] splitted = location.split(applnFolderName);
 			String minificationDir = splitted[1];
 			appendChildElement(doc, agrigationElement, POM_OUTPUT, MINIFY_OUTPUT_DIRECTORY + minificationDir.replace("\\", "/") + file.getCompressName() + DOT_MIN_DOT + file.getFileType());
 		}

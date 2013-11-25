@@ -30,6 +30,7 @@ import com.photon.phresco.commons.model.Dashboard;
 import com.photon.phresco.commons.model.DashboardInfo;
 import com.photon.phresco.commons.model.Dashboards;
 import com.photon.phresco.commons.model.DownloadInfo;
+import com.photon.phresco.commons.model.ModuleInfo;
 import com.photon.phresco.commons.model.ProjectDelivery;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.RepoInfo;
@@ -282,34 +283,18 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				RepoInfo repoInfo = customer.getRepoInfo();
 				List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
 				for (ApplicationInfo appInfo : appInfos) {
-					String pluginInfoFile = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  APPLICATION_HANDLER_INFO_FILE;
-					File path = new File(Utility.getProjectHome() + appInfo.getAppDirName());
-					projectUtils.updateTestPom(path);
-					//For Pdf Document Creation In Docs Folder
-					DocumentGenerator documentGenerator = PhrescoFrameworkFactory.getDocumentGenerator();
-					documentGenerator.generate(appInfo, path, null, serviceManager);
-					
-					MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
-					ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
-					if (applicationHandler != null) {
-						List<ArtifactGroup> plugins = setArtifactGroup(applicationHandler);
-						//Dynamic Class Loading
-						PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
-						ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(applicationHandler.getClazz());
-						applicationProcessor.postCreate(appInfo);
-					}
-					if (isCallEclipsePlugin(appInfo)) {
-						ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-						String baseDir = Utility.getProjectHome() + File.separator + appInfo.getAppDirName();
-						List<String> buildArgCmds = new ArrayList<String>();
-			            String pomFileName = Utility.getPomFileName(appInfo);
-						if(!POM_NAME.equals(pomFileName)) {
-							buildArgCmds.add(HYPHEN_F);
-							buildArgCmds.add(pomFileName);
+					if (appInfo.getModules() != null) {
+						for (ModuleInfo module : appInfo.getModules()) {
+							File moduleDir = new File(Utility.getProjectHome() + module.getRootModule() + File.separator + module.getCode());
+							String pluginInfoFile = moduleDir.getPath() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  APPLICATION_HANDLER_INFO_FILE;
+							ApplicationInfo subModuleAppInfo = ProjectUtils.getApplicationInfo(moduleDir);
+							postProjectCreation(projectInfo, serviceManager, projectUtils, repoInfo, subModuleAppInfo, pluginInfoFile, moduleDir);
 						}
-						 applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir);
+					} else {
+						String pluginInfoFile = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  APPLICATION_HANDLER_INFO_FILE;
+						File path = new File(Utility.getProjectHome() + appInfo.getAppDirName());
+						postProjectCreation(projectInfo, serviceManager, projectUtils, repoInfo, appInfo, pluginInfoFile, path);
 					}
-
 				}
 			} catch (FileNotFoundException e) {
 				throw new PhrescoException(e); 
@@ -322,8 +307,42 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			throw new PhrescoException("Project creation failed");
 		}
 
-		createEnvConfigXml(projectInfo, serviceManager);
 		return projectInfo;
+	}
+	
+	private void postProjectCreation(ProjectInfo projectInfo, ServiceManager serviceManager, ProjectUtils projectUtils,
+			RepoInfo repoInfo, ApplicationInfo appInfo, String pluginInfoFile, File baseDir) throws PhrescoException {
+		try {
+			projectUtils.updateTestPom(baseDir);
+			if (appInfo != null) {	
+				//For Pdf Document Creation In Docs Folder
+				DocumentGenerator documentGenerator = PhrescoFrameworkFactory.getDocumentGenerator();
+				documentGenerator.generate(appInfo, baseDir, null, serviceManager);
+	
+				MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
+				ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
+				if (applicationHandler != null) {
+					List<ArtifactGroup> plugins = setArtifactGroup(applicationHandler);
+					//Dynamic Class Loading
+					PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
+					ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(applicationHandler.getClazz());
+					applicationProcessor.postCreate(appInfo);
+				}
+				if (isCallEclipsePlugin(appInfo)) {
+					ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+					List<String> buildArgCmds = new ArrayList<String>();
+					String pomFileName = Utility.getPomFileName(appInfo);
+					if(!POM_NAME.equals(pomFileName)) {
+						buildArgCmds.add(HYPHEN_F);
+						buildArgCmds.add(pomFileName);
+					}
+					applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir.getPath());
+				}
+				createConfigurationXml(serviceManager, appInfo.getRootModule(), appInfo.getAppDirName());
+			}	
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
 	}
 	
 	private boolean isCallEclipsePlugin(ApplicationInfo appInfo) throws PhrescoException {
@@ -491,12 +510,13 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					}
 					applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir.toString());
 				}
+				createConfigurationXml(serviceManager, appInfo.getRootModule(), appInfo.getAppDirName());
 			} else if (response.getStatus() == 401) {
 				throw new PhrescoException("Session expired");
 			} else {
 				throw new PhrescoException("Project updation failed");
 			}
-			createEnvConfigXml(projectInfo, serviceManager);
+			
 		return projectInfo;
 	}
 
@@ -557,19 +577,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		}
 	}
 
-	private void createEnvConfigXml(ProjectInfo projectInfo, ServiceManager serviceManager) throws PhrescoException {
-		try {
-			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
-			Environment defaultEnv = getEnvFromService(serviceManager);
-			for (ApplicationInfo applicationInfo : appInfos) {
-				createConfigurationXml(applicationInfo.getRootModule(), applicationInfo.getAppDirName(), defaultEnv);	
-			}
-		} catch (PhrescoException e) {
-			S_LOGGER.error("Entered into the catch block of Configuration creation failed Exception" + e.getLocalizedMessage());
-			throw new PhrescoException("Configuration creation failed"+e);
-		}
-	}
-	
 	private File backUpProjectInfoFile(String oldDirPath) throws PhrescoException {
 		if(StringUtils.isNotEmpty(oldDirPath)) {
 			return null;
@@ -791,7 +798,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		return null;
 	}
 	
-	private File createConfigurationXml(String rootModule, String appDirName, Environment defaultEnv) throws PhrescoException {
+	private File createConfigurationXml(ServiceManager serviceManager, String rootModule, String appDirName) throws PhrescoException {
+		Environment defaultEnv = getEnvFromService(serviceManager);
 		if (StringUtils.isNotEmpty(rootModule)) {
 			appDirName = rootModule + File.separator + appDirName;
 		}

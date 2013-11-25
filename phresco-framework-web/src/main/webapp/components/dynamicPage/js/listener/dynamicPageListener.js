@@ -1515,7 +1515,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 				header.requestMethod = "GET";
 				header.dataType = "xml";
 				header.contentType = "application/xml",
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/fileBrowse?&appDirName="+ appDirName + (fileType === undefined || fileType === null ? "" : "&fileType=" + fileType);
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/fileBrowse?&appDirName="+ appDirName + (fileType === undefined || fileType === null ? "" : "&fileType=" + fileType)+moduleParam;
 			}
             
             return header;

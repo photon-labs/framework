@@ -469,8 +469,9 @@ define(["build/listener/buildListener"], function() {
 								fileInfo = {}, type = $(rCurrent).find('input[name=fileType]').val().trim(),
 								compressName = $(rCurrent).find('input[name='+ type +'MinName]').val().trim(),
 								files = $(rCurrent).find('input[name='+ type +'MinFiles]').val().trim(),
-								path = $(rCurrent).find('input[name='+ type +'filePath]').val().trim().replace(($(rCurrent).find('input[name='+ type +'filePath]').val().trim().split('\\').pop()), '');
-								
+								hiddenPath = $(rCurrent).find('input[name='+ type +'filePath]').val().trim(),
+								fileWithExtension = ($(rCurrent).find('input[name='+ type +'filePath]').val().trim().split('\\').pop()), 	
+								path = hiddenPath !== fileWithExtension ? hiddenPath.replace(fileWithExtension, '') :  hiddenPath;
 								if(type !== '' && files !== '' && path !== ''){
 									if(compressName === ''){
 										$(rCurrent).find('input[name='+ type +'MinName]').addClass('errormessage')

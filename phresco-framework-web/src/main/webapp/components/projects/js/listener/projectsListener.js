@@ -1915,7 +1915,7 @@ define([], function() {
 													dependentModules.push(dependency);
 												}
 											});
-											var moduleInfo = self.getModuleInfoObj($(this), "1dbcf61c-e7b7-4267-8431-822c4580f9cf", false, dependentModules);
+											var moduleInfo = self.getModuleInfoObj($(this), "1dbcf61c-e7b7-4267-8431-822c4580f9cf", false, dependentModules, code);
 											moduleInfos.push(moduleInfo);
 											canAddAppInfo = true;
 										} else {
@@ -1941,7 +1941,7 @@ define([], function() {
 											}
 											
 											if (modified) {
-												var moduleInfo = self.getModuleInfoObj($(this), "1dbcf61c-e7b7-4267-8431-822c4580f9cf", true, dependentModules);
+												var moduleInfo = self.getModuleInfoObj($(this), "1dbcf61c-e7b7-4267-8431-822c4580f9cf", true, dependentModules, code);
 												moduleInfos.push(moduleInfo);
 												canAddAppInfo = true;
 											}
@@ -2017,7 +2017,7 @@ define([], function() {
 													dependentModules.push(dependency);
 												}
 											});
-											var moduleInfo = self.getModuleInfoObj($(this), "e1af3f5b-7333-487d-98fa-46305b9dd6ee", false, dependentModules);
+											var moduleInfo = self.getModuleInfoObj($(this), "e1af3f5b-7333-487d-98fa-46305b9dd6ee", false, dependentModules, code);
 											moduleInfos.push(moduleInfo);
 											canAddAppInfo = true;
 										} else {
@@ -2043,7 +2043,7 @@ define([], function() {
 											}
 											
 											if (modified) {
-												var moduleInfo = self.getModuleInfoObj($(this), "e1af3f5b-7333-487d-98fa-46305b9dd6ee", true, dependentModules);
+												var moduleInfo = self.getModuleInfoObj($(this), "e1af3f5b-7333-487d-98fa-46305b9dd6ee", true, dependentModules, code);
 												moduleInfos.push(moduleInfo);
 												canAddAppInfo = true;
 											}
@@ -2123,7 +2123,7 @@ define([], function() {
 													dependentModules.push(dependency);
 												}
 											});
-											var moduleInfo = self.getModuleInfoObj($(this), "99d55693-dacd-4f77-994a-f02a66176ff9", false, dependentModules);
+											var moduleInfo = self.getModuleInfoObj($(this), "99d55693-dacd-4f77-994a-f02a66176ff9", false, dependentModules, code);
 											moduleInfos.push(moduleInfo);
 											canAddAppInfo = true;
 										} else {
@@ -2149,7 +2149,7 @@ define([], function() {
 											}
 											
 											if (modified) {
-												var moduleInfo = self.getModuleInfoObj($(this), "99d55693-dacd-4f77-994a-f02a66176ff9", true, dependentModules);
+												var moduleInfo = self.getModuleInfoObj($(this), "99d55693-dacd-4f77-994a-f02a66176ff9", true, dependentModules, code);
 												moduleInfos.push(moduleInfo);
 												canAddAppInfo = true;
 											}
@@ -2204,7 +2204,7 @@ define([], function() {
 			}
 		},
 		
-		getModuleInfoObj : function(thisObj, appTypeId, modified, dependentModules) {
+		getModuleInfoObj : function(thisObj, appTypeId, modified, dependentModules, rootModule) {
 			var appModuleName = thisObj.find('input[name=subModuleName]').val();
 			var moduleInfo = {};
 			moduleInfo.code = appModuleName;
@@ -2216,6 +2216,7 @@ define([], function() {
 			technologyInfo.name = thisObj.find('select[name=technology] option:selected').text();
 			technologyInfo.appTypeId = appTypeId;
 			moduleInfo.techInfo = technologyInfo;
+			moduleInfo.rootModule = rootModule;
 			return moduleInfo;
 		}
 	});

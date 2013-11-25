@@ -115,9 +115,10 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 	@GET
 	@Path("/minifer")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response minifer(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+	public Response minifer(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		ResponseInfo<List<BuildInfo>> responseData = new ResponseInfo<List<BuildInfo>>();
 		try {
+			appDirName = StringUtils.isNotEmpty(module) ? appDirName + File.separator + module : appDirName;
 			String pomPath = FrameworkServiceUtil.getAppPom(appDirName);
 			PomProcessor pomProcessor = new PomProcessor(new File(pomPath));
 			com.phresco.pom.model.Plugin.Configuration pluginConfig = pomProcessor.getPlugin(MINIFY_PLUGIN_GROUPID,
