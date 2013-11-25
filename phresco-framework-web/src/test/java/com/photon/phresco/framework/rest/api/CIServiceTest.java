@@ -240,8 +240,8 @@ public class CIServiceTest {
 	public void createBuildTest() throws PhrescoException {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response build = ciservice.build("testJob", "TestProject", "", "testContinuousDelivery");
-			Response buildApp = ciservice.build("testJobApp", null, "TestProject", "testContinuousDeliveryApp");
+			Response build = ciservice.build("testJob", "TestProject", "", "testContinuousDelivery", "photon");
+			Response buildApp = ciservice.build("testJobApp", null, "TestProject", "testContinuousDeliveryApp", "photon");
 			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) build.getEntity();
 			Assert.assertEquals(200, build.getStatus());
 		} else {
@@ -267,9 +267,9 @@ public class CIServiceTest {
 	public void getContinuousDeliveryTest() throws PhrescoException {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response continuousDeliveryJob = ciservice.getContinuousDeliveryJob("TestProject", "");
-			Response continuousDeliveryJobApp = ciservice.getContinuousDeliveryJob("", "TestProject");
-			Response cdJob = ciservice.getContinuousDeliveryJob("", "");
+			Response continuousDeliveryJob = ciservice.getContinuousDeliveryJob("TestProject", "", "photon");
+			Response continuousDeliveryJobApp = ciservice.getContinuousDeliveryJob("", "TestProject", "photon");
+			Response cdJob = ciservice.getContinuousDeliveryJob("", "", "photon");
 			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) continuousDeliveryJob.getEntity();
 			Assert.assertEquals(200, continuousDeliveryJob.getStatus());
 		} else {
@@ -282,8 +282,8 @@ public class CIServiceTest {
 		
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response builds = ciservice.getBuilds("TestProject", "", "testJob", "testContinuousDelivery");
-			Response buildsApp = ciservice.getBuilds("", "TestProject", "testJobApp", "testContinuousDeliveryApp");
+			Response builds = ciservice.getBuilds("TestProject", "", "testJob", "testContinuousDelivery", "photon");
+			Response buildsApp = ciservice.getBuilds("", "TestProject", "testJobApp", "testContinuousDeliveryApp", "photon");
 			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) builds.getEntity();
 			Assert.assertEquals(200, builds.getStatus());
 		} else {
@@ -296,7 +296,7 @@ public class CIServiceTest {
 		
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response lastBuildStatus = ciservice.getLastBuildStatus("testJob", "testContinuousDelivery", "TestProject", "");
+			Response lastBuildStatus = ciservice.getLastBuildStatus("testJob", "testContinuousDelivery", "TestProject", "", "photon");
 //			Response buildsApp = ciservice.getBuilds("", "TestProject", "testJobApp", "testContinuousDeliveryApp");
 //			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) builds.getEntity();
 			Assert.assertEquals(200, lastBuildStatus.getStatus());
@@ -337,7 +337,7 @@ public class CIServiceTest {
 			repoDetail.setPassword("manage");
 			repodetails.add(repoDetail);
 			
-			Response builds = ciservice.setGlobalConfiguration(repodetails, "test@gmail.com", "manage");
+			Response builds = ciservice.setGlobalConfiguration(repodetails, "test@gmail.com", "manage", "", "", "");
 			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) builds.getEntity();
 			Assert.assertEquals(200, builds.getStatus());
 		} else {
@@ -500,8 +500,8 @@ public class CIServiceTest {
 	public void editContinuousDeliveryTest() throws PhrescoException {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response editContinuousView = ciservice.editContinuousView("TestProject", "testContinuousDelivery", "");
-			Response editContinuousViewApp = ciservice.editContinuousView("", "testContinuousDeliveryApp", "TestProject");
+			Response editContinuousView = ciservice.editContinuousView("TestProject", "testContinuousDelivery", "", "photon");
+			Response editContinuousViewApp = ciservice.editContinuousView("", "testContinuousDeliveryApp", "TestProject", "photon");
 			Assert.assertEquals(200, editContinuousView.getStatus());
 		} else {
 			Assert.assertNotSame("200", jenkinsAlive);
@@ -512,8 +512,8 @@ public class CIServiceTest {
 	public void getStatusTest() throws PhrescoException {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			ciservice.getStatus("testJob", "testContinuousDelivery", "TestProject", "");
-			ciservice.getStatus("testJobApp", "testContinuousDeliveryApp", "", "TestProject");
+			ciservice.getStatus("testJob", "testContinuousDelivery", "TestProject", "", "photon");
+			ciservice.getStatus("testJobApp", "testContinuousDeliveryApp", "", "TestProject", "photon");
 		} else {
 			Assert.assertNotSame("200", jenkinsAlive);
 		}

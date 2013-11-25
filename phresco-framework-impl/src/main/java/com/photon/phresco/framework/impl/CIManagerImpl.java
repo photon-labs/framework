@@ -29,13 +29,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -74,6 +74,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.plexus.util.FileUtils;
@@ -100,6 +101,7 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.CIManager;
+import com.photon.phresco.framework.impl.util.FrameworkUtil;
 import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.trilead.ssh2.crypto.Base64;
@@ -219,6 +221,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			if (debugEnabled) {
 				S_LOGGER.debug("argList " + argList.toString());
 			}
+			login(cli);
 			int result = cli.execute(argList, processor.getConfigAsStream(), System.out, baos);
 			String message = "Job created successfully";
 			if (result == -1) { 
@@ -230,13 +233,8 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			}
 			//when svn is selected credential value has to set
 			if(SVN.equals(job.getRepoType())) {
-				StringBuilder ciPath = new StringBuilder(HTTP_PROTOCOL);
-				ciPath.append(PROTOCOL_POSTFIX);
-				ciPath.append(job.getJenkinsUrl());
-				ciPath.append(COLON);
-				ciPath.append(job.getJenkinsPort());
-				ciPath.append(FORWARD_SLASH);
-				ciPath.append(CI);
+				String jenkinsUrl = FrameworkUtil.getJenkinsUrl(job);
+				StringBuilder ciPath = new StringBuilder(jenkinsUrl);
 				ciPath.append(SCM_SUBVERSION_SCM_POST_CREDENTIAL);
 				setSVNCredentials(ciPath.toString(), job.getUrl(), job.getUsername(), job.getPassword());
 			}
@@ -247,6 +245,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			throw new PhrescoException(e);
 		} finally {
 			if (cli != null) {
+				logout(cli);
 				try {
 					cli.close();
 				} catch (IOException e) {
@@ -277,9 +276,9 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			SvnProcessor processor = new SvnProcessor(mailFile);
 
 			InetAddress ownIP = InetAddress.getLocalHost();
-			processor.changeNodeValue(CI_HUDSONURL, HTTP_PROTOCOL + PROTOCOL_POSTFIX + ownIP.getHostAddress() + COLON + jenkinsPort + FORWARD_SLASH + CI + FORWARD_SLASH);
+			processor.changeNodeValue(CI_HUDSONURL, FrameworkUtil.getLocaJenkinsUrl());
 			processor.changeNodeValue("smtpAuthUsername", senderEmailId);
-			processor.changeNodeValue("smtpAuthPassword", encyPassword(senderEmailPassword));
+			processor.changeNodeValue("smtpAuthPassword", (senderEmailPassword));
 			processor.changeNodeValue("adminAddress", senderEmailId);
 
 			String jenkinsJobHome = System.getenv(JENKINS_HOME);
@@ -308,7 +307,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				FileUtils.copyFile(confluenceFile, conluenceHomeXml);
 			}
 			SvnProcessor svn = new SvnProcessor(conluenceHomeXml);
-			svn.writeConfluenceXml(confluenceUrl, confluenceUsername, encyPassword(confluencePassword));
+			svn.writeConfluenceXml(confluenceUrl, confluenceUsername, (confluencePassword));
 		} catch (Exception e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into the catch block of CIManagerImpl.saveConfluenceConfiguration " + e.getLocalizedMessage());
@@ -317,24 +316,6 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 	}
 
-
-	public String encyPassword(String password) throws PhrescoException {
-		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method CIManagerImpl.encyPassword(String password)");
-		}
-		String encString = "";
-		try {
-			Cipher cipher = Cipher.getInstance(AES_ALGO);
-			cipher.init(Cipher.ENCRYPT_MODE, getAes128Key(CI_SECRET_KEY));
-			encString = new String(Base64.encode(cipher.doFinal((password+CI_ENCRYPT_MAGIC).getBytes(CI_UTF8))));
-		} catch (Exception e) {
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into the catch block of CIManagerImpl.encyPassword " + e.getLocalizedMessage());
-			}
-			throw new PhrescoException(e);
-		}
-		return encString;
-	}
 
 	public String decyPassword(String encryptedText) throws PhrescoException {
 		if (debugEnabled) {
@@ -471,7 +452,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		String jsonResponse = null;
 		String color = null;
 		try {
-			String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + job.getJenkinsUrl() + COLON + job.getJenkinsPort() + FORWARD_SLASH + CI + FORWARD_SLASH + CI_JOB + FORWARD_SLASH + job.getJobName()+ FORWARD_SLASH +  "api/json/color";
+			String jenkinsUrl = FrameworkUtil.getJenkinsUrl(job) + FORWARD_SLASH + CI_JOB + FORWARD_SLASH + job.getJobName()+ FORWARD_SLASH +  "api/json/color";
 			jsonResponse = getJsonResponse(jenkinsUrl);
 
 			JsonParser parser = new JsonParser();
@@ -494,9 +475,8 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		String jsonResponse = null;
 		CIBuild ciBuild = null;
 		try {
-			String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + job.getJenkinsUrl() + COLON + job.getJenkinsPort() + FORWARD_SLASH + CI + FORWARD_SLASH + CI_JOB + FORWARD_SLASH + job.getJobName()+ FORWARD_SLASH +  "api/json";
+			String jenkinsUrl = FrameworkUtil.getJenkinsUrl(job) + FORWARD_SLASH + CI_JOB + FORWARD_SLASH + job.getJobName()+ FORWARD_SLASH +  "api/json";
 			jsonResponse = getJsonResponse(jenkinsUrl);
-
 			JsonParser parser = new JsonParser();
 			JsonElement jsonElement = parser.parse(jsonResponse);
 			JsonObject jsonObject = jsonElement.getAsJsonObject();
@@ -528,6 +508,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		argList.add(FrameworkConstants.CI_BUILD_JOB_COMMAND);
 		argList.add(job.getJobName());
 		try {
+			login(cli);
 			int status = cli.execute(argList);
 			String message = FrameworkConstants.CI_BUILD_STARTED;
 			if (status == FrameworkConstants.JOB_STATUS_NOTOK) {
@@ -535,6 +516,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			}
 			return new CIJobStatus(status, message);
 		} finally {
+			logout(cli);
 			if (cli != null) {
 				try {
 					cli.close();
@@ -557,9 +539,9 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 		JsonArray jsonArray = null;
 		try {
-			String jenkinsUrl = "http://" + job.getJenkinsUrl() + ":" + job.getJenkinsPort() + "/ci/";
+			String jenkinsUrl = FrameworkUtil.getJenkinsUrl(job);
 			String jobNameUtf8 = job.getJobName().replace(" ", "%20");
-			String buildsJsonUrl = jenkinsUrl + "job/" + jobNameUtf8 + "/api/json";
+			String buildsJsonUrl = jenkinsUrl + "/job/" + jobNameUtf8 + "/api/json";
 			String jsonResponse = getJsonResponse(buildsJsonUrl);
 
 			JsonParser parser = new JsonParser();
@@ -644,6 +626,12 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 						S_LOGGER.debug("download artifact " + buildDownloadZip);
 					}
 					ciBuild.setDownload(buildDownloadZip);
+					// for testing alone 
+				/*} else {
+					if (debugEnabled) {
+						S_LOGGER.debug("download artifact " + buildDownloadZip);
+					}
+					ciBuild.setDownload(buildDownloadZip);*/
 				}
 			}
 		}
@@ -668,6 +656,8 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
+			HttpContext httpContext = new BasicHttpContext();
+			getAuthenticatedHttpClient(httpClient, httpContext);
 			HttpGet httpget = new HttpGet(jsonUrl);
 			ResponseHandler<String> responseHandler = new BasicResponseHandler();
 			return httpClient.execute(httpget, responseHandler);
@@ -680,12 +670,13 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.getCLI(CIJob job)");
 		}
-		String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + job.getJenkinsUrl() + COLON + job.getJenkinsPort() + FORWARD_SLASH + CI + FORWARD_SLASH;
+		String jenkinsUrl = FrameworkUtil.getJenkinsUrl(job);
 		if (debugEnabled) {
 			S_LOGGER.debug("jenkinsUrl to get cli object " + jenkinsUrl);
 		}
 		try {
-			return new CLI(new URL(jenkinsUrl));
+			URL jenkins = new URL(jenkinsUrl);
+			return new CLI(jenkins);
 		} catch (MalformedURLException e) {
 			throw new PhrescoException(e);
 		} catch (IOException e) {
@@ -694,6 +685,78 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			throw new PhrescoException(e);
 		}
 	}
+	
+	public void login(CLI cli) throws PhrescoException {
+		String username = FrameworkUtil.getJenkinsUsername();
+		String password = FrameworkUtil.getJenkinsPassword();
+		if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
+			List<String> argList = new ArrayList<String>();
+			argList.add("login");
+
+			argList.add("--username");
+			argList.add(username);
+
+			argList.add("--password");
+			argList.add(password);
+
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			int result = cli.execute(argList, null, System.out, baos);
+			String message = "Login successfull";
+			if (result == -1) {
+				byte[] byteArray = baos.toByteArray();
+				message = new String(byteArray);
+			}
+		}
+	}
+
+	public void logout(CLI cli) throws PhrescoException {
+		List<String> argList = new ArrayList<String>();
+		argList.add("logout");
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		int result = cli.execute(argList, null, System.out, baos);
+		String message = "logged out successfully";
+		if (result == -1) {
+			byte[] byteArray = baos.toByteArray();
+			message = new String(byteArray);
+		}
+	}
+
+	public void getAuthenticatedHttpClient(HttpClient client, HttpContext httpContext) throws PhrescoException {
+		try {
+			String jenkinsUsername = FrameworkUtil.getJenkinsUsername();
+			if (StringUtils.isNotEmpty(jenkinsUsername)) {
+				String url = FrameworkUtil.getJenkinsUrl() + "/j_acegi_security_check";
+				HttpPost post = new HttpPost(url);
+				String jenkinsPassword = FrameworkUtil.getJenkinsPassword();
+
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+				nameValuePairs.add(new BasicNameValuePair("j_username", jenkinsUsername));
+				nameValuePairs.add(new BasicNameValuePair("j_password", jenkinsPassword));
+				post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+				HttpResponse response = client.execute(post, httpContext);
+				EntityUtils.consume(response.getEntity());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new PhrescoException(e);
+		}
+	}
+	
+	/*private static void printResponse(HttpResponse response) throws IOException {
+		BufferedReader rd = new BufferedReader(new InputStreamReader(response
+				.getEntity().getContent()));
+		System.out.println("Reading " + rd);
+		StringBuffer result = new StringBuffer();
+		String line = "";
+		if (rd != null) {
+			while ((line = rd.readLine()) != null) {
+				result.append(line);
+			}
+		}
+		System.out.println(result.toString());
+	}*/
 
 	private void customizeNodes(ConfigProcessor processor, CIJob job) throws JDOMException,PhrescoException {
 		//SVN url customization
@@ -832,6 +895,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			S_LOGGER.debug("Build numbers " + builds);
 		}
 		try {
+			login(cli);
 			int status = cli.execute(argList);
 			String message = deleteType + " has successfully deleted in jenkins";
 			if (status == FrameworkConstants.JOB_STATUS_NOTOK) {
@@ -842,6 +906,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			S_LOGGER.debug("Delete CI Message " + message);
 			return new CIJobStatus(status, message);
 		} finally {
+			logout(cli);
 			if (cli != null) {
 				try {
 					cli.close();
@@ -879,7 +944,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 
 	public boolean createJsonJobs(ContinuousDelivery continuousDelivery, List<CIJob> jobs, String projId, String appDir) throws PhrescoException {
 		try {
-			String ciJobInfoPath = Utility.getCiJobInfoPath(appDir);
+			String ciJobInfoPath = Utility.getCiJobInfoPath(appDir, "");
 			File infoFile = new File(ciJobInfoPath);
 
 			//create new info file if not exists
@@ -940,8 +1005,8 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		return null;
 	}
 
-	public List<CIJob> getOldJobs(String projectId, ContinuousDelivery continuousDelivery, String appDirName) throws PhrescoException {
-		List<ProjectDelivery> ciJobInfo = getCiJobInfo(appDirName);
+	public List<CIJob> getOldJobs(String projectId, ContinuousDelivery continuousDelivery, String appDirName, String globalInfo) throws PhrescoException {
+		List<ProjectDelivery> ciJobInfo = getCiJobInfo(appDirName, globalInfo);
 		if (CollectionUtils.isNotEmpty(ciJobInfo)) {
 			return Utility.getJobs(continuousDelivery.getName(), projectId, ciJobInfo);
 		}
@@ -950,8 +1015,8 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 
 	public boolean clearContinuousDelivery(String continuousDeliveryName, String projId, String appDir) throws PhrescoException {
 		try {
-			List<ProjectDelivery> ciJobInfo = getCiJobInfo(appDir);
-			String ciJobInfoPath = Utility.getCiJobInfoPath(appDir);
+			List<ProjectDelivery> ciJobInfo = getCiJobInfo(appDir, "");
+			String ciJobInfoPath = Utility.getCiJobInfoPath(appDir, "");
 			if (CollectionUtils.isNotEmpty(ciJobInfo)) {
 				ProjectDelivery projectDelivery = Utility.getProjectDelivery(projId, ciJobInfo);
 				if (projectDelivery != null) {
@@ -980,7 +1045,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				return;
 			}
 			List<CIJob> jobs = new ArrayList<CIJob>();
-			List<ProjectDelivery> ciJobInfo = getCiJobInfo(appDir);
+			List<ProjectDelivery> ciJobInfo = getCiJobInfo(appDir, "");
 			ProjectDelivery projectDelivery = Utility.getProjectDelivery(projectId, ciJobInfo);
 			List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
 			ContinuousDelivery continuousDelivery = Utility.getContinuousDelivery(name, continuousDeliveries);
@@ -999,7 +1064,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 					}
 				}
 			}
-			String ciJobInfoPath = Utility.getCiJobInfoPath(appDir);
+			String ciJobInfoPath = Utility.getCiJobInfoPath(appDir, "");
 			ciInfoFileWriter(ciJobInfoPath, ciJobInfo);
 		} catch (Exception e) {
 			throw new PhrescoException(e);
@@ -1088,12 +1153,12 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		return ciJobTemplates;
 	}
 
-	public List<ProjectDelivery> getCiJobInfo(String appDir) throws PhrescoException {
+	public List<ProjectDelivery> getCiJobInfo(String appDir, String globalInfo) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.getCiJobInfo(String appDir)");
 		}
 		List<ProjectDelivery> projectDelivery = new ArrayList<ProjectDelivery>();
-		String ciJobInfoPath = Utility.getCiJobInfoPath(appDir);
+		String ciJobInfoPath = Utility.getCiJobInfoPath(appDir, globalInfo);
 		File ciJobInfoFile = new File(ciJobInfoPath);
 		if(!ciJobInfoFile.exists()) {
 			return new ArrayList<ProjectDelivery>();
@@ -1356,8 +1421,8 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 
 	private int getProgressInBuild(CIJob job) throws PhrescoException {
 		S_LOGGER.debug("Entering Method CIManagerImpl.isBuilding(CIJob job)");
-		String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + job.getJenkinsUrl() + COLON + job.getJenkinsPort() + FORWARD_SLASH + CI + FORWARD_SLASH;
-		String isBuildingUrlUrl = BUSY_EXECUTORS;
+		String jenkinsUrl = FrameworkUtil.getJenkinsUrl(job);
+		String isBuildingUrlUrl = FORWARD_SLASH + BUSY_EXECUTORS;
 		String jsonResponse = getJsonResponse(jenkinsUrl + isBuildingUrlUrl);
 		int buidInProgress = Integer.parseInt(jsonResponse);
 		S_LOGGER.debug("buidInProgress " + buidInProgress);
@@ -1389,6 +1454,9 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			HttpClient client = new DefaultHttpClient();
 			HttpPost post = new HttpPost(submitUrl);
 			HttpContext httpContext = new BasicHttpContext();
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			ciManager.getAuthenticatedHttpClient(client, httpContext);
+			
 			BasicCookieStore cookieStore =  new BasicCookieStore();
 			httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
 
@@ -1432,6 +1500,10 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			HttpClient client = new DefaultHttpClient();
 			HttpPost post = new HttpPost(submitUrl);
 			HttpContext httpContext = new BasicHttpContext();
+			//Configuring global configuration in remote jenkins
+//			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+//			ciManager.getAuthenticatedHttpClient(client, httpContext);
+			
 			CookieStore cookieStore =  new BasicCookieStore();
 			httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
 
@@ -1504,7 +1576,10 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			HttpContext httpContext = new BasicHttpContext();
 			CookieStore cookieStore =  new BasicCookieStore();
 			httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
-
+			//Configuring global configuration in remote jenkins
+//			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+//			ciManager.getAuthenticatedHttpClient(client, httpContext);
+			
 			String globalConfig = "/ciGlobalConfig.json";
 			InputStream resourceAsStream = CIManagerImpl.class.getResourceAsStream(globalConfig);
 			String json = IOUtils.toString(resourceAsStream);

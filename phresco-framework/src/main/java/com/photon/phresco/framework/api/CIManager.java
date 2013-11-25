@@ -20,6 +20,8 @@ package com.photon.phresco.framework.api;
 import java.io.*;
 import java.util.*;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.protocol.HttpContext;
 import org.codehaus.jettison.json.JSONArray;
 
 import com.photon.phresco.commons.model.*;
@@ -148,14 +150,7 @@ public interface CIManager {
 	 * @throws PhrescoException
 	 */
 	public List<String> getConfluenceSites() throws PhrescoException;
-
-	/**
-	 * @param password
-	 * @return
-	 * @throws PhrescoException
-	 */
-	public String encyPassword(String password) throws PhrescoException;
-
+	
 	/**
 	 * @param encryptedText
 	 * @return
@@ -223,7 +218,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	public List<ProjectDelivery> getCiJobInfo(String appDir) throws PhrescoException;
+	public List<ProjectDelivery> getCiJobInfo(String appDir, String globalInfo) throws PhrescoException;
 
 	/**
 	 * @param appDir
@@ -250,7 +245,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	public List<CIJob> getOldJobs(String projectId, ContinuousDelivery continuousDelivery, String appDirName) throws PhrescoException;
+	public List<CIJob> getOldJobs(String projectId, ContinuousDelivery continuousDelivery, String appDirName, String globalInfo) throws PhrescoException;
 
 	/**
 	 * @param ciJob
@@ -303,4 +298,11 @@ public interface CIManager {
 	 * @throws PhrescoException
 	 */
 	public CIBuild getStatusInfo(CIJob job) throws PhrescoException;
+	
+	/**
+	 * @param client
+	 * @param httpContext
+	 * @throws PhrescoException
+	 */
+	public void getAuthenticatedHttpClient(HttpClient client, HttpContext httpContext) throws PhrescoException;
 }

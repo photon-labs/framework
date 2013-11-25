@@ -180,7 +180,6 @@ public class ApplicationManagerImpl implements ApplicationManager {
 	private BufferedInputStream executeMavenCommand(ProjectInfo projectInfo, ActionType action, StringBuilder command, String workingDirectory) throws PhrescoException {
     	if (isDebugEnabled) {
     		S_LOGGER.debug("Entering Method ApplicationManagerImpl.executeMavenCommand(Project project, ActionType action, StringBuilder command)");
-    		S_LOGGER.debug("executeMavenCommand() Project Code = " + projectInfo.getProjectCode());
     		S_LOGGER.debug("executeMavenCommand() Command = " + command.toString());
     		S_LOGGER.debug("executeMavenCommand() ActionType Name = " + action.getActionType());
 		}

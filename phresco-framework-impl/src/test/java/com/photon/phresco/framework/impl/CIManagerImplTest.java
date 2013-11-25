@@ -17,11 +17,16 @@
  */
 package com.photon.phresco.framework.impl;
 
+import hudson.cli.CLI;
+
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -30,6 +35,17 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -78,6 +94,46 @@ public class CIManagerImplTest implements FrameworkConstants{
 	    if (ciManager != null) {
 	    	ciManager = null;
 	    }
+	}
+	
+//	@Test
+	public void testRun() throws Exception {
+		System.out.println("Test 1234 ");
+		HttpClient client = new DefaultHttpClient();
+		String uri = "http://172.16.22.180:3579/ci/j_acegi_security_check";
+
+		HttpPost post = new HttpPost(uri);
+		HttpContext httpContext = new BasicHttpContext();
+
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+		nameValuePairs.add(new BasicNameValuePair("j_username", "admin"));
+		nameValuePairs.add(new BasicNameValuePair("j_password", "admin"));
+		post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+		HttpResponse response = client.execute(post, httpContext);
+		System.out.println("Response Code : "
+				+ response.getStatusLine().getStatusCode());
+
+		EntityUtils.consume(response.getEntity());
+		HttpGet request = new HttpGet("http://172.16.22.180:3579/ci");
+		HttpResponse response1 = client.execute(request);
+		int responseCode1 = response1.getStatusLine().getStatusCode();
+		System.out.println("Response Code : " + responseCode1);
+		printResponse(response1);
+	}
+	
+	private static void printResponse(HttpResponse response) throws IOException {
+		BufferedReader rd = new BufferedReader(new InputStreamReader(response
+				.getEntity().getContent()));
+		System.out.println("Reading " + rd);
+		StringBuffer result = new StringBuffer();
+		String line = "";
+		if (rd != null) {
+			while ((line = rd.readLine()) != null) {
+				result.append(line);
+			}
+		}
+		System.out.println(result.toString());
 	}
 	
 //	@Test
@@ -454,5 +510,96 @@ public class CIManagerImplTest implements FrameworkConstants{
 	private CIJob updateWithCloneTheWorkspace(CIJob job) {
 		job.setCloneWorkspace(true);
 		return job;
+	}
+	
+	//@Test
+	public void testTesting() throws Exception {
+		System.out.println("Testing !!!!!! ");
+//		String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + job.getJenkinsUrl() + COLON + job.getJenkinsPort() + FORWARD_SLASH + CI + FORWARD_SLASH;
+//		String jenkinsUrl = "http://172.16.26.79:3579/ci/";
+		String jenkinsUrl = "http://172.16.22.180:3579/ci/";
+			try {
+				CLI cli = new CLI(new URL(jenkinsUrl));
+				
+				// login and create a job
+				List<String> argList = new ArrayList<String>();
+				argList.add("who-am-i");
+				System.out.println("========================================================");
+				int result = cli.execute(argList);
+				System.out.println("who am i > " + result);
+				
+				System.out.println("========================================================");
+				List<String> argList1 = new ArrayList<String>();
+				argList1.add("login");
+				
+				argList1.add("--username");
+				argList1.add("jenkins");
+				
+				argList1.add("--password");
+				argList1.add("jenkins");
+				System.out.println("========================================================");
+				int result1 = cli.execute(argList1);
+				System.out.println("login > " + result1);
+				System.out.println("========================================================");
+				
+				List<String> argList2 = new ArrayList<String>();
+				argList2.add("who-am-i");
+				System.out.println("========================================================");
+				int result2 = cli.execute(argList2);
+				System.out.println("who am i > " + result2);
+				System.out.println("========================================================");
+				
+				//build a job
+				System.out.println("========================================================");
+				System.out.println("Buildin job test....");
+				List<String> build = new ArrayList<String>();
+				build.add("build");
+				build.add("KaleesBuild");
+				int result11 = cli.execute(build);
+				System.out.println("========================================================");
+				
+				
+				
+				
+				// create job
+				List<String> createL = new ArrayList<String>();
+				createL.add("create-job");
+				createL.add("KaleesTesting123");
+				File configFile = new File("/Users/kaleeswaran/workspace/tools/jenkins/jobs/JWS-Build/config.xml");
+				FileInputStream is = new FileInputStream(configFile);
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				System.out.println("========================================================");
+				int create = cli.execute(createL, is, System.out, baos);
+				System.out.println(baos.toString());
+				System.out.println("creat job > " + create);
+				System.out.println("========================================================");
+				
+				List<String> argList3 = new ArrayList<String>();
+				argList3.add("logout");
+				System.out.println("========================================================");
+				int result3 = cli.execute(argList3);
+				System.out.println("logout > " + result3);
+				System.out.println("========================================================");
+				
+				
+				List<String> argList4 = new ArrayList<String>();
+				argList4.add("who-am-i");
+				System.out.println("========================================================");
+				int result4 = cli.execute(argList4);
+				System.out.println("who am i > " + result4);
+				System.out.println("========================================================");
+				
+				if (cli != null) {
+					try {
+						cli.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 	}
 }

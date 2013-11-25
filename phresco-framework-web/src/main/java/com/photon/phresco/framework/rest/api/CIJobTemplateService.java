@@ -347,7 +347,7 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 			}
 		}
 		CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-		List<ProjectDelivery> projectDeliveries = ciManager.getCiJobInfo(null);
+		List<ProjectDelivery> projectDeliveries = ciManager.getCiJobInfo(null, "");
 		if (CollectionUtils.isNotEmpty(projectDeliveries)) {
 			ProjectDelivery projectDelivery = Utility.getProjectDelivery(projId, projectDeliveries);
 			if (projectDelivery != null) {
@@ -373,7 +373,7 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 		for (String appId : appIds) {
 			for (ApplicationInfo appInfo : appInfos) {
 				if(appInfo.getName().equals(appId)){
-					List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appInfo.getAppDirName());
+					List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appInfo.getAppDirName(), "");
 					if (CollectionUtils.isNotEmpty(ciJobInfo)) {
 						ProjectDelivery appDelivery = Utility.getProjectDelivery(projId, ciJobInfo);
 						if (appDelivery != null) {

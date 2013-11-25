@@ -503,13 +503,13 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	private void updateCiInfoFile(ProjectInfo projectInfo, String oldDir) throws PhrescoException {
 		ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 		
-		String ciJobInfoPath = Utility.getCiJobInfoPath(oldDir);
+		String ciJobInfoPath = Utility.getCiJobInfoPath(oldDir, "");
 		File ciJobInfoFile = new File(ciJobInfoPath);
 		if(ciJobInfoFile.exists()) {
 			updateCiInfo(applicationInfo, ciJobInfoPath, ciJobInfoFile, oldDir, projectInfo.getId());
 		}
 		
-		String ciInfoPath = Utility.getCiJobInfoPath(null);
+		String ciInfoPath = Utility.getCiJobInfoPath(null, "");
 		
 		File ciJobInfoFilePath = new File(ciInfoPath);
 		if(ciJobInfoFilePath.exists()) {

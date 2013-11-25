@@ -138,7 +138,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 			//to hide all opts @ startup in view page
 			$(".opts").hide();
 			self.jenkinsStatus.dispatch(function(callback) {
-				if(callback.data !== "200") {
+				if(callback.data !== "200" && callback.data !== "403") {
 					var errorMessage = callback.responseCode;
 					if(callback.data === "503") {
 						errorMessage = "PHR800011";

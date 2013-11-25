@@ -137,7 +137,7 @@ public class QualityUtil {
             jmxFile = jmxFiles[0];
         }
 
-		Document document = ApplicationsUtil.getDocument(jmxFile);
+		Document document = com.photon.phresco.framework.impl.util.FrameworkUtil.getDocument(jmxFile);
 		appendThreadProperties(document, noOfUsers, rampUpPeriod, loopCount);
 		NodeList nodelist = org.apache.xpath.XPathAPI.selectNodeList(document, "jmeterTestPlan/hashTree/hashTree/hashTree/HTTPSamplerProxy");
 		if (nodelist != null && nodelist.getLength() > 0) {
@@ -183,7 +183,7 @@ public class QualityUtil {
             jmxFile = jmxFiles[0];
         }
 
-		Document document = ApplicationsUtil.getDocument(jmxFile);
+		Document document = com.photon.phresco.framework.impl.util.FrameworkUtil.getDocument(jmxFile);
 		appendThreadProperties(document, noOfUsers, rampUpPeriod, loopCount);
 		appendJdbcDataSrc(document, dataSource, dbUrl, driver, userName, passWord);
 		NodeList nodelist = org.apache.xpath.XPathAPI.selectNodeList(document, "jmeterTestPlan/hashTree/hashTree/hashTree/JDBCSampler");
@@ -209,7 +209,7 @@ public class QualityUtil {
             File[] jmxFiles = jmxDir.listFiles(filter);
             jmxFile = jmxFiles[0];
         }
-        Document document = ApplicationsUtil.getDocument(jmxFile);
+        Document document = com.photon.phresco.framework.impl.util.FrameworkUtil.getDocument(jmxFile);
         appendThreadProperties(document, noOfUsers, rampUpPeriod, loopCount);
         if (MapUtils.isNotEmpty(headersMap)) {
         	NodeList hashTree = org.apache.xpath.XPathAPI.selectNodeList(document, "jmeterTestPlan/hashTree/hashTree/hashTree");
@@ -678,7 +678,7 @@ public class QualityUtil {
 		File buildPathXml = null;
             S_LOGGER.debug("Entering Method QualityUtil.testSuite() performance path and TestName " + performancePath + " " + testName);
 		buildPathXml = new File(performancePath + buildFileName);
-		Document document = ApplicationsUtil.getDocument(buildPathXml);
+		Document document = com.photon.phresco.framework.impl.util.FrameworkUtil.getDocument(buildPathXml);
 		String fileNameNode = "project/target[@name='init']/property[@name='jmeter.result.file']";
 		NodeList nodelist = org.apache.xpath.XPathAPI.selectNodeList(document, fileNameNode);
 		if (nodelist != null && nodelist.getLength() > 0) {

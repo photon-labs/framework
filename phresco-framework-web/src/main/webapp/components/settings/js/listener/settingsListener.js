@@ -73,11 +73,13 @@ define([], function() {
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.mvnCiStop;
 			} else if (action === "save") {
 				header.requestMethod = "POST";
-				var user = $('input[name=username][temp=email]').val();
-				var pass = $('input[name=password][temp=email]').val();
+				var eUser = $('input[name=username][temp=email]').val();
+				var ePass = $('input[name=password][temp=email]').val();
+				var jUrl = $('input[name=jenkinsUrl][temp=jenkins]').val();
+				var jName = $('input[name=juserName][temp=jenkins]').val();
+				var jPass = $('input[name=jpassword][temp=jenkins]').val();				
 				header.requestPostBody = JSON.stringify(ciRequestBody);
-//				header.requestPostBody = ciRequestBody;
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/global?emailAddress=" + user + "&emailPassword=" + pass;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/global?emailAddress=" + eUser + "&emailPassword=" + ePass + "&url=" + jUrl + "&username=" + jName + "&password=" + jPass;
 			} 
 			return header;
 		},
@@ -86,7 +88,9 @@ define([], function() {
 			var self = this;
 			
 			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'jenkinsUrl'), function(response) {
-				$('input[name=jenkinsUrl]').val(response.data);
+				$('input[name=jenkinsUrl]').val(response.data.repoUrl);
+				$('input[name=juserName]').val(response.data.userName);
+				$('input[name=jpassword]').val(response.data.password);
 			});
 			
 			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'getMail'), function(response) {

@@ -85,38 +85,6 @@ public class ApplicationsUtil implements FrameworkConstants {
     	return csv;
     }
     
-	public static Document getDocument(File file) throws PhrescoException {
-		if (s_debugEnabled) {
-    		S_LOGGER.debug("Entering into ApplicationsUtil.getDocument()");
-    	}
-		InputStream fis = null;
-        DocumentBuilder builder = null;
-        try {
-            fis = new FileInputStream(file);
-            DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-            domFactory.setNamespaceAware(false);
-            builder = domFactory.newDocumentBuilder();
-            Document doc = builder.parse(fis);
-            return doc;
-        } catch (FileNotFoundException e) {
-        	throw new PhrescoException(e);
-		} catch (ParserConfigurationException e) {
-			throw new PhrescoException(e);
-		} catch (SAXException e) {
-			throw new PhrescoException(e);
-		} catch (IOException e) {
-			throw new PhrescoException(e);
-		} finally {
-        	if (fis != null) {
-        		try {
-					fis.close();
-				} catch (IOException e) {
-					throw new PhrescoException(e);
-				}
-            }
-        }
-	}
-	
 	public static List<Integer> getArrayListFromStrArr(String[] strArr) {
 		if (s_debugEnabled) {
     		S_LOGGER.debug("Entering into ApplicationsUtil.getArrayListFromStrArr()");

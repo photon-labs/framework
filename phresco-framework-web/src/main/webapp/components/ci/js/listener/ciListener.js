@@ -139,7 +139,7 @@ define([], function() {
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates+ "?customerId="+ customerId + "&projectId=" + projectId;
 			} else if (action === "continuousDeliveryList") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci+"/list?projectId="+projectId+"&appDirName="+appDir;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci+"/list?projectId="+projectId+"&appDirName="+appDir + "&customerId="+ customerId;
 			} else if (action === "update") {
 				header.requestMethod = "PUT";
 				header.requestPostBody = JSON.stringify(ciRequestBody);
@@ -199,13 +199,13 @@ define([], function() {
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/update" + "?customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+appDir + "&userId=" +userId;
 			}  else if (action === "getBuilds") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/builds?projectId="+projectId+"&name="+ciRequestBody.jobName+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/builds?projectId="+projectId+"&name="+ciRequestBody.jobName+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName + "&customerId=" + customerId;
 			} else if (action === "generateBuild") {
 				header.requestMethod = "POST";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/build?name="+ciRequestBody.jobName+"&projectId="+projectId+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/build?name="+ciRequestBody.jobName+"&projectId="+projectId+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName + "&customerId=" + customerId;
 			} else if (action === "lastBuildStatus") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/lastBuildStatus?name="+ciRequestBody.jobName+"&projectId="+projectId+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/lastBuildStatus?name="+ciRequestBody.jobName+"&projectId="+projectId+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName + "&customerId=" + customerId;
 			} else if (action === "deleteBuild") {
 				header.requestMethod = "DELETE";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/deletebuilds?buildNumber="+ciRequestBody.buildNumber+"&name="+ciRequestBody.jobName+"&projectId="+projectId+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName;
@@ -214,7 +214,7 @@ define([], function() {
 				header.webserviceurl  =commonVariables.webserviceurl + commonVariables.ci +"/downloadBuild?buildDownloadUrl=" +ciRequestBody.buildDownloadUrl+"&downloadJobName="+ciRequestBody.jobName+ "&customerId=" + customerId +"&projectId="+projectId+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName;
 			} else if (action === "jobStatus") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/jobStatus?name="+ciRequestBody.jobName+"&continuousName="+ciRequestBody.cdName+"&projectId="+projectId+"&appDirName="+appDir;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/jobStatus?name="+ciRequestBody.jobName+"&continuousName="+ciRequestBody.cdName+"&projectId="+projectId+"&appDirName="+appDir + "&customerId=" + customerId;
 			} else if (action === "deleteContinuousDelivery") {
 				header.requestMethod = "DELETE";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/delete?continuousName="+ciRequestBody.cdName+"&customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+appDir;
@@ -228,7 +228,7 @@ define([], function() {
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.ci+"/clone?customerId="+ customerId + "&projectId="+projectId+"&appDirName=" + appDir + "&userId=" + userId +"&"+ciRequestBody.data;
 			} else if(action === "editContinuousView") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/editContinuousView?projectId="+projectId+"&appDirName="+appDir+"&name=" + params;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/editContinuousView?projectId="+projectId+"&appDirName="+appDir+"&name=" + params + "&customerId="+ customerId;
 			} else if(action === "jenkinsStatus") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/isAlive";

@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.KeyStore;
 import java.security.cert.CertificateException;
@@ -67,6 +68,7 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.BuildInfo;
+import com.photon.phresco.commons.model.CIJob;
 import com.photon.phresco.commons.model.CertificateInfo;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.ProjectInfo;
@@ -838,27 +840,6 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 		return actionresponse;
 	}
 
-	/**
-	 * Gets the port no.
-	 *
-	 * @param path the path
-	 * @return the port no
-	 * @throws PhrescoException the phresco exception
-	 */
-	public static String getJenkinsPortNo() throws PhrescoException {
-		String portNo = "";
-		try {
-			String jenkinsHome = Utility.getJenkinsHome();
-			StringBuilder path = new StringBuilder(jenkinsHome);
-			Document document = ApplicationsUtil.getDocument(new File(path.toString() + File.separator + POM_FILE));
-			String portNoNode = CI_TOMCAT_HTTP_PORT;
-			NodeList nodelist = org.apache.xpath.XPathAPI.selectNodeList(document, portNoNode);
-			portNo = nodelist.item(0).getTextContent();
-		} catch (Exception e) {
-			throw new PhrescoException(e);
-		}
-		return portNo;
-	}
 	
 	private boolean fetchAlreadyValidatedKeys(Map<String, List<String>> validateMap, Parameter parameter) {
 		boolean alreadyValidated = false;
