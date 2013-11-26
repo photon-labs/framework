@@ -376,7 +376,7 @@
         <phresco.unitTest.java.report.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/do_not_checkin/reports/unitReports</phresco.unitTest.java.report.dir>
         <phresco.unitTest.java.testsuite.xpath xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testsuite</phresco.unitTest.java.testsuite.xpath>
         <phresco.unitTest.java.testcase.path xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testcase</phresco.unitTest.java.testcase.path>
-        <phresco.functionalTest.selenium.tool xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">webdriver</phresco.functionalTest.selenium.tool>
+        <phresco.functionalTest.selenium.tool xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">grid</phresco.functionalTest.selenium.tool>
         <phresco.functionalTest.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/test/functional</phresco.functionalTest.dir>
         <phresco.functionalTest.report.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/test/functional/target/surefire-reports</phresco.functionalTest.report.dir>
         <phresco.functionalTest.testsuite.xpath xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testsuite</phresco.functionalTest.testsuite.xpath>

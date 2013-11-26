@@ -1,0 +1,274 @@
+<!--
+
+    Archetype - phresco-html5-jquery-archetype
+
+    Copyright (C) 1999-2013 Photon Infotech Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<archetype-descriptor name="html5">
+	<fileSets> 	
+		<fileSet filtered="false" packaged="false"> 
+			<directory>.phresco/</directory> 
+			<includes> 
+				<include>archetype-metadata.xml</include> 
+				<include>excludefiles.txt</include> 
+				<include>war-config.xml</include> 
+				<include>phresco-package-info.xml</include>
+				<include>phresco-deploy-info.xml</include>
+				<include>phresco-validate-code-info.xml</include>
+				<include>phresco-functional-test-info.xml</include>
+				<include>phresco-load-test-info.xml</include>
+				<include>phresco-ci-info.xml</include>
+				<include>phresco-application-handler-info.xml</include>
+				<include>phresco-start-hub-info.xml</include>
+				<include>phresco-start-node-info.xml</include>
+				<include>phresco-run-against-source-info.xml</include>
+				<include>phresco-pdf-report-info.xml</include>
+				<include>phresco-performance-test-info.xml</include>
+				<include>phresco-unit-test-info.xml</include>
+			</includes> 
+		</fileSet>
+		<fileSet filtered="false" packaged="false"> 
+			<directory>docs</directory> 
+			<includes> 
+				<include>PHTN_Reference_Guide.doc</include> 
+				<include>PHTN_Release_Notes.doc</include> 
+				<include>README.txt</include> 
+			</includes> 
+		</fileSet>
+		<fileSet filtered="false" packaged="false"> 
+			<directory>src/main/java/com/photon/phresco/configuration</directory> 
+			<includes>
+				<include>ConfigReader.java</include>
+				<include>Configuration.java</include>
+			</includes>
+		</fileSet>
+		<fileSet filtered="false" packaged="false"> 
+			<directory>src/main/webapp</directory> 
+			<includes>
+				<include>environment.jsp</include>
+				<include>index.jsp</include>
+			</includes>
+		</fileSet>
+        
+		<fileSet filtered="false" packaged="false"> 
+			<directory>src/main/webapp/WEB-INF</directory> 
+			<includes>
+				<include>web.xml</include>
+			</includes>
+		</fileSet>
+		<fileSet filtered="false" packaged="false"> 
+			<directory>src/main/webapp/js/framework</directory> 
+			<includes>
+				<include>Base.js</include>
+				<include>LoginWidget.js</include>
+			</includes>
+		</fileSet>
+		<fileSet filtered="false" packaged="false"> 
+			<directory>src/main/webapp/images</directory> 
+			<includes>
+				<include>**/*</include>
+			</includes>
+		</fileSet>
+		<fileSet filtered="false" packaged="false"> 
+			<directory>src/main/webapp/css</directory> 
+			<includes>
+				<include>**/*</include>
+			</includes>
+		</fileSet>
+		<fileSet filtered="false" packaged="false"> 
+			<directory>src/main/webapp/WEB-INF/resources</directory> 
+			<includes>
+				<include>phresco-env-config.xml</include>
+			</includes>
+		</fileSet>
+		<fileSet filtered="false" packaged="false"> 
+			<directory>src/test/java/com/photon/phresco/service</directory> 
+			<includes>
+				<include>TestCase.java</include>
+			</includes>
+		</fileSet>
+		<fileSet filtered="false" packaged="false"> 
+			<directory>src/test/webapp/js/Framework</directory> 
+			<includes>
+				<include>LoginTest.js</include>
+			</includes>
+		</fileSet>
+		<fileSet filtered="false" packaged="false"> 
+			<directory>src/test/webapp/resources/css</directory> 
+			<includes>
+				<include>qunit.css</include>
+			</includes>
+		</fileSet>
+		<fileSet filtered="false" packaged="false"> 
+			<directory>src/test/webapp/resources/Framework</directory> 
+			<includes>
+				<include>LoginTest.html</include>
+			</includes>
+		</fileSet>
+        
+        <fileSet filtered="false" encoding="UTF-8">
+			<directory>test/functional</directory>
+			<includes>
+				<include>pom.xml</include>
+				<include>hubconfig.json</include>
+				<include>nodeconfig.json</include>
+			</includes>
+		</fileSet>
+        
+        <fileSet filtered="false" packaged="false"> 
+			<directory>test/manual</directory> 
+			<includes>
+				<include>HeliOs_HTML5mobilewidget_Manual_Testcases.xls</include>
+			</includes>
+		</fileSet>
+        
+		<fileSet filtered="false" encoding="UTF-8">
+			<directory>test/functional/src/main/java/com/photon/phresco/Screens</directory>
+			<includes>
+				<include>BaseScreen.java</include>
+				<include>PhotonAbstractScreen.java</include>
+				<include>WelcomeScreen.java</include>
+			</includes>
+		</fileSet>		
+		<fileSet filtered="false" encoding="UTF-8">
+			<directory>test/functional/src/main/java/com/photon/phresco/selenium/util</directory>
+			<includes>
+				<include>Constants.java</include>
+				<include>ScreenActionFailedException.java</include>
+				<include>ScreenException.java</include>
+				<include>GetCurrentDir.java</include>
+			</includes>
+		</fileSet>
+		<fileSet filtered="false" encoding="UTF-8">
+			<directory>test/functional/src/main/java/com/photon/phresco/uiconstants</directory>
+			<includes>
+				<include>PhrescoUiConstants.java</include>
+				<include>ReadXMLFile.java</include>
+			</includes>
+		</fileSet>
+		<fileSet filtered="false" encoding="UTF-8">
+			<directory>test/functional/src/main/resources</directory>
+			<includes>
+				<include>phresco-env-config.xml</include>
+			</includes>
+		</fileSet>
+		<fileSet filtered="false" encoding="UTF-8">
+			<directory>test/functional/src/test/java/com/photon/phresco/testcases</directory>
+			<includes>
+				<include>WelcomePageTestCase.java</include>
+			</includes>
+		</fileSet>
+        <fileSet filtered="false" encoding="UTF-8">
+			<directory>test/functional/src/test/java/com/photon/phresco/testsuites</directory>
+			<includes>
+				<include>AllTest.xml</include>
+				<include>WelcomePageTestSuite.xml</include>
+			</includes>
+		</fileSet>
+		<fileSet filtered="false"> 
+			<directory>test/load/server</directory> 
+			<includes> 
+				<include>build.properties</include>
+				<include>build.xml</include>
+				<include>pom.xml</include>
+			</includes> 
+		</fileSet>
+		<fileSet filtered="false"> 
+			<directory>test/load/webservice</directory> 
+			<includes> 
+				<include>build.properties</include>
+				<include>build.xml</include>
+				<include>pom.xml</include>
+			</includes> 
+		</fileSet>
+        <fileSet filtered="false"> 
+			<directory>test/load/server/tests</directory> 
+			<includes> 
+				<include>phresco-env-config.csv</include>
+				<include>PhrescoFrameWork_TestPlan.jmx</include>
+			</includes> 
+		</fileSet>
+        <fileSet filtered="false"> 
+			<directory>test/load/webservice/tests</directory> 
+			<includes> 
+				<include>phresco-env-config.csv</include>
+				<include>PhrescoFrameWork_TestPlan.jmx</include>
+			</includes> 
+		</fileSet>
+		<fileSet filtered="false" encoding="UTF-8"> 
+			<directory>test/performance/database</directory> 
+			<includes> 
+				<include>build.properties</include> 
+				<include>build.xml</include> 
+				<include>pom.xml</include> 
+			</includes> 
+		</fileSet>
+		<fileSet filtered="false" encoding="UTF-8"> 
+			<directory>test/performance/database/tests</directory> 
+			<includes> 
+				<include>PhrescoFrameWork_TestPlan.jmx</include> 				
+			</includes> 
+		</fileSet>
+		<fileSet filtered="false" packaged="false"> 
+			<directory>test/performance/server</directory> 
+			<includes>
+				<include>build.properties</include>
+				<include>build.xml</include>
+				<include>pom.xml</include>
+			</includes>
+		</fileSet>
+		<fileSet filtered="false" packaged="false"> 
+			<directory>test/performance/server/tests</directory> 
+			<includes>
+				<include>phresco-env-config.csv</include>
+				<include>PhrescoFrameWork_TestPlan.jmx</include>
+			</includes>
+		</fileSet>
+		<fileSet filtered="false" packaged="false"> 
+			<directory>test/performance/webservice</directory> 
+			<includes>
+				<include>build.properties</include>
+				<include>build.xml</include>
+				<include>pom.xml</include>
+			</includes>
+		</fileSet>
+		<fileSet filtered="false" packaged="false"> 
+			<directory>test/performance/webservice/tests</directory> 
+			<includes>
+				<include>phresco-env-config.csv</include>
+				<include>PhrescoFrameWork_TestPlan.jmx</include>
+			</includes>
+		</fileSet>
+         <fileSet filtered="false"> 
+			<directory>test/performance/server/json</directory> 
+			<includes> 
+				<include>**/*</include>
+			</includes> 
+		</fileSet>
+        <fileSet filtered="false"> 
+			<directory>test/performance/database/json</directory> 
+			<includes> 
+				<include>**/*</include>
+			</includes> 
+		</fileSet>
+        <fileSet filtered="false"> 
+			<directory>test/performance/webservice/json</directory> 
+			<includes> 
+				<include>**/*</include>
+			</includes> 
+		</fileSet>		
+	</fileSets>
+</archetype-descriptor>

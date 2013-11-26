@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mojos>
+    <mojo>
+		<goal>start-node</goal>
+		<description>Goal which starts the node</description>
+		<requiresDirectInvocation>false</requiresDirectInvocation>
+		<requiresProject>true</requiresProject>
+		<requiresReports>false</requiresReports>
+		<aggregator>false</aggregator>
+		<requiresOnline>false</requiresOnline>
+		<inheritedByDefault>true</inheritedByDefault>
+		<language>java</language>
+		<instantiationStrategy>per-lookup</instantiationStrategy>
+		<executionStrategy>once-per-session</executionStrategy>
+		<threadSafe>false</threadSafe>
+		<configuration>
+            <parameters>
+                <parameter>
+                    <name>
+                        <value lang="en">Hub Host</value>
+                    </name>
+                    <type>String</type>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>hubHost</key>
+                    <multiple>false</multiple>
+                    <value>localhost</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Hub Port</value>
+                    </name>
+                    <type>String</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>hubPort</key>
+                    <multiple>false</multiple>
+                    <value>4444</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Node Port</value>
+                    </name>
+                    <type>String</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>nodeport</key>
+                    <multiple>false</multiple>
+                    <value>5555</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Max Session</value>
+                    </name>
+                    <type>String</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>maxSession</key>
+                    <multiple>false</multiple>
+                    <value>5</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Selenium Protocol</value>
+                    </name>
+                    <type>String</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>seleniumProtocol</key>
+                    <multiple>false</multiple>
+                    <value>WebDriver</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Register</value>
+                    </name>
+                    <type>String</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>register</key>
+                    <multiple>false</multiple>
+                    <value>true</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Register Cycle</value>
+                    </name>
+                    <type>String</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>registerCycle</key>
+                    <multiple>false</multiple>
+                    <value>5000</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Proxy</value>
+                    </name>
+                    <type>String</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>proxy</key>
+                    <multiple>false</multiple>
+                    <value>org.openqa.grid.selenium.proxy.DefaultRemoteProxy</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Browser Info</value>
+                    </name>
+                    <type>map</type>
+                    <childs>
+                        <child>
+                            <name>
+								<value lang="en">Browser Name</value>
+                            </name>
+                            <type>List</type>
+                            <key>browserName</key>
+                            <possibleValues>
+								<value key="firefox">Firefox</value>
+								<value key="chrome">Google Chrome</value>
+								<value key="internet explorer">Internet Explorer</value>
+								<value key="safari">Safari</value>
+								<value key="opera">Opera</value>
+								<value key="htmlunit">Non GUI(Html Unit)</value>
+								<value key="iPhone">Iphone WebDriver</value>
+                            </possibleValues>
+                            <required>true</required>
+                            <description>Name of the browsers</description>
+                        </child>
+                        <child>
+                            <name>
+								<value lang="en">Max Instances</value>
+                            </name>
+                            <type>String</type>
+                            <key>browserMaxInstances</key>
+                            <required>true</required>
+                            <description>no of instances of the browser</description>
+                        </child>
+                    </childs>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>browserInfo</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+            </parameters>
+        </configuration>
+	</mojo>
+</mojos>

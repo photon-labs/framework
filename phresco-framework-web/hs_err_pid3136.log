@@ -1,0 +1,142 @@
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Native memory allocation (malloc) failed to allocate 32756 bytes for ChunkPool::allocate
+# Possible reasons:
+#   The system is out of physical RAM or swap space
+#   In 32 bit mode, the process size limit was hit
+# Possible solutions:
+#   Reduce memory load on the system
+#   Increase physical memory or swap space
+#   Check if swap backing store is full
+#   Use 64 bit Java on a 64 bit OS
+#   Decrease Java heap size (-Xmx/-Xms)
+#   Decrease number of Java threads
+#   Decrease Java thread stack sizes (-Xss)
+#   Set larger code cache with -XX:ReservedCodeCacheSize=
+# This output file may be truncated or incomplete.
+#
+#  Out of Memory Error (allocation.cpp:211), pid=3136, tid=6012
+#
+# JRE version: 6.0_26-b03
+# Java VM: Java HotSpot(TM) Client VM (20.1-b02 mixed mode, sharing windows-x86 )
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x01109400):  JavaThread "C1 CompilerThread0" daemon [_thread_in_native, id=6012, stack(0x043f0000,0x04440000)]
+
+Stack: [0x043f0000,0x04440000],  sp=0x0443f518,  free space=317k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [jvm.dll+0x13379a]
+V  [jvm.dll+0x12e78c]
+V  [jvm.dll+0x53be9]
+V  [jvm.dll+0x53de2]
+V  [jvm.dll+0x53fe3]
+V  [jvm.dll+0x65b7e]
+V  [jvm.dll+0x12f198]
+V  [jvm.dll+0xf1b48]
+V  [jvm.dll+0x1f780d]
+V  [jvm.dll+0x1f77e4]
+V  [jvm.dll+0x1f77e4]
+V  [jvm.dll+0x1f77e4]
+V  [jvm.dll+0x1f7c03]
+V  [jvm.dll+0x1f7d28]
+V  [jvm.dll+0x1fa073]
+V  [jvm.dll+0x1e3ad9]
+V  [jvm.dll+0x1e3b6c]
+V  [jvm.dll+0x1e3cbf]
+V  [jvm.dll+0x1e3f14]
+V  [jvm.dll+0x3db2d]
+V  [jvm.dll+0x3e655]
+V  [jvm.dll+0x1190d4]
+V  [jvm.dll+0x1411ac]
+C  [MSVCR71.dll+0x9565]  endthreadex+0xa0
+C  [kernel32.dll+0xb729]  GetModuleFileNameA+0x1ba
+
+
+Current CompileTask:
+C1: 119617 322      com.sun.tools.javac.jvm.ClassReader.sigToType()Lcom/sun/tools/javac/code/Type; (819 bytes)
+
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x01118000 JavaThread "Low Memory Detector" daemon [_thread_blocked, id=4604, stack(0x04440000,0x04840000)]
+=>0x01109400 JavaThread "C1 CompilerThread0" daemon [_thread_in_native, id=6012, stack(0x043f0000,0x04440000)]
+  0x01107c00 JavaThread "Attach Listener" daemon [_thread_blocked, id=3952, stack(0x03ff0000,0x043f0000)]
+  0x01106400 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=4424, stack(0x03bf0000,0x03ff0000)]
+  0x01102c00 JavaThread "Finalizer" daemon [_thread_blocked, id=3720, stack(0x037f0000,0x03bf0000)]
+  0x010fe000 JavaThread "Reference Handler" daemon [_thread_blocked, id=4968, stack(0x033f0000,0x037f0000)]
+  0x010a0400 JavaThread "main" [_thread_blocked, id=4288, stack(0x00c90000,0x01090000)]
+
+Other Threads:
+  0x010c2000 VMThread [stack: 0x033a0000,0x033f0000] [id=4876]
+  0x0111a000 WatcherThread [stack: 0x04840000,0x04890000] [id=684]
+
+VM state:not at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+Heap
+ def new generation   total 11648K, used 5439K [0x22a40000, 0x236e0000, 0x27f90000)
+  eden space 10368K,  42% used [0x22a40000, 0x22e860e0, 0x23460000)
+  from space 1280K,  83% used [0x23460000, 0x23569d90, 0x235a0000)
+  to   space 1280K,   0% used [0x235a0000, 0x235a0000, 0x236e0000)
+ tenured generation   total 25772K, used 16574K [0x27f90000, 0x298bb000, 0x32a40000)
+   the space 25772K,  64% used [0x27f90000, 0x28fbf958, 0x28fbfa00, 0x298bb000)
+ compacting perm gen  total 12288K, used 3513K [0x32a40000, 0x33640000, 0x36a40000)
+   the space 12288K,  28% used [0x32a40000, 0x32dae628, 0x32dae800, 0x33640000)
+    ro space 10240K,  54% used [0x36a40000, 0x36fbeb78, 0x36fbec00, 0x37440000)
+    rw space 12288K,  55% used [0x37440000, 0x37ae49c8, 0x37ae4a00, 0x38040000)
+
+Code Cache  [0x011c0000, 0x012c0000, 0x031c0000)
+ total_blobs=464 nmethods=329 adapters=71 free_code_cache=32508288 largest_free_block=1984
+
+Dynamic libraries:
+0x00400000 - 0x0040a000 	C:\Program Files\Java\jdk1.6.0_26\bin\javac.exe
+0x7c900000 - 0x7c9b2000 	C:\WINDOWS\system32\ntdll.dll
+0x7c800000 - 0x7c8f6000 	C:\WINDOWS\system32\kernel32.dll
+0x002a0000 - 0x0030c000 	C:\WINDOWS\SYSTEM32\SYSFER.DLL
+0x6d010000 - 0x6d025000 	C:\Program Files\Java\jdk1.6.0_26\bin\jli.dll
+0x77dd0000 - 0x77e6b000 	C:\WINDOWS\system32\ADVAPI32.dll
+0x77e70000 - 0x77f03000 	C:\WINDOWS\system32\RPCRT4.dll
+0x77fe0000 - 0x77ff1000 	C:\WINDOWS\system32\Secur32.dll
+0x7c340000 - 0x7c396000 	C:\Program Files\Java\jdk1.6.0_26\bin\MSVCR71.dll
+0x00360000 - 0x003b6000 	C:\Program Files\Java\jdk1.6.0_26\jre\bin\msvcr71.dll
+0x6d8a0000 - 0x6db4f000 	C:\Program Files\Java\jdk1.6.0_26\jre\bin\client\jvm.dll
+0x7e410000 - 0x7e4a1000 	C:\WINDOWS\system32\USER32.dll
+0x77f10000 - 0x77f59000 	C:\WINDOWS\system32\GDI32.dll
+0x76b40000 - 0x76b6d000 	C:\WINDOWS\system32\WINMM.dll
+0x629c0000 - 0x629c9000 	C:\WINDOWS\system32\LPK.DLL
+0x74d90000 - 0x74dfb000 	C:\WINDOWS\system32\USP10.dll
+0x6d850000 - 0x6d85c000 	C:\Program Files\Java\jdk1.6.0_26\jre\bin\verify.dll
+0x6d3d0000 - 0x6d3ef000 	C:\Program Files\Java\jdk1.6.0_26\jre\bin\java.dll
+0x76bf0000 - 0x76bfb000 	C:\WINDOWS\system32\PSAPI.DLL
+0x6d890000 - 0x6d89f000 	C:\Program Files\Java\jdk1.6.0_26\jre\bin\zip.dll
+
+VM Arguments:
+jvm_args: -Dapplication.home=C:\Program Files\Java\jdk1.6.0_26 -Xms8m -Xss4m -ea:com.sun.tools... 
+java_command: com.sun.tools.javac.Main -classpath D:\Build\3.1.0\Phresco-Adoption\phresco-framework\workspace\projects\framework\phresco-framework-web\do_not_checkin\target\classes;D:\Build\3.1.0\Phresco-Adoption\phresco-framework\bin\..\workspace\repo\org\easymock\easymock\3.2\easymock-3.2.jar;D:\Build\3.1.0\Phresco-Adoption\phresco-framework\bin\..\workspace\repo\cglib\cglib-nodep\2.2.2\cglib-nodep-2.2.2.jar;D:\Build\3.1.0\Phresco-Adoption\phresco-framework\bin\..\workspace\repo\org\objenesis\objenesis\1.3\objenesis-1.3.jar;D:\Build\3.1.0\Phresco-Adoption\phresco-framework\bin\..\workspace\repo\org\cometd\java\bayeux-api\2.5.0-beta2\bayeux-api-2.5.0-beta2.jar;D:\Build\3.1.0\Phresco-Adoption\phresco-framework\bin\..\workspace\repo\org\cometd\java\cometd-java-server\2.5.0-beta2\cometd-java-server-2.5.0-beta2.jar;D:\Build\3.1.0\Phresco-Adoption\phresco-framework\bin\..\workspace\repo\org\cometd\java\cometd-java-common\2.5.0-beta2\cometd-java-common-2.5.0-beta2.jar;D:\Build\3.1.0\Phresco-Adoption\phresco-framework\bin\..\workspace\repo\org\slf4j\slf4j-api\1.6.4\slf4j-api-1.6.4.jar;D:\Build\3.1.0\Phresco-Adoption\phresco-framework\bin\..\workspace\repo\org\cometd\java\cometd-java-annotations\2.5.0-beta2\cometd-java-annotations-2.5.0-beta2.jar;D:\Build\3.1.0\Phresco-Adoption\phresco-framework\bin\..\workspace\repo\javax\inject\javax.inject\1\javax.inject-1.jar;D:\Build\3.1.0\Phresco-Adoption\phresco-framework\bin\..\workspace\repo\javax\annotation\jsr250-api\1.0\jsr250-api-1.0.jar;D:\Build\3.1.0\Phresco-Adoption\phresco-framework\bin\..\workspace\repo\org\cometd\java\cometd-websocket-jetty\2.5.0-beta2\cometd-websocket-jetty-2.5.0-beta2.jar;D:\Build\3.1.0\Phresco-Adoption\phresco-framework\bin\..\workspace\repo\org\eclipse\jetty\jetty-util\7.6.4.v20120524\jetty-util-7.6.4.v20120524.jar;D:\Build\3.1.0\Phresco-Adoption\phresco-framework\bin\..\workspace\repo\org\eclipse\jetty\jetty-jmx\7.6.4.v20120524\jetty-jmx-7.6.4.v20120524.jar;D:\Build\3.1.0\Phresco-Adoption\phresco-
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+JAVA_HOME=C:\Program Files\Java\jdk1.6.0_26
+PATH=D:\Build\3.1.0\Phresco-Adoption\phresco-framework\bin\..\tools\maven\bin;D:\Build\3.1.0\Phresco-Adoption\phresco-framework\bin\..\bin;D:\Build\3.1.0\Phresco-Adoption\phresco-framework\bin\..\workspace\tools\phantomjs-1.5.0-win32-static;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\system32\WindowsPowerShell\v1.0;C:\Program Files\Java\jdk1.6.0_26\bin;C:\Program Files\TortoiseSVN\bin;C:\Program Files\OpenLDAP\kfw\Binary;D:\Softwares\apache-maven-3.0.3\bin;D:\Softwares\apache-ant-1.8.3\bin;C:\wamp\bin\php\php5.3.10;D:\jboss-as-7.0.2.Final\bin;C:\Program Files\Java\jdk1.6.0_26\bin;C:\Program Files\TortoiseGit\bin;C:\Program Files\Git\cmd;C:\phantomjs-1.5.0-win32-static;C:\Program Files\Internet Explorer;C:\Program Files\nodejs\;C:\Program Files\SSH Communications Security\SSH Secure Shell;C:\Documents and Settings\vivekraja_v\Application Data\npm\;D:\Softwares\gradle-1.6\bin;D:\Softwares\jscoverage;D:\Softwares\apache-ant-1.8.3\bin;C:\opscode\chef\bin;;
+USERNAME=vivekraja_v
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=x86 Family 6 Model 23 Stepping 10, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows XP Build 2600 Service Pack 3
+
+CPU:total 2 (2 cores per cpu, 1 threads per core) family 6 model 23 stepping 10, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3
+
+Memory: 4k page, physical 2085780k(225220k free), swap 3452812k(307684k free)
+
+vm_info: Java HotSpot(TM) Client VM (20.1-b02) for windows-x86 JRE (1.6.0_26-b03), built on May  4 2011 00:50:59 by "java_re" with MS VC++ 7.1 (VS2003)
+
+time: Tue Nov 26 16:13:05 2013
+elapsed time: 119 seconds
+

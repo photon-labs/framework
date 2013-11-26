@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     
     <parent>
         <groupId>com.photon.phresco.framework</groupId>
@@ -843,9 +842,9 @@
 					  <goal>copy-dependencies</goal>
 					</goals>
 					<configuration>
-					  <includeTypes>js</includeTypes>
-					  <outputDirectory>do_not_checkin/target/lib</outputDirectory>
-					</configuration>
+                            <includeTypes>js</includeTypes>
+                            <outputDirectory>do_not_checkin/target/lib</outputDirectory>
+                        </configuration>
 				  </execution>
 				</executions>
 			 </plugin>
@@ -878,13 +877,13 @@
                 <configuration>
                     <webXml>do_not_checkin/target/jspweb.xml</webXml>
                     <warSourceExcludes>**/*.jsp</warSourceExcludes>
-					 <webResources>
-						<resource>
-							<filtering>true</filtering>
-							<targetPath>lib</targetPath>
-							<directory>do_not_checkin/target/lib/</directory>
-							<includes>
-								<include>**/*.js</include>
+                    <webResources>
+                        <resource>
+                            <filtering>true</filtering>
+                            <targetPath>lib</targetPath>
+                            <directory>do_not_checkin/target/lib/</directory>
+                            <includes>
+                                <include>**/*.js</include>
 							</includes>
 						</resource>
 					  </webResources>
@@ -927,12 +926,12 @@
                             <goal>compile-reports</goal>
                         </goals>
                         <configuration>
-                            <!-- define where is your jrxml file -->
                             <sourceDirectory>src\\main\\resources\\reports\\template</sourceDirectory>
                             <sourceFileExt>.jrxml</sourceFileExt>
                             <compiler>net.sf.jasperreports.engine.design.JRJavacCompiler</compiler>
-                            <!-- define where is the jasper file will be generated -->
                             <outputDirectory>src\\main\\resources\\reports\\jasper</outputDirectory>
+                            <!-- define where is your jrxml file -->
+                            <!-- define where is the jasper file will be generated -->
                         </configuration>
                     </execution>
                 </executions>
@@ -965,22 +964,21 @@
 					</execution>
 				</executions>
 				<configuration>
-					<runnerType>REQUIREJS</runnerType>
-					<coverage>true</coverage>
-					<skipTests>${js.skipTest}</skipTests>
-					<packBeforeTest>false</packBeforeTest>
-					<amdPreloads>
-						<amdPreload>lib/jquery.js</amdPreload>
-					</amdPreloads>						
-					<testIncludes>
-						<testInclude>components/login/test/config.json</testInclude>
-						<testInclude>components/login/test/BootstrapTest.js</testInclude>
+                    <runnerType>REQUIREJS</runnerType>
+                    <coverage>true</coverage>
+                    <skipTests>${js.skipTest}</skipTests>
+                    <packBeforeTest>false</packBeforeTest>
+                    <amdPreloads>
+                        <amdPreload>lib/jquery.js</amdPreload>
+					</amdPreloads>
+                    <testIncludes>
+                        <testInclude>components/login/test/config.json</testInclude>
+                        <testInclude>components/login/test/BootstrapTest.js</testInclude>
 					</testIncludes>
-					<testExcludes>
-                       <testExclude>**/lib/**/*.js</testExclude>
+                    <testExcludes>
+                        <testExclude>**/lib/**/*.js</testExclude>
                    </testExcludes>
-
-				</configuration>
+                </configuration>
 			</plugin>
         </plugins>
         <resources>
@@ -1027,7 +1025,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore></ignore>
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -1043,10 +1041,10 @@
             <properties>
                 <sonar.branch>js</sonar.branch>
                 <sonar.language>js</sonar.language>
-				<sonar.exclusions>**/test/**,**/lib/**</sonar.exclusions>
+                <sonar.exclusions>**/test/**,**/lib/**</sonar.exclusions>
                 <phresco.source.directory>src/main/webapp</phresco.source.directory>
-				<testSourceDirectory>src/main/webapp</testSourceDirectory>
-				<js.skipTest>false</js.skipTest>
+                <testSourceDirectory>src/main/webapp</testSourceDirectory>
+                <js.skipTest>false</js.skipTest>
             </properties>
         </profile>
         <profile>
@@ -1058,42 +1056,42 @@
                 <sonar.branch>java</sonar.branch>
                 <sonar.language>java</sonar.language>
                 <phresco.source.directory>src/main/java</phresco.source.directory>
-				<testSourceDirectory>src/test/java</testSourceDirectory>
-				<js.skipTest>true</js.skipTest>
+                <testSourceDirectory>src/test/java</testSourceDirectory>
+                <js.skipTest>true</js.skipTest>
             </properties>
         </profile>
 	</profiles>
 	<properties>
-		<phresco.env.config.xml>/src/main/webapp/WEB-INF/resources/phresco-env-config.xml</phresco.env.config.xml>
-		<phresco.env.test.config.xml>/src/test/webapp/resources/phresco-env-config.xml</phresco.env.test.config.xml>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sonar.language>js</sonar.language>
-		<sonar.javascript.jstest.reportsfolder>/do_not_checkin/target/jstest/report/emulator-0</sonar.javascript.jstest.reportsfolder>
-		<sonar.javascript.testframework>jstest</sonar.javascript.testframework>
-		<phresco.jslibs.source.dir>/src/main/webapp/lib</phresco.jslibs.source.dir>
-		<phresco.source.resource.dir>/src/main/webapp/WEB-INF/resources</phresco.source.resource.dir>
-		<phresco.components.source.dir>/src/main/webapp/components</phresco.components.source.dir>
-		<phresco.eclipse>true</phresco.eclipse>
-		<phresco.unitTest>js,java</phresco.unitTest>
-		<phresco.unitTest.js.report.dir>/do_not_checkin/target/jstest/report/emulator-0</phresco.unitTest.js.report.dir>
-		<phresco.unitTest.js.testsuite.xpath>/testsuite</phresco.unitTest.js.testsuite.xpath>
-		<phresco.unitTest.js.testcase.path>/testcase</phresco.unitTest.js.testcase.path>
-		<phresco.manualTest.testcase.path>/test/manual</phresco.manualTest.testcase.path>
-		<phresco.unitTest.java.report.dir>/do_not_checkin/target/surefire-reports</phresco.unitTest.java.report.dir>
-		<phresco.unitTest.java.testsuite.xpath>/testsuite</phresco.unitTest.java.testsuite.xpath>
-		<phresco.unitTest.java.testcase.path>/testcase</phresco.unitTest.java.testcase.path>
-		<phresco.functionalTest.selenium.tool>grid</phresco.functionalTest.selenium.tool>
-		<phresco.functionalTest.dir>/test/functional</phresco.functionalTest.dir>
-		<phresco.functionalTest.report.dir>/test/functional/target/surefire-reports</phresco.functionalTest.report.dir>
-		<phresco.functionalTest.testsuite.xpath>/testsuite</phresco.functionalTest.testsuite.xpath>
-		<phresco.functionalTest.testcase.path>/testcase</phresco.functionalTest.testcase.path>
-		<phresco.functionalTest.adapt.config>/test/functional/src/main/resources/phresco-env-config.xml</phresco.functionalTest.adapt.config>
-		<phresco.performanceTest.dir>/test/performance</phresco.performanceTest.dir>
-		<phresco.performanceTest.report.dir>/test/performance/dir_type/results/jmeter</phresco.performanceTest.report.dir>
-		<phresco.loadTest.dir>/test/load</phresco.loadTest.dir>
-		<phresco.loadTest.report.dir>/test/load/dir_type/results/jmeter</phresco.loadTest.report.dir>
-		<phresco.theme.builder.path>/src/main/webapp/css</phresco.theme.builder.path>
-		<phresco.theme.builder.image.path>/src/main/webapp/images</phresco.theme.builder.image.path>
-		<phresco.theme.file.extension>.css</phresco.theme.file.extension>
-	</properties>
+        <phresco.env.config.xml>/src/main/webapp/WEB-INF/resources/phresco-env-config.xml</phresco.env.config.xml>
+        <phresco.env.test.config.xml>/src/test/webapp/resources/phresco-env-config.xml</phresco.env.test.config.xml>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sonar.language>js</sonar.language>
+        <sonar.javascript.jstest.reportsfolder>/do_not_checkin/target/jstest/report/emulator-0</sonar.javascript.jstest.reportsfolder>
+        <sonar.javascript.testframework>jstest</sonar.javascript.testframework>
+        <phresco.jslibs.source.dir>/src/main/webapp/lib</phresco.jslibs.source.dir>
+        <phresco.source.resource.dir>/src/main/webapp/WEB-INF/resources</phresco.source.resource.dir>
+        <phresco.components.source.dir>/src/main/webapp/components</phresco.components.source.dir>
+        <phresco.eclipse>true</phresco.eclipse>
+        <phresco.unitTest>js,java</phresco.unitTest>
+        <phresco.unitTest.js.report.dir>/do_not_checkin/target/jstest/report/emulator-0</phresco.unitTest.js.report.dir>
+        <phresco.unitTest.js.testsuite.xpath>/testsuite</phresco.unitTest.js.testsuite.xpath>
+        <phresco.unitTest.js.testcase.path>/testcase</phresco.unitTest.js.testcase.path>
+        <phresco.manualTest.testcase.path>/test/manual</phresco.manualTest.testcase.path>
+        <phresco.unitTest.java.report.dir>/do_not_checkin/target/surefire-reports</phresco.unitTest.java.report.dir>
+        <phresco.unitTest.java.testsuite.xpath>/testsuite</phresco.unitTest.java.testsuite.xpath>
+        <phresco.unitTest.java.testcase.path>/testcase</phresco.unitTest.java.testcase.path>
+        <phresco.functionalTest.selenium.tool>grid</phresco.functionalTest.selenium.tool>
+        <phresco.functionalTest.dir>/test/functional</phresco.functionalTest.dir>
+        <phresco.functionalTest.report.dir>/test/functional/target/surefire-reports</phresco.functionalTest.report.dir>
+        <phresco.functionalTest.testsuite.xpath>/testsuite</phresco.functionalTest.testsuite.xpath>
+        <phresco.functionalTest.testcase.path>/testcase</phresco.functionalTest.testcase.path>
+        <phresco.functionalTest.adapt.config>/test/functional/src/main/resources/phresco-env-config.xml</phresco.functionalTest.adapt.config>
+        <phresco.performanceTest.dir>/test/performance</phresco.performanceTest.dir>
+        <phresco.performanceTest.report.dir>/test/performance/dir_type/results/jmeter</phresco.performanceTest.report.dir>
+        <phresco.loadTest.dir>/test/load</phresco.loadTest.dir>
+        <phresco.loadTest.report.dir>/test/load/dir_type/results/jmeter</phresco.loadTest.report.dir>
+        <phresco.theme.builder.path>/src/main/webapp/css</phresco.theme.builder.path>
+        <phresco.theme.builder.image.path>/src/main/webapp/images</phresco.theme.builder.image.path>
+        <phresco.theme.file.extension>.css</phresco.theme.file.extension>
+    </properties>
 </project>

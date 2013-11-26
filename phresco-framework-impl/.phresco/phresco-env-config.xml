@@ -1,0 +1,140 @@
+<environments>
+<environment appliesTo="" default="false" desc="" name="Production">
+        <Server name="server">
+            <context>framework</context>
+            <admin_username/>
+            <deploy_dir>D:\work\Framwork-apache-tomcat-7.0.14\webapps</deploy_dir>
+            <additional_context>/</additional_context>
+            <port>2468</port>
+            <admin_password/>
+            <version>2.3</version>
+            <certificate/>
+            <type>Apache</type>
+            <remoteDeployment>false</remoteDeployment>
+            <protocol>http</protocol>
+            <host>localhost</host>
+        </Server>
+        <WebService name="Webservice">
+            <port>80</port>
+            <password/>
+            <context>service-2.0</context>
+            <additional_context>/rest/api</additional_context>
+            <host>phresco.photoninfotech.com</host>
+            <protocol>http</protocol>
+            <username/>
+        </WebService>
+        <Other name="Apikey">
+            <apiKey>Bearer TXuk45IV_fFoCou1pzu15l2jEgka</apiKey>
+        </Other>
+    </environment>
+    <environment appliesTo="" default="true" desc="" name="Development">
+        <Server desc="" name="server">
+            <context>framework</context>
+            <deploy_dir/>
+            <admin_username>admin</admin_username>
+            <additional_context>/</additional_context>
+            <port>8080</port>
+            <admin_password>admin</admin_password>
+            <version>7.0.x</version>
+            <type>Apache Tomcat</type>
+            <remoteDeployment>true</remoteDeployment>
+            <protocol>http</protocol>
+            <host>172.16.17.227</host>
+        </Server>
+        <WebService desc="" name="webservice">
+            <port>8080</port>
+            <password/>
+            <context>service</context>
+            <host>172.16.17.227</host>
+            <protocol>http</protocol>
+            <username/>
+            <additional_context>/rest/api</additional_context>
+        </WebService>
+        <Other name="Apikey">
+            <apiKey>Bearer TXuk45IV_fFoCou1pzu15l2jEgka</apiKey>
+        </Other>
+    </environment>
+    <environment appliesTo="" default="false" desc="" name="Testing">
+        <Server desc="" name="server">
+            <context>framework</context>
+            <deploy_dir>D:/Softwares/apache-tomcat-7.0.14/webapps/</deploy_dir>
+            <admin_username/>
+            <additional_context>/</additional_context>
+            <port>3030</port>
+            <admin_password/>
+            <version>7.0.x</version>
+            <type>Apache Tomcat</type>
+            <remoteDeployment>false</remoteDeployment>
+            <protocol>http</protocol>
+            <host>localhost</host>
+        </Server>
+        <WebService name="webservice">
+            <port>7070</port>
+            <password/>
+            <context>service-test</context>
+            <additional_context>/rest/api</additional_context>
+            <host>172.16.17.117</host>
+            <protocol>http</protocol>
+            <username/>
+        </WebService>
+        <Other name="Apikey">
+            <apiKey>Bearer oaqHffzj7qp0nCLW8VKeE8toAIYa</apiKey>
+        </Other>
+    </environment>
+    <environment appliesTo="" default="false" desc="" name="Testing-amazon">
+        <Server name="server">
+            <context>framework</context>
+            <admin_username/>
+            <deploy_dir>D:\work\Framwork-apache-tomcat-7.0.14\webapps</deploy_dir>
+            <additional_context>/</additional_context>
+            <port>2468</port>
+            <admin_password/>
+            <version>2.3</version>
+            <certificate/>
+            <type>Apache</type>
+            <remoteDeployment>false</remoteDeployment>
+            <protocol>http</protocol>
+            <host>localhost</host>
+        </Server>
+        <WebService name="webservice">
+            <port>8080</port>
+            <password/>
+            <context>service-testing</context>
+            <additional_context>/rest/api</additional_context>
+            <host>54.242.10.51</host>
+            <protocol>http</protocol>
+            <username/>
+        </WebService>
+        <Other name="Apikey">
+            <apiKey>Bearer oaqHffzj7qp0nCLW8VKeE8toAIYa</apiKey>
+        </Other>
+    </environment>
+    <environment appliesTo="" default="false" desc="" name="Testing-ws">
+        <Server name="server">
+            <context>framework</context>
+            <admin_username/>
+            <deploy_dir>D:\work\Framwork-apache-tomcat-7.0.14\webapps</deploy_dir>
+            <additional_context>/</additional_context>
+            <port>2468</port>
+            <admin_password/>
+            <version>2.3</version>
+            <certificate/>
+            <type>Apache</type>
+            <remoteDeployment>false</remoteDeployment>
+            <protocol>http</protocol>
+            <host>localhost</host>
+        </Server>
+        <WebService name="webservice">
+            <port>3030</port>
+            <password/>
+            <context>service</context>
+            <additional_context>/rest/api</additional_context>
+            <host>localhost</host>
+            <protocol>http</protocol>
+            <username/>
+        </WebService>
+        <Other name="Apikey">
+            <apiKey>Bearer oaqHffzj7qp0nCLW8VKeE8toAIYa</apiKey>
+        </Other>
+    </environment>
+</environments>
