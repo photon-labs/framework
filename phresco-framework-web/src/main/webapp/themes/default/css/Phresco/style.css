@@ -1286,7 +1286,7 @@ img[name="close"] {
 
 .create_proj textarea {
 	margin-bottom: 0px;
-	height:52px;
+	/* height:52px; */
 }
 
 .startdate input, .enddate input {

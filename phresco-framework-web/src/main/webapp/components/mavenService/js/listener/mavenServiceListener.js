@@ -358,7 +358,7 @@ define([], function() {
 				}else if(logStr.match("SUCCESS")){
 					return "green";
 				}else if(logStr.toLowerCase().match("server running at https://") ||
-					logStr.toLowerCase().match("server running at http://")){
+					logStr.toLowerCase().match("server running at http://") || logStr.toLowerCase().match("running war on http://")){
 					return "green";
 				}else{
 					return "block";

@@ -890,6 +890,8 @@ define([], function() {
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							if(response.responseCode === "PHR200017") {
 								commonVariables.api.showError(response.responseCode ,"success", true);
+							} else if(response.responseCode === "PHR210048") {
+								commonVariables.api.showError(response.responseCode ,"error", true);
 							}
 							callback(response);						
 						} else {
@@ -1091,10 +1093,12 @@ define([], function() {
 				$("#importloading").hide();
 				if (response.exception === null) {
 					$("#project_list_import").hide();	
-					self.getMyObj(commonVariables.projectlist, function(returnVal){
-						self.projectlist = returnVal;
-						Clazz.navigationController.push(self.projectlist, commonVariables.animation);
-					});
+					setTimeout(function() {
+						self.getMyObj(commonVariables.projectlist, function(returnVal){
+							self.projectlist = returnVal;
+							Clazz.navigationController.push(self.projectlist, commonVariables.animation);
+						});
+					},1000);	
 				}
 				commonVariables.hideloading = false;
 			});
