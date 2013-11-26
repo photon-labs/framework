@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0">
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.photon.phresco.framework</groupId>
     <artifactId>phresco-framework-root</artifactId>
@@ -25,30 +24,30 @@
                     <configuration>
                         <lifecycleMappingMetadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <pluginExecutions>
-<pluginExecution>
-    <pluginExecutionFilter>
-        <groupId>org.apache.geronimo.genesis.plugins</groupId>
-        <artifactId>tools-maven-plugin</artifactId>
-        <versionRange>[1.1,)</versionRange>
-        <goals>
-            <goal>copy-legal-files</goal>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.geronimo.genesis.plugins</groupId>
+                                        <artifactId>tools-maven-plugin</artifactId>
+                                        <versionRange>[1.1,)</versionRange>
+                                        <goals>
+                                            <goal>copy-legal-files</goal>
                                         </goals>
                                     </pluginExecutionFilter>
-    <action>
-        <ignore/>
+                                    <action>
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
-<pluginExecution>
-    <pluginExecutionFilter>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jasperreports-maven-plugin</artifactId>
-        <versionRange>[1.0-beta-2,)</versionRange>
-        <goals>
-            <goal>compile-reports</goal>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>jasperreports-maven-plugin</artifactId>
+                                        <versionRange>[1.0-beta-2,)</versionRange>
+                                        <goals>
+                                            <goal>compile-reports</goal>
                                         </goals>
                                     </pluginExecutionFilter>
-    <action>
-        <ignore/>
+                                    <action>
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -58,7 +57,7 @@
                 <plugin>
                     <groupId>com.photon.phresco.plugins</groupId>
                     <artifactId>phresco-maven-plugin</artifactId>
-                    <version>3.1.0.3001</version>
+                    <version>3.2.0.2000</version>
                     <extensions>true</extensions>
                 </plugin>
             </plugins>
@@ -94,7 +93,7 @@
                         </goals>
                         <configuration>
                             <sources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-<source>${basedir}/src/main/java</source>
+                                <source>${basedir}/src/main/java</source>
 							</sources>
                         </configuration>
                     </execution>
@@ -185,19 +184,19 @@
                         <configuration>
                             <excludeDefaultDirectories xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</excludeDefaultDirectories>
                             <filesets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-<fileset>
-    <directory>do_not_checkin/build</directory>
-    <includes>
-        <include>**/*</include>
+                                <fileset>
+                                    <directory>do_not_checkin/build</directory>
+                                    <includes>
+                                        <include>**/*</include>
 									</includes>
-    <followSymlinks>false</followSymlinks>
+                                    <followSymlinks>false</followSymlinks>
 								</fileset>
-<fileset>
-    <directory>do_not_checkin/archives</directory>
-    <includes>
-        <include>**/*</include>
+                                <fileset>
+                                    <directory>do_not_checkin/archives</directory>
+                                    <includes>
+                                        <include>**/*</include>
                                     </includes>
-    <followSymlinks>false</followSymlinks>
+                                    <followSymlinks>false</followSymlinks>
                             	</fileset>
 							</filesets>
                         </configuration>
