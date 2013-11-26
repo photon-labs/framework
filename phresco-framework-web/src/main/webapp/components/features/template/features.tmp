@@ -36,7 +36,7 @@
 									{{/each}}
 								{{/each}}	
 								<input type="hidden" class="moduleId" value="{{id}}">
-                                <select class="input-mini">
+                                <select class="input-mini flt_right">
                                     {{#each versions}}									
                                         <option value="{{id}}" scope="{{scope}}">{{version}}</option>  
                                     {{/each}} 
@@ -79,7 +79,7 @@
 								{{/each}}	
 								<input type="hidden" class="moduleId" value="{{id}}">
                                 {{#if versions}}
-									<select class="input-mini">
+									<select class="input-mini flt_right">
 										{{#each versions}}										
 											<option value="{{id}}" scope="{{scope}}">{{version}}</option>  
 										{{/each}} 
@@ -124,7 +124,7 @@
 									{{/each}}
 								<input type="hidden" class="moduleId" value="{{id}}">
 								{{#if versions}}
-									<select class="input-mini">
+									<select class="input-mini flt_right">
 										{{#each versions}}										
 											<option value="{{id}}" scope="{{scope}}">{{version}}</option>  
 										{{/each}} 

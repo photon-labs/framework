@@ -23,6 +23,7 @@ define(["projectlist/listener/projectListListener"], function() {
 		onGetReportEvent : null,
 		flagged: null,
 		flag:null,
+		delobj:null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -137,7 +138,6 @@ define(["projectlist/listener/projectListListener"], function() {
 
 		getAction : function(actionBody, action, callback) {
 			var self = this;
-			
 			self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, action), "" , function(response) {
 				if ("delete" === action) {
 					callback();
@@ -282,6 +282,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				var usrObj;
 				var pwdObj;		
 				var counter;				
+				var obj_del = this;
 				var action = $(this).attr("data-original-title");
 				var currentPrjName = $(this).closest("tr").attr("class");
 				var dynamicId = $(this).attr("dynamicId");
@@ -448,6 +449,9 @@ define(["projectlist/listener/projectListListener"], function() {
 					var applnids = $(this).hasClass('del_project') ? $(this).attr('appids') : dynamicId;
 					self.checkForLock(lockAction, applnids, function(response){
 						if (response.status === "success" && response.responseCode === "PHR10C00002") {
+							if($(obj_del).hasClass('del_project')) {
+								self.delobj = $(obj_del).parent('td.delimages');
+							}
 							self.openccpl(openccObj, openccName, currentPrjName);
 							var target = $('#' + openccName);
 							$('.content_main').prepend(target);
@@ -538,10 +542,11 @@ define(["projectlist/listener/projectListListener"], function() {
 			$("input[name='holeDelete']").unbind('click');
 			$("input[name='holeDelete']").click(function(e) {
 				self.projectslistListener.delprojectname = $(this).attr('deleteAppname');
-				var projectnameArray = [], cls, temp, temp1, temp2, classname, curr, currentRow;
-				temp = $(this).parents().parent("td.delimages").parent('tr');
-				curr =  $(this).parents().parent("td.delimages").parent().next('tr');
-				currentRow =  $(this).parents().parent("td.delimages").parent().next();
+				var projectnameArray = [], cls, temp, temp1, temp2, classname, curr, currentRow, deleteappname;
+				deleteappname = $(this).attr('deleteappname');
+				temp = self.delobj.parent('tr');
+				curr =  self.delobj.parent().next('tr');
+				currentRow =  self.delobj.parent().next();
 				while(currentRow !== null && currentRow.length > 0) {
 				   classname = currentRow.attr("class");
 				   if(classname !== "proj_title") {
@@ -570,6 +575,7 @@ define(["projectlist/listener/projectListListener"], function() {
 						if(!($('tr.proj_title').length)) {
 							self.flagged=0;
 						}	
+						$(".deleteproj_msg").hide();
 				});					
 			});			
 			
