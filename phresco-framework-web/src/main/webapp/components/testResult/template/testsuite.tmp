@@ -77,7 +77,7 @@
 			</thead>
         </table>
 		<div class="consolescrolldiv" autoscroll="true">
-			<div id="testConsole" class="console_pad">
+			<div id="testConsole" class="console_pad console_font">
 			</div>
 		</div>
     </div>
