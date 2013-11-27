@@ -181,7 +181,7 @@
 				 </thead>
 			</table>
 			<div class="consolescrolldiv" autoscroll="true">
-				<div id="logContent" class="console_pad">
+				<div id="logContent" class="console_pad console_font">
 				</div>
 			</div>
 		</div>

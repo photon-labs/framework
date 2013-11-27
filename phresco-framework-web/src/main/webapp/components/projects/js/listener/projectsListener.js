@@ -1963,6 +1963,7 @@ define([], function() {
 												appInfo.code = code;
 												appInfo.name = code;
 												appInfo.version = projectversion;
+												appInfo.techInfo.version = techInfo.version;
 												self.appInfos.push(appInfo);
 											}
 										});

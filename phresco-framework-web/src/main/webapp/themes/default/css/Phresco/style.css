@@ -3015,6 +3015,10 @@ html>body tbody.scrollContent {
 	padding:10px;
 }
 
+.console_font {
+	font-size: 13px !important;
+}
+
 .unit_text {
 	float:left;
 	font-size: 14px;
