@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -134,12 +135,13 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 		.append(DOT_PHRESCO_FOLDER)
 		.append(File.separatorChar)
 		.append(PROJECT_INFO_FILE);
+		BufferedReader bufferedReader = null;
 		try {
 			File projectInfoFile = new File(builder.toString());
 			if (!projectInfoFile.exists()) {
 				return null;
 			}
-			BufferedReader bufferedReader = new BufferedReader(new FileReader(builder.toString()));
+			bufferedReader = new BufferedReader(new FileReader(builder.toString()));
 			Gson gson = new Gson();
 			ProjectInfo projectInfo = gson.fromJson(bufferedReader, ProjectInfo.class);
 			return projectInfo;
@@ -149,6 +151,14 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 			throw new PhrescoException(e);
 		} catch (FileNotFoundException e) {
 			throw new PhrescoException(e);
+		} finally {
+			if (bufferedReader != null) {
+				try {
+					bufferedReader.close();
+				} catch (Exception e) {
+					throw new PhrescoException(e);
+				}
+			}
 		}
 	}
 	

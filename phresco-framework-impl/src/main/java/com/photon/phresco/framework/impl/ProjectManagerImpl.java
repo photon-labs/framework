@@ -17,6 +17,37 @@
  */
 package com.photon.phresco.framework.impl;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.wink.json4j.OrderedJSONObject;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -55,50 +86,8 @@ import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.ProjectUtils;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.model.Dependency;
 import com.phresco.pom.util.PomProcessor;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.wink.json4j.OrderedJSONObject;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.Map.Entry;
-
-import java.lang.reflect.Type;
-import java.net.MalformedURLException;
-
-import javax.ws.rs.QueryParam;
-import org.eclipse.ui.internal.handlers.WidgetMethodHandler;
-import org.json.JSONObject;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.splunk.Args;
 import com.splunk.JobResultsArgs;
 import com.splunk.Service;
@@ -470,10 +459,17 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				}
 				newAppDirSb.append(projectInfo.getAppInfos().get(0).getAppDirName());
 				File projectInfoFile = new File(newAppDirSb.toString());
+				
+				
+				//To update dependency entries in dependent submodule's pom
+				updateDependenciesInSubModulePom(projectInfo.getAppInfos().get(0), rootModule, oldAppDirName);
+				
 				//rename to application app dir
 				boolean renameTo = oldDir.renameTo(projectInfoFile);
+				
 				updateProjectPom(projectInfo, rootModule);
 				updateCiInfoFile(projectInfo, appDirWithModule);
+				
 				
 				StringBuilder dotPhrescoPathSb = new StringBuilder(projectInfoFile.getPath());
 				dotPhrescoPathSb.append(File.separator);
@@ -519,7 +515,45 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			
 		return projectInfo;
 	}
-
+	
+	private void updateDependenciesInSubModulePom(ApplicationInfo appInfo, String rootModule, String oldAppDirName) throws PhrescoException {
+		try {
+			if (StringUtils.isNotEmpty(rootModule)) {
+				String oldFolderDir = StringUtils.isNotEmpty(rootModule) ? rootModule + File.separator + oldAppDirName : oldAppDirName;
+	 			File rootDir = new File(Utility.getProjectHome() + rootModule);
+				File currentSubModuleDir = new File(Utility.getProjectHome() + oldFolderDir);
+				ApplicationInfo rootAppInfo = ProjectUtils.getApplicationInfo(rootDir);
+				String currSubModulePomName = Utility.getPomFileName(appInfo);
+				File currSubModulePomFile = new File(currentSubModuleDir.getPath() + File.separator + currSubModulePomName);
+				List<ModuleInfo> modules = rootAppInfo.getModules();
+				if (modules != null) {
+					for (ModuleInfo module : modules) {
+						if (currSubModulePomFile.exists() && !appInfo.getAppDirName().equals(module.getCode())) {
+							PomProcessor pp = new PomProcessor(currSubModulePomFile);
+							String currSubModuleGroupId = pp.getGroupId();
+							String currSubModuleArtifactId = pp.getArtifactId();
+							File otherModuleDir = new File(Utility.getProjectHome() + rootModule + File.separator + module.getCode());
+							ApplicationInfo otherModuleAppInfo = ProjectUtils.getApplicationInfo(otherModuleDir);
+							String otherModulePomName = Utility.getPomFileName(otherModuleAppInfo);
+							File otherModulePomFile = new File(otherModuleDir.getPath() + File.separator + otherModulePomName);
+							if (otherModulePomFile.exists()) {
+								PomProcessor otherPP = new PomProcessor(otherModulePomFile);
+								Dependency dependency = otherPP.getDependency(currSubModuleGroupId, currSubModuleArtifactId);
+								if (dependency != null) {
+									dependency.setArtifactId(appInfo.getCode());
+									dependency.setVersion(appInfo.getVersion());
+									otherPP.save();
+								}
+							}
+						}
+					}
+				}
+			}	
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
 	private void updateCiInfoFile(ProjectInfo projectInfo, String oldDir) throws PhrescoException {
 		ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 		
