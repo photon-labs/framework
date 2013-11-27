@@ -87,7 +87,7 @@
                     <editable>true</editable>
                     <key>environmentName</key>
                     <multiple>true</multiple>
-                    <value>Development,Testing</value>
+                    <value>Production</value>
                     <sort>false</sort>
                     <show>true</show>
                 </parameter>
@@ -215,7 +215,6 @@
                     <description></description>
                     <key>packageFileBrowse</key>
                     <multiple>false</multiple>
-                    <value></value>
                     <sort>false</sort>
                     <show>true</show>
                 </parameter>

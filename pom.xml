@@ -14,7 +14,7 @@
         <sourceDirectory>${phresco.source.directory}</sourceDirectory>
         <testSourceDirectory>${testSourceDirectory}</testSourceDirectory>
         <directory>do_not_checkin/target</directory>
-        <finalName>framework</finalName>
+        <finalName>javawebserviceeshop</finalName>
         <pluginManagement>
             <plugins>
                 <plugin>
