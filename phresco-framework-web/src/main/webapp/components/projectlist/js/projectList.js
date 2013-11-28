@@ -536,6 +536,8 @@ define(["projectlist/listener/projectListListener"], function() {
 				deletearray.actionType = "application";				
 				self.deleteProjectfn(deletearray, imgname1, imgname2, deleteproject);
 				self.closeAll($(this).attr('name'));
+				$('.content_title').css('z-index', '6');
+				$('.header_section').css('z-index', '7');
 				
 			});
 
@@ -576,7 +578,9 @@ define(["projectlist/listener/projectListListener"], function() {
 							self.flagged=0;
 						}	
 						$(".deleteproj_msg").hide();
-				});					
+				});		
+				$('.content_title').css('z-index', '6');
+				$('.header_section').css('z-index', '7');
 			});			
 			
 			$(".credential").unbind("click");
