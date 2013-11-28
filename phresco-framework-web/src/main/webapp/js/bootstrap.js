@@ -51,6 +51,9 @@ var commonVariables = {
 	
 	codequality : "codequality",
 	
+	editAppFrom : "",
+	editAppHasModules : false,
+	
 	configuration : "configuration",
 	editConfiguration : "editConfiguration",
 	updateConfigName : '',

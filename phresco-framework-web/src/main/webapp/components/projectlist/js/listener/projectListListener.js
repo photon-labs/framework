@@ -299,12 +299,38 @@ define([], function() {
 			
 		},
 		
-		loadAppInfo : function(value, techid, module){
+		loadAppInfo : function(value, techid, module, from, hasModules){
 			var self = this;
 			self.editAplnContent.appDirName = value;
 			commonVariables.api.localVal.setSession('appDirName', value);
 			commonVariables.api.localVal.setSession('techid', techid);
-			Clazz.navigationController.push(self.editAplnContent, commonVariables.animation);
+			if (self.isBlank(commonVariables.editAppFrom) && commonVariables.editAppHasModules) {
+				try {
+					var header = self.editAplnContent.editApplicationListener.getRequestHeader(value , "getappinfo");
+					commonVariables.api.ajaxRequest(header,
+						function(response) {
+							if (response !== null && response.status !== "error" && response.status !== "failure") {
+								commonVariables.api.localVal.setProjectInfo(response);
+								commonVariables.navListener.getMyObj(commonVariables.featurelist, function(returnVal){
+									Clazz.navigationController.push(returnVal, commonVariables.animation);
+								});
+								commonVariables.navListener.showHideControls(commonVariables.editApplication);
+								$("li#featurelist").children().addClass("act");
+							} else {
+								commonVariables.api.showError(response.responseCode ,"error", true);			
+							}
+						},
+
+						function(textStatus) {
+							commonVariables.api.showError("serviceerror" ,"error", true);
+						}
+					);
+				} catch(exception) {
+					
+				}
+			} else {
+				Clazz.navigationController.push(self.editAplnContent, commonVariables.animation);
+			}
 			self.isBlank(module) ? $("#aplntitle").html("Edit - "+value) : $("#aplntitle").html("Edit - "+module);
 		},
 		

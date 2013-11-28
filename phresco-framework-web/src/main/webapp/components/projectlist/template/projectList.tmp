@@ -41,7 +41,7 @@
                       </tr>
 					         {{#each appInfos}}
                       <tr class="{{appDirName}}" techid="{{techInfo.id}}">
-                        <td width="25%"><a name="editApplication" appid="{{id}}" href="javascript:;">{{name}}</a></td>
+                        <td width="25%"><a name="editApplication" appid="{{id}}" modules="{{#hasModules modules}}{{/hasModules}}" href="javascript:;">{{name}}</a></td>
                         <td width="25%">{{#descriptionshow description}}{{/descriptionshow}}</td>
                         <td width="25%">{{techInfo.name}}</td>
                        <td class="list_img"><a name="pdf_report_{{id}}" temp="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="{{id}}" data-placement="bottom" data-t="tooltip" href="javascript:void(0)" data-original-title="PDF Report"><img src="themes/default/images/Phresco/pdf_icon.png" width="14" height="16" border="0" alt=""></a>

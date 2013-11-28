@@ -477,6 +477,14 @@ define([], function() {
 					$("#applicationedit").show();
 					$("#settingsNav").hide();
 					$("#downloadsNav").hide();
+					if (self.isBlank(commonVariables.editAppFrom) && commonVariables.editAppHasModules) {
+						$("li[name=editMenu]").not("#featurelist, .continuousDeliveryView").hide();
+					} else if (commonVariables.editAppFrom === "multimodule") {
+						$("li[name=editMenu]").not(".continuousDeliveryView").show();
+					} else {
+						$("li[name=editMenu]").show();
+					}
+					
 					break;
 					
 				case commonVariables.settings :
@@ -568,10 +576,10 @@ define([], function() {
 			} else {
 				$("#manualTest").show();
 			}
-			if (jQuery.inArray(commonVariables.optionsCI, applicableOptions) === -1) {
-				$("#continuousDeliveryView").hide();
-			} else {
-				$("#continuousDeliveryView").show();
+			if (jQuery.inArray(commonVariables.optionsCI, applicableOptions) === -1 || commonVariables.editAppFrom === "multimodule") {
+				$(".continuousDeliveryView").hide();
+			} else if (commonVariables.editAppFrom !== "multimodule") {
+				$(".continuousDeliveryView").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsRunAgainstSrc, applicableOptions) === -1) {
 				$("input[name=build_runagsource]").hide();

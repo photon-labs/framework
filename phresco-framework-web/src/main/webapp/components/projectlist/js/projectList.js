@@ -111,6 +111,14 @@ define(["projectlist/listener/projectListListener"], function() {
 				}
 				return appIds;
 			});
+			
+			Handlebars.registerHelper('hasModules', function(modules) {
+				if (modules !== undefined && modules !== null && modules.length > 0) {
+					return true;
+				} else {							
+					return false;
+				}		
+			});
 		},
 		
 		/***
@@ -255,7 +263,11 @@ define(["projectlist/listener/projectListListener"], function() {
 						var techid = $(thisObj).closest("tr").attr("techid");
 						commonVariables.techId = techid;
 						$("#myTab li#appinfo a").addClass("act");
-						var module = "multimodule" === $(thisObj).attr("from") ?  $(thisObj).text() : "";
+						var from = $(thisObj).attr("from");
+						var hasModules = Boolean($(thisObj).attr("modules"));
+						commonVariables.editAppFrom = from;
+						commonVariables.editAppHasModules = hasModules;
+						var module = "multimodule" === from ?  $(thisObj).text() : "";
 						self.onProjectsEvent.dispatch(value , techid, module);
 	
 						//To show/hide openfolder, copy path icon and copy to clipboard
@@ -263,11 +275,6 @@ define(["projectlist/listener/projectListListener"], function() {
 						self.projectslistListener.getProjectList(self.projectslistListener.getActionHeader(actionBody, "checkMachine"), function(response) {
 							commonVariables.api.localVal.setSession("checkMachine", JSON.stringify(response));
 						});
-						if (!self.isBlank(module)) {
-							$('li[id=continuousDeliveryView]').hide();
-						} else {
-							$('li[id=continuousDeliveryView]').show();
-						}
 					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
 						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 					}	
