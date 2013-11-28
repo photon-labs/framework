@@ -120,13 +120,19 @@ import com.perforce.p4java.server.ServerFactory;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.LockUtil;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ModuleInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.SCMManager;
 import com.photon.phresco.framework.model.RepoDetail;
 import com.photon.phresco.framework.model.RepoFileInfo;
+import com.photon.phresco.framework.model.RepoInfo;
+import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.model.Build;
+import com.phresco.pom.model.Model.Profiles;
+import com.phresco.pom.model.Profile;
 import com.phresco.pom.util.PomProcessor;
 
 
@@ -843,43 +849,307 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 	}
 
-	public boolean importToRepo(RepoDetail repodetail, ApplicationInfo appInfo) throws Exception {
+	public boolean importToRepo(RepoInfo repoInfo, ApplicationInfo appInfo) throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importToRepo()");
 		}
-		File dir = new File(Utility.getProjectHome() + appInfo.getAppDirName());
+		String appDirName = appInfo.getAppDirName();
+		String tempBasePath = Utility.getPhrescoTemp() + appDirName;
+		
+		File tempPhrescoFile = new File(tempBasePath + SUFFIX_PHRESCO);
+		File tempTestFile = new File(tempBasePath + SUFFIX_TEST);
+		File tempSrcFile = new File(tempBasePath);
 		try {
-			if (SVN.equals(repodetail.getType())) {
-				String tail = addAppFolderToSVN(repodetail, dir);
-				String appendedUrl = repodetail.getRepoUrl() + FORWARD_SLASH + tail;
-				repodetail.setRepoUrl(appendedUrl);
-				importDirectoryContentToSubversion(repodetail, dir.getPath());
-				// checkout to get .svn folder
-				checkoutImportedApp(repodetail, appInfo);
-			} else if (GIT.equals(repodetail.getType())) {
-				importToGITRepo(repodetail,appInfo, dir);
+			RepoDetail srcRepoDetail = repoInfo.getSrcRepoDetail();
+			String repoType = srcRepoDetail.getType();
+			
+			File dir = new File(Utility.getProjectHome() + appDirName);
+			
+			boolean hasSplit = false; 
+			if (repoInfo.isSplitPhresco() || repoInfo.isSplitTest()) {
+				hasSplit = true;
+			}
+			if (hasSplit) {
+				RepoDetail phrescoRepoDetail = repoInfo.getPhrescoRepoDetail();
+				RepoDetail testRepoDetail = repoInfo.getTestRepoDetail();
+				
+				String phrescoDirName = appDirName + SUFFIX_PHRESCO;
+				String srcDirName = appDirName;
+				String testDirName = appDirName + SUFFIX_TEST;
+				
+				String srcRepoUrl = srcRepoDetail.getRepoUrl() + FORWARD_SLASH + srcDirName;
+				String phrescoRepoUrl = "";
+				if (phrescoRepoDetail != null) {
+					phrescoRepoUrl = phrescoRepoDetail.getRepoUrl() + FORWARD_SLASH + phrescoDirName;
+				}
+				String testRepoUrl = "";
+				if (testRepoDetail != null) {
+					testRepoUrl = testRepoDetail.getRepoUrl() + FORWARD_SLASH + testDirName;
+				}
+				if (repoInfo.isSplitPhresco()) {
+					splitDotPhrescoContents(appInfo, tempPhrescoFile, phrescoRepoUrl, srcRepoUrl, testRepoUrl);
+					addToRepo(phrescoRepoDetail, appInfo, dir, phrescoDirName, tempPhrescoFile, hasSplit);
+				}
+				if (repoInfo.isSplitTest()) {
+					splitTestContents(appInfo, tempTestFile);
+					addToRepo(testRepoDetail, appInfo, dir, testDirName, tempTestFile, hasSplit);
+				}
+				if (hasSplit) {
+					splitSrcContents(appInfo, tempSrcFile, repoInfo, phrescoRepoUrl, srcRepoUrl, testRepoUrl);
+					addToRepo(srcRepoDetail, appInfo, dir, srcDirName, tempSrcFile, hasSplit);
+				}
+				FileUtil.delete(dir);
+				if (repoType.equals(SVN)) {
+					File copySrcDir = new File(Utility.getPhrescoTemp(), CHECKOUT_TEMP + File.separator + appDirName);
+					FileUtils.copyDirectoryToDirectory(copySrcDir, new File(Utility.getProjectHome()));
+				}
+				if (repoType.equals(GIT)) {
+					FileUtils.copyDirectoryToDirectory(tempPhrescoFile, dir);
+					FileUtils.copyDirectoryToDirectory(tempSrcFile, dir);
+					FileUtils.copyDirectoryToDirectory(tempTestFile, dir);
+				}
+			} else {
+				addToRepo(srcRepoDetail, appInfo, dir, appDirName, dir, hasSplit);
 			}
 		} catch (Exception e) {
-			throw e;
+			throw new PhrescoException(e);
+		} finally {
+			FileUtil.delete(tempPhrescoFile);
+			FileUtil.delete(tempTestFile);
+			FileUtil.delete(tempSrcFile);
+			FileUtil.delete(new File(tempBasePath));
+			FileUtil.delete(new File(Utility.getPhrescoTemp(), CHECKOUT_TEMP));
 		}
 		return true;
 	}
 	
-	private String addAppFolderToSVN(RepoDetail repodetail, final File dir) throws PhrescoException {
+	private void splitDotPhrescoContents(ApplicationInfo appInfo, File tempPhrescoFile, String phrescoRepoUrl, String srcRepoUrl, String testRepoUrl) throws PhrescoException {
+		try {
+			String appDirName = appInfo.getAppDirName();
+			String appHome = Utility.getProjectHome() + appDirName + File.separator;
+			List<ModuleInfo> modules = appInfo.getModules();
+			if (CollectionUtils.isNotEmpty(modules)) {
+				for (ModuleInfo module : modules) {
+					String moduleAppInfoPath = appHome + module.getCode() + File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator + PROJECT_INFO;
+					ApplicationInfo moduleAppInfo = getApplicationInfo(moduleAppInfoPath);
+					File tempDest = new File(tempPhrescoFile, module.getCode());
+					tempDest.mkdirs();
+					File phrescoSrc = new File(appHome + module.getCode() + File.separator + Constants.DOT_PHRESCO_FOLDER);
+					FileUtils.copyDirectoryToDirectory(phrescoSrc, tempDest);
+					String phrescoPomFile = moduleAppInfo.getPhrescoPomFile();
+					if (StringUtils.isNotEmpty(phrescoPomFile)) {
+						File phrescoPomSrc = new File(appHome + module.getCode() + File.separator + phrescoPomFile);
+						File phrescoPomDest = new File(tempDest, phrescoPomFile);
+						FileUtils.copyFileToDirectory(phrescoPomSrc, tempDest);
+						updatePomProperties(appInfo, phrescoPomDest, phrescoRepoUrl, srcRepoUrl, testRepoUrl, true);
+					}
+				}
+			}
+			tempPhrescoFile.mkdirs();
+			File phrescoSrc = new File(appHome + Constants.DOT_PHRESCO_FOLDER);
+			FileUtils.copyDirectoryToDirectory(phrescoSrc, tempPhrescoFile);
+			if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
+				File phrescoPomSrc = new File(appHome + appInfo.getPhrescoPomFile());
+				FileUtils.copyFileToDirectory(phrescoPomSrc, tempPhrescoFile);
+				updatePomProperties(appInfo, new File(tempPhrescoFile, appInfo.getPhrescoPomFile()), phrescoRepoUrl, srcRepoUrl, testRepoUrl, false);
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	private void splitTestContents(ApplicationInfo appInfo, File tempTestFile) throws PhrescoException {
+		try {
+			String appDirName = appInfo.getAppDirName();
+			String appHome = Utility.getProjectHome() + appDirName + File.separator;
+			List<ModuleInfo> modules = appInfo.getModules();
+			if (CollectionUtils.isNotEmpty(modules)) {
+				for (ModuleInfo module : modules) {
+					String moduleAppInfoPath = appHome + module.getCode() + File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator + PROJECT_INFO;
+					ApplicationInfo moduleAppInfo = getApplicationInfo(moduleAppInfoPath);
+					String pomFile = moduleAppInfo.getPomFile();
+					if (StringUtils.isNotEmpty(moduleAppInfo.getPhrescoPomFile())) {
+						pomFile = moduleAppInfo.getPhrescoPomFile();
+					}
+					PomProcessor pomProcessor = new PomProcessor(new File(appHome + module.getCode() + File.separator + pomFile));
+					String testDir = pomProcessor.getProperty(Constants.POM_PROP_KEY_TEST_DIR);
+					if (StringUtils.isNotEmpty(testDir)) {
+						File tempDest = new File(tempTestFile, module.getCode());
+						tempDest.mkdirs();
+						File testSrc = new File(appHome + moduleAppInfo.getAppDirName() + File.separator + testDir);
+						FileUtils.copyDirectoryToDirectory(testSrc, tempDest);
+					}
+				}
+			} else {
+				tempTestFile.mkdirs();
+				String pomFile = appInfo.getPomFile();
+				if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
+					pomFile = appInfo.getPhrescoPomFile();
+				}
+				PomProcessor pomProcessor = new PomProcessor(new File(appHome + pomFile));
+				String testDir = pomProcessor.getProperty(Constants.POM_PROP_KEY_TEST_DIR);
+				File testSrc = new File(appHome, testDir);
+				FileUtils.copyDirectoryToDirectory(testSrc, tempTestFile);
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	private String getTestDirFromPom(ApplicationInfo appInfo) throws PhrescoException {
+		try {
+			PomProcessor pomProcessor = getPomProcessor(appInfo);
+			return pomProcessor.getProperty(Constants.POM_PROP_KEY_TEST_DIR);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	private void splitSrcContents(ApplicationInfo appInfo, File tempSrcFile, RepoInfo repoInfo, String phrescoRepoUrl, String srcRepoUrl, String testRepoUrl) throws PhrescoException {
+		try {
+			String appDirName = appInfo.getAppDirName();
+			String appHome = Utility.getProjectHome() + appDirName + File.separator;
+			List<ModuleInfo> modules = appInfo.getModules();
+			if (CollectionUtils.isNotEmpty(modules)) {
+				for (ModuleInfo module : modules) {
+					File srcDest = new File(tempSrcFile, module.getCode());
+					File srcDir = new File(appHome, module.getCode());
+					FileUtils.copyDirectory(srcDir, srcDest, false);
+					String moduleAppInfoPath = appHome + module.getCode() + File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator + PROJECT_INFO;
+					ApplicationInfo moduleAppInfo = getApplicationInfo(moduleAppInfoPath);
+					
+					if (StringUtils.isEmpty(moduleAppInfo.getPhrescoPomFile())) {
+						File pomDest = new File(srcDest, moduleAppInfo.getPomFile());
+						updatePomProperties(appInfo, pomDest, phrescoRepoUrl, srcRepoUrl, testRepoUrl, true);
+					}
+					
+					if (repoInfo.isSplitPhresco()) {
+						FileUtils.deleteDirectory(new File(srcDest, Constants.DOT_PHRESCO_FOLDER));
+						if (StringUtils.isNotEmpty(moduleAppInfo.getPhrescoPomFile())) {
+							File phrescoPomFile = new File(srcDest, moduleAppInfo.getPhrescoPomFile());
+							FileUtil.delete(phrescoPomFile);
+						}
+					}
+					if (repoInfo.isSplitTest()) {
+						String pomFile = moduleAppInfo.getPomFile();
+						if (StringUtils.isNotEmpty(moduleAppInfo.getPhrescoPomFile())) {
+							pomFile = moduleAppInfo.getPhrescoPomFile();
+						}
+						PomProcessor pomProcessor = new PomProcessor(new File(appHome + module.getCode() + File.separator + pomFile));
+						String testDir = pomProcessor.getProperty(Constants.POM_PROP_KEY_TEST_DIR);
+						if (StringUtils.isNotEmpty(testDir)) {
+							FileUtils.deleteDirectory(new File(srcDest, testDir));
+						}
+					}
+				}
+			} else {
+				tempSrcFile.mkdirs();
+				File srcDir = new File(Utility.getProjectHome() + appDirName);
+				FileUtils.copyDirectory(srcDir, tempSrcFile, false);
+				
+				if (StringUtils.isEmpty(appInfo.getPhrescoPomFile())) {
+					File pomDest = new File(tempSrcFile, appInfo.getPomFile());
+					updatePomProperties(appInfo, pomDest, phrescoRepoUrl, srcRepoUrl, testRepoUrl, false);
+				}
+				
+				if (repoInfo.isSplitPhresco()) {
+					FileUtils.deleteDirectory(new File(tempSrcFile, Constants.DOT_PHRESCO_FOLDER));
+					if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
+						File phrescoPomFile = new File(tempSrcFile, appInfo.getPhrescoPomFile());
+						FileUtil.delete(phrescoPomFile);
+					}
+				}
+				if (repoInfo.isSplitTest()) {
+					String pomFile = appInfo.getPomFile();
+					if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
+						pomFile = appInfo.getPhrescoPomFile();
+					}
+					PomProcessor pomProcessor = new PomProcessor(new File(appHome, pomFile));
+					String testDir = pomProcessor.getProperty(Constants.POM_PROP_KEY_TEST_DIR);
+					FileUtils.deleteDirectory(new File(tempSrcFile, testDir));
+				}
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	private void updatePomProperties(ApplicationInfo appInfo, File pomFile, String phrescoRepoUrl, String srcRepoUrl, String testRepoUrl, boolean isMultiModule) throws PhrescoException {
+		try {
+			String appDirName = appInfo.getAppDirName();
+			PomProcessor pomProcessor = new PomProcessor(pomFile);
+			Build build = pomProcessor.getModel().getBuild();
+			StringBuilder sb = new StringBuilder(PREV_DIR);
+			if (isMultiModule) {
+				sb.append(PREV_DIR);
+			}
+
+			build.setSourceDirectory(sb.toString() + Constants.POM_PROP_KEY_SPLIT_SRC_DIR + FORWARD_SLASH + build.getSourceDirectory());
+			build.setTestSourceDirectory(sb.toString() + Constants.POM_PROP_KEY_SPLIT_SRC_DIR + FORWARD_SLASH + build.getTestSourceDirectory());
+			
+			Profiles profiles = pomProcessor.getModel().getProfiles();
+			if (profiles != null) {
+				
+			}
+			
+			pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_PHRESCO_DIR, appDirName + SUFFIX_PHRESCO);
+			pomProcessor.setProperty(Constants.POM_PROP_KEY_PHRESCO_REPO_URL, phrescoRepoUrl);
+			pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_SRC_DIR, appDirName);
+			pomProcessor.setProperty(Constants.POM_PROP_KEY_SRC_REPO_URL, srcRepoUrl);
+			pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_TEST_DIR, appDirName + SUFFIX_TEST);
+			pomProcessor.setProperty(Constants.POM_PROP_KEY_TEST_REPO_URL, testRepoUrl);
+			pomProcessor.save();
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	private ApplicationInfo getApplicationInfo(String path) throws PhrescoException {
+		BufferedReader bufferedReader = null;
+		try {
+			if (!new File(path).exists()) {
+				return null;
+			}
+			bufferedReader = new BufferedReader(new FileReader(path));
+			Gson gson = new Gson();
+			ProjectInfo projectInfo = gson.fromJson(bufferedReader, ProjectInfo.class);
+			return projectInfo.getAppInfos().get(0);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		} finally {
+			if (bufferedReader != null) {
+				try {
+					bufferedReader.close();
+				} catch (IOException e) {
+					throw new PhrescoException(e);
+				}
+			}
+		}
+	}
+	
+	private void addToRepo(RepoDetail repodetail, ApplicationInfo appInfo, File dir, String dirName, File srcDir, boolean hasSplit) throws PhrescoException {
+		try {
+			String repoType = repodetail.getType();
+			if (SVN.equals(repoType)) {
+				addAppFolderToSVN(repodetail, dir, dirName);
+				String appendedUrl = repodetail.getRepoUrl() + FORWARD_SLASH + dirName;
+				repodetail.setRepoUrl(appendedUrl);
+				importDirectoryContentToSubversion(repodetail, srcDir.getPath());
+				// checkout to get .svn folder
+				checkoutImportedApp(repodetail, appInfo, dirName, hasSplit);
+			} else if (GIT.equals(repoType)) {
+				importToGITRepo(repodetail, appInfo, srcDir);
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	private void addAppFolderToSVN(RepoDetail repodetail, final File dir, String dirName) throws PhrescoException {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.addAppFolderToSVN()");
 		}
 		try {
-			//get DirName
-			ProjectInfo projectInfo;
-			projectInfo = getGitAppInfo(dir);
-			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
-			String appDirName = "";
-			if (CollectionUtils.isNotEmpty(appInfos)) {
-				ApplicationInfo appInfo = appInfos.get(0);
-				appDirName = appInfo.getAppDirName();
-			}
-			
 			//CreateTempFolder
 			File temp = new File(dir, TEMP_FOLDER);
 			if (temp.exists()) {
@@ -887,7 +1157,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			}
 			temp.mkdir();
 			
-			File folderName = new File(temp, appDirName);
+			File folderName = new File(temp, dirName);
 			folderName.mkdir();
 			
 			//Checkin rootFolder
@@ -897,8 +1167,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if (temp.exists()) {
 				FileUtils.deleteDirectory(temp);
 			}
-			
-			return appDirName;
 		} catch (Exception e) {
 			throw new PhrescoException(e);
 		} 
@@ -915,25 +1183,35 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
         return cm.getCommitClient().doImport(new File(subVersionedDirectory), SVNURL.parseURIEncoded(repodetail.getRepoUrl()), repodetail.getCommitMessage(), null, true, true, SVNDepth.fromRecurse(true));
     }
 	
-	private void checkoutImportedApp(RepoDetail repodetail, ApplicationInfo appInfo) throws Exception {
+	private void checkoutImportedApp(RepoDetail repodetail, ApplicationInfo appInfo, String dirName, boolean hasSplit) throws PhrescoException {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.checkoutImportedApp()");
 		}
-		DefaultSVNOptions options = new DefaultSVNOptions();
-		SVNClientManager cm = SVNClientManager.newInstance(options, repodetail.getUserName(), repodetail.getPassword());
-		SVNUpdateClient uc = cm.getUpdateClient();
-		SVNURL svnURL = SVNURL.parseURIEncoded(repodetail.getRepoUrl());
-		if(debugEnabled){
-			S_LOGGER.debug("Checking out...");
+		try {
+			DefaultSVNOptions options = new DefaultSVNOptions();
+			SVNClientManager cm = SVNClientManager.newInstance(options, repodetail.getUserName(), repodetail.getPassword());
+			SVNUpdateClient uc = cm.getUpdateClient();
+			SVNURL svnURL = SVNURL.parseURIEncoded(repodetail.getRepoUrl());
+			if(debugEnabled){
+				S_LOGGER.debug("Checking out...");
+			}
+			String subVersionedDirectory = Utility.getProjectHome() + appInfo.getAppDirName();
+			if (hasSplit) {
+				subVersionedDirectory = Utility.getPhrescoTemp() + CHECKOUT_TEMP + File.separator + appInfo.getAppDirName() + File.separator + dirName;
+			}
+			File subVersDir = new File(subVersionedDirectory);
+			if (!subVersDir.exists()) {
+				subVersDir.mkdirs();
+			}
+			uc.doCheckout(SVNURL.parseURIEncoded(repodetail.getRepoUrl()), subVersDir, SVNRevision.UNDEFINED, SVNRevision.parse(HEAD_REVISION), SVNDepth.INFINITY, true);
+			if(debugEnabled){
+				S_LOGGER.debug("updating pom.xml");
+			}
+			// update connection url in pom.xml
+			updateSCMConnection(appInfo, svnURL.toDecodedString());
+		} catch (Exception e) {
+			throw new PhrescoException(e);
 		}
-		String subVersionedDirectory = Utility.getProjectHome() + appInfo.getAppDirName();
-		File subVersDir = new File(subVersionedDirectory);
-		uc.doCheckout(SVNURL.parseURIEncoded(repodetail.getRepoUrl()), subVersDir, SVNRevision.UNDEFINED, SVNRevision.parse(HEAD_REVISION), SVNDepth.INFINITY, true);
-		if(debugEnabled){
-			S_LOGGER.debug("updating pom.xml");
-		}
-		// update connection url in pom.xml
-		updateSCMConnection(appInfo, svnURL.toDecodedString());
 	}
 
 	private void importToGITRepo(RepoDetail repodetail,ApplicationInfo appInfo, File appDir) throws Exception {

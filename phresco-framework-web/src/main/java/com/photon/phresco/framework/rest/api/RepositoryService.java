@@ -63,6 +63,7 @@ import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.impl.SCMManagerImpl;
 import com.photon.phresco.framework.model.RepoDetail;
 import com.photon.phresco.framework.model.RepoFileInfo;
+import com.photon.phresco.framework.model.RepoInfo;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.service.client.impl.ServiceManagerImpl;
 import com.photon.phresco.util.Constants;
@@ -149,31 +150,26 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 
 	/**
 	 * Adds the project to repository.
-	 *
-	 * @param appDirName the app dir name
-	 * @param repodetail the repodetail
-	 * @param userId the user id
-	 * @param projectId the project id
-	 * @param appId the app id
-	 * @return the response
+	 * @param appDirName
+	 * @param repoInfo
+	 * @param userId
+	 * @param projectId
+	 * @param appId
+	 * @param displayName
+	 * @return
 	 */
 	@POST
 	@Path("/addProjectToRepo")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addProjectToRepo(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, RepoDetail repodetail,
+	public Response addProjectToRepo(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, RepoInfo repoInfo,
 			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_PROJECTID) String projectId,
 			@QueryParam(REST_QUERY_APPID) String appId, @QueryParam("displayName") String displayName) {
-		Response response = null;
-		String type = repodetail.getType();
+		RepoDetail srcRepoDetail = repoInfo.getSrcRepoDetail();
+		String type = srcRepoDetail.getType();
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		if (type.equals(SVN)) {
-			response = addSVNProject(appDirName, repodetail, userId, projectId, appId, type, unique_key, displayName);
-		} else if (type.equals(GIT)) {
-			response = addGitProject(userId, projectId, appId, appDirName, repodetail, type, unique_key, displayName);
-		}
-		return response;
+		return addToRepo(appDirName, repoInfo, userId, projectId, appId, type, unique_key, displayName);
 	}
 
 	/**
@@ -859,7 +855,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @param type the type
 	 * @return the response
 	 */
-	private Response addSVNProject(String appDirName, RepoDetail repodetail, String userId, String projectId,
+	private Response addToRepo(String appDirName, RepoInfo repoInfo, String userId, String projectId,
 			String appId, String type, String uniqueKey, String displayName) {
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		ResponseInfo responseData = new ResponseInfo();
@@ -867,49 +863,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			//To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), ADD_TO_REPO, displayName, uniqueKey)), true);
-			scmi.importToRepo(repodetail, applicationInfo);
-			User user = ServiceManagerImpl.USERINFO_MANAGER_MAP.get(userId);
-			// updateLatestProject(user, projectId, appId);
-			status = RESPONSE_STATUS_SUCCESS;
-			successCode = PHR200019;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, null,
-					null, status, successCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-		} catch (Exception e) {
-			status = RESPONSE_STATUS_ERROR;
-			errorCode = PHR210031;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
-		} finally {
-			try {
-				LockUtil.removeLock(uniqueKey);
-			} catch (PhrescoException e) {
-
-			}
-		}
-	}
-
-	/**
-	 * Adds the git project.
-	 *
-	 * @param userId the user id
-	 * @param projectId the project id
-	 * @param appId the app id
-	 * @param appDirName the app dir name
-	 * @param repodetail the repodetail
-	 * @param type the type
-	 * @return the response
-	 */
-	private Response addGitProject(String userId, String projectId, String appId, String appDirName,
-			RepoDetail repodetail, String type, String uniqueKey, String displayName) {
-		ResponseInfo responseData = new ResponseInfo();
-		SCMManagerImpl scmi = new SCMManagerImpl();
-		try {
-			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
-			//To generate the lock for the particular operation
-			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), ADD_TO_REPO, displayName, uniqueKey)), true);
-			scmi.importToRepo(repodetail, applicationInfo);
+			scmi.importToRepo(repoInfo, applicationInfo);
 			User user = ServiceManagerImpl.USERINFO_MANAGER_MAP.get(userId);
 			// updateLatestProject(user, projectId, appId);
 			status = RESPONSE_STATUS_SUCCESS;

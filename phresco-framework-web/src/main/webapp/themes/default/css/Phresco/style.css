@@ -1174,19 +1174,6 @@ ul.nav li.dropdown:hover > .test_options{
 	margin-left:0px !important;
 }
 
-<<<<<<< HEAD
-
-=======
-.addtorepo_tabdiv ul li a {
-	background: linear-gradient(to bottom, #F4F4F4 0%, #E3E3E3 100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
-    border: 1px solid #DDDDDD;
-    border-radius: 8px 8px 0 0;
-    color: #000000;
-    padding: 5px;
-    text-align: center;
-    width: 75px;
-}
-
 .add_repo .tab-content {
 	border:1px solid #DDDDDD;
 	border-top:none;
@@ -1195,18 +1182,51 @@ ul.nav li.dropdown:hover > .test_options{
 	margin-bottom: 10px;
 }
 
-.addtorepo_tabdiv .nav li {
-	padding-right:10px;
+.repository_tabdiv ul li a{
+	background:background: #f4f4f4; /* Old browsers */
+	background: -moz-linear-gradient(top,  #f4f4f4 0%, #e3e3e3 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f4f4f4), color-stop(100%,#e3e3e3)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #f4f4f4 0%,#e3e3e3 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #f4f4f4 0%,#e3e3e3 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #f4f4f4 0%,#e3e3e3 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #f4f4f4 0%,#e3e3e3 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f4f4f4', endColorstr='#e3e3e3',GradientType=0 ); /* IE6-9 */
+	color:#000;
+    padding: 5px;
+    text-align: center;
+    width: 75px;
+	border-radius: 8px 8px 0 0;
+	border:1px solid #DDDDDD;
 }
 
-.addtorepo_tabdiv .nav li.active a, .nav li.focus a {
-	background: none repeat scroll 0 0 #FFFFFF;
-    outline: 0 none;
+.repository_tabdiv ul li a:hover {
+	border:1px solid #DDDDDD;
+	outline: 0 none;
 }
->>>>>>> 3.2.0
+
+.repository_tabdiv .nav li.active a, .repository_tabdiv .nav li.focus a, .repository_tabdiv a:focus {
+    outline: 0 none !important;
+	background:#FFF;
+}
+
+.repository_tabdiv .nav li {
+    padding-right: 8px;
+}
+
+.repository_tabdiv ul li .repo_tab{
+	margin:-20px 0px 0px;
+}
+
+.repository_tabdiv ul li input[type="checkbox"] {
+	margin: 0 0 -10px 2px !important;
+}
 
 .btn.disabled, .btn[disabled] {
 	height:28px;
+}
+
+.repository_tabdiv ul li .repo_tab{
+	margin:-20px 0px 0px;
 }
 
 /* ******************************************************************* CSS related to create project page ********************************************************************** */

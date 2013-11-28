@@ -18,7 +18,6 @@
 package com.photon.phresco.framework.rest.api;
 
 import java.util.Arrays;
-import java.util.List;
 
 import javax.ws.rs.core.Response;
 
@@ -28,6 +27,7 @@ import org.junit.Test;
 
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.model.RepoDetail;
+import com.photon.phresco.framework.model.RepoInfo;
 import com.photon.phresco.util.Utility;
 
 public class RepositoryServiceTest extends RestBaseTest  {
@@ -36,13 +36,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	
 	@Test
 	public void  addProjectToRepo() {	
-		RepoDetail repodetail = new RepoDetail();
-		repodetail.setUserName("santhosh_ja");
-		repodetail.setPassword("santJ!23");
-		repodetail.setType("svn");
-		repodetail.setCommitMessage("[artf672433]testcommit");
-		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
-		Response addProjectToRepo = repositoryservice.addProjectToRepo(appDirName, repodetail, userId, "TestProject", "TestProject", "admin_user");
+		Response addProjectToRepo = repositoryservice.addProjectToRepo(appDirName, getSvnRepoInfo(), userId, "TestProject", "TestProject", "admin_user");
 		Assert.assertEquals(200,addProjectToRepo.getStatus());
 	}
 	
@@ -71,7 +65,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	public void  commitProjectToRepo() {
 		RepoDetail repodetail = new RepoDetail();
 		repodetail.setUserName("santhosh_ja");
-		repodetail.setPassword("santJ!23");
+		repodetail.setPassword("farewellJ123");
 		repodetail.setType("svn");
 		repodetail.setCommitMessage("[artf710705]testcommit");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/" + appDirName);
@@ -85,7 +79,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	public void  updateProjectToRepo() {
 		RepoDetail repodetail = new RepoDetail();
 		repodetail.setUserName("santhosh_ja");
-		repodetail.setPassword("santJ!23");
+		repodetail.setPassword("farewellJ123");
 		repodetail.setRevision("head");
 		repodetail.setType("svn");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/" + appDirName);
@@ -97,7 +91,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	public void  importProjectFromRepo() throws Exception {
 		RepoDetail repodetail = new RepoDetail();
 		repodetail.setUserName("santhosh_ja");
-		repodetail.setPassword("santJ!23");
+		repodetail.setPassword("farewellJ123");
 		repodetail.setRevision("head");
 		repodetail.setType("svn");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0/239/");
@@ -114,7 +108,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	public void  fetchLogMessages() throws PhrescoException {
 		RepoDetail repodetail = new RepoDetail();
 		repodetail.setUserName("santhosh_ja");
-		repodetail.setPassword("santJ!23");
+		repodetail.setPassword("farewellJ123");
 		repodetail.setRevision("head");
 		repodetail.setType("svn");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
@@ -137,13 +131,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	
 	@Test
 	public void addGitProjectToRepo() {
-		RepoDetail repodetail = new RepoDetail();
-		repodetail.setUserName("santhosh-ja");
-		repodetail.setPassword("santJ!23");
-		repodetail.setType("git");
-		repodetail.setCommitMessage("commit for test");
-		repodetail.setRepoUrl("https://github.com/santhosh-ja/TestGit.git");
-		Response addProjectToRepo = repositoryservice.addProjectToRepo("TestGitProject", repodetail, userId, "TestGitProject", "TestGitProject", "admin_user");
+		Response addProjectToRepo = repositoryservice.addProjectToRepo("TestGitProject", getGitRepoInfo(), userId, "TestGitProject", "TestGitProject", "admin_user");
 		Assert.assertEquals(200,  addProjectToRepo.getStatus());
 	}
 	
@@ -195,5 +183,77 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		repodetail.setRepoUrl("https://github.com/santhosh-ja/GitAdd.git");
 		Response importApplication = repositoryservice.importApplication(repodetail, "Admin");
 		Assert.assertEquals(200,importApplication.getStatus());
+	}
+	
+	private RepoInfo getSvnRepoInfo() {
+		RepoInfo repoInfo = new RepoInfo();
+
+		RepoDetail srcRepoDetail = new RepoDetail();
+		srcRepoDetail.setType("svn");
+		srcRepoDetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
+		srcRepoDetail.setUserName("santhosh_ja");
+		srcRepoDetail.setPassword("farewellJ123");
+		srcRepoDetail.setCommitMessage("[artf778042] Add test");
+		srcRepoDetail.setPassPhrase("");
+		repoInfo.setSrcRepoDetail(srcRepoDetail);
+
+		RepoDetail phrescoRepoDetail = new RepoDetail();
+		phrescoRepoDetail.setType("svn");
+		phrescoRepoDetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
+		phrescoRepoDetail.setUserName("santhosh_ja");
+		phrescoRepoDetail.setPassword("farewellJ123");
+		phrescoRepoDetail.setCommitMessage("[artf778042] Add test");
+		phrescoRepoDetail.setPassPhrase("");
+		repoInfo.setPhrescoRepoDetail(phrescoRepoDetail);
+
+		RepoDetail testRepoDetail = new RepoDetail();
+		testRepoDetail.setType("svn");
+		testRepoDetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
+		testRepoDetail.setUserName("santhosh_ja");
+		testRepoDetail.setPassword("farewellJ123");
+		testRepoDetail.setCommitMessage("[artf778042] Add test");
+		testRepoDetail.setPassPhrase("");
+		repoInfo.setTestRepoDetail(testRepoDetail);
+
+		repoInfo.setSplitPhresco(true);
+		repoInfo.setSplitTest(true);
+
+		return repoInfo;
+	}
+	
+	private RepoInfo getGitRepoInfo() {
+		RepoInfo repoInfo = new RepoInfo();
+
+		RepoDetail srcRepoDetail = new RepoDetail();
+		srcRepoDetail.setType("git");
+		srcRepoDetail.setRepoUrl("https://github.com/santhosh-ja/TestProject_src.git");
+		srcRepoDetail.setUserName("santhosh-ja");
+		srcRepoDetail.setPassword("santJ!23");
+		srcRepoDetail.setCommitMessage("[artf778042] Add test");
+		srcRepoDetail.setPassPhrase("");
+		repoInfo.setSrcRepoDetail(srcRepoDetail);
+
+		RepoDetail phrescoRepoDetail = new RepoDetail();
+		phrescoRepoDetail.setType("git");
+		phrescoRepoDetail.setRepoUrl("https://github.com/santhosh-ja/TestProject_phresco.git");
+		phrescoRepoDetail.setUserName("santhosh-ja");
+		phrescoRepoDetail.setPassword("santJ!23");
+		phrescoRepoDetail.setCommitMessage("[artf778042] Add test");
+		phrescoRepoDetail.setPassPhrase("");
+		repoInfo.setPhrescoRepoDetail(phrescoRepoDetail);
+
+		RepoDetail testRepoDetail = new RepoDetail();
+		testRepoDetail.setType("git");
+		testRepoDetail.setRepoUrl("https://github.com/santhosh-ja/TestProject_test.git");
+		testRepoDetail.setUserName("santhosh-ja");
+		testRepoDetail.setPassword("santJ!23");
+		testRepoDetail.setCommitMessage("[artf778042] Add test");
+		testRepoDetail.setPassPhrase("");
+		repoInfo.setTestRepoDetail(testRepoDetail);
+
+		repoInfo.setSplitPhresco(true);
+		repoInfo.setSplitTest(true);
+
+		return repoInfo;
 	}
 }

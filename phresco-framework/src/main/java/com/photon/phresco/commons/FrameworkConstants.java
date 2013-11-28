@@ -290,6 +290,7 @@ public interface FrameworkConstants {
     String UPDATE_SVN_PROJECT = "updateProject";
     String SVN_TYPE = "svnType";
     String SVN_CHECKOUT_TEMP = "svn-checkout-temp";
+    String CHECKOUT_TEMP = "checkout-temp";
     String PHRESCO = "/.phresco";
     String GITHUB_SCM = "hudson.plugins.git.GitSCM";
     String SVN_SCM = "hudson.scm.SubversionSCM";
@@ -1999,6 +2000,9 @@ public interface FrameworkConstants {
 	    final String ODS = "ods";
 		final String XLS = "xls";
 		final String XLSX = "xlsx";
+
+		String SUFFIX_PHRESCO = "-phresco";
+		String SUFFIX_TEST = "-test";
 		
 		/**
 		 * Liquibase Constants

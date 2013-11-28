@@ -62,12 +62,61 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var getval = $(commonVariables.contentPlaceholder).find("select#type_294187d7-f75a-4adc-bb25-ce9465e0e82f").val();
 					var visibility =  $('#addRepo_294187d7-f75a-4adc-bb25-ce9465e0e82f').css('display').trim();
-					equal("block", visibility, "Add to repo popup shown");
-					equal("svn", getval, "Repo type svn listed");
+					equal(visibility, "block", "Add to repo popup shown");
+					equal(getval, "svn", "Repo type svn listed");
+					self.splitDotPhrescoCheckedTest(projectlist);
+				}, 1500);
+			});
+		},
+		
+		splitDotPhrescoCheckedTest : function(projectlist) {
+			var self = this;
+			asyncTest("Test - Project List addrepo split .phresco Checked test", function() {
+				$(".splitDotPhresco").first().click();
+				setTimeout(function() {
+					start();
+					equal($(".splitDotPhresco").first().parent().hasClass("active"), true, "Test - Project List addrepo split .phresco checked tested");
+					self.splitDotPhrescoNotCheckedTest(projectlist);
+				}, 1500);
+			});
+		},
+		
+		splitDotPhrescoNotCheckedTest : function(projectlist) {
+			var self = this;
+			asyncTest("Test - Project List addrepo split .phresco not Checked test", function() {
+				$(".splitDotPhresco").first().attr("checked", true).click();
+				setTimeout(function() {
+					start();
+					equal($(".splitDotPhresco").first().parent().hasClass("active"), false, "Test - Project List addrepo split .phresco not checked tested");
+					self.splitTestSrcCheckedTest(projectlist);
+				}, 1500);
+			});
+		},
+		
+		splitTestSrcCheckedTest : function(projectlist) {
+			var self = this;
+			asyncTest("Test - Project List addrepo split test source test", function() {
+				$(".splitTest").first().click();
+				setTimeout(function() {
+					start();
+					equal($(".splitTest").first().parent().hasClass("active"), true, "Test - Project List addrepo split test source tested");
+					self.splitTestSrcNotCheckedTest(projectlist);
+				}, 1500);
+			});
+		},
+		
+		splitTestSrcNotCheckedTest : function(projectlist) {
+			var self = this;
+			asyncTest("Test - Project List addrepo split test source test", function() {
+				$(".splitTest").first().attr("checked", true).click();
+				setTimeout(function() {
+					start();
+					equal($(".splitTest").first().parent().hasClass("active"), false, "Test - Project List addrepo split test source tested");
 					self.projectListTest(projectlist);
 				}, 1500);
 			});
 		},
+		
 		projectListTest : function(projectlist) {
 			$('#content').empty();
 			var self = this;
@@ -92,7 +141,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();
 					var techid = $(commonVariables.contentPlaceholder).find(".wordpress-WordPress").attr("techid");
-					equal("tech-wordpress", techid, "Project List Service Tested");
+					equal(techid, "tech-wordpress", "Project List Service Tested");
 					self.runValidationAddrepoTest(projectlist);					
 				}, 1500);
 			});
@@ -100,24 +149,24 @@ define(["projectlist/projectList"], function(ProjectList) {
 		
 		runValidationAddrepoTest : function (projectlist){
 			var self = this;			
-				asyncTest("addRepo URL Validation Test", function() {
-					
-					$('#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('');
-					$('#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').bind('input');
-					$('input#pwd_294187d7-f75a-4adc-bb25-ce9465e0e82f').val(''); 
-					$('input#repomessage_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('');
-					$('input#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('');
-					$('.tooltiptop[name^="addRepo"]').click();
-					$("input[name='addrepobtn']").click();
-					setTimeout(function() {
-						start();
-						var repo = $(commonVariables.contentPlaceholder).find('#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-						equal("errormessage", repo, 'URL div error class added test');
-						self.runValidationAddrepousernameTest(projectlist);
-					}, 1000);
-					
-				});
+			asyncTest("addRepo URL Validation Test", function() {
+				$('#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('');
+				$('#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').bind('input');
+				$('input#pwd_294187d7-f75a-4adc-bb25-ce9465e0e82f').val(''); 
+				$('input#repomessage_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('');
+				$('input#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('');
+				$('.tooltiptop[name^="addRepo"]').click();
+				$("input[name='addrepobtn']").click();
+				setTimeout(function() {
+					start();
+					var repo = $(commonVariables.contentPlaceholder).find('#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
+					equal(repo, "errormessage", 'URL div error class added test');
+					self.runValidationAddrepousernameTest(projectlist);
+				}, 1000);
+				
+			});
 		},
+		
 		runValidationAddrepousernameTest : function (projectlist){
 			var self = this;
 			asyncTest("addRepo username Validation Test", function() {
@@ -128,11 +177,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();
 					var username = $(commonVariables.contentPlaceholder).find('#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-					equal("uname errormessage", username, 'username div error class added test');
+					equal(username, "uname errormessage", 'username div error class added test');
 					self.runValidationAddrepoPasswordTest(projectlist);
 				}, 1000);
 			});
 		},
+		
 		runValidationAddrepoPasswordTest : function (projectlist){
 			var self = this;
 			asyncTest("addRepo password Validation Test", function() {
@@ -144,7 +194,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();
 					var password = $(commonVariables.contentPlaceholder).find('#pwd_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-					equal("pwd errormessage", password, 'Password div error class added test');
+					equal(password, "pwd errormessage", 'Password div error class added test');
 					self.runValidationCommitRepoTest(projectlist);
 				}, 1000);
 			}); 
@@ -159,7 +209,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 					setTimeout(function() {
 						start();
 						var repo = $(commonVariables.contentPlaceholder).find('#commitRepourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-						equal("errormessage", repo, 'URL div error class added test');
+						equal(repo, "errormessage", 'URL div error class added test');
 						self.runValidationCommitusernameTest(projectlist);
 					}, 1000);
 					
@@ -175,7 +225,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();
 					var username = $(commonVariables.contentPlaceholder).find('#commitUsername_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-					equal("uname errormessage", username, 'username div error class added test');
+					equal(username, "uname errormessage", 'username div error class added test');
 					self.runValidationCommiPasswordTest(projectlist);
 				}, 1000);
 			});
@@ -191,7 +241,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();
 					var password = $(commonVariables.contentPlaceholder).find('#commitPassword_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-					equal("pwd errormessage", password, 'Password div error class added test');
+					equal(password, "pwd errormessage", 'Password div error class added test');
 					self.runValidationSVNupdateTest(projectlist);
 				}, 1000);
 			}); 
@@ -206,12 +256,13 @@ define(["projectlist/projectList"], function(ProjectList) {
 					setTimeout(function() {
 						start();
 						var repo = $(commonVariables.contentPlaceholder).find('#updateRepourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-						equal("errormessage", repo, 'URL div error class added test');
+						equal(repo, "errormessage", 'URL div error class added test');
 						self.runValidationSVNupdateusernameTest(projectlist);
 					}, 1000);
 					
 				});
 		},
+		
 		runValidationSVNupdateusernameTest : function (projectlist){
 			var self = this;
 			asyncTest("SVNupdate username Validation Test", function() {
@@ -226,11 +277,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();
 					var username = $(commonVariables.contentPlaceholder).find('#updateUsername_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-					equal("uname errormessage", username, 'username div error class added test');
+					equal(username, "uname errormessage", 'username div error class added test');
 					self.runValidationSVNupdatePasswordTest(projectlist);
 				}, 1000);
 			});
 		},
+		
 		runValidationSVNupdatePasswordTest : function (projectlist){
 			var self = this;
 			asyncTest("SVNupdate password Validation Test", function() {
@@ -242,20 +294,22 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();
 					var password = $(commonVariables.contentPlaceholder).find('#updatePassword_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-					equal("pwd errormessage", password, 'Password div error class added test');
-					//self.projectaddrepoVerification(projectlist);
-					self.commituiver(projectlist);
+					equal(password, "pwd errormessage", 'Password div error class added test');
+					self.projectaddrepoPhrRepoUrlVerification(projectlist);
 				}, 1000);
 			}); 
 		},
-
-		 projectaddrepoVerification : function(projectlist) {
+		
+		projectaddrepoPhrRepoUrlVerification : function(projectlist) {
 			var self=this;
-			asyncTest("Test -Add to Repo trigger", function() {
+			asyncTest("Test -Add to Repo .phresco repo url validation test", function() {
 				$("input[name='repoUrl']").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
 				$("input[name='username']").val("admin");
 				$("input[name='password']").val("manage");
 				$("textarea[name='commitMsg']").val("New Project added");
+				var dynid = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$("#splitDotPhresco_"+dynid).attr("checked", true);
+				$("#phrescorepourl_"+dynid).val('');
 				var addtorepoAjax = $.mockjax({
 					url: commonVariables.webserviceurl + 'repository/addProjectToRepo?appDirName=wordpress-WordPress&userId=admin&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f&projectId=a58a5358-fa43-4fac-9b98-9bf94b7c4d1f&displayName=Admin',
 					type:'POST',
@@ -269,7 +323,210 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();
 					var getval = $(".msgdisplay,.success").text();
-					equal("Project added successfully", getval, "Addrepo service call");
+					equal($("#phrescorepourl_"+dynid).attr("placeholder"), "Enter URL", "Test -Add to Repo .phresco repo url validation tested");
+					self.projectaddrepoPhrUnameVerification(projectlist);
+				}, 2500);
+			});
+		},
+		
+		projectaddrepoPhrUnameVerification : function(projectlist) {
+			var self=this;
+			asyncTest("Test -Add to Repo .phresco user name validation test", function() {
+				$("input[name='repoUrl']").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
+				$("input[name='username']").val("admin");
+				$("input[name='password']").val("manage");
+				$("textarea[name='commitMsg']").val("New Project added");
+				var dynid = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$("#splitDotPhresco_"+dynid).attr("checked", true);
+				$("#phrescorepourl_"+dynid).val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
+				$("#phrescouname_"+dynid).val("");
+				var addtorepoAjax = $.mockjax({
+					url: commonVariables.webserviceurl + 'repository/addProjectToRepo?appDirName=wordpress-WordPress&userId=admin&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f&projectId=a58a5358-fa43-4fac-9b98-9bf94b7c4d1f&displayName=Admin',
+					type:'POST',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200019","data":null,"status":"success"});
+					}
+				});
+				$("input[name='addrepobtn']").click();
+				setTimeout(function() {
+					start();
+					var getval = $(".msgdisplay,.success").text();
+					equal($("#phrescouname_"+dynid).attr("placeholder"), "Enter UserName", "Test -Add to Repo .phresco user name validation tested");
+					self.projectaddrepoPhrPwdVerification(projectlist);
+				}, 2500);
+			});
+		},
+		
+		projectaddrepoPhrPwdVerification : function(projectlist) {
+			var self=this;
+			asyncTest("Test -Add to Repo .phresco password validation test", function() {
+				$("input[name='repoUrl']").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
+				$("input[name='username']").val("admin");
+				$("input[name='password']").val("manage");
+				$("textarea[name='commitMsg']").val("New Project added");
+				var dynid = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$("#splitDotPhresco_"+dynid).attr("checked", true);
+				$("#phrescorepourl_"+dynid).val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
+				$("#phrescouname_"+dynid).val("admin");
+				$("#phrescopwd_"+dynid).val("");
+				var addtorepoAjax = $.mockjax({
+					url: commonVariables.webserviceurl + 'repository/addProjectToRepo?appDirName=wordpress-WordPress&userId=admin&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f&projectId=a58a5358-fa43-4fac-9b98-9bf94b7c4d1f&displayName=Admin',
+					type:'POST',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200019","data":null,"status":"success"});
+					}
+				});
+				$("input[name='addrepobtn']").click();
+				setTimeout(function() {
+					start();
+					var getval = $(".msgdisplay,.success").text();
+					equal($("#phrescopwd_"+dynid).attr("placeholder"), "Enter Password", "Test -Add to Repo .phresco Password validation tested");
+					self.projectaddrepoTestRepoUrlVerification(projectlist);
+				}, 2500);
+			});
+		},
+		
+		projectaddrepoTestRepoUrlVerification : function(projectlist) {
+			var self=this;
+			asyncTest("Test -Add to Repo Test repo url validation test", function() {
+				$("input[name='repoUrl']").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
+				$("input[name='username']").val("admin");
+				$("input[name='password']").val("manage");
+				$("textarea[name='commitMsg']").val("New Project added");
+				var dynid = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$("#splitDotPhresco_"+dynid).attr("checked", true);
+				$("#phrescorepourl_"+dynid).val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
+				$("#phrescouname_"+dynid).val("admin");
+				$("#phrescopwd_"+dynid).val("manage");
+				$("#phrescorepomessage_"+dynid).val("New Project added");
+				$("#splitTest_"+dynid).attr("checked", true);
+				$("#testrepourl_"+dynid).val('');
+				var addtorepoAjax = $.mockjax({
+					url: commonVariables.webserviceurl + 'repository/addProjectToRepo?appDirName=wordpress-WordPress&userId=admin&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f&projectId=a58a5358-fa43-4fac-9b98-9bf94b7c4d1f&displayName=Admin',
+					type:'POST',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200019","data":null,"status":"success"});
+					}
+				});
+				$("input[name='addrepobtn']").click();
+				setTimeout(function() {
+					start();
+					var getval = $(".msgdisplay,.success").text();
+					equal($("#testrepourl_"+dynid).attr("placeholder"), "Enter URL", "Test -Add to Repo Test repo url validation tested");
+					self.projectaddrepoTestUnameVerification(projectlist);
+				}, 2500);
+			});
+		},
+
+		projectaddrepoTestUnameVerification : function(projectlist) {
+			var self=this;
+			asyncTest("Test -Add to Repo Test user name validation test", function() {
+				$("input[name='repoUrl']").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
+				$("input[name='username']").val("admin");
+				$("input[name='password']").val("manage");
+				$("textarea[name='commitMsg']").val("New Project added");
+				var dynid = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$("#splitDotPhresco_"+dynid).attr("checked", true);
+				$("#phrescorepourl_"+dynid).val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
+				$("#phrescouname_"+dynid).val("admin");
+				$("#phrescopwd_"+dynid).val("manage");
+				$("#phrescorepomessage_"+dynid).val("New Project added");
+				$("#splitTest_"+dynid).attr("checked", true);
+				$("#testrepourl_"+dynid).val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
+				$("#testuname_"+dynid).val("");
+				var addtorepoAjax = $.mockjax({
+					url: commonVariables.webserviceurl + 'repository/addProjectToRepo?appDirName=wordpress-WordPress&userId=admin&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f&projectId=a58a5358-fa43-4fac-9b98-9bf94b7c4d1f&displayName=Admin',
+					type:'POST',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200019","data":null,"status":"success"});
+					}
+				});
+				$("input[name='addrepobtn']").click();
+				setTimeout(function() {
+					start();
+					var getval = $(".msgdisplay,.success").text();
+					equal($("#testuname_"+dynid).attr("placeholder"), "Enter UserName", "Test -Add to Repo Test user name validation tested");
+					self.projectaddrepoTestPwdVerification(projectlist);
+				}, 2500);
+			});
+		},
+		
+		projectaddrepoTestPwdVerification : function(projectlist) {
+			var self=this;
+			asyncTest("Test -Add to Repo Test Password validation test", function() {
+				$("input[name='repoUrl']").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
+				$("input[name='username']").val("admin");
+				$("input[name='password']").val("manage");
+				$("textarea[name='commitMsg']").val("New Project added");
+				var dynid = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$("#splitDotPhresco_"+dynid).attr("checked", true);
+				$("#phrescorepourl_"+dynid).val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
+				$("#phrescouname_"+dynid).val("admin");
+				$("#phrescopwd_"+dynid).val("manage");
+				$("#phrescorepomessage_"+dynid).val("New Project added");
+				$("#splitTest_"+dynid).attr("checked", true);
+				$("#testrepourl_"+dynid).val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
+				$("#testuname_"+dynid).val("admin");
+				$("#testpwd_"+dynid).val("");
+				var addtorepoAjax = $.mockjax({
+					url: commonVariables.webserviceurl + 'repository/addProjectToRepo?appDirName=wordpress-WordPress&userId=admin&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f&projectId=a58a5358-fa43-4fac-9b98-9bf94b7c4d1f&displayName=Admin',
+					type:'POST',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200019","data":null,"status":"success"});
+					}
+				});
+				$("input[name='addrepobtn']").click();
+				setTimeout(function() {
+					start();
+					var getval = $(".msgdisplay,.success").text();
+					equal($("#testuname_"+dynid).attr("placeholder"), "Enter UserName", "Test -Add to Repo Test Password validation tested");
+					self.projectaddrepoVerification(projectlist);
+				}, 2500);
+			});
+		},
+
+		projectaddrepoVerification : function(projectlist) {
+			var self=this;
+			asyncTest("Test -Add to Repo trigger", function() {
+				$("input[name='repoUrl']").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
+				$("input[name='username']").val("admin");
+				$("input[name='password']").val("manage");
+				$("textarea[name='commitMsg']").val("New Project added");
+				var dynid = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$("#splitDotPhresco_"+dynid).attr("checked", true);
+				$("#phrescorepourl_"+dynid).val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
+				$("#phrescouname_"+dynid).val("admin");
+				$("#phrescopwd_"+dynid).val("manage");
+				$("#phrescorepomessage_"+dynid).val("New Project added");
+				$("#splitTest_"+dynid).attr("checked", true);
+				$("#testrepourl_"+dynid).val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
+				$("#testuname_"+dynid).val("admin");
+				$("#testpwd_"+dynid).val("manage");
+				$("#testrepomessage_"+dynid).val("New Project added");
+				var addtorepoAjax = $.mockjax({
+					url: commonVariables.webserviceurl + 'repository/addProjectToRepo?appDirName=wordpress-WordPress&userId=admin&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f&projectId=a58a5358-fa43-4fac-9b98-9bf94b7c4d1f&displayName=Admin',
+					type:'POST',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200019","data":null,"status":"success"});
+					}
+				});
+				$("input[name='addrepobtn']").click();
+				setTimeout(function() {
+					start();
+					var getval = $(".msgdisplay,.success").text();
+					equal($("#addRepo_"+dynid).css("display"), "none", "Addrepo service call");
 					self.commituiver(projectlist);
 				}, 2500);
 			});
@@ -411,12 +668,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var getval = $(commonVariables.contentPlaceholder).find("#noReport_294187d7-f75a-4adc-bb25-ce9465e0e82f").text();
 					equal("No Reports are Available", getval, "Delete pdf successfully.");
-					self.updateuiver(projectlist);
+					self.projectcommitVerification(projectlist);
 				}, 2500);
 			});
 		},
 		
-		 projectcommitVerification : function(projectlist) {
+		projectcommitVerification : function(projectlist) {
 			var self=this;
 			asyncTest("Test -Commit trigger", function() {
 				$("input[name='repoUrl']").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0/wordpress-WordPress');
@@ -543,15 +800,80 @@ define(["projectlist/projectList"], function(ProjectList) {
 					var visibility =  $('#svn_update294187d7-f75a-4adc-bb25-ce9465e0e82f').css('display').trim();
 					equal("block", visibility, "Add to Commit popup shown");
 					equal("svn", getval, "Project List SVNUPDATE popup rendered");
-					//self.projectSVNUpdateVerification(projectlist);
-					self.projectImportAppSuccessVerification(projectlist);
+					self.projectPerforceUpdateEmptyUrlValidation(projectlist);
 				}, 2500);
 			});
 		},
 		
-		 projectSVNUpdateVerification : function(projectlist) {
+		projectPerforceUpdateEmptyUrlValidation : function(projectlist) {
+			var self = this;
+			asyncTest("Test - Perforce Update Empty Repo Url Validation Test", function() {
+				var dynid = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$("#updateType_"+dynid).val("perforce");
+				$("input[name='repoUrl']").val('');
+				$("input[name='updatebtn']").click();
+				setTimeout(function() {
+					start();
+					equal($("#updateRepourl_"+dynid).attr('placeholder'), 'Enter Url', "Perforce Update Empty Repo Url Validation Tested");
+					self.projectPerforceUpdateUrlValidation(projectlist);
+				}, 2500);
+			});
+		},
+		
+		projectPerforceUpdateUrlValidation : function(projectlist) {
+			var self = this;
+			asyncTest("Test - Perforce Update Repo Url Validation Test", function() {
+				var dynid = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$("#updateType_"+dynid).val("perforce");
+				$("input[name='repoUrl']").val('sample:8080');
+				$("input[name='updatebtn']").click();
+				setTimeout(function() {
+					start();
+					equal($("#updateRepourl_"+dynid).attr('placeholder'), 'Enter Url', "Perforce Update Repo Url Validation Tested");
+					self.projectPerforceUpdateUnameValidation(projectlist);
+				}, 2500);
+			});
+		},
+		
+		projectPerforceUpdateUnameValidation : function(projectlist) {
+			var self = this;
+			asyncTest("Test - Perforce Update User Name Validation Test", function() {
+				var dynid = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$("#updateType_"+dynid).val("perforce");
+				$("input[name='repoUrl']").val('localhost:8080');
+				$("#updateUsername_"+dynid).val('');
+				$("input[name='updatebtn']").click();
+				setTimeout(function() {
+					start();
+					equal($("#updateUsername_"+dynid).attr('placeholder'), 'Enter UserName', "Perforce Update User Name Validation Tested");
+					self.projectPerforceUpdateStreamValidation(projectlist);
+				}, 2500);
+			});
+		},
+		
+		projectPerforceUpdateStreamValidation : function(projectlist) {
+			var self = this;
+			asyncTest("Test - Perforce Update User Name Validation Test", function() {
+				var dynid = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$("#updateType_"+dynid).val("perforce");
+				$("input[name='repoUrl']").val('localhost:8080');
+				$("#updateUsername_"+dynid).val('admin');
+				$("#stream_"+dynid).val('');
+				$("input[name='updatebtn']").click();
+				setTimeout(function() {
+					start();
+					var getval = $(".msgdisplay,.success").text();
+					equal($("#stream_"+dynid).attr('placeholder'), 'Enter Stream', "Perforce Update User Name Validation Tested");
+					self.projectSVNUpdateVerification(projectlist);
+				}, 2500);
+			});
+		},
+		
+		projectSVNUpdateVerification : function(projectlist) {
 			var self = this;
 			asyncTest("Test -SVNUpdate trigger", function() {
+				var dynid = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$("#updateType_"+dynid).val("svn");
 				$("input[name='repoUrl']").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
 				$("input[name='username']").val("admin");
 				$("input[name='password']").val("manage");

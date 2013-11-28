@@ -197,12 +197,7 @@ define([], function() {
 			} else if(action === "repoget") {
 				header.requestMethod = "POST";
 				var addrepo ={};
-				addrepo.type = projectRequestBody.type;
-				addrepo.repoUrl = projectRequestBody.repoUrl;
-				addrepo.userName = projectRequestBody.userName;
-				addrepo.password = projectRequestBody.password;
-				addrepo.commitMessage = projectRequestBody.commitMessage;
-				header.requestPostBody = JSON.stringify(addrepo);			
+				header.requestPostBody = JSON.stringify(projectRequestBody.repoInfo);
 				header.webserviceurl = commonVariables.webserviceurl + "repository/addProjectToRepo?appDirName="+projectRequestBody.appdirname+"&userId="+userId+"&appId="+projectRequestBody.appid+"&projectId="+projectRequestBody.projectid+"&displayName="+data.displayName;				
 			} else if(action === "commitget") {
 				header.requestMethod = "POST";
@@ -317,26 +312,50 @@ define([], function() {
 			var self = this;
 			self.renderlocales(contentPlaceholder);
 		},
+		
 		addRepoEvent : function(obj, dynid){
 			var self = this;
-			var repodata = {}, actionBody, action;
+			var srcRepoDetail = {}, phrescoRepoDetail = {}, testRepoDetail = {}, actionBody = {}, action, repoInfo = {};
 			self.flag1=1;
 			if(!self.validation(dynid)) {
 				if($("#repomessage_"+dynid).val() === '') {
 					var drop = obj.parent().prev().prev().find('tbody').find('.searchdropdown option:first-child').text();
 					$("#repomessage_"+dynid).val(drop);
 				}
+				srcRepoDetail.type = $("#type_"+dynid).val();
+				srcRepoDetail.repoUrl = $("#repourl_"+dynid).val();
+				srcRepoDetail.userName = $("#uname_"+dynid).val();
+				srcRepoDetail.password = $("#pwd_"+dynid).val();
+				srcRepoDetail.commitMessage = $("#repomessage_"+dynid).val();
+				srcRepoDetail.passPhrase = $("#repoPhrase_"+dynid).val();
+				repoInfo.srcRepoDetail = srcRepoDetail;
 				
-				repodata.type = $("#type_"+dynid).val();
-				repodata.repoUrl = $("#repourl_"+dynid).val();
-				repodata.userName = $("#uname_"+dynid).val();
-				repodata.password = $("#pwd_"+dynid).val();
-				repodata.commitMessage = $("#repomessage_"+dynid).val();
-				repodata.appdirname = obj.parent("div").attr("appDirName");
-				repodata.appid = obj.parent("div").attr("appId");
-				repodata.projectid = obj.parent("div").attr("projectId");
-				repodata.passPhrase = $("#repoPhrase_"+dynid).val();
-				actionBody = repodata;
+				if ($("#splitDotPhresco_"+dynid).is(":checked")) {
+					phrescoRepoDetail.type = $("#phrescotype_"+dynid).val();
+					phrescoRepoDetail.repoUrl = $("#phrescorepourl_"+dynid).val();
+					phrescoRepoDetail.userName = $("#phrescouname_"+dynid).val();
+					phrescoRepoDetail.password = $("#phrescopwd_"+dynid).val();
+					phrescoRepoDetail.commitMessage = $("#phrescorepomessage_"+dynid).val();
+					phrescoRepoDetail.passPhrase = $("#phrescorepoPhrase_"+dynid).val();
+					repoInfo.phrescoRepoDetail = phrescoRepoDetail;
+				}
+				
+				if ($("#splitTest_"+dynid).is(":checked")) {
+					testRepoDetail.type = $("#testtype_"+dynid).val();
+					testRepoDetail.repoUrl = $("#testrepourl_"+dynid).val();
+					testRepoDetail.userName = $("#testuname_"+dynid).val();
+					testRepoDetail.password = $("#testpwd_"+dynid).val();
+					testRepoDetail.commitMessage = $("#testrepomessage_"+dynid).val();
+					testRepoDetail.passPhrase = $("#testrepoPhrase_"+dynid).val();
+					repoInfo.testRepoDetail = testRepoDetail;
+				}
+				repoInfo.splitPhresco = $("#splitDotPhresco_"+dynid).is(":checked");
+				repoInfo.splitTest = $("#splitTest_"+dynid).is(":checked");
+				actionBody.repoInfo = repoInfo;
+				actionBody.appdirname = obj.parent("div").attr("appDirName");
+				actionBody.appid = obj.parent("div").attr("appId");
+				actionBody.projectid = obj.parent("div").attr("projectId");
+				
 				action = "repoget";
 				commonVariables.hideloading = true;
 				self.projectListActionForScm(self.getActionHeader(actionBody, action), $("#addRepoLoading_"+dynid), function(response){
@@ -774,40 +793,98 @@ define([], function() {
 				mandatoryUpdateUser = $("#updateUsername_"+dynid).attr("mandatory");
 				mandatoryUpdatePwd = $("#updatePassword_"+dynid).attr("mandatory");
 				revision = $("#revision_"+dynid).val();
-				if(self.flag1 === 1)
-				{	
-					if(repourl === ''){
+				
+				var splitDotPhresco = $("#splitDotPhresco_" + dynid).is(":checked");
+				var splitTest = $("#splitTest_" + dynid).is(":checked");
+				self.hasError = false;
+				var hasDotPhrescoErr = false;
+				var hasTestErr = false;
+				if(self.flag1 === 1) {
+					if (repourl === '') {
+						$("#dotphresco" + dynid).removeClass("active in");
+						$("#source" + dynid).addClass("active in");
+						$("#test" + dynid).removeClass("active in");
+						$("#splitDotPhresco_" + dynid).parent().prev().addClass("active");
+						$("#splitDotPhresco_" + dynid).parent().removeClass("active");
+						$("#splitTest_" + dynid).parent().removeClass("active");
+						
 						$("#repourl_"+dynid).focus();
 						$("#repourl_"+dynid).val('');
 						$("#repourl_"+dynid).attr('placeholder','Enter URL');
 						$("#repourl_"+dynid).addClass("errormessage");
-						setTimeout(function() { 
-							$("#repourl_"+dynid).val(repourl); 
-						}, 4000);
 						self.hasError = true;
-					} else if (mandatoryUser === "true") { 
-						if(uname === ""){
-							$("#uname_"+dynid).focus();
-							$("#uname_"+dynid).attr('placeholder','Enter UserName');
-							$("#uname_"+dynid).addClass("errormessage");
-							self.hasError = true;
-						} else if(pwd === ""){
-							$("#pwd_"+dynid).focus();
-							$("#pwd_"+dynid).attr('placeholder','Enter Password');
-							$("#pwd_"+dynid).addClass("errormessage");
-							self.hasError = true;
-						} else {
-							self.hasError=false;
-						}
-					} else {
-						self.hasError=false;
+					} else if (mandatoryUser === "true" && uname === "") {
+						$("#uname_"+dynid).focus();
+						$("#uname_"+dynid).attr('placeholder','Enter UserName');
+						$("#uname_"+dynid).addClass("errormessage");
+						self.hasError = true;
+					} else if (mandatoryUser === "true" && pwd === "") {
+						$("#pwd_"+dynid).focus();
+						$("#pwd_"+dynid).attr('placeholder','Enter Password');
+						$("#pwd_"+dynid).addClass("errormessage");
+						self.hasError = true;
+					} else if (splitDotPhresco && $("#phrescorepourl_"+dynid).val() === '') {
+						$("#phrescorepourl_"+dynid).focus();
+						$("#phrescorepourl_"+dynid).val('');
+						$("#phrescorepourl_"+dynid).attr('placeholder','Enter URL');
+						$("#phrescorepourl_"+dynid).addClass("errormessage");
+						hasDotPhrescoErr = true;
+						self.hasError = true;
+					} else if (splitDotPhresco && mandatoryUser === "true" && $("#phrescouname_"+dynid).val() === "") {
+						$("#phrescouname_"+dynid).focus();
+						$("#phrescouname_"+dynid).val('');
+						$("#phrescouname_"+dynid).attr('placeholder','Enter UserName');
+						$("#phrescouname_"+dynid).addClass("errormessage");
+						hasDotPhrescoErr = true;
+						self.hasError = true;
+					} else if (splitDotPhresco && mandatoryUser === "true" && $("#phrescopwd_"+dynid).val() === "") {
+						$("#phrescopwd_"+dynid).focus();
+						$("#phrescopwd_"+dynid).val('');
+						$("#phrescopwd_"+dynid).attr('placeholder','Enter Password');
+						$("#phrescopwd_"+dynid).addClass("errormessage");
+						hasDotPhrescoErr = true;
+						self.hasError = true;
+					} else if (splitTest && $("#testrepourl_"+dynid).val() === '') {
+						$("#testrepourl_"+dynid).focus();
+						$("#testrepourl_"+dynid).val('');
+						$("#testrepourl_"+dynid).attr('placeholder','Enter URL');
+						$("#testrepourl_"+dynid).addClass("errormessage");
+						self.hasError = true;
+						hasTestErr = true;
+					} else if (splitTest && mandatoryUser === "true" && $("#testuname_"+dynid).val() === "") {
+						$("#testuname_"+dynid).focus();
+						$("#testuname_"+dynid).val('');
+						$("#testuname_"+dynid).attr('placeholder','Enter UserName');
+						$("#testuname_"+dynid).addClass("errormessage");
+						self.hasError = true;
+						hasTestErr = true;
+					} else if (splitTest && mandatoryUser === "true" && $("#testpwd_"+dynid).val() === "") {
+						$("#testpwd_"+dynid).focus();
+						$("#testpwd_"+dynid).val('');
+						$("#testpwd_"+dynid).attr('placeholder','Enter Password');
+						$("#testpwd_"+dynid).addClass("errormessage");
+						self.hasError = true;
+						hasTestErr = true;
+					}
+					if (hasDotPhrescoErr) {
+						$("#dotphresco" + dynid).addClass("active in");
+						$("#source" + dynid).removeClass("active in");
+						$("#test" + dynid).removeClass("active in");
+						$("#splitDotPhresco_" + dynid).parent().prev().removeClass("active");
+						$("#splitDotPhresco_" + dynid).parent().addClass("active");
+						$("#splitTest_" + dynid).parent().removeClass("active");
+					}
+					if (hasTestErr) {
+						$("#dotphresco" + dynid).removeClass("active in");
+						$("#source" + dynid).removeClass("active in");
+						$("#test" + dynid).addClass("active in");
+						$("#splitDotPhresco_" + dynid).parent().prev().removeClass("active");
+						$("#splitDotPhresco_" + dynid).parent().removeClass("active");
+						$("#splitTest_" + dynid).parent().addClass("active");
 					}
 					self.flag1=0;
 					return self.hasError;
-				}
-
-				else if(self.flag2 === 1)
-				{
+				} else if(self.flag2 === 1) {
 					if(commitRepourl === ""){
 						$("#commitRepourl_"+dynid).focus();
 						$("#commitRepourl_"+dynid).val('');
@@ -828,19 +905,12 @@ define([], function() {
 							$("#commitPassword_"+dynid).attr('placeholder','Enter Password');
 							$("#commitPassword_"+dynid).addClass("errormessage");
 							self.hasError = true;
-						} else {
-							self.hasError=false;
 						}
-					} else {
-						self.hasError=false;
 					}
 					self.flag2=0;
 					return self.hasError;
-				}
-				
-				else if(self.flag3 === 1)
-				{	
-				if($("#updateType_"+dynid).val() !== 'perforce') {
+				} else if(self.flag3 === 1) {	
+					if($("#updateType_"+dynid).val() !== 'perforce') {
 						if(updateRepourl === ""){
 								$("#updateRepourl_"+dynid).focus();
 								$("#updateRepourl_"+dynid).val('');
@@ -862,15 +932,9 @@ define([], function() {
 								$("#updatePassword_"+dynid).attr('placeholder','Enter Password');
 								$("#updatePassword_"+dynid).addClass("errormessage");
 								self.hasError = true;
-							} else {
-								self.hasError=false;
 							}
-						} else {
-							self.hasError=false;
 						}
-
-					}
-					else {
+					} else {
 						stream = $("#stream_"+dynid).val();
 						if($(".stream").hasClass("errormessage")) 
 								$(".stream").removeClass("errormessage");
@@ -904,10 +968,7 @@ define([], function() {
 								$("#stream_"+dynid).attr('placeholder','Enter Stream');
 								$("#stream_"+dynid).addClass("errormessage");
 								self.hasError = true;
-						} else {
-							self.hasError=false;
 						}
-
 					}	
 					self.flag3=0;
 					return self.hasError;
