@@ -591,7 +591,7 @@ define([], function() {
 				$("table[name=pdfHeader_"+dynamicId+"]").show();
 				for(var i =0; i < response.data.json.length; i++) {
 					var idgenerate = Date.now();
-					var headerTr = '<tr class="generatedRow" fileName="'+response.data.json[i].fileName+'" appdirname = "'+temp+'" moduleName="'+ modulename +'"><td>' + response.data.json[i].time + '</td><td>'+response.data.json[i].type+'</td>';
+					var headerTr = '<tr class="generatedRow" fileName="'+response.data.json[i].fileName+'" appdirname = "'+temp+'" moduleName="'+ modulename +'"><td style="width:41% !important;">' + response.data.json[i].time + '</td><td>'+response.data.json[i].type+'</td>';
 					content = content.concat(headerTr);
 					headerTr = '<td class="list_img"><a class="tooltiptop" fileName="'+response.data.json[i].fileName+'" fromPage="All" href="javascript:void(0)" data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title=""><img src="themes/default/images/Phresco/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>';
 					content = content.concat(headerTr);

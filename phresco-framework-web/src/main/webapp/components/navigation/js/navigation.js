@@ -79,6 +79,7 @@ define(["navigation/listener/navigationListener"], function() {
 			
 			self.windowResize();
 			var data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+			var pass = commonVariables.api.localVal.getSession('password');
 			
 			$('#addproject').unbind('click');
 			$('#addproject').click(function(){
@@ -128,7 +129,7 @@ define(["navigation/listener/navigationListener"], function() {
 					$('#importPassword').val('');
 				} else { */				
 					$('#importUserName').val(data.id);
-					$('#importPassword').val('');
+					$('#importPassword').val(pass);
 				//}
 				if($("#importType").val() === 'svn') {
 					$(".seperatetd").show();
@@ -244,7 +245,6 @@ define(["navigation/listener/navigationListener"], function() {
 			checkbox.unbind("change");
 			checkbox.on("change", function(){	
 				if(checkbox.is(':checked')) {
-					console.info("checkbox", checkbox.is(':checked'));
 					$('#importUserName').removeAttr('disabled','disabled');
 					$('#importPassword').removeAttr('disabled','disabled');
 					$('#importUserName').removeAttr('readonly','readonly');
@@ -252,9 +252,8 @@ define(["navigation/listener/navigationListener"], function() {
 					$('#importUserName').val('');
 					$('#importPassword').val('');
 				} else {
-					console.info("checkbox", checkbox.is(':checked'));
 					$('#importUserName').val(data.id);
-					//$('#importPassword').val(data.password);
+					$('#importPassword').val(pass);
 					$('#importUserName').attr('readonly','readonly');
 					$('#importPassword').attr('readonly','readonly');
 				}	
