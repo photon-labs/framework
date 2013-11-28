@@ -822,11 +822,15 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 						File subModuleMainPom = new File(subModuleDir.getPath() + File.separator + subModuleMainPomName);
 						if (subModuleMainPom.exists()) {
 							PomProcessor subPomProcessor = new PomProcessor(subModuleMainPom);
-							subPomProcessor.getParent().setArtifactId(mainPomProcessor.getArtifactId());
-							subPomProcessor.getParent().setGroupId(mainPomProcessor.getGroupId());
-							subPomProcessor.getParent().setVersion(mainPomProcessor.getVersion());
-							subPomProcessor.getParent().setRelativePath("../");
-							subPomProcessor.save();
+							if (subPomProcessor != null &&  subPomProcessor.getParent() != null  
+									&& mainPomProcessor.getGroupId().equals(subPomProcessor.getParent().getGroupId()) 
+									&& mainPomProcessor.getVersion().equals(subPomProcessor.getParent().getVersion())) {
+								subPomProcessor.getParent().setArtifactId(mainPomProcessor.getArtifactId());
+								subPomProcessor.getParent().setGroupId(mainPomProcessor.getGroupId());
+								subPomProcessor.getParent().setVersion(mainPomProcessor.getVersion());
+								subPomProcessor.getParent().setRelativePath("../");
+								subPomProcessor.save();
+							}
 						}
 					}
 				}
@@ -856,7 +860,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					}
 					List<String> dependentModules = module.getDependentModules();
 				
-					if (dependentModules != null && dependentModules.contains(oldSubModuleName)) {
+					if (CollectionUtils.isNotEmpty(dependentModules)&& dependentModules.contains(oldSubModuleName)) {
 						int itemIndex = dependentModules.indexOf(oldSubModuleName);
 						dependentModules.remove(itemIndex);
 						dependentModules.add(itemIndex, newSubModuleName);
