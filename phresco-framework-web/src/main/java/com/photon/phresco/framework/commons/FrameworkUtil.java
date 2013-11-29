@@ -598,6 +598,175 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 		
 		return permissions;
     }
+    
+    public boolean deleteTestSuitesFromXls(String filePath, String testSuiteName) {
+    	boolean hasTrue = false;
+    	Iterator<Row> rowIterator;
+    	try{
+		FileInputStream myInput = new FileInputStream(filePath);
+		HSSFWorkbook myWorkBook = new HSSFWorkbook(myInput);
+
+		HSSFSheet mySheet = myWorkBook.getSheetAt(0);
+		rowIterator = mySheet.rowIterator();
+		for (int i = 0; i <=2; i++) {
+			rowIterator.next();
+		}
+		while (rowIterator.hasNext()) {
+			Row next = rowIterator.next();
+			if(getValue(next.getCell(2)).equalsIgnoreCase(testSuiteName)) {
+				mySheet.removeRow(next);
+				int rowNum = next.getRowNum();
+				int newNum = rowNum + 1;
+				mySheet.shiftRows(newNum, mySheet.getLastRowNum(),-1);
+				int numberOfSheets = myWorkBook.getNumberOfSheets();
+	         	for (int j = 0; j < numberOfSheets; j++) {
+	         		HSSFSheet mySheet1 = myWorkBook.getSheetAt(j);
+	         		if(mySheet1.getSheetName().equalsIgnoreCase(testSuiteName)) {
+	         			myWorkBook.removeSheetAt(j);
+	         			hasTrue = true;
+	         			break;
+	         		}
+	         	}
+	         		myInput.close();
+				    FileOutputStream outFile =new FileOutputStream(filePath);
+				    myWorkBook.write(outFile);
+				    outFile.close();
+				break;
+			}
+		}
+    	} catch(Exception e) {
+    		
+    	}
+    	
+		return hasTrue;
+    }
+    
+    public boolean deleteTestSuitesFromXLSX(String filePath, String testSuiteName) {
+    	boolean hasTrue = false;
+    	Iterator<Row> rowIterator;
+    	try {
+		FileInputStream myInput = new FileInputStream(filePath);
+		    
+		OPCPackage opc=OPCPackage.open(myInput); 
+		
+		XSSFWorkbook myWorkBook = new XSSFWorkbook(opc);
+		XSSFSheet mySheet = myWorkBook.getSheetAt(0);
+		rowIterator = mySheet.rowIterator();
+		for (int i = 0; i <=2; i++) {
+			rowIterator.next();
+		}
+		
+		while (rowIterator.hasNext()) {
+			Row next = rowIterator.next();
+			if(getValue(next.getCell(2)).equalsIgnoreCase(testSuiteName)) {
+				mySheet.removeRow(next);
+				int rowNum = next.getRowNum();
+				int newNum = rowNum + 1;
+				mySheet.shiftRows(newNum, mySheet.getLastRowNum(),-1);
+				int numberOfSheets = myWorkBook.getNumberOfSheets();
+	         	for (int j = 0; j < numberOfSheets; j++) {
+	         		XSSFSheet mySheet1 = myWorkBook.getSheetAt(j);
+	         		if(mySheet1.getSheetName().equalsIgnoreCase(testSuiteName)) {
+	         			myWorkBook.removeSheetAt(j);
+	         			hasTrue = true;
+	         			break;
+	         		}
+	         	}
+	         		myInput.close();
+				    FileOutputStream outFile =new FileOutputStream(filePath);
+				    myWorkBook.write(outFile);
+				    outFile.close();
+				break;
+			}
+		}
+    	} catch(Exception e) {
+    		
+    	}
+    	
+		return hasTrue;
+    }
+    
+    public  boolean deleteManualTestSuiteFile(String filePath, String testSuiteName) throws PhrescoException  {
+		Iterator<Row> rowIterator = null;
+		boolean delete = false;
+		try {
+			File testDir = new File(filePath);
+			StringBuilder sb = new StringBuilder(filePath);
+			if(testDir.isDirectory()) {
+				FilenameFilter filterXslx = new PhrescoFileFilter("", "xlsx");
+				FilenameFilter filterXls = new PhrescoFileFilter("", "xls");
+				FilenameFilter filterOds = new PhrescoFileFilter("", "ods");
+				File[] listXlsxFiles = testDir.listFiles(filterXslx);
+				File[] listXlsFiles = testDir.listFiles(filterXls);
+				File[] listOdsFiles = testDir.listFiles(filterOds);
+				if (listXlsxFiles.length != 0) {
+					for (File listXlsxFile : listXlsxFiles) {
+						if (listXlsxFile.isFile()) {
+							sb.append(File.separator);
+							sb.append(listXlsxFile.getName());
+							break;
+						}
+					}
+					deleteTestSuitesFromXLSX(sb.toString(), testSuiteName);
+				} else if (listXlsFiles.length != 0) {
+					for(File listXlsFile : listXlsFiles) {
+						if (listXlsFile.isFile()) {
+							sb.append(File.separator);
+							sb.append(listXlsFile.getName());
+							break;
+						}
+					}
+					delete = deleteTestSuitesFromXls(sb.toString(), testSuiteName);
+				} else if (listOdsFiles.length != 0) {
+					for(File listOdsFile : listOdsFiles) {
+						if (listOdsFile.isFile()) {
+							sb.append(File.separator);
+							sb.append(listOdsFile.getName());
+							break;
+						}
+					}
+					delete = deleteTestSuitesFromODS(sb.toString(), testSuiteName);
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new PhrescoException(e);
+		}
+		return delete;
+	}
+    
+	private boolean deleteTestSuitesFromODS(String filePath, String testSuiteName) {
+		boolean delete = false;
+		File file = new File(filePath);
+		org.jopendocument.dom.spreadsheet.Sheet sheet;
+		try {
+			ODPackage createFromFile = ODPackage.createFromFile(file);
+			SpreadSheet spreadSheet = createFromFile.getSpreadSheet();
+			sheet = spreadSheet.getSheet(0);
+			
+			int nRowCount = sheet.getRowCount();
+
+			//Iterating through each row of the selected sheet
+			org.jopendocument.dom.spreadsheet.Cell cell = null;
+			for(int nRowIndex = 3; nRowIndex < nRowCount; nRowIndex++) {
+				cell = sheet.getCellAt(1, nRowIndex);
+				if (cell.getValue() != null && cell.getValue() != "") {
+					String name= cell.getTextValue();
+					if(name.equalsIgnoreCase(testSuiteName)) {
+						sheet.removeRow(nRowIndex);
+						break;
+					}
+				}
+			}
+			OutputStream out=new FileOutputStream(file);
+			createFromFile.save(out);
+			out.close();
+
+		} catch (IOException e) {
+		}
+		return delete;
+	}
 
 	public  List<TestSuite> readManualTestSuiteFile(String filePath) throws PhrescoException  {
 		List<TestSuite> excels = new ArrayList<TestSuite>();
@@ -851,6 +1020,382 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
     	return testSuite;
 	}
     
+	  
+    public boolean deleteTestCasesFromXls(String filePath, String testSuiteName, String testCaseId) {
+    	boolean hasTrue = false;
+    	List<TestCase> testCases = new ArrayList<TestCase>();
+    	TestCase tstCase = new TestCase();
+    	Iterator<Row> rowIterator;
+    	try {
+    		FileInputStream myInput = new FileInputStream(filePath);
+    		HSSFWorkbook myWorkBook = new HSSFWorkbook(myInput);
+	        int numberOfSheets = myWorkBook.getNumberOfSheets();
+	        for (int j = 0; j < numberOfSheets; j++) {
+	        	HSSFSheet mySheet = myWorkBook.getSheetAt(j);
+	        	if(mySheet.getSheetName().equals(testSuiteName)) {
+	        		rowIterator = mySheet.rowIterator();
+	        		for (int i = 0; i <=23; i++) {
+	        			rowIterator.next();
+	        		}
+	        		while (rowIterator.hasNext()) {
+	        			Row next = rowIterator.next();
+	        			if (testCaseId.equalsIgnoreCase(getValue(next.getCell(3)))) {
+	        				tstCase = readTest(next);
+		    				mySheet.removeRow(next);
+		    				int rowNum = next.getRowNum();
+		    				int newNum = rowNum + 1;
+		    				mySheet.shiftRows(newNum, mySheet.getLastRowNum(),-1);
+		    				hasTrue = true;
+		    				break;
+		    			}
+	        		}
+	        	}
+	        }
+	        if(hasTrue) {
+	        	 for (int j = 0; j < numberOfSheets; j++) {
+	 	        	HSSFSheet myHSSFSheet = myWorkBook.getSheetAt(j);
+	 	        	if(myHSSFSheet.getSheetName().equals(testSuiteName)) {
+	 	        		rowIterator = myHSSFSheet.rowIterator();
+	 	        		for (int i = 0; i <=23; i++) {
+	 	        			rowIterator.next();
+	 	        		}
+	 	        		while (rowIterator.hasNext()) {
+	 	        			Row next = rowIterator.next();
+	 	        			TestCase createObject = readTest(next);
+	 	        			if(StringUtils.isNotEmpty(createObject.getTestCaseId())) {
+	 	        				testCases.add(createObject);
+	 	        			}
+	 	        		}
+	 	        		float totalPass = 0;
+		 	   			float totalFail = 0;
+		 	   			float totalNotApplicable = 0;
+		 	   			float totalBlocked = 0;
+		 	   			int totalTestCases = testCases.size();
+		 	   			for (TestCase testCase: testCases) {
+		 	   				String testCaseStatus = testCase.getStatus();
+		 	   				if(testCaseStatus.equalsIgnoreCase("success")) {
+		 	   					totalPass = totalPass + 1;
+		 	   				} else if (testCaseStatus.equalsIgnoreCase("failure")) {
+		 	   					totalFail = totalFail + 1;
+		 	   				} else if (testCaseStatus.equalsIgnoreCase("notApplicable")) {
+		 	   					totalNotApplicable = totalNotApplicable + 1;
+		 	   				} else if (testCaseStatus.equalsIgnoreCase("blocked")) {
+		 	   					totalBlocked = totalBlocked + 1;
+		 	   				} 
+		 	   			}
+			 	   		if(tstCase.getStatus().equalsIgnoreCase("success")) {
+	 	   					totalPass = totalPass - 1;
+	 	   				} else if (tstCase.getStatus().equalsIgnoreCase("failure")) {
+	 	   					totalFail = totalFail - 1;
+	 	   				} else if (tstCase.getStatus().equalsIgnoreCase("notApplicable")) {
+	 	   					totalNotApplicable = totalNotApplicable - 1;
+	 	   				} else if (tstCase.getStatus().equalsIgnoreCase("blocked")) {
+	 	   					totalBlocked = totalBlocked - 1;
+	 	   				} 
+			 	   		
+	 	   				HSSFSheet mySheet1 = myWorkBook.getSheetAt(0);
+	 	   				rowIterator = mySheet1.rowIterator();
+	 	   				 for (int i = 0; i <=2; i++) {
+	 	   						rowIterator.next();
+	 	   				 }
+	 	   		        while (rowIterator.hasNext()) {
+	 	   		    		Row next1 = rowIterator.next();
+	 	   		    		if (StringUtils.isNotEmpty(getValue(next1.getCell(2))) && !getValue(next1.getCell(2)).equalsIgnoreCase("Total")) {
+	 	   		    			TestSuite createObject = createObject(next1);
+	 	   		            	if (StringUtils.isNotEmpty(tstCase.getTestCaseId()) && createObject.getName().equals(testSuiteName)) {
+	 	   		     				updateIndex(
+	 	   									totalPass,
+	 	   									totalFail,
+	 	   									totalNotApplicable,
+	 	   									totalBlocked,
+	 	   									next1, totalTestCases, "delete");
+	 	   		     			}
+	 	   		    		}
+	 	   		        }
+	 	        	}
+	 	        }
+	        	
+	        	myInput.close();
+			    FileOutputStream outFile =new FileOutputStream(filePath);
+			    myWorkBook.write(outFile);
+			    outFile.close();
+	        }
+    	} catch(Exception e) {
+    		
+    	}
+    	
+		return hasTrue;
+    }
+    
+    public boolean deleteTestCasesFromXLSX(String filePath, String testSuiteName, String testCaseId) {
+    	boolean hasTrue = false;
+    	List<TestCase> testCases = new ArrayList<TestCase>();
+    	TestCase tstCase = new TestCase();
+    	Iterator<Row> rowIterator;
+    	try {
+    		FileInputStream myInput = new FileInputStream(filePath);
+		    
+    		OPCPackage opc=OPCPackage.open(myInput); 
+    		
+    		XSSFWorkbook myWorkBook = new XSSFWorkbook(opc);
+    		int numberOfSheets = myWorkBook.getNumberOfSheets();
+    		 for (int j = 0; j < numberOfSheets; j++) {
+    			 XSSFSheet mySheet = myWorkBook.getSheetAt(j);
+    			 if(mySheet.getSheetName().equals(testSuiteName)) {
+    				 rowIterator = mySheet.rowIterator();
+    		         for (int i = 0; i <=23; i++) {
+    						rowIterator.next();
+    					}
+    		         while (rowIterator.hasNext()) {
+    		     		Row next = rowIterator.next();
+    		     		if (testCaseId.equalsIgnoreCase(getValue(next.getCell(3)))) {
+    		     			mySheet.removeRow(next);
+		    				int rowNum = next.getRowNum();
+		    				int newNum = rowNum + 1;
+		    				mySheet.shiftRows(newNum, mySheet.getLastRowNum(),-1);
+		    				hasTrue = true;
+		    				break;
+    		     		}
+    		     	}
+    			 }
+    		 }
+    		 if(hasTrue) {
+	        	 for (int j = 0; j < numberOfSheets; j++) {
+	        		XSSFSheet myXSSFSheet = myWorkBook.getSheetAt(j);
+	 	        	if(myXSSFSheet.getSheetName().equals(testSuiteName)) {
+	 	        		rowIterator = myXSSFSheet.rowIterator();
+	 	        		for (int i = 0; i <=23; i++) {
+	 	        			rowIterator.next();
+	 	        		}
+	 	        		while (rowIterator.hasNext()) {
+	 	        			Row next = rowIterator.next();
+	 	        			TestCase createObject = readTest(next);
+	 	        			testCases.add(createObject);
+	 	        		}
+	 	        		float totalPass = 0;
+		 	   			float totalFail = 0;
+		 	   			float totalNotApplicable = 0;
+		 	   			float totalBlocked = 0;
+		 	   			int totalTestCases = testCases.size();
+		 	   			for (TestCase testCase: testCases) {
+		 	   				String testCaseStatus = testCase.getStatus();
+		 	   				if(testCaseStatus.equalsIgnoreCase("success")) {
+		 	   					totalPass = totalPass + 1;
+		 	   				} else if (testCaseStatus.equalsIgnoreCase("failure")) {
+		 	   					totalFail = totalFail + 1;
+		 	   				} else if (testCaseStatus.equalsIgnoreCase("notApplicable")) {
+		 	   					totalNotApplicable = totalNotApplicable + 1;
+		 	   				} else if (testCaseStatus.equalsIgnoreCase("blocked")) {
+		 	   					totalBlocked = totalBlocked + 1;
+		 	   				} 
+		 	   			}
+		 	   			
+			 	   		if(tstCase.getStatus().equalsIgnoreCase("success")) {
+	 	   					totalPass = totalPass - 1;
+	 	   				} else if (tstCase.getStatus().equalsIgnoreCase("failure")) {
+	 	   					totalFail = totalFail - 1;
+	 	   				} else if (tstCase.getStatus().equalsIgnoreCase("notApplicable")) {
+	 	   					totalNotApplicable = totalNotApplicable - 1;
+	 	   				} else if (tstCase.getStatus().equalsIgnoreCase("blocked")) {
+	 	   					totalBlocked = totalBlocked - 1;
+	 	   				} 
+			 	   		
+			 	   		XSSFSheet mySheet1 = myWorkBook.getSheetAt(0);
+	 	   				rowIterator = mySheet1.rowIterator();
+	 	   				 for (int i = 0; i <=2; i++) {
+	 	   						rowIterator.next();
+	 	   					}
+	 	   		        while (rowIterator.hasNext()) {
+	 	   		    		Row next1 = rowIterator.next();
+	 	   		    		if (StringUtils.isNotEmpty(getValue(next1.getCell(2))) && !getValue(next1.getCell(2)).equalsIgnoreCase("Total")) {
+	 	   		    			TestSuite createObject = createObject(next1);
+	 	   		            	if (StringUtils.isNotEmpty(tstCase.getTestCaseId()) && createObject.getName().equals(testSuiteName)) {
+	 	   		     				updateIndex(
+	 	   									totalPass,
+	 	   									totalFail,
+	 	   									totalNotApplicable,
+	 	   									totalBlocked,
+	 	   									next1,totalTestCases,"delete");
+	 	   		     			}
+	 	   		    		}
+	 	   		        }
+	 	        	}
+	 	        }
+	        	
+	        	myInput.close();
+			    FileOutputStream outFile =new FileOutputStream(filePath);
+			    myWorkBook.write(outFile);
+			    outFile.close();
+	        }
+    	} catch(Exception e) {
+    		
+    	}
+    	
+		return hasTrue;
+    }
+    
+    public  boolean deleteManualTestCaseFile(String filePath, String testSuiteName, String testCaseId) throws PhrescoException  {
+		boolean delete = false;
+		try {
+			File testDir = new File(filePath);
+			StringBuilder sb = new StringBuilder(filePath);
+			if(testDir.isDirectory()) {
+				FilenameFilter filterXslx = new PhrescoFileFilter("", "xlsx");
+				FilenameFilter filterXls = new PhrescoFileFilter("", "xls");
+				FilenameFilter filterOds = new PhrescoFileFilter("", "ods");
+				File[] listXlsxFiles = testDir.listFiles(filterXslx);
+				File[] listXlsFiles = testDir.listFiles(filterXls);
+				File[] listOdsFiles = testDir.listFiles(filterOds);
+				if (listXlsxFiles.length != 0) {
+					for (File listXlsxFile : listXlsxFiles) {
+						if (listXlsxFile.isFile()) {
+							sb.append(File.separator);
+							sb.append(listXlsxFile.getName());
+							break;
+						}
+					}
+					delete = deleteTestCasesFromXLSX(sb.toString(), testSuiteName, testCaseId);
+					if(delete) {
+						
+					}
+				} else if (listXlsFiles.length != 0) {
+					for(File listXlsFile : listXlsFiles) {
+						if (listXlsFile.isFile()) {
+							sb.append(File.separator);
+							sb.append(listXlsFile.getName());
+							break;
+						}
+					}
+					delete = deleteTestCasesFromXls(sb.toString(), testSuiteName, testCaseId);
+					if(delete) {
+						
+					}
+				} else if (listOdsFiles.length != 0) {
+					for(File listOdsFile : listOdsFiles) {
+						if (listOdsFile.isFile()) {
+							sb.append(File.separator);
+							sb.append(listOdsFile.getName());
+							break;
+						}
+					}
+					delete = deleteTestCasesFromODS(sb.toString(), testSuiteName, testCaseId);
+				}
+			}
+
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		return delete;
+	}
+    
+	private boolean deleteTestCasesFromODS(String filePath, String testSuiteName, String testCaseId) {
+		boolean delete = false;
+		List<TestCase> testCases = new ArrayList<TestCase>();
+    	TestCase tstCase = new TestCase();
+		File file = new File(filePath);
+		org.jopendocument.dom.spreadsheet.Sheet sheet;
+		try {
+			ODPackage createFromFile = ODPackage.createFromFile(file);
+			SpreadSheet spreadSheet = createFromFile.getSpreadSheet();
+			sheet = spreadSheet.getSheet(testSuiteName);
+			
+			int nColCount = sheet.getColumnCount();
+			int nRowCount = sheet.getRowCount();
+			org.jopendocument.dom.spreadsheet.Cell cell = null;
+			for(int nRowIndex = 24; nRowIndex < nRowCount; nRowIndex++) {
+				cell = sheet.getCellAt(3, nRowIndex);
+				if (cell.getValue() != null && cell.getValue() != "") {
+					String testId= cell.getTextValue();
+					if(testId.equalsIgnoreCase(testCaseId)) {
+						sheet.removeRow(nRowIndex);
+						delete = true;
+						break;
+					}
+				}
+				
+			}
+			if(delete) {
+   	     	    OutputStream out=new FileOutputStream(file);
+   				createFromFile.save(out);
+   				out.close();
+	 			for(int nRowIndex = 24; nRowIndex < nRowCount; nRowIndex++) {
+	 				cell = sheet.getCellAt(1, nRowIndex);
+	 				if (cell.getValue() != null && cell.getValue() != "") {
+	 					TestCase testCase = readTestCasesFromODS(nRowIndex, sheet);
+	 					testCases.add(testCase);
+	 				} else {
+	 					break;
+	 				}
+	 				
+	 			}
+        		float totalPass = 0;
+ 	   			float totalFail = 0;
+ 	   			float totalNotApplicable = 0;
+ 	   			float totalBlocked = 0;
+ 	   			float totalNotExecuted = 0;
+ 	   			int totalTestCases = testCases.size();
+ 	   			for (TestCase testCase: testCases) {
+ 	   				String testCaseStatus = testCase.getStatus();
+ 	   				if(testCaseStatus.equalsIgnoreCase("success")) {
+ 	   					totalPass = totalPass + 1;
+ 	   				} else if (testCaseStatus.equalsIgnoreCase("failure")) {
+ 	   					totalFail = totalFail + 1;
+ 	   				} else if (testCaseStatus.equalsIgnoreCase("notApplicable")) {
+ 	   					totalNotApplicable = totalNotApplicable + 1;
+ 	   				} else if (testCaseStatus.equalsIgnoreCase("blocked")) {
+ 	   					totalBlocked = totalBlocked + 1;
+ 	   				} else {
+ 	   					totalNotExecuted = totalNotExecuted + 1;
+ 	   				}
+ 	   			}
+	        	
+	 	   		ODPackage indexSheet = ODPackage.createFromFile(file);
+				SpreadSheet indexSpreadSheet = indexSheet.getSpreadSheet();
+	     		org.jopendocument.dom.spreadsheet.Sheet sheet2 = indexSpreadSheet.getSheet(0);
+	     		List<TestSuite> testSuites = new ArrayList<TestSuite>();
+				int indexRowCount = sheet2.getRowCount();
+				org.jopendocument.dom.spreadsheet.Cell indexCell = null;
+				for(int rowIndex = 3; rowIndex < indexRowCount; rowIndex++) {
+					//Iterating through each column
+					indexCell = sheet2.getCellAt(1, rowIndex);
+					if (indexCell.getValue() != null && indexCell.getValue() != "") {
+						TestSuite testSuite = readDataFromODS(rowIndex, sheet2);
+						testSuites.add(testSuite);
+						if (testSuite.getName().equalsIgnoreCase(testSuiteName)) {
+							sheet2.getCellAt(2, rowIndex).clearValue();
+							sheet2.setValueAt(totalPass, 2, rowIndex);
+							
+							sheet2.getCellAt(3, rowIndex).clearValue();
+							sheet2.setValueAt(totalFail, 3, rowIndex);
+							
+							sheet2.getCellAt(4, rowIndex).clearValue();
+							sheet2.setValueAt(totalNotApplicable, 4, rowIndex);
+							
+							sheet2.getCellAt(5, rowIndex).clearValue();
+							sheet2.setValueAt(totalNotExecuted, 5, rowIndex);
+							
+							sheet2.getCellAt(6, rowIndex).clearValue();
+							sheet2.setValueAt(totalBlocked, 6, rowIndex);
+							sheet2.getCellAt(7, rowIndex).clearValue();
+							sheet2.setValueAt(totalTestCases, 7, rowIndex);
+					       			   
+							sheet2.getCellAt(8, rowIndex).clearValue();
+							float testCovrge = (float)((totalTestCases-totalNotExecuted)/totalTestCases)*100;
+							sheet2.setValueAt(Math.round(testCovrge), 8, rowIndex);
+							break;
+						}
+					}
+				}
+		 	   	OutputStream out1=new FileOutputStream(file);
+			 	indexSheet.save(out1);
+			 	Utility.closeStream(out1);
+	        }
+		} catch(Exception e) {
+		}
+		return delete;
+	}
+
+	
     public List<TestCase> readManualTestCaseFile(String filePath, String fileName, com.photon.phresco.commons.model.TestCase testCase) throws PhrescoException {
 		List<TestCase> testCases = readTestCase(filePath, fileName, testCase);
 		return testCases;
@@ -1058,7 +1603,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 			}
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		return testCases;
 	}
@@ -1143,20 +1688,24 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 		     			TestCase createObject = readTest(next);
 		     			testCases.add(createObject);
 		     			if (tstCase != null && createObject.getTestCaseId().equals(tstCase.getTestCaseId())) {
-		     				Cell stepsCell=next.getCell(5);
-		     				stepsCell.setCellValue(tstCase.getSteps());
 		     				
-		     				Cell expectedCell=next.getCell(8);
-		     				expectedCell.setCellValue(tstCase.getExpectedResult());
-		     				
-		     				Cell actualCell=next.getCell(9);
-		     				actualCell.setCellValue(tstCase.getActualResult());
-		     				
-		     				Cell statusCell=next.getCell(10);
-		     				statusCell.setCellValue(tstCase.getStatus());
-		     				
-		     				Cell commentCell=next.getCell(13);
-		     				commentCell.setCellValue(tstCase.getBugComment());
+		     				Cell preConditionsCell=next.getCell(5);
+							preConditionsCell.setCellValue(tstCase.getPreconditions());
+							
+							Cell stepsCell=next.getCell(6);
+							stepsCell.setCellValue(tstCase.getSteps());
+							
+							Cell expectedCell=next.getCell(9);
+							expectedCell.setCellValue(tstCase.getExpectedResult());
+							
+							Cell actualCell=next.getCell(10);
+							actualCell.setCellValue(tstCase.getActualResult());
+							
+							Cell statusCell=next.getCell(11);
+							statusCell.setCellValue(tstCase.getStatus());
+							
+							Cell commentCell=next.getCell(12);
+							commentCell.setCellValue(tstCase.getBugComment());
 		     			   
 		     			}
 		     		}
@@ -1207,7 +1756,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 			         				updateIndex(totalPass,
 											totalFail,
 											totalNotApplicable,
-											totalBlocked, next1);
+											totalBlocked, next1,0,"");
 			         			}
 		            		}
 		                }
@@ -1272,14 +1821,14 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 									totalFail,
 									totalNotApplicable,
 									totalBlocked,
-									next1);
+									next1,0,"");
 		     			}
 		    		}
 		        }
 	}
 
 	private void updateIndex(float totalPass, float totalFail,
-			float totalNotApplicable, float totalBlocked, Row next1) {
+			float totalNotApplicable, float totalBlocked, Row next1, int totalTestCases, String operation) {
 		Cell successCell=next1.getCell(3);
 		int pass = (int)totalPass;
 		successCell.setCellValue(pass);
@@ -1295,16 +1844,26 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 		Cell blockedCell=next1.getCell(7);
 		int blocked = (int)totalBlocked;
 		blockedCell.setCellValue(blocked);
-		
+		double numericCellValue;
 		Cell cell = next1.getCell(8);
-		double numericCellValue = cell.getNumericCellValue();
-		
+		if(StringUtils.isNotEmpty(operation) && operation.equalsIgnoreCase("delete")) {
+			numericCellValue = totalTestCases;
+		} else {
+			numericCellValue = cell.getNumericCellValue();
+		}
 		Cell notExeCell=next1.getCell(6);
 		int notExe = (int) (numericCellValue - (pass + fail + notApp + blocked));
 		notExeCell.setCellValue(notExe);
 		
 		Cell testCovrgeCell=next1.getCell(9);
-		int total = (int) cell.getNumericCellValue();
+		int total = 0;
+		if(StringUtils.isNotEmpty(operation) && operation.equalsIgnoreCase("delete")) {
+			total = totalTestCases;
+			Cell totalCell=next1.getCell(8);
+			totalCell.setCellValue(total);
+		} else {
+			total = (int) cell.getNumericCellValue();
+		}
 		float notExetd= notExe;
 		float testCovrge = (float)((total-notExetd)/total)*100;
 		testCovrgeCell.setCellValue(Math.round(testCovrge));
@@ -1322,19 +1881,22 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 				TestCase createObject = readTest(next);
 				testCases.add(createObject);
 				if (tstCase != null && createObject.getTestCaseId().equals(tstCase.getTestCaseId())) {
-					Cell stepsCell=next.getCell(5);
+					Cell preConditionsCell=next.getCell(5);
+					preConditionsCell.setCellValue(tstCase.getPreconditions());
+					
+					Cell stepsCell=next.getCell(6);
 					stepsCell.setCellValue(tstCase.getSteps());
 					
-					Cell expectedCell=next.getCell(8);
+					Cell expectedCell=next.getCell(9);
 					expectedCell.setCellValue(tstCase.getExpectedResult());
 					
-					Cell actualCell=next.getCell(9);
+					Cell actualCell=next.getCell(10);
 					actualCell.setCellValue(tstCase.getActualResult());
 					
-					Cell statusCell=next.getCell(10);
+					Cell statusCell=next.getCell(11);
 					statusCell.setCellValue(tstCase.getStatus());
 					
-					Cell commentCell=next.getCell(13);
+					Cell commentCell=next.getCell(12);
 					commentCell.setCellValue(tstCase.getBugComment());
 				   
 				}
@@ -1370,32 +1932,41 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
     		Cell cell=next.getCell(5);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
+    			testcase.setPreconditions(value);
+    		}
+    	}
+    	
+    	if(next.getCell(6)!=null){
+    		Cell cell=next.getCell(6);
+    		String value=getValue(cell);
+    		if(StringUtils.isNotEmpty(value)) {
     			testcase.setSteps(value);
     		}
     	}
-    	if(next.getCell(8)!=null){
-    		Cell cell=next.getCell(8);
-    		String value=getValue(cell);
-    		if(StringUtils.isNotEmpty(value)) {
-    			testcase.setExpectedResult(value);
-    		}
-    	}
+    	
     	if(next.getCell(9)!=null){
     		Cell cell=next.getCell(9);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
-    			testcase.setActualResult(value);
+    			testcase.setExpectedResult(value);
     		}
     	}
     	if(next.getCell(10)!=null){
     		Cell cell=next.getCell(10);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
+    			testcase.setActualResult(value);
+    		}
+    	}
+    	if(next.getCell(11)!=null){
+    		Cell cell=next.getCell(11);
+    		String value=getValue(cell);
+    		if(StringUtils.isNotEmpty(value)) {
     			testcase.setStatus(value);
     		}
     	}
-    	if(next.getCell(13)!=null){
-    		Cell cell=next.getCell(13);
+    	if(next.getCell(12)!=null){
+    		Cell cell=next.getCell(12);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
     			testcase.setBugComment(value);
@@ -1479,7 +2050,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 
 							int flag = 0;
 							next = rowIterator.next();
-							if (mySheet.getSheetName().equalsIgnoreCase("Index")
+							if ((mySheet.getSheetName().trim()).equalsIgnoreCase("Index")
 									&& ((mySheet.getLastRowNum() - next.getRowNum()) < 3)) {
 								for (Cell cell : next) {
 									cell.setCellType(1);
@@ -1497,7 +2068,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 						} while (rowIterator.hasNext());
 
 						Row r = null;
-						if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
+						if ((mySheet.getSheetName().trim()).equalsIgnoreCase("Index")) {
 							r = mySheet.createRow(next.getRowNum() - 1);
 
 						} else {
@@ -1512,7 +2083,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 
 							cell.setCellStyle(tryStyle[i]);
 						}
-						if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
+						if ((mySheet.getSheetName().trim()).equalsIgnoreCase("Index")) {
 							Sheet fromSheet = myWorkBook.getSheetAt((myWorkBook
 									.getNumberOfSheets() - 1));
 							Sheet toSheet = myWorkBook.createSheet(sheetName);
@@ -1584,7 +2155,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 	
 								int flag = 0;
 								next = rowIterator.next();
-								if (mySheet.getSheetName().equalsIgnoreCase("Index")
+								if ((mySheet.getSheetName().trim()).equalsIgnoreCase("Index")
 										&& ((mySheet.getLastRowNum() - next.getRowNum()) < 3)) {
 									for (Cell cell : next) {
 										cell.setCellType(1);
@@ -1602,7 +2173,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 							} while (rowIterator.hasNext());
 	
 							Row r = null;
-							if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
+							if ((mySheet.getSheetName().trim()).equalsIgnoreCase("Index")) {
 								r = mySheet.createRow(mySheet.getLastRowNum() - 2);
 							} else {
 								r = mySheet.createRow(next.getRowNum() + 1);
@@ -1616,7 +2187,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 	
 								cell.setCellStyle(tryStyle[i]);
 							}
-							if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
+							if ((mySheet.getSheetName().trim()).equalsIgnoreCase("Index")) {
 								Sheet fromSheet = myWorkBook.getSheetAt((myWorkBook
 										.getNumberOfSheets() - 1));
 								Sheet toSheet = myWorkBook.createSheet(sheetName);
@@ -1722,7 +2293,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 	
 	public void addNewTestCase(String filePath, String testSuiteName,String cellValue[], String status) {
 		try {
-			int numCol = 14;
+			int numCol = 13;
 			int cellno = 0;
 			CellStyle tryStyle[] = new CellStyle[20];
 			//String cellValue[] = {"",featureId,"",testCaseId,testDesc,testSteps,testCaseType,priority,expectedResult,actualResult,status,"","",bugComment};
@@ -1767,7 +2338,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
                 }
    	        }
 		} catch (Exception e) {
-			//e.printStackTrace();
+//			e.printStackTrace();
 		}
 	}
 	
@@ -1918,7 +2489,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 				float totalTestCases = 0;
 				do {
 					next = rowIterator.next();
-					if (StringUtils.isNotEmpty(getValue(next.getCell(1))) && !getValue(next.getCell(0)).equalsIgnoreCase("S.NO")) {
+					if (StringUtils.isNotEmpty(getValue(next.getCell(0))) && !getValue(next.getCell(0)).equalsIgnoreCase("S.NO")) {
 						String value = getValue(next.getCell(10));
 						if (StringUtils.isNotEmpty(value)) {
 							if (value.equalsIgnoreCase("success")) {
@@ -2003,10 +2574,10 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 				if(myHssfSheet.getSheetName().equals(testSuiteName)) {
 					rowIterator = myHssfSheet.rowIterator();
 					Row next;
-					for (Cell cell : myHssfSheet.getRow((myHssfSheet.getLastRowNum()) - 2)) {
+					for (Cell cell : myHssfSheet.getRow((myHssfSheet.getLastRowNum()) - 1)) {
 						tryStyle[cellno] = cell.getCellStyle();
 						cellno = cellno + 1;
-						if(cellno == 16){
+						if(cellno == 15){
 							break;
 						}
 					}
@@ -2018,7 +2589,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 					float totalTestCases = 0;
 					do {
 						next = rowIterator.next();
-						if (StringUtils.isNotEmpty(getValue(next.getCell(1))) && !getValue(next.getCell(0)).equalsIgnoreCase("S.NO")) {
+						if (StringUtils.isNotEmpty(getValue(next.getCell(0))) && !getValue(next.getCell(0)).equalsIgnoreCase("S.NO")) {
 							String value = getValue(next.getCell(10));
 							if (StringUtils.isNotEmpty(value)) {
 								if (value.equalsIgnoreCase("success")) {
@@ -2050,24 +2621,23 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 					totalTestCases = totalPass + totalFail + totalNotApp + totalBlocked + notExecuted;
 					HSSFSheet mySheetHssf = myWorkBook.getSheetAt(0);
 					rowIterator = mySheetHssf.rowIterator();
-					 for (int i = 0; i <=2; i++) {
-							rowIterator.next();
-						}
-		                while (rowIterator.hasNext()) {
-		            		Row next1 = rowIterator.next();
-		            		if (StringUtils.isNotEmpty(getValue(next1.getCell(2))) && !getValue(next1.getCell(2)).equalsIgnoreCase("Total")) {
-		            			TestSuite createObject = createObject(next1);
-		                    	if (createObject.getName().equals(testSuiteName)) {
-			         				addCalculationsToIndex(
-											totalPass, totalFail,
-											totalNotApp,
-											totalBlocked,
-											notExecuted,
-											totalTestCases, next1);
-			         			}
-		            		}
-		                }
-					
+					for (int i = 0; i <=2; i++) {
+						rowIterator.next();
+					}
+	                while (rowIterator.hasNext()) {
+	            		Row next1 = rowIterator.next();
+	            		if (StringUtils.isNotEmpty(getValue(next1.getCell(2))) && !getValue(next1.getCell(2)).equalsIgnoreCase("Total")) {
+	            			TestSuite createObject = createObject(next1);
+	                    	if (createObject.getName().equals(testSuiteName)) {
+		         				addCalculationsToIndex(
+										totalPass, totalFail,
+										totalNotApp,
+										totalBlocked,
+										notExecuted,
+										totalTestCases, next1);
+		         			}
+	            		}
+	                }
 					Row r = null;
 					if (myHssfSheet.getSheetName().equalsIgnoreCase("Index")) {
 						r = myHssfSheet.createRow(next.getRowNum() - 1);

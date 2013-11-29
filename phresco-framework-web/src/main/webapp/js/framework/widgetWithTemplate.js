@@ -721,6 +721,14 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						var BottomHeight = clicked.offset().top + clicked.height() - 128 ;
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) + 5;
 						$(target).css({"right":d ,"margin-top":10,"left": "auto","top": BottomHeight});
+					} else if (act === 'Delete TestSuite') {
+						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 50;
+						var BottomHeight = clicked.position().top + clicked.height() + 16 ;
+						$(target).css({"right":d,"left": "auto","top": BottomHeight});
+					} else if (act === 'Delete TestCase'){
+						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 50;
+						var BottomHeight = clicked.position().top + clicked.height() + 16 ;
+						$(target).css({"right":d,"left": "auto","top": BottomHeight});
 					} else {
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 18;
 						$(target).css({"right":d ,"margin-top":10,"left": "auto","top": "auto"});
@@ -762,6 +770,18 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						d = ($(window).width() - (clicked.offset().left + clicked.outerWidth())) + 5;
 						BottomHeight = clicked.offset().top - 202;
 						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
+						$(target).toggle();
+						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
+					} else if(act === 'Delete TestSuite') {
+						var BottomHeight = clicked.offset().top + clicked.height() -300 ;
+						d = ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 50;
+						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});	
+						$(target).toggle();
+						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
+					} else if (act === 'Delete TestCase') {
+						var BottomHeight = clicked.offset().top + clicked.height() -300 ;
+						d = ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 50;
+						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});	
 						$(target).toggle();
 						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
 					} else {

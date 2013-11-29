@@ -50,7 +50,7 @@
 					</thead>
 					<tbody>
 						{{#each testcases}}
-							<tr>
+							<tr testCaseId="{{testCaseId}}">
 								<td class="manual hideContent">
 									{{featureId}}
 								</td>
@@ -89,6 +89,7 @@
 								<td class="manual hideContent">
 									{{bugComment}}
 								</td>
+								
 								<td class="manual hideContent">
 									<a class="dynPopup{{@index}}" href="javascript:void(0)" name="updateManualTestCase_popup" testcaseName="{{testCaseId}}">
 										<img alt="Edit" src="themes/default/images/Phresco/edit_icon.png"/>
@@ -130,6 +131,12 @@
 															{{#statusUpdate status}}{{/statusUpdate}}
 														</td>
 													</tr>
+													<tr>
+														<td>Preconditions<br>
+															<textarea name="preconditions">{{preconditions}}</textarea>
+														</td>
+														
+													</tr>
 												</tbody>
 											</table>
 											<div class="flt_right">
@@ -140,6 +147,18 @@
 									</div>
 									<!-- edit testcase popup ends -->
 								</td>
+								<td class="manual hideContent">
+				                		<a class="tooltiptop" name="deleteTestCase_{{#uniqueTestCaseId testCaseId}}{{/uniqueTestCaseId}}" href="javascript:void(0)" data-toggle="tooltip" data-placement="top" namedel="deleteTestCase" data-original-title="Delete TestCase" title="">
+				                			<img src="themes/default/images/Phresco/delete_row.png" width="14" height="18" border="0" alt="0">
+				                		</a>
+				                		<div style="display:none;" testCaseName="{{testCaseId}}" id="deleteTestCase_{{#uniqueTestCaseId testCaseId}}{{/uniqueTestCaseId}}" class="delete_msg tohide">
+				                			Are you sure to delete ?
+				                			<div>
+				                				<input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style dlt" name="delTestCase">
+				                				<input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close">
+				                			</div>
+				                		</div>
+				                </td>
 								<td class="list_img logTd">
 									{{#if testCaseFailure}}
 										<a href="javascript:void(0)" type="failure" resultName="{{removeDot name}}" class="log">

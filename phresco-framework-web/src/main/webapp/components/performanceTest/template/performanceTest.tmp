@@ -44,7 +44,7 @@
 	           <div class="icon_images"><a class="tooltiptop performancePDF" from="performance" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/Phresco/pdf_icon_white.png" ></a>
 	        		<!--Pdf report popup starts here -->
 					<div id="pdf_report" class="dyn_popup hideContent">
-						<div id="noPdfReport" class="alert noReport"></div>
+						<div id="noReport" class="alert noReport"></div>
 	                	<table class="table_border availablePdfRptsTbl hideContent" border="0" cellspacing="0" cellpadding="5" width="100%" id="availablePdfRptsTbl">
 	                		<thead>
 	                        	<tr>

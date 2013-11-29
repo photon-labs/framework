@@ -11,6 +11,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -121,6 +122,35 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 		} 
 	}
 	
+	@DELETE
+	@Path(REST_API_TESTSUITES_DELETE)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deleteTestSuites(@QueryParam(REST_API_TESTSUITE) String testSuiteName, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		ManualTestResult createManualTestResult = null;
+		ResponseInfo<Boolean> finalOutput = null;
+		try {
+			if (StringUtils.isNotEmpty(moduleName)) {
+				appDirName = appDirName + File.separator + moduleName;
+			}
+			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+			String manualTestDir = getManualTestReportDir(appDirName);
+			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(manualTestDir);
+			File file = new File(sb.toString());
+			if (! new File(sb.toString()).exists()) {
+				finalOutput = responseDataEvaluation(responseData, null, createManualTestResult, RESPONSE_STATUS_FAILURE, PHRQ000003);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
+			boolean deleteManualTestSuiteFile = frameworkUtil.deleteManualTestSuiteFile(sb.toString(), testSuiteName);
+			finalOutput = responseDataEvaluation(responseData, null, deleteManualTestSuiteFile, RESPONSE_STATUS_SUCCESS, PHRQ400008);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (Exception e) {
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHRQ410004);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} 
+	}
+	
 	@GET
 	@Path(REST_API_TESTCASES)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -150,7 +180,7 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 	@POST
 	@Path(REST_API_TESTSUITES)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createTestSuite(@QueryParam("testSuiteName") String testSuiteName, 
+	public Response createTestSuite(@QueryParam(REST_API_TESTSUITE) String testSuiteName, 
 			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
 		ResponseInfo responseData = new ResponseInfo();
 		try {
@@ -184,8 +214,8 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 			String path = getManualTestReportDir(appDirName);
 			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(path);
-			String cellValue[] = {"", testCase.getFeatureId(), "",testCase.getTestCaseId(), testCase.getDescription(), testCase.getSteps(), "", "",
-					testCase.getExpectedResult(), testCase.getActualResult(), testCase.getStatus(), "", "", testCase.getBugComment()};
+			String cellValue[] = {"", testCase.getFeatureId(), "",testCase.getTestCaseId(), testCase.getDescription(), testCase.getPreconditions(),testCase.getSteps(), "", "",
+					testCase.getExpectedResult(), testCase.getActualResult(), testCase.getStatus(), testCase.getBugComment()};
 			frameworkUtil.addNewTestCase(sb.toString(), testSuiteName,cellValue, testCase.getStatus());
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, testCase, RESPONSE_STATUS_SUCCESS, PHRQ400005);
 			return Response.status(Status.OK).entity(finalOutput).build();
@@ -216,6 +246,33 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHRQ410008);
 			return Response.status(Status.OK).entity(finalOutput).build();			
 		}
+	}
+	
+
+	@DELETE
+	@Path(REST_API_TESTCASE_DELETE)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deleteTestCase(@QueryParam(REST_API_TESTSUITE) String testSuiteName, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam(REST_QUERY_TESTCASE_NAME) String testCaseId, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
+			ResponseInfo<String> responseData = new ResponseInfo<String>();
+			List<com.photon.phresco.commons.model.TestCase> readTestCase = null;
+			boolean hasTrue = false;
+			try {
+				if (StringUtils.isNotEmpty(moduleName)) {
+					appDirName = appDirName + File.separator + moduleName;
+				}
+				FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+				String manualTestDir = getManualTestReportDir(appDirName);
+				StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(manualTestDir);
+				hasTrue = frameworkUtil.deleteManualTestCaseFile(sb.toString(), testSuiteName, testCaseId);
+				ResponseInfo<Boolean> finalOutput = 
+					responseDataEvaluation(responseData, null, hasTrue, RESPONSE_STATUS_SUCCESS, PHRQ400009);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			} catch (Exception e) {
+				ResponseInfo<Boolean> finalOutput = 
+					responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHRQ410010);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
 	}
 	
 	@GET

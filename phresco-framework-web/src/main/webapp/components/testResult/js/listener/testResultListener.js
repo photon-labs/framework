@@ -369,6 +369,12 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			} else if (action === "deletePdfReport") {
 				header.requestMethod = "DELETE";
 				header.webserviceurl = commonVariables.webserviceurl + "pdf/deleteReport?appDirName=" + appDirName + "&fromPage=" + testType + "&reportFileName=" + requestBody.fileName + rootModuleParam;
+			} else if(action === "deleteTestSuite") {
+				header.requestMethod = "DELETE";
+				header.webserviceurl = commonVariables.webserviceurl + "manual/deleteTestsuite?appDirName=" + appDirName +"&testSuiteName=" + requestBody.testsuitename + rootModuleParam;
+			} else if (action === "deleteTestCase") {
+				header.requestMethod = "DELETE";
+				header.webserviceurl = commonVariables.webserviceurl + "manual/deleteTestCase?appDirName=" + appDirName +"&testSuiteName=" + requestBody.testsuitename +"&testCaseId="+requestBody.testCaseName+ rootModuleParam;
 			} else if (action === "downloadPdfReport") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName=" + appDirName + "&fromPage=" + testType + "&reportFileName=" + requestBody.fileName + rootModuleParam;
@@ -460,14 +466,18 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				$("#availablePdfRptsTbl").show();
 				var content = "";
 				for (i in pdfReports) {
-					content = content.concat('<tr class="generatedRow"><td>' + pdfReports[i].time + '</td>');
+					var idgenerate = Date.now();
+					content = content.concat('<tr class="generatedRow" fileName="' + pdfReports[i].fileName + '"><td>' + pdfReports[i].time + '</td>');
 					content = content.concat('<td>' + pdfReports[i].type + '</td>');
 					content = content.concat('<td><a class="tooltiptop" fileName="' + pdfReports[i].fileName + '" href="javascript:void(0)"');
 					content = content.concat(' data-toggle="tooltip" data-placement="top" name="downloadPdfReport" data-original-title="Download Pdf" title="">');
 					content = content.concat('<img src="themes/default/images/Phresco/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>');
-					content = content.concat('<td><a class="tooltiptop deletePdf" fileName="' + pdfReports[i].fileName + '" href="javascript:void(0)"');
-					content = content.concat(' data-toggle="tooltip" data-placement="top" name="delete" data-original-title="Delete Pdf" title="">');
-					content = content.concat('<img src="themes/default/images/Phresco/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>');
+					content = content.concat('<td class="list_img"><a class="tooltiptop" name="deletepdf_'+idgenerate+i+'" fileName="' + pdfReports[i].fileName + '"  href="javascript:void(0)"');
+					content = content.concat(' data-toggle="tooltip" data-placement="top" namedel="delete" data-original-title="Delete Pdf" title="">');
+					content = content.concat('<img src="themes/default/images/Phresco/delete_row.png" width="14" height="18" border="0" alt="0"></a>');
+					content = content.concat('<div style="display:none;" id="deletepdf_'+idgenerate+i+'" class="delete_msg tohide">Are you sure to delete ?<div>');
+					content = content.concat('<input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style dlt" name="delpdf"><input type="button"');
+					content = content.concat('value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close"></div></div></td></tr>');
 				}
 				$(commonVariables.contentPlaceholder).find("#availablePdfRptsTbdy").html(content);
 				self.pdfReportEvents();
@@ -487,6 +497,29 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			self.performAction(self.getActionHeader(requestBody, "generatePdfReport"), function(response) {
 				$("input[name=pdfName]").val('');
 				self.getPdfReports();
+			});
+		},
+		
+		deleteTestSuite : function(testsuitename) {
+			var self = this;
+			var requestBody = {};
+			requestBody.testsuitename = testsuitename;
+			self.performAction(self.getActionHeader(requestBody, "deleteTestSuite"), function(response) {
+				if(response.data) {
+					$("tr[testSuiteName='"+testsuitename+"']").remove();
+				} 
+			});
+		},
+		
+		deleteTestCase : function(testCaseName, currentTestsuiteName) {
+			var self = this;
+			var requestBody = {};
+			requestBody.testCaseName = testCaseName;
+			requestBody.testsuitename = currentTestsuiteName;
+			self.performAction(self.getActionHeader(requestBody, "deleteTestCase"), function(response) {
+				if(response.data) {
+					$("tr[testCaseId='"+testCaseName+"']").remove();
+				} 
 			});
 		},
 		
@@ -515,13 +548,35 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 		pdfReportEvents : function() {
 			var self = this;
 			//To delete the selected pdf report
-			$('.deletePdf').on("click", function() {
+			$("a[namedel=delete]").click(function() {
+				var temp = $(this).attr('name');
+				self.openccpl(this, $(this).attr('name'));
+				$('#'+temp).show();
 				self.showPopupLoading($('#pdfReportLoading'));
-				var requestBody = {};
-				requestBody.fileName = $(this).attr('fileName');
-				self.performAction(self.getActionHeader(requestBody, "deletePdfReport"), function(response) {
-					self.getPdfReports();
-				});
+				
+				var actionBody = {};
+				actionBody.fileName = $(this).attr("fileName");
+				$('input[name="delpdf"]').unbind();
+				$('input[name="delpdf"]').click(function() {
+					self.performAction(self.getActionHeader(actionBody, "deletePdfReport"), function(response) {
+						if (response.status === "success") {
+							$(".generatedRow").each(function() {
+								var pdfFileName = $(this).attr("fileName");
+								if(pdfFileName === actionBody.fileName){
+									$("tr[fileName='"+pdfFileName+"']").remove();
+								}
+							});
+							var size = $(".generatedRow").size();
+							if(size === 0) {
+								$(commonVariables.contentPlaceholder).find("#availablePdfRptsTbl").hide();
+								$("#noReport").show();
+								$("#noReport").html("No Report are Available");
+							}
+						}
+						self.hidePopupLoading($('#pdfReportLoading'));
+					});  
+				});	
+				self.hidePopupLoading($('#pdfReportLoading'));
 			});
 
 			//To download the selected pdf report
