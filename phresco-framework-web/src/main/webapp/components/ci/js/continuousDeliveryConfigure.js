@@ -23,6 +23,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 		sortableTwoReceive : null,
 		sortableOneChange : null,
 		sortableTwoChange : null,
+		sortableTwoHold : null,
 
 		/***
 		 * Called in initialization time of this class 
@@ -92,6 +93,10 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 				 	self.sortableTwoChange = new signals.Signal();
 			 }
 				
+			 if (self.sortableTwoHold === null) {
+				 	self.sortableTwoHold = new signals.Signal();
+			 }
+			 
 			 // Trigger registered events
 			 self.onLoadEnvironmentEvent.add(ciListener.loadEnvironmentEvent, ciListener);
 			 self.onConfigureJobPopupEvent.add(self.ciListener.showConfigureJob, self.ciListener);
@@ -104,7 +109,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 		  	 self.sortableTwoReceive.add(self.ciListener.sortableTwoReceive, self.ciListener);
 		  	 self.sortableOneChange.add(self.ciListener.sortableOneChange, self.ciListener);
 		  	 self.sortableTwoChange.add(self.ciListener.sortableTwoChange, self.ciListener);
-
+		  	 self.sortableTwoHold.add(self.ciListener.sortableTwohold, self.ciListener);
 
 			 // Handle bars
 			Handlebars.registerHelper('environment', function(data, flag) {
@@ -264,6 +269,10 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 
 					receive: function( event, ui ) {
 						self.sortableTwoReceive.dispatch(ui);
+					},
+					
+					update: function() {
+						self.sortableTwoHold.dispatch();
 					}
 				}); 
 			});
