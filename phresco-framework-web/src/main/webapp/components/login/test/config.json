@@ -309,7 +309,22 @@
 		"dashboardTest" : {
 			"moduleName":"dashboardTest",
 			"path" : "components/dashboard/test/dashboardTest"
-		}
+		},
+
+		"repository" : {
+			"moduleName":"repository",
+			"path" : "components/repository/js"
+		},
+		
+		"sourceRepositoryTest" : {
+			"moduleName":"sourceRepositoryTest",
+			"path" : "components/repository/test/sourceRepositoryTest"
+		},
+		
+		"buildRepositoryTest" : {
+			"moduleName":"buildRepositoryTest",
+			"path" : "components/repository/test/buildRepositoryTest"
+		}		
 		
 	}
 }

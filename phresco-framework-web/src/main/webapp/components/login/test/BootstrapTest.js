@@ -40,6 +40,9 @@ var commonVariables = {
 	featurePage : "features",
 	featurePageContext : "features",
 
+	buildRepo : "buildRepo",
+	sourceRepo : "sourceRepo",
+	
 	buildNo : null,
 	build : "build",
 	typeBuild : "build",

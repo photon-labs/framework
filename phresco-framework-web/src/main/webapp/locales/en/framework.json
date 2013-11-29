@@ -308,8 +308,21 @@
 			"testcheckout" : "Test Checkout",
 			"testrepourl" : "Test Repo Url",
 			"processlockby" : "The process has been locked by ",
-			"dashboard" : "Dashboard"
+			"dashboard" : "Dashboard",
+			"repository" : "Repository",
+			"sourceRepo" : "Source Repo",
+			"buildRepo" : "Build Repo"
  		}
+	},
+	
+	"repository" : {
+		"build" : {
+			"release" : "Release",
+			"create" : "Create"
+		},
+		
+		"source" : {
+		}
 	},
 	"codequality" : {
 		"report" : "Report",
