@@ -477,6 +477,14 @@ define([], function() {
 					$("#applicationedit").show();
 					$("#settingsNav").hide();
 					$("#downloadsNav").hide();
+					if (self.isBlank(commonVariables.editAppFrom) && commonVariables.editAppHasModules) {
+						$("li[name=editMenu]").not("#featurelist, .continuousDeliveryView").hide();
+					} else if (commonVariables.editAppFrom === "multimodule") {
+						$("li[name=editMenu]").not(".continuousDeliveryView").show();
+					} else {
+						$("li[name=editMenu]").show();
+					}
+					
 					break;
 					
 				case commonVariables.settings :
@@ -568,10 +576,10 @@ define([], function() {
 			} else {
 				$("#manualTest").show();
 			}
-			if (jQuery.inArray(commonVariables.optionsCI, applicableOptions) === -1) {
-				$("#continuousDeliveryView").hide();
-			} else {
-				$("#continuousDeliveryView").show();
+			if (jQuery.inArray(commonVariables.optionsCI, applicableOptions) === -1 || commonVariables.editAppFrom === "multimodule") {
+				$(".continuousDeliveryView").hide();
+			} else if (commonVariables.editAppFrom !== "multimodule") {
+				$(".continuousDeliveryView").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsRunAgainstSrc, applicableOptions) === -1) {
 				$("input[name=build_runagsource]").hide();
@@ -890,6 +898,8 @@ define([], function() {
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							if(response.responseCode === "PHR200017") {
 								commonVariables.api.showError(response.responseCode ,"success", true);
+							} else if(response.responseCode === "PHR210048") {
+								commonVariables.api.showError(response.responseCode ,"error", true);
 							}
 							callback(response);						
 						} else {
@@ -1091,10 +1101,12 @@ define([], function() {
 				$("#importloading").hide();
 				if (response.exception === null) {
 					$("#project_list_import").hide();	
-					self.getMyObj(commonVariables.projectlist, function(returnVal){
-						self.projectlist = returnVal;
-						Clazz.navigationController.push(self.projectlist, commonVariables.animation);
-					});
+					setTimeout(function() {
+						self.getMyObj(commonVariables.projectlist, function(returnVal){
+							self.projectlist = returnVal;
+							Clazz.navigationController.push(self.projectlist, commonVariables.animation);
+						});
+					},1000);	
 				}
 				commonVariables.hideloading = false;
 			});

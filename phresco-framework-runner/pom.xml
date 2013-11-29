@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
      <parent>
         <groupId>com.photon.phresco.framework</groupId>
         <artifactId>phresco-framework-root</artifactId>
-        <version>3.2.0.2002-SNAPSHOT</version>
+        <version>3.2.0.2004-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
     
@@ -43,11 +42,11 @@
 								<goal>single</goal>
 							</goals>
 							<configuration>
-								<finalName>release</finalName>
-								<descriptors>
-									<descriptor>assembly/config.xml</descriptor>
+                            <finalName>release</finalName>
+                            <descriptors>
+                                <descriptor>assembly/config.xml</descriptor>
 								</descriptors>
-							</configuration>
+                        </configuration>
 					</execution>
 					
 					<execution>
@@ -57,11 +56,11 @@
 								<goal>single</goal>
 							</goals>
 							<configuration>
-								<finalName>update</finalName>
-								<descriptors>
-									<descriptor>assembly/release-config.xml</descriptor>
+                            <finalName>update</finalName>
+                            <descriptors>
+                                <descriptor>assembly/release-config.xml</descriptor>
 								</descriptors>
-							</configuration>
+                        </configuration>
 					</execution>
 					
                 </executions>
@@ -79,11 +78,11 @@
 							<goal>upload</goal>
 						</goals>
 						<configuration>
-							<resourceSrc>${project.build.directory}/update.zip</resourceSrc>
-							<resourceDest>com/photon/phresco/framework/release/${project.version}</resourceDest>
-							<serverId>${releases.repo.id}</serverId>
-							<url>${releases.repo.url}</url>
-						</configuration>
+                            <resourceSrc>${project.build.directory}/update.zip</resourceSrc>
+                            <resourceDest>com/photon/phresco/framework/release/${project.version}</resourceDest>
+                            <serverId>${releases.repo.id}</serverId>
+                            <url>${releases.repo.url}</url>
+                        </configuration>
 					</execution>
 				</executions>
 			</plugin>

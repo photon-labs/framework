@@ -518,22 +518,42 @@ define(["build/listener/buildListener"], function() {
 			
 			$('img[name=jsAdd]').unbind('click');
 			$('img[name=jsAdd]').click(function(){
+				$(this).hide();
+				var trLength = $('tbody[name=jsParent]').children().size();
+				if(trLength === 1) {
+					$('tbody[name=jsParent]').children().last().children().last().find('img[name=jsRemove]').show();
+				}
 				self.appendMinifyRow({"opFileLoc": "", "csvFileName": "", "compressName": "", "fileType": "js"});
 			});
 			
 			$('img[name=cssAdd]').unbind('click');
 			$('img[name=cssAdd]').click(function(){
+				$(this).hide();
+				var trLength = $('tbody[name=cssParent]').children().size();
+				if(trLength === 1) {
+					$('tbody[name=cssParent]').children().last().children().last().find('img[name=cssRemove]').show();
+				}
 				self.appendMinifyRow({"opFileLoc": "", "csvFileName": "", "compressName": "", "fileType": "css"});
 			});
 			
 			$('img[name=jsRemove]').unbind('click');
 			$('img[name=jsRemove]').click(function(){
 				$(this).closest('tr').remove();
+				var trLength = $('tbody[name=jsParent]').children().size();
+				$('tbody[name=jsParent]').children().last().children().last().find('img[name=jsAdd]').show();
+				if(trLength === 1) {
+				   $('tbody[name=jsParent]').children().last().children().last().find('img[name=jsRemove]').hide();
+				}
 			});
 			
 			$('img[name=cssRemove]').unbind('click');
 			$('img[name=cssRemove]').click(function(){
 				$(this).closest('tr').remove();
+				var trLength = $('tbody[name=cssParent]').children().size();
+				$('tbody[name=cssParent]').children().last().children().last().find('img[name=cssAdd]').show();
+				if(trLength === 1) {
+				   $('tbody[name=cssParent]').children().last().children().last().find('img[name=cssRemove]').hide();
+				}
 			});
 			
 			$('input[name=jsBrowse]').unbind("click");
@@ -560,10 +580,16 @@ define(["build/listener/buildListener"], function() {
 		
 		appendMinifyRow : function(current){
 			if(current !== null && current.fileType.toLowerCase() === "js" || current.fileType.toLowerCase() === "css"){
-				var minusImg = '<img src="themes/default/images/Phresco/minus_icon.png" alt="" name="'+ current.fileType.toLowerCase() +'Remove">';
-			
-				if(current.minusImg){minusImg = '';}
-				$('table#'+ current.fileType.toLowerCase() +'min tbody').append('<tr><td><input type="text" maxlength="30" name="'+ current.fileType.toLowerCase() +'MinName" value="'+ current.compressName +'"></td><td><input type="text" name="'+ current.fileType.toLowerCase() +'MinFiles" value="'+ current.csvFileName +'" disabled><input type="hidden" name="'+ current.fileType.toLowerCase() +'filePath" value="'+ current.opFileLoc +'"><input type="hidden" name="fileType" value="'+ current.fileType.toLowerCase() +'"><input type="button" name="'+ current.fileType.toLowerCase() +'Browse" value="Browse" data-i18n="[value]build.label.browse" class="btn btn_style"><img src="themes/default/images/Phresco/plus_icon.png" alt="" name="'+ current.fileType.toLowerCase() +'Add">'+ minusImg +'<div name="treeTop" class="speakstyletopright dyn_popup" style="right:70px;"><div name="treeContent"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style"></div></div></td></tr>');
+				
+				$('table#'+ current.fileType.toLowerCase() +'min tbody').append('<tr><td><input type="text" maxlength="30" name="'+ current.fileType.toLowerCase() +'MinName" value="'+ current.compressName +'"></td><td><input type="text" name="'+ current.fileType.toLowerCase() +'MinFiles" value="'+ current.csvFileName +'" disabled><input type="hidden" name="'+ current.fileType.toLowerCase() +'filePath" value="'+ current.opFileLoc +'"><input type="hidden" name="fileType" value="'+ current.fileType.toLowerCase() +'"><input type="button" name="'+ current.fileType.toLowerCase() +'Browse" value="Browse" data-i18n="[value]build.label.browse" class="btn btn_style"><img src="themes/default/images/Phresco/plus_icon.png" alt="" name="'+ current.fileType.toLowerCase() +'Add" style="display:none;"><img src="themes/default/images/Phresco/minus_icon.png" alt="" name="'+ current.fileType.toLowerCase() +'Remove"><div name="treeTop" class="speakstyletopright dyn_popup" style="right:70px;"><div name="treeContent"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style"></div></div></td></tr>');
+				
+				if(current.fileType === 'js') {
+					$('tbody[name=jsParent]').children().last().prev().children().last().find('img[name=jsAdd]').hide();
+					$('tbody[name=jsParent]').children().last().children().last().find('img[name=jsAdd]').show();
+				} else {
+					$('tbody[name=cssParent]').children().last().prev().children().last().find('img[name=cssAdd]').hide();
+					$('tbody[name=cssParent]').children().last().children().last().find('img[name=cssAdd]').show();
+				}	
 				
 				self.hideTreeContent();
 				self.addJSMinRow();
@@ -758,17 +784,36 @@ define(["build/listener/buildListener"], function() {
 			$("input[name=build_minifier]").click(function() {
 				var openccObj = this;
 				var openccObjName = $(this).attr('name');
+				var jsCount = 0;
+				var cssCount = 0;
 				self.checkForLock("minify", '', function(response) {
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {
-						$("#build_minifier").html('<input type="checkbox" id="minAllchk"> Compress All Files <table id="jsmin" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0" style="margin-top:8px;"><thead><tr><th colspan="2">JS Minification</th></tr></thead><tbody></tbody></table><table id="cssmin" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0"><thead><tr><th colspan="2">CSS Minification</th></tr></thead><tbody></tbody></table><div class="flt_right"><input type="button" value="Minify" data-i18n="[value]build.label.minify" class="btn btn_style" name="btnMinifer" id="btnMinifer"><input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close"></div>');
-						self.appendMinifyRow({"opFileLoc": "", "csvFileName": "", "compressName": "", "fileType": "js", 'minusImg': true});
-						self.appendMinifyRow({"opFileLoc": "", "csvFileName": "", "compressName": "", "fileType": "css", 'minusImg': true});
+						$("#build_minifier").html('<input type="checkbox" id="minAllchk"> Compress All Files <table id="jsmin" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0" style="margin-top:8px;"><thead><tr><th colspan="2">JS Minification</th></tr></thead><tbody name="jsParent"></tbody></table><table id="cssmin" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0"><thead><tr><th colspan="2">CSS Minification</th></tr></thead><tbody name="cssParent"></tbody></table><div class="flt_right"><input type="button" value="Minify" data-i18n="[value]build.label.minify" class="btn btn_style" name="btnMinifer" id="btnMinifer"><input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close"></div>');
+						
 						
 						self.buildListener.getInfo(self.buildListener.getRequestHeader("", '', 'minifyList'), function(response){
 							if(response !== null && response.data !== null){
 								$.each(response.data, function(index, current){
+									if(current.fileType === 'js') {
+									    jsCount ++;
+									} else {
+										cssCount ++;
+									}
 									self.appendMinifyRow(current);
 								});
+								if($("tbody[name=jsParent]").children().size() === 1) {
+									$('tbody[name=jsParent]').children().last().children().last().find('img[name=jsRemove]').hide();
+								}
+								if($("tbody[name=cssParent]").children().size() === 1) {
+									$('tbody[name=cssParent]').children().last().children().last().find('img[name=cssRemove]').hide();
+								}
+							} 
+							
+							if(jsCount === 0) {
+								self.appendMinifyRow({"opFileLoc": "", "csvFileName": "", "compressName": "", "fileType": "js"});
+							} 
+							if(cssCount === 0){
+								self.appendMinifyRow({"opFileLoc": "", "csvFileName": "", "compressName": "", "fileType": "css"});
 							}
 						});
 		

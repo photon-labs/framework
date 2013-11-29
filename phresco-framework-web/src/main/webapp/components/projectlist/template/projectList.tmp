@@ -41,7 +41,7 @@
                       </tr>
 					         {{#each appInfos}}
                       <tr class="{{appDirName}}" techid="{{techInfo.id}}">
-                        <td width="25%"><a name="editApplication" appid="{{id}}" href="javascript:;">{{name}}</a></td>
+                        <td width="25%"><a name="editApplication" appid="{{id}}" modules="{{#hasModules modules}}{{/hasModules}}" href="javascript:;">{{name}}</a></td>
                         <td width="25%">{{#descriptionshow description}}{{/descriptionshow}}</td>
                         <td width="25%">{{techInfo.name}}</td>
                        <td class="list_img"><a name="pdf_report_{{id}}" temp="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="{{id}}" data-placement="bottom" data-t="tooltip" href="javascript:void(0)" data-original-title="PDF Report"><img src="themes/default/images/Phresco/pdf_icon.png" width="14" height="16" border="0" alt=""></a>
@@ -121,55 +121,157 @@
               			{{/if}}
                   
                   <div id="addRepo_{{id}}" class="add_repo dyn_popup" name="addRepo">
-                      <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                        <tbody>
-                            <tr>
-                                <td><span data-i18n="commonlabel.label.type"></span><sup>*</sup></td>
-                                <td><span data-i18n="navigation.application.apprepourl"></span><sup>*</sup></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <select id="type_{{id}}" class="ad_Select">
-                                        <option value="svn" data-i18n="projectlist.label.svn"></option>
-                                        <option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
-                                        <option value="git" data-i18n="projectlist.label.git"></option>
-                                    </select>
-                                </td>
-                                <td><input type="text" name="repoUrl" placeholder="Repo Url" id="repourl_{{id}}"></td>
-                            </tr>
-                            <tr>
-                                <td class="seperatetdSvn"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="repocredential_{{id}}" repoDynid="{{id}}" class="credential"></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td><span data-i18n="login.placeholder.username" name="username"></span><sup>*</sup></td>
-                                <td><span data-i18n="login.placeholder.password" name="password"></span><sup>*</sup></td>
-                            </tr>
-                            <tr>
-                                <td><input type="text" name="username" mandatory=true data-i18n="[placeholder]login.placeholder.username" id="uname_{{id}}" class="uname"></td>
-                                <td><input type="password" name="password" mandatory=true placeholder="Password" id="pwd_{{id}}" class="pwd"></td>
-                            </tr>
-							<tr class="passPhrase" style="display:none">
-                                <td><label value="passPhrase">PassPhrase</label></td>
-                            </tr>
-							<tr class="passPhrase" style="display:none">
-                                <td><input type="text" id="repoPhrase_{{id}}"/></td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <textarea class="popuptextarea" name="commitMsg" data-i18n="[placeholder]projectlist.label.message" id="repomessage_{{id}}"></textarea><img class="search" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
-								</td>
-                            </tr>
-							<tr>
-								<td><select class="searchdropdown"></select></td>
-							</tr>
-                        </tbody>
-                     </table> 
-                     <div class="popuploading" id="addRepoLoading_{{id}}">&nbsp</div>
-                     <div class="flt_right" appId="{{id}}" projectId = "{{../id}}" appDirName="{{appDirName}}">
-                        <input type="button" name="addrepobtn" id="{{id}}" value="Add To Repo" data-i18n="[value]projectlist.btn.addrepo;" class="btn btn_style">
-                        <input type="button" value="Close" data-i18n="[value]common.btn.close;" class="btn btn_style dyn_popup_close">
-                     </div> 
+				  	<div class="bs-docs-example repository_tabdiv">
+						<ul class="nav nav-tabs" id="myTab">
+							<li class="active"><a data-toggle="tab" href="#source{{id}}">Source</a></li>
+							<li><input type="checkbox" id="splitDotPhresco_{{id}}" class="splitDotPhresco" dynamicId="{{id}}"><a class="repo_tab dotPhrescoA " dynamicId="{{id}}">.Phresco</a></li>
+							<li><input type="checkbox" id="splitTest_{{id}}" class="splitTest" dynamicId="{{id}}"><a class="repo_tab testA" dynamicId="{{id}}">Test</a></li>
+						</ul>
+					</div>
+					<div class="tab-content" id="myTabContent">
+					  <div id="source{{id}}" class="tab-pane fade active in">
+						  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tbody>
+								<tr>
+									<td><span data-i18n="commonlabel.label.type"></span><sup>*</sup></td>
+									<td><span data-i18n="navigation.application.apprepourl"></span><sup>*</sup></td>
+								</tr>
+								<tr>
+									<td>
+										<select id="type_{{id}}" class="ad_Select">
+											<option value="svn" data-i18n="projectlist.label.svn"></option>
+											<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
+											<option value="git" data-i18n="projectlist.label.git"></option>
+										</select>
+									</td>
+									<td><input type="text" name="repoUrl" placeholder="Repo Url" id="repourl_{{id}}"></td>
+								</tr>
+								<tr>
+									<td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="repocredential_{{id}}" repoDynid="{{id}}" class="credential"></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td><span data-i18n="login.placeholder.username" name="username"></span><sup>*</sup></td>
+									<td><span data-i18n="login.placeholder.password" name="password"></span><sup>*</sup></td>
+								</tr>
+								<tr>
+									<td><input type="text" name="username" mandatory=true data-i18n="[placeholder]login.placeholder.username" id="uname_{{id}}" class="uname"></td>
+									<td><input type="password" name="password" mandatory=true placeholder="Password" id="pwd_{{id}}" class="pwd"></td>
+								</tr>
+								<tr class="passPhrase hideContent">
+									<td><label value="passPhrase">PassPhrase</label></td>
+								</tr>
+								<tr class="passPhrase hideContent">
+									<td><input type="text" id="repoPhrase_{{id}}"/></td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<textarea class="popuptextarea" name="commitMsg" data-i18n="[placeholder]projectlist.label.message" id="repomessage_{{id}}"></textarea><img class="search" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
+									</td>
+								</tr>
+								<tr>
+									<td><select class="searchdropdown"></select></td>
+								</tr>
+							</tbody>
+						 </table>
+						 </div>
+						 <div id="dotphresco{{id}}" class="tab-pane fade">
+						 <table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tbody>
+								<tr>
+									<td><span data-i18n="commonlabel.label.type"></span><sup>*</sup></td>
+									<td><span data-i18n="navigation.application.phrescorepourl"></span><sup>*</sup></td>
+								</tr>
+								<tr>
+									<td>
+										<select id="phrescotype_{{id}}" class="ad_Select" disabled>
+											<option value="svn" data-i18n="projectlist.label.svn"></option>
+											<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
+											<option value="git" data-i18n="projectlist.label.git"></option>
+										</select>
+									</td>
+									<td><input type="text" name="repoUrl" placeholder="Repo Url" id="phrescorepourl_{{id}}"></td>
+								</tr>
+								<tr>
+									<td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="repocredential_{{id}}" repoDynid="{{id}}" class="credential"></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td><span data-i18n="login.placeholder.username" name="username"></span><sup>*</sup></td>
+									<td><span data-i18n="login.placeholder.password" name="password"></span><sup>*</sup></td>
+								</tr>
+								<tr>
+									<td><input type="text" name="username" mandatory=true data-i18n="[placeholder]login.placeholder.username" id="phrescouname_{{id}}" class="uname"></td>
+									<td><input type="password" name="password" mandatory=true placeholder="Password" id="phrescopwd_{{id}}" class="pwd"></td>
+								</tr>
+								<tr class="passPhrase hideContent">
+									<td><label value="passPhrase">PassPhrase</label></td>
+								</tr>
+								<tr class="passPhrase hideContent">
+									<td><input type="text" id="phrescorepoPhrase_{{id}}"/></td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<textarea class="popuptextarea" name="commitMsg" data-i18n="[placeholder]projectlist.label.message" id="phrescorepomessage_{{id}}"></textarea><img class="search" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
+									</td>
+								</tr>
+								<tr>
+									<td><select class="searchdropdown"></select></td>
+								</tr>
+							</tbody>
+						 </table>
+						 </div>
+						 <div id="test{{id}}" class="tab-pane fade">
+						 <table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tbody>
+								<tr>
+									<td><span data-i18n="commonlabel.label.type"></span><sup>*</sup></td>
+									<td><span data-i18n="navigation.application.testrepourl"></span><sup>*</sup></td>
+								</tr>
+								<tr>
+									<td>
+										<select id="testtype_{{id}}" class="ad_Select" disabled>
+											<option value="svn" data-i18n="projectlist.label.svn"></option>
+											<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
+											<option value="git" data-i18n="projectlist.label.git"></option>
+										</select>
+									</td>
+									<td><input type="text" name="repoUrl" placeholder="Repo Url" id="testrepourl_{{id}}"></td>
+								</tr>
+								<tr>
+									<td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="repocredential_{{id}}" repoDynid="{{id}}" class="credential"></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td><span data-i18n="login.placeholder.username" name="username"></span><sup>*</sup></td>
+									<td><span data-i18n="login.placeholder.password" name="password"></span><sup>*</sup></td>
+								</tr>
+								<tr>
+									<td><input type="text" name="username" mandatory=true data-i18n="[placeholder]login.placeholder.username" id="testuname_{{id}}" class="uname"></td>
+									<td><input type="password" name="password" mandatory=true placeholder="Password" id="testpwd_{{id}}" class="pwd"></td>
+								</tr>
+								<tr class="passPhrase hideContent">
+									<td><label value="passPhrase">PassPhrase</label></td>
+								</tr>
+								<tr class="passPhrase hideContent">
+									<td><input type="text" id="testrepoPhrase_{{id}}"/></td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<textarea class="popuptextarea" name="testcommitMsg" data-i18n="[placeholder]projectlist.label.message" id="testrepomessage_{{id}}"></textarea><img class="search" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
+									</td>
+								</tr>
+								<tr>
+									<td><select class="searchdropdown"></select></td>
+								</tr>
+							</tbody>
+						 </table>
+						 </div>
+						 <div class="popuploading" id="addRepoLoading_{{id}}">&nbsp</div>
+						 <div class="flt_right" appId="{{id}}" projectId = "{{../id}}" appDirName="{{appDirName}}">
+							<input type="button" name="addrepobtn" id="{{id}}" value="Add To Repo" data-i18n="[value]projectlist.btn.addrepo;" class="btn btn_style">
+							<input type="button" value="Close" data-i18n="[value]common.btn.close;" class="btn btn_style dyn_popup_close">
+						 </div> 
                   </div>
                   <!--add_repo div ends here --> 
                   

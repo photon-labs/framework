@@ -182,7 +182,7 @@
                         </ul>
                       </div>
                 </li>
-                <li id="continuousDeliveryView" name="editMenu"><a href="javascript:void(0)" data-i18n="navigation.application.ci"></a></li>
+                <li class="continuousDeliveryView" id="continuousDeliveryView" name="editMenu"><a href="javascript:void(0)" data-i18n="navigation.application.ci"></a></li>
                 <li id="mavenReport" name="editMenu"><a href="javascript:void(0)" data-i18n="navigation.application.report"></a></li>
         	</ul>
         </div>

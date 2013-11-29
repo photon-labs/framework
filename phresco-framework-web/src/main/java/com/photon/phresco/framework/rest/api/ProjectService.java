@@ -86,6 +86,7 @@ import com.photon.phresco.util.ProjectUtils;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.model.Dependency;
 import com.phresco.pom.model.Model.Modules;
 import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
@@ -627,79 +628,27 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					.append(Constants.DOT_PHRESCO_FOLDER).append(File.separator).append(
 							Constants.APPLICATION_HANDLER_INFO_FILE);
 			filePath = new File(sb.toString());
-			MojoProcessor mojo = new MojoProcessor(filePath);
-			ApplicationHandler applicationHandler = mojo.getApplicationHandler();
-			// To write selected Database into phresco-application-Handler-info.xml
 			List<ArtifactGroupInfo> selectedDatabases = appInfo.getSelectedDatabases();
-			if (CollectionUtils.isNotEmpty(selectedDatabases)) {
-				for (ArtifactGroupInfo selectedDatabase : selectedDatabases) {
-					DownloadInfo downloadInfo = serviceManager.getDownloadInfo(selectedDatabase.getArtifactGroupId());
-					String id = downloadInfo.getArtifactGroup().getId();
-					ArtifactGroup artifactGroupInfo = serviceManager.getArtifactGroupInfo(id);
-					List<ArtifactInfo> dbVersionInfos = artifactGroupInfo.getVersions();
-					// for selected version infos from ui
-					List<ArtifactInfo> selectedDBVersionInfos = new ArrayList<ArtifactInfo>();
-					for (ArtifactInfo versionInfo : dbVersionInfos) {
-						String versionId = versionInfo.getId();
-						if (selectedDatabase.getArtifactInfoIds().contains(versionId)) {
-							// Add selected version infos to list
-							selectedDBVersionInfos.add(versionInfo);
-						}
-					}
-					downloadInfo.getArtifactGroup().setVersions(selectedDBVersionInfos);
-					selectedDatabaseGroup.add(downloadInfo);
-				}
-				if (CollectionUtils.isNotEmpty(selectedDatabaseGroup)) {
-					String databaseGroup = gson.toJson(selectedDatabaseGroup);
-					applicationHandler.setSelectedDatabase(databaseGroup);
-				}
+			
+			if (new File(filePath.toString()).exists()) {
+				MojoProcessor mojo = new MojoProcessor(filePath);
+				ApplicationHandler applicationHandler = mojo.getApplicationHandler();
+				
+				// To write selected Database into phresco-application-Handler-info.xml
+				updateSelectedDBinApplnHandler(serviceManager, selectedDatabaseGroup, gson, applicationHandler, selectedDatabases);
+	
+				// To write selected Servers into phresco-application-Handler-info.xml
+				List<ArtifactGroupInfo> selectedServers = appInfo.getSelectedServers();
+				updateSelectedServersInApplnHandlerXml(serviceManager, selectedServerGroup, gson, applicationHandler, selectedServers);
+	
+				// To write selected WebServices info to phresco-plugin-info.xml
+				List<String> selectedWebservices = appInfo.getSelectedWebservices();
+				
+				updateSelectedWSinApplnHandlerXml(serviceManager, gson, applicationHandler, selectedWebservices);
+				mojo.save();
 			} else {
-				applicationHandler.setSelectedDatabase(null);
+				throw new PhrescoException("Application Handler xml does not exist");
 			}
-
-			// To write selected Servers into phresco-application-Handler-info.xml
-			List<ArtifactGroupInfo> selectedServers = appInfo.getSelectedServers();
-			if (CollectionUtils.isNotEmpty(selectedServers)) {
-				for (ArtifactGroupInfo selectedServer : selectedServers) {
-					DownloadInfo downloadInfo = serviceManager.getDownloadInfo(selectedServer.getArtifactGroupId());
-					String id = downloadInfo.getArtifactGroup().getId();
-					ArtifactGroup artifactGroupInfo = serviceManager.getArtifactGroupInfo(id);
-					List<ArtifactInfo> serverVersionInfos = artifactGroupInfo.getVersions();
-					List<ArtifactInfo> selectedServerVersionInfos = new ArrayList<ArtifactInfo>();
-					for (ArtifactInfo versionInfo : serverVersionInfos) {
-						String versionId = versionInfo.getId();
-						if (selectedServer.getArtifactInfoIds().contains(versionId)) {
-							selectedServerVersionInfos.add(versionInfo);
-						}
-					}
-					downloadInfo.getArtifactGroup().setVersions(selectedServerVersionInfos);
-					selectedServerGroup.add(downloadInfo);
-				}
-				if (CollectionUtils.isNotEmpty(selectedServerGroup)) {
-					String serverGroup = gson.toJson(selectedServerGroup);
-					applicationHandler.setSelectedServer(serverGroup);
-				}
-			} else {
-				applicationHandler.setSelectedServer(null);
-			}
-
-			// To write selected WebServices info to phresco-plugin-info.xml
-			List<String> selectedWebservices = appInfo.getSelectedWebservices();
-			List<WebService> webServiceList = new ArrayList<WebService>();
-			if (CollectionUtils.isNotEmpty(selectedWebservices)) {
-				for (String selectedWebService : selectedWebservices) {
-					WebService webservice = serviceManager.getWebService(selectedWebService);
-					webServiceList.add(webservice);
-				}
-				if (CollectionUtils.isNotEmpty(webServiceList)) {
-					String serverGroup = gson.toJson(webServiceList);
-					applicationHandler.setSelectedWebService(serverGroup);
-				}
-			} else {
-				applicationHandler.setSelectedWebService(null);
-			}
-
-			mojo.save();
 			StringBuilder sbs = null;
 			if (StringUtils.isNotEmpty(folder)) {
 				sbs = new StringBuilder(Utility.getProjectHome()).append(folder).append(File.separator).append(
@@ -718,9 +667,9 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 			projectManager.updateApplication(projectInfo, serviceManager, oldAppDirName, rootModule);
 
-			//to update submodule's appdirname in root module's project info
+			//to update submodule's appdirname in root module's project info - in appInfo.getModules() entry
 			if (StringUtils.isNotEmpty(rootModule) && !oldAppDirName.equals(appInfo.getAppDirName())) {
-				updateSubModuleNameInRootProjInfo(rootModule, oldAppDirName, appInfo.getAppDirName());
+				updateSubModuleNameInRootProjInfo(rootModule, oldAppDirName, appInfo);
 			} 
 			String newFolderDir = appInfo.getAppDirName();
 			if (StringUtils.isEmpty(rootModule)) {
@@ -735,7 +684,6 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			} else {
 				newFolderDir = rootModule + File.separator + appInfo.getAppDirName();
 			}
-			
 			//To update parent tags in submodule's pom
 			updateSubModulePomParentTagInfo(newFolderDir, appInfo);
 			
@@ -779,6 +727,79 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		}
 	}
 
+	private void updateSelectedWSinApplnHandlerXml(ServiceManager serviceManager, Gson gson, ApplicationHandler applicationHandler, List<String> selectedWebservices)
+			throws PhrescoException {
+		List<WebService> webServiceList = new ArrayList<WebService>();
+		if (CollectionUtils.isNotEmpty(selectedWebservices)) {
+			for (String selectedWebService : selectedWebservices) {
+				WebService webservice = serviceManager.getWebService(selectedWebService);
+				webServiceList.add(webservice);
+			}
+			if (CollectionUtils.isNotEmpty(webServiceList)) {
+				String serverGroup = gson.toJson(webServiceList);
+				applicationHandler.setSelectedWebService(serverGroup);
+			}
+		} else {
+			applicationHandler.setSelectedWebService(null);
+		}
+	}
+
+	private void updateSelectedServersInApplnHandlerXml(ServiceManager serviceManager, List<DownloadInfo> selectedServerGroup, Gson gson, ApplicationHandler applicationHandler,
+			List<ArtifactGroupInfo> selectedServers) throws PhrescoException {
+		if (CollectionUtils.isNotEmpty(selectedServers)) {
+			for (ArtifactGroupInfo selectedServer : selectedServers) {
+				DownloadInfo downloadInfo = serviceManager.getDownloadInfo(selectedServer.getArtifactGroupId());
+				String id = downloadInfo.getArtifactGroup().getId();
+				ArtifactGroup artifactGroupInfo = serviceManager.getArtifactGroupInfo(id);
+				List<ArtifactInfo> serverVersionInfos = artifactGroupInfo.getVersions();
+				List<ArtifactInfo> selectedServerVersionInfos = new ArrayList<ArtifactInfo>();
+				for (ArtifactInfo versionInfo : serverVersionInfos) {
+					String versionId = versionInfo.getId();
+					if (selectedServer.getArtifactInfoIds().contains(versionId)) {
+						selectedServerVersionInfos.add(versionInfo);
+					}
+				}
+				downloadInfo.getArtifactGroup().setVersions(selectedServerVersionInfos);
+				selectedServerGroup.add(downloadInfo);
+			}
+			if (CollectionUtils.isNotEmpty(selectedServerGroup)) {
+				String serverGroup = gson.toJson(selectedServerGroup);
+				applicationHandler.setSelectedServer(serverGroup);
+			}
+		} else {
+			applicationHandler.setSelectedServer(null);
+		}
+	}
+
+	private void updateSelectedDBinApplnHandler(ServiceManager serviceManager, List<DownloadInfo> selectedDatabaseGroup, Gson gson, ApplicationHandler applicationHandler,
+			List<ArtifactGroupInfo> selectedDatabases) throws PhrescoException {
+		if (CollectionUtils.isNotEmpty(selectedDatabases)) {
+			for (ArtifactGroupInfo selectedDatabase : selectedDatabases) {
+				DownloadInfo downloadInfo = serviceManager.getDownloadInfo(selectedDatabase.getArtifactGroupId());
+				String id = downloadInfo.getArtifactGroup().getId();
+				ArtifactGroup artifactGroupInfo = serviceManager.getArtifactGroupInfo(id);
+				List<ArtifactInfo> dbVersionInfos = artifactGroupInfo.getVersions();
+				// for selected version infos from ui
+				List<ArtifactInfo> selectedDBVersionInfos = new ArrayList<ArtifactInfo>();
+				for (ArtifactInfo versionInfo : dbVersionInfos) {
+					String versionId = versionInfo.getId();
+					if (selectedDatabase.getArtifactInfoIds().contains(versionId)) {
+						// Add selected version infos to list
+						selectedDBVersionInfos.add(versionInfo);
+					}
+				}
+				downloadInfo.getArtifactGroup().setVersions(selectedDBVersionInfos);
+				selectedDatabaseGroup.add(downloadInfo);
+			}
+			if (CollectionUtils.isNotEmpty(selectedDatabaseGroup)) {
+				String databaseGroup = gson.toJson(selectedDatabaseGroup);
+				applicationHandler.setSelectedDatabase(databaseGroup);
+			}
+		} else {
+			applicationHandler.setSelectedDatabase(null);
+		}
+	}
+
 	private void updateSubModulePomParentTagInfo(String newFolderDir, ApplicationInfo appInfo) throws PhrescoException  {
 		Type type;
 		try {
@@ -801,11 +822,15 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 						File subModuleMainPom = new File(subModuleDir.getPath() + File.separator + subModuleMainPomName);
 						if (subModuleMainPom.exists()) {
 							PomProcessor subPomProcessor = new PomProcessor(subModuleMainPom);
-							subPomProcessor.getParent().setArtifactId(mainPomProcessor.getArtifactId());
-							subPomProcessor.getParent().setGroupId(mainPomProcessor.getGroupId());
-							subPomProcessor.getParent().setVersion(mainPomProcessor.getVersion());
-							subPomProcessor.getParent().setRelativePath("../");
-							subPomProcessor.save();
+							if (subPomProcessor != null &&  subPomProcessor.getParent() != null  
+									&& mainPomProcessor.getGroupId().equals(subPomProcessor.getParent().getGroupId()) 
+									&& mainPomProcessor.getVersion().equals(subPomProcessor.getParent().getVersion())) {
+								subPomProcessor.getParent().setArtifactId(mainPomProcessor.getArtifactId());
+								subPomProcessor.getParent().setGroupId(mainPomProcessor.getGroupId());
+								subPomProcessor.getParent().setVersion(mainPomProcessor.getVersion());
+								subPomProcessor.getParent().setRelativePath("../");
+								subPomProcessor.save();
+							}
 						}
 					}
 				}
@@ -815,8 +840,9 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		}
 	}
 	
-	private void updateSubModuleNameInRootProjInfo(String rootModule, String oldSubModuleName, String newSubModuleName) throws PhrescoException {
+	private void updateSubModuleNameInRootProjInfo(String rootModule, String oldSubModuleName, ApplicationInfo appInfo) throws PhrescoException {
 		try {
+			String newSubModuleName = appInfo.getAppDirName(); 
 			File rootFolder = new File(Utility.getProjectHome() + rootModule);
 			File rootModuleProjInfo = new File(rootFolder.getPath() + File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator + PROJECT_INFO);
 			Gson gson = new Gson();
@@ -832,6 +858,14 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					if (oldSubModuleName.equals(module.getCode())) {
 						module.setCode(newSubModuleName);
 					}
+					List<String> dependentModules = module.getDependentModules();
+				
+					if (CollectionUtils.isNotEmpty(dependentModules)&& dependentModules.contains(oldSubModuleName)) {
+						int itemIndex = dependentModules.indexOf(oldSubModuleName);
+						dependentModules.remove(itemIndex);
+						dependentModules.add(itemIndex, newSubModuleName);
+					}
+					module.setDependentModules(dependentModules);
 					newModuleInfos.add(module);
 				}
 			}
@@ -844,7 +878,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			throw new PhrescoException(e);
 		} 
 	}
-
+	
 	private void updateRootPomModules(String rootModule, String oldSubModuleName, String newSubModuleName, File rootFolder,
 			ApplicationInfo rootAppInfo) throws PhrescoPomException {
 		String rootPomName = Utility.getPomFileNameFromRootModule(rootAppInfo, rootModule);

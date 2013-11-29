@@ -23,6 +23,7 @@ define(["projectlist/listener/projectListListener"], function() {
 		onGetReportEvent : null,
 		flagged: null,
 		flag:null,
+		delobj:null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -110,6 +111,14 @@ define(["projectlist/listener/projectListListener"], function() {
 				}
 				return appIds;
 			});
+			
+			Handlebars.registerHelper('hasModules', function(modules) {
+				if (modules !== undefined && modules !== null && modules.length > 0) {
+					return true;
+				} else {							
+					return false;
+				}		
+			});
 		},
 		
 		/***
@@ -137,7 +146,6 @@ define(["projectlist/listener/projectListListener"], function() {
 
 		getAction : function(actionBody, action, callback) {
 			var self = this;
-			
 			self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, action), "" , function(response) {
 				if ("delete" === action) {
 					callback();
@@ -255,7 +263,11 @@ define(["projectlist/listener/projectListListener"], function() {
 						var techid = $(thisObj).closest("tr").attr("techid");
 						commonVariables.techId = techid;
 						$("#myTab li#appinfo a").addClass("act");
-						var module = "multimodule" === $(thisObj).attr("from") ?  $(thisObj).text() : "";
+						var from = $(thisObj).attr("from");
+						var hasModules = Boolean($(thisObj).attr("modules"));
+						commonVariables.editAppFrom = from;
+						commonVariables.editAppHasModules = hasModules;
+						var module = "multimodule" === from ?  $(thisObj).text() : "";
 						self.onProjectsEvent.dispatch(value , techid, module);
 	
 						//To show/hide openfolder, copy path icon and copy to clipboard
@@ -263,11 +275,6 @@ define(["projectlist/listener/projectListListener"], function() {
 						self.projectslistListener.getProjectList(self.projectslistListener.getActionHeader(actionBody, "checkMachine"), function(response) {
 							commonVariables.api.localVal.setSession("checkMachine", JSON.stringify(response));
 						});
-						if (!self.isBlank(module)) {
-							$('li[id=continuousDeliveryView]').hide();
-						} else {
-							$('li[id=continuousDeliveryView]').show();
-						}
 					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
 						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 					}	
@@ -282,6 +289,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				var usrObj;
 				var pwdObj;		
 				var counter;				
+				var obj_del = this;
 				var action = $(this).attr("data-original-title");
 				var currentPrjName = $(this).closest("tr").attr("class");
 				var dynamicId = $(this).attr("dynamicId");
@@ -371,7 +379,7 @@ define(["projectlist/listener/projectListListener"], function() {
 					}
 				} 
 				
-				if(checkObj !== null  && checkObj !== undefined && checkObj !== '') {
+				/*if(checkObj !== null  && checkObj !== undefined && checkObj !== '') {
 					self.makeCredReadOnly(checkObj, usrObj, pwdObj);
 				}	
 
@@ -380,7 +388,7 @@ define(["projectlist/listener/projectListListener"], function() {
 					checkObj.on("change", function(){				
 						self.makeCredReadOnly(checkObj, usrObj, pwdObj);
 					});
-				}
+				}*/
 				
 				if(selectObj !== null  && selectObj !== undefined && selectObj !== '') {
 					selectObj.unbind("change");
@@ -448,6 +456,9 @@ define(["projectlist/listener/projectListListener"], function() {
 					var applnids = $(this).hasClass('del_project') ? $(this).attr('appids') : dynamicId;
 					self.checkForLock(lockAction, applnids, function(response){
 						if (response.status === "success" && response.responseCode === "PHR10C00002") {
+							if($(obj_del).hasClass('del_project')) {
+								self.delobj = $(obj_del).parent('td.delimages');
+							}
 							self.openccpl(openccObj, openccName, currentPrjName);
 							var target = $('#' + openccName);
 							$('.content_main').prepend(target);
@@ -532,16 +543,19 @@ define(["projectlist/listener/projectListListener"], function() {
 				deletearray.actionType = "application";				
 				self.deleteProjectfn(deletearray, imgname1, imgname2, deleteproject);
 				self.closeAll($(this).attr('name'));
+				$('.content_title').css('z-index', '6');
+				$('.header_section').css('z-index', '7');
 				
 			});
 
 			$("input[name='holeDelete']").unbind('click');
 			$("input[name='holeDelete']").click(function(e) {
 				self.projectslistListener.delprojectname = $(this).attr('deleteAppname');
-				var projectnameArray = [], cls, temp, temp1, temp2, classname, curr, currentRow;
-				temp = $(this).parents().parent("td.delimages").parent('tr');
-				curr =  $(this).parents().parent("td.delimages").parent().next('tr');
-				currentRow =  $(this).parents().parent("td.delimages").parent().next();
+				var projectnameArray = [], cls, temp, temp1, temp2, classname, curr, currentRow, deleteappname;
+				deleteappname = $(this).attr('deleteappname');
+				temp = self.delobj.parent('tr');
+				curr =  self.delobj.parent().next('tr');
+				currentRow =  self.delobj.parent().next();
 				while(currentRow !== null && currentRow.length > 0) {
 				   classname = currentRow.attr("class");
 				   if(classname !== "proj_title") {
@@ -570,7 +584,10 @@ define(["projectlist/listener/projectListListener"], function() {
 						if(!($('tr.proj_title').length)) {
 							self.flagged=0;
 						}	
-				});					
+						$(".deleteproj_msg").hide();
+				});		
+				$('.content_title').css('z-index', '6');
+				$('.header_section').css('z-index', '7');
 			});			
 			
 			$(".credential").unbind("click");
@@ -625,10 +642,62 @@ define(["projectlist/listener/projectListListener"], function() {
 					var value = $(this).val();
 				}
 			});
+			
+			$(".splitDotPhresco").unbind("click");
+			$(".splitDotPhresco").bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				if ($(this).is(":checked")) {
+					$("#addRepo_" + dynamicId).find(".dotPhrescoA").attr("data-toggle", "tab").attr("href", "#dotphresco"+dynamicId);
+					$("#dotphresco" + dynamicId).addClass("active in");
+					$("#source" + dynamicId).removeClass("active in");
+					$("#test" + dynamicId).removeClass("active in");
+					$(this).parent().addClass("active");
+					$(this).parent().prev().removeClass("active");
+					$(this).parent().next().removeClass("active");
+				} else {
+					$("#addRepo_" + dynamicId).find(".dotPhrescoA").removeAttr("data-toggle").removeAttr("href");
+					if ($(this).parent().hasClass("active")) {
+						$("#dotphresco" + dynamicId).removeClass("active in");
+						$("#source" + dynamicId).addClass("active in");
+						$(this).parent().removeClass("active");
+						$(this).parent().prev().addClass("active");
+					}
+				}
+			});
+			
+			$(".splitTest").unbind("click");
+			$(".splitTest").bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				if ($(this).is(":checked")) {
+					$("#addRepo_" + dynamicId).find(".testA").attr("data-toggle", "tab").attr("href", "#test"+dynamicId);
+					$("#dotphresco" + dynamicId).removeClass("active in");
+					$("#source" + dynamicId).removeClass("active in");
+					$("#test" + dynamicId).addClass("active in");
+					$(this).parent().addClass("active");
+					$(this).parent().prev().prev().removeClass("active");
+					$(this).parent().prev().removeClass("active");
+				} else {
+					$("#addRepo_" + dynamicId).find(".testA").removeAttr("data-toggle").removeAttr("href");
+					if ($(this).parent().hasClass("active")) {
+						$("#test" + dynamicId).removeClass("active in");
+						$("#source" + dynamicId).addClass("active in");
+						$(this).parent().removeClass("active");
+						$(this).parent().prev().prev().addClass("active");
+					}
+				}
+			});
+			
+			$(".dotPhrescoA, .testA").unbind("click");
+			$(".dotPhrescoA, .testA").bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				var selectedType = $("#type_" + dynamicId).val();
+				$("#phrescotype_" + dynamicId).val(selectedType);
+				$("#testtype_" + dynamicId).val(selectedType);
+			});
+			
 			self.windowResize();
 			self.tableScrollbar();
 			this.customScroll($(".customer_names"));
-			//this.customScroll($(".pdfheight"));
 		}
 	});
 

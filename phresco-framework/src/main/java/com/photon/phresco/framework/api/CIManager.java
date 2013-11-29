@@ -211,14 +211,14 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	public boolean createJsonJobs(ContinuousDelivery continuousDelivery, List<CIJob> jobs, String projId, String appDir) throws PhrescoException;
+	public boolean createJsonJobs(ContinuousDelivery continuousDelivery, List<CIJob> jobs, String projId, String appDir, String globalInfo, String status) throws PhrescoException;
 
 	/**
 	 * @param appDir
 	 * @return
 	 * @throws PhrescoException
 	 */
-	public List<ProjectDelivery> getCiJobInfo(String appDir, String globalInfo) throws PhrescoException;
+	public List<ProjectDelivery> getCiJobInfo(String appDir, String globalInfo, String status) throws PhrescoException;
 
 	/**
 	 * @param appDir
@@ -227,7 +227,7 @@ public interface CIManager {
 	 * @param name
 	 * @throws PhrescoException
 	 */
-	public void deleteJsonJobs(String appDir, List<CIJob> selectedJobs, String projectId, String name) throws PhrescoException;
+	public void deleteJsonJobs(String appDir, List<CIJob> selectedJobs, String projectId, String name, String status) throws PhrescoException;
 
 	/**
 	 * @param continuousDeliveryName
@@ -236,7 +236,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	public boolean clearContinuousDelivery(String continuousDeliveryName, String projId, String appDir) throws PhrescoException;
+	public boolean clearContinuousDelivery(String continuousDeliveryName, String projId, String appDir, String globalInfo, String status) throws PhrescoException;
 
 	/**
 	 * @param projectId
@@ -245,7 +245,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	public List<CIJob> getOldJobs(String projectId, ContinuousDelivery continuousDelivery, String appDirName, String globalInfo) throws PhrescoException;
+	public List<CIJob> getOldJobs(String projectId, ContinuousDelivery continuousDelivery, String appDirName, String globalInfo, String status) throws PhrescoException;
 
 	/**
 	 * @param ciJob

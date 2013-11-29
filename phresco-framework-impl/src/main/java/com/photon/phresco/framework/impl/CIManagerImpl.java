@@ -942,9 +942,9 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		return updateContinuousDeliveries;
 	}
 
-	public boolean createJsonJobs(ContinuousDelivery continuousDelivery, List<CIJob> jobs, String projId, String appDir) throws PhrescoException {
+	public boolean createJsonJobs(ContinuousDelivery continuousDelivery, List<CIJob> jobs, String projId, String appDir, String globalInfo, String status) throws PhrescoException {
 		try {
-			String ciJobInfoPath = Utility.getCiJobInfoPath(appDir, "");
+			String ciJobInfoPath = Utility.getCiJobInfoPath(appDir, globalInfo, status);
 			File infoFile = new File(ciJobInfoPath);
 
 			//create new info file if not exists
@@ -1005,18 +1005,18 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		return null;
 	}
 
-	public List<CIJob> getOldJobs(String projectId, ContinuousDelivery continuousDelivery, String appDirName, String globalInfo) throws PhrescoException {
-		List<ProjectDelivery> ciJobInfo = getCiJobInfo(appDirName, globalInfo);
+	public List<CIJob> getOldJobs(String projectId, ContinuousDelivery continuousDelivery, String appDirName, String globalInfo, String status) throws PhrescoException {
+		List<ProjectDelivery> ciJobInfo = getCiJobInfo(appDirName, globalInfo, status);
 		if (CollectionUtils.isNotEmpty(ciJobInfo)) {
 			return Utility.getJobs(continuousDelivery.getName(), projectId, ciJobInfo);
 		}
 		return null;
 	}
 
-	public boolean clearContinuousDelivery(String continuousDeliveryName, String projId, String appDir) throws PhrescoException {
+	public boolean clearContinuousDelivery(String continuousDeliveryName, String projId, String appDir, String globalInfo, String status) throws PhrescoException {
 		try {
-			List<ProjectDelivery> ciJobInfo = getCiJobInfo(appDir, "");
-			String ciJobInfoPath = Utility.getCiJobInfoPath(appDir, "");
+			List<ProjectDelivery> ciJobInfo = getCiJobInfo(appDir, globalInfo, status);
+			String ciJobInfoPath = Utility.getCiJobInfoPath(appDir, globalInfo, status);
 			if (CollectionUtils.isNotEmpty(ciJobInfo)) {
 				ProjectDelivery projectDelivery = Utility.getProjectDelivery(projId, ciJobInfo);
 				if (projectDelivery != null) {
@@ -1039,13 +1039,13 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 	}
 
-	public void deleteJsonJobs(String appDir, List<CIJob> selectedJobs, String projectId, String name) throws PhrescoException {
+	public void deleteJsonJobs(String appDir, List<CIJob> selectedJobs, String projectId, String name, String status) throws PhrescoException {
 		try {
 			if (CollectionUtils.isEmpty(selectedJobs)) {
 				return;
 			}
 			List<CIJob> jobs = new ArrayList<CIJob>();
-			List<ProjectDelivery> ciJobInfo = getCiJobInfo(appDir, "");
+			List<ProjectDelivery> ciJobInfo = getCiJobInfo(appDir, "", status);
 			ProjectDelivery projectDelivery = Utility.getProjectDelivery(projectId, ciJobInfo);
 			List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
 			ContinuousDelivery continuousDelivery = Utility.getContinuousDelivery(name, continuousDeliveries);
@@ -1064,7 +1064,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 					}
 				}
 			}
-			String ciJobInfoPath = Utility.getCiJobInfoPath(appDir, "");
+			String ciJobInfoPath = Utility.getCiJobInfoPath(appDir, "", status);
 			ciInfoFileWriter(ciJobInfoPath, ciJobInfo);
 		} catch (Exception e) {
 			throw new PhrescoException(e);
@@ -1153,12 +1153,12 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		return ciJobTemplates;
 	}
 
-	public List<ProjectDelivery> getCiJobInfo(String appDir, String globalInfo) throws PhrescoException {
+	public List<ProjectDelivery> getCiJobInfo(String appDir, String globalInfo, String status) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.getCiJobInfo(String appDir)");
 		}
 		List<ProjectDelivery> projectDelivery = new ArrayList<ProjectDelivery>();
-		String ciJobInfoPath = Utility.getCiJobInfoPath(appDir, globalInfo);
+		String ciJobInfoPath = Utility.getCiJobInfoPath(appDir, globalInfo, status);
 		File ciJobInfoFile = new File(ciJobInfoPath);
 		if(!ciJobInfoFile.exists()) {
 			return new ArrayList<ProjectDelivery>();

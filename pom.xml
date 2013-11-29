@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0">
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.photon.phresco.framework</groupId>
     <artifactId>phresco-framework-root</artifactId>
     <packaging>pom</packaging>
     <name>Phresco Framework</name>
-    <version>3.2.0.2002-SNAPSHOT</version>
+    <version>3.2.0.2004-SNAPSHOT</version>
     <description>phresco-framework-root</description>
     <url>http://www.phresco.org</url>
     <scm>
@@ -15,7 +14,7 @@
         <sourceDirectory>${phresco.source.directory}</sourceDirectory>
         <testSourceDirectory>${testSourceDirectory}</testSourceDirectory>
         <directory>do_not_checkin/target</directory>
-        <finalName>framework</finalName>
+        <finalName>javawebserviceeshop</finalName>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -25,30 +24,30 @@
                     <configuration>
                         <lifecycleMappingMetadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                             <pluginExecutions>
-<pluginExecution>
-    <pluginExecutionFilter>
-        <groupId>org.apache.geronimo.genesis.plugins</groupId>
-        <artifactId>tools-maven-plugin</artifactId>
-        <versionRange>[1.1,)</versionRange>
-        <goals>
-            <goal>copy-legal-files</goal>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.geronimo.genesis.plugins</groupId>
+                                        <artifactId>tools-maven-plugin</artifactId>
+                                        <versionRange>[1.1,)</versionRange>
+                                        <goals>
+                                            <goal>copy-legal-files</goal>
                                         </goals>
                                     </pluginExecutionFilter>
-    <action>
-        <ignore/>
+                                    <action>
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
-<pluginExecution>
-    <pluginExecutionFilter>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jasperreports-maven-plugin</artifactId>
-        <versionRange>[1.0-beta-2,)</versionRange>
-        <goals>
-            <goal>compile-reports</goal>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>jasperreports-maven-plugin</artifactId>
+                                        <versionRange>[1.0-beta-2,)</versionRange>
+                                        <goals>
+                                            <goal>compile-reports</goal>
                                         </goals>
                                     </pluginExecutionFilter>
-    <action>
-        <ignore/>
+                                    <action>
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -58,7 +57,7 @@
                 <plugin>
                     <groupId>com.photon.phresco.plugins</groupId>
                     <artifactId>phresco-maven-plugin</artifactId>
-                    <version>3.1.0.3001</version>
+                    <version>3.2.0.2000</version>
                     <extensions>true</extensions>
                 </plugin>
             </plugins>
@@ -94,7 +93,7 @@
                         </goals>
                         <configuration>
                             <sources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-<source>${basedir}/src/main/java</source>
+                                <source>${basedir}/src/main/java</source>
 							</sources>
                         </configuration>
                     </execution>
@@ -185,19 +184,19 @@
                         <configuration>
                             <excludeDefaultDirectories xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</excludeDefaultDirectories>
                             <filesets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-<fileset>
-    <directory>do_not_checkin/build</directory>
-    <includes>
-        <include>**/*</include>
+                                <fileset>
+                                    <directory>do_not_checkin/build</directory>
+                                    <includes>
+                                        <include>**/*</include>
 									</includes>
-    <followSymlinks>false</followSymlinks>
+                                    <followSymlinks>false</followSymlinks>
 								</fileset>
-<fileset>
-    <directory>do_not_checkin/archives</directory>
-    <includes>
-        <include>**/*</include>
+                                <fileset>
+                                    <directory>do_not_checkin/archives</directory>
+                                    <includes>
+                                        <include>**/*</include>
                                     </includes>
-    <followSymlinks>false</followSymlinks>
+                                    <followSymlinks>false</followSymlinks>
                             	</fileset>
 							</filesets>
                         </configuration>
@@ -377,7 +376,7 @@
         <phresco.unitTest.java.report.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/do_not_checkin/reports/unitReports</phresco.unitTest.java.report.dir>
         <phresco.unitTest.java.testsuite.xpath xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testsuite</phresco.unitTest.java.testsuite.xpath>
         <phresco.unitTest.java.testcase.path xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testcase</phresco.unitTest.java.testcase.path>
-        <phresco.functionalTest.selenium.tool xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">webdriver</phresco.functionalTest.selenium.tool>
+        <phresco.functionalTest.selenium.tool xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">grid</phresco.functionalTest.selenium.tool>
         <phresco.functionalTest.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/test/functional</phresco.functionalTest.dir>
         <phresco.functionalTest.report.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/test/functional/target/surefire-reports</phresco.functionalTest.report.dir>
         <phresco.functionalTest.testsuite.xpath xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testsuite</phresco.functionalTest.testsuite.xpath>
