@@ -2134,7 +2134,12 @@ define([], function() {
 				},2500);
 			}
 		},
-
+		
+		sortableTwohold : function(){
+			var self = this;
+			self.downStreamCriteria();
+			self.lastChild();
+		},
 
 		dragDrop : function(){
 			$('.connectedSortable').sortable({

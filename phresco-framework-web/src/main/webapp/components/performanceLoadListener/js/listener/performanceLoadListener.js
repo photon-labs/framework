@@ -399,14 +399,18 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 				$("#availablePdfRptsTbl").show();
 				var content = "";
 				for (var i = 0; i < pdfReports.length; i++) {
-					content = content.concat('<tr class="generatedRow"><td>' + pdfReports[i].time + '</td>');
+					var idgenerate = Date.now();
+					content = content.concat('<tr class="generatedRow" fileName="' + pdfReports[i].fileName + '"><td>' + pdfReports[i].time + '</td>');
 					content = content.concat('<td>' + pdfReports[i].type + '</td>');
-					content = content.concat('<td><a class="tooltiptop donloadPdfReport" from="'+from+'" fileName="' + pdfReports[i].fileName + '" href="javascript:void(0)"');
-					content = content.concat(' data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title="">');
+					content = content.concat('<td><a class="tooltiptop" fileName="' + pdfReports[i].fileName + '" href="javascript:void(0)"');
+					content = content.concat(' data-toggle="tooltip" data-placement="top" name="downloadPdfReport" data-original-title="Download Pdf" title="">');
 					content = content.concat('<img src="themes/default/images/Phresco/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>');
-					content = content.concat('<td><a class="tooltiptop deletePdf" from="'+from+'" fileName="' + pdfReports[i].fileName + '" href="javascript:void(0)"');
-					content = content.concat(' data-toggle="tooltip" data-placement="top" name="delete" data-original-title="Delete Pdf" title="">');
-					content = content.concat('<img src="themes/default/images/Phresco/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>');
+					content = content.concat('<td class="list_img"><a class="tooltiptop" name="deletepdf_'+idgenerate+i+'" fileName="' + pdfReports[i].fileName + '" href="javascript:void(0)"');
+					content = content.concat(' data-toggle="tooltip" data-placement="top" namedel="delete" data-original-title="Delete Pdf" title="">');
+					content = content.concat('<img src="themes/default/images/Phresco/delete_row.png" width="14" height="18" border="0" alt="0"></a>');
+					content = content.concat('<div style="display:none;" id="deletepdf_'+idgenerate+i+'" class="delete_msg tohide">Are you sure to delete ?<div>');
+					content = content.concat('<input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style dlt" name="delpdf"><input type="button"');
+					content = content.concat('value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close"></div></div></td></tr>');
 				}
 				$(commonVariables.contentPlaceholder).find("#availablePdfRptsTbdy").html(content);
 				self.deletePdfReport();
@@ -428,17 +432,34 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 		//To delete the selected pdf report
 		deletePdfReport : function() {
 			var self = this;
-			$('.deletePdf').on("click", function() {
-				$('#pdfReportLoading').show();
-				var from = $(this).attr('from');
-				var requestBody = {};
-				requestBody.fileName = $(this).attr('fileName');
-				requestBody.from = from;
-				self.performAction(self.getActionHeader(requestBody, "deletePdfReport"), function(response) {
-					if (response.status === "success" ) {
-						self.getPdfReports(from);
-					}
-				});
+			$("a[namedel=delete]").click(function() {
+				var temp = $(this).attr('name');
+				self.openccpl(this, $(this).attr('name'));
+				$('#'+temp).show();
+				var fromPage = $('#pdfReportForm').find('input[name=fromPage]').val();
+				var actionBody = {};
+				actionBody.fileName = $(this).attr("fileName");
+				actionBody.from = fromPage;
+				$('input[name="delpdf"]').unbind();
+				$('input[name="delpdf"]').click(function() {
+					self.performAction(self.getActionHeader(actionBody, "deletePdfReport"), function(response) {
+						if (response.status === "success") {
+							$(".generatedRow").each(function() {
+								var pdfFileName = $(this).attr("fileName");
+								if(pdfFileName === actionBody.fileName){
+									$("tr[fileName='"+pdfFileName+"']").remove();
+								}
+							});
+							var size = $(".generatedRow").size();
+							if(size === 0) {
+								$(commonVariables.contentPlaceholder).find("#availablePdfRptsTbl").hide();
+								$("#noReport").show();
+								$("#noReport").html("No Report are Available");
+							}
+						}
+					});  
+				});	
+				
 			});
 		},
 		

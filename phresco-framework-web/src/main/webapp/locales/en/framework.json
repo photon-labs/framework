@@ -303,11 +303,26 @@
 			"jobs" : "Jobs",
 			"apistatus" : "API Status",
 			"apprepourl" : "Application Repo URL",
+			"phrescorepourl" : ".Phresco Repo URL",
+			"testrepourl" : "Test Repo URL",
 			"testcheckout" : "Test Checkout",
 			"testrepourl" : "Test Repo Url",
 			"processlockby" : "The process has been locked by ",
-			"dashboard" : "Dashboard"
+			"dashboard" : "Dashboard",
+			"repository" : "Repository",
+			"sourceRepo" : "Source Repo",
+			"buildRepo" : "Build Repo"
  		}
+	},
+	
+	"repository" : {
+		"build" : {
+			"release" : "Release",
+			"create" : "Create"
+		},
+		
+		"source" : {
+		}
 	},
 	"codequality" : {
 		"report" : "Report",
@@ -355,7 +370,6 @@
 				"widget" : "Widget",
 				"multimodule" : "  Multi Module",
 				"technology" : "Technology",
-				"groupid" : "Group Id",
 				"dependency" : "Dependency",
 				"version" : "Version",
 				"description" : "Description",
@@ -372,7 +386,9 @@
 				"seltech" : "Select Technology",
 				"sellayer" : "Select Layer",
 				"integrationTest": "IntegrationTest",
-				"groupid" : "GroupId"
+				"groupid" : "GroupId",
+				"splitdotphresco" : "Split .Phresco",
+				"splittest" : "Split Test"
 			},
 			"title" : {
 				"label" : {

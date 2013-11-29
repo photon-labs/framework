@@ -14,6 +14,7 @@ define(["testResult/listener/testResultListener"], function() {
 		onShowHideConsoleEvent : null,
 		onPrintPdfEvent : null,
 		onGeneratePdfEvent : null,
+		deleteTestSuiteEvent : null,
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -39,6 +40,26 @@ define(["testResult/listener/testResultListener"], function() {
 				self.onGeneratePdfEvent = new signals.Signal();
 			}
 			self.onGeneratePdfEvent.add(self.testResultListener.generatePdfReport, self.testResultListener);
+			
+			if (self.deleteTestSuiteEvent === null) {
+				self.deleteTestSuiteEvent = new signals.Signal();
+			}
+			self.deleteTestSuiteEvent.add(self.testResultListener.deleteTestSuite, self.testResultListener);
+			
+			self.registerEvents();
+		},
+		
+		registerEvents : function() {
+			var self = this;
+			Handlebars.registerHelper('uniqueName', function(name) {
+				var str = name;
+				str = self.specialCharValidation(str);
+				str = str.replace(/[^a-zA-Z 0-9\-\_]+/g, '');
+				str = str.replace(/\s+/g, '');
+				
+				return str;
+				
+			});
 		},
 		
 		loadPage : function() {
@@ -141,6 +162,18 @@ define(["testResult/listener/testResultListener"], function() {
 					Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
 					Clazz.navigationController.push(self.testcaseResult, false);
 				});
+			});
+			
+			$("a[namedel=delete]").click(function() {
+				var temp = $(this).attr('name');
+				self.openccpl(this, $(this).attr('name'));
+				$('#'+temp).show();
+				$('input[name="delTestSuite"]').unbind();
+				$('input[name="delTestSuite"]').click(function() {
+					var testsuitename = $(this).closest("div").parent("div").attr("testsuitename");
+					$('input[name="delTestSuite"]').closest("div");
+					self.deleteTestSuiteEvent.dispatch(testsuitename);
+				});	
 			});
 			
 			//To show hide the console content when the console is clicked

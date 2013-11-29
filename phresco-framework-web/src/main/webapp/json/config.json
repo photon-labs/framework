@@ -150,6 +150,11 @@
 		"manualTest" : {
 			"moduleName":"manualTest",
 			"path" : "../components/manualTest/js"
-		}
+		},
+
+		"repository" : {
+			"moduleName":"repository",
+			"path" : "../components/repository/js"
+		}		
 	}
 }

@@ -466,7 +466,7 @@
 				$(commonVariables.contentPlaceholder).find("#pdf_report").find("#generatePdf").click();
 				setTimeout(function () {
 					start();
-					equal($(commonVariables.contentPlaceholder).find("#availablePdfRptsTbdy").find('tr:last').find('.deletePdf').attr('filename'),'TestGenerate_crisp.pdf', 'Generate PDF test');
+					equal($(commonVariables.contentPlaceholder).find("#availablePdfRptsTbdy").find('tr:last').attr('filename'),'TestGenerate_crisp.pdf', 'Generate PDF test');
 					self.runDeletePdf(performanceTest);
 				}, 1300)
 			});	
@@ -499,10 +499,11 @@
 				  }
 				});
 				commonVariables.api.localVal.setSession("appDirName" , "PF_TEST_PHP");
-				$(commonVariables.contentPlaceholder).find("#availablePdfRptsTbdy").find('tr:first').find('.deletePdf').click();
+				$(commonVariables.contentPlaceholder).find("#availablePdfRptsTbdy").find('tr:first').find('a[namedel=delete]').click();
+				$(commonVariables.contentPlaceholder).find("#availablePdfRptsTbdy").find('tr:first').find('input[name="delpdf"]').click();
 				setTimeout(function() {
 					start();
-					equal($(commonVariables.contentPlaceholder).find("#availablePdfRptsTbdy").find('tr').length, 1, "Delete PDF test");
+					equal($(commonVariables.contentPlaceholder).find("#availablePdfRptsTbdy").find('tr').length, 2, "Delete PDF test");
 					self.renderRenderDeviceList(performanceTest);
 				}, 1300);
 			});

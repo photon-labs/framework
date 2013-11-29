@@ -668,7 +668,9 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 			if (key === "signing") {
 				self.signingCheck();
 			} else if (key === "zipAlign") {
-				self.zipAlignCheck();
+				self.zipAlignCheck(false);
+			} else if (key === "skipTest" || key === "coverage") {
+				self.skipTestCoverageCheck(key);
 			}
 			/* self.zipAlignCheck();
 			self.signingCheck(); */
@@ -969,10 +971,13 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                         self.showControl(dependencyArr);                    
                     }
                 }
+                if (id === 'skipTest' || id ==='coverage') {
+                	self.skipTestCoverageCheck(id);
+                }
             });
 			
 			self.chkSQLCheck();
-			self.zipAlignCheck();
+			self.zipAlignCheck(true);
 			self.signingCheck();
             self.removeFormOverflowHidden();
         },
@@ -989,7 +994,8 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 		},
 		
 		signingCheck : function(){
-			if(!$("#signing").is(':checked')){
+			if(!$("#signing").is(':checked')) {
+				$("#zipAlign").prop("checked", false);
 				$("#keystoreLi").hide();
 				$("#storepassLi").hide();
 				$("#keypassLi").hide();
@@ -1002,19 +1008,38 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 			}
 		},
 		
-		zipAlignCheck : function(){
-			if($("#zipAlign").is(':checked')){
+		zipAlignCheck : function(flag){
+			if($("#zipAlign").is(':checked')) {
 				$("#signing").prop("checked", true);
 				$("#keystoreLi").show();
 				$("#storepassLi").show();
 				$("#keypassLi").show();
 				$("#aliasLi").show();
-			} else {
+			} else if(!flag) {
 				$("#signing").prop("checked", false);
 				$("#keystoreLi").hide();
 				$("#storepassLi").hide();
 				$("#keypassLi").hide();
 				$("#aliasLi").hide();
+			}
+		},
+		
+		skipTestCoverageCheck : function(key) {
+			if (key === 'skipTest') {
+				if($("#skipTest").is(':checked')){
+					$('#coverage').attr('disabled', true);
+				} else if (!$("#coverage").is(':checked')) {
+					$('#coverage').attr('checked', false);
+					$('#coverage').attr('disabled', false);
+				}
+			} else if (key === 'coverage') {
+				!$("#coverage").is(':checked')
+				if($("#coverage").is(':checked')){
+					$('#skipTest').attr('disabled', true);
+				} else if (!$("#skipTest").is(':checked')) {
+					$('#skipTest').attr('checked', false);
+					$('#skipTest').attr('disabled', false);
+				}
 			}
 		},
         

@@ -3,7 +3,6 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 	return { 
 
 		runTests: function (configData) {
-
 			module("jobTemplates.js");	
 			var jobTemplates = new JobTemplates(), templateData = {}, self = this, jobTempList;
 			asyncTest("List Job Templates - UI Test", function() {
@@ -40,13 +39,12 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 			asyncTest("jobTemplates - open Create Popup Test", function() {
 
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.projectlistContext + 
-					"/appinfos?customerId=photon&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8",							
+					url: commonVariables.webserviceurl + commonVariables.projectlistContext + "/appinfos?customerId=photon&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8",							
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200002","data":[{"version":"1.0","modules":null,"pomFile":null,"code":"TodayProject","appDirName":"TodayProject","techInfo":{"version":"0.10.9","appTypeId":"app-layer","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"Node JS","id":"tech-nodejs-webservice","displayName":null,"status":null,"description":null,"creationDate":1376927360000,"helpText":null,"system":false},"functionalFramework":null,"selectedServers":null,"selectedDatabases":null,"selectedModules":null,"selectedJSLibs":null,"selectedComponents":null,"selectedWebservices":null,"functionalFrameworkInfo":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"dependentModules":null,"created":false,"customerIds":null,"used":false,"name":"TodayProject","id":"cf25973d-9e0e-4455-9ed3-af8371b3b3db","displayName":null,"status":null,"description":null,"creationDate":1376927360000,"helpText":null,"system":false}],"status":"success"});
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200002","data":[{"version":"1.0","modules":[{"code":"Common","techInfo":{"version":"1.0","multiModule":false,"appTypeId":"e1af3f5b-7333-487d-98fa-46305b9dd6ee","techGroupId":"Java","techVersions":null,"customerIds":null,"used":false,"name":"OSGI Bundle","id":"54e8eb2c-f320-4f31-a3ac-762ae2cdcfd4","displayName":null,"status":null,"description":null,"creationDate":1379937498000,"helpText":null,"system":false},"rootModule":null,"modified":false,"dependentModules":null,"dependentApps":null,"name":null,"id":"9d528ad6-be05-441b-8e69-f647fe0d1709","displayName":null,"status":null,"description":null,"creationDate":1380870242000,"helpText":null,"system":false},{"code":"Log4j","techInfo":{"version":"1.0","multiModule":false,"appTypeId":"e1af3f5b-7333-487d-98fa-46305b9dd6ee","techGroupId":"Java","techVersions":null,"customerIds":null,"used":false,"name":"OSGI Fragment","id":"b5851876-f4f0-4573-9344-7969ad759448","displayName":null,"status":null,"description":null,"creationDate":1379937498000,"helpText":null,"system":false},"rootModule":null,"modified":false,"dependentModules":null,"dependentApps":null,"name":null,"id":"d00a01a7-f1bf-4114-bba9-51d711cbdc7f","displayName":null,"status":null,"description":null,"creationDate":1380870242000,"helpText":null,"system":false},{"code":"PresentationService","techInfo":{"version":"1.0","multiModule":false,"appTypeId":"e1af3f5b-7333-487d-98fa-46305b9dd6ee","techGroupId":"Java","techVersions":null,"customerIds":null,"used":false,"name":"Jersey-OSGI","id":"8892cc43-c2ab-46a4-be5d-d4752d6dd418","displayName":null,"status":null,"description":null,"creationDate":1379937498000,"helpText":null,"system":false},"rootModule":null,"modified":false,"dependentModules":null,"dependentApps":null,"name":null,"id":"5a11b3bf-7139-4e24-9a4e-19b9a1168744","displayName":null,"status":null,"description":null,"creationDate":1380870242000,"helpText":null,"system":false}],"pomFile":null,"code":"TodayProject","appDirName":"TodayProject","techInfo":{"version":"0.10.9","appTypeId":"app-layer","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"Node JS","id":"tech-nodejs-webservice","displayName":null,"status":null,"description":null,"creationDate":1376927360000,"helpText":null,"system":false},"functionalFramework":null,"selectedServers":null,"selectedDatabases":null,"selectedModules":null,"selectedJSLibs":null,"selectedComponents":null,"selectedWebservices":null,"functionalFrameworkInfo":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"dependentModules":null,"created":false,"customerIds":null,"used":false,"name":"TodayProject","id":"cf25973d-9e0e-4455-9ed3-af8371b3b3db","displayName":null,"status":null,"description":null,"creationDate":1376927360000,"helpText":null,"system":false}],"status":"success"});
 					}
 				});
 
@@ -187,6 +185,17 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 					status: 200,
 					response: function() {
 						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200002","data":[{"version":"1.0","modules":null,"pomFile":null,"code":"TodayProject","appDirName":"TodayProject","techInfo":{"version":"0.10.9","appTypeId":"app-layer","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"Node JS","id":"tech-nodejs-webservice","displayName":null,"status":null,"description":null,"creationDate":1376927360000,"helpText":null,"system":false},"functionalFramework":null,"selectedServers":null,"selectedDatabases":null,"selectedModules":null,"selectedJSLibs":null,"selectedComponents":null,"selectedWebservices":null,"functionalFrameworkInfo":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"dependentModules":null,"created":false,"customerIds":null,"used":false,"name":"TodayProject","id":"cf25973d-9e0e-4455-9ed3-af8371b3b3db","displayName":null,"status":null,"description":null,"creationDate":1376927360000,"helpText":null,"system":false}],"status":"success"});	
+					}
+				});
+				
+				$.mockjax({
+					url: commonVariables.webserviceurl + commonVariables.jobTemplates + "/validateApp?projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&customerId=photon&name=load&appName=TodayProject",
+					type:'GET',
+					dataType: "json",
+					contentType: "application/json",
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR800015","data":"TodayProject#SEP#true","status":"success"});	
 					}
 				});
 

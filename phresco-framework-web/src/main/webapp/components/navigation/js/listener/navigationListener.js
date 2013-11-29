@@ -36,6 +36,8 @@ define([], function() {
 		mavenService : null,
 		continuousDeliveryConfigure : null,
 		act:null,
+		sourceRepo : null,
+		buildRepo : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -457,6 +459,31 @@ define([], function() {
 						}
 						
 						break;
+
+					case commonVariables.buildRepo :
+						console.info("build repo in get my tab");
+						if(self.buildRepo === null) {
+							require(["repository/buildRepository"], function(){
+								self.buildRepo = new Clazz.com.components.repository.js.BuildRepository();
+								callback(self.buildRepo);	
+							});
+						}else{
+							callback(self.buildRepo);
+						}
+						
+						break;
+						
+					case commonVariables.sourceRepo :
+						if(self.sourceRepo === null) {
+							require(["repository/sourceRepository"], function(){
+								self.sourceRepo = new Clazz.com.components.repository.js.SourceRepository();
+								callback(self.sourceRepo);	
+							});
+						}else{
+							callback(self.sourceRepo);
+						}
+						
+						break;						
 					
 				}
 		},
@@ -477,6 +504,14 @@ define([], function() {
 					$("#applicationedit").show();
 					$("#settingsNav").hide();
 					$("#downloadsNav").hide();
+					if (self.isBlank(commonVariables.editAppFrom) && commonVariables.editAppHasModules) {
+						$("li[name=editMenu]").not("#featurelist, .continuousDeliveryView").hide();
+					} else if (commonVariables.editAppFrom === "multimodule") {
+						$("li[name=editMenu]").not(".continuousDeliveryView").show();
+					} else {
+						$("li[name=editMenu]").show();
+					}
+					
 					break;
 					
 				case commonVariables.settings :
@@ -568,10 +603,10 @@ define([], function() {
 			} else {
 				$("#manualTest").show();
 			}
-			if (jQuery.inArray(commonVariables.optionsCI, applicableOptions) === -1) {
-				$("#continuousDeliveryView").hide();
-			} else {
-				$("#continuousDeliveryView").show();
+			if (jQuery.inArray(commonVariables.optionsCI, applicableOptions) === -1 || commonVariables.editAppFrom === "multimodule") {
+				$(".continuousDeliveryView").hide();
+			} else if (commonVariables.editAppFrom !== "multimodule") {
+				$(".continuousDeliveryView").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsRunAgainstSrc, applicableOptions) === -1) {
 				$("input[name=build_runagsource]").hide();
@@ -789,7 +824,19 @@ define([], function() {
 					currentObj.favourite = false;
 					self.myTabRenderFunction(currentObj, keyword);
 				});
-			}	
+			} else if (keyword === commonVariables.buildRepo) {		
+				self.getMyObj(commonVariables.buildRepo, function(returnVal){
+					currentObj = returnVal;
+					currentObj.favourite = false;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
+			} else if (keyword === commonVariables.sourceRepo) {
+				self.getMyObj(commonVariables.sourceRepo, function(returnVal){
+					currentObj = returnVal;
+					currentObj.favourite = false;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
+			}		
 						
 
 		},

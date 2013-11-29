@@ -111,6 +111,14 @@ define(["projectlist/listener/projectListListener"], function() {
 				}
 				return appIds;
 			});
+			
+			Handlebars.registerHelper('hasModules', function(modules) {
+				if (modules !== undefined && modules !== null && modules.length > 0) {
+					return true;
+				} else {							
+					return false;
+				}		
+			});
 		},
 		
 		/***
@@ -255,7 +263,11 @@ define(["projectlist/listener/projectListListener"], function() {
 						var techid = $(thisObj).closest("tr").attr("techid");
 						commonVariables.techId = techid;
 						$("#myTab li#appinfo a").addClass("act");
-						var module = "multimodule" === $(thisObj).attr("from") ?  $(thisObj).text() : "";
+						var from = $(thisObj).attr("from");
+						var hasModules = Boolean($(thisObj).attr("modules"));
+						commonVariables.editAppFrom = from;
+						commonVariables.editAppHasModules = hasModules;
+						var module = "multimodule" === from ?  $(thisObj).text() : "";
 						self.onProjectsEvent.dispatch(value , techid, module);
 	
 						//To show/hide openfolder, copy path icon and copy to clipboard
@@ -263,11 +275,6 @@ define(["projectlist/listener/projectListListener"], function() {
 						self.projectslistListener.getProjectList(self.projectslistListener.getActionHeader(actionBody, "checkMachine"), function(response) {
 							commonVariables.api.localVal.setSession("checkMachine", JSON.stringify(response));
 						});
-						if (!self.isBlank(module)) {
-							$('li[id=continuousDeliveryView]').hide();
-						} else {
-							$('li[id=continuousDeliveryView]').show();
-						}
 					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
 						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 					}	
@@ -372,7 +379,7 @@ define(["projectlist/listener/projectListListener"], function() {
 					}
 				} 
 				
-				if(checkObj !== null  && checkObj !== undefined && checkObj !== '') {
+				/*if(checkObj !== null  && checkObj !== undefined && checkObj !== '') {
 					self.makeCredReadOnly(checkObj, usrObj, pwdObj);
 				}	
 
@@ -381,7 +388,7 @@ define(["projectlist/listener/projectListListener"], function() {
 					checkObj.on("change", function(){				
 						self.makeCredReadOnly(checkObj, usrObj, pwdObj);
 					});
-				}
+				}*/
 				
 				if(selectObj !== null  && selectObj !== undefined && selectObj !== '') {
 					selectObj.unbind("change");
@@ -635,10 +642,62 @@ define(["projectlist/listener/projectListListener"], function() {
 					var value = $(this).val();
 				}
 			});
+			
+			$(".splitDotPhresco").unbind("click");
+			$(".splitDotPhresco").bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				if ($(this).is(":checked")) {
+					$("#addRepo_" + dynamicId).find(".dotPhrescoA").attr("data-toggle", "tab").attr("href", "#dotphresco"+dynamicId);
+					$("#dotphresco" + dynamicId).addClass("active in");
+					$("#source" + dynamicId).removeClass("active in");
+					$("#test" + dynamicId).removeClass("active in");
+					$(this).parent().addClass("active");
+					$(this).parent().prev().removeClass("active");
+					$(this).parent().next().removeClass("active");
+				} else {
+					$("#addRepo_" + dynamicId).find(".dotPhrescoA").removeAttr("data-toggle").removeAttr("href");
+					if ($(this).parent().hasClass("active")) {
+						$("#dotphresco" + dynamicId).removeClass("active in");
+						$("#source" + dynamicId).addClass("active in");
+						$(this).parent().removeClass("active");
+						$(this).parent().prev().addClass("active");
+					}
+				}
+			});
+			
+			$(".splitTest").unbind("click");
+			$(".splitTest").bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				if ($(this).is(":checked")) {
+					$("#addRepo_" + dynamicId).find(".testA").attr("data-toggle", "tab").attr("href", "#test"+dynamicId);
+					$("#dotphresco" + dynamicId).removeClass("active in");
+					$("#source" + dynamicId).removeClass("active in");
+					$("#test" + dynamicId).addClass("active in");
+					$(this).parent().addClass("active");
+					$(this).parent().prev().prev().removeClass("active");
+					$(this).parent().prev().removeClass("active");
+				} else {
+					$("#addRepo_" + dynamicId).find(".testA").removeAttr("data-toggle").removeAttr("href");
+					if ($(this).parent().hasClass("active")) {
+						$("#test" + dynamicId).removeClass("active in");
+						$("#source" + dynamicId).addClass("active in");
+						$(this).parent().removeClass("active");
+						$(this).parent().prev().prev().addClass("active");
+					}
+				}
+			});
+			
+			$(".dotPhrescoA, .testA").unbind("click");
+			$(".dotPhrescoA, .testA").bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				var selectedType = $("#type_" + dynamicId).val();
+				$("#phrescotype_" + dynamicId).val(selectedType);
+				$("#testtype_" + dynamicId).val(selectedType);
+			});
+			
 			self.windowResize();
 			self.tableScrollbar();
 			this.customScroll($(".customer_names"));
-			//this.customScroll($(".pdfheight"));
 		}
 	});
 

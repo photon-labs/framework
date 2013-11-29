@@ -127,7 +127,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
 			}
-			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo);
+			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 			List<CIJob> ciJobs = Utility.getJobs(continuousName, projectId, ciJobInfo);
 			for (CIJob ciJob : ciJobs) {
 				if(ciJob.getJobName().equals(jobName)) {
@@ -271,7 +271,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
 			}
-			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo);
+			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 			ContinuousDelivery specificContinuousDelivery = Utility.getContinuousDelivery(projectId, trimmedName, ciJobInfo);
 			if(specificContinuousDelivery.getName().equals(trimmedName)) {
 				continuousDelivery.setName(cloneName);
@@ -345,7 +345,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
 			}
-			List<CIJob> oldJobs = ciManager.getOldJobs(projectId, continuousDelivery, appDir, globalInfo);
+			List<CIJob> oldJobs = ciManager.getOldJobs(projectId, continuousDelivery, appDir, globalInfo, READ);
 			tempCiJobs.addAll(oldJobs);
 
 			for (CIJob ciJob : newJobs) {
@@ -391,12 +391,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 					
 				} 
 			}
-			boolean clearContinuousDelivery = ciManager.clearContinuousDelivery(continuousDelivery.getName(), projectId, appDir);
+			boolean clearContinuousDelivery = ciManager.clearContinuousDelivery(continuousDelivery.getName(), projectId, appDir, "", WRITE);
 			if(clearContinuousDelivery) {
 				continuousDelivery.setJobs(tempJobs);
 			}
 
-			boolean createJsonJobs = ciManager.createJsonJobs(continuousDelivery, tempJobs, projectId, appDir);
+			boolean createJsonJobs = ciManager.createJsonJobs(continuousDelivery, tempJobs, projectId, appDir, "", WRITE);
 			if (createJsonJobs) {
 				for(CIJob job:tempJobs) {
 					for (CIJob ciJob2 : tempCiJobs) {
@@ -477,7 +477,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		if (CollectionUtils.isNotEmpty(appInfos)) {
 			globalInfo = appInfos.get(0).getAppDirName();
 		}
-		List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo);
+		List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 		ContinuousDelivery continuousDelivery = Utility.getContinuousDelivery(projectId, continuousName.trim(), ciJobInfo);
 		if (continuousDelivery.getName().equalsIgnoreCase(continuousName)) {
 			matchingContinuous = continuousDelivery;
@@ -518,7 +518,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
 			}
-			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo);
+			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 			if(CollectionUtils.isNotEmpty(ciJobInfo)) {
 				ProjectDelivery projectDelivery = Utility.getProjectDelivery(projectId, ciJobInfo);
 				if (projectDelivery != null) {
@@ -608,11 +608,11 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
 			}
-			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo);
+			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 			CIJobStatus ciJobStatus = null;
 			List<CIJob> jobs = Utility.getJobs(continuousName, projectId, ciJobInfo);
 			ciJobStatus = ciManager.deleteJobs(appDir, jobs, projectId, continuousName);
-			boolean clearContinuousDelivery = ciManager.clearContinuousDelivery(continuousName, projectId, appDir);
+			boolean clearContinuousDelivery = ciManager.clearContinuousDelivery(continuousName, projectId, appDir, "", WRITE);
 			if (clearContinuousDelivery && StringUtils.isEmpty(appDir)) {
 				copyGlobalInfoFile(customerId, projectId);
 			}
@@ -658,7 +658,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
 			}
-			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo);
+			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 			CIJob specificJob = ciManager.getJob(jobName, projectId, ciJobInfo, continuousName);
 			if (specificJob != null) {
 				deleteBuilds = ciManager.deleteBuilds(specificJob, buildNumber);
@@ -705,7 +705,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
 			}
-			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo);
+			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 			CIJob specificJob = ciManager.getJob(name, projectId, ciJobInfo, continuousName);
 			if (specificJob != null) {
 				buildJobs = ciManager.generateBuild(specificJob);
@@ -910,7 +910,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
 			}
-			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo);
+			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 			CIJob job = ciManager.getJob(downloadJobName, projectId, ciJobInfo, continuousName);
 			// Get it from web path
 			String jenkinsUrl = FrameworkUtil.getJenkinsUrl(job) + "/job/";
@@ -987,7 +987,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
 			}
-			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo);
+			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 			List<CIJob> ciJobs = Utility.getJobs(continuousName, projectId, ciJobInfo);
 			for (CIJob ciJob : ciJobs) {
 				if(ciJob.getJobName().equals(jobName)) {
@@ -1025,7 +1025,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
 			}
-			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo);
+			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 			List<CIJob> ciJobs = Utility.getJobs(continuousName, projectId, ciJobInfo);
 			for (CIJob ciJob : ciJobs) {
 				if(ciJob.getJobName().equals(jobName)) {
@@ -1062,7 +1062,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				}
 			}
 			if (CollectionUtils.isNotEmpty(ciJobs)) {
-				createJsonJobs = ciManager.createJsonJobs(continuousDelivery, ciJobs, projectId, appDir);
+				createJsonJobs = ciManager.createJsonJobs(continuousDelivery, ciJobs, projectId, appDir, "", WRITE);
 				if (createJsonJobs && StringUtils.isEmpty(appDir)) {
 					copyGlobalInfoFile(customerId, projectId);
 				}

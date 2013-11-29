@@ -239,12 +239,12 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 							} else {
 								optGroup = document.createElement('optgroup');
 								optGroup.label = value.name;
-								//appendin option for root module
+								/*//appendin option for root module
 								rootModule = document.createElement("option") ;
 								rootModule.innerHTML = value.name;
 								rootModule.value = value.name;
 								rootModule.appName = value.name;
-								optGroup.appendChild(rootModule);
+								optGroup.appendChild(rootModule);*/
 								$.each(value.modules, function(moduleIndex, module) {
 									objOption=document.createElement("option");
 									objOption.innerHTML = module.code;

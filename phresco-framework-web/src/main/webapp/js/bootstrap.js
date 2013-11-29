@@ -51,6 +51,9 @@ var commonVariables = {
 	
 	codequality : "codequality",
 	
+	editAppFrom : "",
+	editAppHasModules : false,
+	
 	configuration : "configuration",
 	editConfiguration : "editConfiguration",
 	updateConfigName : '',
@@ -96,6 +99,8 @@ var commonVariables = {
 	downloads : "downloads",
 	
 	dashboard : "dashboard",
+	buildRepo : "buildRepo",
+	sourceRepo : "sourceRepo",
 	clearInterval : {},
 	
 	customerTheme : null,
