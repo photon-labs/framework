@@ -21,6 +21,7 @@ import java.io.File;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.framework.model.RepoDetail;
+import com.photon.phresco.framework.model.RepoInfo;
 
 public interface SCMManager {
 
@@ -60,7 +61,7 @@ public interface SCMManager {
 	 * @throws Exception 
 	 
 	 */
-	public boolean importToRepo(RepoDetail repodetail, ApplicationInfo appInfo) throws Exception ;
+	public boolean importToRepo(RepoInfo repoInfo, ApplicationInfo appInfo) throws Exception ;
 	
 	/**
 	 * 
