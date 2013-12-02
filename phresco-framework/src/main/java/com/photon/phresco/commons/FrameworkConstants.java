@@ -185,6 +185,8 @@ public interface FrameworkConstants {
     String CI_BUILD_NAME = "PHR_ci_build";
     String CI_JOB_INFO_NAME = "ciJob.info";
     String CI_JOB_TEMPLATE_NAME = "ciJobTemplate.info";
+    String READ	= "read";
+    String WRITE = "write";
     String CI_JOB_JSON_BUILDS = "builds";
     String CI_JOB_BUILD_RESULT = "result";
     String CI_JOB_BUILD_ID = "id";
