@@ -2370,7 +2370,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 					sheet.duplicateRows(nRowIndex, 1, 1);
 				}
 				if (StringUtils.isNotEmpty(cell.getTextValue())) {
-					org.jopendocument.dom.spreadsheet.Cell cell1 = sheet.getCellAt(10,nRowIndex);
+					org.jopendocument.dom.spreadsheet.Cell cell1 = sheet.getCellAt(11,nRowIndex);
 					String value = cell1.getTextValue();
 					if (StringUtils.isNotEmpty(value)) {
 						if (value.equalsIgnoreCase("success")) {
@@ -2490,7 +2490,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 				do {
 					next = rowIterator.next();
 					if (StringUtils.isNotEmpty(getValue(next.getCell(0))) && !getValue(next.getCell(0)).equalsIgnoreCase("S.NO")) {
-						String value = getValue(next.getCell(10));
+						String value = getValue(next.getCell(11));
 						if (StringUtils.isNotEmpty(value)) {
 							if (value.equalsIgnoreCase("success")) {
 								totalPass = totalPass + 1;
@@ -2590,7 +2590,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 					do {
 						next = rowIterator.next();
 						if (StringUtils.isNotEmpty(getValue(next.getCell(0))) && !getValue(next.getCell(0)).equalsIgnoreCase("S.NO")) {
-							String value = getValue(next.getCell(10));
+							String value = getValue(next.getCell(11));
 							if (StringUtils.isNotEmpty(value)) {
 								if (value.equalsIgnoreCase("success")) {
 									totalPass = totalPass + 1;
