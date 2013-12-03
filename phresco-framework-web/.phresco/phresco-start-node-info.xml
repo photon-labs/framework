@@ -146,7 +146,6 @@
 								<value key="safari">Safari</value>
 								<value key="opera">Opera</value>
 								<value key="htmlunit">Non GUI(Html Unit)</value>
-								<value key="iPhone">Iphone WebDriver</value>
                             </possibleValues>
                             <required>true</required>
                             <description>Name of the browsers</description>

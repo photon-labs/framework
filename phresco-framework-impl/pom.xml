@@ -11,6 +11,7 @@
     <groupId>com.photon.phresco.framework</groupId>
     <artifactId>phresco-framework-impl</artifactId>
     <name>Phresco Framework Implementation</name>
+    <packaging>jar</packaging>
     <description>Phresco Framework Implementation</description>
     <url>http://www.phresco.org</url>
     
@@ -176,6 +177,7 @@
     
     <build>
 		<sourceDirectory>${phresco.source.directory}</sourceDirectory>
+        <finalName>javawebserviceeshop</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -15,6 +15,7 @@ define(["build/listener/buildListener"], function() {
 		dynamicPageListener : null,
 		generateBuildContent : "",
 		onMavenServiceEvent : null,
+		count : 0,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -580,8 +581,8 @@ define(["build/listener/buildListener"], function() {
 		
 		appendMinifyRow : function(current){
 			if(current !== null && current.fileType.toLowerCase() === "js" || current.fileType.toLowerCase() === "css"){
-				
-				$('table#'+ current.fileType.toLowerCase() +'min tbody').append('<tr><td><input type="text" maxlength="30" name="'+ current.fileType.toLowerCase() +'MinName" value="'+ current.compressName +'"></td><td><input type="text" name="'+ current.fileType.toLowerCase() +'MinFiles" value="'+ current.csvFileName +'" disabled><input type="hidden" name="'+ current.fileType.toLowerCase() +'filePath" value="'+ current.opFileLoc +'"><input type="hidden" name="fileType" value="'+ current.fileType.toLowerCase() +'"><input type="button" name="'+ current.fileType.toLowerCase() +'Browse" value="Browse" data-i18n="[value]build.label.browse" class="btn btn_style"><img src="themes/default/images/Phresco/plus_icon.png" alt="" name="'+ current.fileType.toLowerCase() +'Add" style="display:none;"><img src="themes/default/images/Phresco/minus_icon.png" alt="" name="'+ current.fileType.toLowerCase() +'Remove"><div name="treeTop" class="speakstyletopright dyn_popup" style="right:70px;"><div name="treeContent"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style"></div></div></td></tr>');
+				self.count++;
+				$('table#'+ current.fileType.toLowerCase() +'min tbody').append('<tr><td><input type="text" count = "'+self.count+'" class="append'+current.fileType.toLowerCase()+'" maxlength="30" name="'+ current.fileType.toLowerCase() +'MinName" value="'+ current.compressName +'"></td><td><input type="text" name="'+ current.fileType.toLowerCase() +'MinFiles" value="'+ current.csvFileName +'" disabled><input type="hidden" name="'+ current.fileType.toLowerCase() +'filePath" value="'+ current.opFileLoc +'"><input type="hidden" name="fileType" value="'+ current.fileType.toLowerCase() +'"><input type="button" name="'+ current.fileType.toLowerCase() +'Browse" value="Browse" data-i18n="[value]build.label.browse" class="btn btn_style"><img src="themes/default/images/Phresco/plus_icon.png" alt="" name="'+ current.fileType.toLowerCase() +'Add" style="display:none;"><img src="themes/default/images/Phresco/minus_icon.png" alt="" name="'+ current.fileType.toLowerCase() +'Remove"><div name="treeTop" class="speakstyletopright dyn_popup" style="right:70px;"><div name="treeContent"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style"></div></div></td></tr>');
 				
 				if(current.fileType === 'js') {
 					$('tbody[name=jsParent]').children().last().prev().children().last().find('img[name=jsAdd]').hide();
@@ -593,9 +594,34 @@ define(["build/listener/buildListener"], function() {
 				
 				self.hideTreeContent();
 				self.addJSMinRow();
+				self.minifierNameValidation($(".append"+current.fileType.toLowerCase()));
 			}
 		},
 		
+		minifierNameValidation : function(val) {
+			var self=this;
+			val.keyup(function() {
+				var currentCount = $(this).attr('count');
+				var currentVal =  $(this).val();
+				var appCodeTextObj = $(this);
+				val.each(function(index, value){
+					var valueCount = $(value).attr('count');
+					var appcodeVal = $(value).val();
+					if(currentCount !== valueCount && currentVal === appcodeVal){
+						$(appCodeTextObj).val("");
+						$(appCodeTextObj).focus();
+						$(appCodeTextObj).addClass('errormessage');
+						$(appCodeTextObj).attr('placeholder', 'Appcode Already Exists');
+						$(appCodeTextObj).bind('keypress', function() {
+							$(this).removeClass("errormessage");
+							$(appCodeTextObj).attr('placeholder', '');
+						});
+						return false;
+					}
+				});
+			});
+			
+		},
 		
 		hideTreeContent : function(){
 			$('div[name=treeTop]').hide();

@@ -9,7 +9,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.photon.phresco.framework</groupId>
     <artifactId>phresco-framework</artifactId>
-    <name>Phresco Framework</name>
+    <name>phresco-framework</name>
+    <version>3.2.0.3001-SNAPSHOT</version>
+    <packaging>jar</packaging>
     <url>http://www.phresco.org</url>
     <description>Phresco Framework API Module</description>
 		
@@ -20,6 +22,14 @@
             <url>${siteBaseUrl}/framework/phresco-framework/</url>
         </site>
     </distributionManagement>
+    <properties>
+        <phresco.functionalTest.selenium.tool>fest</phresco.functionalTest.selenium.tool>
+        <phresco.functionalTest.dir>/test/functional</phresco.functionalTest.dir>
+        <phresco.functionalTest.report.dir>/test/functional/target</phresco.functionalTest.report.dir>
+        <phresco.functionalTest.testcase.path>/testcase</phresco.functionalTest.testcase.path>
+        <phresco.functionalTest.testsuite.xpath>/testsuite</phresco.functionalTest.testsuite.xpath>
+        <phresco.functionalTest.adapt.config>/test/functional/src/test/java/phresco/testcases/phresco-env-config.xml</phresco.functionalTest.adapt.config>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -86,6 +96,8 @@
 	
     <build>
 		<sourceDirectory>${phresco.source.directory}</sourceDirectory>
+        <directory>do_not_checkin/target</directory>
+        <finalName>HelloWorld</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -115,6 +127,103 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            
+             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <excludeScope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">provided</excludeScope>
+                            <includeTypes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">jar</includeTypes>
+                            <outputDirectory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">do_not_checkin/target/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                                <source>${basedir}/src/main/java</source>
+							</sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>tomcat-maven-plugin</artifactId>
+                <version>1.1</version>
+                <configuration>
+                    <port xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">${server.port}</port>
+                    <username xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">${server.username}</username>
+                    <password xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">${server.password}</password>
+                    <url xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">http://${server.host}:${server.port}/manager/html</url>
+                    <path xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/${project.build.finalName}</path>
+                    <argLine xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">-Xmx512m</argLine>
+                    <warFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">${project.basedir}/do_not_checkin/build/temp/${project.build.finalName}.war</warFile>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+                <version>1.2.3</version>
+                <configuration>
+                    <container xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                        <containerId>${container.id}</containerId>
+                        <type>remote</type>
+					</container>
+                    <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                        <type>runtime</type>
+                        <properties>
+                            <cargo.protocol>${server.protocol}</cargo.protocol>
+                            <cargo.hostname>${server.host}</cargo.hostname>
+                            <cargo.servlet.port>${server.port}</cargo.servlet.port>
+                            <cargo.remote.username>${server.username}</cargo.remote.username>
+                            <cargo.remote.password>${server.password}</cargo.remote.password>
+                            <cargo.jvmargs>-Xmx512m</cargo.jvmargs>
+						</properties>
+					</configuration>
+                    <deployables xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                        <deployable>
+                            <location>${project.basedir}/do_not_checkin/build/temp/${server.context}.war</location>
+                            <type>war</type>
+						</deployable>
+                   </deployables>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.11</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>2.12</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <includes>
+                        <include>**/AllTest.class</include>
+				</includes>
+                    <reportsDirectory>${project.basedir}/do_not_checkin/reports/unitReports</reportsDirectory>
+                </configuration>
             </plugin>
         </plugins>
     </build>

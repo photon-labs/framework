@@ -188,7 +188,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 				ResponseInfo validationResponse = validateProject(projectinfo);
 				if (validationResponse != null) {
 				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-						null, validationResponse.getStatus(), validationResponse.getResponseCode());
+						validationResponse.getData(), validationResponse.getStatus(), validationResponse.getResponseCode());
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 			}
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
@@ -1327,6 +1327,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 						response = new ResponseInfo();
 						response.setStatus(RESPONSE_STATUS_FAILURE);
 						response.setResponseCode(PHR210043);
+						response.setData(appInfos.get(i).getCode());
 						return response;
 					}
 					if(appInfos.get(i).getAppDirName().equalsIgnoreCase(discoveredAppInfos.get(j).getAppDirName())) {

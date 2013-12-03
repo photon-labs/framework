@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mojos>
+    <mojo>
+        <goal>pdf-report</goal>
+        <description>Goal which generates pdf report for the project</description>
+        <requiresDirectInvocation>false</requiresDirectInvocation>
+        <requiresProject>true</requiresProject>
+        <requiresReports>false</requiresReports>
+        <aggregator>false</aggregator>
+        <requiresOnline>false</requiresOnline>
+        <inheritedByDefault>true</inheritedByDefault>
+        <implementation>
+            <dependency>
+                <groupId>com.photon.phresco.plugins</groupId>
+                <artifactId>report-phresco-plugin</artifactId>
+                <type>jar</type>
+                <version>3.1.0.7000</version>
+                <class>com.photon.phresco.plugins.ReportPlugin</class>
+            </dependency>
+        </implementation>
+        <language>java</language>
+        <instantiationStrategy>per-lookup</instantiationStrategy>
+        <executionStrategy>once-per-session</executionStrategy>
+        <threadSafe>false</threadSafe>
+        <configuration>
+            <parameters>
+                <parameter>
+                    <name>
+                        <value lang="en">Report Type</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>reportType</key>
+                    <possibleValues>
+                        <value key="crisp">Overall</value>
+                        <value key="detail">Detailed</value>
+                    </possibleValues>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+				<parameter>
+                    <name>
+                        <value lang="en">Pdf Report Name</value>
+                    </name>
+                    <type>String</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>reportName</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Test Type</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>testType</key>
+                    <possibleValues>
+                        <value key="All">All</value>
+                        <value key="unit">unit</value>
+                        <value key="functional">functional</value>
+                        <value key="performance">performance</value>
+                        <value key="load">load</value>
+						<value key="manual">manual</value>
+						<value key="component">component</value>
+                    </possibleValues>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Sonar Url</value>
+                    </name>
+                    <type>Hidden</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>sonarUrl</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>false</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Logo</value>
+                    </name>
+                    <type>Hidden</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>logo</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>false</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Theme</value>
+                    </name>
+                    <type>Hidden</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>theme</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>false</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Technology Name</value>
+                    </name>
+                    <type>Hidden</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>technologyName</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>false</show>
+                </parameter>
+            </parameters>
+        </configuration>
+    </mojo>
+    <mojo>
+        <goal>CIPrebuildStep</goal>
+        <description>Goal which do's CI pre build step</description>
+        <requiresDirectInvocation>false</requiresDirectInvocation>
+        <requiresProject>true</requiresProject>
+        <requiresReports>false</requiresReports>
+        <aggregator>false</aggregator>
+        <requiresOnline>false</requiresOnline>
+        <inheritedByDefault>true</inheritedByDefault>
+        <implementation>
+           <dependency>
+               <groupId>com.photon.phresco.plugins</groupId>
+               <artifactId>ci-phresco-plugin</artifactId>
+               <type>jar</type>
+               <version>3.1.0.7000</version>
+               <class>com.photon.phresco.plugins.CIPlugin</class>
+           </dependency>
+       </implementation>
+        <language>java</language>
+        <instantiationStrategy>per-lookup</instantiationStrategy>
+        <executionStrategy>once-per-session</executionStrategy>
+        <threadSafe>false</threadSafe>
+    </mojo>
+</mojos>

@@ -829,7 +829,7 @@
 		<sourceDirectory>${phresco.source.directory}</sourceDirectory>
 		<testSourceDirectory>${testSourceDirectory}</testSourceDirectory>
         <directory>do_not_checkin/target</directory>
-	   <finalName>framework</finalName>
+	   <finalName>javawebserviceeshop</finalName>
         <plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

@@ -64,7 +64,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
     	pomProcessor.save();
     }
 	
-	/*@Test
+	@Test
 	public void getAllEnvironmentsTest() {
 		Response response = configurationService.getAllEnvironments(appDirName, "", "true","","");
 		Assert.assertEquals(200, response.getStatus());
@@ -212,7 +212,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		Response responseFail = configurationService.addEnvironment("", "", environments,"","","");
 		Assert.assertEquals(200, responseFail.getStatus());
 	}
-	*/
+	
 	@Test
 	public void addNonEnvConfigTest() throws ConfigurationException {
 		List<Configuration> configList = new ArrayList<Configuration>();
@@ -723,7 +723,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	}
 	
 	
-//	@Test
+	@Test
 	public void addProdEnvironmentTest() throws PhrescoException {
 		List<Environment> environments = new ArrayList<Environment>();
 		List<Configuration> configList = new ArrayList<Configuration>();
@@ -832,8 +832,8 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	
 //	@Test
 	public void returnCertificate() throws PhrescoException {
-//		Response authenticateServer = configurationService.authenticateServer("kumar_s", "8443", "TestProject");
-//		Assert.assertEquals(200, authenticateServer.getStatus());
+		Response authenticateServer = configurationService.authenticateServer("kumar_s", "8443", "TestProject", "");
+		Assert.assertEquals(200, authenticateServer.getStatus());
 	}
 	
 	@Test

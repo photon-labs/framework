@@ -10,14 +10,14 @@
         <requiresOnline>false</requiresOnline>
         <inheritedByDefault>true</inheritedByDefault>
         <implementation>
-           <dependency>
-               <groupId>com.photon.phresco.plugins</groupId>
-               <artifactId>report-phresco-plugin</artifactId>
-               <type>jar</type>
-               <version>3.2.0.2000</version>
-               <class>com.photon.phresco.plugins.ReportPlugin</class>
-           </dependency>
-       </implementation>
+            <dependency>
+                <groupId>com.photon.phresco.plugins</groupId>
+                <artifactId>report-phresco-plugin</artifactId>
+                <type>jar</type>
+                <version>3.1.0.7000</version>
+                <class>com.photon.phresco.plugins.ReportPlugin</class>
+            </dependency>
+        </implementation>
         <language>java</language>
         <instantiationStrategy>per-lookup</instantiationStrategy>
         <executionStrategy>once-per-session</executionStrategy>
@@ -38,11 +38,11 @@
                         <value key="detail">Detailed</value>
                     </possibleValues>
                     <multiple>false</multiple>
-                    <value></value>
+                    <value>crisp</value>
                     <sort>false</sort>
                     <show>true</show>
                 </parameter>
-				<parameter>
+                <parameter>
                     <name>
                         <value lang="en">Pdf Report Name</value>
                     </name>
@@ -66,11 +66,11 @@
                     <description></description>
                     <key>testType</key>
                     <multiple>false</multiple>
-                    <value></value>
+                    <value>All</value>
                     <sort>false</sort>
                     <show>false</show>
                 </parameter>
-				<parameter>
+                <parameter>
                     <name>
                         <value lang="en">Sonar Url</value>
                     </name>
@@ -94,7 +94,7 @@
                     <description></description>
                     <key>logo</key>
                     <multiple>false</multiple>
-                    <value></value>
+                    <value>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</value>
                     <sort>false</sort>
                     <show>false</show>
                 </parameter>
@@ -112,7 +112,7 @@
                     <sort>false</sort>
                     <show>false</show>
                 </parameter>
-				<parameter>
+                <parameter>
                     <name>
                         <value lang="en">Technology Name</value>
                     </name>
@@ -122,7 +122,7 @@
                     <description></description>
                     <key>technologyName</key>
                     <multiple>false</multiple>
-                    <value></value>
+                    <value>J2EE</value>
                     <sort>false</sort>
                     <show>false</show>
                 </parameter>

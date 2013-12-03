@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mojos>
     <mojo>
-		<goal>load-test</goal>
-		<description>Goal which load Test to the DotNet project</description>
-		<requiresDirectInvocation>false</requiresDirectInvocation>
-		<requiresProject>true</requiresProject>
-		<requiresReports>false</requiresReports>
-		<aggregator>false</aggregator>
-		<requiresOnline>false</requiresOnline>
-		<inheritedByDefault>true</inheritedByDefault>
-		<language>java</language>
-		<instantiationStrategy>per-lookup</instantiationStrategy>
-		<executionStrategy>once-per-session</executionStrategy>
-		<threadSafe>false</threadSafe>
-			<configuration>
-			<parameters>
-				<parameter>
+        <goal>load-test</goal>
+        <description>Goal which load Test to the DotNet project</description>
+        <requiresDirectInvocation>false</requiresDirectInvocation>
+        <requiresProject>true</requiresProject>
+        <requiresReports>false</requiresReports>
+        <aggregator>false</aggregator>
+        <requiresOnline>false</requiresOnline>
+        <inheritedByDefault>true</inheritedByDefault>
+        <language>java</language>
+        <instantiationStrategy>per-lookup</instantiationStrategy>
+        <executionStrategy>once-per-session</executionStrategy>
+        <threadSafe>false</threadSafe>
+        <configuration>
+            <parameters>
+                <parameter>
                     <name>
                         <value lang="en">JMX Type</value>
                     </name>
@@ -29,11 +29,11 @@
                         <value key="customise" dependency="customTestAgainst,uploadJMX,availableJmx">Custom</value>
                     </possibleValues>
                     <multiple>false</multiple>
-                    <value></value>
+                    <value>parameters</value>
                     <sort>false</sort>
                     <show>true</show>
                 </parameter>
-				<parameter>
+                <parameter>
                     <name>
                         <value lang="en">Test Against</value>
                     </name>
@@ -47,12 +47,12 @@
                         <value key="webservice" dependency="loadContextUrl">Web Services</value>
                     </possibleValues>
                     <multiple>false</multiple>
-                    <value></value>
+                    <value>server</value>
                     <sort>false</sort>
                     <show>false</show>
                     <dependency>configurations,testName</dependency>
                 </parameter>
-				<parameter>
+                <parameter>
                     <name>
                         <value lang="en">Test Against</value>
                     </name>
@@ -66,77 +66,12 @@
                         <value key="webservice">Web Services</value>
                     </possibleValues>
                     <multiple>false</multiple>
-                    <value></value>
+                    <value>server</value>
                     <sort>false</sort>
                     <show>false</show>
                     <dependency>availableJmx</dependency>
                 </parameter>
-				<parameter>
-					<name>
-						<value lang="en">Show Settings</value>
-					</name>
-					<type>Boolean</type>
-					<required>false</required>
-					<editable>true</editable>
-					<description></description>
-					<key>showSettings</key>
-					<multiple>false</multiple>
-					<value>false</value>
-					<sort>false</sort>
-					<show>true</show>
-					<dependency>environmentName</dependency>
-				</parameter>
-				<parameter>
-					<name>
-						<value lang="en">Environment</value>
-					</name>
-					<type>DynamicParameter</type>
-					<dynamicParameter>
-						<class>com.photon.phresco.impl.EnvironmentsParameterImpl</class>
-						<dependencies>
-							<dependency>
-								<groupId>com.photon.phresco.commons</groupId>
-								<artifactId>phresco-commons</artifactId>
-								<type>jar</type>
-								<version>3.2.0.2000</version>
-							</dependency>
-						</dependencies>
-					</dynamicParameter>
-					<required>true</required>
-					<editable>true</editable>
-					<key>environmentName</key>
-					<multiple>false</multiple>
-					<value></value>
-					<sort>false</sort>
-					<show>true</show>
-					<dependency>configurations</dependency>
-				</parameter>
-				<parameter>
-                   <name>
-                       <value lang="en">Configurations</value>
-                   </name>
-                   <type>DynamicParameter</type>
-                   <dynamicParameter>
-                       <class>com.photon.phresco.framework.param.impl.PerformanceConfigurationsImpl</class>
-						<dependencies>
-                           <dependency>
-								<groupId>com.photon.phresco.framework</groupId>
-								<artifactId>phresco-framework-impl</artifactId>
-								<type>jar</type>
-								<version>3.2.0.2000</version>
-                           </dependency>
-                       </dependencies>
-                   </dynamicParameter>
-                   <required>true</required>
-                   <editable>true</editable>
-                   <description></description>
-                   <key>configurations</key>
-                   <multiple>false</multiple>
-                   <value></value>
-                   <sort>false</sort>
-                   <show>true</show>
-                </parameter>
-				<parameter>
+                <parameter>
                     <name>
                         <value lang="en">Test Result Name</value>
                     </name>
@@ -145,10 +80,10 @@
                         <class>com.photon.phresco.framework.param.impl.PerformanceTestResultNamesImpl</class>
                         <dependencies>
                             <dependency>
-								<groupId>com.photon.phresco.framework</groupId>
-								<artifactId>phresco-framework-impl</artifactId>
-								<type>jar</type>
-								<version>3.2.0.2000</version>
+<groupId>com.photon.phresco.framework</groupId>
+<artifactId>phresco-framework-impl</artifactId>
+<type>jar</type>
+<version>3.1.0.7000</version>
                             </dependency>
                         </dependencies>
                     </dynamicParameter>
@@ -157,53 +92,118 @@
                     <description></description>
                     <key>testName</key>
                     <multiple>false</multiple>
-                    <value></value>
+                    <value>JavaWS</value>
                     <sort>false</sort>
                     <show>false</show>
                 </parameter>
-				<parameter>
-					<name>
-						<value lang="en">No Of Users</value>
-					</name>
-					<type>Number</type>
-					<required>true</required>
-					<editable>true</editable>
-					<description></description>
-					<key>noOfUsers</key>
-					<multiple>false</multiple>
-					<value>10</value>
-					<sort>false</sort>
-					<show>true</show>
-				</parameter>
-				<parameter>
-					<name>
-						<value lang="en">Ramp-Up Period</value>
-					</name>
-					<type>Number</type>
-					<required>true</required>
-					<editable>true</editable>
-					<description></description>
-					<key>rampUpPeriod</key>
-					<multiple>false</multiple>
-					<value>10</value>
-					<sort>false</sort>
-					<show>true</show>
-				</parameter>
-				<parameter>
-					<name>
-						<value lang="en">Loop Count</value>
-					</name>
-					<type>Number</type>
-					<required>true</required>
-					<editable>true</editable>
-					<description></description>
-					<key>loopCount</key>
-					<multiple>false</multiple>
-					<value>10</value>
-					<sort>false</sort>
-					<show>true</show>
-				</parameter>
-				<parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Show Settings</value>
+                    </name>
+                    <type>Boolean</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>showSettings</key>
+                    <multiple>false</multiple>
+                    <value>false</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                    <dependency>environmentName</dependency>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Environment</value>
+                    </name>
+                    <type>DynamicParameter</type>
+                    <dynamicParameter>
+                        <class>com.photon.phresco.impl.EnvironmentsParameterImpl</class>
+                        <dependencies>
+                            <dependency>
+<groupId>com.photon.phresco.commons</groupId>
+<artifactId>phresco-commons</artifactId>
+<type>jar</type>
+<version>3.1.0.7000</version>
+                            </dependency>
+                        </dependencies>
+                    </dynamicParameter>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <key>environmentName</key>
+                    <multiple>false</multiple>
+                    <value>Production</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                    <dependency>configurations</dependency>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Configurations</value>
+                    </name>
+                    <type>DynamicParameter</type>
+                    <dynamicParameter>
+                        <class>com.photon.phresco.framework.param.impl.PerformanceConfigurationsImpl</class>
+                        <dependencies>
+                            <dependency>
+<groupId>com.photon.phresco.framework</groupId>
+<artifactId>phresco-framework-impl</artifactId>
+<type>jar</type>
+<version>3.1.0.7000</version>
+                            </dependency>
+                        </dependencies>
+                    </dynamicParameter>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>configurations</key>
+                    <multiple>false</multiple>
+                    <value>Server Configuration</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">No Of Users</value>
+                    </name>
+                    <type>Number</type>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>noOfUsers</key>
+                    <multiple>false</multiple>
+                    <value>10</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Ramp-Up Period</value>
+                    </name>
+                    <type>Number</type>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>rampUpPeriod</key>
+                    <multiple>false</multiple>
+                    <value>10</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Loop Count</value>
+                    </name>
+                    <type>Number</type>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>loopCount</key>
+                    <multiple>false</multiple>
+                    <value>10</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
                     <name>
                         <value lang="en">Auth Manager</value>
                     </name>
@@ -288,7 +288,7 @@
                     <sort>false</sort>
                     <show>false</show>
                 </parameter>
-				<parameter>
+                <parameter>
                     <name>
                         <value lang="en">Context URLs</value>
                     </name>
@@ -297,10 +297,10 @@
                         <class>com.photon.phresco.framework.param.impl.LoadTestDetailsImpl</class>
                         <dependencies>
                             <dependency>
-								<groupId>com.photon.phresco.framework</groupId>
-								<artifactId>phresco-framework-impl</artifactId>
-								<type>jar</type>
-								<version>3.2.0.2000</version>
+<groupId>com.photon.phresco.framework</groupId>
+<artifactId>phresco-framework-impl</artifactId>
+<type>jar</type>
+<version>3.1.0.7000</version>
                             </dependency>
                         </dependencies>
                     </dynamicParameter>
@@ -313,7 +313,7 @@
                     <sort>false</sort>
                     <show>false</show>
                 </parameter>
-				<parameter>
+                <parameter>
                     <name>
                         <value lang="en">Upload JMX</value>
                     </name>
@@ -338,22 +338,55 @@
                         <class>com.photon.phresco.impl.JmxFilesImpl</class>
                         <dependencies>
                             <dependency>
-								<groupId>com.photon.phresco.commons</groupId>
-								<artifactId>phresco-commons</artifactId>
-								<type>jar</type>
-								<version>3.2.0.2000</version>
+<groupId>com.photon.phresco.commons</groupId>
+<artifactId>phresco-commons</artifactId>
+<type>jar</type>
+<version>3.1.0.7000</version>
                             </dependency>
                         </dependencies>
                     </dynamicParameter>
                     <required>true</required>
                     <editable>true</editable>
                     <key>availableJmx</key>
-                    <multiple>false</multiple>
+                    <multiple>true</multiple>
                     <value></value>
                     <sort>false</sort>
                     <show>false</show>
                 </parameter>
-			</parameters>
-		</configuration>
-	</mojo>
+				 <parameter>
+                    <pluginParameter>framework</pluginParameter>
+                    <mavenCommands>
+                        <mavenCommand>
+                            <key>showErrors</key>
+                            <value>-e</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>hideLogs</key>
+                            <value>-q</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>showDebug</key>
+                            <value>-X</value>
+                        </mavenCommand>
+                    </mavenCommands>
+                    <name>
+                        <value lang="en">Logs</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <key>logs</key>
+                    <possibleValues>
+                        <value key="showErrors">Show Errors</value>
+                        <value key="hideLogs">Hide Logs</value>
+                        <value key="showDebug">Show Debug</value>
+                    </possibleValues>
+                    <multiple>false</multiple>
+					<sort>false</sort>
+					<show>true</show>
+                    <value></value>
+                </parameter>
+            </parameters>
+        </configuration>
+    </mojo>
 </mojos>
