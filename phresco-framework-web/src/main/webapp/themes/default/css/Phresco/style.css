@@ -4860,11 +4860,6 @@ a.selected { background:#dcdcdc; }
 	margin-bottom:6px;
 }
 
-.about_cont tr td img { 
-	margin-right:15px; 
-	height:19px;
-}
-
 .update_success {
 	background: #e3f8c0 !important;
 	text-align:center;

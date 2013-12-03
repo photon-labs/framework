@@ -930,10 +930,11 @@ define([], function() {
 		navigationActionForImport : function(header, callback) {
 			var self = this;			
 			try {
-				//commonVariables.loadingScreen.showLoading();
+				commonVariables.loadingScreen.showLoading();
+				$("#importloading").hide();
 				commonVariables.api.ajaxRequestForScm(header,
 					function(response) {
-						//commonVariables.loadingScreen.removeLoading();
+						commonVariables.loadingScreen.removeLoading();
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							if(response.responseCode === "PHR200017") {
 								commonVariables.api.showError(response.responseCode ,"success", true);
@@ -958,7 +959,7 @@ define([], function() {
 					}
 				);
 			} catch(exception) {
-				//commonVariables.loadingScreen.removeLoading();
+				commonVariables.loadingScreen.removeLoading();
 			}
 		}, 
 		
@@ -973,7 +974,7 @@ define([], function() {
 				if(!self.isValidUrl(importRepourl)) {
 					error = true;
 					$("#importRepourl").val('');
-					self.validateTextBox($("#importRepourl"), 'Invalid Application Url');	
+					self.validateTextBox($("#importRepourl"), 'Enter Application Url');	
 					setTimeout(function() { 
 					//$("#importRepourl").val(importRepourl); 
 					}, 4000);				
