@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mojos>
+    <mojo>
+        <goal>functional-test-webdriver</goal>
+        <description>Goal which functional Test-webdriver the Java Quick Start project</description>
+        <requiresDirectInvocation>false</requiresDirectInvocation>
+        <requiresProject>true</requiresProject>
+        <requiresReports>false</requiresReports>
+        <aggregator>false</aggregator>
+        <requiresOnline>false</requiresOnline>
+        <inheritedByDefault>true</inheritedByDefault>
+        <language>java</language>
+        <instantiationStrategy>per-lookup</instantiationStrategy>
+        <executionStrategy>once-per-session</executionStrategy>
+        <threadSafe>false</threadSafe>
+        <configuration>
+        <parameters>
+            <parameter>
+                <name>
+                    <value lang="en">Test Against</value>
+                </name>
+                <type>List</type>
+                <required>false</required>
+                <editable>true</editable>
+                <description></description>
+                <key>testAgainst</key>
+                <possibleValues>
+                    <value key="jar" dependency="jarLocation">Jar</value>
+				</possibleValues>
+                <value></value>
+                <sort>false</sort>
+                <show>true</show>
+            </parameter>
+            <parameter>
+                <name>
+                    <value lang="en">JAR Location</value>
+                </name>
+                <type>FileBrowse</type>
+                <required>false</required>
+                <editable>true</editable>
+                <description></description>
+                <key>jarLocation</key>
+                <multiple>false</multiple>
+                <value></value>
+                <sort>false</sort>
+                <show>false</show>
+                <fileType>jar</fileType>
+            </parameter>
+			 <parameter>
+                    <pluginParameter>framework</pluginParameter>
+                    <mavenCommands>
+                        <mavenCommand>
+                            <key>showErrors</key>
+                            <value>-e</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>hideLogs</key>
+                            <value>-q</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>showDebug</key>
+                            <value>-X</value>
+                        </mavenCommand>
+                    </mavenCommands>
+                    <name>
+                        <value lang="en">Logs</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <key>logs</key>
+                    <possibleValues>
+                        <value key="showErrors">Show Errors</value>
+                        <value key="hideLogs">Hide Logs</value>
+                        <value key="showDebug">Show Debug</value>
+                    </possibleValues>
+                    <multiple>false</multiple>
+                    <sort>false</sort>
+                    <show>true</show>
+                    <value></value>
+                </parameter>
+        </parameters>
+    </configuration>
+    </mojo>
+    <mojo>
+        <goal>CIPrebuildStep</goal>
+        <description>Goal which do's CI pre build step</description>
+        <requiresDirectInvocation>false</requiresDirectInvocation>
+        <requiresProject>true</requiresProject>
+        <requiresReports>false</requiresReports>
+        <aggregator>false</aggregator>
+        <requiresOnline>false</requiresOnline>
+        <inheritedByDefault>true</inheritedByDefault>
+        <implementation>
+           <dependency>
+               <groupId>com.photon.phresco.plugins</groupId>
+               <artifactId>ci-phresco-plugin</artifactId>
+               <type>jar</type>
+               <version>3.1.0.4001-SNAPSHOT</version>
+               <class>com.photon.phresco.plugins.CIPlugin</class>
+           </dependency>
+       </implementation>
+        <language>java</language>
+        <instantiationStrategy>per-lookup</instantiationStrategy>
+        <executionStrategy>once-per-session</executionStrategy>
+        <threadSafe>false</threadSafe>
+    </mojo>
+</mojos>

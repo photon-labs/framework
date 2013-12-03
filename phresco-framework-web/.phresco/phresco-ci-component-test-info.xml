@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mojos>
+    <mojo>
+	 <goal>CIPrebuildStep</goal>
+        <description>Goal which do's CI pre build step</description>
+        <requiresDirectInvocation>false</requiresDirectInvocation>
+        <requiresProject>true</requiresProject>
+        <requiresReports>false</requiresReports>
+        <aggregator>false</aggregator>
+        <requiresOnline>false</requiresOnline>
+        <inheritedByDefault>true</inheritedByDefault>
+        <implementation>
+           <dependency>
+               <groupId>com.photon.phresco.plugins</groupId>
+               <artifactId>ci-phresco-plugin</artifactId>
+               <type>jar</type>
+               <version>3.0.0.28002-SNAPSHOT</version>
+               <class>com.photon.phresco.plugins.CIPlugin</class>
+           </dependency>
+       </implementation>
+        <language>java</language>
+        <instantiationStrategy>per-lookup</instantiationStrategy>
+        <executionStrategy>once-per-session</executionStrategy>
+        <threadSafe>false</threadSafe>
+    </mojo>
+</mojos>

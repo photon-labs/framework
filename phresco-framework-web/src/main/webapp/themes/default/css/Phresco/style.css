@@ -1288,7 +1288,7 @@ img[name="close"] {
 	color: #747474;
 	text-align:left;
 	border:none;
-	width:4%;
+	width:11%;
 }
 
 .errormessage {
@@ -4858,11 +4858,6 @@ a.selected { background:#dcdcdc; }
 	line-height:22px;
 	color:#333333;
 	margin-bottom:6px;
-}
-
-.about_cont tr td img { 
-	margin-right:15px; 
-	height:19px;
 }
 
 .update_success {

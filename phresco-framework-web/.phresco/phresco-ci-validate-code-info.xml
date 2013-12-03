@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mojos>
+    <mojo>
+      <goal>validate-code</goal>
+      <description>Goal which validates the Java WebService project</description>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <language>java</language>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>false</threadSafe>
+      <configuration>
+      <parameters>
+        <parameter>
+            <name>
+                <value lang="en">Validate Against</value>
+            </name>
+            <type>List</type>
+            <required>false</required>
+            <editable>true</editable>
+            <description></description>
+            <key>sonar</key>
+            <possibleValues>
+                <value key="src" dependency="src,skipTests">Source</value>
+                <value key="functional">Functional Test</value>
+            </possibleValues>
+            <multiple>false</multiple>
+            <sort>false</sort>
+            <show>true</show>
+          <value></value>
+        </parameter>
+        <parameter>
+            <pluginParameter>plugin</pluginParameter>
+            <name>
+                <value lang="en">Technology</value>
+            </name>
+            <mavenCommands>
+                <mavenCommand>
+                    <key>js</key>
+                    <value>-Pjs</value>
+                </mavenCommand>
+                <mavenCommand>
+                    <key>java</key>
+                    <value>-Pjava</value>
+                </mavenCommand>
+                <mavenCommand>
+                    <key>html</key>
+                    <value>-Phtml</value>
+                </mavenCommand>
+                <mavenCommand>
+                    <key>web</key>
+                    <value>-Pweb</value>
+                </mavenCommand>
+            </mavenCommands>
+            <type>List</type>
+            <required>false</required>
+            <editable>true</editable>
+            <description></description>
+            <key>src</key>
+            <possibleValues>
+                <value key="js">js</value>
+                <value key="java">java</value>
+                <value key="html">html</value>
+                <value key="web">jsp/jsf</value>
+            </possibleValues>
+            <multiple>false</multiple>
+            <sort>false</sort>
+            <show>false</show>
+            <value></value>
+        </parameter>
+        <parameter>
+            <pluginParameter>plugin</pluginParameter>
+            <mavenCommands>
+                <mavenCommand>
+                    <key>true</key>
+                    <value>-DskipTests=true</value>
+                </mavenCommand>
+                <mavenCommand>
+                    <key>false</key>
+                    <value>-DskipTests=false</value>
+                </mavenCommand>
+            </mavenCommands>
+            <name>
+                <value lang="en">Skip Unit Test</value>
+            </name>
+            <type>Boolean</type>
+            <required>false</required>
+            <editable>true</editable>
+            <description></description>
+            <key>skipTests</key>
+            <multiple>false</multiple>
+            <sort>false</sort>
+            <show>true</show>
+            <value>false</value>
+        </parameter>
+		 <parameter>
+			<pluginParameter>framework</pluginParameter>
+			<mavenCommands>
+				<mavenCommand>
+					<key>showErrors</key>
+					<value>-e</value>
+				</mavenCommand>
+				<mavenCommand>
+					<key>hideLogs</key>
+					<value>-q</value>
+				</mavenCommand>
+				<mavenCommand>
+					<key>showDebug</key>
+					<value>-X</value>
+				</mavenCommand>
+			</mavenCommands>
+			<name>
+				<value lang="en">Logs</value>
+			</name>
+			<type>List</type>
+			<required>false</required>
+			<editable>true</editable>
+			<key>logs</key>
+			<possibleValues>
+				<value key="showErrors">Show Errors</value>
+				<value key="hideLogs">Hide Logs</value>
+				<value key="showDebug">Show Debug</value>
+			</possibleValues>
+			<multiple>false</multiple>
+			<sort>false</sort>
+			<show>true</show>
+			<value></value>
+		</parameter>
+    </parameters>
+    </configuration>
+    </mojo>
+    
+    <mojo>
+        <goal>CIPrebuildStep</goal>
+        <description>Goal which do's CI pre build step</description>
+        <requiresDirectInvocation>false</requiresDirectInvocation>
+        <requiresProject>true</requiresProject>
+        <requiresReports>false</requiresReports>
+        <aggregator>false</aggregator>
+        <requiresOnline>false</requiresOnline>
+        <inheritedByDefault>true</inheritedByDefault>
+        <implementation>
+           <dependency>
+               <groupId>com.photon.phresco.plugins</groupId>
+               <artifactId>ci-phresco-plugin</artifactId>
+               <type>jar</type>
+               <version>3.1.0.7000</version>
+               <class>com.photon.phresco.plugins.CIPlugin</class>
+           </dependency>
+       </implementation>
+        <language>java</language>
+        <instantiationStrategy>per-lookup</instantiationStrategy>
+        <executionStrategy>once-per-session</executionStrategy>
+        <threadSafe>false</threadSafe>
+    </mojo>
+</mojos>
