@@ -2,7 +2,7 @@
 <mojos>
     <mojo>
         <goal>package</goal>
-        <description>Goal which packages the HTML5-Jquery project</description>
+        <description>Goal which packages the Java web service project</description>
         <requiresDirectInvocation>false</requiresDirectInvocation>
         <requiresProject>true</requiresProject>
         <requiresReports>false</requiresReports>
@@ -14,7 +14,7 @@
                 <groupId>com.photon.phresco.plugins</groupId>
                 <artifactId>java-phresco-plugin</artifactId>
                 <type>jar</type>
-                <version>3.2.0.2000</version>
+                <version>3.1.0.7000</version>
                 <class>com.photon.phresco.plugins.java.JavaPlugin</class>
             </dependency>
         </implementation>
@@ -79,7 +79,7 @@
 <groupId>com.photon.phresco.commons</groupId>
 <artifactId>phresco-commons</artifactId>
 <type>jar</type>
-<version>3.2.0.2000</version>
+<version>3.1.0.7000</version>
                             </dependency>
                         </dependencies>
                     </dynamicParameter>
@@ -87,7 +87,7 @@
                     <editable>true</editable>
                     <key>environmentName</key>
                     <multiple>true</multiple>
-                    <value>Development,Testing</value>
+                    <value>Production</value>
                     <sort>false</sort>
                     <show>true</show>
                 </parameter>
@@ -150,62 +150,6 @@
                     <show>true</show>
                 </parameter>
                 <parameter>
-                    <pluginParameter>plugin</pluginParameter>
-                    <mavenCommands>
-                        <mavenCommand>
-                            <key>true</key>
-                            <value>-Dmaven.yuicompressor.skip=true</value>
-                        </mavenCommand>
-                        <mavenCommand>
-                            <key>false</key>
-                            <value>-Dmaven.yuicompressor.skip=false</value>
-                        </mavenCommand>
-                    </mavenCommands>
-                    <name>
-                        <value lang="en">Minify</value>
-                    </name>
-                    <type>Hidden</type>
-                    <required>false</required>
-                    <editable>true</editable>
-                    <description></description>
-                    <key>minify</key>
-                    <multiple>false</multiple>
-                    <value>true</value>
-                    <sort>false</sort>
-                    <show>false</show>
-                </parameter>
-                <parameter>
-                    <name>
-                        <value lang="en">Pack Minified Files</value>
-                    </name>
-                    <type>Boolean</type>
-                    <required>false</required>
-                    <editable>true</editable>
-                    <description></description>
-                    <key>packMinifiedFiles</key>
-                    <multiple>false</multiple>
-                    <value>false</value>
-                    <sort>false</sort>
-                    <show>true</show>
-                </parameter>
-                <parameter>
-                    <name>
-                        <value lang="en">Build Type</value>
-                    </name>
-                    <type>List</type>
-                    <required>false</required>
-                    <editable>true</editable>
-                    <key>packageType</key>
-                    <possibleValues>
-                        <value key="war">war</value>
-                        <value key="zip">zip</value>
-                    </possibleValues>
-                    <multiple>false</multiple>
-                    <value>war</value>
-                    <sort>false</sort>
-                    <show>true</show>
-                </parameter>
-                <parameter>
                     <name>
                         <value lang="en">Package File Browse</value>
                     </name>
@@ -215,23 +159,8 @@
                     <description></description>
                     <key>packageFileBrowse</key>
                     <multiple>false</multiple>
-                    <value></value>
                     <sort>false</sort>
                     <show>true</show>
-                </parameter>
-                <parameter>
-                    <name>
-                        <value lang="en">Module</value>
-                    </name>
-                    <type>Hidden</type>
-                    <required>false</required>
-                    <editable>true</editable>
-                    <description></description>
-                    <key>projectModule</key>
-                    <multiple>false</multiple>
-                    <value>phresco-framework-web</value>
-                    <sort>false</sort>
-                    <show>false</show>
                 </parameter>
             </parameters>
         </configuration>

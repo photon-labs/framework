@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mojos>
-    <mojo>
+       <mojo>
       <goal>start</goal>
-      <description>Goal which starts the HTML5-Jquery project</description>
+      <description>Goal which starts the java web project</description>
       <requiresDirectInvocation>false</requiresDirectInvocation>
       <requiresProject>true</requiresProject>
       <requiresReports>false</requiresReports>
@@ -14,7 +14,7 @@
                <groupId>com.photon.phresco.plugins</groupId>
                <artifactId>java-phresco-plugin</artifactId>
                <type>jar</type>
-               <version>3.2.0.2000</version>
+               <version>3.1.0.7000</version>
                <class>com.photon.phresco.plugins.java.JavaPlugin</class>
            </dependency>
        </implementation>
@@ -24,6 +24,21 @@
       <threadSafe>false</threadSafe>
 	  <configuration>
       <parameters>
+	  <parameter>
+			<name>
+				<value lang="en">Show Settings</value>
+			</name>
+			<type>Boolean</type>
+			<required>false</required>
+			<editable>true</editable>
+			<description></description>
+			<key>showSettings</key>
+			<multiple>false</multiple>
+			<value>false</value>
+			<sort>false</sort>
+			<show>true</show>
+			<dependency>environmentName</dependency>
+		</parameter>
         <parameter>
 			<name>
 				<value lang="en">Environment</value>
@@ -36,7 +51,7 @@
 						<groupId>com.photon.phresco.commons</groupId>
 						<artifactId>phresco-commons</artifactId>
 						<type>jar</type>
-						<version>3.2.0.2000</version>
+						<version>3.1.0.7000</version>
 					</dependency>
 				</dependencies>
 			</dynamicParameter>
@@ -47,13 +62,112 @@
 			<sort>false</sort>
 			<show>true</show>
 			<value></value>
-		</parameter>
-          </parameters>
+			 <dependency>dataBase,fetchSql</dependency>
+        </parameter>
+		 <parameter>
+                    <name>
+                        <value lang="en">Execute Sql</value>
+                    </name>
+                    <type>Boolean</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>executeSql</key>
+                    <value>true</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                    <dependency>dataBase</dependency>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">DataBase</value>
+                    </name>
+                    <type>DynamicParameter</type>
+                    <dynamicParameter>
+                        <class>com.photon.phresco.framework.param.impl.DynamicDataBaseImpl</class>
+                        <dependencies>
+                            <dependency>
+								<groupId>com.photon.phresco.framework</groupId>
+								<artifactId>phresco-framework-impl</artifactId>
+								<type>jar</type>
+								<version>3.1.0.7000</version>
+                            </dependency>
+                        </dependencies>
+                    </dynamicParameter>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>dataBase</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>false</show>
+                    <dependency>fetchSql</dependency>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en"></value>
+                    </name>
+                    <type>DynamicParameter</type>
+                    <dynamicParameter>
+                        <class>com.photon.phresco.framework.param.impl.DynamicFetchSqlImpl</class>
+                        <dependencies>
+                            <dependency>
+								<groupId>com.photon.phresco.framework</groupId>
+								<artifactId>phresco-framework-impl</artifactId>
+								<type>jar</type>
+								<version>3.1.0.7000</version>
+                            </dependency>
+                        </dependencies>
+                    </dynamicParameter>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>fetchSql</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>true</sort>
+                    <show>false</show>
+                </parameter>	
+				 <parameter>
+                    <pluginParameter>framework</pluginParameter>
+                    <mavenCommands>
+                        <mavenCommand>
+                            <key>showErrors</key>
+                            <value>-e</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>hideLogs</key>
+                            <value>-q</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>showDebug</key>
+                            <value>-X</value>
+                        </mavenCommand>
+                    </mavenCommands>
+                    <name>
+                        <value lang="en">Logs</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <key>logs</key>
+                    <possibleValues>
+                        <value key="showErrors">Show Errors</value>
+                        <value key="hideLogs">Hide Logs</value>
+                        <value key="showDebug">Show Debug</value>
+                    </possibleValues>
+                    <multiple>false</multiple>
+					<sort>false</sort>
+					<show>true</show>
+                    <value></value>
+                </parameter>
+            </parameters>
       </configuration>
     </mojo>
-    <mojo>
+	 <mojo>
       <goal>stop</goal>
-      <description>Goal which stops the HTML5-Jquery project</description>
+      <description>Goal which stops the java web project</description>
       <requiresDirectInvocation>false</requiresDirectInvocation>
       <requiresProject>true</requiresProject>
       <requiresReports>false</requiresReports>
@@ -65,7 +179,7 @@
                <groupId>com.photon.phresco.plugins</groupId>
                <artifactId>java-phresco-plugin</artifactId>
                <type>jar</type>
-               <version>3.2.0.2000</version>
+               <version>3.1.0.7000</version>
                <class>com.photon.phresco.plugins.java.JavaPlugin</class>
            </dependency>
        </implementation>

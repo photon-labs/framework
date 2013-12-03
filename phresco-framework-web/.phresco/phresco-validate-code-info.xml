@@ -1,142 +1,136 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mojos>
     <mojo>
-      <goal>validate-code</goal>
-      <description>Goal which validates the HTML5 - Jquery project</description>
-      <requiresDirectInvocation>false</requiresDirectInvocation>
-      <requiresProject>true</requiresProject>
-      <requiresReports>false</requiresReports>
-      <aggregator>false</aggregator>
-      <requiresOnline>false</requiresOnline>
-      <inheritedByDefault>true</inheritedByDefault>
-      <language>java</language>
-      <instantiationStrategy>per-lookup</instantiationStrategy>
-      <executionStrategy>once-per-session</executionStrategy>
-      <threadSafe>false</threadSafe>
-	  <configuration>
-      <parameters>
-        <parameter>
-			<name>
-                <value lang="en">Validate Against</value>
-            </name>
-			<type>List</type>
-			<required>false</required>
-			<editable>true</editable>
-			<description></description>
-			<key>sonar</key>
-			<possibleValues>
-				<value key="src" dependency="src,skipTests,environmentName,showSettings">Source</value>
-				<value key="functional">Functional Test</value>
-			</possibleValues>
-			<multiple>false</multiple>
-			<sort>false</sort>
-			<show>true</show>
-		  <value></value>
-        </parameter>
-		<parameter>
-		<pluginParameter>plugin</pluginParameter>
-			<name>
-                <value lang="en">Technology</value>
-            </name>
-			<mavenCommands>
-				<mavenCommand>
-					<key>js</key>
-					<value>-Pjs</value>
-				</mavenCommand>
-				<mavenCommand>
-					<key>java</key>
-					<value>-Pjava</value>
-				</mavenCommand>
-				<mavenCommand>
-					<key>html</key>
-					<value>-Phtml</value>
-				</mavenCommand>
-				<mavenCommand>
-					<key>web</key>
-					<value>-Pweb</value>
-				</mavenCommand>
-			</mavenCommands>
-          <type>List</type>
-          <required>false</required>
-          <editable>true</editable>
-          <description></description>
-		  <key>src</key>
-			<possibleValues>
-				<value key="js" dependency="showSettings,environmentName">js</value>
-				<value key="java">java</value>
-				<value key="html">html</value>
-				<value key="web">jsp/jsf</value>
-			</possibleValues>
-			<multiple>false</multiple>
-			<sort>false</sort>
-			<show>false</show>
-		  <value></value>
-        </parameter>
-	  <parameter>
-			<pluginParameter>plugin</pluginParameter>
-			<mavenCommands>
-				<mavenCommand>
-					<key>true</key>
-					<value>-DskipTests=true -Dmaven.test.skip=true</value>
-				</mavenCommand>
-				<mavenCommand>
-					<key>false</key>
-					<value>-DskipTests=false</value>
-				</mavenCommand>
-			</mavenCommands>
-			<name>
-				<value lang="en">Skip Unit Test</value>
-			</name>
-			<type>Boolean</type>
-			<required>false</required>
-			<editable>true</editable>
-			<description></description>
-			<key>skipTests</key>
-			<multiple>false</multiple>
-			<sort>false</sort>
-			<show>false</show>
-			<value>false</value>
-      </parameter>
-	   <parameter>
-			<name>
-				<value lang="en">Show Settings</value>
-			</name>
-			<type>Boolean</type>
-			<required>false</required>
-			<editable>true</editable>
-			<description></description>
-			<key>showSettings</key>
-			<multiple>false</multiple>
-			<value></value>
-			<sort>false</sort>
-			<show>false</show>
-			<dependency>environmentName</dependency>
-		</parameter>
-	   <parameter>
-			<name>
-				<value lang="en">Environment</value>
-			</name>
-			<type>DynamicParameter</type>
-			<dynamicParameter>
-				<class>com.photon.phresco.impl.EnvironmentsParameterImpl</class>
-				<dependencies>
-					<dependency>
-						<groupId>com.photon.phresco.commons</groupId>
-						<artifactId>phresco-commons</artifactId>
-						<type>jar</type>
-						<version>3.2.0.2000</version>
-					</dependency>
-				</dependencies>
-			</dynamicParameter>
-			<required>true</required>
-			<editable>true</editable>
-			<key>environmentName</key>
-			<multiple>false</multiple>
-			<value></value>
-			<sort>false</sort>
-			<show>true</show>
-		</parameter>
-  </parameters>
-      </configuration>
+        <goal>validate-code</goal>
+        <description>Goal which validates the Java WebService project</description>
+        <requiresDirectInvocation>false</requiresDirectInvocation>
+        <requiresProject>true</requiresProject>
+        <requiresReports>false</requiresReports>
+        <aggregator>false</aggregator>
+        <requiresOnline>false</requiresOnline>
+        <inheritedByDefault>true</inheritedByDefault>
+        <language>java</language>
+        <instantiationStrategy>per-lookup</instantiationStrategy>
+        <executionStrategy>once-per-session</executionStrategy>
+        <threadSafe>false</threadSafe>
+        <configuration>
+            <parameters>
+                <parameter>
+                    <name>
+                        <value lang="en">Validate Against</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>sonar</key>
+                    <possibleValues>
+                        <value key="src" dependency="src,skipTests">Source</value>
+                        <value key="functional">Functional Test</value>
+                    </possibleValues>
+                    <multiple>false</multiple>
+                    <value>src</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <pluginParameter>plugin</pluginParameter>
+                    <mavenCommands>
+                        <mavenCommand>
+                            <key>js</key>
+                            <value>-Pjs</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>java</key>
+                            <value>-Pjava</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>html</key>
+                            <value>-Phtml</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>web</key>
+                            <value>-Pweb</value>
+                        </mavenCommand>
+                    </mavenCommands>
+                    <name>
+                        <value lang="en">Technology</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>src</key>
+                    <possibleValues>
+                        <value key="js">js</value>
+                        <value key="java">java</value>
+                        <value key="html">html</value>
+                        <value key="web">jsp/jsf</value>
+                    </possibleValues>
+                    <multiple>false</multiple>
+                    <value>js</value>
+                    <sort>false</sort>
+                    <show>false</show>
+                </parameter>
+                <parameter>
+                    <pluginParameter>plugin</pluginParameter>
+                    <mavenCommands>
+                        <mavenCommand>
+                            <key>true</key>
+                            <value>-DskipTests=true</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>false</key>
+                            <value>-DskipTests=false</value>
+                        </mavenCommand>
+                    </mavenCommands>
+                    <name>
+                        <value lang="en">Skip Unit Test</value>
+                    </name>
+                    <type>Boolean</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>skipTests</key>
+                    <multiple>false</multiple>
+                    <value>false</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+				<parameter>
+                    <pluginParameter>framework</pluginParameter>
+                    <mavenCommands>
+                        <mavenCommand>
+                            <key>showErrors</key>
+                            <value>-e</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>hideLogs</key>
+                            <value>-q</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>showDebug</key>
+                            <value>-X</value>
+                        </mavenCommand>
+                    </mavenCommands>
+                    <name>
+                        <value lang="en">Logs</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <key>logs</key>
+                    <possibleValues>
+                        <value key="showErrors">Show Errors</value>
+                        <value key="hideLogs">Hide Logs</value>
+                        <value key="showDebug">Show Debug</value>
+                    </possibleValues>
+                    <multiple>false</multiple>
+					<sort>false</sort>
+					<show>true</show>
+                    <value></value>
+                </parameter>
+            </parameters>
+        </configuration>
     </mojo>
 </mojos>

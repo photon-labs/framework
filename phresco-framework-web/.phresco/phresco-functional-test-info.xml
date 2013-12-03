@@ -2,7 +2,7 @@
 <mojos>
     <mojo>
 		<goal>functional-test-webdriver</goal>
-		<description>Goal which functionalTest-webdriver the HTML5-Jquery project</description>
+		<description>Goal which functionalTest-webdriver the Java WebService project</description>
 		<requiresDirectInvocation>false</requiresDirectInvocation>
 		<requiresProject>true</requiresProject>
 		<requiresReports>false</requiresReports>
@@ -59,7 +59,7 @@
 						<groupId>com.photon.phresco.commons</groupId>
 						<artifactId>phresco-commons</artifactId>
 						<type>jar</type>
-						<version>3.2.0.2000</version>
+						<version>3.1.0.7000</version>
 					</dependency>
 				</dependencies>
 				</dynamicParameter>
@@ -86,59 +86,57 @@
 					<value key="opera">Opera</value>
 					<value key="internetExplorer">Internet Explorer</value>
 					<value key="chrome">Chrome</value>
-					<value key="android">Android Webdriver</value>
-                    <value key="iPhone">iPhone Webdriver</value>
 				</possibleValues>
 				<multiple>false</multiple>
 				<value></value>
 				<sort>false</sort>
 				<show>true</show>
 			</parameter>
-			<parameter>
+	        <parameter>
+				<pluginParameter>framework</pluginParameter>
+				<mavenCommands>
+					<mavenCommand>
+						<key>showErrors</key>
+						<value>-e</value>
+					</mavenCommand>
+					<mavenCommand>
+						<key>hideLogs</key>
+						<value>-q</value>
+					</mavenCommand>
+					<mavenCommand>
+						<key>showDebug</key>
+						<value>-X</value>
+					</mavenCommand>
+				</mavenCommands>
 				<name>
-					<value lang="en">Resolution</value>
+					<value lang="en">Logs</value>
 				</name>
 				<type>List</type>
 				<required>false</required>
-				<editable>edit</editable>
-				<description></description>
-				<key>resolution</key>
+				<editable>true</editable>
+				<key>logs</key>
 				<possibleValues>
-					<value key="320x480">320x480</value>
-					<value key="1024x768">1024x768</value>
-					<value key="1280x800">1280x800</value>
-					<value key="1280x960">1280x960</value>
-					<value key="1280x1024">1280x1024</value>
-					<value key="1360x768">1360x768</value>
-					<value key="1440x900">1440x900</value>
-					<value key="1600x900">1600x900</value>
+					<value key="showErrors">Show Errors</value>
+					<value key="hideLogs">Hide Logs</value>
+					<value key="showDebug">Show Debug</value>
 				</possibleValues>
 				<multiple>false</multiple>
-				<value></value>
 				<sort>false</sort>
 				<show>true</show>
-			</parameter>
+				<value></value>
+            </parameter>
 		</parameters>
 	</configuration>
 	</mojo>
 	<mojo>
         <goal>functional-test-grid</goal>
-        <description>Goal which deploys the Html5-Jquery project</description>
+        <description>Goal which deploys the Java WebService project</description>
         <requiresDirectInvocation>false</requiresDirectInvocation>
         <requiresProject>true</requiresProject>
         <requiresReports>false</requiresReports>
         <aggregator>false</aggregator>
         <requiresOnline>false</requiresOnline>
         <inheritedByDefault>true</inheritedByDefault>
-        <implementation>
-           <dependency>
-               <groupId>com.photon.phresco.plugins</groupId>
-               <artifactId>java-phresco-plugin</artifactId>
-               <type>jar</type>
-               <version>3.2.0.2000</version>
-               <class>com.photon.phresco.plugins.java.JavaPlugin</class>
-           </dependency>
-       </implementation>
         <language>java</language>
         <instantiationStrategy>per-lookup</instantiationStrategy>
         <executionStrategy>once-per-session</executionStrategy>
@@ -189,7 +187,7 @@
 								<groupId>com.photon.phresco.commons</groupId>
 								<artifactId>phresco-commons</artifactId>
 								<type>jar</type>
-								<version>3.2.0.2000</version>
+								<version>3.1.0.7000</version>
                             </dependency>
                         </dependencies>
                     </dynamicParameter>
@@ -197,40 +195,49 @@
                     <editable>true</editable>
                     <key>environmentName</key>
                     <multiple>false</multiple>
+					<value></value>
                     <sort>false</sort>
                     <show>true</show>
-					<value></value>
                 </parameter>
-				<parameter>
-					<name>
-						<value lang="en">Resolution</value>
-					</name>
-					<type>List</type>
-					<required>false</required>
-					<editable>edit</editable>
-					<description></description>
-					<key>resolution</key>
-					<possibleValues>
-						<value key="320x480">320x480</value>
-						<value key="1024x768">1024x768</value>
-						<value key="1280x800">1280x800</value>
-						<value key="1280x960">1280x960</value>
-						<value key="1280x1024">1280x1024</value>
-						<value key="1360x768">1360x768</value>
-						<value key="1440x900">1440x900</value>
-						<value key="1600x900">1600x900</value>
-					</possibleValues>
-					<multiple>false</multiple>
-					<value></value>
+			    <parameter>
+                    <pluginParameter>framework</pluginParameter>
+                    <mavenCommands>
+                        <mavenCommand>
+                            <key>showErrors</key>
+                            <value>-e</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>hideLogs</key>
+                            <value>-q</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>showDebug</key>
+                            <value>-X</value>
+                        </mavenCommand>
+                    </mavenCommands>
+                    <name>
+                        <value lang="en">Logs</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <key>logs</key>
+                    <possibleValues>
+                        <value key="showErrors">Show Errors</value>
+                        <value key="hideLogs">Hide Logs</value>
+                        <value key="showDebug">Show Debug</value>
+                    </possibleValues>
+                    <multiple>false</multiple>
 					<sort>false</sort>
 					<show>true</show>
-				</parameter>
+                    <value></value>
+                </parameter>
             </parameters>
         </configuration>
     </mojo>
 	<mojo>
         <goal>functional-test-cucumber</goal>
-        <description>Goal which functional-test-cucumber the Html-5 project</description>
+        <description>Goal which functional-test-cucumber the java webservice project</description>
         <requiresDirectInvocation>false</requiresDirectInvocation>
         <requiresProject>true</requiresProject>
         <requiresReports>false</requiresReports>
@@ -287,7 +294,7 @@
 <groupId>com.photon.phresco.commons</groupId>
 <artifactId>phresco-commons</artifactId>
 <type>jar</type>
-<version>3.2.0.2000</version>
+<version>3.1.0.7000</version>
                             </dependency>
                         </dependencies>
                     </dynamicParameter>
@@ -320,12 +327,45 @@
                     <sort>false</sort>
                     <show>true</show>
                 </parameter>
+			    <parameter>
+                    <pluginParameter>framework</pluginParameter>
+                    <mavenCommands>
+                        <mavenCommand>
+                            <key>showErrors</key>
+                            <value>-e</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>hideLogs</key>
+                            <value>-q</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>showDebug</key>
+                            <value>-X</value>
+                        </mavenCommand>
+                    </mavenCommands>
+                    <name>
+                        <value lang="en">Logs</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <key>logs</key>
+                    <possibleValues>
+                        <value key="showErrors">Show Errors</value>
+                        <value key="hideLogs">Hide Logs</value>
+                        <value key="showDebug">Show Debug</value>
+                    </possibleValues>
+                    <multiple>false</multiple>
+					<sort>false</sort>
+					<show>true</show>
+                    <value></value>
+                </parameter>
             </parameters>
         </configuration>
     </mojo>
     <mojo>
         <goal>functional-test-capybara</goal>
-        <description>Goal which functional-test-capybara the Html-5 project</description>
+        <description>Goal which functional-test-capybara the Java webservice project</description>
         <requiresDirectInvocation>false</requiresDirectInvocation>
         <requiresProject>true</requiresProject>
         <requiresReports>false</requiresReports>
@@ -382,7 +422,7 @@
 <groupId>com.photon.phresco.commons</groupId>
 <artifactId>phresco-commons</artifactId>
 <type>jar</type>
-<version>3.2.0.2000</version>
+<version>3.1.0.7000</version>
                             </dependency>
                         </dependencies>
                     </dynamicParameter>
@@ -414,6 +454,39 @@
                     <value>firefox</value>
                     <sort>false</sort>
                     <show>true</show>
+                </parameter>
+				<parameter>
+                    <pluginParameter>framework</pluginParameter>
+                    <mavenCommands>
+                        <mavenCommand>
+                            <key>showErrors</key>
+                            <value>-e</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>hideLogs</key>
+                            <value>-q</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>showDebug</key>
+                            <value>-X</value>
+                        </mavenCommand>
+                    </mavenCommands>
+                    <name>
+                        <value lang="en">Logs</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <key>logs</key>
+                    <possibleValues>
+                        <value key="showErrors">Show Errors</value>
+                        <value key="hideLogs">Hide Logs</value>
+                        <value key="showDebug">Show Debug</value>
+                    </possibleValues>
+                    <multiple>false</multiple>
+					<sort>false</sort>
+					<show>true</show>
+                    <value></value>
                 </parameter>
             </parameters>
         </configuration>
