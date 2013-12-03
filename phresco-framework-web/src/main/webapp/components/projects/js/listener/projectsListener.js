@@ -119,6 +119,21 @@ define([], function() {
 								callback(response);
 							}	
 						} else {
+							if(response.responseCode === "PHR210043") {
+								$(".appCodeText").each(function(index, value){
+									var currentVal = $(value).val();
+									if(currentVal === response.data){
+										$(this).focus();
+										$(this).addClass('errormessage');
+										$(this).attr('placeholder', 'module name already exists');
+										return false;
+									}
+								});
+								$(appCodeTextObj).bind('input', function() {
+									$(this).removeClass("errormessage");
+									$(this).removeAttr("placeholder");
+								});
+							}
 							$(".msgdisplay").removeClass("success").addClass("error");
 							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
 							self.renderlocales(commonVariables.contentPlaceholder);	
