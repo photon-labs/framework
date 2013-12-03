@@ -1,0 +1,28 @@
+<environments>
+    <environment default="true" name="Production">
+        <Server name="Server Configuration">
+            <context>javawebserviceeshop</context>
+            <admin_username/>
+            <deploy_dir>D:/softwares/apache-tomcat-7.0.37-windows-x86/apache-tomcat-7.0.37/webapps/</deploy_dir>
+            <additional_context/>
+            <port>2020</port>
+            <admin_password/>
+            <version>7.0.x</version>
+            <type>Apache Tomcat</type>
+            <remoteDeployment>false</remoteDeployment>
+            <host>localhost</host>
+            <protocol>http</protocol>
+        </Server>
+        
+    <Database desc="" name="Database Configuration">
+            <version>5.5.1</version>
+            <port>3306</port>
+            <password/>
+            <type>MYSQL</type>
+            <host>localhost</host>
+            <driver>com.mysql.jdbc.Driver</driver>
+            <dbname>jwsdb</dbname>
+            <username>root</username>
+        </Database>
+    </environment>
+</environments>
