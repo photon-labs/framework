@@ -10,7 +10,7 @@
     <groupId>com.photon.phresco.framework</groupId>
     <artifactId>phresco-framework</artifactId>
     <name>phresco-framework</name>
-    <version>3.2.0.2004-SNAPSHOT</version>
+    <version>3.2.0.3001-SNAPSHOT</version>
     <packaging>jar</packaging>
     <url>http://www.phresco.org</url>
     <description>Phresco Framework API Module</description>
