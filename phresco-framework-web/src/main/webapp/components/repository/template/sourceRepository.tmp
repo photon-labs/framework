@@ -1,0 +1,310 @@
+<div id="sourceRepoPage">
+	<div id="test">
+	<section class="content_main">
+    	<div class="tree_view">
+        	<ul class="tree">
+                        <li>
+                          <a href="#" role="branch" class="tree-toggle" data-toggle="branch">https://insight.photoninfotech.com/svn/repo</a>
+                          <ul class="branch in">
+                              <li>
+                              	<a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">trunck</a>
+                                  <ul class="branch">
+                                    <li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">Bootstrap-Tree</a>
+                                    	<ul class="branch ul_margin">
+                                            <li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
+                                            <li><span class="build_repo_arrow"><a href="#">source</a></span></li>
+                                            <li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">ajaxPager</a>
+                                    	<ul class="branch ul_margin">
+                                            <li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
+                                            <li><span class="build_repo_arrow"><a href="#">source</a></span></li>
+                                            <li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">CFQueryReader</a>
+                                    	<ul class="branch ul_margin">
+                                            <li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
+                                            <li><span class="build_repo_arrow"><a href="#">source</a></span></li>
+                                            <li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
+                                        </ul>
+                                    </li>
+                                  </ul>
+                              </li>
+                              <li>
+                              	<a href="#" role="branch" class="tree-toggle" data-toggle="branch">branches</a>
+                                  <ul class="branch in">
+                                    <li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">agra</a>
+                                    	<ul class="branch ul_margin">
+                                           <li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
+                                            <li><span class="build_repo_arrow"><a href="#">source</a></span></li>
+                                            <li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">agra-macys</a>
+                                    	<ul class="branch ul_margin">
+                                            <li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
+                                            <li><span class="build_repo_arrow"><a href="#">source</a></span></li>
+                                            <li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">boston</a>
+                                    	<ul class="branch ul_margin">
+                                            <li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
+                                            <li><span class="build_repo_arrow"><a href="#">source</a></span></li>
+                                            <li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">release</a>
+                                    	<ul class="branch ul_margin">
+                                            <li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
+                                            <li><span class="build_repo_arrow"><a href="#">source</a></span></li>
+                                            <li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
+                                        </ul>
+                                    </li>
+                                  </ul>
+                              </li>
+                              <li>
+                              	<a href="#" role="branch" class="tree-toggle" data-toggle="branch">tags</a>
+                                  <ul class="branch in">
+                                    <li>
+                                    	<a href="#" role="branch" class="tree-toggle" data-toggle="branch">1501</a>
+                                        	<ul class="branch in">
+                                                <li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">archtypes</a>
+                                                	<ul class="branch ul_margin">
+                                                        <li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
+                                                        <li><span class="build_repo_arrow"><a href="#">source</a></span></li>
+                                                        <li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
+                                                    </ul>
+                                                </li>
+                                                <li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">commons</a>
+                                                	<ul class="branch ul_margin">
+                                                        <li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
+                                                        <li><span class="build_repo_arrow"><a href="#">source</a></span></li>
+                                                        <li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
+                                                    </ul>
+                                                </li>
+                                                <li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">framework</a>
+                                                	<ul class="branch ul_margin">
+                                                        <li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
+                                                        <li><span class="build_repo_arrow"><a href="#">source</a></span></li>
+                                                        <li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
+                                                    </ul>
+                                                </li>
+                                                <li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">libraries</a>
+                                                	<ul class="branch ul_margin">
+                                                        <li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
+                                                        <li><span class="build_repo_arrow"><a href="#">source</a></span></li>
+                                                        <li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
+                                                    </ul>
+                                                </li>
+                                                <li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">phresco-pom</a>
+                                                	<ul class="branch ul_margin">
+                                                        <li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
+                                                        <li><span class="build_repo_arrow"><a href="#">source</a></span></li>
+                                                        <li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
+                                                    </ul>
+                                                </li>
+                                                <li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">service</a>
+                                                	<ul class="branch ul_margin">
+                                                        <li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
+                                                        <li><span class="build_repo_arrow"><a href="#">source</a></span></li>
+                                                        <li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
+                                                    </ul>
+                                                </li>
+                                                <li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">plugins</a>
+                                                	<ul class="branch ul_margin">
+                                                        <li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
+                                                        <li><span class="build_repo_arrow"><a href="#">source</a></span></li>
+                                                        <li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                       </li>
+                                  </ul>
+                              </li>
+                          </ul>
+                     </li>
+               </ul>
+        </div>
+        <div class="file_view">
+        	<div class="files_list"><span style="vertical-align: text-top;">Files</span>
+            	<div class="flt_right">
+                    <input type="submit" name="rep_release" data-i18n="[value]repository.build.release" class="btn btn_style release_btn">
+                    <input type="submit" name="rep_create" data-i18n="[value]repository.build.create" class="btn btn_style createrepo_btn">
+                </div>
+             </div>
+             <table class="filerepo_list" cellpadding="0" cellspacing="0" border="0" width="100%">
+             	<tr>
+                	<td><img src="themes/default/images/Phresco/folder.png"></td>
+                    <td>agra</td>
+                    <td><img src="themes/default/images/Phresco/delete_row.png"></td>
+                </tr>
+                <tr>
+                	<td><img src="themes/default/images/Phresco/folder.png"></td>
+                    <td>agra</td>
+                    <td><img src="themes/default/images/Phresco/delete_row.png"></td>
+                </tr>
+                <tr>
+                	<td><img src="themes/default/images/Phresco/folder.png"></td>
+                    <td>agra</td>
+                    <td><img src="themes/default/images/Phresco/delete_row.png"></td>
+                </tr>
+                <tr>
+                	<td><img src="themes/default/images/Phresco/folder.png"></td>
+                    <td>agra</td>
+                    <td><img src="themes/default/images/Phresco/delete_row.png"></td>
+                </tr>
+             </table>
+        </div>
+        <div id="rep_release" class="dyn_popup hideContent">
+        	<table>
+            	<tr>
+                	<td>Version</td>
+                    <td>Tag Name</td>
+                </tr>
+                <tr>
+                	<td><input type="text" style="margin-right:10px;"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                	<td><input type="checkbox">Deploy</td>
+                    <td>Enviornment</td>
+                </tr>
+                <tr>
+                	<td></td>
+                	<td>
+                    	<select>
+                            <option>Select</option>
+                        </select>
+                    </td>
+                </tr>
+             </table>
+             <div class="flt_right">
+             	<input type="button" value="Execute" class="btn btn_style">
+                <input type="button" value="Close" class="btn btn_style dyn_popup_close">
+             </div>
+        </div>
+        
+        <div id="rep_create" class="dyn_popup popup_bg hideContent">
+        	 <div class="bs-docs-example repository_tabdiv">
+                <ul class="nav nav-tabs" id="myTab">
+                    <li class="active"><a data-toggle="tab" href="#branch">Branch</a></li>
+                    <li><a data-toggle="tab" href="#tags">Tags</a></li>
+                </ul>
+            </div>
+            <div class="tab-content" id="myTabContent">
+              <div id="branch" class="tab-pane fade active in">
+              	<table>
+                	<tr>
+                    	<td>From Branch/Trunck</td>
+                        <td>Version</td>
+                    </tr>
+                    <tr>
+                    	<td><input type="text" style="margin-right:10px" disabled="disabled"></td>
+                        <td><input type="text"  disabled="disabled"></td>
+                    </tr>
+                    <tr>
+                    	<td>Branch To</td>
+                        <td>Version</td>
+                    </tr>
+                    <tr>
+                    	<td><input type="text"></td>
+                        <td><input class="ver_popup" type="text"><img class="dropdown_icon" src="themes/default/images/Phresco/dropdown_icon.png"></td>
+                    </tr>
+                    <tr>
+                    	<td colspan="2"><textarea></textarea></td>
+                    </tr>
+                    <tr>
+                    	<td><input type="checkbox">Download to Workspace</td>
+                        <td class="flt_right">
+                        	<input type="button" value="Create" class="btn btn_style">
+                            <input type="button" value="Close" class="btn btn_style dyn_popup_close">
+                        </td>
+                    </tr>
+                </table>
+             </div>
+             <div id="tags" class="tab-pane fade ">
+              	<table>
+                	<tr>
+                    	<td>From Branch/Trunck</td>
+                        <td>Version</td>
+                    </tr>
+                    <tr>
+                    	<td><input type="text" style="margin-right:10px" disabled="disabled"></td>
+                        <td><input type="text"  disabled="disabled"></td>
+                    </tr>
+                    <tr>
+                    	<td>Tags To</td>
+                    </tr>
+                    <tr>
+                    	<td><input type="text"></td>
+                    </tr>
+                    <tr>
+                    	<td colspan="2"><textarea></textarea></td>
+                    </tr>
+                    <tr>
+                    	<td><input type="checkbox">Download to Workspace</td>
+                        <td class="flt_right">
+                        	<input type="button" value="Create" class="btn btn_style">
+                            <input type="button" value="Close" class="btn btn_style dyn_popup_close">
+                        </td>
+                    </tr>
+                </table>
+             </div>
+          </div>
+       </div>
+       <div id="version_popup" class="dyn_popup hideContent">
+            <table>
+            	<tr>
+                	<td> Major </td>
+                    <td> Minor </td>
+                    <td> Fixed </td>
+                </tr>
+                <tr>
+                	<td>
+                        <select>
+                               <option>20</option>
+                        </select>
+                    </td>
+                    <td>
+                    	<select>
+                               <option>20</option>
+                        </select>
+                    </td>
+                    <td>
+                    	<select>
+                               <option>20</option>
+                        </select>
+                    </td>
+                </tr>
+				<tr>
+					<td>Build Type</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+                        <select class="type_build">
+                               <option>Sprint</option>
+                        </select>
+                    </td>
+				</tr>
+				<tr>
+					<td>Week Start</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+                        <select class="type_build">
+                               <option>30</option>
+                        </select>
+                    </td>
+				</tr>
+            </table>
+            <div align="right"><input type="button" class="btn btn_style dyn_popup_close_ok" value="OK"></div>     
+        </div>
+   	</section>
+	</div>
+	<section class="content_end" style="display:none;">
+		<div class="msgdisplay"></div>
+	</section>
+</div>

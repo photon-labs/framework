@@ -99,6 +99,8 @@ var commonVariables = {
 	downloads : "downloads",
 	
 	dashboard : "dashboard",
+	buildRepo : "buildRepo",
+	sourceRepo : "sourceRepo",
 	clearInterval : {},
 	
 	customerTheme : null,

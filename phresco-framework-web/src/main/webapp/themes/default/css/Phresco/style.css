@@ -5414,6 +5414,198 @@ textarea[name="regex"] {
 }
 
 
+/* *************************************************************** STYLES FOR reposiyory tab *********************************************************************** */
+
+.tree_view {
+	width:22%;
+	height:670px;
+	overflow:auto;
+	border:1px solid #cecece;
+	float:left;
+	border-radius:6px;
+	margin-right: 15px;
+}
+
+.file_view {
+	width:76%;
+	height:670px;
+	border:1px solid #cecece;
+	float:left;
+	border-radius:6px;
+}
+
+.files_list {
+	background:background: #f4f4f4; /* Old browsers */
+	background: -moz-linear-gradient(top,  #f4f4f4 0%, #e3e3e3 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f4f4f4), color-stop(100%,#e3e3e3)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #f4f4f4 0%,#e3e3e3 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #f4f4f4 0%,#e3e3e3 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #f4f4f4 0%,#e3e3e3 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #f4f4f4 0%,#e3e3e3 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f4f4f4', endColorstr='#e3e3e3',GradientType=0 ); /* IE6-9 */
+	color: #E8795B;
+    height: 28px;
+    padding: 8px 4px 8px 8px;
+	border-bottom: 1px solid #CECECE;
+	border-radius: 6px 6px 0 0;
+}
+
+#rep_release input[type="text"], #rep_create input[type="text"] {
+	width:164px;
+}
+
+#rep_release select, #rep_create select {
+	width:178px;
+}
+
+#rep_create textarea {
+	width: 96%;
+}
+
+#rep_release table tr td input[type="checkbox"], #rep_create table tr td input[type="checkbox"]{
+	margin: 0 5px 3px 0;
+}
+
+.repository_tabdiv ul li a{
+	background:background: #f4f4f4; /* Old browsers */
+	background: -moz-linear-gradient(top,  #f4f4f4 0%, #e3e3e3 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f4f4f4), color-stop(100%,#e3e3e3)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #f4f4f4 0%,#e3e3e3 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #f4f4f4 0%,#e3e3e3 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #f4f4f4 0%,#e3e3e3 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #f4f4f4 0%,#e3e3e3 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f4f4f4', endColorstr='#e3e3e3',GradientType=0 ); /* IE6-9 */
+	color:#000;
+    padding: 5px;
+    text-align: center;
+    width: 75px;
+	border-radius: 8px 8px 0 0;
+	border:1px solid #DDDDDD;
+}
+
+.repository_tabdiv ul li a:hover {
+	border:1px solid #DDDDDD;
+	outline: 0 none;
+}
+
+.repository_tabdiv .nav li.active a, .repository_tabdiv .nav li.focus a, .repository_tabdiv a:focus {
+    outline: 0 none !important;
+	background:#FFF;
+}
+
+.repository_tabdiv .nav li {
+    padding-right: 8px;
+}
+
+.tree_view ul {
+	margin-left:15px;
+}
+
+
+.file_view .filerepo_list tr td {
+	padding: 5px 0 5px 8px;
+	border-bottom:1px solid #e2e2e2;
+}
+
+.file_view .filerepo_list tr td:last-child img {
+	margin-right: 10px;
+}
+
+.filerepo_list tr td:first-child {
+	width:16px;
+}
+
+.filerepo_list tr td:last-child {
+	text-align:right;
+}
+
+#version_popup {
+	padding:7px;
+	z-index:2;
+}
+
+#version_popup select{
+	width:65px;
+	margin-right:7px;
+	margin-bottom:0;
+}
+
+#version_popup tr:last-child td:last-child select {
+	margin-right:0px !important;
+}
+
+#version_popup input[type="button"] {
+	padding: 5px 8px !important;
+}
+
+#version_popup table {
+	margin-bottom:7px !important;
+}
+
+#version_popup .type_build {
+	width:213px;
+}
+
+#rep_create .tab-content {
+	border:1px solid #DDDDDD;
+	border-top:none;
+	border-radius:5px;
+	padding: 6px;
+}
+
+.build_repo_download {
+	margin: -4px 0 0;
+	cursor:pointer;
+}
+
+.build_repo_font {
+	font-weight:bold;
+}
+
+.build_repo_table tr td {
+	padding:8px;
+}
+
+.ul_margin {
+	margin-top: 6px !important;
+}
+
+.build_repo_tab {
+	background:background: #f4f4f4; /* Old browsers */
+	background: -moz-linear-gradient(top,  #f4f4f4 0%, #e3e3e3 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f4f4f4), color-stop(100%,#e3e3e3)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #f4f4f4 0%,#e3e3e3 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #f4f4f4 0%,#e3e3e3 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #f4f4f4 0%,#e3e3e3 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #f4f4f4 0%,#e3e3e3 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f4f4f4', endColorstr='#e3e3e3',GradientType=0 ); /* IE6-9 */
+	border-radius: 8px 8px 0 0;
+}
+
+.build_repo_tab ul li a {
+	background:#EF7B43;
+	color:#fff;
+    padding: 8px;
+    text-align: center;
+	border-radius: 8px 8px 0 0;
+	border:1px solid #DDDDDD;
+	margin: 10px 0 0 10px;
+	font-size:13px;
+}
+
+.build_repo_tab ul li a:hover {
+	border:1px solid #DDDDDD;
+	outline: 0 none;
+	background:#EF7B43;
+	color:#fff;
+}
+
+.build_repo_tab .nav li.active a, .build_repo_tab .nav li.focus a, .build_repo_tab a:focus {
+    outline: 0 none !important;
+	background:#FFF;
+}
+
+
 
 
 /***************************** STYLES FOR THE TABLE SORTING ENDS *************************************/

@@ -10,6 +10,7 @@ define(["testResult/listener/testResultListener"], function() {
 		testResultListener : null,
 		requestBody : {},
 		onShowHideConsoleEvent : null,
+		deleteTestCaseEvent : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -26,7 +27,12 @@ define(["testResult/listener/testResultListener"], function() {
 				self.onShowHideConsoleEvent = new signals.Signal();
 			}
 			self.onShowHideConsoleEvent.add(self.testResultListener.showHideConsole, self.testResultListener);
-
+			
+			if (self.deleteTestCaseEvent === null) {
+				self.deleteTestCaseEvent = new signals.Signal();
+			}
+			self.deleteTestCaseEvent.add(self.testResultListener.deleteTestCase, self.testResultListener);
+			
 			self.registerEvents();
 		},
 
@@ -57,6 +63,16 @@ define(["testResult/listener/testResultListener"], function() {
 				var returnVal = "<select name='status'> <option "+ sectedText +" disabled value=''>Select Status</option> <option value='success'"+ successStatus +">Success</option> <option value='failure'"+ failStatus +">Failure</option><option value='notApplicable'" +notAppStatus +">Not Applicable</option><option value='blocked'" + blockStatus+">Blocked</option>";
 				
 				return returnVal;
+			});
+			
+			Handlebars.registerHelper('uniqueTestCaseId', function(testCaseId) {
+				var str = testCaseId;
+				if(!self.isBlank(str)) {
+					str = self.specialCharValidation(str);
+					str = str.replace(/[^a-zA-Z 0-9\-\_]+/g, '');
+					str = str.replace(/\s+/g, '');
+				}
+				return str;
 			});
 			
 		},
@@ -237,6 +253,19 @@ define(["testResult/listener/testResultListener"], function() {
 						
 					});
 				});
+			});
+			
+			$("a[namedel=deleteTestCase]").click(function() {
+				var temp = $(this).attr('name');
+				self.openccpl(this, $(this).attr('name'));
+				$('#'+temp).show();
+				$('input[name="delTestCase"]').unbind();
+				$('input[name="delTestCase"]').click(function() {
+					var testCaseName = $(this).closest("div").parent("div").attr("testCaseName");
+					$('input[name="delTestCase"]').closest("div");
+					var currentTestsuiteName = commonVariables.testSuiteName;
+					self.deleteTestCaseEvent.dispatch(testCaseName, currentTestsuiteName);
+				});	
 			});
 			
 			$('.log').unbind("click");

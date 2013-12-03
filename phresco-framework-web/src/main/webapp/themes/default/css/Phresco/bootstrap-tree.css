@@ -1,0 +1,67 @@
+/*!
+ * Bootstrap Tree v0.3
+ *
+ * Copyright 2012 Cutters Crossing
+ * Bootstrap is Copyright 2012 Twitter, Inc.
+ * Licensed under the Apache License v2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Designed and built with all the love in the world by @cutterbl.
+ */
+ 
+.tree,
+.branch {
+  list-style: none outside none;
+}
+.branch {
+  postion: relative;
+  height: 0;
+  margin: 0 0 0 15px;
+  overflow: hidden;
+}
+.branch.in {
+  height: auto;
+}
+
+.tree_view a:link,
+.tree_view a:visited {
+  color: #000;
+  text-decoration: none;
+}
+
+.tree_view a:hover, .tree_view a:active, .tree_view a:focus {
+	color:#ED7940;
+	cursor: pointer;
+}
+
+/* Work in progress */
+a.tree-toggle-icon-only {
+  height: 16px;
+  width: 20px;
+  line-height: 16px;
+  vertical-align: middle;
+  display: inline-block;
+  background: url(../../images/Phresco/plus_minus_icons.png) no-repeat;
+  background-position: 0 -21px;
+}
+
+a.tree-toggle {
+  height: 16px;
+  padding-left: 20px;
+  line-height: 16px;
+  vertical-align: middle;
+  display: inline-block;
+  background: url(../../images/Phresco/plus_minus_icons.png) no-repeat;
+  background-position: 0 -21px;
+  margin-top: 8px;
+}
+a.tree-toggle.closed, a.tree-toggle-icon-only.closed {
+  background-position: 0 1px;
+}
+
+.build_repo_arrow {
+	background-image:url(../../images/Phresco/build_repo_tree_active.png);
+	background-repeat:no-repeat;
+	background-position: left center;
+	padding: 0 20px;
+}

@@ -401,6 +401,9 @@ public interface ResponseCodes {
 	String PHRQ410008 = "PHRQ410008"; // failed to update test case
 	String PHRQ400007 = "PHRQ400007"; // TestCase Validation completed successfully
 	String PHRQ410009 = "PHRQ410009"; // failed to validate test case
+	String PHRQ400008 = "PHRQ400008"; // TestSuite deleted successfully
+	String PHRQ400009 = "PHRQ400009"; // TestCase deleted successfully
+	String PHRQ410010 = "PHRQ410010"; // failed to delete test cases
 	
 	/*
 	 * Performance
