@@ -538,6 +538,16 @@ define(["ci/continuousDeliveryConfigure"], function(ContinuousDeliveryConfigure)
 					}
 				});
 				
+				$.mockjax({
+					url: commonVariables.webserviceurl + commonVariables.ci + "/pipeline?projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&name=contDelivery&customerId=photon",						
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR810042","data":false,"status":"success"});
+					}
+				});
+				
 				$("input[name=continuousDeliveryName]").val("contDelivery");
 				console.info("$(input[type=submit])========> length  jobTemplatesTest ",$(".content_end").find("input[type=submit][value=Add]").length);
 				$(".content_end").find("input[type=submit][value=Add]").click();

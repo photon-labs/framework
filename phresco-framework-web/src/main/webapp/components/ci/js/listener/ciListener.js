@@ -71,7 +71,7 @@ define([], function() {
 				var sort = $(commonVariables.contentPlaceholder).find('#sortable2');
 				sort.empty();
 				$('input[name=continuousDeliveryName]').val(data.name);
-				$('input[name=continuousDeliveryName]').prop("readonly",true);
+				$('input[name=continuousDeliveryName]').attr('oldName', data.name);
 				$('select[name=environments]').val(data.envName);
 				$.each(data.jobs, function(key, value) {
 					var id = value.appName + value.templateName;
@@ -196,7 +196,8 @@ define([], function() {
 				// update the continuos delivery with all the drag and dropped job templates
 				header.requestMethod = "PUT";
 				header.requestPostBody = JSON.stringify(ciRequestBody);
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/update" + "?customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+appDir + "&userId=" +userId;
+				var oldName = $('input[name=continuousDeliveryName]').attr('oldName');
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/update" + "?customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+appDir + "&userId=" +userId + "&oldname=" + oldName ;
 			}  else if (action === "getBuilds") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/builds?projectId="+projectId+"&name="+ciRequestBody.jobName+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName + "&customerId=" + customerId;
@@ -242,6 +243,9 @@ define([], function() {
 			} else if (action === "getConfluence") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/confluence";
+			} else if (action === "pipeline") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/pipeline?projectId=" + projectId + "&appDirName=" + appDir + "&name=" + ciRequestBody.name + "&customerId="+ customerId;
 			}
 
 			return header;
@@ -441,29 +445,28 @@ define([], function() {
 			var self = this;
 			var ciRequestBody = {},jobName;
 			ciRequestBody.data = obj.closest("form").serialize();
-			if(self.cloneValidation()) {
-				self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'createClone'), function (response) {
-					self.loadContinuousDeliveryView(response);
-				});
-			}
-		},
-		
-		cloneValidation: function(obj) {
-			$('#errMsg').html('');
-			var self=this;
-			var status = true;
 			var name = $("input[name=cloneName]").val();
-			if(name === "" || name === undefined) {				
+			if(self.isBlank(name)) {
+				$('#errMsg').html('');
 				$("input[name='cloneName']").focus();
 				$("input[name='cloneName']").attr('placeholder','Enter Name');
 				$("input[name='cloneName']").addClass("errormessage");
 				$("input[name='ncloneNameame']").bind('keypress', function() {
 					$(this).removeClass("errormessage");
 				});
-				status = false;				
+			} else if(!self.isBlank(name)) {
+				ciRequestBody.name = name;
+				self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'pipeline'), function (response) {
+					if (response.data === true || response.data === 'true') {
+						var msg = name+ " " + commonVariables.api.error[response.responseCode];
+						commonVariables.api.showError(msg ,"error", true, true, true);
+					} else {
+						self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'createClone'), function (response) {
+							self.loadContinuousDeliveryView(response);
+						});
+					}
+				});
 			}
-			
-			return status;
 		},
 		
 		validate : function (callback) {
@@ -1613,9 +1616,7 @@ define([], function() {
 					ciRequestBody.data = $('#jonConfiguration :input[name!=parameterValue]').serialize()+"&appDirName="+appDirName+"&testAction="+testAction+moduleParam;
 					ciRequestBody.jsondata = json;
 					
-					self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'writeJson'), function (response) {
-						
-					});
+					self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'writeJson'), function (response) {});
 				} else {
 					emptyFound = true;
 				}
@@ -1890,66 +1891,77 @@ define([], function() {
 		saveContinuousDelivery : function (thisObj, callback) {
 			var self = this;
 			var contDeliveryName = $("[name=continuousDeliveryName]").val();
+			var oldName = $("[name=continuousDeliveryName]").attr('oldname');
 			var envName = $("select[name=environments]").val();
 			var sortable2LiObj = $("#sortable2 li[temp=ci]");
 			var sortable2Obj = $("#sortable2");
 			var name = [];
 			if(!self.isBlank(contDeliveryName) && $(sortable2LiObj).length !== 0) {				
 				var hasError = false;
-				$(sortable2LiObj).each(function(index) {
-					var thisAnchorElem = $(this).find('a');
-					var thisTemplateJsonData = $(thisAnchorElem).data("templateJson");
-					var thisJobJsonData = $(thisAnchorElem).data("jobJson");
-					var thisAppName = $(thisAnchorElem).attr("appname");
-					// open the popup and ask the user to input the data, Once the popup is opened all the data will be validates
-					if (self.isBlank(thisJobJsonData)) {
-						self.showConfigureJob(thisAnchorElem);
-						hasError = true;
-						return false;
-					} else {					
-						// all the input text box should not be empty
-						if (self.isBlank(thisJobJsonData.jobName)) {
-							self.showConfigureJob(thisAnchorElem);
-							hasError = true;
-							return false;
-						} 
-					}
-					name.push(thisJobJsonData.jobName);
-				});
 				var ciRequestBody = {};
-				ciRequestBody.jobName =name;
-				ciRequestBody.flag =$(thisObj).val();
-				self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'jobValidation'), function (response) {
-					if(response.responseCode === "PHR810031") {
-						var msg = response.data + commonVariables.api.error[response.responseCode];
+				ciRequestBody.name =contDeliveryName;
+				self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'pipeline'), function (response) {
+					if ((response.data === true || response.data === 'true') && (oldName !== contDeliveryName || oldName === '')) {
+						var msg = contDeliveryName+ " " + commonVariables.api.error[response.responseCode];
 						commonVariables.api.showError(msg ,"error", true, true, true);
 						hasError = true;
 						return false;
-					} 
-
-					if(!hasError) {
-						var jobs = [];
-						var contDelivery = {};
-						// Upstream and downstream config auto population goes here
-						self.streamConfig(sortable2Obj, function() {
-							// construct the job json data here once all the data are validated
-							$(sortable2LiObj).each(function(index) {
-								var thisAnchorElem = $(this).find('a');
-								var thisTemplateJsonData = $(thisAnchorElem).data("templateJson");
-								var thisJobJsonData = $(thisAnchorElem).data("jobJson");
-								jobs.push(thisJobJsonData);
-							});
+					} else {
+						$(sortable2LiObj).each(function(index) {
+							var thisAnchorElem = $(this).find('a');
+							var thisTemplateJsonData = $(thisAnchorElem).data("templateJson");
+							var thisJobJsonData = $(thisAnchorElem).data("jobJson");
+							var thisAppName = $(thisAnchorElem).attr("appname");
+							// open the popup and ask the user to input the data, Once the popup is opened all the data will be validates
+							if (self.isBlank(thisJobJsonData)) {
+								self.showConfigureJob(thisAnchorElem);
+								hasError = true;
+								return false;
+							} else {					
+								// all the input text box should not be empty
+								if (self.isBlank(thisJobJsonData.jobName)) {
+									self.showConfigureJob(thisAnchorElem);
+									hasError = true;
+									return false;
+								} 
+							}
+							name.push(thisJobJsonData.jobName);
 						});
-						
-						contDelivery.name = contDeliveryName;
-						contDelivery.envName = envName;
-						contDelivery.jobs = jobs;
-
-						callback(contDelivery);
+						var ciRequestBody = {};
+						ciRequestBody.jobName =name;
+						ciRequestBody.flag =$(thisObj).val();
+						self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'jobValidation'), function (response) {
+							if(response.responseCode === "PHR810031") {
+								var msg = response.data + commonVariables.api.error[response.responseCode];
+								commonVariables.api.showError(msg ,"error", true, true, true);
+								hasError = true;
+								return false;
+							} 
+		
+							if(!hasError) {
+								var jobs = [];
+								var contDelivery = {};
+								// Upstream and downstream config auto population goes here
+								self.streamConfig(sortable2Obj, function() {
+									// construct the job json data here once all the data are validated
+									$(sortable2LiObj).each(function(index) {
+										var thisAnchorElem = $(this).find('a');
+										var thisTemplateJsonData = $(thisAnchorElem).data("templateJson");
+										var thisJobJsonData = $(thisAnchorElem).data("jobJson");
+										jobs.push(thisJobJsonData);
+									});
+								});
+								
+								contDelivery.name = contDeliveryName;
+								contDelivery.envName = envName;
+								contDelivery.jobs = jobs;
+		
+								callback(contDelivery);
+							}
+						});
 					}
 				});
-				
-			} else if(self.isBlank(contDeliveryName)){
+			} else if(self.isBlank(contDeliveryName)) {
 				$("[name=continuousDeliveryName]").focus();
 				$("[name=continuousDeliveryName]").attr('placeholder','Enter Name');
 				$("[name=continuousDeliveryName]").addClass("errormessage");
@@ -2135,7 +2147,7 @@ define([], function() {
 			}
 		},
 		
-		sortableTwohold : function(){
+		sortableTwohold : function(obj){
 			var self = this;
 			self.downStreamCriteria();
 			self.lastChild();

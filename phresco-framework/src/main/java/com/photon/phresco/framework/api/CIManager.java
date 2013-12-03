@@ -245,7 +245,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	public List<CIJob> getOldJobs(String projectId, ContinuousDelivery continuousDelivery, String appDirName, String globalInfo, String status) throws PhrescoException;
+	public List<CIJob> getOldJobs(String projectId, String name, String appDirName, String globalInfo, String status) throws PhrescoException;
 
 	/**
 	 * @param ciJob

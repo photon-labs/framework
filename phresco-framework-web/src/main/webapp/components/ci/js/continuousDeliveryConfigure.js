@@ -271,8 +271,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 						self.sortableTwoReceive.dispatch(ui);
 					},
 					
-					update: function() {
-						self.sortableTwoHold.dispatch();
+					update: function( event, ui ) {
+						self.sortableTwoHold.dispatch(ui);
 					}
 				}); 
 			});
@@ -334,7 +334,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 	   				});
    				}
    			
-   				if ( $(this).val() === 'Update') {
+   				if ($(this).val() === 'Update') {
 	   				self.onSaveEvent.dispatch(this, function(editJobParams) {
 	   					self.ciRequestBody = editJobParams;
 	   					commonVariables.showloading = true;

@@ -326,8 +326,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateJob(@Context HttpServletRequest request, ContinuousDelivery continuousDelivery, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_USERID) String userId)
+			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_OLDNAME)String oldname)
 	throws PhrescoException, ClientProtocolException, IOException, JSONException {
+		String thisName = continuousDelivery.getName();
+		if (StringUtils.isNotEmpty(oldname) && (!thisName.equalsIgnoreCase(oldname))) {
+			thisName = oldname;
+		}
 		ResponseInfo<CIJobStatus> responseData = new ResponseInfo<CIJobStatus>();
 		boolean updateJob = false;
 		CIJobStatus status = null;
@@ -345,7 +349,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
 			}
-			List<CIJob> oldJobs = ciManager.getOldJobs(projectId, continuousDelivery, appDir, globalInfo, READ);
+			List<CIJob> oldJobs = ciManager.getOldJobs(projectId, thisName, appDir, globalInfo, READ);
 			tempCiJobs.addAll(oldJobs);
 
 			for (CIJob ciJob : newJobs) {
@@ -391,7 +395,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 					
 				} 
 			}
-			boolean clearContinuousDelivery = ciManager.clearContinuousDelivery(continuousDelivery.getName(), projectId, appDir, "", WRITE);
+			boolean clearContinuousDelivery = ciManager.clearContinuousDelivery(thisName, projectId, appDir, "", WRITE);
 			if(clearContinuousDelivery) {
 				continuousDelivery.setJobs(tempJobs);
 			}
@@ -405,7 +409,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 						}
 					}
 				}
-				status = ciManager.deleteJobs(appDir, oldJobs, projectId, continuousDelivery.getName());
+				status = ciManager.deleteJobs(appDir, oldJobs, projectId, thisName);
 			}
 			if (StringUtils.isEmpty(appDir)) {
 				copyGlobalInfoFile(customerId, projectId);
@@ -1037,6 +1041,40 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
 			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810036);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			.build();
+		}
+	}
+	
+	@GET
+	@Path("/pipeline")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response PipelineValidation(@QueryParam(REST_QUERY_NAME) String pipelineName, @QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		ResponseInfo<Boolean> finalOutput = null;
+		boolean nameExist = false;
+		try {
+		List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+		String globalInfo = "";
+		if (CollectionUtils.isNotEmpty(appInfos)) {
+			globalInfo = appInfos.get(0).getAppDirName();
+		}
+		CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+		List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
+		ProjectDelivery projectDelivery = Utility.getProjectDelivery(projectId, ciJobInfo);
+		if (projectDelivery != null) {
+			List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
+			for (ContinuousDelivery continuousDelivery : continuousDeliveries) {
+				if (continuousDelivery.getName().equalsIgnoreCase(pipelineName)) {
+					nameExist = true;
+				}
+			}
+		}
+		finalOutput = responseDataEvaluation(responseData, null, nameExist, RESPONSE_STATUS_SUCCESS, PHR810042);
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+		} catch (PhrescoException e) {
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810042);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}

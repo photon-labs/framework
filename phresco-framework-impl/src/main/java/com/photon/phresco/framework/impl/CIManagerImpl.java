@@ -1005,10 +1005,10 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		return null;
 	}
 
-	public List<CIJob> getOldJobs(String projectId, ContinuousDelivery continuousDelivery, String appDirName, String globalInfo, String status) throws PhrescoException {
+	public List<CIJob> getOldJobs(String projectId, String name, String appDirName, String globalInfo, String status) throws PhrescoException {
 		List<ProjectDelivery> ciJobInfo = getCiJobInfo(appDirName, globalInfo, status);
 		if (CollectionUtils.isNotEmpty(ciJobInfo)) {
-			return Utility.getJobs(continuousDelivery.getName(), projectId, ciJobInfo);
+			return Utility.getJobs(name, projectId, ciJobInfo);
 		}
 		return null;
 	}
