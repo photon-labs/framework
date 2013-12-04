@@ -1213,10 +1213,6 @@ ul.nav li.dropdown:hover > .test_options{
     padding-right: 8px;
 }
 
-.repository_tabdiv ul li .repo_tab{
-	margin:-20px 0px 0px;
-}
-
 .repository_tabdiv ul li input[type="checkbox"] {
 	margin: 0 0 -10px 2px !important;
 }
@@ -5491,15 +5487,6 @@ textarea[name="regex"] {
 .repository_tabdiv ul li a:hover {
 	border:1px solid #DDDDDD;
 	outline: 0 none;
-}
-
-.repository_tabdiv .nav li.active a, .repository_tabdiv .nav li.focus a, .repository_tabdiv a:focus {
-    outline: 0 none !important;
-	background:#FFF;
-}
-
-.repository_tabdiv .nav li {
-    padding-right: 8px;
 }
 
 .tree_view ul {

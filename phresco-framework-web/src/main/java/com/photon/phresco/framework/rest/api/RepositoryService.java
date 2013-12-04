@@ -1033,7 +1033,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		String repoType = "";
 		if (repoUrl.startsWith("bk")) {
 			repoType = BITKEEPER;
-		} else if (repoUrl.endsWith(".git")) {
+		} else if (repoUrl.endsWith(".git") || repoUrl.contains("gerrit") || repoUrl.startsWith("ssh")) {
 			repoType = GIT;
 		} else if (repoUrl.contains("svn")) {
 			repoType = SVN;

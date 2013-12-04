@@ -1173,9 +1173,11 @@ define([], function() {
 			repoInfo.srcRepoDetail = self.getImportSrcRepoDetail();
 			if ($('#importDotPhrescoSrc').is(":checked")) {
 				repoInfo.phrescoRepoDetail = self.getImportPhrescoRepoDetail();
+				repoInfo.splitPhresco = true;
 			}
 			if ($('#importTestSrc').is(":checked")) {
 				repoInfo.testRepoDetail = self.getImportTestRepoDetail();
+				repoInfo.splitTest = true;
 			}
 			actionBody = repoInfo;
 			action = "importpost";
