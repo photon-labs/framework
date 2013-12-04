@@ -16,7 +16,7 @@
 							<th width="24%" class="manual hideContent">
 								<div class="th-inner">Expected Result</div>
 							</th>
-							<th width="30%" class="manual hideContent">
+							<th width="25%" class="manual hideContent">
 								<div class="th-inner">Actual Result</div>
 							</th>
 							<th width="15%" class="defaultHead">
@@ -34,7 +34,7 @@
 							<th width="6%" class="defaultHead">
 								<div class="th-inner" data-i18n="testcase.status"></div>
 							</th>
-							<th width="8%" class="manual hideContent">
+							<th width="10%" class="manual hideContent">
 								<div class="th-inner">Bug Comments</div>
 							</th>
 							<th width="5%" class="manual hideContent">
