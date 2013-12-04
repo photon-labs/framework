@@ -359,7 +359,8 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 						boolean equals = ciJob.equals(oldCiJob);
 						//tempCiJobs.add(ciJob);
 						ApplicationInfo applicationInfo = new ApplicationInfo();
-						if(!equals) {
+						String ciName = continuousDelivery.getName();
+						if(!equals || (!ciName.equalsIgnoreCase(oldname))) {
 							exists = true;
 							if(StringUtils.isNotEmpty(ciJob.getAppDirName())) {
 								applicationInfo = FrameworkServiceUtil.getApplicationInfo(ciJob.getAppDirName());

@@ -3,123 +3,213 @@
     	<div class="add_cancel">
         	<a><input type="button" value="Add" data-i18n="common.btn.add" class="btn btn_style add_icon_btn" id="addproject"></a>
             <input type="submit" value="Import" data-i18n="navigation.application.import" class="btn btn_style import_icon_btn" id="importApp">
-			<div id="project_list_import" class="newdyn_popup dyn_popup" style="display:none; width:30%;">
-            <div class="project_list_popup popup_scroll">
-                <table class="table importselect" cellpadding="0" cellspacing="0" border="0">
-                    <tbody>
-                        <tr>
-                            <td><span data-i18n="project.create.label.type"></span><sup>*</sup></td>
-                            <td><span data-i18n="navigation.application.apprepourl"></span><sup>*</sup></td>
-                        </tr>
-                        <tr>
-                        	<td>
-                            	<select id="importType">
-                                	<option value="svn" data-i18n="projectlist.label.svn"></option>
-									<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
-									<option value="git" data-i18n="projectlist.label.git"></option>
-                                    <option value="perforce" data-i18n="projectlist.label.perforce"></option>
-
-                            	</select>
-                            </td>
-                            <td><input type="text" id="importRepourl" data-i18n="[placeholder]navigation.application.apprepourl"></td>
-                        </tr>
-                        <tr>
-                            <td class="seperatetd" id="importCredential"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox"></td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="svndata">
-                <table>
-                	<tbody>
-                        <tr>
-                            <td><span data-i18n="login.placeholder.username"></span><sup class="svnusr">*</sup></td>
-                            <td><span data-i18n="login.placeholder.password"></span><sup class="svnpswd">*</sup></td>
-                        </tr>
-                        <tr>
-                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="importUserName"></td>
-                            <td><input type="password" placeholder="*******" id="importPassword"></td>
-                        </tr>
-                        <tr>
-                        	<td><input type="radio" name="headoption" value="HEAD" checked><span data-i18n="projectlist.label.headrevision"></span><input class="revtext" type="radio" name="headoption" value="revision"><span data-i18n="projectlist.label.revision"></span></td>
-                            <td><input type="text" readonly="readonly" id="revision"></td>
-                        </tr>
-                        
-                        <tr>
-                            <td class="seperatetd"><span data-i18n="navigation.application.testcheckout"></span><input type="checkbox" class="testCheckout"></td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                  </table>
+			<div id="project_list_import" class="newdyn_popup dyn_popup hideContent">
+				  	<div class="bs-docs-example repository_tabdiv">
+						<ul class="nav nav-tabs" id="myTab">
+							<li class="active"><a data-toggle="tab" href="#importSource">Source</a></li>
+							<li><input type="checkbox" id="importDotPhrescoSrc"><a class="repo_tab" id="importDotPhrescoA">.Phresco</a></li>
+							<li><input type="checkbox" id="importTestSrc"><a class="repo_tab" id="importTestA">Test</a></li>
+						</ul>
+					</div>
+					<div class="tab-content" id="myTabContent">
+						<div id="importSource" class="tab-pane fade active in">
+							<table class="table importselect" cellpadding="0" cellspacing="0" border="0">
+                    			<tbody>
+			                        <tr>
+			                            <td><span data-i18n="project.create.label.type"></span><sup>*</sup></td>
+			                            <td><span data-i18n="navigation.application.apprepourl"></span><sup>*</sup></td>
+			                        </tr>
+                        			<tr>
+                        				<td>
+			                            	<select id="importType" class="importType">
+			                                	<option value="svn" data-i18n="projectlist.label.svn"></option>
+												<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
+												<option value="git" data-i18n="projectlist.label.git"></option>
+			                                    <option value="perforce" data-i18n="projectlist.label.perforce"></option>
+			                            	</select>
+                            			</td>
+                            			<td><input type="text" id="importRepourl" data-i18n="[placeholder]navigation.application.apprepourl"></td>
+                        			</tr>
+                        			<tr class="importCredential">
+                            			<td class="seperatetd" id="importCredential"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox"></td>
+                            			<td></td>
+                        			</tr>
+			                        <tr class="svndata">
+			                            <td><span data-i18n="login.placeholder.username"></span><sup class="svnusr">*</sup></td>
+			                            <td><span data-i18n="login.placeholder.password"></span><sup class="svnpswd">*</sup></td>
+			                        </tr>
+			                        <tr class="svndata">
+			                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="importUserName"></td>
+			                            <td><input type="password" placeholder="*******" id="importPassword"></td>
+			                        </tr>
+			                        <tr class="svndata">
+			                        	<td>
+			                        		<input type="radio" name="headoption" value="HEAD" checked>
+			                        		<span data-i18n="projectlist.label.headrevision"></span>
+			                        		<input class="revtext" type="radio" name="headoption" value="revision">
+			                        		<span data-i18n="projectlist.label.revision"></span>
+		                        		</td>
+			                            <td><input type="text" readonly="readonly" id="revision"></td>
+			                        </tr>
+                                	<tr class="gitdata bitkeeperdata">
+                                    	<td><span data-i18n="login.placeholder.username"></span></td>
+										<td><span data-i18n="login.placeholder.password"></span></td>
+                                	</tr>
+                                	<tr class="gitdata bitkeeperdata">
+                                    	<td id="gitName"><input type="text" data-i18n="[placeholder]login.placeholder.username" id="gitUserName"></td>
+                                    	<td><input type="password" placeholder="*******" id="gitPassword"></td>
+                                	</tr>
+									<tr class="gitdata">
+										<td><span name="branch" value="branch">Branch</laspanbel></td>
+										<td><span name="branch" value="passPhrase">PassPhrase</span></td>
+									</tr>
+									<tr class="gitdata">	
+										<td><input type="text" class="branchval"></td>
+										<td><input type="password" class="passPhraseval"></td>
+									</tr>
+                                	<tr class="perforcedata">
+                                    	<td><span name="stream" value="stream">Stream</span></td>
+                                	</tr>
+                                	<tr class="perforcedata">    
+                                    	<td><input name="stream" type="text" class="stream"></td>
+                                	</tr>
+                            	</tbody>
+                         	</table>
+						</div>
+						<div id="importDotphresco" class="tab-pane fade">
+							<table class="table importselect" cellpadding="0" cellspacing="0" border="0">
+                    			<tbody>
+			                        <tr>
+			                            <td><span data-i18n="project.create.label.type"></span><sup>*</sup></td>
+			                            <td><span data-i18n="navigation.application.phrescorepourl"></span><sup>*</sup></td>
+			                        </tr>
+                        			<tr>
+                        				<td>
+			                            	<select id="phrescoImportType" class="phrescoImportType" disabled>
+			                                	<option value="svn" data-i18n="projectlist.label.svn"></option>
+												<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
+												<option value="git" data-i18n="projectlist.label.git"></option>
+			                                    <option value="perforce" data-i18n="projectlist.label.perforce"></option>
+			                            	</select>
+                            			</td>
+                            			<td><input type="text" id="importPhrescoRepourl" data-i18n="[placeholder]navigation.application.phrescorepourl"></td>
+                        			</tr>
+                        			<tr class="importCredential">
+                            			<td class="seperatetd" id="importPhrescoCredential"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox"></td>
+                            			<td></td>
+                        			</tr>
+			                        <tr class="svndata">
+			                            <td><span data-i18n="login.placeholder.username"></span><sup class="svnusr">*</sup></td>
+			                            <td><span data-i18n="login.placeholder.password"></span><sup class="svnpswd">*</sup></td>
+			                        </tr>
+			                        <tr class="svndata">
+			                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="importPhrescoUserName"></td>
+			                            <td><input type="password" placeholder="*******" id="importPhrescoPassword"></td>
+			                        </tr>
+			                        <tr class="svndata">
+			                        	<td>
+			                        		<input type="radio" name="phrescoHeadoption" value="HEAD" checked>
+			                        		<span data-i18n="projectlist.label.headrevision"></span>
+			                        		<input class="revtext" type="radio" name="phrescoHeadoption" value="revision">
+			                        		<span data-i18n="projectlist.label.revision"></span>
+		                        		</td>
+			                            <td><input type="text" readonly="readonly" id="phrescoRevision"></td>
+			                        </tr>
+                                	<tr class="gitdata bitkeeperdata">
+                                    	<td><span data-i18n="login.placeholder.username"></span></td>
+										<td><span data-i18n="login.placeholder.password"></span></td>
+                                	</tr>
+                                	<tr class="gitdata bitkeeperdata">
+                                    	<td id="gitName"><input type="text" data-i18n="[placeholder]login.placeholder.username" id="phrescoGitUserName"></td>
+                                    	<td><input type="password" placeholder="*******" id="phrescoGitPassword"></td>
+                                	</tr>
+									<tr class="gitdata">
+										<td><span name="branch" value="branch">Branch</laspanbel></td>
+										<td><span name="branch" value="passPhrase">PassPhrase</span></td>
+									</tr>
+									<tr class="gitdata">	
+										<td><input type="text" class="phrescoBranchval"></td>
+										<td><input type="password" class="phrescoPassPhraseval"></td>
+									</tr>
+                                	<tr class="perforcedata">
+                                    	<td><span name="stream" value="stream">Stream</span></td>
+                                	</tr>
+                                	<tr class="perforcedata">    
+                                    	<td><input name="phrescoStream" type="text" class="phrescoStream"></td>
+                                	</tr>
+                            	</tbody>
+                         	</table>
+						</div>
+						<div id="importTest" class="tab-pane fade">
+							<table class="table importselect" cellpadding="0" cellspacing="0" border="0">
+                    			<tbody>
+			                        <tr>
+			                            <td><span data-i18n="project.create.label.type"></span><sup>*</sup></td>
+			                            <td><span data-i18n="navigation.application.testrepourl"></span><sup>*</sup></td>
+			                        </tr>
+                        			<tr>
+                        				<td>
+			                            	<select id="testImportType" class="testImportType" disabled>
+			                                	<option value="svn" data-i18n="projectlist.label.svn"></option>
+												<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
+												<option value="git" data-i18n="projectlist.label.git"></option>
+			                                    <option value="perforce" data-i18n="projectlist.label.perforce"></option>
+			                            	</select>
+                            			</td>
+                            			<td><input type="text" id="importTestRepourl" data-i18n="[placeholder]navigation.application.apprepourl"></td>
+                        			</tr>
+                        			<tr class="importCredential">
+                            			<td class="seperatetd" id="importTestCredential"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox"></td>
+                            			<td></td>
+                        			</tr>
+			                        <tr class="svndata">
+			                            <td><span data-i18n="login.placeholder.username"></span><sup class="svnusr">*</sup></td>
+			                            <td><span data-i18n="login.placeholder.password"></span><sup class="svnpswd">*</sup></td>
+			                        </tr>
+			                        <tr class="svndata">
+			                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="importTestUserName"></td>
+			                            <td><input type="password" placeholder="*******" id="importTestPassword"></td>
+			                        </tr>
+			                        <tr class="svndata">
+			                        	<td>
+			                        		<input type="radio" name="testHeadoption" value="HEAD" checked>
+			                        		<span data-i18n="projectlist.label.headrevision"></span>
+			                        		<input class="revtext" type="radio" name="testHeadoption" value="revision">
+			                        		<span data-i18n="projectlist.label.revision"></span>
+		                        		</td>
+			                            <td><input type="text" readonly="readonly" id="testRevision"></td>
+			                        </tr>
+                                	<tr class="gitdata bitkeeperdata">
+                                    	<td><span data-i18n="login.placeholder.username"></span></td>
+										<td><span data-i18n="login.placeholder.password"></span></td>
+                                	</tr>
+                                	<tr class="gitdata bitkeeperdata">
+                                    	<td id="gitName"><input type="text" data-i18n="[placeholder]login.placeholder.username" id="testGitUserName"></td>
+                                    	<td><input type="password" placeholder="*******" id="testGitPassword"></td>
+                                	</tr>
+									<tr class="gitdata">
+										<td><span name="branch" value="branch">Branch</laspanbel></td>
+										<td><span name="branch" value="passPhrase">PassPhrase</span></td>
+									</tr>
+									<tr class="gitdata">	
+										<td><input type="text" class="testBranchval"></td>
+										<td><input type="password" class="testPassPhraseval"></td>
+									</tr>
+                                	<tr class="perforcedata">
+                                    	<td><span name="stream" value="stream">Stream</span></td>
+                                	</tr>
+                                	<tr class="perforcedata">    
+                                    	<td><input name="testStream" type="text" class="testStream"></td>
+                                	</tr>
+                            	</tbody>
+                         	</table>
+						</div>
+						 <div class="popuploading hideContent" id="importloading">&nbsp</div>
+						 <div class="flt_right" appId="">
+							 <input class="btn btn_style" type="button" value="Import" name="importbtn" data-i18n="[value]navigation.application.import">
+                        	<input class="btn btn_style dyn_popup_close" type="button" value="Close" data-i18n="[value]common.btn.close">
+						 </div> 
                   </div>
-                  <div class="testCheckoutData">
-	                <table>
-	                	<tbody>
-	                		<tr>
-	                            <td><span data-i18n="navigation.application.testrepourl"></span><sup>*</sup></td>
-	                            <td><input type="text" id="testRepoUrl" data-i18n="[placeholder]navigation.application.testrepourl"></td>
-	                        </tr>
-	                        <tr>
-	                            <td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input  id="testCredentials" type="checkbox"></td>
-	                            <td></td>
-                        	</tr>
-	                        <tr>
-	                            <td><span data-i18n="login.placeholder.username"></span><sup>*</sup></td>
-	                            <td><span data-i18n="login.placeholder.password"></span><sup>*</sup></td>
-	                        </tr>
-	                        <tr>
-	                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="testImportUserName"></td>
-	                            <td><input type="password" placeholder="*******" id="testImportPassword"></td>
-	                        </tr>
-	                        <tr>
-	                        	<td><input type="radio" name="testHeadOption" value="HEAD" checked><span data-i18n="projectlist.label.headrevision"></span><input class="revtext" type="radio" name="testHeadOption" value="revision"><span data-i18n="projectlist.label.revision"></span></td>
-	                            <td><input type="text" readonly="readonly" id="testRevision"></td>
-	                        </tr>
-	                    </tbody>
-	                  </table>
-                  </div>
-                   <div class="gitdata">
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td><span data-i18n="login.placeholder.username"></span><sup>*</sup></td>
-									<td><span data-i18n="login.placeholder.password"></span><sup>*</sup></td>
-                                </tr>
-                                <tr>
-                                    <td id="gitName"><input type="text" data-i18n="[placeholder]login.placeholder.username" id="gitUserName"></td>
-                                    <td><input type="password" placeholder="*******" id="gitPassword"></td>
-                                </tr>
-								
-								<tr>
-									<td><label name="branch" value="branch">Branch</label></td>
-									<td><label name="branch" value="passPhrase">PassPhrase</label></td>
-								</tr>
-								<tr>	
-									<td><input type="text" class="branchval"></td>
-									<td><input type="password" class="passPhraseval"></td>
-								</tr>
-                            </tbody>
-                         </table>
-                  	 </div>
-                       <div class="perforcedata">
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td><label name="stream" value="stream">Stream</label></td>
-                                </tr>
-                                <tr>    
-                                    <td><input name="stream" type="text" class="stream"></td>
-                                </tr>
-                            </tbody>
-                         </table>
-                     </div>
-               </div>
-				<div class="popuploading" id="importloading" style="display:none">&nbsp</div>
-                  <div class="flt_right">
-                        <input class="btn btn_style" type="button" value="Import" name="importbtn" data-i18n="[value]navigation.application.import">
-                        <input class="btn btn_style dyn_popup_close" type="button" value="Close" data-i18n="[value]common.btn.close">
-                  </div>
-        </div>
         </div>
     	<!--content_title ends here -->
     </section>

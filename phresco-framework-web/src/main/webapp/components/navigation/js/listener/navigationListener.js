@@ -461,7 +461,6 @@ define([], function() {
 						break;
 
 					case commonVariables.buildRepo :
-						console.info("build repo in get my tab");
 						if(self.buildRepo === null) {
 							require(["repository/buildRepository"], function(){
 								self.buildRepo = new Clazz.com.components.repository.js.BuildRepository();
@@ -860,11 +859,13 @@ define([], function() {
 			var self=this, header, data = {}, userId, appDirName='';
 			var type = requestBody.type;
 			var moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
-			if (!self.isBlank(moduleParam)) {
-				appDirName = $('.rootModule').val()
-			} else if(commonVariables.api.localVal.getProjectInfo() !== null) {
-				var projectInfo = commonVariables.api.localVal.getProjectInfo();
-				appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+			if (action === "openFolder" || action === "copyPath") {
+				if (!self.isBlank(moduleParam)) {
+					appDirName = $('.rootModule').val()
+				} else if(commonVariables.api.localVal.getProjectInfo() !== null) {
+					var projectInfo = commonVariables.api.localVal.getProjectInfo();
+					appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+				}
 			}
 			header = {
 				contentType: "application/json",				
@@ -965,112 +966,193 @@ define([], function() {
 		
 		validateImport : function (callback) {
 			var self = this;
+			var hasError = false;
 			var importType = $("#importType").val();
-			var importRepourl = $("#importRepourl").val().replace(/\s/g, '');
-			$("#importRepourl").removeClass("errormessage");
-			var error = false;
-			
-			if('perforce' !== importType) {
-				if(!self.isValidUrl(importRepourl)) {
-					error = true;
-					$("#importRepourl").val('');
-					self.validateTextBox($("#importRepourl"), 'Enter Application Url');	
-					setTimeout(function() { 
-					//$("#importRepourl").val(importRepourl); 
-					}, 4000);				
+			if (importType === "git") {
+				hasError = self.validateGitData($('#importRepourl'));
+				if (hasError) {
+					self.showSrcImportTab();
 				}
-			} else {
-				if($(".stream").hasClass("errormessage")) 
-								$(".stream").removeClass("errormessage");
-
-				if(importRepourl === ""){
-					error = true;
-					$("#importRepourl").val('');
-					self.validateTextBox($("#importRepourl"), 'Invalid Application Url');	
-					setTimeout(function() { 
-					//$("#importRepourl").val(importRepourl); 
-					}, 4000);		
-				} else if(!self.validateperforce(importRepourl)) {
-					error = true;
-					$("#importRepourl").val('');
-					self.validateTextBox($("#importRepourl"), 'Invalid Application Url');
-
-				} else if ($("#gitUserName").val() === "") {
-					if($("#importRepourl").hasClass("errormessage")) 
-								$("#importRepourl").removeClass("errormessage");
-					error = true;
-					$("#gitName").val('');
-					self.validateTextBox($("#gitName"), 'Invalid User Name');	
-						
-				} else if ($(".stream").val() === "") {
-					if($("#importRepourl").hasClass("errormessage")) 
-								$("#importRepourl").removeClass("errormessage");
-					error = true;
-					$(".stream").val('');
-					self.validateTextBox($(".stream"), 'Invalid Stream');	
+				if ($('#importDotPhrescoSrc').is(":checked") && !hasError) {
+					hasError = self.validateGitData($('#importPhrescoRepourl'));
+					if (hasError) {
+						self.showDotPhrescoImportTab();
+					}
+				}
+				if ($('#importTestSrc').is(":checked") && !hasError) {
+					hasError = self.validateGitData($('#importTestRepourl'));
+					if (hasError) {
+						self.showTestImportTab();
+					}
+				}
+			}
+			if (!hasError && importType === "svn") {
+				hasError = self.validateSvnData($('#importRepourl'), $('#importUserName'), $('#importPassword'), $('input[name=headoption]:checked'), $('#revision'));
+				if (hasError) {
+					self.showSrcImportTab();
+				}
+				if ($('#importDotPhrescoSrc').is(":checked") && !hasError) {
+					hasError = self.validateSvnData($('#importPhrescoRepourl'), $('#importPhrescoUserName'), $('#importPhrescoPassword'), $('input[name=phrescoHeadoption]:checked'), $('#phrescoRevision'));
+					if (hasError) {
+						self.showDotPhrescoImportTab();
+					}
+				}
+				if ($('#importTestSrc').is(":checked") && !hasError) {
+					hasError = self.validateSvnData($('#importTestRepourl'), $('#importTestUserName'), $('#importTestPassword'), $('input[name=testHeadoption]:checked'), $('#testRevision'));
+					if (hasError) {
+						self.showTestImportTab();
+					}
+				}
+			}
+			if (!hasError && importType === "perforce") {
+				hasError = self.validatePerforceData($('#importRepourl'), $('.stream'));
+				if (hasError) {
+					self.showSrcImportTab();
+				}
+				if ($('#importDotPhrescoSrc').is(":checked") && !hasError) {
+					hasError = self.validatePerforceData($('#importPhrescoRepourl'), $('.phrescoStream'));
+					if (hasError) {
+						self.showDotPhrescoImportTab();
+					}
+				}
+				if ($('#importTestSrc').is(":checked") && !hasError) {
+					hasError = self.validatePerforceData($('#importTestRepourl'), $('.testStream'));
+					if (hasError) {
+						self.showTestImportTab();
+					}
+				}
+			}
+			if (!hasError && importType === "bitkeeper") {
+				hasError = self.validateBitkeeperData($("#importRepourl"));
+				if (hasError) {
+					self.showSrcImportTab();
+				}
+				if ($('#importDotPhrescoSrc').is(":checked") && !hasError) {
+					hasError = self.validateBitkeeperData($('#importPhrescoRepourl'));
+					if (hasError) {
+						self.showDotPhrescoImportTab();
+					}
+				}
+				if ($('#importTestSrc').is(":checked") && !hasError) {
+					hasError = self.validateBitkeeperData($('#importTestRepourl'));
+					if (hasError) {
+						self.showTestImportTab();
+					}
 				}
 			}
 			
-			if ('svn' === importType && !error) {
-				$("#importUserName").removeClass("errormessage");
-				$("#importPassword").removeClass("errormessage");
-				$("#revision").removeClass("errormessage");
-				var userName = $("#importUserName").val().replace(/\s/g, '');
-				var pswd = $("#importPassword").val();
-				var revision = $("input[name='headoption']:checked").val();
-				if (userName === "") {
-					error = true;
-					self.validateTextBox($("#importUserName"), 'Enter user name');
-				} else if (pswd === "") {
-					error = true;
-					self.validateTextBox($("#importPassword"), 'Enter password');
-				} else if (revision === "revision" && $('#revision').val() === "") {
-					error = true;
-					self.validateTextBox($("#revision"), 'Enter revision');
-				} else if ($(".testCheckout").is(":checked")) {
-					$("#testRepoUrl").removeClass("errormessage");
-					$("#testImportUserName").removeClass("errormessage");
-					$("#testImportPassword").removeClass("errormessage");
-					
-					var testRepoUrl = $("#testRepoUrl").val().replace(/\s/g, '');
-					var testImportUserName = $("#testImportUserName").val().replace(/\s/g, '');
-					var testImportPassword = $("#testImportPassword").val();
-					var testRevision = $("input[name='testHeadOption']:checked").val();
-					if(!self.isValidUrl(testRepoUrl)) {
-						error = true;
-						$("#testRepoUrl").val('');
-						self.validateTextBox($("#testRepoUrl"), 'Invalid Test Repourl');
-						setTimeout(function() { 
-							$("#testRepoUrl").val(testRepoUrl); 
-						}, 4000);
-					} else if (testImportUserName === "") {
-						error = true;
-						self.validateTextBox($("#testImportUserName"), 'Enter user name');
-					} else if (testImportPassword === "") {
-						error = true;
-						self.validateTextBox($("#testImportPassword"), 'Enter password');
-					} else if (testRevision === "revision" && $('#testRevision').val() === "") {
-						error = true;
-						self.validateTextBox($("#testRevision"), 'Enter revision');
-					} 
-				}
-			} else if ('bitkeeper' === importType) {
-				$("#gitUserName").removeClass("errormessage");
-				$("#gitPassword").removeClass("errormessage");
-				var bituserName = $("#gitUserName").val().replace(/\s/g, '');
-				var bitpwd = $("#gitPassword").val();
-				if (bituserName === "") {
-					error = true;
-					self.validateTextBox($("#gitUserName"), 'Enter user name');
-				} else if (bitpwd === "") {
-					error = true;
-					self.validateTextBox($("#gitPassword"), 'Enter password');
-				}
-			} else if ('git' === importType) {
-				$("#gitUserName").removeClass("errormessage");
-				$("#gitPassword").removeClass("errormessage");
+			callback(hasError);
+		},
+		
+		showSrcImportTab : function() {
+			$("#importDotphresco").removeClass("active in");
+			$("#importSource").addClass("active in");
+			$("#importTest").removeClass("active in");
+			$("#importDotPhrescoSrc").parent().prev().addClass("active");
+			$("#importDotPhrescoSrc").parent().removeClass("active");
+			$("#importTestSrc").parent().removeClass("active");
+		},
+		
+		showDotPhrescoImportTab : function() {
+			$("#importDotphresco").addClass("active in");
+			$("#importSource").removeClass("active in");
+			$("#importTest").removeClass("active in");
+			$("#importDotPhrescoSrc").parent().prev().removeClass("active");
+			$("#importDotPhrescoSrc").parent().addClass("active");
+			$("#importTestSrc").parent().removeClass("active");
+		},
+		
+		showTestImportTab : function() {
+			$("#importDotphresco").removeClass("active in");
+			$("#importSource").removeClass("active in");
+			$("#importTest").addClass("active in");
+			$("#importDotPhrescoSrc").parent().prev().removeClass("active");
+			$("#importDotPhrescoSrc").parent().removeClass("active");
+			$("#importTestSrc").parent().addClass("active");
+		},
+		
+		validateGitData : function(repoUrlObj) {
+			var self = this;
+			repoUrlObj.removeClass("errormessage");
+			
+			var repoUrl = repoUrlObj.val();
+			if (repoUrl === "") {
+				self.validateTextBox(repoUrlObj, 'Enter Url');
+				return true;
 			}
-			callback(error);
+			if(!self.isValidUrl(repoUrl)) {
+				repoUrlObj.val('');
+				self.validateTextBox(repoUrlObj, 'Invalid Repo Url');
+				return true;
+			}
+			return false;
+		},
+		
+		validateSvnData : function(repoUrlObj, userNameObj, pwdObj, headOptObj, revisionObj) {
+			
+			var self = this;
+			userNameObj.removeClass("errormessage");
+			pwdObj.removeClass("errormessage");
+			revisionObj.removeClass("errormessage");
+			repoUrlObj.removeClass("errormessage");
+			
+			var repoUrl = repoUrlObj.val();
+			var userName = userNameObj.val().replace(/\s/g, '');
+			var pswd = pwdObj.val();
+			var revision = headOptObj.val();
+			if (repoUrl === "") {
+				self.validateTextBox(repoUrlObj, 'Enter Url');
+				return true;
+			}
+			if(!self.isValidUrl(repoUrl)) {
+				repoUrlObj.val('');
+				self.validateTextBox(repoUrlObj, 'Invalid Repo Url');
+				return true;
+			}
+			if (userName === "") {
+				self.validateTextBox(userNameObj, 'Enter user name');
+				return true;
+			} 
+			if (pswd === "") {
+				self.validateTextBox(pwdObj, 'Enter password');
+				return true;
+			} 
+			if (revision === "revision" && revisionObj.val() === "") {
+				self.validateTextBox(revisionObj, 'Enter revision');
+				return true;
+			}
+			return false;
+		},
+		
+		validatePerforceData : function(repoUrlObj, streamObj) {
+			var self = this;
+			var repoUrl = repoUrlObj.val();
+			var stream = streamObj.val();
+			if (repoUrl === "") {
+				self.validateTextBox(repoUrlObj, 'Enter Url');
+				return true;
+			}
+			if (!self.validateperforce(repoUrl)) {
+				repoUrlObj.val('');
+				self.validateTextBox(repoUrlObj, 'Invalid Repo Url');
+				return true;
+			}
+			
+			if (stream === "") {
+				self.validateTextBox(streamObj, 'Enter Stream');
+				return true;
+			}
+			return false;
+		},
+		
+		validateBitkeeperData : function(repoUrlObj) {
+			var self = this;
+			var repoUrl = repoUrlObj.val();
+			if (repoUrl === "") {
+				self.validateTextBox(repoUrlObj, 'Enter Url');
+				return true;
+			}
+			return false;
 		},
 		
 		validateTextBox : function (textBoxObj, errormsg) {
@@ -1082,60 +1164,26 @@ define([], function() {
 				textBoxObj.attr('placeholder', errormsg);
 				textBoxObj.removeClass("errormessage");
 			}
-		}, 
+		},
 		
 		addImportEvent : function(){
 			var self = this;
-			var importdata = {}, actionBody, action;
+			var repoInfo = {}, actionBody, action;
 			
-			var revision = $("input[name='headoption']:checked").val();
-			if(revision !== ""){
-				revision = revision;
-			} else{
-				revision = $("#revision").val();
+			repoInfo.srcRepoDetail = self.getImportSrcRepoDetail();
+			if ($('#importDotPhrescoSrc').is(":checked")) {
+				repoInfo.phrescoRepoDetail = self.getImportPhrescoRepoDetail();
 			}
-			
-			var testRevision = $("input[name='testHeadOption']:checked").val();
-			if(testRevision !== ""){
-				testRevision = testRevision;
-			} else{
-				testRevision = $("#testRevision").val();
+			if ($('#importTestSrc').is(":checked")) {
+				repoInfo.testRepoDetail = self.getImportTestRepoDetail();
 			}
-			
-			importdata.type = $("#importType").val();
-			importdata.repoUrl = $("#importRepourl").val();
-			
-			if('git' === importdata.type) {
-				importdata.branch = $(".branchval").val();
-				importdata.userName = $("#gitUserName").val();
-				importdata.password = $("#gitPassword").val();
-				importdata.passPhrase = $(".passPhraseval").val();
-			} else {
-				importdata.userName = $("#importUserName").val();
-				importdata.password = $("#importPassword").val();
-				importdata.revision = revision;
-			}
-			
-			if ('svn' === importdata.type && $(".testCheckout").is(":checked")) {
-				importdata.testCheckOut = true;
-				importdata.testRepoUrl = $("#testRepoUrl").val();
-				importdata.testUserName = $("#testImportUserName").val();
-				importdata.testPassword = $("#testImportPassword").val();
-				importdata.testRevision = testRevision;
-			} else {
-				importdata.testCheckOut = false;
-			}
-
-			if('perforce' === importdata.type) {
-				importdata.stream = $('.stream').val();
-			}
-			
-			actionBody = importdata;
+			actionBody = repoInfo;
 			action = "importpost";
 			commonVariables.hideloading = true;
 			$("#project_list_import").find('input').attr('disabled','disabled');
 			$("#project_list_import").find('select').attr('disabled','disabled');
-			self.navigationActionForImport(self.getActionHeader(actionBody, action), function(response){
+			var header = self.getActionHeader(actionBody, action);
+			self.navigationActionForImport(header, function(response){
 				$("#project_list_import").find('input').removeAttr('disabled');
 				$("#project_list_import").find('select').removeAttr('disabled');
 				$("#importloading").hide();
@@ -1151,22 +1199,105 @@ define([], function() {
 				commonVariables.hideloading = false;
 			});
 		},
+		
+		getImportSrcRepoDetail : function() {
+			var repoDetail = {};
+			var revision = $("input[name='headoption']:checked").val();
+			if (revision === "revision") {
+				revision = $("#revision").val();
+			} else{
+				revision = revision;
+			}
+			var repoType = $("#importType").val()
+			repoDetail.type = repoType;
+			repoDetail.repoUrl = $("#importRepourl").val();
+			
+			if ('git' === repoType) {
+				repoDetail.branch = $(".branchval").val();
+				repoDetail.userName = $("#gitUserName").val();
+				repoDetail.password = $("#gitPassword").val();
+				repoDetail.passPhrase = $(".passPhraseval").val();
+			} else {
+				repoDetail.userName = $("#importUserName").val();
+				repoDetail.password = $("#importPassword").val();
+				repoDetail.revision = revision;
+			}
+			
+			if ('perforce' === repoType) {
+				repoDetail.stream = $('.stream').val();
+			}
+			return repoDetail;
+		},
+		
+		getImportPhrescoRepoDetail : function() {
+			var repoDetail = {};
+			var revision = $("input[name='phrescoHeadoption']:checked").val();
+			if (revision === "revision") {
+				revision = $("#revision").val();
+			} else{
+				revision = revision;
+			}
+			var repoType = $("#phrescoImportType").val()
+			repoDetail.type = repoType;
+			repoDetail.repoUrl = $("#importPhrescoRepourl").val();
+			
+			if ('svn' === repoType) {
+				repoDetail.userName = $("#importPhrescoUserName").val();
+				repoDetail.password = $("#importPhrescoPassword").val();
+				repoDetail.revision = revision;
+			} else {
+				repoDetail.branch = $(".phrescoBranchval").val();
+				repoDetail.userName = $("#phrescoGitUserName").val();
+				repoDetail.password = $("#phrescoGitPassword").val();
+				repoDetail.passPhrase = $(".phrescoPassPhraseval").val();
+			}
+			
+			if ('perforce' === repoType) {
+				repoDetail.stream = $('.phrescoStream').val();
+			}
+			return repoDetail;
+		},
+		
+		getImportTestRepoDetail : function() {
+			var repoDetail = {};
+			var revision = $("input[name='testHeadoption']:checked").val();
+			if (revision === "revision") {
+				revision = $("#revision").val();
+			} else{
+				revision = revision;
+			}
+			var repoType = $("#testImportType").val()
+			repoDetail.type = repoType;
+			repoDetail.repoUrl = $("#importTestRepourl").val();
+			
+			if ('svn' === repoType) {
+				repoDetail.userName = $("#importTestUserName").val();
+				repoDetail.password = $("#importTestPassword").val();
+				repoDetail.revision = revision;
+			} else {
+				repoDetail.branch = $(".testBranchval").val();
+				repoDetail.userName = $("#testGitUserName").val();
+				repoDetail.password = $("#testGitPassword").val();
+				repoDetail.passPhrase = $(".testPassPhraseval").val();
+			}
+			
+			if ('perforce' === repoType) {
+				repoDetail.stream = $('.testStream').val();
+			}
+			return repoDetail;
+		},
 
 		validateperforce : function(importRepourl) {
-			if( importRepourl.indexOf(':') > 0 ){
+			if(importRepourl.indexOf(':') > 0 ){
 				var arr=new Array();
 				var arr=importRepourl.split(":"); 
 				if(/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/i.test(arr[0]) === true || arr[0] === "localhost" ){
 					if(!isNaN(arr[1]) && isFinite(arr[1])){
-					return true;
+						return true;
 					}
-				}	
-
-
-				
+				}
 			}
 			return false;
-
 		},
 		
 		//To copy the console log content to the clip-board
