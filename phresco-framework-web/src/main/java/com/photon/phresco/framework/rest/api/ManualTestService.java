@@ -80,6 +80,8 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
     		builder.append(appDirName);
     		builder.append(File.separator);
     		builder.append(manualTestReportPath);
+    		File existingFile = new File(builder.toString());
+    		FileUtils.cleanDirectory(existingFile); 
     		File file = new File(builder.toString() + File.separator + fileName);
     		FileUtils.copyInputStreamToFile(inputStream, file);
         } catch (Exception e) {
