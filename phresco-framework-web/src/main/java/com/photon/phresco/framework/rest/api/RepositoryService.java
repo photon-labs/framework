@@ -86,7 +86,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	/**
 	 * Import application from repository.
 	 *
-	 * @param repodetail the repodetail
+	 * @param repoInfo the repodetail
 	 * @return the response
 	 * @throws Exception 
 	 */
@@ -94,18 +94,9 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	@Path("/importApplication")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response importApplication(RepoDetail repodetail, @QueryParam("displayName") String displayName) throws Exception {
+	public Response importApplication(RepoInfo repoInfo, @QueryParam("displayName") String displayName) throws Exception {
 		Response response = null;
-		String type = repodetail.getType();
-		if (type.equals(SVN)) {
-			response = importSVNApplication(type, repodetail, displayName);
-		} else if (type.equals(GIT)) {
-			response = importGITApplication(type, repodetail, displayName);
-		} else if (type.equals(BITKEEPER)) {
-			response = importBitKeeperApplication(type, repodetail, displayName);
-		}else if(type.equals(PERFORCE)){
-			response = importPerforceApplication(type, repodetail, displayName);
-		}
+		response = importSVNApplication(repoInfo, displayName);
 		return response;
 	}
 
@@ -113,7 +104,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * Update imported applicaion  from repository.
 	 *
 	 * @param appDirName the app dir name
-	 * @param repodetail the repodetail
+	 * @param repoInfo the repodetail
 	 * @return the response
 	 */
 	@POST
@@ -121,23 +112,14 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateImportedApplicaion(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam("displayName") String displayName,
-			RepoDetail repodetail) {
+			RepoInfo repoInfo) {
 		Response response = null;
 		ResponseInfo responseData = new ResponseInfo();
 		try {
 			UUID uniqueKey = UUID.randomUUID();
 			String unique_key = uniqueKey.toString();
 			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
-			String type = repodetail.getType();
-			if (type.equals(SVN)) {
-				response = updateSVNProject(responseData, type, applicationInfo, repodetail, unique_key, displayName);
-			} else if (type.equals(GIT)) {
-				response = updateGitProject(responseData, type, applicationInfo, repodetail, unique_key, displayName);
-			} else if (type.equals(BITKEEPER)) {
-				response = updateBitKeeperProject(type, applicationInfo, repodetail, unique_key, displayName);
-			} else if (type.equals(PERFORCE)) {
-				response = updatePerforceProject(type, applicationInfo, repodetail, unique_key, displayName);
-			}
+			response = updateSVNProject(responseData, applicationInfo, appDirName, repoInfo, unique_key, displayName);
 			return response;
 		} catch (PhrescoException e) {
 			status = RESPONSE_STATUS_ERROR;
@@ -297,46 +279,29 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * Import svn application.
 	 *
 	 * @param type the type
-	 * @param repodetail the repodetail
+	 * @param repoInfo the repodetail
 	 * @return the response
 	 */
-	private Response importSVNApplication(String type, RepoDetail repodetail, String displayName) {
+	private Response importSVNApplication(RepoInfo repoInfo, String displayName) {
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		ResponseInfo responseData = new ResponseInfo();
 		String revision = "";
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
 		try {
-			ApplicationInfo importProject = scmi.importProject(repodetail, displayName, unique_key);
-			if (importProject != null) {
-				if (repodetail.isTestCheckOut() && !importProject.getId().equals("#SEP#")) {
-					String path = Utility.getProjectHome() + File.separator + importProject.getAppDirName()
-							+ File.separator;
-					File testFolder = new File(path, TEST);
-					if (!testFolder.exists()) {
-						testFolder.mkdirs();
-					}
-					FileUtils.cleanDirectory(testFolder);
-					String testSvnCheckout = scmi.svnCheckout(repodetail, testFolder.getPath());
-				} else {
-					status = RESPONSE_STATUS_SUCCESS;
-					successCode = PHR210048;
-					ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
-					return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-							.build();
-				}
-				status = RESPONSE_STATUS_SUCCESS;
-				successCode = PHR200017;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-						.build();
-			} else {
-				status = RESPONSE_STATUS_FAILURE;
-				errorCode = PHR210022;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+			ApplicationInfo importProject = scmi.importProject(repoInfo, displayName, unique_key);
+			if(repoInfo.isSplitTest()) {
+				scmi.importTest(importProject, repoInfo);
 			}
+			if(repoInfo.isSplitPhresco()) {
+				scmi.importPhresco(importProject, repoInfo);
+			}
+			scmi.updateSCMConnection(repoInfo, importProject);
+			status = RESPONSE_STATUS_SUCCESS;
+			successCode = PHR200017;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		} catch (SVNAuthenticationException e) {
 			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210023;
@@ -396,7 +361,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @param repodetail the repodetail
 	 * @return the response
 	 */
-	private Response importGITApplication(String type, RepoDetail repodetail, String displayName) {
+	private Response importGITApplication(String type, RepoInfo repodetail, String displayName) {
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		ResponseInfo responseData = new ResponseInfo();
 		UUID uniqueKey = UUID.randomUUID();
@@ -449,7 +414,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @param repodetail the repodetail
 	 * @return the response
 	 */
-	private Response importBitKeeperApplication(String type, RepoDetail repodetail, String displayName) {
+	private Response importBitKeeperApplication(String type, RepoInfo repodetail, String displayName) {
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		ResponseInfo responseData = new ResponseInfo();
 		UUID uniqueKey = UUID.randomUUID();
@@ -503,7 +468,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
 		try {
-			ApplicationInfo importProject=scmi.importFromPerforce(repodetail);
+			ApplicationInfo importProject=scmi.importFromPerforce(repodetail, new File(""));
 			if (importProject != null) {
 				status = RESPONSE_STATUS_SUCCESS;
 				successCode = PHR200017;
@@ -575,7 +540,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			//To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), FrameworkConstants.UPDATE, displayName, uniqueKey)), true);
 			
-			scmi.updateProject(repodetail, applicationInfo);
+			scmi.updateProject(repodetail, new File(""));
 			
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200018;
@@ -656,16 +621,48 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @param repodetail the repodetail
 	 * @return the response
 	 */
-	private Response updateSVNProject(ResponseInfo responseData, String type, ApplicationInfo applicationInfo,
-			RepoDetail repodetail, String uniqueKey, String displayName) {
+	private Response updateSVNProject(ResponseInfo responseData, ApplicationInfo applicationInfo,
+			String appDirName, RepoInfo repoInfo, String uniqueKey, String displayName) {
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		String revision = "";
-		revision = !HEAD_REVISION.equals(repodetail.getRevision()) ? repodetail.getRevisionVal() : repodetail
-				.getRevision();
+//		revision = !HEAD_REVISION.equals(repoInfo.getRevision()) ? repoInfo.getRevisionVal() : repoInfo
+//				.getRevision();
 		try {
 			//To generate the lock for the particular operation
-			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), FrameworkConstants.UPDATE, displayName, uniqueKey)), true);
-			scmi.updateProject(repodetail, applicationInfo);
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), 
+					FrameworkConstants.UPDATE, displayName, uniqueKey)), true);
+			RepoDetail srcRepoDetail = repoInfo.getSrcRepoDetail();
+			RepoDetail testRepoDetail = repoInfo.getTestRepoDetail();
+			RepoDetail phrescoRepoDetail = repoInfo.getPhrescoRepoDetail();
+			StringBuilder workingDir = new StringBuilder(Utility.getProjectHome()).append(appDirName);
+			String sourceFolderName = "";
+			String testFolderName = "";
+			String phrescoPomFileName = applicationInfo.getPhrescoPomFile();
+			File splitPhrescoDir = new File(workingDir.toString(), appDirName + "-phresco");
+			if(splitPhrescoDir.exists() && StringUtils.isNotEmpty(phrescoPomFileName)) {
+				File phrescoPomFile = new File(splitPhrescoDir, phrescoPomFileName);
+				PomProcessor processor = new PomProcessor(phrescoPomFile);
+				sourceFolderName = processor.getProperty("phresco.src.dir");
+				processor.getProperty("phresco.test.dir");
+			}
+			if(phrescoRepoDetail != null) {
+				scmi.updateProject(phrescoRepoDetail, splitPhrescoDir);
+			}
+			if(srcRepoDetail != null) {
+				if(StringUtils.isNotEmpty(sourceFolderName)) {
+					workingDir.append(File.separator).append(sourceFolderName);
+				}
+				scmi.updateProject(srcRepoDetail, new File(workingDir.toString()));
+			}
+			if(testRepoDetail != null) {
+				StringBuilder testDir = null;
+				if(StringUtils.isNotEmpty(testFolderName)) {	
+					testDir = new StringBuilder(Utility.getProjectHome()).append(appDirName);
+					testDir.append(File.separator).append(testFolderName);
+				}
+				scmi.updateProject(srcRepoDetail, new File(testDir.toString()));
+			}
+			scmi.updateSCMConnection(repoInfo, applicationInfo);	
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200018;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null,
@@ -757,7 +754,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		try {
 	    	//To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), FrameworkConstants.UPDATE, displayName, uniqueKey)), true);
-			scmi.updateProject(repodetail, applicationInfo);
+			scmi.updateProject(repodetail, new File(""));
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200018;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
@@ -798,7 +795,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		try {
 	    	//To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), FrameworkConstants.UPDATE, displayName, uniqueKey)), true);
-			scmi.updateProject(repodetail, applicationInfo);
+			scmi.updateProject(repodetail, new File(""));
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200018;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);

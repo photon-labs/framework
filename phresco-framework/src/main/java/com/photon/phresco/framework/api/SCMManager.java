@@ -35,7 +35,7 @@ public interface SCMManager {
 	 * @throws Exception 
 	 
 	 */
-	ApplicationInfo importProject(RepoDetail repodetail, String displayName, String uniqueKey) throws Exception ;
+	ApplicationInfo importProject(RepoInfo repodetail, String displayName, String uniqueKey) throws Exception ;
 	
 	/**
 	 * 
@@ -47,7 +47,7 @@ public interface SCMManager {
 	 * @throws Exception 
 	
 	 */
-	public boolean updateProject(RepoDetail repodetail, ApplicationInfo appInfo) throws Exception ;
+	public boolean updateProject(RepoDetail repodetail, File workingDir) throws Exception ;
 	
 	/**
 	 * 
@@ -76,5 +76,9 @@ public interface SCMManager {
 	 
 	 */
 	public boolean commitToRepo(RepoDetail repodetail, File dir) throws Exception;
-
+	
+	void importTest(ApplicationInfo applicationInfo, RepoInfo repoInfo) throws Exception;
+	
+	void importPhresco(ApplicationInfo applicationInfo, RepoInfo repoInfo) throws Exception;
+	
 }

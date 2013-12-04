@@ -143,77 +143,136 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	boolean dotphresco ;
 	SVNClientManager cm = null;
 
-		public ApplicationInfo importProject(RepoDetail repodetail, String displayName, String uniqueKey) throws Exception {
+	public ApplicationInfo importProject(RepoInfo repoInfo, String displayName, String uniqueKey) throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importProject()");
 		}
-		if (SVN.equals(repodetail.getType())) {
-			if(debugEnabled){
-				S_LOGGER.debug("SVN type");
-			}
-
-			SVNURL svnURL = SVNURL.parseURIEncoded(repodetail.getRepoUrl());
-			DAVRepositoryFactory.setup();
-			DefaultSVNOptions options = new DefaultSVNOptions();
-			cm = SVNClientManager.newInstance(options, repodetail.getUserName(), repodetail.getPassword());
-			boolean valid = checkOutFilter(repodetail, svnURL, displayName, uniqueKey);
-			if(debugEnabled){
-				S_LOGGER.debug("Completed");
-			}
-
-			if (valid) {
-				ProjectInfo projectInfo = getSvnAppInfo(repodetail.getRevision(), svnURL);
-				if (projectInfo != null) {
-					if (projectInfo.getId().equals("#SEP#")) {
-						ApplicationInfo appInfo = 	new ApplicationInfo();
-						appInfo.setId("#SEP#");
-						return appInfo;
-					} else {
-						return returnAppInfo(projectInfo);
-					}
+		ApplicationInfo applicaionInfo = null;
+		if(repoInfo.isSplitPhresco()) {
+			applicaionInfo = validatePhrescoProject(repoInfo.getPhrescoRepoDetail());
+		} else {
+			applicaionInfo = validatePhrescoProject(repoInfo.getSrcRepoDetail());
+		}
+		if(applicaionInfo != null) {
+			RepoDetail srcRepoDetail = repoInfo.getSrcRepoDetail();
+			if (SVN.equals(srcRepoDetail.getType())) {
+				checkoutSVN(applicaionInfo, repoInfo, 
+						displayName, uniqueKey);
+				if(debugEnabled){
+					S_LOGGER.debug("SVN type");
 				}
-			} 
-			return null;
-		} else if (GIT.equals(repodetail.getType())) {
-			if(debugEnabled){
-				S_LOGGER.debug("GIT type");
+			} else if (GIT.equals(srcRepoDetail.getType())) {
+				if(debugEnabled){
+					S_LOGGER.debug("GIT type");
+				}
+				String uuid = UUID.randomUUID().toString();
+				File gitImportTemp = new File(Utility.getPhrescoTemp(), uuid);
+				if(debugEnabled){
+					S_LOGGER.debug("gitImportTemp " + gitImportTemp);
+				}
+				if (gitImportTemp.exists()) {
+					if(debugEnabled){
+						S_LOGGER.debug("Empty git directory need to be removed before importing from git ");
+					}
+					FileUtils.deleteDirectory(gitImportTemp);
+				}
+				if(debugEnabled){
+					S_LOGGER.debug("gitImportTemp " + gitImportTemp);
+				}
+				importFromGit(repoInfo.getSrcRepoDetail(), gitImportTemp);
+				if(debugEnabled){
+					S_LOGGER.debug("Validating Phresco Definition");
+				}
+				cloneFilter(applicaionInfo, gitImportTemp, displayName, uniqueKey, repoInfo);
+				if (gitImportTemp.exists()) {
+					if(debugEnabled){
+						S_LOGGER.debug("Deleting ~Temp");
+					}
+					FileUtils.deleteDirectory(gitImportTemp);
+				}
+				if(debugEnabled){
+					S_LOGGER.debug("Completed");
+				}
+			} else if (BITKEEPER.equals(srcRepoDetail.getType())) {
+				String uuid = UUID.randomUUID().toString();
+				File bkImportTemp = new File(Utility.getPhrescoTemp(), uuid);
+				boolean isImported = importFromBitKeeper(srcRepoDetail.getRepoUrl(), bkImportTemp);
+				if (isImported) {
+                	String appId = applicaionInfo.getId();
+                	LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appId, FrameworkConstants.IMPORT, 
+                			displayName, uniqueKey)), true);
+                	String workDirPath = workDirPath(repoInfo, applicaionInfo);
+        			importToWorkspace(bkImportTemp, new File(workDirPath.toString()));
+		        } 	
+			} else if(PERFORCE.equals(srcRepoDetail.getType())){
+				String uuid = UUID.randomUUID().toString();
+				File tempFile = new File(Utility.getPhrescoTemp(), uuid);
+				importFromPerforce(srcRepoDetail, tempFile);
+				String workDirPath = workDirPath(repoInfo, applicaionInfo);
+				importToWorkspace(tempFile, new File(workDirPath));
 			}
+		}
+		return applicaionInfo;
+	}
+	
+	private String workDirPath(RepoInfo repoInfo, ApplicationInfo applicaionInfo) throws Exception {
+		StringBuilder str = new StringBuilder(Utility.getProjectHome()).append(applicaionInfo.getAppDirName());
+    	if(repoInfo.isSplitPhresco() || repoInfo.isSplitTest()) {
+    		File pom = getPomFromRepository(applicaionInfo, repoInfo);
+    		PomProcessor processor = new PomProcessor(pom);
+    		String property = processor.getProperty("sourcename");
+    		str.append(File.separator).append(property);
+    	}
+    	return str.toString();
+	}
+	
+	private ApplicationInfo validatePhrescoProject(RepoDetail phrescoRepoDetail) throws Exception {
+		ApplicationInfo appInfo = null;
+		if(phrescoRepoDetail.getType().equals(SVN)) {
+			appInfo = checkOutFilter(phrescoRepoDetail);
+		}
+		if(phrescoRepoDetail.getType().equals(GIT)) {
 			String uuid = UUID.randomUUID().toString();
 			File gitImportTemp = new File(Utility.getPhrescoTemp(), uuid);
-			if(debugEnabled){
-				S_LOGGER.debug("gitImportTemp " + gitImportTemp);
+			importFromGit(phrescoRepoDetail, gitImportTemp);
+			ProjectInfo gitAppInfo = getGitAppInfo(gitImportTemp);
+			if(gitAppInfo != null) {
+				appInfo = returnAppInfo(gitAppInfo);
 			}
-			if (gitImportTemp.exists()) {
-				if(debugEnabled){
-					S_LOGGER.debug("Empty git directory need to be removed before importing from git ");
-				}
-				FileUtils.deleteDirectory(gitImportTemp);
-			}
-			if(debugEnabled){
-				S_LOGGER.debug("gitImportTemp " + gitImportTemp);
-			}
-			importFromGit(repodetail, gitImportTemp);
-			if(debugEnabled){
-				S_LOGGER.debug("Validating Phresco Definition");
-			}
-			ApplicationInfo applicationInfo = cloneFilter(gitImportTemp, repodetail.getRepoUrl(), true, displayName, uniqueKey);
-			if (gitImportTemp.exists()) {
-				if(debugEnabled){
-					S_LOGGER.debug("Deleting ~Temp");
-				}
-				FileUtils.deleteDirectory(gitImportTemp);
-			}
-			if(debugEnabled){
-				S_LOGGER.debug("Completed");
-			}
-			if (applicationInfo != null) {
-				return applicationInfo;
-			} 
-		} else if (BITKEEPER.equals(repodetail.getType())) {
-		    return importFromBitKeeper(repodetail.getRepoUrl(), displayName, uniqueKey);
 		}
-		
-		return null;
+		if(phrescoRepoDetail.getType().equals(BITKEEPER)) {
+			String uuid = UUID.randomUUID().toString();
+			File bkImportTemp = new File(Utility.getPhrescoTemp(), uuid);
+			boolean imported = importFromBitKeeper(phrescoRepoDetail.getRepoUrl(), bkImportTemp);
+			if(imported) {
+				ProjectInfo projectInfo = getGitAppInfo(bkImportTemp);
+	        	if (projectInfo != null) {
+	        		appInfo = returnAppInfo(projectInfo);
+	        	}
+			}
+		}
+		if(phrescoRepoDetail.getType().equals(PERFORCE)) {
+			String uuid = UUID.randomUUID().toString();
+			File bkImportTemp = new File(Utility.getPhrescoTemp(), uuid);
+			appInfo = importFromPerforce(phrescoRepoDetail, bkImportTemp);
+		}
+		return appInfo;
+	}
+
+	private SVNURL getSVNURL(String repoURL) throws PhrescoException {
+		SVNURL svnurl = null;
+		try {
+			svnurl = SVNURL.parseURIEncoded(repoURL);
+		} catch (SVNException e) {
+			throw new PhrescoException(e);
+		}
+		return svnurl;
+	}
+	
+	private SVNClientManager getSVNClientManager(String userName, String password) {
+		DAVRepositoryFactory.setup();
+		DefaultSVNOptions options = new DefaultSVNOptions();
+		return SVNClientManager.newInstance(options, userName, password);
 	}
 	
 	private ApplicationInfo returnAppInfo(ProjectInfo projectInfo) {
@@ -231,7 +290,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		return null;
 	}
 
-	public boolean updateProject(RepoDetail repodetail, ApplicationInfo appInfo) throws Exception  {
+	public boolean updateProject(RepoDetail repodetail, File updateDir) throws Exception  {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.updateproject()");
 		}
@@ -240,21 +299,18 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				S_LOGGER.debug("SVN type");
 			}
 			DAVRepositoryFactory.setup();
-			SVNURL svnURL = SVNURL.parseURIEncoded(repodetail.getRepoUrl());
-			DefaultSVNOptions options = new DefaultSVNOptions();
-			cm = SVNClientManager.newInstance(options, repodetail.getUserName(), repodetail.getPassword());
+			SVNClientManager svnClientManager = getSVNClientManager(repodetail.getUserName(), repodetail.getPassword());
 			if(debugEnabled){
 				S_LOGGER.debug("update SCM Connection " + repodetail.getRepoUrl());
 			}
-			 updateSCMConnection(appInfo, repodetail.getRepoUrl());
+//			 updateSCMConnection(appInfo, repodetail.getRepoUrl());
 				// revision = HEAD_REVISION.equals(revision) ? revision
 				// : revisionVal;
-			File updateDir = new File(Utility.getProjectHome(), appInfo.getAppDirName());
 			if(debugEnabled){
 				S_LOGGER.debug("updateDir SVN... " + updateDir);
 				S_LOGGER.debug("Updating...");
 			}
-			SVNUpdateClient uc = cm.getUpdateClient();
+			SVNUpdateClient uc = svnClientManager.getUpdateClient();
 			uc.doUpdate(updateDir, SVNRevision.parse(repodetail.getRevision()), SVNDepth.UNKNOWN, true, true);
 			if(debugEnabled){
 				S_LOGGER.debug("Updated!");
@@ -264,8 +320,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.debug("GIT type");
 			}
-			updateSCMConnection(appInfo, repodetail.getRepoUrl());
-			File updateDir = new File(Utility.getProjectHome(), appInfo.getAppDirName()); 
+//			updateSCMConnection(appInfo, repodetail.getRepoUrl());
 			if(debugEnabled){
 				S_LOGGER.debug("updateDir GIT... " + updateDir);
 			}
@@ -283,17 +338,14 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		    if (debugEnabled) {
                 S_LOGGER.debug("BITKEEPER type");
             }
-		    StringBuilder sb = new StringBuilder(Utility.getProjectHome())
-		    .append(appInfo.getAppDirName());
-		    updateFromBitKeeperRepo(repodetail.getRepoUrl(), sb.toString());
+		    updateFromBitKeeperRepo(repodetail.getRepoUrl(), updateDir.getPath());
 		} else if (PERFORCE.equals(repodetail.getType())) {
 		    if (debugEnabled) {
                 S_LOGGER.debug("PERFORCE type");
             }
-			File updateDir = new File(Utility.getProjectHome(), appInfo.getAppDirName()); 
 			String baseDir = updateDir.getAbsolutePath();
-		    perforceSync(repodetail, baseDir, appInfo.getAppDirName(),"update");
-			updateSCMConnection(appInfo, repodetail.getRepoUrl()+repodetail.getStream());
+		    perforceSync(repodetail, baseDir, updateDir.getName(),"update");
+//			updateSCMConnection(appInfo, repodetail.getRepoUrl()+repodetail.getStream());
 		}
 
 		return false;
@@ -337,12 +389,11 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
         return isUpdated;
     }
 
-	private void importToWorkspace(File gitImportTemp, String projectHome,String code) throws Exception {
+	private void importToWorkspace(File gitImportTemp, File workspaceProjectDir) throws Exception {
 		try {
 			if(debugEnabled){
 				S_LOGGER.debug("Entering Method  SCMManagerImpl.importToWorkspace()");
 			}
-			File workspaceProjectDir = new File(projectHome + code);
 			if(debugEnabled){
 				S_LOGGER.debug("workspaceProjectDir " + workspaceProjectDir);
 			}
@@ -393,7 +444,76 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			throw new PhrescoException(POM_URL_FAIL);
 		}
 	}
-
+	
+	public void updateSCMConnection(RepoInfo repoInfo, ApplicationInfo appInfo)throws Exception {
+		if(debugEnabled){
+			S_LOGGER.debug("Entering Method SCMManagerImpl.updateSCMConnection()");
+		}
+		try {
+			//Update scm in pom.xml
+			String repoUrl = repoInfo.getSrcRepoDetail().getRepoUrl();
+			StringBuilder builder = new StringBuilder(Utility.getProjectHome()).append(File.separator).append(appInfo.getAppDirName());
+			if(repoInfo.isSplitPhresco() || repoInfo.isSplitTest()) {
+				File pomfile = getPomFromRepository(appInfo, repoInfo);
+				PomProcessor processor = new PomProcessor(pomfile);
+				builder.append(File.separator).append(processor.getProperty("sourcename"));
+			}
+			builder.append(File.separator).append(appInfo.getPomFile());
+			File pomFile = new File(builder.toString());
+			PomProcessor processor = new PomProcessor(pomFile);
+			processor.setSCM(repoUrl, "", "", "");
+			processor.save();
+			
+			// To write in phresco-pom.xml
+			if(StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
+				if(repoInfo.isSplitPhresco()) {
+					builder = new StringBuilder(Utility.getProjectHome()).append(File.separator).append(appInfo.getAppDirName());
+					builder.append(File.separator).append(appInfo.getAppDirName()+ "_phresco").append(File.separator).append(appInfo.getPhrescoPomFile());
+					pomFile = new File(builder.toString());
+					PomProcessor phrescoPomProcessor = new PomProcessor(pomFile);
+					phrescoPomProcessor.setSCM(repoUrl, "", "", "");
+					phrescoPomProcessor.save();
+				}
+			}
+		} catch (Exception e) {
+			if(debugEnabled){
+				S_LOGGER.error("Entering catch block of updateSCMConnection()"+ e.getLocalizedMessage());
+			}
+			throw new PhrescoException(POM_URL_FAIL);
+		}
+	}
+	
+	private File getPomFromRepository(ApplicationInfo applicationInfo, RepoInfo repoInfo) throws Exception {
+		File pomFile = null;
+		String pomFileName = applicationInfo.getPhrescoPomFile();
+		RepoDetail phrescoRepoDetail = repoInfo.getPhrescoRepoDetail();
+		if(StringUtils.isEmpty(pomFileName)) {
+			pomFileName = applicationInfo.getPomFile();
+			phrescoRepoDetail = repoInfo.getSrcRepoDetail();
+		}
+		if(phrescoRepoDetail.getType().equals(SVN)) {
+			pomFile = getPomFromSVN(applicationInfo, phrescoRepoDetail, pomFileName);
+		}
+		if(phrescoRepoDetail.getType().equals(GIT)) {
+			pomFile = getPomFromGit(applicationInfo, phrescoRepoDetail, pomFileName);
+		}
+		if(phrescoRepoDetail.getType().equals(BITKEEPER)) {
+			pomFile = getPomFromBitkeeper(applicationInfo, phrescoRepoDetail, pomFileName);
+		}
+		return pomFile;
+	}
+	
+	private File getPomFromBitkeeper(ApplicationInfo applicationInfo, RepoDetail repoDetail, String pomName) throws PhrescoException {
+		File pomfile = null;
+		String uuid = UUID.randomUUID().toString();
+		File bkImportTemp = new File(Utility.getPhrescoTemp(), uuid);
+		boolean imported = importFromBitKeeper(repoDetail.getRepoUrl(), bkImportTemp);
+		if(imported) {
+			pomfile = new File(bkImportTemp, pomName);
+		}
+		return pomfile;
+	}
+	
 	private PomProcessor getPomProcessor(ApplicationInfo appInfo)throws Exception {
 		try {
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
@@ -429,41 +549,41 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		FSRepositoryFactory.setup();
 	}
 
-	private boolean checkOutFilter(RepoDetail repodetail,SVNURL svnURL, String displayName, String uniqueKey) throws Exception {
+	private ApplicationInfo checkOutFilter(RepoDetail srcRepoDetail) throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.checkOutFilter()");
 		}
+		String repoURL = srcRepoDetail.getRepoUrl();
+		String userName = srcRepoDetail.getUserName();
+		String password = srcRepoDetail.getPassword();
 		setupLibrary();
-		SVNRepository repository = null;
-		repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(repodetail.getRepoUrl()));
-		ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(repodetail.getUserName(), repodetail.getPassword());
+		SVNRepository repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(repoURL));
+		ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(userName, password);
 		repository.setAuthenticationManager(authManager);
 			SVNNodeKind nodeKind = repository.checkPath("", -1);
 			if (nodeKind == SVNNodeKind.NONE) {
 				if(debugEnabled){
-					S_LOGGER.error("There is no entry at '" + repodetail.getRepoUrl() + "'.");
+					S_LOGGER.error("There is no entry at '" + srcRepoDetail.getRepoUrl() + "'.");
 				}
 			} else if (nodeKind == SVNNodeKind.FILE) {
 				if(debugEnabled){
-					S_LOGGER.error("The entry at '" + repodetail.getRepoUrl() + " is a file while a directory was expected.");
+					S_LOGGER.error("The entry at '" + srcRepoDetail.getRepoUrl() + " is a file while a directory was expected.");
 				}
 			}
 			if(debugEnabled){
 				S_LOGGER.debug("Repository Root: " + repository.getRepositoryRoot(true));
 				S_LOGGER.debug("Repository UUID: " + repository.getRepositoryUUID(true));
 			}
-			return recurseMethod(repository, "", repodetail.getRevision(), svnURL, displayName, uniqueKey, true);
+			return recurseMethod(repository, "", srcRepoDetail, getSVNURL(srcRepoDetail.getRepoUrl()), true);
 	}
 	
-	boolean recurseMethod(SVNRepository repository, String path, String revision, SVNURL svnURL, String displayName, String uniqueKey, boolean recursive) throws Exception {
+	private ApplicationInfo recurseMethod(SVNRepository repository, String path, RepoDetail repoDetail, SVNURL svnURL, 
+			boolean recursive) throws Exception {
 		Collection entries = repository.getDir(path, -1, null, (Collection) null);
-		ApplicationInfo appInfo = dotPhrescoEvaluator(entries, revision, svnURL);
-		if(appInfo != null) {
-			boolean checkoutSVN = checkoutSVN(appInfo, revision, svnURL, displayName, uniqueKey);
-			if(checkoutSVN) {
-				dotphresco = true;
-			}
-		} else if (recursive) {
+		ApplicationInfo appInfo = dotPhrescoEvaluator(entries, repoDetail);
+		if (recursive) {
+			String repoUrlString = repoDetail.getRepoUrl();
+			svnURL = getSVNURL(repoUrlString);
 			Iterator iterator = entries.iterator();
 			if (entries.size() != 0) {
 				while (iterator.hasNext()) {
@@ -474,16 +594,16 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 							S_LOGGER.debug("Appended SVNURL for subdir " + svnURL);
 							S_LOGGER.debug("checking subdirectories");
 						}
-						boolean recurseMethod = recurseMethod(repository,(path.equals("")) ? entry.getName() : path
-								+ FORWARD_SLASH + entry.getName(), revision,svnnewURL, displayName, uniqueKey, false);
+						recurseMethod(repository,(path.equals("")) ? entry.getName() : path
+								+ FORWARD_SLASH + entry.getName(), repoDetail ,svnnewURL, false);
 					}
 				}
 			}
 		} 
-		return dotphresco;
+		return appInfo;
 	}
 	
-	ApplicationInfo dotPhrescoEvaluator(Collection entries, String revision, SVNURL svnURL) throws Exception {
+	private ApplicationInfo dotPhrescoEvaluator(Collection entries, RepoDetail repoDetail) throws Exception {
 		Iterator iterator = entries.iterator();
 		if(debugEnabled){
 			S_LOGGER.debug("Entry size " + entries.size());
@@ -497,15 +617,15 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						S_LOGGER.debug("Entry name " + entry.getName());
 						S_LOGGER.debug("Entry Path " + entry.getURL());
 					}
-					return retrieveAppInfo(revision, svnURL);
+					return retrieveAppInfo(repoDetail);
 				}
 			}
 		}
 		return null;
 	}
 	
-	ApplicationInfo retrieveAppInfo(String revision, SVNURL svnURL) throws Exception {
-		ProjectInfo projectInfo = getSvnAppInfo(revision, svnURL);
+	private ApplicationInfo retrieveAppInfo(RepoDetail repoDetail) throws Exception {
+		ProjectInfo projectInfo = getSvnAppInfo(repoDetail);
 		if (projectInfo == null) {
 			if(debugEnabled){
 				S_LOGGER.debug("ProjectInfo is Empty");
@@ -523,9 +643,20 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		return appInfo;
 	}
 	
-	boolean checkoutSVN(ApplicationInfo appInfo, String revision, SVNURL svnURL, String displayName, String uniqueKey) throws Exception {
-		SVNUpdateClient uc = cm.getUpdateClient();
-		File file = new File(Utility.getProjectHome(), appInfo.getAppDirName());
+	boolean checkoutSVN(ApplicationInfo appInfo, RepoInfo repoInfo, String displayName, String uniqueKey) throws Exception {
+		RepoDetail srcRepoDetail = repoInfo.getSrcRepoDetail();
+		SVNUpdateClient uc = getSVNClientManager(srcRepoDetail.getUserName(), srcRepoDetail.getPassword()).getUpdateClient();
+		StringBuilder strbuilder = new StringBuilder(Utility.getProjectHome());
+		strbuilder.append(File.separator);
+		strbuilder.append(appInfo.getAppDirName());
+		if(repoInfo.isSplitPhresco() || repoInfo.isSplitTest()) {
+			File pomFile = getPomFromRepository(appInfo, repoInfo);
+			PomProcessor processor = new PomProcessor(pomFile);
+			String sourceDirName = processor.getProperty("sourcename");
+			strbuilder.append(File.separator);
+			strbuilder.append(sourceDirName);
+		}
+		File file = new File(strbuilder.toString());
 		if (file.exists()) {
 			throw new PhrescoException(PROJECT_ALREADY);
         } else {
@@ -536,15 +667,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		if(debugEnabled){
 			S_LOGGER.debug("Checking out...");
 		}
-		uc.doCheckout(svnURL, file, SVNRevision.UNDEFINED,
-				SVNRevision.parse(revision), SVNDepth.UNKNOWN,
+		uc.doCheckout(getSVNURL(srcRepoDetail.getRepoUrl()), file, SVNRevision.UNDEFINED,
+				SVNRevision.parse(srcRepoDetail.getRevision()), SVNDepth.UNKNOWN,
 				false);
 		if(debugEnabled){
 			S_LOGGER.debug("updating pom.xml");
 		}
-		// update connection url in pom.xml
-		updateSCMConnection(appInfo,
-				svnURL.toDecodedString());
 		return true;
 	}
 
@@ -687,14 +815,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		} 
 	}
 	
-	private ApplicationInfo importFromBitKeeper(String repoUrl, String displayName, String uniqueKey) throws PhrescoException {
+	private boolean importFromBitKeeper(String repoUrl, File bkImportTemp) throws PhrescoException {
 	    BufferedReader reader = null;
 	    File file = new File(Utility.getPhrescoTemp() + "bitkeeper.info");
 	    boolean isImported = false;
 	    try {
 	        String command = BK_CLONE + SPACE + repoUrl;
-	        String uuid = UUID.randomUUID().toString();
-			File bkImportTemp = new File(Utility.getPhrescoTemp(), uuid);
 			if(debugEnabled){
 				S_LOGGER.debug("bkImportTemp " + bkImportTemp);
 			}
@@ -717,20 +843,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	                throw new PhrescoException("Failed to import project");
 	            }
 	        }
-	        if (isImported) {
-	        	ProjectInfo projectInfo = getGitAppInfo(bkImportTemp);
-	        	if (projectInfo != null) {
-	        		ApplicationInfo appInfo = returnAppInfo(projectInfo);
-	        		if (appInfo != null) {
-	        			//generate import lock
-	                	String appId = appInfo.getId();
-	                	LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appId, FrameworkConstants.IMPORT, displayName, uniqueKey)), true);
-	        			importToWorkspace(bkImportTemp, Utility.getProjectHome(), appInfo.getAppDirName());
-	        			return appInfo;
-	        		}
-	        	} 
-	        } 
-	        return null;
+	        return isImported;
 	    } catch (IOException e) {
 	        throw new PhrescoException(e);
 	    } catch (Exception e) {
@@ -749,45 +862,44 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	    }
 	}
 
-	private ApplicationInfo cloneFilter(File appDir, String url, boolean recursive, String displayName, String uniqueKey)throws Exception {
+	private void cloneFilter(ApplicationInfo applicationInfo, File appDir, String displayName, 
+			String uniqueKey, RepoInfo repoInfo)throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.cloneFilter()");
 		}
+		File pomFromGit = null;
 		if (appDir.isDirectory()) {
-			ProjectInfo projectInfo = getGitAppInfo(appDir);
+			//generate import lock
+        	String appId = applicationInfo.getId();
+        	LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appId, FrameworkConstants.IMPORT, 
+        			displayName, uniqueKey)), true);
+        	StringBuilder str = new StringBuilder(Utility.getProjectHome()).append(applicationInfo.getAppDirName());
+        	if(repoInfo.isSplitPhresco() || repoInfo.isSplitTest()) {
+        		pomFromGit = getPomFromRepository(applicationInfo, repoInfo);
+        		PomProcessor processor = new PomProcessor(pomFromGit);
+        		String property = processor.getProperty("sourcename");
+        		str.append(File.separator).append(property);
+        	}
+        	importToWorkspace(appDir, new File(str.toString()));
 			if(debugEnabled){
-				S_LOGGER.debug("appInfo " + projectInfo);
+				S_LOGGER.debug("updating pom.xml");
 			}
-			if (projectInfo == null) {
-				if(debugEnabled){
-					S_LOGGER.debug("ProjectInfo is Empty");
-				}
-				throw new PhrescoException(INVALID_FOLDER);
-			}
-			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
-			if (appInfos == null) {
-				if(debugEnabled){
-					S_LOGGER.debug("AppInfo is Empty");
-				}
-				throw new PhrescoException(INVALID_FOLDER);
-			}
-			ApplicationInfo appInfo = appInfos.get(0);
-			if (appInfo != null) {
-				//generate import lock
-            	String appId = appInfo.getId();
-            	LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appId, FrameworkConstants.IMPORT, displayName, uniqueKey)), true);
-				importToWorkspace(appDir, Utility.getProjectHome(),	appInfo.getAppDirName());
-				if(debugEnabled){
-					S_LOGGER.debug("updating pom.xml");
-				}
-				// update connection in pom.xml
-				updateSCMConnection(appInfo, url);
-				return appInfo;
+			// update connection in pom.xml
+//			updateSCMConnection(applicationInfo, repoInfo.getSrcRepoDetail().getRepoUrl());
+			if(pomFromGit.exists()) {
+				FileUtil.delete(pomFromGit.getParentFile());
 			}
 		}
-		return null;
 	}
-
+	
+	private File getPomFromGit(ApplicationInfo applicationInfo, RepoDetail repoDetail, String pomFile) throws Exception {
+		String uuid = UUID.randomUUID().toString();
+		File gitImportTemp = new File(Utility.getPhrescoTemp(), uuid);
+		importFromGit(repoDetail, gitImportTemp);
+		File pom = new File(gitImportTemp, pomFile);
+		return pom;
+	}
+	
 	private ProjectInfo getGitAppInfo(File directory)throws PhrescoException {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.getGitAppInfo()");
@@ -814,22 +926,28 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 	}
 
-	private ProjectInfo getSvnAppInfo(String revision, SVNURL svnURL) throws Exception {
+	private ProjectInfo getSvnAppInfo(RepoDetail repoDetail) throws  Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.getSvnAppInfo()");
 		}
 		BufferedReader reader = null;
-		File tempDir = new File(Utility.getSystemTemp(), SVN_CHECKOUT_TEMP);
+		File tempDir = new File(Utility.getSystemTemp(), SVN_CHECKOUT_TEMP + "1");
 		if(debugEnabled){
 			S_LOGGER.debug("temp dir : SVNAccessor " + tempDir);
 		}
+		String repoURL = repoDetail.getRepoUrl();
+		String userName = repoDetail.getUserName();
+		String password = repoDetail.getPassword();
+		String revision = repoDetail.getRevision();
 		try {
-			SVNUpdateClient uc = cm.getUpdateClient();
+			SVNClientManager svnClientManager = getSVNClientManager(userName, password);
+			SVNUpdateClient uc = svnClientManager.getUpdateClient();
 			try {
-			uc.doCheckout(svnURL.appendPath(PHRESCO, true), tempDir,
+			uc.doCheckout(getSVNURL(repoURL).appendPath(PHRESCO, true), tempDir,
 					SVNRevision.UNDEFINED, SVNRevision.parse(revision),
 					SVNDepth.UNKNOWN, false);
 			} catch(SVNException er) {
+				er.printStackTrace();
 				ProjectInfo projInfo = new ProjectInfo();
 				projInfo.setId("#SEP#");
 				return projInfo;
@@ -848,7 +966,27 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			}
 		}
 	}
-
+	
+	public File getPomFromSVN(ApplicationInfo appInfo, RepoDetail repoDetail, String pomName) throws Exception {
+		if(debugEnabled){
+			S_LOGGER.debug("Entering Method  SCMManagerImpl.getPomFromSVN()");
+		}
+		File tempDir = new File(Utility.getSystemTemp(), SVN_CHECKOUT_TEMP);
+		if(debugEnabled){
+			S_LOGGER.debug("temp dir : SVNAccessor " + tempDir);
+		}
+		SVNUpdateClient uc = getSVNClientManager(repoDetail.getUserName(), repoDetail.getPassword()).getUpdateClient();
+		try {
+			uc.doCheckout(getSVNURL(repoDetail.getRepoUrl()), tempDir,
+			SVNRevision.UNDEFINED, SVNRevision.parse(repoDetail.getRevision()),
+				SVNDepth.UNKNOWN, false);
+		} catch(SVNException er) {
+			er.printStackTrace();
+		}
+		File pom = new File(tempDir, pomName);
+		return pom;
+	}
+	
 	public boolean importToRepo(RepoInfo repoInfo, ApplicationInfo appInfo) throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importToRepo()");
@@ -1601,42 +1739,36 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		return commitInfo;
 	}
 	
-	public String svnCheckout(RepoDetail repodetail, String Path) {
+	public String svnCheckout(String path, String userName, String password, String repoURL, String revision) {
 		DAVRepositoryFactory.setup();
 		SVNClientManager clientManager = SVNClientManager.newInstance();
-		ISVNAuthenticationManager authManager = new BasicAuthenticationManager(repodetail.getTestUserName(), repodetail.getTestPassword());
+		ISVNAuthenticationManager authManager = new BasicAuthenticationManager(userName, password);
 		clientManager.setAuthenticationManager(authManager);
 		SVNUpdateClient updateClient = clientManager.getUpdateClient();
 		try
 		{
-			File file = new File(Path);
-			SVNURL url = SVNURL.parseURIEncoded(repodetail.getTestRepoUrl());
-			updateClient.doCheckout(url, file, SVNRevision.UNDEFINED, SVNRevision.parse(repodetail.getTestRevision()), true);
+			File file = new File(path);
+			SVNURL url = SVNURL.parseURIEncoded(repoURL);
+			updateClient.doCheckout(url, file, SVNRevision.UNDEFINED, SVNRevision.parse(revision), true);
 		}
 		catch (SVNException e) {
 			return e.getLocalizedMessage();
 		}
 		return SUCCESSFUL;
 	}
-	public ApplicationInfo importFromPerforce(RepoDetail repodetail) throws Exception {
-		String uuid = UUID.randomUUID().toString();
-		File perforceImportTemp = new File(Utility.getPhrescoTemp(), uuid);
-		String baseDir=perforceImportTemp.getAbsolutePath();
-		perforceSync(repodetail, baseDir, uuid,"import");
-		String path=perforceImportTemp.getAbsolutePath();
-		String[] pathArr=repodetail.getStream().split("/");
-		String projName=pathArr[pathArr.length-1];
-		File actualFile=new  File(path+"/"+projName);
-		ProjectInfo projectInfo=getGitAppInfo(actualFile);
-		if(projectInfo!=null){
+	
+	public ApplicationInfo importFromPerforce(RepoDetail repodetail, File tempFile) throws Exception {
+		perforceSync(repodetail, tempFile.getAbsolutePath(), tempFile.getName(),"import");
+		String path = tempFile.getAbsolutePath();
+		String[] pathArr = repodetail.getStream().split("/");
+		String projName = pathArr[pathArr.length-1];
+		File actualFile = new  File(path+"/"+projName);
+		ProjectInfo projectInfo = getGitAppInfo(actualFile);
+		if(projectInfo!= null){
 			ApplicationInfo appInfo = returnAppInfo(projectInfo);
-			importToWorkspace(actualFile, Utility.getProjectHome(), appInfo.getAppDirName() );
 			updateSCMConnection(appInfo, repodetail.getRepoUrl()+repodetail.getStream());
-			return returnAppInfo(projectInfo);
-		} else{
-			return null;
-		}
-
+		} 
+		return returnAppInfo(projectInfo);
 	}
 	
 	public void perforceSync(RepoDetail repodetail,String baseDir , String projectName,String flag) throws ConnectionException, RequestException  {
@@ -1716,5 +1848,80 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			exc.printStackTrace();
 		}
 
+	}
+
+	@Override
+	public void importTest(ApplicationInfo applicationInfo, RepoInfo repoInfo) throws Exception {
+		StringBuilder builder = new StringBuilder(Utility.getProjectHome()).append(File.separator);
+		builder.append(applicationInfo.getAppDirName());
+		if(repoInfo.isSplitTest()) {
+			File pomFile = getPomFromRepository(applicationInfo, repoInfo);
+			PomProcessor processor = new PomProcessor(pomFile);
+			String testDir = processor.getProperty("testname");
+			builder.append(File.separator).append(testDir);
+		}
+		RepoDetail testRepoDetail = repoInfo.getTestRepoDetail();
+		String type = testRepoDetail.getType();
+		if(type.equals(SVN)) {
+			svnCheckout(builder.toString(), testRepoDetail.getUserName(), testRepoDetail.getPassword(), 
+					testRepoDetail.getRepoUrl(), testRepoDetail.getRevision());
+		}
+		if(type.equals(GIT)) {
+			String uuid = UUID.randomUUID().toString();
+			File gitImportTemp = new File(Utility.getPhrescoTemp(), uuid);
+			importFromGit(testRepoDetail, gitImportTemp);
+			importToWorkspace(gitImportTemp, new File(builder.toString()));
+		}
+		if(type.equals(BITKEEPER)) {
+			String uuid = UUID.randomUUID().toString();
+			File importTemp = new File(Utility.getPhrescoTemp(), uuid);
+			boolean imported = importFromBitKeeper(testRepoDetail.getRepoUrl(), importTemp);
+			if(imported) {
+				importToWorkspace(importTemp, new File(builder.toString()));
+			}
+		}
+		if(type.equals(PERFORCE)) {
+			String uuid = UUID.randomUUID().toString();
+			File tempFile = new File(Utility.getPhrescoTemp(), uuid);
+			FileUtils.forceMkdir(tempFile);
+			importFromPerforce(testRepoDetail, tempFile);
+			importToWorkspace(tempFile, new File(builder.toString()));
+		}
+	}
+
+	@Override
+	public void importPhresco(ApplicationInfo applicationInfo, RepoInfo repoInfo)
+			throws Exception {
+		StringBuilder builder = new StringBuilder(Utility.getProjectHome()).append(File.separator);
+		builder.append(applicationInfo.getAppDirName());
+		if(repoInfo.isSplitPhresco()) {
+			builder.append(File.separator).append(applicationInfo.getAppDirName() + "_phresco");
+		}
+		RepoDetail phrescoRepoDetail = repoInfo.getPhrescoRepoDetail();
+		String type = phrescoRepoDetail.getType();
+		if(type.equals(SVN)) {
+			svnCheckout(builder.toString(), phrescoRepoDetail.getUserName(), phrescoRepoDetail.getPassword(), 
+					phrescoRepoDetail.getRepoUrl(), phrescoRepoDetail.getRevision());
+		}
+		if(type.equals(GIT)) {
+			String uuid = UUID.randomUUID().toString();
+			File gitImportTemp = new File(Utility.getPhrescoTemp(), uuid);
+			importFromGit(phrescoRepoDetail, gitImportTemp);
+			importToWorkspace(gitImportTemp, new File(builder.toString()));
+		}
+		if(type.equals(BITKEEPER)) {
+			String uuid = UUID.randomUUID().toString();
+			File importTemp = new File(Utility.getPhrescoTemp(), uuid);
+			boolean imported = importFromBitKeeper(phrescoRepoDetail.getRepoUrl(), importTemp);
+			if(imported) {
+				importToWorkspace(importTemp, new File(builder.toString()));
+			}
+		}
+		if(type.equals(PERFORCE)) {
+			String uuid = UUID.randomUUID().toString();
+			File tempFile = new File(Utility.getPhrescoTemp(), uuid);
+			importFromPerforce(phrescoRepoDetail, tempFile);
+			importToWorkspace(tempFile, new File(builder.toString()));
+		}
 	}
 }

@@ -77,29 +77,34 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	
 	@Test
 	public void  updateProjectToRepo() {
+		RepoInfo repoInfo = new RepoInfo();
 		RepoDetail repodetail = new RepoDetail();
 		repodetail.setUserName("santhosh_ja");
 		repodetail.setPassword("farewellJ123");
 		repodetail.setRevision("head");
 		repodetail.setType("svn");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/" + appDirName);
-		Response updateImportedApplicaion = repositoryservice.updateImportedApplicaion(appDirName,"admin_user", repodetail );
+		repoInfo.setSrcRepoDetail(repodetail);
+		Response updateImportedApplicaion = repositoryservice.updateImportedApplicaion(appDirName,"admin_user", repoInfo );
 		Assert.assertEquals(200,updateImportedApplicaion.getStatus());
 	}
 	
 	@Test
 	public void  importProjectFromRepo() throws Exception {
+		RepoInfo repoInfo = new RepoInfo();
 		RepoDetail repodetail = new RepoDetail();
 		repodetail.setUserName("santhosh_ja");
 		repodetail.setPassword("farewellJ123");
 		repodetail.setRevision("head");
 		repodetail.setType("svn");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0/239/");
-		Response importApplication = repositoryservice.importApplication(repodetail, "Admin");
+		repoInfo.setSrcRepoDetail(repodetail);
+		Response importApplication = repositoryservice.importApplication(repoInfo, "Admin");
 		Assert.assertEquals(200,importApplication.getStatus());
 		
 		repodetail.setUserName("sample");
-		Response authenticationException = repositoryservice.importApplication(repodetail, "Admin");
+		repoInfo.setSrcRepoDetail(repodetail);
+		Response authenticationException = repositoryservice.importApplication(repoInfo, "Admin");
 		Assert.assertEquals(200, authenticationException.getStatus());
 	}
 	
@@ -165,23 +170,27 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	
 	@Test
 	public void  updateGitProjectToRepo() {
+		RepoInfo repoInfo = new RepoInfo();
 		RepoDetail repodetail = new RepoDetail();
 		repodetail.setUserName("santhosh-ja");
 		repodetail.setPassword("santJ!23");
 		repodetail.setType("git");
 		repodetail.setRepoUrl("https://github.com/santhosh-ja/TestGit.git");
-		Response updateImportedApplicaion = repositoryservice.updateImportedApplicaion("TestGitProject","admin_user", repodetail);
+		repoInfo.setSrcRepoDetail(repodetail);
+		Response updateImportedApplicaion = repositoryservice.updateImportedApplicaion("TestGitProject","admin_user", repoInfo);
 		Assert.assertEquals(200,updateImportedApplicaion.getStatus());
 	}
 	
 	@Test
 	public void  importGitProjectFromRepo() throws Exception {
+		RepoInfo repoInfo = new RepoInfo();
 		RepoDetail repodetail = new RepoDetail();
 		repodetail.setUserName("santhosh-ja");
 		repodetail.setPassword("santJ!23");
 		repodetail.setType("git");
 		repodetail.setRepoUrl("https://github.com/santhosh-ja/GitAdd.git");
-		Response importApplication = repositoryservice.importApplication(repodetail, "Admin");
+		repoInfo.setSrcRepoDetail(repodetail);
+		Response importApplication = repositoryservice.importApplication(repoInfo, "Admin");
 		Assert.assertEquals(200,importApplication.getStatus());
 	}
 	
