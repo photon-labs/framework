@@ -2418,7 +2418,7 @@ img[name="close"] {
 }
 
 .optional_dropdown {
-	 width: 186px;	
+	 /*width: 186px;*/	
 }
 .graph_table .fixed-table-container-inner {
 	height:85% !important;
@@ -4862,6 +4862,12 @@ a.selected { background:#dcdcdc; }
 	line-height:22px;
 	color:#333333;
 	margin-bottom:6px;
+}
+
+.about_cont tr td img { 
+	margin-right:15px; 
+	/*height:19px;*/
+	width:315px;
 }
 
 .update_success {
