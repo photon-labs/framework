@@ -33,6 +33,7 @@ import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ProjectManager;
+import com.photon.phresco.framework.model.DeleteProjectInfo;
 import com.photon.phresco.service.client.api.ServiceContext;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.service.client.impl.ServiceManagerImpl;
@@ -199,7 +200,9 @@ public class ProjectManagerTest {
 	public void deleteProject() throws PhrescoException {
 		List<String> appDirNames = new ArrayList<String>();
 		appDirNames.add("testPhp");
-		boolean delete = projectManager.delete(appDirNames);
+		DeleteProjectInfo deleteProjectInfo = new DeleteProjectInfo();
+		deleteProjectInfo.setAppDirNames(appDirNames);
+		boolean delete = projectManager.delete(deleteProjectInfo);
 //		Assert.assertTrue(delete);
 	}
 	

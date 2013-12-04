@@ -44,7 +44,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
@@ -76,6 +75,7 @@ import com.photon.phresco.exception.PhrescoWebServiceException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.model.DeleteProjectInfo;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.util.MojoProcessor;
@@ -1045,13 +1045,18 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	@Path(REST_API_PROJECT_DELETE)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteproject(List<String> appDirnames, @QueryParam("actionType") String actionType) {
+	public Response deleteproject(DeleteProjectInfo deleteProjectInfo) {
 		BufferedReader reader = null;
 		ResponseInfo responseData = new ResponseInfo();
 		try {
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-			if (CollectionUtils.isNotEmpty(appDirnames)) {
-				for (String appDirName : appDirnames) {
+			List<String> appDirNames = deleteProjectInfo.getAppDirNames();
+			String actionType = deleteProjectInfo.getActionType();
+			if (CollectionUtils.isNotEmpty(appDirNames)) {
+				for (String appDirName : appDirNames) {
+					if (REQ_MODULE.equals(actionType) && StringUtils.isNotEmpty(deleteProjectInfo.getRootModule())) {
+						appDirName = deleteProjectInfo.getRootModule() + File.separator + appDirName; 
+					}
 					StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(
 							File.separator).append(FOLDER_DOT_PHRESCO).append(File.separator).append(
 							RUNAGNSRC_INFO_FILE);
@@ -1072,15 +1077,21 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 						}
 					}
 					String applicationHome = FrameworkServiceUtil.getApplicationHome(appDirName);
-					Utility.killProcess(applicationHome, "eclipse");
+					Utility.killProcess(applicationHome, REQ_EQLIPSE);
 				}
 			}
 			
-			boolean status  = projectManager.delete(appDirnames);
-			if(status && actionType.equals("project")) {
+			if (REQ_MODULE.equals(actionType) && StringUtils.isNotEmpty(deleteProjectInfo.getRootModule())) {
+				removeAllEntriesOfModuleToBeDeleted(deleteProjectInfo.getDependents(), deleteProjectInfo.getAppDirNames().get(0), deleteProjectInfo.getRootModule());
+			}
+			boolean status  = projectManager.delete(deleteProjectInfo);
+			if(status && actionType.equals(APPLICATION_PROJECT)) {
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_SUCCESS, PHR200010);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
-			} else if (status && actionType.equals("application")) {
+			} else if (status && actionType.equals(REQ_APPLICATION)) {
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_SUCCESS, PHR200026);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+			} else if (status && actionType.equals(REQ_MODULE)) { 
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_SUCCESS, PHR200026);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 			} else {
@@ -1101,7 +1112,86 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					"*").build();
 		}
 	}
+	
+	private void removeAllEntriesOfModuleToBeDeleted(List<String> dependents, String moduleNameToDelete, String rootModule) throws PhrescoException {
+		try {
+			//To delete entries in root project
+			removeModuleInfoFromRootProject(moduleNameToDelete, rootModule);
+			if (CollectionUtils.isNotEmpty(dependents)) {
+				//To remove dependency entry in other sub module's pom
+				removeDependencies(dependents, moduleNameToDelete, rootModule);
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
 
+	private void removeDependencies(List<String> dependents, String moduleNameToDelete, String rootModule) throws PhrescoException, PhrescoPomException {
+		File currentModuleDir = new File(Utility.getProjectHome() + rootModule + File.separator + moduleNameToDelete);
+		ApplicationInfo currentAppInfo = ProjectUtils.getApplicationInfo(currentModuleDir);
+		String currentPom = Utility.getPomFileName(currentAppInfo);
+		File currentPomFile = new File(currentModuleDir.getPath() + File.separator + currentPom);
+		if (currentPomFile.exists()) {
+			PomProcessor processor = new PomProcessor(currentPomFile);
+			String groupId = processor.getGroupId();
+			String artifactId = processor.getArtifactId();
+			for (String dependent : dependents) {
+				File dependentDir = new File(Utility.getProjectHome() + rootModule + File.separator + dependent);
+				ApplicationInfo dependentAppInfo = ProjectUtils.getApplicationInfo(dependentDir);
+				String dependentPom = Utility.getPomFileName(dependentAppInfo);
+				File dependentPomFile = new File(dependentDir.getPath() + File.separator + dependentPom);
+				if (dependentPomFile.exists()) {
+					PomProcessor proc = new PomProcessor(dependentPomFile);
+					Dependency dependency = proc.getDependency(groupId, artifactId);
+					if (dependency != null) {
+						proc.deleteDependency(groupId, artifactId, "");
+						proc.save();
+					}
+				}
+			}
+		}
+	}
+
+	private void removeModuleInfoFromRootProject(String moduleNameToDelete, String rootModule) throws PhrescoException {
+		try {
+			ProjectInfo rootProjectInfo = FrameworkServiceUtil.getProjectInfo(rootModule);
+			File rootProjectInfoFile = new File(Utility.getProjectHome() + rootModule + File.separator + Constants.DOT_PHRESCO_FOLDER 
+										+ File.separator + Constants.PROJECT_INFO_FILE);
+			ApplicationInfo rootAppInfo = rootProjectInfo.getAppInfos().get(0);
+			String rootPomName = Utility.getPomFileName(rootAppInfo);
+			File rootPom = new File(Utility.getProjectHome() + rootModule + File.separator + rootPomName);
+			//To remove modules entry in root pom
+			if (rootPom.exists()) {
+				PomProcessor processor = new PomProcessor(rootPom);
+				Modules modules = processor.getModel().getModules();
+				if (modules != null && CollectionUtils.isNotEmpty(modules.getModule()) && modules.getModule().contains(moduleNameToDelete)) {
+					processor.removeModule(moduleNameToDelete);
+					processor.save();
+				}
+			}
+			//To remove current module info and update dependent modules info in root project's project.info
+			List<ModuleInfo> modules = rootAppInfo.getModules();
+			List<ModuleInfo> newModuleInfos = new ArrayList<ModuleInfo>();
+			if (CollectionUtils.isNotEmpty(modules)) {
+				for (ModuleInfo module : modules) {
+					if (!module.getCode().equals(moduleNameToDelete)) {
+						List<String> dependentModules = module.getDependentModules();
+						if (CollectionUtils.isNotEmpty(dependentModules)&& dependentModules.contains(moduleNameToDelete)) {
+							int itemIndex = dependentModules.indexOf(moduleNameToDelete);
+							dependentModules.remove(itemIndex);
+							module.setDependentModules(dependentModules);
+						}
+						newModuleInfos.add(module);
+					} 
+				}
+				rootAppInfo.setModules(newModuleInfos);
+				ProjectUtils.updateProjectInfo(rootProjectInfo, rootProjectInfoFile);
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
 	/**
 	 * Gets the permission.
 	 *
@@ -1139,7 +1229,56 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					"*").build();
 		}
 	}
-
+	
+	/**
+	 * Get dependents of particular sub module application
+	 */
+	@GET
+	@Path(REST_API_MODULE_DEPENDENTS)
+	@Produces(MediaType.APPLICATION_JSON)
+		public Response getModuleDependents(@QueryParam(REST_QUERY_MODULE_NAME) String moduleName, @QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule) throws PhrescoException {
+		List<String> dependents = new ArrayList<String>();
+		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
+		try {
+			ApplicationInfo rootAppInfo = FrameworkServiceUtil.getApplicationInfo(rootModule);
+			if (rootAppInfo != null && CollectionUtils.isNotEmpty(rootAppInfo.getModules())) {
+				File currentModule = new File(Utility.getProjectHome() + rootModule + File.separator + moduleName);
+				ApplicationInfo currentModuleAppInfo = ProjectUtils.getApplicationInfo(currentModule);
+				String currentModulePomName = Utility.getPomFileName(currentModuleAppInfo);
+				File currentModulePom = new File(currentModule.getPath() + File.separator + currentModulePomName);
+				if (currentModulePom.exists()) {
+					PomProcessor proc = new PomProcessor(currentModulePom);
+					String groupId = proc.getGroupId();
+					String artifactId = proc.getArtifactId();
+					for (ModuleInfo module : rootAppInfo.getModules()) {
+						if (!moduleName.equals(module.getCode())) {
+							File otherModuleDir = new File(Utility.getProjectHome() + rootModule + File.separator + module.getCode());
+							ApplicationInfo otherModuleAppInfo = ProjectUtils.getApplicationInfo(otherModuleDir);
+							String pomFileName = Utility.getPomFileName(otherModuleAppInfo);
+							File pom = new File (otherModuleDir.getPath() + File.separator + pomFileName);
+							if (pom.exists()) {
+								PomProcessor processor = new PomProcessor(pom);
+								Dependency dependency = processor.getDependency(groupId, artifactId);
+								if (dependency != null) {
+									dependents.add(module.getCode());
+								}
+							}
+						}
+					}
+				}	
+			}
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
+					dependents, RESPONSE_STATUS_SUCCESS, PHR210051);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+		} catch (Exception e) {
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
+					null, RESPONSE_STATUS_ERROR, PHR210052);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+					"*").build();
+		}
+	}
+	
+	
 	/**
 	 * Sort by date to latest.
 	 *

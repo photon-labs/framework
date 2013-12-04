@@ -17,21 +17,18 @@
  */
 package com.photon.phresco.framework.api;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.wink.json4j.OrderedJSONObject;
-import org.json.JSONObject;
 
-import com.photon.phresco.commons.model.ApplicationInfo;
-import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.Dashboard;
 import com.photon.phresco.commons.model.DashboardInfo;
 import com.photon.phresco.commons.model.Dashboards;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.Widget;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.model.DeleteProjectInfo;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.DashboardSearchInfo;
 
@@ -98,7 +95,7 @@ public interface ProjectManager {
 	 * @return boolean - returns true if deletion is success and false if deletion fails.
 	 * @throws PhrescoException
 	 */
-	boolean delete(List<String> appDirNames) throws PhrescoException;
+	boolean delete(DeleteProjectInfo deleteProjectInfo) throws PhrescoException;
 	
 	/**
 	 * This method returns the ProjectInfo of the given appId

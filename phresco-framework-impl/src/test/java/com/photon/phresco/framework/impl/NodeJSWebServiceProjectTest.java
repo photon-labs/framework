@@ -33,6 +33,7 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectManager;
+import com.photon.phresco.framework.model.DeleteProjectInfo;
 
 public class NodeJSWebServiceProjectTest extends BaseTest{
 	
@@ -58,7 +59,9 @@ public class NodeJSWebServiceProjectTest extends BaseTest{
 	
 	@After
 	public void tearDown() throws PhrescoException {
-		boolean delete = projectManager.delete(appDirNames);
+		DeleteProjectInfo deleteProjectInfo = new DeleteProjectInfo();
+		deleteProjectInfo.setAppDirNames(appDirNames);
+		boolean delete = projectManager.delete(deleteProjectInfo);
 		Assert.assertTrue(delete);
 	}
 	

@@ -73,6 +73,7 @@ import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.DocumentGenerator;
 import com.photon.phresco.framework.api.ProjectManager;
+import com.photon.phresco.framework.model.DeleteProjectInfo;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceClientConstant;
@@ -670,12 +671,20 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		return plugins;
 	}
 	@Override
-	public boolean delete(List<String> appDirNames) throws PhrescoException {
+	public boolean delete(DeleteProjectInfo deleteProjectInfo) throws PhrescoException {
 		boolean deletionSuccess = false;
 		String projectsPath = Utility.getProjectHome();
-		for (String appDirName : appDirNames) {
-			File application = new File(projectsPath + appDirName);
-			deletionSuccess = FileUtil.delete(application);
+		List<String> appDirNames = deleteProjectInfo.getAppDirNames();
+		if (CollectionUtils.isNotEmpty(appDirNames)) {
+			for (String appDirName : appDirNames) {
+				if (REQ_MODULE.equals(deleteProjectInfo.getActionType())) {
+					appDirName = deleteProjectInfo.getRootModule() + File.separator + appDirName;
+				}
+				File application = new File(projectsPath + appDirName);
+				if (application.exists()) {
+					deletionSuccess = FileUtil.delete(application);
+				}
+			}
 		}
 		return deletionSuccess;
 	}
@@ -793,7 +802,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				}
 			}
 		} catch (PhrescoPomException e) {
-			e.printStackTrace();
 			throw new PhrescoException(e);
 		}
 	}

@@ -32,6 +32,7 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectManager;
+import com.photon.phresco.framework.model.DeleteProjectInfo;
 import com.photon.phresco.commons.model.ApplicationInfo;
 
 public class SiteCoreProjectTest extends BaseTest {
@@ -56,7 +57,9 @@ public class SiteCoreProjectTest extends BaseTest {
 	
 	@After
 	public void tearDown() throws PhrescoException {
-		boolean delete = projectManager.delete(appDirNames);
+		DeleteProjectInfo deleteProjectInfo = new DeleteProjectInfo();
+		deleteProjectInfo.setAppDirNames(appDirNames);
+		boolean delete = projectManager.delete(deleteProjectInfo);
 		Assert.assertTrue(delete);
 	}
 	

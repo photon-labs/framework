@@ -770,6 +770,8 @@ public interface FrameworkConstants {
     String REQ_TYPE = "type";
     String REQ_DESCRIPTION = "description";
     String REQ_APPLICATION = "application";
+    String REQ_MODULE = "module";
+    String REQ_EQLIPSE = "eclipse";
     String REQ_APPTYPE_TECHNOLOGIES = "appTypeTechnologies";
     String REQ_ADD_APPLICATION = "addApplication";
     String REQ_EDIT_APPLICATION = "addApplication";

@@ -21,6 +21,7 @@ define(["projectlist/listener/projectListListener"], function() {
 		onAddUpdateEvent : null,
 		onAddReportEvent : null,
 		onGetReportEvent : null,
+		onDeleteSubModuleEvent : null,
 		flagged: null,
 		flag:null,
 		delobj:null,
@@ -86,6 +87,10 @@ define(["projectlist/listener/projectListListener"], function() {
 			}
 			self.onGetReportEvent.add(projectslistListener.getReportEvent, projectslistListener);
 			
+			if(self.onDeleteSubModuleEvent === null) {
+				self.onDeleteSubModuleEvent = new signals.Signal();
+			}
+			self.onDeleteSubModuleEvent.add(projectslistListener.checkForDependents, projectslistListener);
 		},
 		registerHandlebars : function () {
 			var self = this;
@@ -158,9 +163,9 @@ define(["projectlist/listener/projectListListener"], function() {
 			});
 		},
 		
-		deleteProjectfn : function(deletearray, imgname1, imgname2, deleteproject){
+		deleteProjectfn : function(deletObj, imgname1, imgname2, deleteproject){
 			var self = this;
-			self.getAction(deletearray,"delete",function(response) {
+			self.getAction(deletObj,"delete",function(response) {
 				//commonVariables.loadingScreen.removeLoading();
 				self.deleterow(imgname1, imgname2, deleteproject);
 			});
@@ -170,6 +175,8 @@ define(["projectlist/listener/projectListListener"], function() {
 			var self = this;
 			if(imgname1 === 'delete'|| imgname2 === 'delete') {	
 				$(commonVariables.contentPlaceholder).find("tr[class="+deleteproject+"]").remove();
+			} else if (imgname1 === 'module_delete') {
+				deleteproject.remove();
 			} else {
 				$(commonVariables.contentPlaceholder).find("tr[class="+deleteproject+"]").prev('tr').remove();
 				$(commonVariables.contentPlaceholder).find("tr[class="+deleteproject+"]").remove();
@@ -254,7 +261,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			
 			$("#myTab li a").removeClass("act");
 			$('a[name=editApplication]').click(function(){
-				var thisObj = this; appid = $(this).attr("appid");
+				var thisObj = this, appid = $(this).attr("appid");
 				self.checkForLock("editAppln", appid, function(response){
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {
 						$(".dyn_popup").hide();
@@ -468,9 +475,21 @@ define(["projectlist/listener/projectListListener"], function() {
 							commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 						}	
 					});			
+				} else if ($(this).hasClass('del_submodule')){
+					var openccName = $(this).attr('name'), rootModule = $(this).closest('tr').attr('rootModule');
+					self.onDeleteSubModuleEvent.dispatch($(this).attr('name'), rootModule, function(dependents) {
+						var deleteMsg = "Are you sure to delete?";
+						if (dependents.length > 0) {
+							deleteMsg =openccName + ' is dependent to ' + dependents.join(',') + '. <br/>Are you sure to delete?'
+							$('.'+openccName+'_module_dependents').attr("dependents", dependents.join(','));
+						}
+						self.openccpl(openccObj, openccName, rootModule);
+						$('.'+openccName+'_module_delete_msg').html(deleteMsg);
+
+					});
 				} else {
 					self.openccpl(this, $(this).attr('name'), currentPrjName);
-				} 
+				}
 				//functionality for search log messages
 				$("#type_"+dynamicId).bind('change',function() {
 					if($(this).val() !== 'svn') {
@@ -532,7 +551,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			});
 			$("input[name='deleteConfirm']").unbind('click');
 			$("input[name='deleteConfirm']").click(function(e) {
-				self.projectslistListener.delprojectname = $(this).attr('deleteAppname');
+				self.projectslistListener.delprojectname = $(this).attr('deleteAppname'), deleteObj = {};
 				var deletearray = [], deleteproject, imgname1, imgname2;
 				deleteproject = $(this).parent().parent().attr('currentPrjName');
 				deletearray.push(deleteproject);
@@ -540,8 +559,23 @@ define(["projectlist/listener/projectListListener"], function() {
 				imgname2 = $("tr[class="+deleteproject+"]").prev('tr').children('td:eq(5)').children('a').children('img').attr('name');
 				self.flagged=1;
 				//commonVariables.loadingScreen.showLoading();		
-				deletearray.actionType = "application";				
-				self.deleteProjectfn(deletearray, imgname1, imgname2, deleteproject);
+				deleteObj.actionType = "application";		
+				deleteObj.appDirNames = deletearray;
+				if ($(this).hasClass('module_delete')) {
+					var array = [];
+					array.push($(this).attr('moduleName'));
+					deleteObj.actionType = 'module';
+					deleteObj.appDirNames = array;
+					deleteObj.rootModule = $(this).attr('appdirname');
+					deleteObj.dependents = $(this).attr('dependents').split(',');
+					self.projectslistListener.delprojectname = $(this).attr("moduleName");
+					deleteproject = $(this).closest("tr");
+					self.deleteProjectfn(deleteObj, "module_delete", "", deleteproject);
+				} else {
+					self.deleteProjectfn(deleteObj, imgname1, imgname2, deleteproject);
+				}
+
+				
 				self.closeAll($(this).attr('name'));
 				$('.content_title').css('z-index', '6');
 				$('.header_section').css('z-index', '7');
@@ -551,22 +585,23 @@ define(["projectlist/listener/projectListListener"], function() {
 			$("input[name='holeDelete']").unbind('click');
 			$("input[name='holeDelete']").click(function(e) {
 				self.projectslistListener.delprojectname = $(this).attr('deleteAppname');
-				var projectnameArray = [], cls, temp, temp1, temp2, classname, curr, currentRow, deleteappname;
+				var deleteObj = {}, projectnameArray = [], cls, temp, temp1, temp2, classname, curr, currentRow, deleteappname;
 				deleteappname = $(this).attr('deleteappname');
 				temp = self.delobj.parent('tr');
 				curr =  self.delobj.parent().next('tr');
 				currentRow =  self.delobj.parent().next();
 				while(currentRow !== null && currentRow.length > 0) {
 				   classname = currentRow.attr("class");
-				   if(classname !== "proj_title") {
+				   if(classname !== "proj_title" && classname !== "") {
 				        currentRow = currentRow.next('tr');
 				        projectnameArray.push(classname);
 				   }else {currentRow = null;}
 				}
 				self.flagged=1;
-				projectnameArray.actionType = "project";
+				deleteObj.actionType = "project";
+				deleteObj.appDirNames = projectnameArray;
 				//commonVariables.loadingScreen.showLoading();
-				self.getAction(projectnameArray,"delete",function(response) {
+				self.getAction(deleteObj,"delete",function(response) {
 					//commonVariables.loadingScreen.removeLoading();
 						while(curr !== null && curr.length !== 0) {
 							cls = curr.attr("class");
