@@ -781,6 +781,28 @@ define(["build/listener/buildListener"], function() {
 			$("#buildRun").unbind("click");
 			$("#buildRun").click(function(){
 				var sqlParam = "";
+				
+				var targetFolders = [];
+				var fileOrFolders = [];
+				$('input[name=selectedFileOrFolderValue]').each(function(i) {
+					fileOrFolders.push($(this).val());
+				});
+
+				$('input[name=targetFolder]').each(function(i) {
+					targetFolders.push($(this).val());
+				});
+				
+				var selectedFiles = [];
+				for (i in targetFolders) {
+					if ((!self.isBlank(targetFolders[i]) && self.isBlank(fileOrFolders[i])) ||
+					(!self.isBlank(fileOrFolders[i]) && self.isBlank(targetFolders[i]))
+					|| (!self.isBlank(targetFolders[i]) && !self.isBlank(fileOrFolders[i]))) {
+						selectedFiles.push(targetFolders[i] + "#FILESEP#" + fileOrFolders[i]);
+					}
+				}
+				
+				$("input[name=selectedFiles]").val(selectedFiles.join("#SEP#"));
+				
 				queryStr = $('form[name=buildForm]').serialize().replace("=on", "=true");
 				var displayName="", userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 				if (userInfo !== null) {

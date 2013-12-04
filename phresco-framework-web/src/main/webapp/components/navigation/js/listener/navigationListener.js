@@ -940,7 +940,7 @@ define([], function() {
 							if(response.responseCode === "PHR200017") {
 								commonVariables.api.showError(response.responseCode ,"success", true);
 							} else if(response.responseCode === "PHR210048") {
-								commonVariables.api.showError(response.responseCode ,"error", true);
+								commonVariables.api.showError(response.responseCode ,"success", true);
 							}
 							callback(response);						
 						} else {

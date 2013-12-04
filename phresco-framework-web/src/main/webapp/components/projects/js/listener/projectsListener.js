@@ -124,6 +124,7 @@ define([], function() {
 									var currentVal = $(value).val();
 									if(currentVal === response.data){
 										$(this).focus();
+										$(this).val('');
 										$(this).addClass('errormessage');
 										$(this).attr('placeholder', 'module name already exists');
 										return false;

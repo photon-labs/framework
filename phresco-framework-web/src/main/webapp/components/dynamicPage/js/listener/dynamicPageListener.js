@@ -440,7 +440,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 		
 		packageFileBrowswCtrl : function(parameter, whereToRender, goal) {
 			var self=this;
-			whereToRender.append('<table class="table table-striped table_border table-bordered browse_table" cellpadding="0" cellspacing="0" border="0" id="package_browse"><thead><tr><th>Target Folder</th><th>File/Folder</th></thead><tbody><tr><td><input type="text" class="browse_build" name="targetFolder"></td><td><input type="text" class="browse_build" name="selectedFileOrFolderValue" disabled><input type="hidden" name="selectedFileOrFolder" value=""><input type="button" class="btn btn_style" value="Browse" name="browseFile"><a href="#"><img name=jsAdd src="themes/default/images/Phresco/plus_icon.png" alt=""></a><a name="remove"></a><div id="browseFile" class="dyn_popup" style="display:none"><div name="treeContent"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div></td></tr></tbody></table>');
+			whereToRender.append('<table class="table table-striped table_border table-bordered browse_table" cellpadding="0" cellspacing="0" border="0" id="package_browse"><thead><tr><th>Target Folder</th><th>File/Folder</th></thead><tbody><tr><td><input type="text" class="browse_build" name="targetFolder"></td><td><input type="text" class="browse_build" name="selectedFileOrFolderValue" disabled><input type="hidden" name="selectedFileOrFolder" value=""><input type="hidden" name="selectedFiles" value=""><input type="button" class="btn btn_style" value="Browse" name="browseFile"><a href="#"><img name=jsAdd src="themes/default/images/Phresco/plus_icon.png" alt=""></a><a name="remove"></a><div id="browseFile" class="dyn_popup" style="display:none"><div name="treeContent"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div></td></tr></tbody></table>');
 			
 			self.packageBrowseEvents();
 		},
@@ -1221,7 +1221,8 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 		
 		treeclickEvent : function(placeCnt, hiddenCnt) {
 			var self=this;
-			$('span.folder, span.file').click(function(e){
+			$('span.folder, span.file').unbind('click');
+			$('span.folder, span.file').bind('click', function(e){
 				$("span.folder a, span.file a").removeClass("selected");
 				$(this).find("a").attr("class", "selected");
 				var path = $(this).parent().attr('value');
@@ -1231,12 +1232,11 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 		},
 		
 		saveFilePath : function(placeCnt, hiddenCnt, path) {
-			var self=this;
 			$("input[name=selectFilePath]").click(function() {
 				placeCnt.val(path);
 				if(hiddenCnt !== undefined) {
 					hiddenCnt.val(path);
-				}
+				}	
 				$("#browse").hide();
 				$("#browseFile").hide();
 				$('#header').css('z-index','7');
