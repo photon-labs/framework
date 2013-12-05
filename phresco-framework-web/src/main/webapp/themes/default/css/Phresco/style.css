@@ -1214,7 +1214,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .repository_tabdiv ul li input[type="checkbox"] {
-	margin: 0 0 -10px 2px !important;
+	margin: 9px 0px 0px 3px !important;
 }
 
 .btn.disabled, .btn[disabled] {
@@ -1222,7 +1222,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .repository_tabdiv ul li .repo_tab{
-	margin:-20px 0px 0px;
+	margin:-22px 0px 0px;
 }
 
 /* ******************************************************************* CSS related to create project page ********************************************************************** */

@@ -1214,15 +1214,15 @@ define([], function() {
 			repoDetail.type = repoType;
 			repoDetail.repoUrl = $("#importRepourl").val();
 			
-			if ('git' === repoType) {
+			if ('svn' === repoType) {
+				repoDetail.userName = $("#importUserName").val();
+				repoDetail.password = $("#importPassword").val();
+				repoDetail.revision = revision;
+			} else {
 				repoDetail.branch = $(".branchval").val();
 				repoDetail.userName = $("#gitUserName").val();
 				repoDetail.password = $("#gitPassword").val();
 				repoDetail.passPhrase = $(".passPhraseval").val();
-			} else {
-				repoDetail.userName = $("#importUserName").val();
-				repoDetail.password = $("#importPassword").val();
-				repoDetail.revision = revision;
 			}
 			
 			if ('perforce' === repoType) {

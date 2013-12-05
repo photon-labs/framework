@@ -130,9 +130,6 @@ import com.photon.phresco.framework.model.RepoInfo;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.Utility;
-import com.phresco.pom.model.Build;
-import com.phresco.pom.model.Model.Profiles;
-import com.phresco.pom.model.Profile;
 import com.phresco.pom.util.PomProcessor;
 
 
@@ -1079,7 +1076,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						File phrescoPomSrc = new File(appHome + module.getCode() + File.separator + phrescoPomFile);
 						File phrescoPomDest = new File(tempDest, phrescoPomFile);
 						FileUtils.copyFileToDirectory(phrescoPomSrc, tempDest);
-						updatePomProperties(appInfo, phrescoPomDest, phrescoRepoUrl, srcRepoUrl, testRepoUrl, true);
+						updatePomProperties(appInfo, moduleAppInfo.getAppDirName(), phrescoPomDest, phrescoRepoUrl, srcRepoUrl, testRepoUrl);
 					}
 				}
 			}
@@ -1089,7 +1086,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
 				File phrescoPomSrc = new File(appHome + appInfo.getPhrescoPomFile());
 				FileUtils.copyFileToDirectory(phrescoPomSrc, tempPhrescoFile);
-				updatePomProperties(appInfo, new File(tempPhrescoFile, appInfo.getPhrescoPomFile()), phrescoRepoUrl, srcRepoUrl, testRepoUrl, false);
+				updatePomProperties(appInfo, "", new File(tempPhrescoFile, appInfo.getPhrescoPomFile()), phrescoRepoUrl, srcRepoUrl, testRepoUrl);
 			}
 		} catch (Exception e) {
 			throw new PhrescoException(e);
@@ -1158,7 +1155,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					
 					if (StringUtils.isEmpty(moduleAppInfo.getPhrescoPomFile())) {
 						File pomDest = new File(srcDest, moduleAppInfo.getPomFile());
-						updatePomProperties(appInfo, pomDest, phrescoRepoUrl, srcRepoUrl, testRepoUrl, true);
+						updatePomProperties(appInfo, moduleAppInfo.getAppDirName(), pomDest, phrescoRepoUrl, srcRepoUrl, testRepoUrl);
 					}
 					
 					if (repoInfo.isSplitPhresco()) {
@@ -1187,7 +1184,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				
 				if (StringUtils.isEmpty(appInfo.getPhrescoPomFile())) {
 					File pomDest = new File(tempSrcFile, appInfo.getPomFile());
-					updatePomProperties(appInfo, pomDest, phrescoRepoUrl, srcRepoUrl, testRepoUrl, false);
+					updatePomProperties(appInfo, "", pomDest, phrescoRepoUrl, srcRepoUrl, testRepoUrl);
 				}
 				
 				if (repoInfo.isSplitPhresco()) {
@@ -1212,23 +1209,23 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 	}
 	
-	private void updatePomProperties(ApplicationInfo appInfo, File pomFile, String phrescoRepoUrl, String srcRepoUrl, String testRepoUrl, boolean isMultiModule) throws PhrescoException {
+	private void updatePomProperties(ApplicationInfo appInfo, String moduleName, File pomFile, String phrescoRepoUrl, String srcRepoUrl, String testRepoUrl) throws PhrescoException {
 		try {
 			String appDirName = appInfo.getAppDirName();
 			PomProcessor pomProcessor = new PomProcessor(pomFile);
-			Build build = pomProcessor.getModel().getBuild();
 			StringBuilder sb = new StringBuilder(PREV_DIR);
-			if (isMultiModule) {
+			if (StringUtils.isNotEmpty(moduleName)) {
 				sb.append(PREV_DIR);
 			}
-
-			build.setSourceDirectory(sb.toString() + Constants.POM_PROP_KEY_SPLIT_SRC_DIR + FORWARD_SLASH + build.getSourceDirectory());
-			build.setTestSourceDirectory(sb.toString() + Constants.POM_PROP_KEY_SPLIT_SRC_DIR + FORWARD_SLASH + build.getTestSourceDirectory());
-			
-			Profiles profiles = pomProcessor.getModel().getProfiles();
-			if (profiles != null) {
-				
+			sb.append(appDirName);
+			if (StringUtils.isNotEmpty(moduleName)) {
+				sb.append(FORWARD_SLASH);
+				sb.append(moduleName);
+				sb.append(FORWARD_SLASH);
 			}
+			
+			String srcRootPrpty = pomProcessor.getProperty(Constants.POM_PROP_KEY_ROOT_SRC_DIR);
+			pomProcessor.setProperty(Constants.POM_PROP_KEY_ROOT_SRC_DIR, sb.toString() + srcRootPrpty);
 			
 			pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_PHRESCO_DIR, appDirName + SUFFIX_PHRESCO);
 			pomProcessor.setProperty(Constants.POM_PROP_KEY_PHRESCO_REPO_URL, phrescoRepoUrl);
