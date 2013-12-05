@@ -2555,7 +2555,7 @@ img[name="close"] {
 	border-bottom: none;	
 }
 
-.dyn_popup .fetchSql_table tr td {
+.testSuiteTable .dyn_popup .fetchSql_table tr td {
 	width:50% !important;
 }
 .fetchSql_table td ul {
