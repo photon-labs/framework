@@ -790,28 +790,15 @@ define([], function() {
 					$('#updateRepourl_'+dynamicId).attr('placeholder','Repo Url');
 				}		
 			}
-			
-			if(selectedType === 'git') {
-				$("input[checkVal=check]").prop('checked', true);
-				$("input[checkVal=check]").attr("disabled", true);
-				$('input[name=commitbtn]').addClass("btn_style");
-				$('input[name=commitbtn]').prop("disabled", false);
-				$(".passPhrase").show();
-				$(".uname").attr("mandatory", "false");
-				$(".pwd").attr("mandatory", "false");
-				$("span[name=username]").next().html("");
-				$("span[name=password]").next().html("");
-			} else {
-				$("input[checkVal=check]").attr("disabled", false);
-				$("input[checkVal=check]").prop('checked', false);
-				$('input[name=commitbtn]').removeClass("btn_style");
-				$('input[name=commitbtn]').prop("disabled", true);
-				$(".passPhrase").hide();
-				$(".uname").attr("mandatory", "true");
-				$(".pwd").attr("mandatory", "true");
-				$("span[name=username]").next().html("<sup>*</sup>");
-				$("span[name=password]").next().html("<sup>*</sup>");
-			}
+			$("input[checkVal=check]").attr("disabled", false);
+			$("input[checkVal=check]").prop('checked', false);
+			$('input[name=commitbtn]').removeClass("btn_style");
+			$('input[name=commitbtn]').prop("disabled", true);
+			$(".passPhrase").hide();
+			$(".uname").attr("mandatory", "true");
+			$(".pwd").attr("mandatory", "true");
+			$("span[name=username]").next().html("<sup>*</sup>");
+			$("span[name=password]").next().html("<sup>*</sup>");
 		},
 		
 		validation : function(dynid) {	
