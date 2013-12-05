@@ -214,7 +214,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	}
 	
 	@Test
-	public void addNonEnvConfigTest() throws ConfigurationException {
+	public void addNonEnvConfigTest() throws ConfigurationException, PhrescoException {
 		List<Configuration> configList = new ArrayList<Configuration>();
 		Configuration prodConfigServer = new Configuration();
 		prodConfigServer.setName("serverconfig");
@@ -317,7 +317,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	}
 	
 	@Test
-	public void deleteEnvTestFail() throws ConfigurationException {
+	public void deleteEnvTestFail() throws ConfigurationException, PhrescoException {
 		String envName = "Production";
 		Response response = configurationService.deleteEnv(appDirName, envName, "", "");
 		ResponseInfo<Environment> responseInfo = (ResponseInfo<Environment>) response.getEntity();
@@ -327,7 +327,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	}
 	
 	@Test
-	public void deleteEnvTest() throws ConfigurationException {
+	public void deleteEnvTest() throws ConfigurationException, PhrescoException {
 		String envName = "Production";
 		Response response = configurationService.deleteEnv(appDirName, envName, "","");
 		Assert.assertEquals(200, response.getStatus());
@@ -498,7 +498,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	}
 	
 	@Test
-	public void configurationValidationTest() throws ConfigurationException {
+	public void configurationValidationTest() throws ConfigurationException, PhrescoException {
 		Properties propertiesServer = new Properties();
 		Properties propertiesSerDupl = new Properties();
 		Properties propertiesEmail = new Properties();

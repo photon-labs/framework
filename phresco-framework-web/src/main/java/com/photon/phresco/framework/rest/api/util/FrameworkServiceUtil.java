@@ -1003,14 +1003,13 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 			return actionResponse;
 		}
 		
-	    public ApplicationProcessor getApplicationProcessor(String appDirName, String customerId, ServiceManager serviceManager) throws PhrescoException {
+	    public ApplicationProcessor getApplicationProcessor(String appDirName, String customerId, ServiceManager serviceManager,  String rootModulePath,String subModuleName) throws PhrescoException {
 	        ApplicationProcessor applicationProcessor = null;
 	        try {
 	            Customer customer = serviceManager.getCustomer(customerId);
 	            RepoInfo repoInfo = customer.getRepoInfo();
-	            StringBuilder sb = new StringBuilder(getApplicationHome(appDirName))
-	            .append(File.separator)
-	            .append(Constants.DOT_PHRESCO_FOLDER)
+	            String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModuleName);
+	            StringBuilder sb = new StringBuilder(dotPhrescoFolderPath)
 	            .append(File.separator)
 	            .append(Constants.APPLICATION_HANDLER_INFO_FILE);
 	            MojoProcessor mojoProcessor = new MojoProcessor(new File(sb.toString()));

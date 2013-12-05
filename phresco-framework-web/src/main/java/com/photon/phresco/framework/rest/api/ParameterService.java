@@ -57,6 +57,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.xml.sax.SAXException;
 
+import com.opensymphony.xwork2.util.profiling.UtilTimerStack;
 import com.photon.phresco.api.DynamicPageParameter;
 import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.FrameworkConstants;
@@ -91,6 +92,7 @@ import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
+import com.sun.xml.bind.Util;
 
 /**
  * The Class ParameterService.
@@ -122,27 +124,37 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 		ResponseInfo<List<Parameter>> responseData = new ResponseInfo<List<Parameter>>();
 		try {
 			String rootModule = appDirName;
+			String rootModulePath = "";
+			String subModuleName = "";
 			if (StringUtils.isNotEmpty(projectCode)) {
 				appDirName = projectCode + "-integrationtest";
 			}
+			
 			if (StringUtils.isNotEmpty(module)) {
-				appDirName = appDirName + File.separator + module;
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = module;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
-			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDirName);
-			ApplicationInfo appInfo = null;
-			if (projectInfo != null) {
-				appInfo = projectInfo.getAppInfos().get(0);
-			}
+			
+			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+//			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDirName);
+//			ApplicationInfo appInfo = null;
+//			if (projectInfo != null) {
+//				appInfo = projectInfo.getAppInfos().get(0);
+//			}
 			if (StringUtils.isEmpty(projectCode)) {
 				projectCode = projectInfo.getProjectCode();
 			}
 			List<Parameter> parameters = null;
-			String filePath = getInfoFileDir(appDirName, goal, phase);
+			String filePath = getInfoFileDir(appDirName, goal, phase, rootModulePath, subModuleName);
 			File file = new File(filePath);
 			if (file.exists()) {
 				MojoProcessor mojo = new MojoProcessor(file);
 				if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
-					String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
+					PomProcessor pomProcessor = Utility.getPomProcessor(rootModulePath, subModuleName);
+					String functionalTestFramework = pomProcessor.getProperty(Constants.POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
+//					String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
 					goal = goal + HYPHEN + functionalTestFramework;
 				}
 				getValues(iphoneDeploy, mojo, goal);
@@ -233,7 +245,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			@QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_PHASE) String phase) {
 		ResponseInfo responseData = new ResponseInfo();
 		try {
-			String filePath = getInfoFileDir(appDirName, goal, phase);
+			String filePath = getInfoFileDir(appDirName, goal, phase, "", "");
 			File file = new File(filePath);
 			String xml = IOUtils.toString(new FileInputStream(file));
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, PARAMETER_RETURNED_SUCCESSFULLY,
@@ -257,15 +269,26 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	public Response updateWatcher(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_GOAL) String goal,
 			@QueryParam(REST_QUERY_KEY) String key, @QueryParam(REST_QUERY_VALUE) String value, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		String rootModulePath = "";
+		String subModuleName = "";
 		try {
+			
 			if (StringUtils.isNotEmpty(module)) {
-				appDirName = appDirName + File.separator + module;
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = module;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
+			
 			if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
-				String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
+				PomProcessor pomProcessor = Utility.getPomProcessor(rootModulePath, subModuleName);
+				String functionalTestFramework = pomProcessor.getProperty(Constants.POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
+//				String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
 				goal = goal + HYPHEN + functionalTestFramework;
 			}
-			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+//			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			Map<String, DependantParameters> watcherMap = valueMap.get(applicationInfo.getId() + goal);
 			DependantParameters currentParameters = watcherMap.get(key);
 			if (currentParameters == null) {
@@ -311,23 +334,31 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			@QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_KEY) String key, 
 			@QueryParam(REST_QUERY_PHASE) String phase, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		ResponseInfo responseData = new ResponseInfo();
-		PossibleValues possibleValues = null;
 		ResponseInfo finalOutput = new ResponseInfo();
+		String rootModulePath = "";
+		String subModuleName = "";
 		try {
 			String rootModule = appDirName;
 			if (StringUtils.isNotEmpty(module)) {
-				appDirName = appDirName + File.separator + module;
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = module;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
+			
 			if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
-				String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
+				PomProcessor pomProcessor = Utility.getPomProcessor(rootModulePath, subModuleName);
+				String functionalTestFramework = pomProcessor.getProperty(Constants.POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
+//				String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
 				goal = goal + HYPHEN + functionalTestFramework;
 			}
 			
-			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDirName);
+//			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDirName);
+			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			Map<String, DependantParameters> watcherMap = valueMap.get(applicationInfo.getId() + goal);
 			Map<String, Object> constructMapForDynVals = constructMapForDynVals(projectInfo, watcherMap, key, customerId, null);
-			String filePath = getInfoFileDir(appDirName, goal, phase);
+			String filePath = getInfoFileDir(appDirName, goal, phase, rootModulePath, subModuleName);
 			MojoProcessor mojo = new MojoProcessor(new File(filePath));
 			Parameter dependentParameter = mojo.getParameter(goal, key);
 			constructMapForDynVals.put(REQ_MOJO, mojo);
@@ -411,6 +442,8 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
             @QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_PHASE) String phase, @QueryParam(REST_QUERY_MODULE_NAME) String module, 
             @Context HttpServletRequest request) {
         ResponseInfo<List<CodeValidationReportType>> responseData = new ResponseInfo<List<CodeValidationReportType>>();
+        String rootModulePath = "";
+        String subModuleName = "";
         try {
 //            int responseCode = setSonarServerStatus(request);
 //            if (responseCode != 200) {
@@ -419,14 +452,20 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 //                return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 //                        ALL_HEADER).build();
 //            }
+        	
         	if (StringUtils.isNotEmpty(module)) {
-				appDirName = appDirName + File.separator + module;
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = module;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
-            String infoFileDir = getInfoFileDir(appDirName, goal, phase);
-            ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+        	
+            String infoFileDir = getInfoFileDir(appDirName, goal, phase, rootModulePath, subModuleName);
+            ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+            ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
             List<CodeValidationReportType> codeValidationReportTypes = new ArrayList<CodeValidationReportType>();
             // To get parameter values for Iphone technology
-            PomProcessor pomProcessor = FrameworkServiceUtil.getPomProcessor(appDirName);
+            PomProcessor pomProcessor = Utility.getPomProcessor(rootModulePath, subModuleName);
             String validateReportUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_VALIDATE_REPORT);
             if (StringUtils.isNotEmpty(validateReportUrl)) {
                 List<Value> clangReports = getClangReports(appInfo);
@@ -474,12 +513,23 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	@GET
 	@Path("/sonarUrl")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getSonarUrl(@Context HttpServletRequest request, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+	public Response getSonarUrl(@Context HttpServletRequest request, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,@QueryParam(REST_QUERY_MODULE_NAME) String moduleName) {
 		FrameworkUtil frameworkUtil = new FrameworkUtil(request);
 		 ResponseInfo<String> responseData = new ResponseInfo<String>();
 		 String url = "";
+		 String rootModulePath = "";
+		 String subModuleName = "";
 			try {
-				PomProcessor pomProcessor = FrameworkServiceUtil.getPomProcessor(appDirName);
+				
+				if (StringUtils.isNotEmpty(moduleName)) {
+					rootModulePath = Utility.getProjectHome() + appDirName;
+					subModuleName = moduleName;
+				} else {
+					rootModulePath = Utility.getProjectHome() + appDirName;
+				}
+				
+				PomProcessor pomProcessor = Utility.getPomProcessor(rootModulePath, subModuleName);
+//				PomProcessor pomProcessor = FrameworkServiceUtil.getPomProcessor(appDirName);
 	            String validateReportUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_VALIDATE_REPORT);
 	    		if (StringUtils.isEmpty(validateReportUrl)) {
 	    			URL sonarURL = new URL(frameworkUtil.getSonarURL());
@@ -525,12 +575,20 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			@QueryParam(REST_QUERY_VALIDATE_AGAINST) String validateAgainst, @QueryParam(REST_QUERY_MODULE_NAME) String module, @Context HttpServletRequest request) {
 		ResponseInfo<PossibleValues> responseData = new ResponseInfo<PossibleValues>();
 		StringBuilder sb = new StringBuilder();
+		String rootModulePath = "";
+		String subModuleName = "";
 		try {
 			if (StringUtils.isNotEmpty(module)) {
-				appDirName = appDirName + File.separator + module;
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = module;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
-			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
-			PomProcessor processor = FrameworkServiceUtil.getPomProcessor(appDirName);
+//			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+            PomProcessor processor = Utility.getPomProcessor(rootModulePath, subModuleName);
+            String pomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
+			File pomFile = new File(pomFileLocation);
+//			PomProcessor processor = FrameworkServiceUtil.getPomProcessor(appDirName);
 			String validateReportUrl = processor.getProperty(Constants.POM_PROP_KEY_VALIDATE_REPORT);
 			FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
@@ -539,7 +597,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			Properties sysProps = System.getProperties();
 			String phrescoFileServerNumber = sysProps.getProperty(PHRESCO_FILE_SERVER_PORT_NO);
 			if (StringUtils.isNotEmpty(validateReportUrl)) {
-				StringBuilder codeValidatePath = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
+				StringBuilder codeValidatePath = new StringBuilder(pomFile.getParent());
 				codeValidatePath.append(validateReportUrl);
 				codeValidatePath.append(validateAgainst);
 				codeValidatePath.append(File.separatorChar);
@@ -571,12 +629,13 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			String serverUrl = "";
 			FrameworkUtil frameworkUtil = new FrameworkUtil(request);
 			serverUrl = frameworkUtil.getSonarHomeURL();
-			StringBuilder reportPath = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
+			StringBuilder reportPath = new StringBuilder(pomFile.getParent());
 			if (StringUtils.isNotEmpty(validateAgainst) && FUNCTIONALTEST.equals(validateAgainst)) {
-				reportPath.append(frameworkUtil.getFunctionalTestDir(appDirName));
+				String funcDir = processor.getProperty(Constants.POM_PROP_KEY_FUNCTEST_DIR);
+				reportPath.append(funcDir);
 			}
 			reportPath.append(File.separatorChar);
-			reportPath.append(Utility.getPhrescoPomFile(appInfo));
+			reportPath.append(pomFile.getName());
 			File file = new File(reportPath.toString());
 			processor = new PomProcessor(file);
 			String groupId = processor.getModel().getGroupId();
@@ -840,21 +899,27 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			@QueryParam("parameterKey") String parameterKey, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
-			if (StringUtils.isNotEmpty(module)) {
-				appDirName = appDirName + File.separator + module;
-			}
+			
+	        String rootModulePath = "";
+	        String subModuleName = "";
+	        	if (StringUtils.isNotEmpty(module)) {
+					rootModulePath = Utility.getProjectHome() + appDirName;
+					subModuleName = module;
+				} else {
+					rootModulePath = Utility.getProjectHome() + appDirName;
+				}
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
-			List<Parameter> parameters = null;
 			StringTemplate constructDynamicTemplate = new StringTemplate();
-			String filePath = getInfoFileDir(appDirName, goal, phase);
+			String filePath = getInfoFileDir(appDirName, goal, phase,rootModulePath,subModuleName);
 			File file = new File(filePath);
 			if (file.exists()) {
 				MojoProcessor mojo = new MojoProcessor(file);
 				if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
-					String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
+					PomProcessor pomProcessor = Utility.getPomProcessor(rootModulePath, subModuleName);
+					String functionalTestFramework = pomProcessor.getProperty(Constants.POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
+//					String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
 					goal = goal + HYPHEN + functionalTestFramework;
 				}
-				parameters = mojo.getParameters(goal);
 				Parameter templateParameter = mojo.getParameter(goal, parameterKey);
 				List<PerformanceDetails> performanceDetails = templateMap.get(appInfo.getId() + parameterKey);
 				constructDynamicTemplate = constructDynamicTemplate(customerId, userId, templateParameter, performanceDetails);
@@ -886,15 +951,33 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			if (StringUtils.isNotEmpty(moduleName)) {
 				appDirName = appDirName + File.separator + moduleName;
 			}
+			
+		     String rootModulePath = "";
+		        String subModuleName = "";
+		        	if (StringUtils.isNotEmpty(moduleName)) {
+						rootModulePath = Utility.getProjectHome() + appDirName;
+						subModuleName = moduleName;
+					} else {
+						rootModulePath = Utility.getProjectHome() + appDirName;
+					}
+		        	
+		   	PomProcessor pomProcessor = Utility.getPomProcessor(rootModulePath, subModuleName);
+			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+		   	File testDir = Utility.getTestFolderLocation(projectInfo, rootModulePath, subModuleName);
 			if (StringUtils.isNotEmpty(uploadedFileName)) {
 				if (PERFORMANCE_TEST.equals(request.getHeader("goal"))) {
-					String performanceTestDir = FrameworkServiceUtil.getPerformanceTestDir(appDirName);
-					String performanceUploadJmxDir = FrameworkServiceUtil.getPerformanceUploadJmxDir(appDirName);
-					finalOuptut = uploadFileForPerformanceLoad(request, appDirName, inputStream, performanceTestDir, performanceUploadJmxDir,uploadedFileName);
+					String performanceTestDir = pomProcessor.getProperty(Constants.POM_PROP_KEY_PERFORMANCETEST_DIR);
+//					String performanceTestDir = FrameworkServiceUtil.getPerformanceTestDir(appDirName);
+					String performanceUploadJmxDir = pomProcessor.getProperty(Constants.POM_PROP_KEY_PERFORMANCETEST_JMX_UPLOAD_DIR);
+					
+//					String performanceUploadJmxDir = FrameworkServiceUtil.getPerformanceUploadJmxDir(appDirName);
+					finalOuptut = uploadFileForPerformanceLoad(request, appDirName, inputStream, performanceTestDir, performanceUploadJmxDir,uploadedFileName,testDir);
 				} else if (Constants.PHASE_LOAD_TEST.equals(request.getHeader("goal"))) {
-					String loadTestDir = FrameworkServiceUtil.getLoadTestDir(appDirName);
-					String loadUploadJmxDir = FrameworkServiceUtil.getLoadUploadJmxDir(appDirName);
-					finalOuptut = uploadFileForPerformanceLoad(request, appDirName, inputStream, loadTestDir, loadUploadJmxDir,uploadedFileName);
+					String loadTestDir = pomProcessor.getProperty(Constants.POM_PROP_KEY_LOADTEST_DIR);
+//					String loadTestDir = FrameworkServiceUtil.getLoadTestDir(appDirName);
+					String loadUploadJmxDir = pomProcessor.getProperty(Constants.POM_PROP_KEY_LOADTEST_JMX_UPLOAD_DIR);
+//					String loadUploadJmxDir = FrameworkServiceUtil.getLoadUploadJmxDir(appDirName);
+					finalOuptut = uploadFileForPerformanceLoad(request, appDirName, inputStream, loadTestDir, loadUploadJmxDir,uploadedFileName, testDir);
 				}
 			}
 			return Response.ok(finalOuptut).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
@@ -913,12 +996,11 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 		}
 	}
 	
-	private ResponseInfo uploadFileForPerformanceLoad(HttpServletRequest request, String appDirName, InputStream inputStream, String testDirectory, String jmxUploadDir, String zipfileName) throws PhrescoException {
+	private ResponseInfo uploadFileForPerformanceLoad(HttpServletRequest request, String appDirName, InputStream inputStream, String testDirectory, String jmxUploadDir, String zipfileName, File testDir) throws PhrescoException {
 		ResponseInfo responseData = new ResponseInfo();
     	File tempDirectory = null;
     	try {
-			StringBuilder uploadJmxDir = new StringBuilder(Utility.getProjectHome())
-			.append(appDirName)
+			StringBuilder uploadJmxDir = new StringBuilder(testDir.toString())
 			.append(testDirectory)
 			.append(File.separator)
 			.append(request.getHeader(REQ_CUSTOM_TEST_AGAINST))
@@ -1015,7 +1097,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	private Map<String, Object> getDynamicPageParameter(ProjectInfo projectInfo, Map<String, DependantParameters> watcherMap, Parameter parameter, 
 			String userId, String customerId, String module, String rootModule) throws PhrescoException {
 		String parameterKey = parameter.getKey();
-		ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 		Map<String, Object> paramsMap = constructMapForDynVals(projectInfo, watcherMap, parameterKey, customerId, null);
 		setModuleInfoInMap(rootModule, module, paramsMap);
 		String className = parameter.getDynamicParameter().getClazz();
@@ -1271,11 +1352,12 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	 * @param goal the goal
 	 * @param phase the phase
 	 * @return the info file dir
+	 * @throws PhrescoException 
 	 */
-	private String getInfoFileDir(String appDirName, String goal, String phase) {
+	private String getInfoFileDir(String appDirName, String goal, String phase, String  rootModulePath, String subModuleName) throws PhrescoException {
 		StringBuilder sb = new StringBuilder();
-		sb.append(Utility.getProjectHome()).append(appDirName).append(File.separatorChar).append(
-				Constants.DOT_PHRESCO_FOLDER).append(File.separatorChar);
+		String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModuleName);
+		sb.append(dotPhrescoFolderPath).append(File.separatorChar);
 		if (StringUtils.isNotEmpty(phase)) {
 			sb.append(Constants.PHRESCO + HYPHEN + phase + Constants.INFO_XML);
 		} else {

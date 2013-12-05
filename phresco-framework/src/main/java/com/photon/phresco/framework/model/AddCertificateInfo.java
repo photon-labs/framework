@@ -40,6 +40,7 @@ public class AddCertificateInfo implements Serializable {
 	private String environmentName;
 	private String configName;
 	private String propValue;
+	private String moduleName;
 	
 	public AddCertificateInfo() {
 		super();
@@ -116,6 +117,14 @@ public class AddCertificateInfo implements Serializable {
 	public void setPropValue(String propValue) {
 		this.propValue = propValue;
 	}
+
+	public void setModuleName(String moduleName) {
+		this.moduleName = moduleName;
+	}
+
+	public String getModuleName() {
+		return moduleName;
+	}
 	
 	public String toString() {
 		 return new ToStringBuilder(this,
@@ -130,6 +139,7 @@ public class AddCertificateInfo implements Serializable {
 	                 .append("environmentName", getEnvironmentName())
 	                .append("configName", getConfigName())
 	                .append("propValue", getPropValue())
+	                .append("moduleName", getModuleName())
 	                .toString();
 	}
 }
