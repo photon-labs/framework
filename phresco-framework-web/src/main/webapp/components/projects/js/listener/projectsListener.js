@@ -1837,6 +1837,7 @@ define([], function() {
 				var integrationTest = $("input[name=integrationTest]").is(":checked");
 				var groupId = $("#groupId").val();
 				var isMultiModule = false;
+				
 				//To convert dd/mm//yyyy to (month date,year) format
 				if (startdate.length !== 0 && enddate.length !== 0) {
 					var myStartDate = new Date(startdate);
@@ -1965,7 +1966,6 @@ define([], function() {
 										isMultiModule = true;
 									});
 									appInfo.modules = moduleInfos;
-									self.projectInfo.multiModule = true;
 								}
 								
 								if (appInfo.code !== undefined && appInfo.code !== null) {
@@ -2065,9 +2065,9 @@ define([], function() {
 												canAddAppInfo = true;
 											}
 										}
+										isMultiModule = true;
 									});
 									appInfo.modules = moduleInfos;
-									self.projectInfo.multiModule = true;
 								}
 								
 								if (appInfo.code !== undefined && appInfo.code !== null) {
@@ -2171,9 +2171,9 @@ define([], function() {
 												canAddAppInfo = true;
 											}
 										}
+										isMultiModule = true;
 									});
 									appInfo.modules = moduleInfos;
-									self.projectInfo.multiModule = true;
 								}
 								
 								if (appInfo.code !== undefined && appInfo.code !== null) {
@@ -2204,6 +2204,7 @@ define([], function() {
 				var appInfos = $.merge($.merge($.merge([],self.appInfos), self.appInfosweb), self.appInfosmobile);
 				self.projectInfo.noOfApps = count;
 				self.projectInfo.appInfos = appInfos;
+				self.projectInfo.multiModule = isMultiModule;
 				self.projectInfo.displayName = $("select[name='prebuiltapps']").val();
 				self.projectRequestBody = self.projectInfo;
 				if(action === "update") {

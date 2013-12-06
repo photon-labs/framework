@@ -90,7 +90,7 @@ define([], function() {
 					function(response) {
 						if(response !== null && response.status !== "error" && response.status !== "failure"){
 							self.hidePopupLoad();
-							if(response.responseCode !== 'PHR200015' && response.responseCode !== 'PHR200021' && response.responseCode !== 'PHR600004' && response.responseCode !== null && response.responseCode !== undefined && response.responseCode !== 'PHR200027') {
+							if(response.responseCode !== 'PHR210051' && response.responseCode !== 'PHR200015' && response.responseCode !== 'PHR200021' && response.responseCode !== 'PHR600004' && response.responseCode !== null && response.responseCode !== undefined && response.responseCode !== 'PHR200027') {
 								commonVariables.api.showError(response.responseCode ,"success", true);
 								if(response.responseCode === 'PHR200010' || response.responseCode === 'PHR200026') {
 									$('.msgdisplay').prepend(self.delprojectname+' ');
@@ -268,6 +268,11 @@ define([], function() {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + 'util/checkMachine';
 			}
+			if (action === "checkForDependents") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + 'project/dependents?moduleName='+projectRequestBody.subModuleName+'&rootModule='+projectRequestBody.rootModule;
+			}
+
 			return header;
 		},
 		
@@ -424,6 +429,17 @@ define([], function() {
 			}
 		},
 		
+		checkForDependents : function(subModuleName, rootModule, callback) {
+			var self = this, moduleData = {};
+			moduleData.subModuleName = subModuleName;
+			moduleData.rootModule = rootModule;
+			self.projectListAction(self.getActionHeader(moduleData, 'checkForDependents'), "", function(response) {
+				if (response !== null && response.data !== null)  {
+					callback(response.data);
+				}
+			});
+		},
+
 		generateReportEvent : function(obj){
 			var self = this, modulename = '';
 			var reportdata = {}, actionBody, action;		
@@ -774,28 +790,15 @@ define([], function() {
 					$('#updateRepourl_'+dynamicId).attr('placeholder','Repo Url');
 				}		
 			}
-			
-			if(selectedType === 'git') {
-				$("input[checkVal=check]").prop('checked', true);
-				$("input[checkVal=check]").attr("disabled", true);
-				$('input[name=commitbtn]').addClass("btn_style");
-				$('input[name=commitbtn]').prop("disabled", false);
-				$(".passPhrase").show();
-				$(".uname").attr("mandatory", "false");
-				$(".pwd").attr("mandatory", "false");
-				$("span[name=username]").next().html("");
-				$("span[name=password]").next().html("");
-			} else {
-				$("input[checkVal=check]").attr("disabled", false);
-				$("input[checkVal=check]").prop('checked', false);
-				$('input[name=commitbtn]').removeClass("btn_style");
-				$('input[name=commitbtn]').prop("disabled", true);
-				$(".passPhrase").hide();
-				$(".uname").attr("mandatory", "true");
-				$(".pwd").attr("mandatory", "true");
-				$("span[name=username]").next().html("<sup>*</sup>");
-				$("span[name=password]").next().html("<sup>*</sup>");
-			}
+			$("input[checkVal=check]").attr("disabled", false);
+			$("input[checkVal=check]").prop('checked', false);
+			$('input[name=commitbtn]').removeClass("btn_style");
+			$('input[name=commitbtn]').prop("disabled", true);
+			$(".passPhrase").hide();
+			$(".uname").attr("mandatory", "true");
+			$(".pwd").attr("mandatory", "true");
+			$("span[name=username]").next().html("<sup>*</sup>");
+			$("span[name=password]").next().html("<sup>*</sup>");
 		},
 		
 		validation : function(dynid) {	

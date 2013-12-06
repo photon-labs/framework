@@ -55,6 +55,7 @@ import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.CoreOption;
 import com.photon.phresco.commons.model.FeatureConfigure;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.RequiredOption;
 import com.photon.phresco.commons.model.SelectedFeature;
@@ -247,7 +248,6 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 					List<ArtifactInfo> versions = artifactGroup.getVersions();
 					for (ArtifactInfo artifactInfo : versions) {
 						if (CollectionUtils.isNotEmpty(artifactInfo.getDependencyIds()) && artifactInfo.getDependencyIds().contains(versionId)) {
-						System.out.println("name===> " + artifactGroup.getName());
 							artifactInfoIds.add(artifactInfo.getId());
 						}
 					}
@@ -288,6 +288,8 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module) throws PhrescoException {
 		ResponseInfo<Map<String, String>> responseData = new ResponseInfo<Map<String, String>>();
 //		List<SelectedFeature> listFeatures = new ArrayList<SelectedFeature>();
+		String rootModulePath = "";
+		String subModuleName = "";
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
@@ -298,10 +300,21 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			}
+			
+//			if (StringUtils.isNotEmpty(module)) {
+//				appDirName = appDirName + File.separator + module;
+//			}
+			
 			if (StringUtils.isNotEmpty(module)) {
-				appDirName = appDirName + File.separator + module;
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = module;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
-			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			
+//			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+			ApplicationInfo appInfo =projectInfo.getAppInfos().get(0);
 			Map<String, String> selectedFeatureMap = appInfo.getSelectedFeatureMap();
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR400004;
@@ -334,6 +347,8 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 	public Response showFeatureConfigPopup(@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_FEATURENAME) String featureName, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
 			@QueryParam(REST_QUERY_MODULE_NAME) String module) {
+		String rootModulePath = "";
+		String subModuleName = "";
 		ResponseInfo<FeatureConfigure> responseData = new ResponseInfo<FeatureConfigure>();
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
@@ -344,10 +359,18 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 						"*").build();
 			}
 			FeatureConfigure featureConfigure = new FeatureConfigure();
+//			if (StringUtils.isNotEmpty(module)) {
+//				appDirName = appDirName + File.separator + module;
+//			}
+			
 			if (StringUtils.isNotEmpty(module)) {
-				appDirName = appDirName + File.separator + module;
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = module;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
-			featureConfigure = getTemplateConfigFile(appDirName, customerId, serviceManager, featureName);
+			
+			featureConfigure = getTemplateConfigFile(appDirName, customerId, serviceManager, featureName, rootModulePath,  subModuleName);
 			ResponseInfo<FeatureConfigure> finalOutput = responseDataEvaluation(responseData, null,
 					featureConfigure, RESPONSE_STATUS_SUCCESS, PHR400005);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
@@ -359,12 +382,13 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 		}
 	}
 	
-	private FeatureConfigure getTemplateConfigFile(String appDirName, String customerId, ServiceManager serviceManager, String featureName) throws PhrescoException {
+	private FeatureConfigure getTemplateConfigFile(String appDirName, String customerId, ServiceManager serviceManager, String featureName, String rootModulePath,String subModuleName) throws PhrescoException {
 	    List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
 	    try {
 	    	FeatureConfigure featureConfigure = new FeatureConfigure();
 	        FrameworkServiceUtil frameworkServiceUtil = new FrameworkServiceUtil();
-	    	List<Configuration> featureConfigurations = frameworkServiceUtil.getApplicationProcessor(appDirName, customerId, serviceManager).preFeatureConfiguration(FrameworkServiceUtil.getApplicationInfo(appDirName), featureName);
+	        ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+	    	List<Configuration> featureConfigurations = frameworkServiceUtil.getApplicationProcessor(appDirName, customerId, serviceManager, rootModulePath, subModuleName).preFeatureConfiguration(projectInfo.getAppInfos().get(0), featureName);
 	    	Properties properties = null;
 	        boolean hasCustomProperty = false;
 	        if (CollectionUtils.isNotEmpty(featureConfigurations)) {
@@ -418,7 +442,9 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 	public Response configureFeature(@Context HttpServletRequest request, @QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_FEATURENAME) String featureName, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
 			@QueryParam(REST_QUERY_MODULE_NAME) String module) {
-		ResponseInfo<FeatureConfigure> responseData = new ResponseInfo<FeatureConfigure>();
+		ResponseInfo<FeatureConfigure> responseData = new ResponseInfo<FeatureConfigure>();	
+		String rootModulePath = "";
+		String subModuleName = "";
 	    try {
 	    	ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
@@ -427,12 +453,15 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			}
+			
 			if (StringUtils.isNotEmpty(module)) {
-				appDirName = appDirName + File.separator + module;
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = module;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
-	    	ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 	    	FeatureConfigure featureConfigure = new FeatureConfigure();
-			featureConfigure = getTemplateConfigFile(appDirName, customerId, serviceManager, featureName);
+			featureConfigure = getTemplateConfigFile(appDirName, customerId, serviceManager, featureName, rootModulePath, subModuleName);
             Properties properties = new Properties();
             if (CollectionUtils.isNotEmpty(featureConfigure.getPropertyTemplates())) {
             	for (PropertyTemplate propertyTemplate : featureConfigure.getPropertyTemplates()) {
@@ -452,7 +481,7 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
             }
             Configuration configuration = new Configuration();
             configuration.setName(featureName);
-            List<Environment> allEnvironments = getAllEnvironments(appInfo);
+            List<Environment> allEnvironments = getAllEnvironments(rootModulePath, subModuleName);
 	        for (Environment environment : allEnvironments) {
 	        	if(environment.isDefaultEnv()) {
 	        		configuration.setEnvName(environment.getName());
@@ -462,7 +491,8 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
             List<Configuration> configs = new ArrayList<Configuration>();
             configs.add(configuration);
             FrameworkServiceUtil frameworkServiceUtil = new FrameworkServiceUtil();
-	    	frameworkServiceUtil.getApplicationProcessor(appDirName, customerId, serviceManager).postFeatureConfiguration(FrameworkServiceUtil.getApplicationInfo(appDirName), configs, featureName);
+            ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+	    	frameworkServiceUtil.getApplicationProcessor(appDirName, customerId, serviceManager, rootModulePath, subModuleName).postFeatureConfiguration(projectInfo.getAppInfos().get(0), configs, featureName);
 	    	ResponseInfo<FeatureConfigure> finalOutput = responseDataEvaluation(responseData, null,
 					null, RESPONSE_STATUS_SUCCESS, PHR400006);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
@@ -477,8 +507,9 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 		}
 	}
 	
-	private List<Environment> getAllEnvironments(ApplicationInfo appInfo) throws PhrescoException, ConfigurationException {
-		String configPath = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + FOLDER_DOT_PHRESCO + File.separator + PHRESCO_ENV_CONFIG_FILE_NAME ;
+	private List<Environment> getAllEnvironments(String  rootModulePath, String subModuleName) throws PhrescoException, ConfigurationException {
+		String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModuleName);
+		String configPath = dotPhrescoFolderPath + File.separator + PHRESCO_ENV_CONFIG_FILE_NAME ;
 		ConfigManager configManager = getConfigManager(configPath);
 		return configManager.getEnvironments();
 	}
@@ -488,92 +519,4 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
         return PhrescoFrameworkFactory.getConfigManager(appDir);
 }
 	
-	/**
-	 * Creates the artifact information.
-	 *
-	 * @param selectedModule the selected module
-	 * @param techId the tech id
-	 * @param appInfo the app info
-	 * @param serviceManager the service manager
-	 * @return the selected feature
-	 * @throws PhrescoException the phresco exception
-	 */
-	private SelectedFeature createArtifactInformation(String selectedModule, String techId, ApplicationInfo appInfo,
-			ServiceManager serviceManager) throws PhrescoException {
-		SelectedFeature slctFeature = new SelectedFeature();
-		ArtifactInfo artifactInfo = serviceManager.getArtifactInfo(selectedModule);
-
-		slctFeature.setDispValue(artifactInfo.getVersion());
-		slctFeature.setVersionID(artifactInfo.getId());
-		slctFeature.setModuleId(artifactInfo.getArtifactGroupId());
-
-		String artifactGroupId = artifactInfo.getArtifactGroupId();
-		ArtifactGroup artifactGroupInfo = serviceManager.getArtifactGroupInfo(artifactGroupId);
-		slctFeature.setName(artifactGroupInfo.getName());
-		slctFeature.setDispName(artifactGroupInfo.getDisplayName());
-		slctFeature.setType(artifactGroupInfo.getType().name());
-		slctFeature.setArtifactGroupId(artifactGroupInfo.getId());
-		slctFeature.setPackaging(artifactGroupInfo.getPackaging());
-		getScope(appInfo, artifactInfo.getId(), slctFeature);
-		List<CoreOption> appliesTo = artifactGroupInfo.getAppliesTo();
-		for (CoreOption coreOption : appliesTo) {
-			if (coreOption.getTechId().equals(techId) && !coreOption.isCore()
-					&& !slctFeature.getType().equals(REQ_JAVASCRIPT_TYPE_MODULE)
-					&& artifactGroupInfo.getPackaging().equalsIgnoreCase(ZIP_FILE)) {
-				slctFeature.setCanConfigure(true);
-			} else {
-				slctFeature.setCanConfigure(false);
-			}
-		}
-		List<RequiredOption> appliesToReqird = artifactInfo.getAppliesTo();
-		if (CollectionUtils.isNotEmpty(appliesToReqird)) {
-			for (RequiredOption requiredOption : appliesToReqird) {
-				if (requiredOption.isRequired() && requiredOption.getTechId().equals(techId)) {
-					slctFeature.setDefaultModule(true);
-				}
-			}
-		}
-
-		return slctFeature;
-
-	}
-
-	/**
-	 * Gets the scope.
-	 *
-	 * @param appInfo the app info
-	 * @param id the id
-	 * @param selectFeature the select feature
-	 * @return the scope
-	 * @throws PhrescoException the phresco exception
-	 */
-	private void getScope(ApplicationInfo appInfo, String id, SelectedFeature selectFeature) throws PhrescoException {
-		StringBuilder dotPhrescoPathSb = new StringBuilder(Utility.getProjectHome());
-		if(StringUtils.isNotEmpty(appInfo.getRootModule())) {
-			dotPhrescoPathSb.append(appInfo.getRootModule());
-			dotPhrescoPathSb.append(File.separator);
-		}
-		dotPhrescoPathSb.append(appInfo.getAppDirName());
-		dotPhrescoPathSb.append(File.separator);
-		dotPhrescoPathSb.append(Constants.DOT_PHRESCO_FOLDER);
-		dotPhrescoPathSb.append(File.separator);
-		String pluginInfoFile = dotPhrescoPathSb.toString() + APPLICATION_HANDLER_INFO_FILE;
-		MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
-		ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
-		String selectedFeatures = applicationHandler.getSelectedFeatures();
-		if (StringUtils.isNotEmpty(selectedFeatures)) {
-			Gson gson = new Gson();
-			Type jsonType = new TypeToken<Collection<ArtifactGroup>>() {
-			}.getType();
-			List<ArtifactGroup> artifactGroups = gson.fromJson(selectedFeatures, jsonType);
-			for (ArtifactGroup artifactGroup : artifactGroups) {
-				for (ArtifactInfo artifactInfo : artifactGroup.getVersions()) {
-					if (artifactInfo.getId().equals(id)) {
-						selectFeature.setScope(artifactInfo.getScope());
-					}
-				}
-			}
-		}
-	}
-
 }

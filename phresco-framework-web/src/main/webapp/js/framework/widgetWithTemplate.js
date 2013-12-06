@@ -429,6 +429,9 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					var BottomHeight = clicked.position().top - (target.height() + 33 );
 					$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
 					$(target).toggle();
+					if ($(ee).attr('name') === "deployBuild") {
+						$(target).css({"right":"32%" ,"top":BottomHeight,"left": "auto"});
+					}
 					if($(ee).hasClass('import_icon_btn')) {
 						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('newdyn_popup');	
 					} else {

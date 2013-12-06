@@ -431,7 +431,7 @@
                         <td>&nbsp;</td>
                       </tr>
 					  {{#each modules}}
-                          <tr class="{{../appDirName}}" techid="{{techInfo.id}}" isMultiModule="true" moduleName="{{code}}">
+                          <tr class="{{../appDirName}}" rootModule="{{../appDirName}}" techid="{{techInfo.id}}" isMultiModule="true" moduleName="{{code}}">
                               <td style="padding-left: 5%;"><a name="editApplication" from="multimodule" appDirName="{{../appDirName}}" href="javascript:;">{{code}}</a></td>
                               <td>&nbsp;</td>
                               <td>{{techInfo.name}}</td>
@@ -493,16 +493,18 @@
                               </td>
                               <td class="list_img">
                                   {{#if ../../../userPermissions.manageApplication}}
-                                      <a class="tooltiptop" title="" name="{{code}}" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete {{code}}">
+                                      <a class="tooltiptop del_submodule" title="" name="{{code}}" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete {{code}}">
                                           <img name="delete" src="themes/default/images/Phresco/delete_row.png" width="14" height="18" border="0" alt="">
                                       </a>
                                   {{else}}
                                       <img name="delete" src="themes/default/images/Phresco/delete_row_off.png" width="14" height="18" border="0" alt="">
                                   {{/if}}
                                       <div class="dyn_popup delete_msg" id="{{code}}" currentModuleName={{code}}>
+                                        <div class="{{code}}_module_delete_msg">
                                           Are you sure to delete ?
+                                         </div> 
                                         <div>
-                                            <input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style dlt" from="module" appDirName="{{../appDirName}}" name="deleteConfirm" moduleName="{{code}}">
+                                            <input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style dlt {{code}}_module_dependents module_delete" dependents="" from="module" appDirName="{{../appDirName}}" name="deleteConfirm" moduleName="{{code}}">
                                             <input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close">
                                         </div>
                                       </div>

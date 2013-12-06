@@ -9,6 +9,8 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 
+import com.photon.phresco.framework.model.DeleteProjectInfo;
+
 public class ProjectDeleteServiceTest {
 	
 	ProjectService projectservice = new ProjectService();
@@ -21,7 +23,11 @@ public class ProjectDeleteServiceTest {
 		projectToDel.add("TestJquery");
 		projectToDel.add("TestGitProject");
 		projectToDel.add("TestProject");
-		Response deleteproject = projectservice.deleteproject(projectToDel, "project");
+		
+		DeleteProjectInfo deleteProjectInfo = new DeleteProjectInfo();
+		deleteProjectInfo.setAppDirNames(projectToDel);
+		deleteProjectInfo.setActionType("project");
+		Response deleteproject = projectservice.deleteproject(deleteProjectInfo);
 		assertEquals(200 , deleteproject.getStatus());
 	}
 }

@@ -16,6 +16,7 @@ import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.SelectedFeature;
 import com.photon.phresco.commons.model.TechnologyInfo;
+import com.photon.phresco.framework.model.DeleteProjectInfo;
 
 public class ProjectServiceTest extends LoginServiceTest {
 	ProjectService projectService = new ProjectService();
@@ -161,7 +162,10 @@ public class ProjectServiceTest extends LoginServiceTest {
 //	@Test
 	public void deleteprojectTest() {
 		ProjectService service = new ProjectService();
-		Response response = service.deleteproject(getCollections(appDirName), "project");
+		DeleteProjectInfo deleteProjectInfo = new DeleteProjectInfo();
+		deleteProjectInfo.setAppDirNames(getCollections(appDirName));
+		deleteProjectInfo.setActionType("project");
+		Response response = service.deleteproject(deleteProjectInfo);
 		assertEquals(200, response.getStatus());
 	}
 

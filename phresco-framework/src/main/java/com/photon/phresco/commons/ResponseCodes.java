@@ -156,6 +156,8 @@ public interface ResponseCodes {
 	String PHR200027 = "PHR200027"; // report fetched successfully
 	String PHR210049 = "PHR210049"; // Invalid host or port
 	String PHR210050 = "PHR210050"; // Invalid stream
+	String PHR210051 = "PHR210051"; // To retrive submodule's dependents
+	String PHR210052 = "PHR210052"; // Failed to retrive submodule's dependents
 
 
 	

@@ -911,6 +911,7 @@ define(["croneExpression/croneExpression"], function() {
 				certificateJson.environmentName = $('input[name=EnvName]').val();
 				certificateJson.configName = $(this).parent().parent().parent().parent().attr('name');
 				certificateJson.propValue = value;
+				certificateJson.moduleName = $('.moduleName').val();
 				self.configRequestBody = certificateJson;
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "addCertificate", ''), function(response) {
 					commonVariables.api.showError(response.responseCode ,"success", true, false, true);
