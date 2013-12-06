@@ -1199,8 +1199,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				// for pdf report attachment patterns
 				// based on test report type, it should be specified
 				//TODO validation for TestType
-				String attacheMentPattern = "cumulativeReports";
-				
+				String attacheMentPattern;
+				if(job.getTestType().equalsIgnoreCase("All")) {
+					attacheMentPattern = "cumulativeReports";
+				} else {
+					attacheMentPattern = job.getTestType();
+				}
 				// enable archiving
 				job.setEnableArtifactArchiver(true);
 				job.setTechnologyName(technology.getName());
