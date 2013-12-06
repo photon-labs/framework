@@ -60,6 +60,7 @@ import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.commons.model.CIJobTemplate;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.impl.ConfigManagerImpl;
+import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse.Status;
@@ -348,7 +349,7 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 		}
 		CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 		String appDirName = appInfos.get(0).getAppDirName();
-		List<ProjectDelivery> projectDeliveries = ciManager.getCiJobInfo(null, appDirName, READ);
+		List<ProjectDelivery> projectDeliveries = ciManager.getCiJobInfo(null, appDirName, Constants.READ);
 		if (CollectionUtils.isNotEmpty(projectDeliveries)) {
 			ProjectDelivery projectDelivery = Utility.getProjectDelivery(projId, projectDeliveries);
 			if (projectDelivery != null) {
@@ -374,7 +375,7 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 		for (String appId : appIds) {
 			for (ApplicationInfo appInfo : appInfos) {
 				if(appInfo.getName().equals(appId)){
-					List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appInfo.getAppDirName(), "", READ);
+					List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appInfo.getAppDirName(), "", Constants.READ);
 					if (CollectionUtils.isNotEmpty(ciJobInfo)) {
 						ProjectDelivery appDelivery = Utility.getProjectDelivery(projId, ciJobInfo);
 						if (appDelivery != null) {

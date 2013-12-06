@@ -56,12 +56,10 @@ import org.w3c.dom.NodeList;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.BuildInfo;
-import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ApplicationManager;
-import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.impl.ConfigurationReader;
 import com.photon.phresco.framework.model.MinifyInfo;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
@@ -90,7 +88,16 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 	public Response list(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		ResponseInfo<List<BuildInfo>> responseData = new ResponseInfo<List<BuildInfo>>();
 		try {
-			String buildInfoFilePath = getBuildInfoFilePath(appDirName, module);
+			String rootModulePath = "";
+			String subModuleName = "";
+			if (StringUtils.isNotEmpty(module)) {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = module;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+			}
+			
+			String buildInfoFilePath = getBuildInfoFilePath(rootModulePath, subModuleName);
 			File buildInfoFile = new File(buildInfoFilePath);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			List<BuildInfo> builds = applicationManager.getBuildInfos(buildInfoFile);
@@ -118,8 +125,20 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 	public Response minifer(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		ResponseInfo<List<BuildInfo>> responseData = new ResponseInfo<List<BuildInfo>>();
 		try {
-			appDirName = StringUtils.isNotEmpty(module) ? appDirName + File.separator + module : appDirName;
-			String pomPath = FrameworkServiceUtil.getAppPom(appDirName);
+			String rootModulePath = "";
+			String subModuleName = "";
+			
+//			appDirName = StringUtils.isNotEmpty(module) ? appDirName + File.separator + module : appDirName;
+			
+			if (StringUtils.isNotEmpty(module)) {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = module;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+			}
+			
+//			String pomPath = FrameworkServiceUtil.getAppPom(appDirName);
+			String pomPath = Utility.getpomFileLocation(rootModulePath, subModuleName);
 			PomProcessor pomProcessor = new PomProcessor(new File(pomPath));
 			com.phresco.pom.model.Plugin.Configuration pluginConfig = pomProcessor.getPlugin(MINIFY_PLUGIN_GROUPID,
 					MINIFY_PLUGIN_ARTFACTID).getConfiguration();
@@ -167,14 +186,23 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 	@Produces(MediaType.MULTIPART_FORM_DATA)
 	public Response buildInfoZip(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
 			@QueryParam(REST_QUERY_BUILD_NUMBER) int buildNumber, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
-		if(StringUtils.isNotEmpty(module)) {
-			appDirName = appDirName + File.separator + module;
+		String rootModulePath = "";
+		String subModuleName = "";
+		
+		if (StringUtils.isNotEmpty(module)) {
+			rootModulePath = Utility.getProjectHome() + appDirName;
+			subModuleName = module;
+		} else {
+			rootModulePath = Utility.getProjectHome() + appDirName;
 		}
+		
 		InputStream fileInputStream = null;
 		ResponseInfo responseData = new ResponseInfo();
 		StringBuilder builder = new StringBuilder();
 		try {
-			String buildInfoFilePath = getBuildInfoFilePath(appDirName, module);
+			String buildInfoFilePath = getBuildInfoFilePath(rootModulePath, subModuleName);
+			String pomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
+			File pomFile = new File(pomFileLocation);
 			String fileName = "";
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			BuildInfo buildInfo = applicationManager.getBuildInfo(buildNumber, buildInfoFilePath);
@@ -182,7 +210,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 				String deliverables = buildInfo.getDeliverables();
 				fileName = buildInfo.getBuildName();
 				if (StringUtils.isEmpty(deliverables)) {
-					builder.append(Utility.getProjectHome() + appDirName);
+					builder.append(pomFile.getParent());
 					builder.append(File.separator);
 					String moduleName = buildInfo.getModuleName();
 					if (StringUtils.isNotEmpty(moduleName)) {
@@ -216,13 +244,10 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 		}
 	}
 
-	private String getBuildInfoFilePath(String appDirName, String module) {
-		StringBuilder buildInfoFilePath = new StringBuilder(Utility.getProjectHome());
-		buildInfoFilePath.append(appDirName)
-		.append(File.separator);
-		if(StringUtils.isNotEmpty(module)) {
-			buildInfoFilePath.append(module).append(File.separator);
-		} 
+	private String getBuildInfoFilePath(String rootModulePath, String subModuleName) throws PhrescoException {
+		String pomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
+		File pomFile = new File(pomFileLocation);
+		StringBuilder buildInfoFilePath = new StringBuilder(pomFile.getParent());
 		buildInfoFilePath.append(BUILD_DIR).append(File.separator).append(BUILD_INFO_FILE_NAME);
 		
 		return buildInfoFilePath.toString();
@@ -242,9 +267,16 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteBuild(String[] buildNumbers, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
-		if(StringUtils.isNotEmpty(module)) {
-			appDirName = appDirName + File.separator + module;
+		String rootModulePath = "";
+		String subModuleName = "";
+		
+		if (StringUtils.isNotEmpty(module)) {
+			rootModulePath = Utility.getProjectHome() + appDirName;
+			subModuleName = module;
+		} else {
+			rootModulePath = Utility.getProjectHome() + appDirName;
 		}
+		
 		ResponseInfo responseData = new ResponseInfo();
 		try {
 			int[] buildInts = new int[buildNumbers.length];
@@ -252,7 +284,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 				buildInts[i] = Integer.parseInt(buildNumbers[i]);
 			}
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			applicationManager.deleteBuildInfos(appDirName, buildInts);
+			applicationManager.deleteBuildInfos(rootModulePath, buildInts, subModuleName);
 		} catch (PhrescoException e) {
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR710004);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
@@ -271,8 +303,19 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 		Boolean connectionAlive = false;
 		FileReader readers = null;
 		try {
-			File configurationInfo = new File(getDotPhrescoFolder(appDirName, module)+ File.separator + PHRESCO_ENV_CONFIG_FILE_NAME);
-			File runAgainsSourceInfo = new File(getDotPhrescoFolder(appDirName, module)+ File.separator + RUNAGNSRC_INFO_FILE);
+			String rootModulePath = "";
+			String subModuleName = "";
+			
+			if (StringUtils.isNotEmpty(module)) {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = module;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+			}
+			
+			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModuleName);
+			File configurationInfo = new File(dotPhrescoFolderPath+ File.separator + PHRESCO_ENV_CONFIG_FILE_NAME);
+			File runAgainsSourceInfo = new File(dotPhrescoFolderPath+ File.separator + RUNAGNSRC_INFO_FILE);
 			if (!runAgainsSourceInfo.exists()) {
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, connectionAlive, RESPONSE_STATUS_SUCCESS, PHR710005);
 			return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
@@ -317,15 +360,30 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 	@GET
 	@Path("/logContent")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response logContent(@QueryParam("status") String status, @QueryParam("appDirName") String appDirName) {
+	public Response logContent(@QueryParam("status") String status, @QueryParam("appDirName") String appDirName, @QueryParam("moduleName") String moduleName) {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		String readLogFile = "";
 		try {
-			if (StringUtils.isNotEmpty(status) && status.equals("true")) {
-				readLogFile = readRunAgsSrcLogFile(appDirName);
+			
+			String rootModulePath = "";
+			String subModuleName = "";
+			
+			if (StringUtils.isNotEmpty(moduleName)) {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = moduleName;
 			} else {
-				deleteLogFile(appDirName);
-				deleteInfoFile(appDirName);
+				rootModulePath = Utility.getProjectHome() + appDirName;
+			}
+			
+			String pomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
+			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModuleName);
+			File pomFile = new File(pomFileLocation);
+			if (StringUtils.isNotEmpty(status) && status.equals("true")) {
+				
+				readLogFile = readRunAgsSrcLogFile(pomFile.getParent());
+			} else {
+				deleteLogFile(pomFile.getParent());
+				deleteInfoFile(dotPhrescoFolderPath);
 			}
 
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, readLogFile,
@@ -339,21 +397,17 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 		}
 	}
 	
-	private void deleteInfoFile(String appDirName) throws PhrescoException {
-		try {
-			File infoFile = new File(FrameworkServiceUtil.getApplicationHome(appDirName) + File.separator + FOLDER_DOT_PHRESCO + File.separator + RUNAGNSRC_INFO_FILE);
-			if (infoFile.isFile() && infoFile.exists()) {
-				infoFile.delete();
-			}
-		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
+	private void deleteInfoFile(String dotPhrescoFolderPath) throws PhrescoException {
+		File infoFile = new File(dotPhrescoFolderPath + File.separator + RUNAGNSRC_INFO_FILE);
+		if (infoFile.isFile() && infoFile.exists()) {
+			infoFile.delete();
 		}
 	}
 
-	public void deleteLogFile(String appDirName) throws PhrescoException {
+	public void deleteLogFile(String targetDir) throws PhrescoException {
 		try {
-			File logFile = new File(getLogFilePath(appDirName));
-			File infoFile = new File(getLogFolderPath(appDirName) + File.separator + RUN_AGS_LOG_FILE);
+			File logFile = new File(getLogFilePath(targetDir));
+			File infoFile = new File(getLogFolderPath(targetDir) + File.separator + RUN_AGS_LOG_FILE);
 			if (logFile.isFile() && logFile.exists()) {
 				logFile.delete();
 			}
@@ -365,17 +419,17 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 		}
 	}
 
-	private String getLogFilePath(String appDirName) throws PhrescoException {
-		StringBuilder builder = new StringBuilder(getLogFolderPath(appDirName));
+	private String getLogFilePath(String targetDir) throws PhrescoException {
+		StringBuilder builder = new StringBuilder(getLogFolderPath(targetDir));
 		builder.append(File.separator);
 		builder.append(LOG_FILE);
 		return builder.toString();
 	}
 
-	private String readRunAgsSrcLogFile(String appDirName) throws PhrescoException {
+	private String readRunAgsSrcLogFile(String targetDir) throws PhrescoException {
 		BufferedReader reader = null;
 		try {
-			File runAgsLogfile = new File(getLogFolderPath(appDirName) + File.separator + RUN_AGS_LOG_FILE);
+			File runAgsLogfile = new File(getLogFolderPath(targetDir) + File.separator + RUN_AGS_LOG_FILE);
 			if (runAgsLogfile.exists()) {
 				reader = new BufferedReader(new FileReader(runAgsLogfile));
 				String text = "";
@@ -396,9 +450,8 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 		return "";
 	}
 	
-	private String getLogFolderPath(String appDirName) throws PhrescoException {
-		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		builder.append(appDirName);
+	private String getLogFolderPath(String targetDir) throws PhrescoException {
+		StringBuilder builder = new StringBuilder(targetDir);
 		builder.append(File.separator);
 		builder.append(DO_NOT_CHECKIN_DIR);
 		builder.append(File.separator);
@@ -465,19 +518,6 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 			isAlive = false;
 		}
 		return isAlive;
-	}
-
-	private String getDotPhrescoFolder(String appDirName, String module) {
-		StringBuilder dotPhrescoPath = new StringBuilder(Utility.getProjectHome());
-		dotPhrescoPath.append(File.separator)
-		.append(appDirName).append(File.separator);
-		if (StringUtils.isNotEmpty(module)) {
-			dotPhrescoPath.append(module).append(File.separator);
-		}
-		dotPhrescoPath.append(FrameworkConstants.FOLDER_DOT_PHRESCO);
-		File dotPhrescoFolder = new File(dotPhrescoPath.toString());
-		
-		return dotPhrescoFolder.getPath();
 	}
 }
 

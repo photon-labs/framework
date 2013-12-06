@@ -991,8 +991,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		String appDirName = appInfo.getAppDirName();
 		String tempBasePath = Utility.getPhrescoTemp() + appDirName;
 		
-		File tempPhrescoFile = new File(tempBasePath + SUFFIX_PHRESCO);
-		File tempTestFile = new File(tempBasePath + SUFFIX_TEST);
+		File tempPhrescoFile = new File(tempBasePath + Constants.SUFFIX_PHRESCO);
+		File tempTestFile = new File(tempBasePath + Constants.SUFFIX_TEST);
 		File tempSrcFile = new File(tempBasePath);
 		try {
 			RepoDetail srcRepoDetail = repoInfo.getSrcRepoDetail();
@@ -1008,9 +1008,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				RepoDetail phrescoRepoDetail = repoInfo.getPhrescoRepoDetail();
 				RepoDetail testRepoDetail = repoInfo.getTestRepoDetail();
 				
-				String phrescoDirName = appDirName + SUFFIX_PHRESCO;
+				String phrescoDirName = appDirName + Constants.SUFFIX_PHRESCO;
 				String srcDirName = appDirName;
-				String testDirName = appDirName + SUFFIX_TEST;
+				String testDirName = appDirName + Constants.SUFFIX_TEST;
 				
 				String srcRepoUrl = srcRepoDetail.getRepoUrl() + FORWARD_SLASH + srcDirName;
 				String phrescoRepoUrl = "";
@@ -1227,11 +1227,11 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			String srcRootPrpty = pomProcessor.getProperty(Constants.POM_PROP_KEY_ROOT_SRC_DIR);
 			pomProcessor.setProperty(Constants.POM_PROP_KEY_ROOT_SRC_DIR, sb.toString() + srcRootPrpty);
 			
-			pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_PHRESCO_DIR, appDirName + SUFFIX_PHRESCO);
+			pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_PHRESCO_DIR, appDirName + Constants.SUFFIX_PHRESCO);
 			pomProcessor.setProperty(Constants.POM_PROP_KEY_PHRESCO_REPO_URL, phrescoRepoUrl);
 			pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_SRC_DIR, appDirName);
 			pomProcessor.setProperty(Constants.POM_PROP_KEY_SRC_REPO_URL, srcRepoUrl);
-			pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_TEST_DIR, appDirName + SUFFIX_TEST);
+			pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_TEST_DIR, appDirName + Constants.SUFFIX_TEST);
 			pomProcessor.setProperty(Constants.POM_PROP_KEY_TEST_REPO_URL, testRepoUrl);
 			pomProcessor.save();
 		} catch (Exception e) {

@@ -184,8 +184,6 @@ public interface FrameworkConstants {
     String JENKINS_HOME = "JENKINS_HOME";
     String CI_BUILD_NAME = "PHR_ci_build";
     String CI_JOB_INFO_NAME = "ciJob.info";
-    String READ	= "read";
-    String WRITE = "write";
     String CI_JOB_TEMPLATE_NAME = "ciJobTemplate.info";
     String CI_JOB_JSON_BUILDS = "builds";
     String CI_JOB_BUILD_RESULT = "result";
@@ -2005,9 +2003,6 @@ public interface FrameworkConstants {
 		final String XLS = "xls";
 		final String XLSX = "xlsx";
 
-		String SUFFIX_PHRESCO = "-phresco";
-		String SUFFIX_TEST = "-test";
-		
 		/**
 		 * Liquibase Constants
 		 */

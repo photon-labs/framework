@@ -254,10 +254,10 @@ public class ApplicationManagerImpl implements ApplicationManager {
 	 }
 	
 	 @Override
-	 public void deleteBuildInfos(String appDirName, int[] buildNumbers) throws PhrescoException {
+	 public void deleteBuildInfos(String rootModulePath, int[] buildNumbers, String subModule) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ApplicationManagerImpl.deleteBuildInfos(ProjectInfo project, int[] buildNumbers)");
 
-		 String buildInfoFile = getBuildInfoFilePath(appDirName);
+		 String buildInfoFile = getBuildInfoFilePath(rootModulePath, subModule);
 		 
 		 List<BuildInfo> totalBuildInfos = getBuildInfos(new File(buildInfoFile));
 		 List<BuildInfo> buildInfos = new CopyOnWriteArrayList<BuildInfo>();
@@ -267,7 +267,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
 			 buildInfos.add(buildInfo);
 		 }
 		 
-		 deleteBuildArchive(appDirName, buildInfos);
+		 deleteBuildArchive(rootModulePath, buildInfos, subModule);
 		 
 		 
 		 for (BuildInfo selectedInfo : buildInfos) {
@@ -288,7 +288,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
 		 }
 	 }
 	 
-	 private void deleteBuildArchive(String appDirName, List<BuildInfo> selectedInfos) throws PhrescoException {
+	 private void deleteBuildArchive(String rootModulePath, List<BuildInfo> selectedInfos, String subModuleName) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method AppliacationmanagerImpl.deleteBuildArchive(ProjectInfo project, List<BuildInfo> selectedInfos)");
 		 File file = null;
 		 try {
@@ -296,9 +296,9 @@ public class ApplicationManagerImpl implements ApplicationManager {
 			 for (BuildInfo selectedInfo : selectedInfos) {
 				 //Delete zip file
 				 delFilename = selectedInfo.getBuildName();
-				 file = new File(getBuildInfoHome(appDirName) + delFilename);
+				 file = new File(getBuildInfoHome(rootModulePath, subModuleName) + delFilename);
 				 FilenameUtils.removeExtension(file.getName());
-				 File temp = new File(getBuildInfoHome(appDirName) + file.getName().substring(0, file.getName().length() - 4));
+				 File temp = new File(getBuildInfoHome(rootModulePath, subModuleName) + file.getName().substring(0, file.getName().length() - 4));
 				 file.delete(); 
 				 if (temp.exists()) {
 					FileUtil.delete(temp);
@@ -310,24 +310,20 @@ public class ApplicationManagerImpl implements ApplicationManager {
 		}
 	 }
 	 
-	 private String getBuildInfoHome(String appDirName) {
-		 StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		 builder.append(appDirName)
-		 .append(File.separator)
-		 .append(FrameworkConstants.BUILD_DIR)
-		 .append(File.separator);
-		 return builder.toString();
+	 private String getBuildInfoHome(String rootModulePath, String subModuleName) throws PhrescoException {
+			String pomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
+			File pomFile = new File(pomFileLocation);
+			StringBuilder buildInfoFilePath = new StringBuilder(pomFile.getParent());
+			buildInfoFilePath.append(FrameworkConstants.BUILD_DIR).append(File.separator);
+		 return buildInfoFilePath.toString();
 	 }
 	 
-	 private String getBuildInfoFilePath(String appDirName) {
-		 StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		 builder.append(appDirName)
-		 .append(File.separator)
-		 .append(FrameworkConstants.BUILD_DIR)
-		 .append(File.separator)
-		 .append(FrameworkConstants.BUILD_INFO_FILE_NAME);
-		 
-		 return builder.toString();
+	 private String getBuildInfoFilePath(String rootModulePath, String subModuleName) throws PhrescoException {
+			String pomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
+			File pomFile = new File(pomFileLocation);
+			StringBuilder buildInfoFilePath = new StringBuilder(pomFile.getParent());
+			buildInfoFilePath.append(FrameworkConstants.BUILD_DIR).append(File.separator).append(FrameworkConstants.BUILD_INFO_FILE_NAME);
+		 return buildInfoFilePath.toString();
 	 }
 	 
 	 private void writeBuildInfo(List<BuildInfo> buildInfos, File path) throws IOException {

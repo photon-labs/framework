@@ -57,7 +57,6 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.xml.sax.SAXException;
 
-import com.opensymphony.xwork2.util.profiling.UtilTimerStack;
 import com.photon.phresco.api.DynamicPageParameter;
 import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.FrameworkConstants;
@@ -92,7 +91,6 @@ import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
-import com.sun.xml.bind.Util;
 
 /**
  * The Class ParameterService.
@@ -138,11 +136,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			}
 			
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
-//			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDirName);
-//			ApplicationInfo appInfo = null;
-//			if (projectInfo != null) {
-//				appInfo = projectInfo.getAppInfos().get(0);
-//			}
 			if (StringUtils.isEmpty(projectCode)) {
 				projectCode = projectInfo.getProjectCode();
 			}
@@ -154,7 +147,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
 					PomProcessor pomProcessor = Utility.getPomProcessor(rootModulePath, subModuleName);
 					String functionalTestFramework = pomProcessor.getProperty(Constants.POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
-//					String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
 					goal = goal + HYPHEN + functionalTestFramework;
 				}
 				getValues(iphoneDeploy, mojo, goal);
@@ -283,10 +275,8 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
 				PomProcessor pomProcessor = Utility.getPomProcessor(rootModulePath, subModuleName);
 				String functionalTestFramework = pomProcessor.getProperty(Constants.POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
-//				String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
 				goal = goal + HYPHEN + functionalTestFramework;
 			}
-//			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			Map<String, DependantParameters> watcherMap = valueMap.get(applicationInfo.getId() + goal);
@@ -349,11 +339,9 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
 				PomProcessor pomProcessor = Utility.getPomProcessor(rootModulePath, subModuleName);
 				String functionalTestFramework = pomProcessor.getProperty(Constants.POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
-//				String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
 				goal = goal + HYPHEN + functionalTestFramework;
 			}
 			
-//			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDirName);
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			Map<String, DependantParameters> watcherMap = valueMap.get(applicationInfo.getId() + goal);
@@ -445,14 +433,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
         String rootModulePath = "";
         String subModuleName = "";
         try {
-//            int responseCode = setSonarServerStatus(request);
-//            if (responseCode != 200) {
-//                ResponseInfo<List<CodeValidationReportType>> finalOutput = responseDataEvaluation(responseData, null,
-//                        null, RESPONSE_STATUS_FAILURE, PHR510001);
-//                return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
-//                        ALL_HEADER).build();
-//            }
-        	
         	if (StringUtils.isNotEmpty(module)) {
 				rootModulePath = Utility.getProjectHome() + appDirName;
 				subModuleName = module;
@@ -474,8 +454,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 					codeValidationReportType.setValidateAgainst(value);
 					codeValidationReportTypes.add(codeValidationReportType);
                 }
-//                ResponseInfo<List<CodeValidationReportType>> finalOutput = responseDataEvaluation(responseData, null,
-//                        DEPENDENCY_RETURNED_SUCCESSFULLY, codeValidationReportTypes);
                 return Response.ok(codeValidationReportTypes).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
             }
             MojoProcessor processor = new MojoProcessor(new File(infoFileDir));
@@ -494,8 +472,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
                 codeValidationReportType.setValidateAgainst(value);
                 codeValidationReportTypes.add(codeValidationReportType);
             }
-//            ResponseInfo<List<CodeValidationReportType>> finalOutput = responseDataEvaluation(responseData, null,
-//                    codeValidationReportTypes, RESPONSE_STATUS_SUCCESS, PHR500001);
             return Response.ok(codeValidationReportTypes).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
         } catch (PhrescoException e) {
             ResponseInfo<List<CodeValidationReportType>> finalOutput = responseDataEvaluation(responseData, e,
@@ -529,7 +505,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				}
 				
 				PomProcessor pomProcessor = Utility.getPomProcessor(rootModulePath, subModuleName);
-//				PomProcessor pomProcessor = FrameworkServiceUtil.getPomProcessor(appDirName);
 	            String validateReportUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_VALIDATE_REPORT);
 	    		if (StringUtils.isEmpty(validateReportUrl)) {
 	    			URL sonarURL = new URL(frameworkUtil.getSonarURL());
@@ -629,13 +604,19 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			String serverUrl = "";
 			FrameworkUtil frameworkUtil = new FrameworkUtil(request);
 			serverUrl = frameworkUtil.getSonarHomeURL();
-			StringBuilder reportPath = new StringBuilder(pomFile.getParent());
+			StringBuilder reportPath = new StringBuilder();
 			if (StringUtils.isNotEmpty(validateAgainst) && FUNCTIONALTEST.equals(validateAgainst)) {
+				ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+				File testFolderLocation = Utility.getTestFolderLocation(projectInfo, rootModulePath, subModuleName);
 				String funcDir = processor.getProperty(Constants.POM_PROP_KEY_FUNCTEST_DIR);
+				reportPath.append(testFolderLocation.toString());
 				reportPath.append(funcDir);
+				reportPath.append(File.separatorChar);
+				reportPath.append(Constants.POM_NAME);
+				
+			} else {
+				reportPath.append(pomFile.getPath());
 			}
-			reportPath.append(File.separatorChar);
-			reportPath.append(pomFile.getName());
 			File file = new File(reportPath.toString());
 			processor = new PomProcessor(file);
 			String groupId = processor.getModel().getGroupId();
@@ -917,7 +898,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
 					PomProcessor pomProcessor = Utility.getPomProcessor(rootModulePath, subModuleName);
 					String functionalTestFramework = pomProcessor.getProperty(Constants.POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
-//					String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
 					goal = goal + HYPHEN + functionalTestFramework;
 				}
 				Parameter templateParameter = mojo.getParameter(goal, parameterKey);
@@ -967,16 +947,11 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			if (StringUtils.isNotEmpty(uploadedFileName)) {
 				if (PERFORMANCE_TEST.equals(request.getHeader("goal"))) {
 					String performanceTestDir = pomProcessor.getProperty(Constants.POM_PROP_KEY_PERFORMANCETEST_DIR);
-//					String performanceTestDir = FrameworkServiceUtil.getPerformanceTestDir(appDirName);
 					String performanceUploadJmxDir = pomProcessor.getProperty(Constants.POM_PROP_KEY_PERFORMANCETEST_JMX_UPLOAD_DIR);
-					
-//					String performanceUploadJmxDir = FrameworkServiceUtil.getPerformanceUploadJmxDir(appDirName);
 					finalOuptut = uploadFileForPerformanceLoad(request, appDirName, inputStream, performanceTestDir, performanceUploadJmxDir,uploadedFileName,testDir);
 				} else if (Constants.PHASE_LOAD_TEST.equals(request.getHeader("goal"))) {
 					String loadTestDir = pomProcessor.getProperty(Constants.POM_PROP_KEY_LOADTEST_DIR);
-//					String loadTestDir = FrameworkServiceUtil.getLoadTestDir(appDirName);
 					String loadUploadJmxDir = pomProcessor.getProperty(Constants.POM_PROP_KEY_LOADTEST_JMX_UPLOAD_DIR);
-//					String loadUploadJmxDir = FrameworkServiceUtil.getLoadUploadJmxDir(appDirName);
 					finalOuptut = uploadFileForPerformanceLoad(request, appDirName, inputStream, loadTestDir, loadUploadJmxDir,uploadedFileName, testDir);
 				}
 			}
