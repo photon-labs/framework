@@ -442,7 +442,7 @@ define(["features/listener/featuresListener"], function() {
 			self.featuresListener.flagged = 2;
 			self.featuresListener.scrollbarEnable();
 			$('#featureUpdate').on("click", function() {
-				self.checkForLock("featureUpdate", '', function(response) {
+				self.checkForLock("featureUpdate", '', '', function(response) {
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {
 						self.featureUpdatedArray = [];
 						$(".switchOn, .default").each(function(index, currentVal) {

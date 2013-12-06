@@ -134,7 +134,7 @@ define(["codequality/listener/codequalityListener"], function() {
 			
 			$("#validate").click(function() {
 				var against = $("#sonar").val();
-				self.checkForLock("code-"+against, '', function(response){
+				self.checkForLock("code-"+against, '', '', function(response){
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {
 						$('.progress_loading').css('display','block');
 						$(".dyn_popup").hide();

@@ -323,7 +323,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			$("input[name=performancePopup]").unbind("click");
 			$("input[name=performancePopup]").click(function() {
 				var openccObj = this, openccObjName = $(this).attr('name');
-				self.checkForLock("performance", '', function(response){
+				self.checkForLock("performance", '', '', function(response){
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {
 						self.closeConsole();
 		                var whereToRender = $('#performancePopup ul');

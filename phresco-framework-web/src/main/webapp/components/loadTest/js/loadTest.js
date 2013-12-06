@@ -267,7 +267,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			$("input[name=loadPopup]").unbind("click");
 			$("input[name=loadPopup]").click(function() {
 				var openccObj = this, openccObjName = $(this).attr('name');
-				self.checkForLock("load", '', function(response){
+				self.checkForLock("load", '', '', function(response){
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {
 						self.closeConsole();
 		                var whereToRender = $('#loadPopup ul');

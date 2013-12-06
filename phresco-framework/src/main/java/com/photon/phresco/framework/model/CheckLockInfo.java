@@ -15,9 +15,11 @@ public class CheckLockInfo implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private boolean lock;
-	private String lockedBy;
-	private String lockedDate;
-	private String lockActionCode;
+	private String lockedAppId = "";
+	private String lockedBy = "";
+	private String lockedDate = "";
+	private String lockActionCode = "";
+	private boolean subModuleLock;
 	
 	public CheckLockInfo() {
 		super();
@@ -29,6 +31,14 @@ public class CheckLockInfo implements Serializable {
 
 	public void setLock(boolean lock) {
 		this.lock = lock;
+	}
+
+	public String getLockedAppId() {
+		return lockedAppId;
+	}
+
+	public void setLockedAppId(String lockedAppId) {
+		this.lockedAppId = lockedAppId;
 	}
 
 	public String getLockedBy() {
@@ -53,6 +63,14 @@ public class CheckLockInfo implements Serializable {
 
 	public String getLockActionCode() {
 		return lockActionCode;
+	}
+
+	public void setSubModuleLock(boolean subModuleLock) {
+		this.subModuleLock = subModuleLock;
+	}
+
+	public boolean isSubModuleLock() {
+		return subModuleLock;
 	}
 
 	public String toString() {

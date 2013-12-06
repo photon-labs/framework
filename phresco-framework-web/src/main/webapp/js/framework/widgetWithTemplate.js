@@ -1176,11 +1176,12 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				});
 			},
 
-			checkForLock : function(actionType, repoAppId, callback) {
+			checkForLock : function(actionType, repoAppId, subModuleIds, callback) {
 				var self = this;
 				try {
 					var requestBody = {};
 					requestBody.actionType = actionType;
+					requestBody.subModuleIds = subModuleIds;
 					commonVariables.api.ajaxRequest(self.getRequestHeader(requestBody, repoAppId, "checkForLock"), function(response) {
 						if (response !== null && callback !== undefined) {
 							callback(response);
@@ -1200,7 +1201,8 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				}, appId = self.isBlank(repoAppId) ? $('.headerAppId').val() : repoAppId;
 				if (action === "checkForLock") {
 					header.requestMethod = "GET";
-					header.webserviceurl = commonVariables.webserviceurl + "util/checkLock?actionType="+requestBody.actionType+"&appId="+appId;
+					var subModuleIds = self.isBlank(requestBody.subModuleIds) ? "" : "&subModuleIds="+requestBody.subModuleIds;
+					header.webserviceurl = commonVariables.webserviceurl + "util/checkLock?actionType="+requestBody.actionType+"&appId="+appId+subModuleIds;
 				}
 
 				return header;
@@ -1225,8 +1227,12 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				callback(strUl); 
 			},
 			
-			getLockErrorMsg : function(response) {
-				var errorMsg = commonVariables.api.error[response.data.lockActionCode] + commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate ;
+			getLockErrorMsg : function(response, lockAction) {
+				var self = this, moduleName = "";
+				if (response.data.subModuleLock || 'deleteProj' === lockAction) {
+					moduleName = '['+$('a[appid='+response.data.lockedAppId+']').text()+'] ';
+				}
+				var errorMsg = moduleName + commonVariables.api.error[response.data.lockActionCode] + commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate ;
 				return errorMsg;
 			}, 
 

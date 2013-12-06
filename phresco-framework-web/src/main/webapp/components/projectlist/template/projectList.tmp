@@ -24,7 +24,7 @@
                         		<img name="editproject" key="{{id}}" projectcode="{{projectCode}}" projectId="{{id}}" src="themes/default/images/Phresco/edit_row_icon.png" width="29" height="23" border="0" alt="">
                     		</a> 
                     		{{#if ../userPermissions.manageApplication}}
-	                    		<a name="{{id}}" appIds="{{#csvAppIds appInfos}}{{/csvAppIds}}" class="tooltiptop del_project" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete {{name}}">
+	                    		<a name="{{id}}" appIds="{{#csvAppIds appInfos}}{{/csvAppIds}}" subModuleIds="{{#allSubModuleIds appInfos}}{{/allSubModuleIds}}" class="tooltiptop del_project" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete {{name}}">
 	                    			<img src="themes/default/images/Phresco/delete_row_icon.png" class="projectlist_delete" width="29" height="23" border="0" alt="0">
 	                			</a>
                 			{{else}}
@@ -414,7 +414,7 @@
                   </td>
                   <td class="list_img">
                   	{{#if ../../userPermissions.manageApplication}}
-	                  	<a name="{{creationDate}}" dynamicid="{{id}}"  class="tooltiptop del_appln" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Delete {{appDirName}}">
+	                  	<a name="{{creationDate}}" dynamicid="{{id}}"  submoduleIds="{{#subModules modules}}{{/subModules}}" class="tooltiptop del_appln" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Delete {{appDirName}}">
 	                  		<img name="delete" src="themes/default/images/Phresco/delete_row.png" width="14" height="18" border="0" alt="">
 	              		</a>
               		{{else}}
@@ -432,11 +432,11 @@
                       </tr>
 					  {{#each modules}}
                           <tr class="{{../appDirName}}" rootModule="{{../appDirName}}" techid="{{techInfo.id}}" isMultiModule="true" moduleName="{{code}}">
-                              <td style="padding-left: 5%;"><a name="editApplication" from="multimodule" appDirName="{{../appDirName}}" href="javascript:;">{{code}}</a></td>
+                              <td style="padding-left: 5%;"><a name="editApplication" appid="{{id}}" from="multimodule" appDirName="{{../appDirName}}" href="javascript:;">{{code}}</a></td>
                               <td>&nbsp;</td>
                               <td>{{techInfo.name}}</td>
                               <td colspan="2" class="list_img">
-                                  <a name="pdf_report_{{id}}" temp="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="{{id}}" data-placement="bottom" data-t="tooltip" href="javascript:void(0)" data-original-title="PDF Report">
+                                  <a name="pdf_report_{{id}}" temp="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="{{id}}" appdata-placement="bottom" data-t="tooltip" href="javascript:void(0)" data-original-title="PDF Report">
                                       <img src="themes/default/images/Phresco/pdf_icon.png" width="14" height="16" border="0" alt="">
                                   </a>
                                                 
@@ -493,7 +493,7 @@
                               </td>
                               <td class="list_img">
                                   {{#if ../../../userPermissions.manageApplication}}
-                                      <a class="tooltiptop del_submodule" title="" name="{{code}}" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete {{code}}">
+                                      <a class="tooltiptop del_submodule" dynamicid="{{id}}" title="" name="{{code}}" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete {{code}}">
                                           <img name="delete" src="themes/default/images/Phresco/delete_row.png" width="14" height="18" border="0" alt="">
                                       </a>
                                   {{else}}

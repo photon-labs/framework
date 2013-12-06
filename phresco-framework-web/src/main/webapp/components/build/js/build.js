@@ -297,7 +297,7 @@ define(["build/listener/buildListener"], function() {
 				commonVariables.phase = "deploy";
 				commonVariables.buildNo = divId;
 				commonVariables.iphoneDeploy = $(this).attr("deviceDeploy");
-				self.checkForLock("Deploy", '', function(response){
+				self.checkForLock("Deploy", '', '', function(response){
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {
 						if(deviceDeploy === "true"){
 							// call device deployment service
@@ -461,7 +461,7 @@ define(["build/listener/buildListener"], function() {
 			//Minifier click event
 			$("#btnMinifer").unbind("click");
 			$("#btnMinifer").click(function() {
-				self.checkForLock("minify", '', function(response) {
+				self.checkForLock("minify", '', '', function(response) {
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {
 						var finalArray = [], fileInfo = {}, type = '', compressName = '', files = '', path = '', queryStr = '',validation = false;
 						
@@ -651,7 +651,7 @@ define(["build/listener/buildListener"], function() {
 			$("input[name=build_runagsource]").unbind("click");
 			$("input[name=build_runagsource]").click(function() {
 				var openccObj = this, openccObjName = $(this).attr('name');
-				self.checkForLock("Start", '', function(response){
+				self.checkForLock("Start", '', '', function(response){
 					if (response.status === "success" && response.responseCode === "PHR10C00002" && $(openccObj).attr("class") === "btn btn_style") {
 							commonVariables.goal = "start";
 							commonVariables.phase = "run-against-source";
@@ -747,7 +747,7 @@ define(["build/listener/buildListener"], function() {
 			$("input[name=build_genbuild]").click(function() {
 				var openccObj = this;
 				var openccObjName = $(this).attr('name');
-				self.checkForLock("build", '', function(response){
+				self.checkForLock("build", '', '', function(response){
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {
 						var whereToRender = $('#build_genbuild ul');
 						$("form[name=buildForm]").show();
@@ -834,7 +834,7 @@ define(["build/listener/buildListener"], function() {
 				var openccObjName = $(this).attr('name');
 				var jsCount = 0;
 				var cssCount = 0;
-				self.checkForLock("minify", '', function(response) {
+				self.checkForLock("minify", '', '', function(response) {
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {
 						$("#build_minifier").html('<input type="checkbox" id="minAllchk"> Compress All Files <table id="jsmin" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0" style="margin-top:8px;"><thead><tr><th colspan="2">JS Minification</th></tr></thead><tbody name="jsParent"></tbody></table><table id="cssmin" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0"><thead><tr><th colspan="2">CSS Minification</th></tr></thead><tbody name="cssParent"></tbody></table><div class="flt_right"><input type="button" value="Minify" data-i18n="[value]build.label.minify" class="btn btn_style" name="btnMinifer" id="btnMinifer"><input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close"></div>');
 						

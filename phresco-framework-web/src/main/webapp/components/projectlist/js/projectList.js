@@ -124,6 +124,34 @@ define(["projectlist/listener/projectListListener"], function() {
 					return false;
 				}		
 			});
+
+			Handlebars.registerHelper('subModules', function(modules) {
+				if (modules !== undefined && modules !== null && modules.length > 0) {
+					var moduleIds = [];
+					$.each(modules, function(index, module) {
+						moduleIds.push(module.id);
+					});
+					return moduleIds.join(',');
+				} else {							
+					return "";
+				}		
+			});
+
+			Handlebars.registerHelper('allSubModuleIds', function(appInfos) {
+				var moduleIds = [];
+				if (appInfos !== undefined && appInfos !== null && appInfos.length > 0) {
+					$.each(appInfos, function(index, appInfo) {
+						if (appInfo.modules !== undefined && appInfo.modules !== null && appInfo.modules.length > 0) {
+							$.each(appInfo.modules, function(index, module) {
+								moduleIds.push(module.id);
+							});
+						}
+					});
+					return moduleIds.join(',');
+				} else {							
+					return "";
+				}		
+			});
 		},
 		
 		/***
@@ -262,7 +290,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			$("#myTab li a").removeClass("act");
 			$('a[name=editApplication]').click(function(){
 				var thisObj = this, appid = $(this).attr("appid");
-				self.checkForLock("editAppln", appid, function(response){
+				self.checkForLock("editAppln", appid, "", function(response){
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {
 						$(".dyn_popup").hide();
 						commonVariables.appDirName = $(thisObj).closest("tr").attr("class");
@@ -415,7 +443,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				$("#addRepoLoading_"+dynamicId).hide();
 				var action = $(this).attr("data-original-title"), openccObj = this;
 				if (action === "Commit") {
-					self.checkForLock("commit", dynamicId, function(response){
+					self.checkForLock("commit", dynamicId, '', function(response){
 						if (response.status === "success" && response.responseCode === "PHR10C00002") {
 							var appDirName = $(openccObj).parent().parent().attr("class");
 							var data = {};
@@ -438,7 +466,7 @@ define(["projectlist/listener/projectListListener"], function() {
 					});		
 				} else if (action === "Update") {
 					var openccName = $(this).attr('name');
-					self.checkForLock("update", dynamicId, function(response){
+					self.checkForLock("update", dynamicId, '', function(response){
 						if (response.status === "success" && response.responseCode === "PHR10C00002") {
 							var appDirName = $(openccObj).parent().parent().attr("class");
 							var data = {};
@@ -459,9 +487,9 @@ define(["projectlist/listener/projectListListener"], function() {
 						}	
 					});		
 				} else if (action === "Add Repo" || $(this).hasClass('del_appln') || $(this).hasClass('del_project')){
-					var openccName = $(this).attr('name'), lockAction = action ===  "Add Repo" ? "addToRepo" : ($(this).hasClass('del_appln') ? "deleteAppln" : "deleteProj");
+					var openccName = $(this).attr('name'), subModuleIds = $(this).attr('subModuleIds'),lockAction = action ===  "Add Repo" ? "addToRepo" : ($(this).hasClass('del_appln') ? "deleteAppln" : "deleteProj");
 					var applnids = $(this).hasClass('del_project') ? $(this).attr('appids') : dynamicId;
-					self.checkForLock(lockAction, applnids, function(response){
+					self.checkForLock(lockAction, applnids, subModuleIds, function(response){
 						if (response.status === "success" && response.responseCode === "PHR10C00002") {
 							if($(obj_del).hasClass('del_project')) {
 								self.delobj = $(obj_del).parent('td.delimages');
@@ -472,20 +500,25 @@ define(["projectlist/listener/projectListListener"], function() {
 							$('.content_title').css('z-index', '0');
 							$('.header_section').css('z-index', '0');
 						} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
-							commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
+							commonVariables.api.showError(self.getLockErrorMsg(response, lockAction), 'error', true, true);
 						}	
 					});			
 				} else if ($(this).hasClass('del_submodule')){
 					var openccName = $(this).attr('name'), rootModule = $(this).closest('tr').attr('rootModule');
-					self.onDeleteSubModuleEvent.dispatch($(this).attr('name'), rootModule, function(dependents) {
-						var deleteMsg = "Are you sure to delete?";
-						if (dependents.length > 0) {
-							deleteMsg =openccName + ' is dependent to ' + dependents.join(',') + '. <br/>Are you sure to delete?'
-							$('.'+openccName+'_module_dependents').attr("dependents", dependents.join(','));
+					self.checkForLock('deleteAppln', dynamicId, '', function(response) {
+						if (response.status === "success" && response.responseCode === "PHR10C00002") {
+							self.onDeleteSubModuleEvent.dispatch(openccName, rootModule, function(dependents) {
+							var deleteMsg = "Are you sure to delete?";
+							if (dependents.length > 0) {
+								deleteMsg =openccName + ' is dependent to ' + dependents.join(',') + '. <br/>Are you sure to delete?'
+								$('.'+openccName+'_module_dependents').attr("dependents", dependents.join(','));
+							}
+							self.openccpl(openccObj, openccName, rootModule);
+							$('.'+openccName+'_module_delete_msg').html(deleteMsg);
+						});
+						} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
+							commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 						}
-						self.openccpl(openccObj, openccName, rootModule);
-						$('.'+openccName+'_module_delete_msg').html(deleteMsg);
-
 					});
 				} else {
 					self.openccpl(this, $(this).attr('name'), currentPrjName);
