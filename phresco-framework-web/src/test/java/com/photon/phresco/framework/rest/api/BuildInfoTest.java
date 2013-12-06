@@ -209,7 +209,7 @@ public class BuildInfoTest extends RestBaseTest {
 	
 	@Test
 	public void getLogContent() {
-		Response logContent = buildinfoservice.logContent("true", appDirName);
+		Response logContent = buildinfoservice.logContent("true", appDirName, "");
 		Assert.assertEquals(200, logContent.getStatus());
 	}
 	
@@ -246,7 +246,7 @@ public class BuildInfoTest extends RestBaseTest {
 	
 	@Test
 	public void getLogContentNone() {
-		Response logContent = buildinfoservice.logContent("false", appDirName);
+		Response logContent = buildinfoservice.logContent("false", appDirName, "");
 		Assert.assertEquals(200, logContent.getStatus());
 	}
 
