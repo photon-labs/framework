@@ -16,8 +16,8 @@
                         	<select class="custon_dropdown" name="builtmyself" disabled>
 	                            <option value="prebuilt" data-i18n="project.create.label.prebuilt" selected></option>
 	                        </select>
-	                        <select class="optional_dropdown" name="">
-	                            <option data-i18n="project.create.label.selpilotproject"></option>
+	                        <select class="optional_dropdown" name="" disabled>
+	                            <option>{{displayName}}</option>
 	                        </select>
                         {{else}}
 							<select class="custon_dropdown" name="builtmyself" disabled>
