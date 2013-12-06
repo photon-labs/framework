@@ -145,25 +145,25 @@ public class UtilServiceTest extends RestBaseTest {
 	@Test
 	public void checkLockTest() throws PhrescoException {
 		
-		Response checkForLock = utilService.checkForLock("code", "TestProject1");
+		Response checkForLock = utilService.checkForLock("code", "TestProject1", "");
 		Assert.assertEquals(200, checkForLock.getStatus());
-		Response checkForLock2 = utilService.checkForLock("build", "TestProject1");
+		Response checkForLock2 = utilService.checkForLock("build", "TestProject1", "");
 		Assert.assertEquals(200, checkForLock2.getStatus());
-		Response checkForLock3 = utilService.checkForLock("Start", "TestProject1");
+		Response checkForLock3 = utilService.checkForLock("Start", "TestProject1", "");
 		Assert.assertEquals(200, checkForLock3.getStatus());
-		Response checkForLock4 = utilService.checkForLock("unit", "TestProject1");
+		Response checkForLock4 = utilService.checkForLock("unit", "TestProject1", "");
 		Assert.assertEquals(200, checkForLock4.getStatus());
-		Response checkForLock5 = utilService.checkForLock("Deploy", "TestProject1");
+		Response checkForLock5 = utilService.checkForLock("Deploy", "TestProject1", "");
 		Assert.assertEquals(200, checkForLock5.getStatus());
-		Response checkForLock6 = utilService.checkForLock("addToRepo", "TestProject1");
+		Response checkForLock6 = utilService.checkForLock("addToRepo", "TestProject1", "");
 		Assert.assertEquals(200, checkForLock6.getStatus());
-		Response checkForLock7 = utilService.checkForLock("commit", "TestProject1");
+		Response checkForLock7 = utilService.checkForLock("commit", "TestProject1", "");
 		Assert.assertEquals(200, checkForLock7.getStatus());
 		
-		Response checkForLock8 = utilService.checkForLock("create", "TestProject");
+		Response checkForLock8 = utilService.checkForLock("create", "TestProject", "");
 		Assert.assertEquals(200, checkForLock8.getStatus());
 		
-		Response checkForLock9 = utilService.checkForLock("update", "TestProject");
+		Response checkForLock9 = utilService.checkForLock("update", "TestProject", "");
 		Assert.assertEquals(200, checkForLock9.getStatus());
 		processFile.delete();
 		
@@ -183,7 +183,7 @@ public class UtilServiceTest extends RestBaseTest {
 
 	@Test
 	public void checkLockException() {
-		 Response checkForLock = utilService.checkForLock("build", "TestProject");
+		 Response checkForLock = utilService.checkForLock("build", "TestProject", "");
 		 Assert.assertEquals(200, checkForLock.getStatus());
 	}
 	
