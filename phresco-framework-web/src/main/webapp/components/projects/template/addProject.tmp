@@ -63,7 +63,7 @@
 						<table class="table table-striped table_border border_div table-bordered applnlayer" cellpadding="0" cellspacing="0" border="0">
 							<thead>
 								<tr>
-									<th><span data-i18n="project.create.label.module"></span><sup>*</sup></th>
+									<th><span data-i18n="project.create.label.application"></span><sup>*</sup></th>
 									<th><span data-i18n="project.create.label.group"></span></th>
 									<th><span data-i18n="project.create.label.technology"></span></th>
 									<th><span data-i18n="project.create.label.version"></span></th>
@@ -118,7 +118,7 @@
 						<table class="table table-striped table_border border_div table-bordered WebLayer" cellpadding="0" cellspacing="0" border="0">
 							<thead>
 								<tr>
-									<th><span data-i18n="project.create.label.module"></span><sup>*</sup></th>
+									<th><span data-i18n="project.create.label.application"></span><sup>*</sup></th>
 									<th><span data-i18n="project.create.label.group"></span></th>
 									<th><span data-i18n="project.create.label.technology"></span></th>
 									<th><span data-i18n="project.create.label.version"></span></th>
@@ -173,7 +173,7 @@
 							<table class="table table-striped table_border border_div table-bordered mob-table" cellpadding="0" cellspacing="0" border="0">
 								<thead>
 									<tr>
-										<th><span data-i18n="project.create.label.module"></span><sup>*</sup></th>
+										<th><span data-i18n="project.create.label.application"></span><sup>*</sup></th>
 										<th><span data-i18n="project.create.label.group"></span></th>
 										<th><span data-i18n="project.create.label.technology"></span></th>
 										<th><span data-i18n="project.create.label.version"></span></th>

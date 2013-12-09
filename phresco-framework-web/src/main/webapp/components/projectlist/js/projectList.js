@@ -443,6 +443,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				$("#addRepoLoading_"+dynamicId).hide();
 				var action = $(this).attr("data-original-title"), openccObj = this;
 				if (action === "Commit") {
+					commonVariables.hideloading = true;
 					self.checkForLock("commit", dynamicId, '', function(response){
 						if (response.status === "success" && response.responseCode === "PHR10C00002") {
 							var appDirName = $(openccObj).parent().parent().attr("class");
@@ -466,6 +467,7 @@ define(["projectlist/listener/projectListListener"], function() {
 					});		
 				} else if (action === "Update") {
 					var openccName = $(this).attr('name');
+					commonVariables.hideloading = true;
 					self.checkForLock("update", dynamicId, '', function(response){
 						if (response.status === "success" && response.responseCode === "PHR10C00002") {
 							var appDirName = $(openccObj).parent().parent().attr("class");
@@ -489,6 +491,9 @@ define(["projectlist/listener/projectListListener"], function() {
 				} else if (action === "Add Repo" || $(this).hasClass('del_appln') || $(this).hasClass('del_project')){
 					var openccName = $(this).attr('name'), subModuleIds = $(this).attr('subModuleIds'),lockAction = action ===  "Add Repo" ? "addToRepo" : ($(this).hasClass('del_appln') ? "deleteAppln" : "deleteProj");
 					var applnids = $(this).hasClass('del_project') ? $(this).attr('appids') : dynamicId;
+					if(lockAction === "addToRepo") {
+						commonVariables.hideloading = true;
+					}
 					self.checkForLock(lockAction, applnids, subModuleIds, function(response){
 						if (response.status === "success" && response.responseCode === "PHR10C00002") {
 							if($(obj_del).hasClass('del_project')) {

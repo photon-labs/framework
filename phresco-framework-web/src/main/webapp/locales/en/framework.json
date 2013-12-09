@@ -376,7 +376,7 @@
 				"dependency" : "Dependency",
 				"version" : "Version",
 				"description" : "Description",
-				"module" : "Module",
+				"application" : "Application",
 				"selwidget" : "Select Widget",
 				"group" : "Group",
 				"seldependency" : "Select Dependency",
