@@ -130,6 +130,9 @@ import com.photon.phresco.framework.model.RepoInfo;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.model.Build;
+import com.phresco.pom.model.Model.Profiles;
+import com.phresco.pom.model.Profile;
 import com.phresco.pom.util.PomProcessor;
 
 
@@ -215,10 +218,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	private String workDirPath(RepoInfo repoInfo, ApplicationInfo applicaionInfo) throws Exception {
 		StringBuilder str = new StringBuilder(Utility.getProjectHome()).append(applicaionInfo.getAppDirName());
     	if(repoInfo.isSplitPhresco() || repoInfo.isSplitTest()) {
-    		File pom = getPomFromRepository(applicaionInfo, repoInfo);
-    		PomProcessor processor = new PomProcessor(pom);
-    		String property = processor.getProperty("sourcename");
-    		str.append(File.separator).append(property);
+//    		File pom = getPomFromRepository(applicaionInfo, repoInfo);
+//    		PomProcessor processor = new PomProcessor(pom);
+//    		String property = processor.getProperty("sourcename");
+    		str.append(File.separator).append(applicaionInfo.getAppDirName());
     	}
     	return str.toString();
 	}
@@ -451,9 +454,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			String repoUrl = repoInfo.getSrcRepoDetail().getRepoUrl();
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome()).append(File.separator).append(appInfo.getAppDirName());
 			if(repoInfo.isSplitPhresco() || repoInfo.isSplitTest()) {
-				File pomfile = getPomFromRepository(appInfo, repoInfo);
-				PomProcessor processor = new PomProcessor(pomfile);
-				builder.append(File.separator).append(processor.getProperty("sourcename"));
+//				File pomfile = getPomFromRepository(appInfo, repoInfo);
+//				PomProcessor processor = new PomProcessor(pomfile);
+				builder.append(File.separator).append(appInfo.getAppDirName());
 			}
 			builder.append(File.separator).append(appInfo.getPomFile());
 			File pomFile = new File(builder.toString());
@@ -465,7 +468,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
 				if(repoInfo.isSplitPhresco()) {
 					builder = new StringBuilder(Utility.getProjectHome()).append(File.separator).append(appInfo.getAppDirName());
-					builder.append(File.separator).append(appInfo.getAppDirName()+ "_phresco").append(File.separator).append(appInfo.getPhrescoPomFile());
+					builder.append(File.separator).append(appInfo.getAppDirName()+ Constants.SUFFIX_PHRESCO).append(File.separator).append(appInfo.getPhrescoPomFile());
 					pomFile = new File(builder.toString());
 					PomProcessor phrescoPomProcessor = new PomProcessor(pomFile);
 					phrescoPomProcessor.setSCM(repoUrl, "", "", "");
@@ -647,11 +650,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		strbuilder.append(File.separator);
 		strbuilder.append(appInfo.getAppDirName());
 		if(repoInfo.isSplitPhresco() || repoInfo.isSplitTest()) {
-			File pomFile = getPomFromRepository(appInfo, repoInfo);
-			PomProcessor processor = new PomProcessor(pomFile);
-			String sourceDirName = processor.getProperty("sourcename");
 			strbuilder.append(File.separator);
-			strbuilder.append(sourceDirName);
+			strbuilder.append(appInfo.getAppDirName());
 		}
 		File file = new File(strbuilder.toString());
 		if (file.exists()) {
@@ -872,10 +872,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
         			displayName, uniqueKey)), true);
         	StringBuilder str = new StringBuilder(Utility.getProjectHome()).append(applicationInfo.getAppDirName());
         	if(repoInfo.isSplitPhresco() || repoInfo.isSplitTest()) {
-        		pomFromGit = getPomFromRepository(applicationInfo, repoInfo);
-        		PomProcessor processor = new PomProcessor(pomFromGit);
-        		String property = processor.getProperty("sourcename");
-        		str.append(File.separator).append(property);
+//        		pomFromGit = getPomFromRepository(applicationInfo, repoInfo);
+//        		PomProcessor processor = new PomProcessor(pomFromGit);
+//        		String property = processor.getProperty("sourcename");
+        		str.append(File.separator).append(applicationInfo.getAppDirName());
         	}
         	importToWorkspace(appDir, new File(str.toString()));
 			if(debugEnabled){
@@ -928,7 +928,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.getSvnAppInfo()");
 		}
 		BufferedReader reader = null;
-		File tempDir = new File(Utility.getSystemTemp(), SVN_CHECKOUT_TEMP + "1");
+		File tempDir = new File(Utility.getSystemTemp(), UUID.randomUUID().toString());
 		if(debugEnabled){
 			S_LOGGER.debug("temp dir : SVNAccessor " + tempDir);
 		}
@@ -968,7 +968,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.getPomFromSVN()");
 		}
-		File tempDir = new File(Utility.getSystemTemp(), SVN_CHECKOUT_TEMP);
+		File tempDir = new File(Utility.getSystemTemp(), UUID.randomUUID().toString());
 		if(debugEnabled){
 			S_LOGGER.debug("temp dir : SVNAccessor " + tempDir);
 		}
@@ -1854,7 +1854,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		if(repoInfo.isSplitTest()) {
 			File pomFile = getPomFromRepository(applicationInfo, repoInfo);
 			PomProcessor processor = new PomProcessor(pomFile);
-			String testDir = processor.getProperty("testname");
+			String testDir = processor.getProperty(Constants.POM_PROP_KEY_SPLIT_TEST_DIR);
 			builder.append(File.separator).append(testDir);
 		}
 		RepoDetail testRepoDetail = repoInfo.getTestRepoDetail();
@@ -1892,7 +1892,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome()).append(File.separator);
 		builder.append(applicationInfo.getAppDirName());
 		if(repoInfo.isSplitPhresco()) {
-			builder.append(File.separator).append(applicationInfo.getAppDirName() + "_phresco");
+			builder.append(File.separator).append(applicationInfo.getAppDirName() + Constants.SUFFIX_PHRESCO);
 		}
 		RepoDetail phrescoRepoDetail = repoInfo.getPhrescoRepoDetail();
 		String type = phrescoRepoDetail.getType();

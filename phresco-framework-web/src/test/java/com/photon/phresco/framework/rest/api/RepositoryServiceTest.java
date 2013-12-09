@@ -71,7 +71,9 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/" + appDirName);
 		
 		repodetail.setCommitableFiles(Arrays.asList(Utility.getProjectHome() + appDirName +"\\pom.xml"));
-		Response commitImportedProject = repositoryservice.commitImportedProject(repodetail, appDirName, "admin_user");
+		RepoInfo repoInfo = new RepoInfo();
+		repoInfo.setSrcRepoDetail(repodetail);
+		Response commitImportedProject = repositoryservice.commitImportedProject(repoInfo, appDirName, "admin_user");
 		Assert.assertEquals(200,commitImportedProject.getStatus());
 	}
 	
@@ -164,7 +166,9 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		repodetail.setRepoUrl("https://github.com/santhosh-ja/TestGit.git");
 		
 		repodetail.setCommitableFiles(Arrays.asList(Utility.getProjectHome() + "TestGitProject" +"\\pom.xml"));
-		Response commitImportedProject = repositoryservice.commitImportedProject(repodetail, "TestGitProject" ,"admin_user");
+		RepoInfo info = new RepoInfo();
+		info.setSrcRepoDetail(repodetail);
+		Response commitImportedProject = repositoryservice.commitImportedProject(info, "TestGitProject" ,"admin_user");
 		Assert.assertEquals(200,commitImportedProject.getStatus());
 	}
 	

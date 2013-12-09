@@ -188,7 +188,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	/**
 	 * Commit imported project to repository.
 	 *
-	 * @param repodetail the repodetail
+	 * @param repoInfo the repodetail
 	 * @param appDirName the app dir name
 	 * @return the response
 	 */
@@ -196,21 +196,72 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	@Path("/commitProjectToRepo")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response commitImportedProject(RepoDetail repodetail, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,  @QueryParam("displayName") String displayName) {
+	public Response commitImportedProject(RepoInfo repoInfo, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,  @QueryParam("displayName") String displayName) {
+		ResponseInfo responseData = null;
 		Response response = null;
-		String type = repodetail.getType();
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		if (type.equals(SVN)) {
-			response = commitSVNProject(repodetail, appDirName, unique_key, displayName);
-		} else if (type.equals(GIT)) {
-			response = commitGitProject(appDirName, repodetail, type, unique_key, displayName);
-		} else if (type.equals(BITKEEPER)) {
-			response = commitBitKeeperProject(appDirName, repodetail, type, unique_key, displayName);
+		try {
+			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			RepoDetail srcRepoDetail = repoInfo.getSrcRepoDetail();
+			RepoDetail phrescoRepoDetail = repoInfo.getPhrescoRepoDetail();
+			RepoDetail testRepoDetail = repoInfo.getTestRepoDetail();
+			StringBuilder rootDir = new StringBuilder(Utility.getProjectHome()).append(appDirName);
+			File phrescoDir = new File(rootDir.toString(), appDirName + Constants.SUFFIX_PHRESCO);
+			if(phrescoRepoDetail != null) {
+				if(phrescoDir.exists() && phrescoDir.isDirectory()) {
+					response = commitProject(phrescoRepoDetail, applicationInfo, displayName, unique_key, phrescoDir);
+				}
+			}
+			File srcDir = new File(rootDir.toString(), appDirName);
+			if(!srcDir.exists()) {
+				srcDir = new File(rootDir.toString());
+			}
+			if(srcRepoDetail != null) {
+				response = commitProject(srcRepoDetail, applicationInfo, displayName, unique_key, srcDir);
+			}
+			
+			if(testRepoDetail != null) {
+				File pomFile = null;
+				if(StringUtils.isNotEmpty(applicationInfo.getPhrescoPomFile())) {
+					pomFile = new File(phrescoDir, applicationInfo.getPhrescoPomFile());
+				} else {
+					pomFile = new File(srcDir, applicationInfo.getPomFile());
+				}
+				PomProcessor processor = new PomProcessor(pomFile);
+				String testDirName = processor.getProperty("phresco.split.test.dir");
+				File testDir = new File(rootDir.toString(), testDirName);
+				response = commitProject(testRepoDetail, applicationInfo, displayName, unique_key, testDir);
+			}
+		} catch (PhrescoException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210028;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		} catch (PhrescoPomException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210028;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
 		return response;
 	}
-
+	
+	private Response commitProject(RepoDetail repoDetail, ApplicationInfo applicationInfo, 
+			String displayName, String unique_key, File workingDir) {
+		Response response = null;
+		String type = repoDetail.getType();
+		if (type.equals(SVN)) {
+			response = commitSVNProject(repoDetail, applicationInfo, unique_key, displayName);
+		} else if (type.equals(GIT)) {
+			response = commitGitProject(applicationInfo, repoDetail, type, unique_key, displayName, workingDir);
+		} else if (type.equals(BITKEEPER)) {
+			response = commitBitKeeperProject(applicationInfo, repoDetail, type, unique_key, displayName, workingDir);
+		}
+		return response;
+	}
 	/**
 	 * Fetch pop up values.
 	 *
@@ -323,7 +374,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			ApplicationInfo importProject = scmi.importProject(repoInfo, displayName, unique_key);
 			if(repoInfo.isSplitTest()) {
 				scmi.importTest(importProject, repoInfo);
-			}
+				}
 			if(repoInfo.isSplitPhresco()) {
 				scmi.importPhresco(importProject, repoInfo);
 			}
@@ -504,7 +555,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @return the response
 	 */
 	@GET
-	@Path("/folderStructure")
+	@Path("/browseBuildRepo")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getFolderStructure(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_PROJECTID) String projectId,
@@ -1001,11 +1052,10 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @param repodetail the repodetail
 	 * @return the response
 	 */
-	public Response commitSVNProject(RepoDetail repodetail, String appDirName, String uniqueKey, String displayName) {
+	public Response commitSVNProject(RepoDetail repodetail, ApplicationInfo applicationInfo, String uniqueKey, String displayName) {
 		ResponseInfo responseData = new ResponseInfo();
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		try {
-			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			if (CollectionUtils.isNotEmpty(repodetail.getCommitableFiles())) {
 				List<File> listModifiedFiles = new ArrayList<File>(repodetail.getCommitableFiles().size());
 				for (String commitableFile : repodetail.getCommitableFiles()) {
@@ -1045,15 +1095,14 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @param type the type
 	 * @return the response
 	 */
-	public Response commitBitKeeperProject(String appDirName, RepoDetail repodetail, String type, String uniqueKey, String displayName) {
+	public Response commitBitKeeperProject(ApplicationInfo applicationInfo, RepoDetail repodetail, 
+			String type, String uniqueKey, String displayName, File workingDir) {
 		ResponseInfo responseData = new ResponseInfo();
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		try {
-			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
-			File appDir = new File(Utility.getProjectHome() + appDirName);
 			//To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), COMMIT , displayName, uniqueKey)), true);
-			scmi.commitToRepo(repodetail, appDir);
+			scmi.commitToRepo(repodetail, workingDir);
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200020;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
@@ -1095,17 +1144,15 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @param type the type
 	 * @return the response
 	 */
-	public Response commitGitProject(String appDirName, RepoDetail repodetail, String type, String uniqueKey, String displayName) {
+	public Response commitGitProject(ApplicationInfo applicationInfo, RepoDetail repodetail, String type, 
+			String uniqueKey, String displayName, File workingDir) {
 		ResponseInfo responseData = new ResponseInfo();
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		try {
-			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			//To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), COMMIT , displayName, uniqueKey)), true);
-			String applicationHome = Utility.getProjectHome() + appDirName;
-			File appDir = new File(applicationHome);
 			if (!repodetail.getCommitableFiles().isEmpty()) {
-				scmi.commitToRepo(repodetail, appDir);
+				scmi.commitToRepo(repodetail, workingDir);
 			}
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200020;
@@ -1158,31 +1205,50 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		ResponseInfo<RepoDetail> responseData = new ResponseInfo<RepoDetail>();
 		try {
 			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
-			String repoUrl = getConnectionUrl(applicationInfo);
-			if (repoUrl.startsWith("bk")) {
-				setRepoExistForCommit = true;
-				repodetail.setRepoExist(setRepoExistForCommit);
-			} else if (repoUrl.endsWith(".git") || repoUrl.contains("gerrit") || repoUrl.startsWith("ssh")) {
-				setRepoExistForCommit = checkGitProject(applicationInfo, setRepoExistForCommit);
-				repodetail.setRepoExist(setRepoExistForCommit);
-				repodetail = updateProjectPopup(appDirName, action, repodetail);
-			} else if (!setRepoExistForCommit) {
-				repodetail = updateProjectPopup(appDirName, action, repodetail);
+			File pomFile = getPomFromWrokDir(applicationInfo);
+			PomProcessor processor = new PomProcessor(pomFile);
+			String srcRepoURL = processor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
+			String dotPhresoRepoURL = processor.getProperty(Constants.POM_PROP_KEY_PHRESCO_REPO_URL);
+			String testRepoURL = processor.getProperty(Constants.POM_PROP_KEY_TEST_REPO_URL);
+			if(StringUtils.isEmpty(srcRepoURL)) {
+				srcRepoURL = getConnectionUrl(applicationInfo);
 			}
-
-			repodetail.setUserName(userId);
-			repodetail.setType(getRepoType(repoUrl));
-			repodetail.setRepoUrl(repoUrl);
-			if (!repodetail.isRepoExist()) {
-				status = RESPONSE_STATUS_FAILURE;
-				errorCode = PHR210035;
-				ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, null,
-						repodetail, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-						.build();
+			StringBuilder rootDir = new StringBuilder(Utility.getProjectHome()).append(appDirName);
+			File phrescoDir = new File(rootDir.toString(), appDirName + Constants.SUFFIX_PHRESCO);
+			if(phrescoDir.exists() && StringUtils.isNotEmpty(dotPhresoRepoURL)) {
+				RepoDetail phrescoRepoDetail = createRepoDetail(dotPhresoRepoURL, userId, action, phrescoDir);
 			}
+			File srcDir = new File(rootDir.toString(), appDirName);
+			if(!srcDir.exists()) {
+				srcDir = new File(rootDir.toString());
+			}
+			if(srcDir.exists() && StringUtils.isNotEmpty(srcRepoURL)) {
+				RepoDetail srcRepoDetail = createRepoDetail(srcRepoURL, userId, action, srcDir);
+			}
+			String testDirName = processor.getProperty("phresco.split.test.dir");
+			File testDir = new File(rootDir.toString(), testDirName);
+			if(testDir.exists() && StringUtils.isNotEmpty(testRepoURL)) {
+				RepoDetail testRepoDetail = createRepoDetail(testRepoURL, userId, action, testDir);
+			}
+			
+			
+			
+//			if (!repodetail.isRepoExist()) {
+//				status = RESPONSE_STATUS_FAILURE;
+//				errorCode = PHR210035;
+//				ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, null,
+//						repodetail, status, errorCode);
+//				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+//						.build();
+//			}
 
 		} catch (PhrescoException e) {
+			status = RESPONSE_STATUS_FAILURE;
+			errorCode = PHR210036;
+			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		} catch (PhrescoPomException e) {
 			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210036;
 			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
@@ -1195,7 +1261,29 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				repodetail, status, successCode);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	}
-
+	
+	private RepoDetail createRepoDetail(String repoUrl, String userId, String action, File workingDir) throws PhrescoException {
+		RepoDetail repodetail = new RepoDetail();
+		repodetail.setRepoUrl(repoUrl);
+		boolean setRepoExistForCommit = false;
+		try {
+			if (repoUrl.startsWith("bk")) {
+				repodetail.setRepoExist(true);
+			} else if (repoUrl.endsWith(".git") || repoUrl.contains("gerrit") || repoUrl.startsWith("ssh")) {
+				setRepoExistForCommit  = checkGitProject(workingDir, setRepoExistForCommit);
+				repodetail.setRepoExist(setRepoExistForCommit);
+				repodetail = updateProjectPopup(workingDir, action, repodetail);
+			} else if (!setRepoExistForCommit) {
+				repodetail = updateProjectPopup(workingDir, action, repodetail);
+			}
+			repodetail.setUserName(userId);
+			repodetail.setType(getRepoType(repoUrl));
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+		return repodetail;
+	}
+	
 	/**
 	 * Repo exist check for update.
 	 *
@@ -1205,28 +1293,57 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @return the response
 	 */
 	private Response repoExistCheckForUpdate(String appDirName, String action, String userId) {
-		RepoDetail repodetail = new RepoDetail();
+		RepoInfo repoInfo = new RepoInfo();
 		ResponseInfo<RepoDetail> responseData = new ResponseInfo<RepoDetail>();
 		try {
-			repodetail.setRepoExist(true);
-			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
-			String repoUrl = getConnectionUrl(applicationInfo);
-			if(StringUtils.isEmpty(repoUrl)) {
-				repodetail.setRepoExist(false);
+			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			File pomFile = getPomFromWrokDir(appInfo);
+			PomProcessor processor = new PomProcessor(pomFile);
+			String srcRepoURL = processor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
+			String dotPhresoRepoURL = processor.getProperty(Constants.POM_PROP_KEY_PHRESCO_REPO_URL);
+			String testRepoURL = processor.getProperty(Constants.POM_PROP_KEY_TEST_REPO_URL);
+			RepoDetail sourceRepoDetail = new RepoDetail();
+			if(StringUtils.isNotEmpty(srcRepoURL)) {
+				fillRepoDetail(sourceRepoDetail, srcRepoURL, userId, true);
+			} else {
+				srcRepoURL = getConnectionUrl(appInfo);
+				if(StringUtils.isNotEmpty(srcRepoURL)) {
+					fillRepoDetail(sourceRepoDetail, srcRepoURL, userId, true);
+				} else {
+					sourceRepoDetail.setRepoExist(false);
+				}
 			}
-			repodetail.setType(getRepoType(repoUrl));
-			repodetail.setRepoUrl(repoUrl);
-			repodetail.setUserName(userId);
-			if (!repodetail.isRepoExist()) {
-				status = RESPONSE_STATUS_FAILURE;
-				errorCode = PHR210037;
-				ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, null,
-						repodetail, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-						.build();
+			RepoDetail dotPhrescoRepoDetail = new RepoDetail();
+			if(StringUtils.isNotEmpty(dotPhresoRepoURL)) {
+				fillRepoDetail(dotPhrescoRepoDetail, dotPhresoRepoURL, userId, true);
+			} else {
+				dotPhrescoRepoDetail.setRepoExist(false);
 			}
+			RepoDetail testRepoDetail = new RepoDetail();
+			if(StringUtils.isNotEmpty(testRepoURL)) {
+				fillRepoDetail(testRepoDetail, testRepoURL, userId, true);
+			} else {
+				testRepoDetail.setRepoExist(false);
+			}
+			repoInfo.setSrcRepoDetail(sourceRepoDetail);
+			repoInfo.setPhrescoRepoDetail(dotPhrescoRepoDetail);
+			repoInfo.setTestRepoDetail(testRepoDetail);
+//			if (!repoInfo.isRepoExist()) {
+//				status = RESPONSE_STATUS_FAILURE;
+//				errorCode = PHR210037;
+//				ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, null,
+//						repoInfo, status, errorCode);
+//				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+//						.build();
+//			}
 
 		} catch (PhrescoException e) {
+			status = RESPONSE_STATUS_FAILURE;
+			errorCode = PHR210036;
+			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		} catch (PhrescoPomException e) {
 			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210036;
 			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
@@ -1236,8 +1353,34 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		status = RESPONSE_STATUS_SUCCESS;
 		successCode = PHR200022;
 		ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, null,
-				repodetail, status, successCode);
+				repoInfo, status, successCode);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+	}
+	
+	private void fillRepoDetail(RepoDetail repoDetail, String url, String userId, boolean exist) {
+		repoDetail.setUserName(userId);
+		repoDetail.setRepoUrl(url);
+		repoDetail.setRepoExist(exist);
+		repoDetail.setType(getRepoType(url));
+	}
+	
+	private File getPomFromWrokDir(ApplicationInfo appInfo) {
+		String appDirName = appInfo.getAppDirName();
+		StringBuilder filePath = new StringBuilder(Utility.getProjectHome()).append(appDirName);
+		File dotPhresoFile = new File(filePath.toString(), appDirName + Constants.SUFFIX_PHRESCO);
+		if(dotPhresoFile.exists() && dotPhresoFile.isDirectory()) {
+			if(StringUtils.isNotEmpty(appInfo.getAppDirName())) {
+				filePath.append(File.separator).append(appDirName + Constants.SUFFIX_PHRESCO).append(File.separator).append(appInfo.getPhrescoPomFile());
+				return new File(filePath.toString());
+			}
+		}
+		File sourceFile = new File(filePath.toString(), appDirName);
+		if(sourceFile.exists() && sourceFile.isDirectory()) {
+			filePath.append(File.separator).append(appDirName).append(File.separator).append(appInfo.getPomFile());
+			return new File(filePath.toString());
+		}
+		
+		return new File(filePath.toString(), appInfo.getPomFile());
 	}
 
 	/**
@@ -1248,23 +1391,22 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @param repodetail the repodetail
 	 * @return the repo detail
 	 */
-	private RepoDetail updateProjectPopup(String appDirName, String action, RepoDetail repodetail) {
+	private RepoDetail updateProjectPopup(File workingDir, String action, RepoDetail repodetail) {
+		String repoUrl = repodetail.getRepoUrl();
 		boolean setRepoExistForCommit = false;
 		ResponseInfo<List<RepoFileInfo>> responseData = new ResponseInfo<List<RepoFileInfo>>();
 		List<RepoFileInfo> commitableFiles = null;
 		try {
-			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			setRepoExistForCommit = true;
-
 			// getting commitable files for SVN repo
-			if (COMMIT.equals(action) && !getConnectionUrl(applicationInfo).contains(BITKEEPER)
-					&& !getConnectionUrl(applicationInfo).contains(GIT)) {
-				commitableFiles = svnCommitableFiles(appDirName);
+			if (COMMIT.equals(action) && !repoUrl.contains(BITKEEPER)
+					&& !repoUrl.contains(GIT)) {
+				commitableFiles = svnCommitableFiles(workingDir);
 
 				// getting commitable files for Git repo
-			} else if (COMMIT.equals(action) && !getConnectionUrl(applicationInfo).contains(BITKEEPER)
-					&& !getConnectionUrl(applicationInfo).contains(SVN)) {
-				commitableFiles = gitCommitableFiles(appDirName);
+			} else if (COMMIT.equals(action) && !repoUrl.contains(BITKEEPER)
+					&& !repoUrl.contains(SVN)) {
+				commitableFiles = gitCommitableFiles(workingDir);
 			}
 		} catch (PhrescoException e) {
 			if (e.getLocalizedMessage().contains(IS_NOT_WORKING_COPY)) {
@@ -1306,18 +1448,12 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @return true, if successful
 	 * @throws PhrescoException the phresco exception
 	 */
-	private boolean checkGitProject(ApplicationInfo applicationInfo, boolean setRepoExistForCommit)
+	private boolean checkGitProject(File  workingDir, boolean setRepoExistForCommit)
 			throws PhrescoException {
 		setRepoExistForCommit = true;
 		String url = "";
-		String Path = "";
-		if (applicationInfo != null) {
-			String appDirName = applicationInfo.getAppDirName();
-			Path = Utility.getProjectHome() + appDirName;
-		}
-		File projectPath = new File(Path);
 		InitCommand initCommand = Git.init();
-		initCommand.setDirectory(projectPath);
+		initCommand.setDirectory(workingDir);
 		Git git = null;
 		try {
 			git = initCommand.call();
@@ -1349,16 +1485,13 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @return the list
 	 * @throws PhrescoException the phresco exception
 	 */
-	private List<RepoFileInfo> svnCommitableFiles(String appDirName) throws PhrescoException {
+	private List<RepoFileInfo> svnCommitableFiles(File workingDir) throws PhrescoException {
 		List<RepoFileInfo> commitableFiles = null;
 		String revision = "";
 		try {
-
 			SCMManagerImpl scmi = new SCMManagerImpl();
-			String applicationHome = FrameworkServiceUtil.getApplicationHome(appDirName);
-			File appDir = new File(applicationHome);
 			revision = HEAD_REVISION;
-			commitableFiles = scmi.getCommitableFiles(appDir, revision);
+			commitableFiles = scmi.getCommitableFiles(workingDir, revision);
 		} catch (Exception e) {
 			throw new PhrescoException(e);
 		}
@@ -1372,13 +1505,11 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @return the list
 	 * @throws PhrescoException the phresco exception
 	 */
-	private List<RepoFileInfo> gitCommitableFiles(String appDirName) throws PhrescoException {
+	private List<RepoFileInfo> gitCommitableFiles(File workingDir) throws PhrescoException {
 		List<RepoFileInfo> gitCommitableFiles = null;
 		try {
 			SCMManagerImpl scmi = new SCMManagerImpl();
-			String applicationHome = FrameworkServiceUtil.getApplicationHome(appDirName);
-			File appDir = new File(applicationHome);
-			gitCommitableFiles = scmi.getGITCommitableFiles(appDir);
+			gitCommitableFiles = scmi.getGITCommitableFiles(workingDir);
 		} catch (Exception e) {
 			throw new PhrescoException(e);
 		}
