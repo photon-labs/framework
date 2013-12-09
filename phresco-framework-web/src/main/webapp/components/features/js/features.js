@@ -87,6 +87,18 @@ define(["features/listener/featuresListener"], function() {
 				return fieldset;
 			});
 			
+			Handlebars.registerHelper('selectDefaultVersion', function(appliesTos) {
+				var selectedString = "";
+				if (appliesTos !== null && appliesTos !== undefined && appliesTos.length > 0) {
+					$.each(appliesTos, function(index, appliesTo) {
+						if (appliesTo.required && techid === appliesTo.techId) {
+							selectedString = 'selected';
+						}
+					});
+				}
+				return selectedString;
+			});
+
 			Handlebars.registerHelper('versionShowHide', function(versions, id) {
 				var fieldset;
 				if(versions.length > 0){

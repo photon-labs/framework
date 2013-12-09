@@ -683,7 +683,13 @@ define([], function() {
 		//Handles the copy path action
 		copyPath : function(actionBody) {
 			var self = this;
-			self.navigationAction(self.getActionHeader(actionBody, "copyPath"), function(response) {});
+			self.navigationAction(self.getActionHeader(actionBody, "copyPath"), function(response) {
+				if (response !== undefined && "success"===response.status ) {
+					commonVariables.api.showError(commonVariables.api.success["PHR4C00001"], 'success', true, true, false);
+				} else {
+					commonVariables.api.showError(commonVariables.api.error["PHR4C00002"], 'error', true, true, false);
+				}
+			});
 		},
 		
 		renderHeader : function(callback) {

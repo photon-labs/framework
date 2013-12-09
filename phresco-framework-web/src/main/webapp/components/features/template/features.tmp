@@ -30,15 +30,10 @@
                         <img src="themes/default/images/Phresco/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                                 {{#versiondata versions id}}{{/versiondata}}
 								{{#versionShowHide versions id}}{{/versionShowHide}} 
-								{{#each versions}}
-									{{#each appliesTo}}
-										<input type="hidden" defaultModule="true">
-									{{/each}}
-								{{/each}}	
 								<input type="hidden" class="moduleId" value="{{id}}">
                                 <select class="input-mini flt_right">
                                     {{#each versions}}									
-                                        <option value="{{id}}" scope="{{scope}}">{{version}}</option>  
+                                        <option value="{{id}}" {{#selectDefaultVersion appliesTo}}{{/selectDefaultVersion}} scope="{{scope}}">{{version}}</option>  
                                     {{/each}} 
                                 </select>
                                 {{#scopeShowHide packaging scope}}{{/scopeShowHide}}
@@ -72,16 +67,11 @@
                              {{#if displayName}}{{displayName}}{{else}}{{name}}{{/if}}
                                 {{#versiondata versions id}}{{/versiondata}}
 								{{#versionShowHide versions id}}{{/versionShowHide}} 
-								{{#each versions}}
-									{{#each appliesTo}}
-										<input type="hidden" defaultModule="true">
-									{{/each}}
-								{{/each}}	
 								<input type="hidden" class="moduleId" value="{{id}}">
                                 {{#if versions}}
 									<select class="input-mini flt_right">
 										{{#each versions}}										
-											<option value="{{id}}" scope="{{scope}}">{{version}}</option>  
+											<option value="{{id}}" {{#selectDefaultVersion appliesTo}}{{/selectDefaultVersion}} scope="{{scope}}">{{version}}</option>  
 										{{/each}} 
 									</select>
 								{{/if}} 
@@ -117,16 +107,11 @@
                         <img src="themes/default/images/Phresco/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                                 {{#versiondata versions id}}{{/versiondata}}
 								{{#versionShowHide versions id}}{{/versionShowHide}}
-									{{#each versions}}
-										{{#each appliesTo}}
-											<input type="hidden" defaultModule="true">
-										{{/each}}
-									{{/each}}
 								<input type="hidden" class="moduleId" value="{{id}}">
 								{{#if versions}}
 									<select class="input-mini flt_right">
 										{{#each versions}}										
-											<option value="{{id}}" scope="{{scope}}">{{version}}</option>  
+											<option value="{{id}}" {{#selectDefaultVersion appliesTo}}{{/selectDefaultVersion}} scope="{{scope}}">{{version}}</option>  
 										{{/each}} 
 									</select>
 								{{/if}}
