@@ -2076,5 +2076,21 @@ public interface FrameworkConstants {
 		final String REFERENCE_PORT = "referencePort";
 		final String SOURCE_DBNAME = "sourceDbName";
 		final String REFERENCE_DBNAME = "referenceDbName";
+		
+		/**
+	     *  Version Range service constants
+	     */
+	    
+	    String ITEM  		= "item";
+	    String TYPE  		= "type";
+	    String FOLDER 		= "folder";
+	    String SNAPSHOT     = "SNAPSHOT";
+	    String RELEASE      = "RELEASE";
+	    String ROOT_ITEM 	= "rootItem";
+	    String ROOT 		= "root";
+	    String DEFAULT 		= "default";
+	    String SNAPSHOT_ITEM = "//item[@name='SNAPSHOT']";
+	    String RELEASE_ITEM   = "//item[@name='RELEASE']";
+	    String SEPARATOR_CONSTANT = "\\.";
 
 }

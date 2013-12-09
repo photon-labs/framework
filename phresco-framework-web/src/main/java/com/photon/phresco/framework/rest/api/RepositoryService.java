@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,11 +35,23 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.maven.repository.internal.MavenRepositorySystemSession;
+import org.codehaus.plexus.DefaultPlexusContainer;
+import org.codehaus.plexus.PlexusContainerException;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -48,8 +61,23 @@ import org.eclipse.jgit.lib.Config;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.sonatype.aether.RepositorySystem;
+import org.sonatype.aether.RepositorySystemSession;
+import org.sonatype.aether.artifact.Artifact;
+import org.sonatype.aether.repository.LocalRepository;
+import org.sonatype.aether.repository.RemoteRepository;
+import org.sonatype.aether.resolution.VersionRangeRequest;
+import org.sonatype.aether.resolution.VersionRangeResolutionException;
+import org.sonatype.aether.resolution.VersionRangeResult;
+import org.sonatype.aether.util.artifact.DefaultArtifact;
+import org.sonatype.aether.util.layout.MavenDefaultLayout;
+import org.sonatype.aether.version.Version;
 import org.tmatesoft.svn.core.SVNAuthenticationException;
 import org.tmatesoft.svn.core.SVNException;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import com.perforce.p4java.exception.ConnectionException;
 import com.perforce.p4java.exception.RequestException;
@@ -65,13 +93,16 @@ import com.photon.phresco.framework.model.RepoDetail;
 import com.photon.phresco.framework.model.RepoFileInfo;
 import com.photon.phresco.framework.model.RepoInfo;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
+import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.service.client.impl.ServiceManagerImpl;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Scm;
 import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
+
 
 /**
  * The Class RepositoryService.
@@ -460,6 +491,78 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			} catch (PhrescoException e) {
 			}
 		}
+	}
+	
+	
+	
+	/**
+	 * Fetch pop up values.
+	 *
+	 * @param appDirName the app dir name
+	 * @param action the action
+	 * @param userId the user id
+	 * @return the response
+	 */
+	@GET
+	@Path("/folderStructure")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getFolderStructure(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_PROJECTID) String projectId,
+			@QueryParam(REST_QUERY_MODULE_NAME) String moduleName) {
+		Response response = null;
+		ResponseInfo<List<DOMSource>> responseData = new ResponseInfo<List<DOMSource>>();
+		JSONObject  domSourceObject = new JSONObject();
+		List<String> urls = new ArrayList<String>();
+		Document document = null;
+		DOMSource domSource = null;
+		try {
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			if (serviceManager != null) {
+				com.photon.phresco.commons.model.RepoInfo repo = serviceManager.getCustomer(customerId).getRepoInfo();
+				String releaseRepoURL = repo.getReleaseRepoURL();
+				String snapshotRepoURL = repo.getSnapshotRepoURL();
+				List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+				for (ApplicationInfo applicationInfo : appInfos) {
+					Artifact artifact = readArtifact(applicationInfo, moduleName);
+					if (StringUtils.isNotEmpty(releaseRepoURL)) {
+						urls.add(releaseRepoURL);
+					} 
+					if (StringUtils.isNotEmpty(snapshotRepoURL)) {
+						urls.add(snapshotRepoURL);
+					}
+					document = constructDomSource(artifact, applicationInfo.getAppDirName(), urls);
+					domSource = new DOMSource();
+					domSource.setNode(document);
+					domSourceObject.put(applicationInfo.getAppDirName(), domSource);
+				}
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, domSourceObject, status, successCode);
+				response = Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+				.build();
+			}
+		}  catch (PhrescoException e) {
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610020);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		}
+		return response;
+	}
+	
+	private Artifact readArtifact(ApplicationInfo appInfo, String moduleName) {
+		Artifact artifact = null;
+		try {
+			String appDirPath = Utility.getProjectHome() + File.separator + appInfo.getAppDirName();
+			String pomPath = Utility.getpomFileLocation(appDirPath, moduleName);
+			File pomFile = new File (pomPath);
+			if (pomFile.exists()) {
+				PomProcessor processor = new PomProcessor(pomFile);
+				String version = "[" + processor.getVersion() + ",)";
+				artifact = new DefaultArtifact(processor.getGroupId(), processor.getArtifactId(), "", processor.getPackage(), version);
+			}
+		} catch (PhrescoPomException e) {
+			e.printStackTrace();
+		} catch (PhrescoException e) {
+			e.printStackTrace();
+		}
+		return artifact;
 	}
 
 	private Response importPerforceApplication(String type, RepoDetail repodetail, String displayName) throws Exception {
@@ -1313,4 +1416,146 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			throw new PhrescoException(e);
 		}
 	}
+	
+	private static Document constructDomSource(Artifact artifactInfo, String appDirName, List<String> urls) throws PhrescoException {
+		try {
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+			Document doc = docBuilder.newDocument();
+			Element rootElement = doc.createElement(ROOT);
+			doc.appendChild(rootElement);
+
+			Element rootItem = doc.createElement(ITEM);
+			rootItem.setAttribute(TYPE, FOLDER);
+			rootItem.setAttribute(PATH, "");
+			rootItem.setAttribute(NAME, ROOT_ITEM);
+
+			Element applicationItem = doc.createElement(ITEM);
+			applicationItem.setAttribute(TYPE, FOLDER);
+			applicationItem.setAttribute(PATH, "");
+			applicationItem.setAttribute(NAME, appDirName);
+
+			Element snapshot = doc.createElement(ITEM);
+			snapshot.setAttribute(TYPE, FOLDER);
+			snapshot.setAttribute(PATH, "");
+			snapshot.setAttribute(NAME, SNAPSHOT);
+			applicationItem.appendChild(snapshot);
+
+
+			Element release = doc.createElement(ITEM);
+			release.setAttribute(TYPE, FOLDER);
+			release.setAttribute(PATH, "");
+			release.setAttribute(NAME, RELEASE);
+			applicationItem.appendChild(release);
+
+			rootElement.appendChild(rootItem);
+
+			rootItem.appendChild(applicationItem);
+
+			RepositorySystem system = newRepositorySystem();
+			RepositorySystemSession session = newRepositorySystemSession( system );
+			Artifact artifact = new DefaultArtifact(artifactInfo.getGroupId(), artifactInfo.getArtifactId(), "", artifactInfo.getExtension(), artifactInfo.getVersion());
+			for (String url : urls) {
+				RemoteRepository repo =  new RemoteRepository("", DEFAULT, url);
+				VersionRangeRequest rangeRequest = new VersionRangeRequest();
+				rangeRequest.setArtifact( artifact );
+				rangeRequest.addRepository( repo );
+				VersionRangeResult rangeResult = system.resolveVersionRange( session, rangeRequest);
+				List<Version> versions = rangeResult.getVersions();
+				constructArtifactItem(versions, applicationItem, artifact, repo, doc);
+				clearCache(artifact);
+			}
+			return doc;
+		} catch (VersionRangeResolutionException e) {
+			throw new PhrescoException(e);
+		} catch (ParserConfigurationException e) {
+			throw new PhrescoException(e);
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+	}
+
+
+	private static void constructArtifactItem(List<Version> versions, Element applicationItem, Artifact artifactInfo, RemoteRepository repo, Document doc) throws PhrescoException {
+		try {
+			Element versionItem = null;
+			Element element =  null;
+			for (Version vers : versions) {
+				String version = vers.toString();
+				Artifact repoArtifact = new DefaultArtifact(artifactInfo.getGroupId(), artifactInfo.getArtifactId(), artifactInfo.getExtension(), version);
+				MavenDefaultLayout defaultLayout = new MavenDefaultLayout();
+				URI Paths = defaultLayout.getPath(repoArtifact);
+				String artifactPath = (repo.getUrl() + repo.getId() + File.separator + Paths).replace("\\", "/");
+				String pathString = Paths.toString();
+				String fileName = pathString.substring(pathString.lastIndexOf("/") + 1);
+
+				Element jarItem = doc.createElement(ITEM);
+				jarItem.setAttribute(TYPE, FILE);
+				jarItem.setAttribute(NAME, fileName);
+				jarItem.setAttribute(PATH, artifactPath);
+
+				versionItem = doc.createElement(ITEM);
+				versionItem.setAttribute(TYPE, FOLDER);
+				versionItem.setAttribute(NAME, version);
+				versionItem.setAttribute(PATH, artifactPath);
+
+				versionItem.appendChild(jarItem);
+				
+				if (version.contains(SNAPSHOT)) {
+					XPath xpath = XPathFactory.newInstance().newXPath();
+					String expression = SNAPSHOT_ITEM;
+					Node node = (Node) xpath.compile(expression).evaluate(doc, XPathConstants.NODE);
+					if (node != null) {
+						element = (Element) node;
+						element.appendChild(versionItem);
+					}
+				} else {
+					XPath xpath = XPathFactory.newInstance().newXPath();
+					String expression = RELEASE_ITEM;
+					Node node = (Node) xpath.compile(expression).evaluate(doc, XPathConstants.NODE);
+					if (node != null) {
+						element = (Element) node;
+						element.appendChild(versionItem);
+					}
+				}
+			}
+		} catch (DOMException e) {
+			throw new PhrescoException(e);
+		} catch (XPathExpressionException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	private static RepositorySystem newRepositorySystem() throws PhrescoException {
+		try {
+			return new DefaultPlexusContainer().lookup(RepositorySystem.class);
+		} catch (ComponentLookupException e) {
+			throw new PhrescoException(e);
+		} catch (PlexusContainerException e) {
+			throw new PhrescoException(e);
+		}
+	}
+
+	private static RepositorySystemSession newRepositorySystemSession(RepositorySystem system) {
+		MavenRepositorySystemSession session = new MavenRepositorySystemSession();
+		LocalRepository localRepo = new LocalRepository(Utility.getPhrescoTemp() + File.separator + REPO);
+		session.setLocalRepositoryManager(system.newLocalRepositoryManager(localRepo));
+		return session;
+	}
+
+	private static void clearCache(Artifact artifact) {
+		String groupIds = artifact.getGroupId();
+		StringBuffer pathBuilder = new StringBuffer();
+		String[] pathSplited = groupIds.split(SEPARATOR_CONSTANT);
+		for (String path : pathSplited) {
+			pathBuilder.append(path);
+			pathBuilder.append(File.separator);
+		}
+		File path = new File(Utility.getPhrescoTemp() + File.separator + REPO + File.separator + pathBuilder + artifact.getArtifactId() + File.separator +  "maven-metadata-.xml");
+		if (path.exists()) {
+			boolean delete = path.delete();
+		}
+	}
+	
 }
