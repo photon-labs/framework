@@ -214,18 +214,6 @@ define(["projectlist/listener/projectListListener"], function() {
 			}
 		},
 		
-		makeCredReadOnly : function (checkObj, usrObj, pwdObj) {
-			if(!checkObj.is(':checked')) {
-				usrObj.attr('readonly','true');
-				pwdObj.attr('readonly','true');
-			} else {
-				usrObj.removeAttr('readonly');
-				pwdObj.removeAttr('readonly');
-			}
-		},
-		
-		
-	
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -398,32 +386,16 @@ define(["projectlist/listener/projectListListener"], function() {
 					pwdObj = $("#updatePassword_"+dynamicId);
 					$("input[name='repoUrl']").val('');
 					$(".revision").val('');
-					if($("#updateRepourl_"+dynamicId).hasClass('errormessage')) {
-						$("#updateRepourl_"+dynamicId).removeClass('errormessage');
-						$("#updateRepourl_"+dynamicId).removeAttr('placeholder');
-						$("#updateRepourl_"+dynamicId).attr('placeholder','Repo Url');
-					}
-					if($("#updateUsername_"+dynamicId).hasClass('errormessage')) {
-						$("#updateUsername_"+dynamicId).removeClass('errormessage');
-						$("#updateUsername_"+dynamicId).removeAttr('placeholder');
-					}
-					if($("#updatePassword_"+dynamicId).hasClass('errormessage')) {
-						$("#updatePassword_"+dynamicId).removeClass('errormessage');
-						$("#updatePassword_"+dynamicId).removeAttr('placeholder');
-						$("#updatePassword_"+dynamicId).attr('placeholder','Password');
-					}
+					
+					$("#updateRepourl_"+dynamicId).removeClass('errormessage');
+					$("#updateRepourl_"+dynamicId).removeAttr('placeholder');
+					$("#updateRepourl_"+dynamicId).attr('placeholder','Repo Url');
+					$("#updateUsername_"+dynamicId).removeClass('errormessage');
+					$("#updateUsername_"+dynamicId).removeAttr('placeholder');
+					$("#updatePassword_"+dynamicId).removeClass('errormessage');
+					$("#updatePassword_"+dynamicId).removeAttr('placeholder');
+					$("#updatePassword_"+dynamicId).attr('placeholder','Password');
 				} 
-				
-				/*if(checkObj !== null  && checkObj !== undefined && checkObj !== '') {
-					self.makeCredReadOnly(checkObj, usrObj, pwdObj);
-				}	
-
-				if(checkObj !== null  && checkObj !== undefined && checkObj !== '') {
-					checkObj.unbind("change");
-					checkObj.on("change", function(){				
-						self.makeCredReadOnly(checkObj, usrObj, pwdObj);
-					});
-				}*/
 				
 				if(selectObj !== null  && selectObj !== undefined && selectObj !== '') {
 					selectObj.unbind("change");
@@ -583,10 +555,6 @@ define(["projectlist/listener/projectListListener"], function() {
 				//end of functionality for search log messages
 			});
 			
-			$("a[name = 'updatesvn']").unbind("click");
-			$("a[name = 'updatesvn']").bind("click",function(){
-				$("#svn_update").show();
-			});
 			$("input[name='deleteConfirm']").unbind('click');
 			$("input[name='deleteConfirm']").click(function(e) {
 				self.projectslistListener.delprojectname = $(this).attr('deleteAppname'), deleteObj = {};
@@ -689,15 +657,8 @@ define(["projectlist/listener/projectListListener"], function() {
 						
 			$("input[name='updatebtn']").unbind("click");
 			$("input[name='updatebtn']").click(function() {
-				var dynid, revision;
-				dynid = $(this).attr('id');
-				var revision = $("input[name='revision']:checked").val();
-				if(revision !== ""){
-					revision = revision;
-				} else{
-					revision = $("#revision_"+dynid).val();
-				}				
-				self.onAddUpdateEvent.dispatch($(this), dynid, revision);				
+				var dynid = $(this).attr('id');
+				self.onAddUpdateEvent.dispatch($(this), dynid);				
 			});
 
 			$("input[name='generate']").unbind("click");
@@ -707,13 +668,6 @@ define(["projectlist/listener/projectListListener"], function() {
 			
 			$("a[temp=pdf_report]").click(function() {
 				self.onGetReportEvent.dispatch($(this));
-			});
-			
-			$("input[name='revision']").unbind("click");
-			$("input[name='revision']").click(function() {
-				if($(this).is(':checked')) {
-					var value = $(this).val();
-				}
 			});
 			
 			$(".splitDotPhresco").unbind("click");
@@ -766,6 +720,80 @@ define(["projectlist/listener/projectListListener"], function() {
 				var selectedType = $("#type_" + dynamicId).val();
 				$("#phrescotype_" + dynamicId).val(selectedType);
 				$("#testtype_" + dynamicId).val(selectedType);
+			});
+			
+			$(".updateDotPhresco").unbind("click");
+			$(".updateDotPhresco").bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				if ($(this).is(":checked")) {
+					$("#svn_update" + dynamicId).find(".updateDotPhrescoA").attr("data-toggle", "tab").attr("href", "#updateDotphresco"+dynamicId);
+					$("#updateDotphresco" + dynamicId).addClass("active in");
+					$("#updateSource" + dynamicId).removeClass("active in");
+					$("#updateTest" + dynamicId).removeClass("active in");
+					$(this).parent().addClass("active");
+					$(this).parent().prev().removeClass("active");
+					$(this).parent().next().removeClass("active");
+				} else {
+					$("#svn_update" + dynamicId).find(".updateDotPhrescoA").removeAttr("data-toggle").removeAttr("href");
+					if ($(this).parent().hasClass("active")) {
+						$("#updateDotphresco" + dynamicId).removeClass("active in");
+						$("#updateSource" + dynamicId).addClass("active in");
+						$(this).parent().removeClass("active");
+						$(this).parent().prev().addClass("active");
+					}
+				}
+			});
+			
+			$(".updateTest").unbind("click");
+			$(".updateTest").bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				if ($(this).is(":checked")) {
+					$("#svn_update" + dynamicId).find(".updateTestA").attr("data-toggle", "tab").attr("href", "#updateTest"+dynamicId);
+					$("#updateDotphresco" + dynamicId).removeClass("active in");
+					$("#updateSource" + dynamicId).removeClass("active in");
+					$("#updateTest" + dynamicId).addClass("active in");
+					$(this).parent().addClass("active");
+					$(this).parent().prev().prev().removeClass("active");
+					$(this).parent().prev().removeClass("active");
+				} else {
+					$("#svn_update" + dynamicId).find(".updateTestA").removeAttr("data-toggle").removeAttr("href");
+					if ($(this).parent().hasClass("active")) {
+						$("#updateTest" + dynamicId).removeClass("active in");
+						$("#updateSource" + dynamicId).addClass("active in");
+						$(this).parent().removeClass("active");
+						$(this).parent().prev().prev().addClass("active");
+					}
+				}
+			});
+			
+			$('.updateHeadoption').unbind("click");
+			$('.updateHeadoption').bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				if ($(this).val() === "revision") {
+					$("#updateRevision"+dynamicId).removeAttr("readonly");
+				} else {
+					$("#updateRevision"+dynamicId).attr("readonly", "readonly");
+				}
+			});
+			
+			$('.updatePhrescoHeadoption').unbind("click");
+			$('.updatePhrescoHeadoption').bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				if ($(this).val() === "revision") {
+					$("#updatePhrescoRevision"+dynamicId).removeAttr("readonly");
+				} else {
+					$("#updatePhrescoRevision"+dynamicId).attr("readonly", "readonly");
+				}
+			});
+			
+			$('.testUpdateHeadoption').unbind("click");
+			$('.testUpdateHeadoption').bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				if ($(this).val() === "revision") {
+					$("#testUpdateRevision"+dynamicId).removeAttr("readonly");
+				} else {
+					$("#testUpdateRevision"+dynamicId).attr("readonly", "readonly");
+				}
 			});
 			
 			self.windowResize();
