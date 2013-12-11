@@ -212,9 +212,9 @@ public class UtilServiceTest extends RestBaseTest {
 	public void getDownloads() {
 		Response downloads = utilService.getDownloads(customerId, "sample");
 		Assert.assertEquals(200, downloads.getStatus());
-		Response downloadSuccess = utilService.getDownloads(customerId, "admin");
+		Response downloadSuccess = utilService.getDownloads(customerId, userId);
 		Assert.assertEquals(200, downloadSuccess.getStatus());
-		Response downloadFail = utilService.getDownloads("b6b5b856-97d8-4e2a-8b42-a5a23568fe51", "admin");
+		Response downloadFail = utilService.getDownloads("b6b5b856-97d8-4e2a-8b42-a5a23568fe51", userId);
 		Assert.assertEquals(200, downloadFail.getStatus());
 		
 		

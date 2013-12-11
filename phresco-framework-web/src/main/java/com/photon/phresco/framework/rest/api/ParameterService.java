@@ -163,7 +163,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				parameterValues.setRootModule(rootModule);
 				parameterValues.setProjectCode(projectCode);
 				setPossibleValuesInReq(projectInfo, parameters, watcherMap, parameterValues);
-				
 				ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null,
 						parameters, RESPONSE_STATUS_SUCCESS, PHR1C00001);
 				return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
@@ -223,34 +222,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	}
 
 	/**
-	 * Gets the file as string.
-	 *
-	 * @param appDirName the app dir name
-	 * @param goal the goal
-	 * @param phase the phase
-	 * @return the file as string
-	 */
-	@GET
-	@Path("/file")
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getFileAsString(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_PHASE) String phase) {
-		ResponseInfo responseData = new ResponseInfo();
-		try {
-			String filePath = getInfoFileDir(appDirName, goal, phase, "", "");
-			File file = new File(filePath);
-			String xml = IOUtils.toString(new FileInputStream(file));
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, PARAMETER_RETURNED_SUCCESSFULLY,
-					xml);
-			return Response.status(200).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
-		} catch (Exception e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, PARAMETER_NOT_FETCHED, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
-					.build();
-		}
-	}
-	
-	/**
 	 * Update watcher map
 	 * 
 	 */
@@ -271,7 +242,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			} else {
 				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
-			
 			if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
 				PomProcessor pomProcessor = Utility.getPomProcessor(rootModulePath, subModuleName);
 				String functionalTestFramework = pomProcessor.getProperty(Constants.POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
@@ -284,7 +254,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			if (currentParameters == null) {
 				currentParameters = new DependantParameters();
 			}
-			
 			currentParameters.setValue(value);
 			watcherMap.put(key, currentParameters);
 			valueMap.put(applicationInfo.getId() + goal, watcherMap);

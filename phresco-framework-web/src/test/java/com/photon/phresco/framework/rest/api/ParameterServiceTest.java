@@ -46,15 +46,6 @@ public class ParameterServiceTest extends RestBaseTest {
 		Assert.assertEquals(200, responseFailure.getStatus());
 	}
 	
-	
-	@Test
-	public void getParamsFile() {
-		Response response = parameterService.getFileAsString(appDirName, "deploy", "");
-		Assert.assertEquals(200, response.getStatus());
-		Response responseFailure = parameterService.getFileAsString(appDirName, "pdf-", "");
-		Assert.assertEquals(400, responseFailure.getStatus());
-	}
-
 	 @Test
 	public void updateWatcher() {
 		Response updateWatcher = parameterService.updateWatcher(appDirName, "package", "showSettings", "true", "");

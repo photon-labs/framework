@@ -96,7 +96,6 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 			} else {
 				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
-			
 			String buildInfoFilePath = getBuildInfoFilePath(rootModulePath, subModuleName);
 			File buildInfoFile = new File(buildInfoFilePath);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
@@ -248,7 +247,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 		String pomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
 		File pomFile = new File(pomFileLocation);
 		StringBuilder buildInfoFilePath = new StringBuilder(pomFile.getParent());
-		buildInfoFilePath.append(BUILD_DIR).append(File.separator).append(BUILD_INFO_FILE_NAME);
+		buildInfoFilePath.append(File.separator).append(BUILD_DIR).append(File.separator).append(BUILD_INFO_FILE_NAME);
 		
 		return buildInfoFilePath.toString();
 	}

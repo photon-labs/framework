@@ -32,8 +32,8 @@ public class PdfServiceTest extends RestBaseTest {
 		request.setParameter("customerId", customerId);
 		request.setParameter("projectId", "TestProject");
 		request.setParameter("appId", "TestProject");
-		request.setParameter("username", "admin");
-		request.setParameter("userId", "admin");
+		request.setParameter("username", userId);
+		request.setParameter("userId", userId);
 		request.setParameter("fromPage", "unit");
 		request.setParameter("reportType", "unit");
 		request.setParameter("reportName", "unit");
@@ -53,8 +53,8 @@ public class PdfServiceTest extends RestBaseTest {
 		request1.setParameter("customerId", customerId);
 		request1.setParameter("projectId", "TestProject");
 		request1.setParameter("appId", "TestProject");
-		request1.setParameter("username", "admin");
-		request1.setParameter("userId", "admin");
+		request1.setParameter("username", userId);
+		request1.setParameter("userId", userId);
 		request1.setParameter("fromPage", "All");
 		request1.setParameter("reportType", "unit");
 		request1.setParameter("appDirName", "TestProject");

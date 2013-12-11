@@ -125,7 +125,7 @@ public class BuildInfoTest extends RestBaseTest {
 		assertEquals(1, data.size());
 	}
 	
-	@Test
+//	@Test
 	public void getBuildListFailure() {
 		Response buildList = buildinfoservice.list("xx","");
 		assertEquals(200, buildList.getStatus());
@@ -256,7 +256,7 @@ public class BuildInfoTest extends RestBaseTest {
 		request.setParameter("minifyAll", "false");
 		request.setParameter("appId", "TestJquery");
 		request.setParameter("projectId", "TestJquery");
-		request.setParameter("username", "admin");
+		request.setParameter("username", userId);
 		request.setParameter("customerId", customerId);
 		request.setParameter("appDirName", "TestProject");
 		MinifyInfo minify = new MinifyInfo();

@@ -53,8 +53,8 @@ public class RestBaseTest extends RestBase {
 	protected String projectInfo = "";
 	
 	public RestBaseTest() {
-		userId = "admin";
-		password = "manage";
+		userId = "phresco";
+		password = "Phresco@123";
 		customerId = "photon";
 		serviceManager = getServiceManager(userId, password);
 		appDirName = "TestProject";

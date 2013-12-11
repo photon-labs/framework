@@ -17,7 +17,7 @@ public class TechnologyServiceTest extends RestBaseTest {
 	public void fetchListAppTypes() {
 		Response listApptypesLoginFail = technologyService.listApptypes("sample", "photon");
 		Assert.assertEquals(200, listApptypesLoginFail.getStatus());
-		Response listApptypes = technologyService.listApptypes("admin", "photon");
+		Response listApptypes = technologyService.listApptypes(userId, "photon");
 		Assert.assertEquals(200, listApptypes.getStatus());
 //		Response listApptypesFail = technologyService.listApptypes("admin", "");
 //		ResponseInfo<List<ApplicationType>> e = (ResponseInfo<List<ApplicationType>> )listApptypesFail.getEntity();
@@ -27,9 +27,9 @@ public class TechnologyServiceTest extends RestBaseTest {
 	
 //	@Test
 	public void fetchListAppTypeTechInfos() {
-		Response listApptypeTechInfo = technologyService.listApptypeTechInfo("Photon", "admin");
+		Response listApptypeTechInfo = technologyService.listApptypeTechInfo("Photon", userId);
 		Assert.assertEquals(200, listApptypeTechInfo.getStatus());
-		Response customer = technologyService.listApptypeTechInfo("Walgreens", "admin");
+		Response customer = technologyService.listApptypeTechInfo("Walgreens", userId);
 		Assert.assertEquals(200, customer.getStatus());
 //		Response customerFail = technologyService.listApptypeTechInfo("Johnson", "admin");
 //		Assert.assertEquals(400, customerFail.getStatus());

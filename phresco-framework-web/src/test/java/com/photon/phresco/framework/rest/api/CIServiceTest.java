@@ -24,7 +24,7 @@ import com.photon.phresco.commons.model.ContinuousDelivery;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.model.RepoDetail;
 
-public class CIServiceTest {
+public class CIServiceTest extends RestBaseTest {
 
 	CIService ciservice = new CIService();
 	
@@ -51,8 +51,8 @@ public class CIServiceTest {
 		ContinuousDelivery continuousDelivery = continuousDeliveryInfo();
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response createJob = ciservice.createJob(httpServletRequest, continuousDelivery, "photon", "TestProject","","admin");
-			Response createJobApp = ciservice.createJob(httpServletRequest, continuousDeliveryInfoAppLevel(), "photon", null,"TestProject","admin");
+			Response createJob = ciservice.createJob(httpServletRequest, continuousDelivery, "photon", "TestProject","", userId);
+			Response createJobApp = ciservice.createJob(httpServletRequest, continuousDeliveryInfoAppLevel(), "photon", null,"TestProject",userId);
 			Assert.assertEquals(200, createJob.getStatus());
 		} else {
 			Assert.assertNotSame("200", jenkinsAlive);
@@ -224,7 +224,7 @@ public class CIServiceTest {
 	private CIJob getJob() {
 		CIJob cijob = new CIJob();
 		cijob.setUrl("gosdghsdah");
-		cijob.setUsername("admin");
+		cijob.setUsername(userId);
 		cijob.setPassword("manage");
 		cijob.setRepoType("svn");
 		cijob.setCloneWorkspace(true);
@@ -253,9 +253,9 @@ public class CIServiceTest {
 	public void jobValidationTest() throws PhrescoException, ClientProtocolException, JSONException, IOException {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response isJobAvailable = ciservice.jobNameValidataion("testJob", "add", "admin");
-			Response jobAvailable = ciservice.jobNameValidataion("testJobbuild", "add", "admin");
-			Response jobAvailable1 = ciservice.jobNameValidataion("", "add", "admin");
+			Response isJobAvailable = ciservice.jobNameValidataion("testJob", "add", userId);
+			Response jobAvailable = ciservice.jobNameValidataion("testJobbuild", "add", userId);
+			Response jobAvailable1 = ciservice.jobNameValidataion("", "add", userId);
 			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) isJobAvailable.getEntity();
 			Assert.assertEquals(200, isJobAvailable.getStatus());
 		} else {
@@ -327,14 +327,14 @@ public class CIServiceTest {
 			List<RepoDetail> repodetails = new ArrayList<RepoDetail>();
 			RepoDetail repo = new RepoDetail();
 			repo.setRepoUrl("test");
-			repo.setUserName("admin");
-			repo.setPassword("manage");
+			repo.setUserName(userId);
+			repo.setPassword(password);
 			repodetails.add(repo);
 			
 			RepoDetail repoDetail = new RepoDetail();
 			repoDetail.setRepoUrl("test1");
-			repoDetail.setUserName("admin");
-			repoDetail.setPassword("manage");
+			repoDetail.setUserName(userId);
+			repoDetail.setPassword(password);
 			repodetails.add(repoDetail);
 			
 			Response builds = ciservice.setGlobalConfiguration(repodetails, "test@gmail.com", "manage", "", "", "");
@@ -392,8 +392,8 @@ public class CIServiceTest {
 		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response createClone = ciservice.createClone(httpServletRequest, "testContinuousDelivery1", "Testing", "testContinuousDelivery", "Photon", "TestProject", "", "admin");
-			ciservice.createClone(httpServletRequest, "testContinuousDeliveryApp", "Testing", "testContinuousDeliveryApp", "Photon", "", "TestProject", "admin");
+			Response createClone = ciservice.createClone(httpServletRequest, "testContinuousDelivery1", "Testing", "testContinuousDelivery", "Photon", "TestProject", "", userId);
+			ciservice.createClone(httpServletRequest, "testContinuousDeliveryApp", "Testing", "testContinuousDeliveryApp", "Photon", "", "TestProject", userId);
 			Assert.assertEquals(200, createClone.getStatus());
 		} else {
 			Assert.assertNotSame("200", jenkinsAlive);
@@ -410,7 +410,7 @@ public class CIServiceTest {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
 			ContinuousDelivery continuousDelivery = continuousDeliveryInfoUpdate();
-			Response updateJob = ciservice.updateJob(httpServletRequest, continuousDelivery, "Photon", "TestProject", "", "admin", "testContinuousDelivery");
+			Response updateJob = ciservice.updateJob(httpServletRequest, continuousDelivery, "Photon", "TestProject", "", userId, "testContinuousDelivery");
 //			ciservice.updateJob(httpServletRequest, continuousDeliveryInfoUpdateApp(), "Photon", "", "TestProject", "admin");
 			Assert.assertEquals(200, updateJob.getStatus());
 		} else {
@@ -426,8 +426,8 @@ public class CIServiceTest {
 		CIJob cijob = new CIJob();
 		cijob.setJobName("testJob");
 		cijob.setUrl("ggggg");
-		cijob.setUsername("admin");
-		cijob.setPassword("manage");
+		cijob.setUsername(userId);
+		cijob.setPassword(password);
 		cijob.setRepoType("svn");
 		cijob.setCloneWorkspace(true);
 		cijob.setDownStreamCriteria("success");
@@ -441,8 +441,8 @@ public class CIServiceTest {
 		CIJob cijob1 = new CIJob();
 		cijob1.setJobName("testJobPdf");
 		cijob1.setUrl("gosdghsdah");
-		cijob1.setUsername("admin");
-		cijob1.setPassword("manage");
+		cijob1.setUsername(userId);
+		cijob1.setPassword(password);
 		cijob1.setRepoType("svn");
 		cijob1.setCloneWorkspace(true);
 		cijob1.setDownStreamCriteria("success");
@@ -465,8 +465,8 @@ public class CIServiceTest {
 		CIJob cijob = new CIJob();
 		cijob.setJobName("testJobApp");
 		cijob.setUrl("ggggg");
-		cijob.setUsername("admin");
-		cijob.setPassword("manage");
+		cijob.setUsername(userId);
+		cijob.setPassword(password);
 		cijob.setRepoType("svn");
 		cijob.setCloneWorkspace(true);
 		cijob.setDownStreamCriteria("success");
@@ -480,8 +480,8 @@ public class CIServiceTest {
 		CIJob cijob1 = new CIJob();
 		cijob1.setJobName("testJobPdfApp");
 		cijob1.setUrl("gosdghsdah");
-		cijob1.setUsername("admin");
-		cijob1.setPassword("manage");
+		cijob1.setUsername(userId);
+		cijob1.setPassword(password);
 		cijob1.setRepoType("svn");
 		cijob1.setCloneWorkspace(true);
 		cijob1.setDownStreamCriteria("success");

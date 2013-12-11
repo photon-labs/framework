@@ -1026,19 +1026,19 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	
 	@Test
 	public void showPropertiesFeaturesTest() {
-		Response names = configurationService.showProperties("admin", "Features", "TestProject", "", "photon");
+		Response names = configurationService.showProperties(userId, "Features", "TestProject", "", "photon");
 		Assert.assertEquals(200, names.getStatus());
 	}
 	
 	@Test
 	public void showPropertiesComponentsTest() throws PhrescoException, FileNotFoundException, IOException, ParseException {
-		Response names = configurationService.showProperties("admin", "Components", "TestProject", "", "photon");
+		Response names = configurationService.showProperties(userId, "Components", "TestProject", "", "photon");
 		Assert.assertEquals(200, names.getStatus());
 	}
 	
 	@Test
 	public void showPropertiesFeaturesErrorTest() {
-		Response names = configurationService.showProperties("admin", "Features", "TestProject", "", "photon");
+		Response names = configurationService.showProperties(userId, "Features", "TestProject", "", "photon");
 		Assert.assertEquals(200, names.getStatus());
 	}
 	
@@ -1073,13 +1073,13 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		jsonDir.mkdirs();
 		writeToJson.postConfiguration(appInfo, configurations);
 		writeToJson.postConfiguration(appInfo, configurations2);
-		Response names = configurationService.showFeatureConfigs("admin", "photon", "testComponent", "TestProject", "production", "");
+		Response names = configurationService.showFeatureConfigs(userId, "photon", "testComponent", "TestProject", "production", "");
 		Assert.assertEquals(200, names.getStatus());
 	}
 	
 	@Test
 	public void showFeatureConfigsErrorTest() throws PhrescoException {
-		Response names = configurationService.showFeatureConfigs("admin", "photon", "testFeature", "TestProject", "production", "");
+		Response names = configurationService.showFeatureConfigs(userId, "photon", "testFeature", "TestProject", "production", "");
 		Assert.assertEquals(200, names.getStatus());
 	}
 	

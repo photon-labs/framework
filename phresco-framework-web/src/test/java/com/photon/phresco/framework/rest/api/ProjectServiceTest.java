@@ -88,7 +88,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 
 	@Test
 	public void editApplicationWithoutUserId() {
-		Response response = projectService.editApplication(appDirName,"admin", "");
+		Response response = projectService.editApplication(appDirName, userId, "");
 		assertEquals(200 , response.getStatus());
 	}
 
@@ -236,7 +236,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 		File projectInfoPath = getProjectInfoPath();
 		File tempPath = getTempPath();
 		projectInfoPath.renameTo(tempPath);
-		Response response = projectService.editApplication(appDirName,"admin", "");
+		Response response = projectService.editApplication(appDirName, userId, "");
 		tempPath.renameTo(projectInfoPath);
 		assertEquals(200 , response.getStatus());
 	}
@@ -454,6 +454,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 		info.setSelectedJSLibs(getCollections("c4a8d772-305e-441a-993e-703e63795aac"));
 		info.setVersion("1.0");
 		info.setPomFile("pom.xml");
+		info.setPhrescoPomFile("phresco-pom.xml");
 
 		// TechnologyInfo
 

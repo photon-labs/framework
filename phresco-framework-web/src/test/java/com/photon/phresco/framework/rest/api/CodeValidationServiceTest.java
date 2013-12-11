@@ -65,7 +65,7 @@ public class CodeValidationServiceTest extends RestBaseTest  {
 		request.setServerName("localhost");	
 		request.setServerPort(2468);
 		request.setServerName(appDirName);
-		Response response = service.getIframeReport("photon", "admin", appDirName, "java", "", request);
+		Response response = service.getIframeReport("photon", userId, appDirName, "java", "", request);
 		Assert.assertEquals(200, response.getStatus());
 	}
 

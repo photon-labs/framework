@@ -16,7 +16,7 @@ public class AppInfoConfigsTest extends RestBaseTest {
 	public void fetchDownloadInfos() {
 		Response downloadInfosLoginFail = appInfoConfigs.getDownloadInfos("photon", "tech-java-webservice", "SERVER", "Windows64", "sample");
 		Assert.assertEquals(200, downloadInfosLoginFail.getStatus());
-		Response downloadInfos = appInfoConfigs.getDownloadInfos("photon", "tech-java-webservice", "SERVER", "Windows64", "admin");
+		Response downloadInfos = appInfoConfigs.getDownloadInfos("photon", "tech-java-webservice", "SERVER", "Windows64", userId);
 		Assert.assertEquals(200, downloadInfos.getStatus());
 //		Response downloadInfosFail = appInfoConfigs.getDownloadInfos("photon", "", "", "", "admin");
 //		ResponseInfo<List<DownloadInfo>> d = (ResponseInfo<List<DownloadInfo>>)downloadInfosFail.getEntity();
@@ -28,13 +28,13 @@ public class AppInfoConfigsTest extends RestBaseTest {
 	public void fetchWebServices() {
 		Response webServicesLoginFail = appInfoConfigs.getWebServices("sample");
 		Assert.assertEquals(200, webServicesLoginFail.getStatus());
-		Response webServices = appInfoConfigs.getWebServices("admin");
+		Response webServices = appInfoConfigs.getWebServices(userId);
 		Assert.assertEquals(200, webServices.getStatus());
 	}
 	
 	@Test
 	public void testGetFunctionalFrameworks() {
-		appInfoConfigs.getFunctionalFrameworks("admin", "tech-php");
+		appInfoConfigs.getFunctionalFrameworks(userId, "tech-php");
 	}
 	
 }

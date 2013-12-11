@@ -210,26 +210,26 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		srcRepoDetail.setPassPhrase("");
 		repoInfo.setSrcRepoDetail(srcRepoDetail);
 
-		RepoDetail phrescoRepoDetail = new RepoDetail();
-		phrescoRepoDetail.setType("svn");
-		phrescoRepoDetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
-		phrescoRepoDetail.setUserName("santhosh_ja");
-		phrescoRepoDetail.setPassword("farewellJ123");
-		phrescoRepoDetail.setCommitMessage("[artf778042] Add test");
-		phrescoRepoDetail.setPassPhrase("");
-		repoInfo.setPhrescoRepoDetail(phrescoRepoDetail);
+//		RepoDetail phrescoRepoDetail = new RepoDetail();
+//		phrescoRepoDetail.setType("svn");
+//		phrescoRepoDetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
+//		phrescoRepoDetail.setUserName("santhosh_ja");
+//		phrescoRepoDetail.setPassword("farewellJ123");
+//		phrescoRepoDetail.setCommitMessage("[artf778042] Add test");
+//		phrescoRepoDetail.setPassPhrase("");
+//		repoInfo.setPhrescoRepoDetail(phrescoRepoDetail);
+//
+//		RepoDetail testRepoDetail = new RepoDetail();
+//		testRepoDetail.setType("svn");
+//		testRepoDetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
+//		testRepoDetail.setUserName("santhosh_ja");
+//		testRepoDetail.setPassword("farewellJ123");
+//		testRepoDetail.setCommitMessage("[artf778042] Add test");
+//		testRepoDetail.setPassPhrase("");
+//		repoInfo.setTestRepoDetail(testRepoDetail);
 
-		RepoDetail testRepoDetail = new RepoDetail();
-		testRepoDetail.setType("svn");
-		testRepoDetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
-		testRepoDetail.setUserName("santhosh_ja");
-		testRepoDetail.setPassword("farewellJ123");
-		testRepoDetail.setCommitMessage("[artf778042] Add test");
-		testRepoDetail.setPassPhrase("");
-		repoInfo.setTestRepoDetail(testRepoDetail);
-
-		repoInfo.setSplitPhresco(true);
-		repoInfo.setSplitTest(true);
+		repoInfo.setSplitPhresco(false);
+		repoInfo.setSplitTest(false);
 
 		return repoInfo;
 	}
@@ -246,26 +246,26 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		srcRepoDetail.setPassPhrase("");
 		repoInfo.setSrcRepoDetail(srcRepoDetail);
 
-		RepoDetail phrescoRepoDetail = new RepoDetail();
-		phrescoRepoDetail.setType("git");
-		phrescoRepoDetail.setRepoUrl("https://github.com/santhosh-ja/TestProject_phresco.git");
-		phrescoRepoDetail.setUserName("santhosh-ja");
-		phrescoRepoDetail.setPassword("santJ!23");
-		phrescoRepoDetail.setCommitMessage("[artf778042] Add test");
-		phrescoRepoDetail.setPassPhrase("");
-		repoInfo.setPhrescoRepoDetail(phrescoRepoDetail);
+//		RepoDetail phrescoRepoDetail = new RepoDetail();
+//		phrescoRepoDetail.setType("git");
+//		phrescoRepoDetail.setRepoUrl("https://github.com/santhosh-ja/TestProject_phresco.git");
+//		phrescoRepoDetail.setUserName("santhosh-ja");
+//		phrescoRepoDetail.setPassword("santJ!23");
+//		phrescoRepoDetail.setCommitMessage("[artf778042] Add test");
+//		phrescoRepoDetail.setPassPhrase("");
+//		repoInfo.setPhrescoRepoDetail(phrescoRepoDetail);
+//
+//		RepoDetail testRepoDetail = new RepoDetail();
+//		testRepoDetail.setType("git");
+//		testRepoDetail.setRepoUrl("https://github.com/santhosh-ja/TestProject_test.git");
+//		testRepoDetail.setUserName("santhosh-ja");
+//		testRepoDetail.setPassword("santJ!23");
+//		testRepoDetail.setCommitMessage("[artf778042] Add test");
+//		testRepoDetail.setPassPhrase("");
+//		repoInfo.setTestRepoDetail(testRepoDetail);
 
-		RepoDetail testRepoDetail = new RepoDetail();
-		testRepoDetail.setType("git");
-		testRepoDetail.setRepoUrl("https://github.com/santhosh-ja/TestProject_test.git");
-		testRepoDetail.setUserName("santhosh-ja");
-		testRepoDetail.setPassword("santJ!23");
-		testRepoDetail.setCommitMessage("[artf778042] Add test");
-		testRepoDetail.setPassPhrase("");
-		repoInfo.setTestRepoDetail(testRepoDetail);
-
-		repoInfo.setSplitPhresco(true);
-		repoInfo.setSplitTest(true);
+		repoInfo.setSplitPhresco(false);
+		repoInfo.setSplitTest(false);
 
 		return repoInfo;
 	}
