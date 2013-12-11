@@ -1,7 +1,7 @@
 <environments>
    <environment appliesTo="" default="true" desc="Production Environment is used for Development purpose only" name="Production">
         <Server desc="Server Configuration for Javawebservice Eshop application" name="Server Configuration">
-            <context>javawebserviceeshop</context>
+            <context>phresco-framework</context>
             <admin_username/>
             <deploy_dir>D:/softwares/apache-tomcat-7.0.37-windows-x86/apache-tomcat-7.0.37/webapps/</deploy_dir>
             <additional_context/>
