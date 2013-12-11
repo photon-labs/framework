@@ -153,7 +153,7 @@ define(["configuration/listener/configurationListener"], function() {
 			
 			$("input[name=UpdateConfiguration]").unbind('click');
 			$("input[name=UpdateConfiguration]").click(function() {
-				self.checkForLock("configUpdate", '', function(response){
+				self.checkForLock("configUpdate", '', '', function(response){
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {
 						if ($('input[name=EnvName]').val() !== '') {
 							self.updateConfigEvent.dispatch();

@@ -132,7 +132,7 @@ define([], function() {
 				url ='buildinfo/minifer?appDirName=' + appdirName+moduleParam;
 			} else if (action === "logContent") {
 				method = "GET";
-				url = 'buildinfo/logContent?status=' + buildInfo + '&appDirName=' + appdirName;
+				url = 'buildinfo/logContent?status=' + buildInfo + '&appDirName=' + appdirName+moduleParam;
 			}
 			
 			header = {

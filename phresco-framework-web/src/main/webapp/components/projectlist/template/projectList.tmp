@@ -24,7 +24,7 @@
                         		<img name="editproject" key="{{id}}" projectcode="{{projectCode}}" projectId="{{id}}" src="themes/default/images/Phresco/edit_row_icon.png" width="29" height="23" border="0" alt="">
                     		</a> 
                     		{{#if ../userPermissions.manageApplication}}
-	                    		<a name="{{id}}" appIds="{{#csvAppIds appInfos}}{{/csvAppIds}}" class="tooltiptop del_project" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete {{name}}">
+	                    		<a name="{{id}}" appIds="{{#csvAppIds appInfos}}{{/csvAppIds}}" subModuleIds="{{#allSubModuleIds appInfos}}{{/allSubModuleIds}}" class="tooltiptop del_project" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete {{name}}">
 	                    			<img src="themes/default/images/Phresco/delete_row_icon.png" class="projectlist_delete" width="29" height="23" border="0" alt="0">
 	                			</a>
                 			{{else}}
@@ -124,7 +124,7 @@
 				  	<div class="bs-docs-example repository_tabdiv">
 						<ul class="nav nav-tabs" id="myTab">
 							<li class="active"><a data-toggle="tab" href="#source{{id}}">Source</a></li>
-							<li><input type="checkbox" id="splitDotPhresco_{{id}}" class="splitDotPhresco" dynamicId="{{id}}"><a class="repo_tab dotPhrescoA " dynamicId="{{id}}">.Phresco</a></li>
+							<li><input type="checkbox" id="splitDotPhresco_{{id}}" class="splitDotPhresco" dynamicId="{{id}}"><a class="repo_tab dotPhrescoA" dynamicId="{{id}}">.Phresco</a></li>
 							<li><input type="checkbox" id="splitTest_{{id}}" class="splitTest" dynamicId="{{id}}"><a class="repo_tab testA" dynamicId="{{id}}">Test</a></li>
 						</ul>
 					</div>
@@ -336,85 +336,233 @@
 						</div>		
 					 </div>
                   </div>
-                   <!--commit div ends here -->	
+                  <!--commit div ends here -->	
                    
-                  <div id="svn_update{{id}}" class="svn_update dyn_popup popup_bg" name="updatepopup">
-				   <div class="hideContent update_data_{{id}}">
-					<table width="100%" border="0" cellspacing="0" cellpadding="0">
-                        <tbody>
-                                    <tr>
-                                        <td><span data-i18n="commonlabel.label.type"></span><sup>*</sup></td>
-										<td><span data-i18n="navigation.application.apprepourl"></span><sup>*</sup></td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <select id="updateType_{{id}}" class="up_Select">
-                                                <option value="svn" data-i18n="projectlist.label.svn"></option>
-                                        		<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
-                                        		<option value="git" data-i18n="projectlist.label.git"></option>
-                                            <option value="perforce" data-i18n="projectlist.label.perforce"></option>
-                                            </select>
-                                        </td>
-                                        <td><input type="text" placeholder="Repo Url" id="updateRepourl_{{id}}" name="repoUrl"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="seperatetdSvn"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="updateCredential_{{id}}" class="credential"></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td><span data-i18n="login.placeholder.username" name="username"></span><sup>*</sup></td>
-										<td><span data-i18n="login.placeholder.password" name="password"></span><sup>*</sup></td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="text" data-i18n="[placeholder]login.placeholder.username" mandatory=true id="updateUsername_{{id}}" class="uname" name="username"></td>
-                                        <td><input type="password" placeholder="Password" mandatory=true id="updatePassword_{{id}}" class="pwd" name="password"></td>
-                                    </tr>
-                                    <tr>
-                                       <td colspan="2" data-i18n="projectlist.label.revision"></td>
-                                    </tr>
-									<tr class="passPhrase" style="display:none">
-										<td><label value="passPhrase">PassPhrase</label></td>
-									</tr>
-									<tr class="passPhrase" style="display:none">
-										<td><input type="text" id="updatePhrase_{{id}}"/></td>
-									</tr>
-                                    <tr>
-                                        <td><input type="radio" name="revision" class="radioBtnClass" value="head" checked><span data-i18n="projectlist.label.headrevision"></span><input type="radio" name="revision" class="radioBtnClass" value=""><span data-i18n="projectlist.label.revision"></span></td>
-                                        <td><input class="revision" type="text"></td>
-                                    </tr>
-                                </tbody>
-                     </table> 
-                       <div class="perforcedata">
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td><label name="stream" value="stream">Stream</label></td>
-                                </tr>
-                                <tr>    
-                                    <td><input id="stream_{{id}}" name="stream" type="text" class="stream"></td>
-                                </tr>
-                            </tbody>
-                         </table>
-                     </div>
-                     <div class="flt_right" style=margin-top:5px;" appDirName="{{appDirName}}">
-                         <input type="button" value="Update Application" data-i18n="[value]common.btn.updateapp"  id="{{id}}" class="btn btn_style" name="updatebtn">
-                         <input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
-                     </div>    
-					</div>
-					<div class="dummyUpdate" id="dummyUpdate_{{id}}"></div>
-				 	<div class="popuploading" id="updateLoading_{{id}}">&nbsp</div>
-					<div class="hideContent updateErr_{{id}} popup_btn" width="100%" border="0" cellspacing="0" cellpadding="0">
-						<p><span data-i18n="projectlist.label.notworkingupdate"></span></p>
-						<div class="popupCloseBtn">
-							<input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
-						</div>		
-					 </div>	
-                    <!--svn_update div ends here -->	
+					<div id="svn_update{{id}}" class="svn_update dyn_popup popup_bg" name="updatepopup">
+						<div class="bs-docs-example repository_tabdiv hideContent">
+							<ul class="nav nav-tabs" id="myTab">
+								<li class="active"><a data-toggle="tab" href="#updateSource{{id}}">Source</a></li>
+								<li><input type="checkbox" id="updateDotPhresco_{{id}}" class="updateDotPhresco" dynamicId="{{id}}" disabled><a class="repo_tab updateDotPhrescoA" dynamicId="{{id}}">.Phresco</a></li>
+								<li><input type="checkbox" id="updateTest_{{id}}" class="updateTest" dynamicId="{{id}}" disabled><a class="repo_tab updateTestA" dynamicId="{{id}}">Test</a></li>
+							</ul>
+						</div>
+						<div class="tab-content hideContent" id="myTabContent">
+					  		<div id="updateSource{{id}}" class="tab-pane fade active in">
+						  		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+									<tbody>
+				                        <tr>
+				                            <td><span data-i18n="project.create.label.type"></span><sup>*</sup></td>
+				                            <td><span data-i18n="navigation.application.apprepourl"></span><sup>*</sup></td>
+				                        </tr>
+	                        			<tr>
+	                        				<td>
+				                            	<select id="updateType{{id}}" class="updateType{{id}}" disabled>
+				                                	<option value="svn" data-i18n="projectlist.label.svn"></option>
+													<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
+													<option value="git" data-i18n="projectlist.label.git"></option>
+				                                    <option value="perforce" data-i18n="projectlist.label.perforce"></option>
+				                            	</select>
+	                            			</td>
+	                            			<td><input type="text" id="updateRepourl{{id}}" data-i18n="[placeholder]navigation.application.apprepourl" readonly="readonly"></td>
+	                        			</tr>
+	                        			<tr class="updateImportCredential{{id}}">
+	                            			<td class="seperatetd" id="updateCredential{{id}}">
+	                            				<span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" dynamicId="{{id}}" class="updSrcOtherCredential">
+                            				</td>
+	                            			<td></td>
+	                        			</tr>
+				                        <tr class="updateSvndata{{id}}">
+				                            <td><span data-i18n="login.placeholder.username"></span><sup class="svnusr">*</sup></td>
+				                            <td><span data-i18n="login.placeholder.password"></span><sup class="svnpswd">*</sup></td>
+				                        </tr>
+				                        <tr class="updateSvndata{{id}}">
+				                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="updateUserName{{id}}" readonly="readonly"></td>
+				                            <td><input type="password" placeholder="*******" id="updatePassword{{id}}" readonly="readonly"></td>
+				                        </tr>
+				                        <tr class="updateSvndata{{id}}">
+				                        	<td>
+				                        		<input type="radio" name="updateHeadoption{{id}}" class="updateHeadoption" value="HEAD" checked dynamicId="{{id}}">
+				                        		<span data-i18n="projectlist.label.headrevision"></span>
+				                        		<input class="revtext updateHeadoption" type="radio" name="updateHeadoption{{id}}" value="revision" dynamicId="{{id}}">
+				                        		<span data-i18n="projectlist.label.revision"></span>
+			                        		</td>
+				                            <td><input type="text" readonly="readonly" id="updateRevision{{id}}"></td>
+				                        </tr>
+	                                	<tr class="updateGitdata{{id}} updateBitkeeperdata{{id}}">
+	                                    	<td><span data-i18n="login.placeholder.username"></span></td>
+											<td><span data-i18n="login.placeholder.password"></span></td>
+	                                	</tr>
+	                                	<tr class="updateGitdata{{id}} updateBitkeeperdata{{id}}">
+	                                    	<td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="updateGitUserName{{id}}"></td>
+	                                    	<td><input type="password" placeholder="*******" id="updateGitPassword{{id}}"></td>
+	                                	</tr>
+										<tr class="updateGitdata{{id}}">
+											<td><span name="branch" value="branch">Branch</laspanbel></td>
+											<td><span name="branch" value="passPhrase">PassPhrase</span></td>
+										</tr>
+										<tr class="updateGitdata{{id}}">	
+											<td><input type="text" class="updateBranchval{{id}}"></td>
+											<td><input type="password" class="updatePassPhraseval{{id}}"></td>
+										</tr>
+	                                	<tr class="updatePerforcedata{{id}}">
+	                                    	<td><span name="stream" value="stream">Stream</span></td>
+	                                	</tr>
+	                                	<tr class="updatePerforcedata{{id}}">    
+	                                    	<td><input name="stream" type="text" class="updateStream{{id}}"></td>
+	                                	</tr>
+	                            	</tbody>
+							 	</table>
+						 	</div>
+						 	<div id="updateDotphresco{{id}}" class="tab-pane fade">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0">
+									<tbody>
+				                        <tr>
+				                            <td><span data-i18n="project.create.label.type"></span><sup>*</sup></td>
+				                            <td><span data-i18n="navigation.application.phrescorepourl"></span><sup>*</sup></td>
+				                        </tr>
+	                        			<tr>
+	                        				<td>
+				                            	<select id="updatePhrescoType{{id}}" class="updatePhrescoType{{id}}" disabled>
+				                                	<option value="svn" data-i18n="projectlist.label.svn"></option>
+													<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
+													<option value="git" data-i18n="projectlist.label.git"></option>
+				                                    <option value="perforce" data-i18n="projectlist.label.perforce"></option>
+				                            	</select>
+	                            			</td>
+	                            			<td><input type="text" id="updatePhrescoRepourl{{id}}" data-i18n="[placeholder]navigation.application.phrescorepourl" readonly="readonly"></td>
+	                        			</tr>
+	                        			<tr class="updateImportCredential{{id}}">
+	                            			<td class="seperatetd" id="updatePhrescoCredential">
+	                            				<span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" dynamicId="{{id}}" class="updPhrOtherCredential">
+                            				</td>
+	                            			<td></td>
+	                        			</tr>
+				                        <tr class="updateSvndata{{id}}">
+				                            <td><span data-i18n="login.placeholder.username"></span><sup class="svnusr">*</sup></td>
+				                            <td><span data-i18n="login.placeholder.password"></span><sup class="svnpswd">*</sup></td>
+				                        </tr>
+				                        <tr class="updateSvndata{{id}}">
+				                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="updatePhrescoUserName{{id}}" readonly="readonly"></td>
+				                            <td><input type="password" placeholder="*******" id="updatePhrescoPassword{{id}}" readonly="readonly"></td>
+				                        </tr>
+				                        <tr class="updateSvndata{{id}}">
+				                        	<td>
+				                        		<input type="radio" name="updatePhrescoHeadoption{{id}}" class="updatePhrescoHeadoption" value="HEAD" checked dynamicId="{{id}}">
+				                        		<span data-i18n="projectlist.label.headrevision"></span>
+				                        		<input class="revtext updatePhrescoHeadoption" type="radio" name="updatePhrescoHeadoption{{id}}" value="revision" dynamicId="{{id}}">
+				                        		<span data-i18n="projectlist.label.revision"></span>
+			                        		</td>
+				                            <td><input type="text" readonly="readonly" id="updatePhrescoRevision{{id}}"></td>
+				                        </tr>
+	                                	<tr class="updateGitdata{{id}} updateBitkeeperdata{{id}}">
+	                                    	<td><span data-i18n="login.placeholder.username"></span></td>
+											<td><span data-i18n="login.placeholder.password"></span></td>
+	                                	</tr>
+	                                	<tr class="updateGitdata{{id}} updateBitkeeperdata{{id}}">
+	                                    	<td id="gitName"><input type="text" data-i18n="[placeholder]login.placeholder.username" id="updatePhrescoGitUserName{{id}}"></td>
+	                                    	<td><input type="password" placeholder="*******" id="updatePhrescoGitPassword{{id}}"></td>
+	                                	</tr>
+										<tr class="updateGitdata{{id}}">
+											<td><span name="branch" value="branch">Branch</laspanbel></td>
+											<td><span name="branch" value="passPhrase">PassPhrase</span></td>
+										</tr>
+										<tr class="updateGitdata{{id}}">	
+											<td><input type="text" class="updatePhrescoBranchval{{id}}"></td>
+											<td><input type="password" class="updatePhrescoPassPhraseval{{id}}"></td>
+										</tr>
+	                                	<tr class="updatePerforcedata{{id}}">
+	                                    	<td><span name="stream" value="stream">Stream</span></td>
+	                                	</tr>
+	                                	<tr class="updatePerforcedata{{id}}">    
+	                                    	<td><input name="updatePhrescoStream{{id}}" type="text" class="updatePhrescoStream{{id}}"></td>
+	                                	</tr>
+	                            	</tbody>
+							 	</table>
+							 </div>
+						 	<div id="updateTest{{id}}" class="tab-pane fade">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0">
+									<tbody>
+				                        <tr>
+				                            <td><span data-i18n="project.create.label.type"></span><sup>*</sup></td>
+				                            <td><span data-i18n="navigation.application.testrepourl"></span><sup>*</sup></td>
+				                        </tr>
+	                        			<tr>
+	                        				<td>
+				                            	<select id="testUpdateType{{id}}" class="testImportType{{id}}" disabled>
+				                                	<option value="svn" data-i18n="projectlist.label.svn"></option>
+													<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
+													<option value="git" data-i18n="projectlist.label.git"></option>
+				                                    <option value="perforce" data-i18n="projectlist.label.perforce"></option>
+				                            	</select>
+	                            			</td>
+	                            			<td><input type="text" id="updateTestRepourl{{id}}" data-i18n="[placeholder]navigation.application.apprepourl" readonly="readonly"></td>
+	                        			</tr>
+	                        			<tr class="updateImportCredential{{id}}">
+	                            			<td class="seperatetd" id="updateTestCredential{{id}}">
+	                            				<span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" dynamicId="{{id}}" class="updTestOtherCredential">
+                            				</td>
+	                            			<td></td>
+	                        			</tr>
+				                        <tr class="updateSvndata{{id}}">
+				                            <td><span data-i18n="login.placeholder.username"></span><sup class="svnusr">*</sup></td>
+				                            <td><span data-i18n="login.placeholder.password"></span><sup class="svnpswd">*</sup></td>
+				                        </tr>
+				                        <tr class="updateSvndata{{id}}">
+				                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="updateTestUserName{{id}}" readonly="readonly"></td>
+				                            <td><input type="password" placeholder="*******" id="updateTestPassword{{id}}" readonly="readonly"></td>
+				                        </tr>
+				                        <tr class="updateSvndata{{id}}">
+				                        	<td>
+				                        		<input type="radio" name="testUpdateHeadoption{{id}}" class="testUpdateHeadoption" value="HEAD" checked dynamicId="{{id}}">
+				                        		<span data-i18n="projectlist.label.headrevision"></span>
+				                        		<input class="revtext testUpdateHeadoption" type="radio" name="testUpdateHeadoption{{id}}" value="revision" dynamicId="{{id}}">
+				                        		<span data-i18n="projectlist.label.revision"></span>
+			                        		</td>
+				                            <td><input type="text" readonly="readonly" id="testUpdateRevision{{id}}"></td>
+				                        </tr>
+	                                	<tr class="updateGitdata{{id}} updateBitkeeperdata{{id}}">
+	                                    	<td><span data-i18n="login.placeholder.username"></span></td>
+											<td><span data-i18n="login.placeholder.password"></span></td>
+	                                	</tr>
+	                                	<tr class="updateGitdata{{id}} updateBitkeeperdata{{id}}">
+	                                    	<td id="gitName"><input type="text" data-i18n="[placeholder]login.placeholder.username" id="testUpdateGitUserName"></td>
+	                                    	<td><input type="password" placeholder="*******" id="testUpdateGitPassword"></td>
+	                                	</tr>
+										<tr class="updateGitdata{{id}}">
+											<td><span name="branch" value="branch">Branch</laspanbel></td>
+											<td><span name="branch" value="passPhrase">PassPhrase</span></td>
+										</tr>
+										<tr class="updateGitdata{{id}}">	
+											<td><input type="text" class="testUpdateBranchval{{id}}"></td>
+											<td><input type="password" class="testUpdatePassPhraseval{{id}}"></td>
+										</tr>
+	                                	<tr class="updatePerforcedata{{id}}">
+	                                    	<td><span name="stream" value="stream">Stream</span></td>
+	                                	</tr>
+	                                	<tr class="updatePerforcedata{{id}}">    
+	                                    	<td><input name="testUpdateStream{{id}}" type="text" class="testUpdateStream{{id}}"></td>
+	                                	</tr>
+	                            	</tbody>
+								</table>
+							</div>
+							<div class="popuploading" id="updateLoading_{{id}}">&nbsp</div>
+						 	<div class="flt_right" appId="{{id}}" projectId = "{{../id}}" appDirName="{{appDirName}}">
+								<input type="button" name="updatebtn" id="{{id}}" data-i18n="[value]common.btn.updateapp" class="btn btn_style">
+								<input type="button" value="Close" data-i18n="[value]common.btn.close;" class="btn btn_style dyn_popup_close">
+							</div>
+						</div>
+						<div class="hideContent updateErr_{{id}} popup_btn" width="100%" border="0" cellspacing="0" cellpadding="0">
+							<p><span data-i18n="projectlist.label.notworkingupdate"></span></p>
+							<div class="popupCloseBtn">
+								<input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
+							</div>		
+				 		</div>
+						<!--svn_update div ends here -->	
                   </div>
                   </td>
                   <td class="list_img">
                   	{{#if ../../userPermissions.manageApplication}}
-	                  	<a name="{{creationDate}}" dynamicid="{{id}}"  class="tooltiptop del_appln" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Delete {{appDirName}}">
+	                  	<a name="{{creationDate}}" dynamicid="{{id}}"  submoduleIds="{{#subModules modules}}{{/subModules}}" class="tooltiptop del_appln" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Delete {{appDirName}}">
 	                  		<img name="delete" src="themes/default/images/Phresco/delete_row.png" width="14" height="18" border="0" alt="">
 	              		</a>
               		{{else}}
@@ -432,11 +580,11 @@
                       </tr>
 					  {{#each modules}}
                           <tr class="{{../appDirName}}" rootModule="{{../appDirName}}" techid="{{techInfo.id}}" isMultiModule="true" moduleName="{{code}}">
-                              <td style="padding-left: 5%;"><a name="editApplication" from="multimodule" appDirName="{{../appDirName}}" href="javascript:;">{{code}}</a></td>
+                              <td style="padding-left: 5%;"><a name="editApplication" appid="{{id}}" from="multimodule" appDirName="{{../appDirName}}" href="javascript:;">{{code}}</a></td>
                               <td>&nbsp;</td>
                               <td>{{techInfo.name}}</td>
                               <td colspan="2" class="list_img">
-                                  <a name="pdf_report_{{id}}" temp="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="{{id}}" data-placement="bottom" data-t="tooltip" href="javascript:void(0)" data-original-title="PDF Report">
+                                  <a name="pdf_report_{{id}}" temp="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="{{id}}" appdata-placement="bottom" data-t="tooltip" href="javascript:void(0)" data-original-title="PDF Report">
                                       <img src="themes/default/images/Phresco/pdf_icon.png" width="14" height="16" border="0" alt="">
                                   </a>
                                                 
@@ -493,7 +641,7 @@
                               </td>
                               <td class="list_img">
                                   {{#if ../../../userPermissions.manageApplication}}
-                                      <a class="tooltiptop del_submodule" title="" name="{{code}}" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete {{code}}">
+                                      <a class="tooltiptop del_submodule" dynamicid="{{id}}" title="" name="{{code}}" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete {{code}}">
                                           <img name="delete" src="themes/default/images/Phresco/delete_row.png" width="14" height="18" border="0" alt="">
                                       </a>
                                   {{else}}

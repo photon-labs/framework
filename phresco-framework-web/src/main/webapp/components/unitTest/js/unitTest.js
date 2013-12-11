@@ -134,7 +134,7 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 			$("#unitTestBtn").unbind("click");
 			$("#unitTestBtn").click(function() {
 				var btnObj = this;
-				self.checkForLock("unit", '', function(response){
+				self.checkForLock("unit", '', '', function(response){
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {
 						self.onDynamicPageEvent.dispatch(btnObj, function() {
 							commonVariables.logContent = $('#testConsole').html();

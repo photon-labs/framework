@@ -1251,6 +1251,7 @@ img[name="close"] {
 .create_proj table tr td input[type=text], .create_proj select {
 	margin-bottom:0px;
 	/*margin-left: 8px !important;*/
+	width:112px !important;
 }
 
 .bootstrap-select:not([class*="span"]) {
@@ -1276,7 +1277,7 @@ img[name="close"] {
 }
 
 .newcreate_proj table tr td {
-	width: 0% !important;
+	width: 9% !important;
 }
 
 .appInfo table tr td {
@@ -2046,6 +2047,10 @@ img[name="close"] {
 		width: 144px !important;
 	}
 	
+	.create_proj table tr td select.custon_dropdown, .create_proj table tr td select.optional_dropdown {
+		width:100px !important;
+	}
+	
 	.create_proj table tr td {
 		 width: 12%;
 	}
@@ -2157,7 +2162,7 @@ img[name="close"] {
 	
 	.project_list_popup input[type=text], .project_list_popup select, .project_list_popup input[type=password] {
 		width:165px !important;
-} 
+}
 
 }
 
@@ -4880,6 +4885,10 @@ a.selected { background:#dcdcdc; }
 	color:#B94A48;
 	border:1px solid #EED3D7;
 	padding:3px;
+}
+
+#abtimge{
+	width:120px !important;"
 }
 
 

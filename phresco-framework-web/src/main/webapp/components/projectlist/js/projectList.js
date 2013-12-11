@@ -124,6 +124,34 @@ define(["projectlist/listener/projectListListener"], function() {
 					return false;
 				}		
 			});
+
+			Handlebars.registerHelper('subModules', function(modules) {
+				if (modules !== undefined && modules !== null && modules.length > 0) {
+					var moduleIds = [];
+					$.each(modules, function(index, module) {
+						moduleIds.push(module.id);
+					});
+					return moduleIds.join(',');
+				} else {							
+					return "";
+				}		
+			});
+
+			Handlebars.registerHelper('allSubModuleIds', function(appInfos) {
+				var moduleIds = [];
+				if (appInfos !== undefined && appInfos !== null && appInfos.length > 0) {
+					$.each(appInfos, function(index, appInfo) {
+						if (appInfo.modules !== undefined && appInfo.modules !== null && appInfo.modules.length > 0) {
+							$.each(appInfo.modules, function(index, module) {
+								moduleIds.push(module.id);
+							});
+						}
+					});
+					return moduleIds.join(',');
+				} else {							
+					return "";
+				}		
+			});
 		},
 		
 		/***
@@ -186,18 +214,6 @@ define(["projectlist/listener/projectListListener"], function() {
 			}
 		},
 		
-		makeCredReadOnly : function (checkObj, usrObj, pwdObj) {
-			if(!checkObj.is(':checked')) {
-				usrObj.attr('readonly','true');
-				pwdObj.attr('readonly','true');
-			} else {
-				usrObj.removeAttr('readonly');
-				pwdObj.removeAttr('readonly');
-			}
-		},
-		
-		
-	
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -262,7 +278,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			$("#myTab li a").removeClass("act");
 			$('a[name=editApplication]').click(function(){
 				var thisObj = this, appid = $(this).attr("appid");
-				self.checkForLock("editAppln", appid, function(response){
+				self.checkForLock("editAppln", appid, "", function(response){
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {
 						$(".dyn_popup").hide();
 						commonVariables.appDirName = $(thisObj).closest("tr").attr("class");
@@ -370,32 +386,16 @@ define(["projectlist/listener/projectListListener"], function() {
 					pwdObj = $("#updatePassword_"+dynamicId);
 					$("input[name='repoUrl']").val('');
 					$(".revision").val('');
-					if($("#updateRepourl_"+dynamicId).hasClass('errormessage')) {
-						$("#updateRepourl_"+dynamicId).removeClass('errormessage');
-						$("#updateRepourl_"+dynamicId).removeAttr('placeholder');
-						$("#updateRepourl_"+dynamicId).attr('placeholder','Repo Url');
-					}
-					if($("#updateUsername_"+dynamicId).hasClass('errormessage')) {
-						$("#updateUsername_"+dynamicId).removeClass('errormessage');
-						$("#updateUsername_"+dynamicId).removeAttr('placeholder');
-					}
-					if($("#updatePassword_"+dynamicId).hasClass('errormessage')) {
-						$("#updatePassword_"+dynamicId).removeClass('errormessage');
-						$("#updatePassword_"+dynamicId).removeAttr('placeholder');
-						$("#updatePassword_"+dynamicId).attr('placeholder','Password');
-					}
+					
+					$("#updateRepourl_"+dynamicId).removeClass('errormessage');
+					$("#updateRepourl_"+dynamicId).removeAttr('placeholder');
+					$("#updateRepourl_"+dynamicId).attr('placeholder','Repo Url');
+					$("#updateUsername_"+dynamicId).removeClass('errormessage');
+					$("#updateUsername_"+dynamicId).removeAttr('placeholder');
+					$("#updatePassword_"+dynamicId).removeClass('errormessage');
+					$("#updatePassword_"+dynamicId).removeAttr('placeholder');
+					$("#updatePassword_"+dynamicId).attr('placeholder','Password');
 				} 
-				
-				/*if(checkObj !== null  && checkObj !== undefined && checkObj !== '') {
-					self.makeCredReadOnly(checkObj, usrObj, pwdObj);
-				}	
-
-				if(checkObj !== null  && checkObj !== undefined && checkObj !== '') {
-					checkObj.unbind("change");
-					checkObj.on("change", function(){				
-						self.makeCredReadOnly(checkObj, usrObj, pwdObj);
-					});
-				}*/
 				
 				if(selectObj !== null  && selectObj !== undefined && selectObj !== '') {
 					selectObj.unbind("change");
@@ -415,7 +415,8 @@ define(["projectlist/listener/projectListListener"], function() {
 				$("#addRepoLoading_"+dynamicId).hide();
 				var action = $(this).attr("data-original-title"), openccObj = this;
 				if (action === "Commit") {
-					self.checkForLock("commit", dynamicId, function(response){
+					commonVariables.hideloading = true;
+					self.checkForLock("commit", dynamicId, '', function(response){
 						if (response.status === "success" && response.responseCode === "PHR10C00002") {
 							var appDirName = $(openccObj).parent().parent().attr("class");
 							var data = {};
@@ -438,7 +439,8 @@ define(["projectlist/listener/projectListListener"], function() {
 					});		
 				} else if (action === "Update") {
 					var openccName = $(this).attr('name');
-					self.checkForLock("update", dynamicId, function(response){
+					commonVariables.hideloading = true;
+					self.checkForLock("update", dynamicId, '', function(response){
 						if (response.status === "success" && response.responseCode === "PHR10C00002") {
 							var appDirName = $(openccObj).parent().parent().attr("class");
 							var data = {};
@@ -459,9 +461,12 @@ define(["projectlist/listener/projectListListener"], function() {
 						}	
 					});		
 				} else if (action === "Add Repo" || $(this).hasClass('del_appln') || $(this).hasClass('del_project')){
-					var openccName = $(this).attr('name'), lockAction = action ===  "Add Repo" ? "addToRepo" : ($(this).hasClass('del_appln') ? "deleteAppln" : "deleteProj");
+					var openccName = $(this).attr('name'), subModuleIds = $(this).attr('subModuleIds'),lockAction = action ===  "Add Repo" ? "addToRepo" : ($(this).hasClass('del_appln') ? "deleteAppln" : "deleteProj");
 					var applnids = $(this).hasClass('del_project') ? $(this).attr('appids') : dynamicId;
-					self.checkForLock(lockAction, applnids, function(response){
+					if(lockAction === "addToRepo") {
+						commonVariables.hideloading = true;
+					}
+					self.checkForLock(lockAction, applnids, subModuleIds, function(response){
 						if (response.status === "success" && response.responseCode === "PHR10C00002") {
 							if($(obj_del).hasClass('del_project')) {
 								self.delobj = $(obj_del).parent('td.delimages');
@@ -472,20 +477,25 @@ define(["projectlist/listener/projectListListener"], function() {
 							$('.content_title').css('z-index', '0');
 							$('.header_section').css('z-index', '0');
 						} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
-							commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
+							commonVariables.api.showError(self.getLockErrorMsg(response, lockAction), 'error', true, true);
 						}	
 					});			
 				} else if ($(this).hasClass('del_submodule')){
 					var openccName = $(this).attr('name'), rootModule = $(this).closest('tr').attr('rootModule');
-					self.onDeleteSubModuleEvent.dispatch($(this).attr('name'), rootModule, function(dependents) {
-						var deleteMsg = "Are you sure to delete?";
-						if (dependents.length > 0) {
-							deleteMsg =openccName + ' is dependent to ' + dependents.join(',') + '. <br/>Are you sure to delete?'
-							$('.'+openccName+'_module_dependents').attr("dependents", dependents.join(','));
+					self.checkForLock('deleteAppln', dynamicId, '', function(response) {
+						if (response.status === "success" && response.responseCode === "PHR10C00002") {
+							self.onDeleteSubModuleEvent.dispatch(openccName, rootModule, function(dependents) {
+							var deleteMsg = "Are you sure to delete?";
+							if (dependents.length > 0) {
+								deleteMsg =openccName + ' is dependent to ' + dependents.join(',') + '. <br/>Are you sure to delete?'
+								$('.'+openccName+'_module_dependents').attr("dependents", dependents.join(','));
+							}
+							self.openccpl(openccObj, openccName, rootModule);
+							$('.'+openccName+'_module_delete_msg').html(deleteMsg);
+						});
+						} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
+							commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 						}
-						self.openccpl(openccObj, openccName, rootModule);
-						$('.'+openccName+'_module_delete_msg').html(deleteMsg);
-
 					});
 				} else {
 					self.openccpl(this, $(this).attr('name'), currentPrjName);
@@ -545,10 +555,6 @@ define(["projectlist/listener/projectListListener"], function() {
 				//end of functionality for search log messages
 			});
 			
-			$("a[name = 'updatesvn']").unbind("click");
-			$("a[name = 'updatesvn']").bind("click",function(){
-				$("#svn_update").show();
-			});
 			$("input[name='deleteConfirm']").unbind('click');
 			$("input[name='deleteConfirm']").click(function(e) {
 				self.projectslistListener.delprojectname = $(this).attr('deleteAppname'), deleteObj = {};
@@ -651,15 +657,8 @@ define(["projectlist/listener/projectListListener"], function() {
 						
 			$("input[name='updatebtn']").unbind("click");
 			$("input[name='updatebtn']").click(function() {
-				var dynid, revision;
-				dynid = $(this).attr('id');
-				var revision = $("input[name='revision']:checked").val();
-				if(revision !== ""){
-					revision = revision;
-				} else{
-					revision = $("#revision_"+dynid).val();
-				}				
-				self.onAddUpdateEvent.dispatch($(this), dynid, revision);				
+				var dynid = $(this).attr('id');
+				self.onAddUpdateEvent.dispatch($(this), dynid);				
 			});
 
 			$("input[name='generate']").unbind("click");
@@ -669,13 +668,6 @@ define(["projectlist/listener/projectListListener"], function() {
 			
 			$("a[temp=pdf_report]").click(function() {
 				self.onGetReportEvent.dispatch($(this));
-			});
-			
-			$("input[name='revision']").unbind("click");
-			$("input[name='revision']").click(function() {
-				if($(this).is(':checked')) {
-					var value = $(this).val();
-				}
 			});
 			
 			$(".splitDotPhresco").unbind("click");
@@ -728,6 +720,80 @@ define(["projectlist/listener/projectListListener"], function() {
 				var selectedType = $("#type_" + dynamicId).val();
 				$("#phrescotype_" + dynamicId).val(selectedType);
 				$("#testtype_" + dynamicId).val(selectedType);
+			});
+			
+			$(".updateDotPhresco").unbind("click");
+			$(".updateDotPhresco").bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				if ($(this).is(":checked")) {
+					$("#svn_update" + dynamicId).find(".updateDotPhrescoA").attr("data-toggle", "tab").attr("href", "#updateDotphresco"+dynamicId);
+					$("#updateDotphresco" + dynamicId).addClass("active in");
+					$("#updateSource" + dynamicId).removeClass("active in");
+					$("#updateTest" + dynamicId).removeClass("active in");
+					$(this).parent().addClass("active");
+					$(this).parent().prev().removeClass("active");
+					$(this).parent().next().removeClass("active");
+				} else {
+					$("#svn_update" + dynamicId).find(".updateDotPhrescoA").removeAttr("data-toggle").removeAttr("href");
+					if ($(this).parent().hasClass("active")) {
+						$("#updateDotphresco" + dynamicId).removeClass("active in");
+						$("#updateSource" + dynamicId).addClass("active in");
+						$(this).parent().removeClass("active");
+						$(this).parent().prev().addClass("active");
+					}
+				}
+			});
+			
+			$(".updateTest").unbind("click");
+			$(".updateTest").bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				if ($(this).is(":checked")) {
+					$("#svn_update" + dynamicId).find(".updateTestA").attr("data-toggle", "tab").attr("href", "#updateTest"+dynamicId);
+					$("#updateDotphresco" + dynamicId).removeClass("active in");
+					$("#updateSource" + dynamicId).removeClass("active in");
+					$("#updateTest" + dynamicId).addClass("active in");
+					$(this).parent().addClass("active");
+					$(this).parent().prev().prev().removeClass("active");
+					$(this).parent().prev().removeClass("active");
+				} else {
+					$("#svn_update" + dynamicId).find(".updateTestA").removeAttr("data-toggle").removeAttr("href");
+					if ($(this).parent().hasClass("active")) {
+						$("#updateTest" + dynamicId).removeClass("active in");
+						$("#updateSource" + dynamicId).addClass("active in");
+						$(this).parent().removeClass("active");
+						$(this).parent().prev().prev().addClass("active");
+					}
+				}
+			});
+			
+			$('.updateHeadoption').unbind("click");
+			$('.updateHeadoption').bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				if ($(this).val() === "revision") {
+					$("#updateRevision"+dynamicId).removeAttr("readonly");
+				} else {
+					$("#updateRevision"+dynamicId).attr("readonly", "readonly");
+				}
+			});
+			
+			$('.updatePhrescoHeadoption').unbind("click");
+			$('.updatePhrescoHeadoption').bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				if ($(this).val() === "revision") {
+					$("#updatePhrescoRevision"+dynamicId).removeAttr("readonly");
+				} else {
+					$("#updatePhrescoRevision"+dynamicId).attr("readonly", "readonly");
+				}
+			});
+			
+			$('.testUpdateHeadoption').unbind("click");
+			$('.testUpdateHeadoption').bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				if ($(this).val() === "revision") {
+					$("#testUpdateRevision"+dynamicId).removeAttr("readonly");
+				} else {
+					$("#testUpdateRevision"+dynamicId).attr("readonly", "readonly");
+				}
 			});
 			
 			self.windowResize();

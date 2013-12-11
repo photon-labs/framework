@@ -88,7 +88,7 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 			$("#componentTestBtn").unbind("click");
 			$("#componentTestBtn").click(function() {
 				var btnObj = this;
-				self.checkForLock("component", '', function(response){
+				self.checkForLock("component", '', '', function(response){
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {
 						self.onDynamicPageEvent.dispatch(btnObj, function() {
 							commonVariables.logContent = $('#testConsole').html();

@@ -28,6 +28,7 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -39,6 +40,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.LockUtil;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.User;
@@ -162,6 +164,16 @@ public class LoginService extends RestBase implements FrameworkConstants, Respon
 		}
 	}
 
+	@GET
+	@Path("/logout")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response clearLock() {
+		ResponseInfo<User> responseData = new ResponseInfo<User>();
+		LockUtil.LOCK_DETAILS.clear();
+		ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, null, null, status, successCode);
+		return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+	}
 	/**
 	 * Do login.
 	 *

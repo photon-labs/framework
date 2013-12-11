@@ -73,6 +73,6 @@ public interface ApplicationManager {
 
 	BuildInfo getBuildInfo(int buildNumber, String buildInfoFileDirectory) throws PhrescoException;
 
-	void deleteBuildInfos(String appDirName, int[] buildNumbers) throws PhrescoException;
+	void deleteBuildInfos(String rootModulePath, int[] buildNumbers, String subModule) throws PhrescoException;
 
 }

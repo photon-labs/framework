@@ -123,7 +123,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					File[] dotPhrescoFolders = null;
 					dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
 					if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
-						File dotAppDir = new File(appDir + File.separator + appDir.getName() + "_phresco");
+						File dotAppDir = new File(appDir + File.separator + appDir.getName() + SUFFIX_PHRESCO);
 						split_phresco = dotAppDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
 					 if (ArrayUtils.isEmpty(split_phresco)) {
 							File srcAppDir = new File(appDir + File.separator + appDir.getName());
@@ -189,7 +189,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				File[] dotPhrescoFolders = null;
 				dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
 				if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
-					File dotAppDir = new File(appDir + File.separator + appDir.getName() + "_phresco");
+					File dotAppDir = new File(appDir + File.separator + appDir.getName() + SUFFIX_PHRESCO);
 					split_phresco = dotAppDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
 				 if (ArrayUtils.isEmpty(split_phresco)) {
 						File srcAppDir = new File(appDir + File.separator + appDir.getName());
@@ -250,7 +250,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				File[] dotPhrescoFolders = null;
 				dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
 				if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
-					File dotAppDir = new File(appDir + File.separator + appDir.getName() + "_phresco");
+					File dotAppDir = new File(appDir + File.separator + appDir.getName() + SUFFIX_PHRESCO);
 					split_phresco = dotAppDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
 				 if (ArrayUtils.isEmpty(split_phresco)) {
 						File srcAppDir = new File(appDir + File.separator + appDir.getName());
@@ -324,7 +324,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			ProjectInfo projectInfo = null;
 			dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
 			if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
-				File dotAppDir = new File(appDir + File.separator + appDir.getName() + "_phresco");
+				File dotAppDir = new File(appDir + File.separator + appDir.getName() + SUFFIX_PHRESCO);
 				split_phresco = dotAppDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
 			 if (ArrayUtils.isEmpty(split_phresco)) {
 					File srcAppDir = new File(appDir + File.separator + appDir.getName());
@@ -629,7 +629,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
 				ApplicationInfo rootAppInfo = projectInfo.getAppInfos().get(0);
 				File docFolderLocation = Utility.getSourceFolderLocation(projectInfo, rootModulePath, oldAppDirName);
-				File currSubModulePomFile = new File(docFolderLocation.getPath() + File.separator + "pom.xml");
+				File currSubModulePomFile = new File(docFolderLocation.getPath() + File.separator + POM_NAME);
 				List<ModuleInfo> modules = rootAppInfo.getModules();
 				if (modules != null) {
 					for (ModuleInfo module : modules) {
@@ -638,7 +638,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 							String currSubModuleGroupId = pp.getGroupId();
 							String currSubModuleArtifactId = pp.getArtifactId();
 							File subModFolderLocation = Utility.getSourceFolderLocation(projectInfo, rootModulePath, module.getCode());
-							File otherModulePomFile = new File(subModFolderLocation + File.separator + "pom.xml");
+							File otherModulePomFile = new File(subModFolderLocation + File.separator + POM_NAME);
 							if (otherModulePomFile.exists()) {
 								PomProcessor otherPP = new PomProcessor(otherModulePomFile);
 								Dependency dependency = otherPP.getDependency(currSubModuleGroupId, currSubModuleArtifactId);
@@ -662,18 +662,18 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		try {
 			File appDirName = new File (rootPath);
 			PomProcessor pomPro  = new PomProcessor(new File(pom));
-			String srcProp = pomPro.getProperty("phresco.split.src.dir");
-			String testProp = pomPro.getProperty("phresco.split.test.dir");
-			String dotProp = pomPro.getProperty("phresco.split.phresco.dir");
+			String srcProp = pomPro.getProperty(POM_PROP_KEY_SPLIT_SRC_DIR);
+			String testProp = pomPro.getProperty(POM_PROP_KEY_SPLIT_TEST_DIR);
+			String dotProp = pomPro.getProperty(POM_PROP_KEY_SPLIT_PHRESCO_DIR);
 			if(StringUtils.isNotEmpty(srcProp)) {
-			pomPro.setProperty("phresco.split.src.dir", appDirName.getName());
+			pomPro.setProperty(POM_PROP_KEY_SPLIT_SRC_DIR, appDirName.getName());
 			}
 			if(StringUtils.isNotEmpty(testProp)) {
-			pomPro.setProperty("phresco.split.test.dir", appDirName.getName() + "_test");
+			pomPro.setProperty(POM_PROP_KEY_SPLIT_TEST_DIR, appDirName.getName() + SUFFIX_TEST);
 			}
 			
 			if(StringUtils.isNotEmpty(dotProp)) {
-				pomPro.setProperty("phresco.split.phresco.dir", appDirName.getName() + "_phresco");
+				pomPro.setProperty(POM_PROP_KEY_SPLIT_PHRESCO_DIR, appDirName.getName() + SUFFIX_PHRESCO);
 			}
 			pomPro.save();
 		} catch (PhrescoPomException e) {
@@ -688,9 +688,9 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			String appDirName = projectinfo.getAppInfos().get(0).getAppDirName();
 			
 			PomProcessor pomPro = new PomProcessor(new File(getpomFileLocation));
-			String srcProp = pomPro.getProperty("phresco.split.src.dir");
-			String testProp = pomPro.getProperty("phresco.split.test.dir");
-			String dotProp = pomPro.getProperty("phresco.split.phresco.dir");
+			String srcProp = pomPro.getProperty(POM_PROP_KEY_SPLIT_SRC_DIR);
+			String testProp = pomPro.getProperty(POM_PROP_KEY_SPLIT_TEST_DIR);
+			String dotProp = pomPro.getProperty(POM_PROP_KEY_SPLIT_PHRESCO_DIR);
 			if(projectinfo.isMultiModule() && StringUtils.isNotEmpty(srcProp)) {
 				src = new File(rootPath + File.separator + srcProp + File.separator + moduleName);
 			 dest = new File(rootPath + File.separator + srcProp + File.separator + appDirName);
@@ -724,13 +724,13 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				 }
 				 
 				 src = new File(rootPath + File.separator + testProp);
-					dest = new File(rootPath + File.separator + appDirName + "_test");
+					dest = new File(rootPath + File.separator + appDirName + SUFFIX_TEST);
 					 if(src.exists()) {
 						 src.renameTo(dest);
 					 }
 					 
 					 src = new File(rootPath + File.separator + dotProp);
-						dest = new File(rootPath + File.separator + appDirName + "_phresco");
+						dest = new File(rootPath + File.separator + appDirName + SUFFIX_PHRESCO);
 						 if(src.exists()) {
 							 src.renameTo(dest);
 						 }
@@ -1260,7 +1260,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		Dashboards dashboards;
 		String json;
 		HashMap<String, Dashboard> dashboardMap;
-		Dashboard dashboard = new Dashboard();
 		try {
 			File dashboardInfoFile = new File(getProjectPhresoFolder(dashboardInfo.getAppdirname()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 			if( dashboardInfoFile.exists()) {
@@ -1455,7 +1454,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		Dashboards dashboards;
 		String json;
 		HashMap<String, Dashboard> dashboardMap;
-		HashMap<String, String[]> widProperties = new HashMap<String, String[]>();
 		try {
 			File dashboardInfoFile = new File(getProjectPhresoFolder(dashboardInfo.getAppdirname()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 			if( dashboardInfoFile.exists()) {

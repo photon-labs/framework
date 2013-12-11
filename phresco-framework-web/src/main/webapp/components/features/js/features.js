@@ -87,6 +87,18 @@ define(["features/listener/featuresListener"], function() {
 				return fieldset;
 			});
 			
+			Handlebars.registerHelper('selectDefaultVersion', function(appliesTos) {
+				var selectedString = "";
+				if (appliesTos !== null && appliesTos !== undefined && appliesTos.length > 0) {
+					$.each(appliesTos, function(index, appliesTo) {
+						if (appliesTo.required && techid === appliesTo.techId) {
+							selectedString = 'selected';
+						}
+					});
+				}
+				return selectedString;
+			});
+
 			Handlebars.registerHelper('versionShowHide', function(versions, id) {
 				var fieldset;
 				if(versions.length > 0){
@@ -442,7 +454,7 @@ define(["features/listener/featuresListener"], function() {
 			self.featuresListener.flagged = 2;
 			self.featuresListener.scrollbarEnable();
 			$('#featureUpdate').on("click", function() {
-				self.checkForLock("featureUpdate", '', function(response) {
+				self.checkForLock("featureUpdate", '', '', function(response) {
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {
 						self.featureUpdatedArray = [];
 						$(".switchOn, .default").each(function(index, currentVal) {

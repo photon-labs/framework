@@ -14,19 +14,24 @@ define(["header/api/headerAPI"], function() {
 			}	
 		},
 		
-		doLogout : function(){
-			var url = location.href;
-			if (commonVariables.customerContext == undefined) {
-				commonVariables.customerContext = '#';
-			}
-			url = url.substr(0, url.lastIndexOf('/')) + "/" + commonVariables.customerContext;
-			this.clearSession();
-			Clazz.navigationController.jQueryContainer = commonVariables.basePlaceholder;
-			this.removePlaceholder();
-			this.headerAPI.localVal.setSession('loggedout', 'true');
-			location.hash = '';
-			commonVariables.customerContext = '';
-			location.href = url;
+		doLogout : function() {
+			var self = this;
+			self.performAction(self.getActionHeader("logout"), function(response) {
+				var url = location.href;
+				if (commonVariables.customerContext == undefined) {
+					commonVariables.customerContext = '#';
+				}
+				url = url.substr(0, url.lastIndexOf('/')) + "/" + commonVariables.customerContext;
+				self.clearSession();
+				Clazz.navigationController.jQueryContainer = commonVariables.basePlaceholder;
+				self.removePlaceholder();
+				self.headerAPI.localVal.setSession('loggedout', 'true');
+				location.hash = '';
+				commonVariables.customerContext = '';
+				location.href = url;
+			});
+			
+			
 		},
 		
 		clearSession : function(){
@@ -259,6 +264,10 @@ define(["header/api/headerAPI"], function() {
 			if (action === "getCustomerTheme") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl+ "customer/theme?userId="+userId+"&customerId="+requestBody.customerId;				
+			}
+			if (action === "logout") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl+ "login/logout";				
 			}
 			return header;
 		},

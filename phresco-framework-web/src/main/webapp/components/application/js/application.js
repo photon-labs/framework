@@ -281,7 +281,7 @@ define(["application/listener/applicationListener"], function() {
 			
 			$("#updatebutton").unbind('click');
 			$("#updatebutton").bind('click', function(){
-				self.checkForLock("applnUpdate", '', function(response){
+				self.checkForLock("applnUpdate", '', '', function(response){
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {
 						self.updateApp.dispatch(self.renderData);
 					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {

@@ -219,10 +219,11 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 	@GET
 	@Path("/checkLock")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response checkForLock(@QueryParam("actionType") String actionType, @QueryParam("appId") String appId) {
+	public Response checkForLock(@QueryParam("actionType") String actionType, @QueryParam("appId") String appId, @QueryParam("subModuleIds") String subModuleIds) {
 		ResponseInfo<CheckLockInfo> responseData = new ResponseInfo<CheckLockInfo>();
 		try {
 			List<String> appIds = StringUtils.isNotEmpty(appId) ? Arrays.asList(appId.split(COMMA)) : new ArrayList<String>();
+			List<String> moduleIds = StringUtils.isNotEmpty(subModuleIds) ? Arrays.asList(subModuleIds.split(COMMA)) : new ArrayList<String>();
 			List<LockDetail> lockDetails = LockUtil.getLockDetails();
 			CheckLockInfo lockInfo = new CheckLockInfo();
 			if (CollectionUtils.isNotEmpty(lockDetails)) {
@@ -262,15 +263,20 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 				}
 				for (LockDetail lockDetail : lockDetails) {
 					if (appIds.contains(lockDetail.getAppId()) && actionTypesToCheck.contains(lockDetail.getActionType())) {
-						lockInfo.setLock(true);
-						lockInfo.setLockedBy(lockDetail.getUserName());
-						lockInfo.setLockedDate(lockDetail.getStartedDate().toString());
-						lockInfo.setLockActionCode(getLockActionCode(lockDetail.getActionType()));
+						lockInfo = setLockInfoResponse(lockDetail, false);
 						ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, lockInfo,
 								RESPONSE_STATUS_SUCCESS, PHR10C00001);
 						return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 								.build();
 					}
+					if (CollectionUtils.isNotEmpty(moduleIds) && moduleIds.contains(lockDetail.getAppId()) && actionTypesToCheck.contains(lockDetail.getActionType())) {
+						lockInfo = setLockInfoResponse(lockDetail, true);
+						ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, lockInfo,
+								RESPONSE_STATUS_SUCCESS, PHR10C00001);
+						return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+								.build();
+					}
+					
 				}
 			}
 		} catch (PhrescoException e) {
@@ -281,6 +287,18 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 		ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, null,
 				RESPONSE_STATUS_SUCCESS, PHR10C00002);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+	}
+
+	private CheckLockInfo setLockInfoResponse(LockDetail lockDetail, boolean isSubModuleLock) {
+		CheckLockInfo lockInfo = new CheckLockInfo();
+		lockInfo.setLock(true);
+		lockInfo.setSubModuleLock(isSubModuleLock);
+		lockInfo.setLockedAppId(lockDetail.getAppId());
+		lockInfo.setLockedBy(lockDetail.getUserName());
+		lockInfo.setLockedDate(lockDetail.getStartedDate().toString());
+		lockInfo.setLockActionCode(getLockActionCode(lockDetail.getActionType()));
+		
+		return lockInfo;
 	}
 
 	private void applnFeatureConfigsUpdateCheck(List<String> actionTypesToCheck) {
