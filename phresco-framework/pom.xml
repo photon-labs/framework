@@ -97,7 +97,7 @@
     <build>
 		<sourceDirectory>${phresco.source.directory}</sourceDirectory>
         <directory>do_not_checkin/target</directory>
-        <finalName>HelloWorld</finalName>
+        <finalName>phresco-framework</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

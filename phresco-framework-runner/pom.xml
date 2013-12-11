@@ -24,7 +24,7 @@
     </distributionManagement>
     
     <build>
-        <finalName>javawebserviceeshop</finalName>
+        <finalName>phresco-framework-runner</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>

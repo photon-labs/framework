@@ -177,7 +177,7 @@
     
     <build>
 		<sourceDirectory>${phresco.source.directory}</sourceDirectory>
-        <finalName>javawebserviceeshop</finalName>
+        <finalName>phresco-framework-impl</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

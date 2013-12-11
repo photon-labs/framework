@@ -1,7 +1,7 @@
 <environments>
     <environment default="true" name="Production">
         <Server name="Server Configuration">
-            <context>javawebserviceeshop</context>
+            <context>phresco-framework</context>
             <admin_username/>
             <deploy_dir>D:/softwares/apache-tomcat-7.0.37-windows-x86/apache-tomcat-7.0.37/webapps/</deploy_dir>
             <additional_context/>
