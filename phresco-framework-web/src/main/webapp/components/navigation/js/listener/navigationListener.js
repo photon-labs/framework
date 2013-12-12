@@ -1046,7 +1046,24 @@ define([], function() {
 					}
 				}
 			}
-			
+			if (!hasError && importType === "tfs") {
+				hasError = self.validateTfsData($('#importRepourl'), $('#importUserName'), $('#importPassword'));
+				if (hasError) {
+					self.showSrcImportTab();
+				}
+				if ($('#importDotPhrescoSrc').is(":checked") && !hasError) {
+					hasError = self.validateTfsData($('#importPhrescoRepourl'), $('#importPhrescoUserName'), $('#importPhrescoPassword'));
+					if (hasError) {
+						self.showDotPhrescoImportTab();
+					}
+				}
+				if ($('#importTestSrc').is(":checked") && !hasError) {
+					hasError = self.validateTfsData($('#importTestRepourl'), $('#importTestUserName'), $('#importTestPassword'));
+					if (hasError) {
+						self.showTestImportTab();
+					}
+				}
+			}
 			callback(hasError);
 		},
 		
@@ -1161,6 +1178,36 @@ define([], function() {
 			return false;
 		},
 		
+		validateTfsData : function(repoUrlObj, userNameObj, pwdObj) {
+			var self = this;
+			
+			userNameObj.removeClass("errormessage");
+			pwdObj.removeClass("errormessage");
+			repoUrlObj.removeClass("errormessage");
+			
+			var repoUrl = repoUrlObj.val();
+			var userName = userNameObj.val().replace(/\s/g, '');
+			var pswd = pwdObj.val();
+			if (repoUrl === "") {
+				self.validateTextBox(repoUrlObj, 'Enter Url');
+				return true;
+			}
+			if(!self.isValidUrl(repoUrl)) {
+				repoUrlObj.val('');
+				self.validateTextBox(repoUrlObj, 'Invalid Repo Url');
+				return true;
+			}
+			if (userName === "") {
+				self.validateTextBox(userNameObj, 'Enter user name');
+				return true;
+			} 
+			if (pswd === "") {
+				self.validateTextBox(pwdObj, 'Enter password');
+				return true;
+			} 
+			return false;
+		},
+		
 		validateTextBox : function (textBoxObj, errormsg) {
 			if(textBoxObj !== "" && errormsg !== "") {
 				textBoxObj.focus();
@@ -1234,6 +1281,13 @@ define([], function() {
 			if ('perforce' === repoType) {
 				repoDetail.stream = $('.stream').val();
 			}
+			
+			if ('tfs' === repoType) {
+			   repoDetail.userName = $("#importUserName").val();
+			   repoDetail.password = $("#importPassword").val();
+			   repoDetail.proName = $('.projName').val();
+			   repoDetail.serverPath = $('.serverpath').val();
+			}
 			return repoDetail;
 		},
 		
@@ -1263,6 +1317,12 @@ define([], function() {
 			if ('perforce' === repoType) {
 				repoDetail.stream = $('.phrescoStream').val();
 			}
+			if ('tfs' === repoType) {
+			   repoDetail.userName = $("#phrescoGitUserName").val();
+			   repoDetail.password = $("#phrescoGitPassword").val();
+			   repoDetail.proName = $('.projName').val();
+			   repoDetail.serverPath = $('.serverpath').val();
+			}
 			return repoDetail;
 		},
 		
@@ -1291,6 +1351,12 @@ define([], function() {
 			
 			if ('perforce' === repoType) {
 				repoDetail.stream = $('.testStream').val();
+			}
+			if ('tfs' === repoType) {
+			   repoDetail.userName = $("#testGitUserName").val();
+			   repoDetail.password = $("#testGitPassword").val();
+			   repoDetail.proName = $('.projName').val();
+			   repoDetail.serverPath = $('.serverpath').val();
 			}
 			return repoDetail;
 		},

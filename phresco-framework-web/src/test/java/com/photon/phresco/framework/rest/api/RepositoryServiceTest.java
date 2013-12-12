@@ -198,6 +198,22 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		Assert.assertEquals(200,importApplication.getStatus());
 	}
 	
+	@Test
+	public void importTfsProjectFromRepo() throws Exception {
+		RepoInfo repoInfo = new RepoInfo();
+		RepoDetail repoDetail = new RepoDetail();
+		repoDetail.setUserName("vivekraja.vasudevan@photoninfotech.com");
+		repoDetail.setPassword("phresco123");
+		repoDetail.setType("tfs");
+		repoDetail.setProName("raj");
+		repoDetail.setServerPath("raj/jsa");
+		repoDetail.setRepoUrl("https://vivekraja.visualstudio.com/DefaultCollection");
+		repoInfo.setSrcRepoDetail(repoDetail);
+		Response importApplication = repositoryservice.importApplication(repoInfo, "Admin");
+		Assert.assertEquals(200,importApplication.getStatus());
+		Assert.assertEquals(true, true);
+	}
+	
 	private RepoInfo getSvnRepoInfo() {
 		RepoInfo repoInfo = new RepoInfo();
 

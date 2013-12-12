@@ -26,6 +26,7 @@
 												<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 												<option value="git" data-i18n="projectlist.label.git"></option>
 			                                    <option value="perforce" data-i18n="projectlist.label.perforce"></option>
+												<option value="tfs" data-i18n="projectlist.label.tfs"></option>
 			                            	</select>
                             			</td>
                             			<td><input type="text" id="importRepourl" data-i18n="[placeholder]navigation.application.apprepourl"></td>
@@ -42,7 +43,7 @@
 			                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="importUserName"></td>
 			                            <td><input type="password" placeholder="*******" id="importPassword"></td>
 			                        </tr>
-			                        <tr class="svndata">
+			                        <tr class="svndata svnheadopt">
 			                        	<td>
 			                        		<input type="radio" name="headoption" value="HEAD" checked>
 			                        		<span data-i18n="projectlist.label.headrevision"></span>
@@ -73,6 +74,14 @@
                                 	<tr class="perforcedata">    
                                     	<td><input name="stream" type="text" class="stream"></td>
                                 	</tr>
+									<tr class="tfsdata">
+										<td><span name="branch" value="proName">Project Name</laspanbel></td>
+										<td><span name="branch" value="serverPath">Server Path</span></td>
+									</tr>
+									<tr class="tfsdata">	
+										<td><input name="proName" type="text" class="projname" id="projcName"></td>
+										<td><input name="serverPath" type="text" class="serverpath" id="servPath"></td>
+									</tr>
                             	</tbody>
                          	</table>
 						</div>
@@ -90,6 +99,7 @@
 												<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 												<option value="git" data-i18n="projectlist.label.git"></option>
 			                                    <option value="perforce" data-i18n="projectlist.label.perforce"></option>
+												<option value="tfs" data-i18n="projectlist.label.tfs"></option>
 			                            	</select>
                             			</td>
                             			<td><input type="text" id="importPhrescoRepourl" data-i18n="[placeholder]navigation.application.phrescorepourl"></td>
@@ -106,7 +116,7 @@
 			                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="importPhrescoUserName"></td>
 			                            <td><input type="password" placeholder="*******" id="importPhrescoPassword"></td>
 			                        </tr>
-			                        <tr class="svndata">
+			                        <tr class="svndata svnheadopt">
 			                        	<td>
 			                        		<input type="radio" name="phrescoHeadoption" value="HEAD" checked>
 			                        		<span data-i18n="projectlist.label.headrevision"></span>
@@ -137,6 +147,14 @@
                                 	<tr class="perforcedata">    
                                     	<td><input name="phrescoStream" type="text" class="phrescoStream"></td>
                                 	</tr>
+									<tr class="tfsdata">
+										<td><span name="branch" value="proName">Project Name</laspanbel></td>
+										<td><span name="branch" value="serverPath">Server Path</span></td>
+									</tr>
+									<tr class="tfsdata">	
+										<td><input name="proName" type="text" class="projname" id="projcName"></td>
+										<td><input name="serverPath" type="text" class="serverpath" id="servPath"></td>
+									</tr>
                             	</tbody>
                          	</table>
 						</div>
@@ -154,6 +172,7 @@
 												<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 												<option value="git" data-i18n="projectlist.label.git"></option>
 			                                    <option value="perforce" data-i18n="projectlist.label.perforce"></option>
+												<option value="tfs" data-i18n="projectlist.label.tfs"></option>
 			                            	</select>
                             			</td>
                             			<td><input type="text" id="importTestRepourl" data-i18n="[placeholder]navigation.application.apprepourl"></td>
@@ -170,7 +189,7 @@
 			                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="importTestUserName"></td>
 			                            <td><input type="password" placeholder="*******" id="importTestPassword"></td>
 			                        </tr>
-			                        <tr class="svndata">
+			                        <tr class="svndata svnheadopt">
 			                        	<td>
 			                        		<input type="radio" name="testHeadoption" value="HEAD" checked>
 			                        		<span data-i18n="projectlist.label.headrevision"></span>
@@ -201,6 +220,14 @@
                                 	<tr class="perforcedata">    
                                     	<td><input name="testStream" type="text" class="testStream"></td>
                                 	</tr>
+									<tr class="tfsdata">
+										<td><span name="branch" value="proName">Project Name</laspanbel></td>
+										<td><span name="branch" value="serverPath">Server Path</span></td>
+									</tr>
+									<tr class="tfsdata">	
+										<td><input name="proName" type="text" class="projname" id="projcName"></td>
+										<td><input name="serverPath" type="text" class="serverpath" id="servPath"></td>
+									</tr>
                             	</tbody>
                          	</table>
 						</div>

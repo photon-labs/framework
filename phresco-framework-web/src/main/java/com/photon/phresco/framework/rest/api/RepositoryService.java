@@ -432,6 +432,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			try {
 				LockUtil.removeLock(unique_key);
 			} catch (PhrescoException e) {
+				
 			}
 		}
 	}
@@ -674,8 +675,54 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			} catch (PhrescoException e) {
 			}
 		}
+	}
 	
-			
+	private Response importTfsApplication(String type, RepoInfo repodetail, String displayName) throws Exception {
+		SCMManagerImpl scmi = new SCMManagerImpl();
+		ResponseInfo responseData = new ResponseInfo();
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		try {
+			ApplicationInfo importProject = scmi.importProject(repodetail, displayName, unique_key);
+			if (importProject != null) {
+				status = RESPONSE_STATUS_SUCCESS;
+				successCode = PHR200017;
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+						.build();
+			} else {
+				status = RESPONSE_STATUS_FAILURE;
+				errorCode = PHR210022;
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
+						"*").build();
+			}
+		} catch (Exception e) {
+			if (PROJECT_ALREADY_IMPORTED.equals(e.getLocalizedMessage())) {
+				status = RESPONSE_STATUS_FAILURE;
+				errorCode = PHR210027;
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
+						"*").build();
+			} else if ("Failed to import project".equals(e.getLocalizedMessage())) {
+				status = RESPONSE_STATUS_ERROR;
+				errorCode = PHR210026;
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
+						"*").build();
+			} else {
+				status = RESPONSE_STATUS_ERROR;
+				errorCode = PHR210026;
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
+						"*").build();
+			}
+		} finally {
+			try {
+				LockUtil.removeLock(unique_key);
+			} catch (PhrescoException e) {
+			}
+		}
 	}
 	
 	/**

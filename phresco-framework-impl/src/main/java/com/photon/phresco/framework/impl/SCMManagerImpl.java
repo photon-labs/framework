@@ -103,6 +103,24 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
 import com.google.gson.Gson;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
+import com.microsoft.tfs.core.TFSTeamProjectCollection;
+import com.microsoft.tfs.core.clients.versioncontrol.GetOptions;
+import com.microsoft.tfs.core.clients.versioncontrol.VersionControlClient;
+import com.microsoft.tfs.core.clients.versioncontrol.WorkspaceLocation;
+import com.microsoft.tfs.core.clients.versioncontrol.WorkspacePermissionProfile;
+import com.microsoft.tfs.core.clients.versioncontrol.path.LocalPath;
+import com.microsoft.tfs.core.clients.versioncontrol.soapextensions.GetRequest;
+import com.microsoft.tfs.core.clients.versioncontrol.soapextensions.RecursionType;
+import com.microsoft.tfs.core.clients.versioncontrol.soapextensions.WorkingFolder;
+import com.microsoft.tfs.core.clients.versioncontrol.soapextensions.Workspace;
+import com.microsoft.tfs.core.clients.versioncontrol.specs.ItemSpec;
+import com.microsoft.tfs.core.clients.versioncontrol.specs.version.LatestVersionSpec;
+import com.microsoft.tfs.core.clients.workitem.project.ProjectCollection;
+import com.microsoft.tfs.core.httpclient.Credentials;
+import com.microsoft.tfs.core.httpclient.DefaultNTCredentials;
+import com.microsoft.tfs.core.httpclient.UsernamePasswordCredentials;
+import com.microsoft.tfs.core.util.CredentialsUtils;
+import com.microsoft.tfs.core.util.URIUtils;
 import com.perforce.p4java.client.IClient;
 import com.perforce.p4java.core.file.FileSpecBuilder;
 import com.perforce.p4java.core.file.FileSpecOpStatus;
@@ -140,6 +158,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 	private static final Logger S_LOGGER = Logger.getLogger(SCMManagerImpl.class);
 	private static Boolean debugEnabled = S_LOGGER.isDebugEnabled();
+	public static String HTTP_PROXY_URL = "";
 	boolean dotphresco ;
 	SVNClientManager cm = null;
 
@@ -147,12 +166,14 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importProject()");
 		}
+	
 		ApplicationInfo applicaionInfo = null;
 		if(repoInfo.isSplitPhresco()) {
 			applicaionInfo = validatePhrescoProject(repoInfo.getPhrescoRepoDetail());
 		} else {
 			applicaionInfo = validatePhrescoProject(repoInfo.getSrcRepoDetail());
 		}
+		
 		if(applicaionInfo != null) {
 			RepoDetail srcRepoDetail = repoInfo.getSrcRepoDetail();
 			if (SVN.equals(srcRepoDetail.getType())) {
@@ -210,8 +231,15 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				importFromPerforce(srcRepoDetail, tempFile);
 				String workDirPath = workDirPath(repoInfo, applicaionInfo);
 				importToWorkspace(tempFile, new File(workDirPath));
+			} else if (TFS.equals(srcRepoDetail.getType())){
+				String uuid = UUID.randomUUID().toString();
+				File tfsImportTemp = new File(Utility.getPhrescoTemp(), uuid);
+				importFromTfs(srcRepoDetail, tfsImportTemp);
+				String workDirPath = workDirPath(repoInfo, applicaionInfo);
+				importToWorkspace(tfsImportTemp, new File(workDirPath));
 			}
 		}
+		
 		return applicaionInfo;
 	}
 	
@@ -255,6 +283,11 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			String uuid = UUID.randomUUID().toString();
 			File bkImportTemp = new File(Utility.getPhrescoTemp(), uuid);
 			appInfo = importFromPerforce(phrescoRepoDetail, bkImportTemp);
+		}
+		if (phrescoRepoDetail.getType().equals(TFS)) {
+			String uuid = UUID.randomUUID().toString();
+			File tfsTemp = new File(Utility.getPhrescoTemp(), uuid);
+			appInfo = importFromTfs(phrescoRepoDetail, tfsTemp);
 		}
 		return appInfo;
 	}
@@ -403,6 +436,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				}
 				throw new PhrescoException(PROJECT_ALREADY);
 			}
+
 			if(debugEnabled){
 				S_LOGGER.debug("Copyin from Temp to workspace...");
 				S_LOGGER.debug("gitImportTemp " + gitImportTemp);
@@ -425,6 +459,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method SCMManagerImpl.updateSCMConnection()");
 		}
+		
 		try {
 			PomProcessor processor = getPomProcessor(appInfo);
 				if(debugEnabled){
@@ -441,6 +476,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.error("Entering catch block of updateSCMConnection()"+ e.getLocalizedMessage());
 			}
+			
 			throw new PhrescoException(POM_URL_FAIL);
 		}
 	}
@@ -500,6 +536,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		if(phrescoRepoDetail.getType().equals(BITKEEPER)) {
 			pomFile = getPomFromBitkeeper(applicationInfo, phrescoRepoDetail, pomFileName);
 		}
+		
 		return pomFile;
 	}
 	
@@ -672,6 +709,109 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 		return true;
 	}
+	
+	private ApplicationInfo importFromTfs(RepoDetail repodetail, File tfsImportTemp) throws Exception {
+		if(debugEnabled){
+			S_LOGGER.debug("Entering Method  SCMManagerImpl.importFromTfs()");
+		}
+		
+		//System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:/builds/TFS/TFS-SDK-11.0.0/redist/native"); 
+		String collectionUrl = repodetail.getRepoUrl();
+		String userName = repodetail.getUserName();
+		String password = repodetail.getPassword();
+		String proName = repodetail.getProName();
+		String serverPath = "$/" +repodetail.getServerPath();
+		String localPath = tfsImportTemp.getAbsolutePath();
+		
+		final TFSTeamProjectCollection tpc = connectToTFS(userName, password, collectionUrl  );
+		ProjectCollection projects = tpc.getWorkItemClient().getProjects();
+		VersionControlClient client = tpc.getVersionControlClient();
+		final Workspace workspace = createAndMapWorkspace(tpc, localPath, serverPath);
+		addGetEventListeners(tpc);
+		getLatest(workspace, localPath);
+		ProjectInfo projectInfo = getGitAppInfo(tfsImportTemp);
+		
+		return returnAppInfo(projectInfo);
+	}
+	
+	private static Workspace createAndMapWorkspace(final TFSTeamProjectCollection tpc,String localPath, String serverPath) {
+		final String workspaceName = "SampleVCWorkspace" + System.currentTimeMillis();
+		Workspace workspace = null;
+
+		// Get the workspace
+		workspace = tpc.getVersionControlClient().tryGetWorkspace(localPath);
+		// Create and map the workspace if it does not exist
+		if (workspace == null) {
+			workspace = tpc.getVersionControlClient().createWorkspace(null, workspaceName, "Sample workspace comment", WorkspaceLocation.SERVER,
+					null, WorkspacePermissionProfile.getPrivateProfile());
+
+			// Map the workspace
+			WorkingFolder workingFolder = new WorkingFolder(serverPath, LocalPath.canonicalize(localPath));
+			workspace.createWorkingFolder(workingFolder);
+		}
+
+		return workspace;
+	}
+	
+	public static void addGetEventListeners(final TFSTeamProjectCollection tpc) {
+		// Adding a get operation started event listener, this is fired once per
+		// get call
+		SampleGetOperationStartedListener getOperationStartedListener = new SampleGetOperationStartedListener();
+		tpc.getVersionControlClient().getEventEngine().addOperationStartedListener(getOperationStartedListener);
+
+		// Adding a get event listener, this fired once per get operation(which
+		// might be multiple times per get call)
+		SampleGetEventListener getListener = new SampleGetEventListener();
+		tpc.getVersionControlClient().getEventEngine().addGetListener(getListener);
+
+		// Adding a get operation completed event listener, this is fired once
+		// per get call
+		SampleGetOperationCompletedListener getOperationCompletedListener = new SampleGetOperationCompletedListener();
+		tpc.getVersionControlClient().getEventEngine().addOperationCompletedListener(getOperationCompletedListener);
+	}
+
+	public static void getLatest(final Workspace workspace, String localPath) {
+		ItemSpec spec = new ItemSpec(localPath, RecursionType.FULL);
+		GetRequest request = new GetRequest(spec, LatestVersionSpec.INSTANCE);
+		workspace.get(request, GetOptions.NONE);
+	}
+	
+	 public static TFSTeamProjectCollection connectToTFS(String userName, String password, String collectionUrl ) {
+	        TFSTeamProjectCollection tpc = null;
+	        Credentials credentials;
+
+	        // In case no username is provided and the current platform supports
+	        // default credentials, use default credentials
+	        if ((userName == null || userName.length() == 0) && CredentialsUtils.supportsDefaultCredentials())
+	        {
+	            credentials = new DefaultNTCredentials();
+	        }
+	        else
+	        {
+	            credentials = new UsernamePasswordCredentials(userName, password);
+	        }
+	        URI httpProxyURI = null;
+
+	        if (HTTP_PROXY_URL != null && HTTP_PROXY_URL.length() > 0)
+	        {
+	            try
+	            {
+	                httpProxyURI = new URI(HTTP_PROXY_URL);
+	            }
+	            catch (URISyntaxException e)
+	            {
+	                // Do Nothing
+	            }
+	        }
+
+	        ConsoleSamplesConnectionAdvisor connectionAdvisor = new ConsoleSamplesConnectionAdvisor(httpProxyURI);
+
+	        tpc = new TFSTeamProjectCollection(URIUtils.newURI(collectionUrl), credentials, connectionAdvisor);
+
+	        return tpc;
+	    }
+
+
 
 	private void importFromGit(RepoDetail repodetail, File gitImportTemp)throws Exception {
 		if(debugEnabled){
@@ -901,6 +1041,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.getGitAppInfo()");
 		}
+		
 		BufferedReader reader = null;
 		try {
 			File dotProjectFile = new File(directory, FOLDER_DOT_PHRESCO+ File.separator + PROJECT_INFO);
@@ -1884,6 +2025,13 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			importFromPerforce(testRepoDetail, tempFile);
 			importToWorkspace(tempFile, new File(builder.toString()));
 		}
+		if (type.equals(TFS)) {
+			String uuid = UUID.randomUUID().toString();
+			File tempFile = new File(Utility.getPhrescoTemp(), uuid);
+			FileUtils.forceMkdir(tempFile);
+			importFromTfs(testRepoDetail, tempFile);
+			importToWorkspace(tempFile, new File(builder.toString()));
+		}
 	}
 
 	@Override
@@ -1918,6 +2066,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			String uuid = UUID.randomUUID().toString();
 			File tempFile = new File(Utility.getPhrescoTemp(), uuid);
 			importFromPerforce(phrescoRepoDetail, tempFile);
+			importToWorkspace(tempFile, new File(builder.toString()));
+		}
+		if(type.equals(TFS)) {
+			String uuid = UUID.randomUUID().toString();
+			File tempFile = new File(Utility.getPhrescoTemp(), uuid);
+			importFromTfs(phrescoRepoDetail, tempFile);
 			importToWorkspace(tempFile, new File(builder.toString()));
 		}
 	}

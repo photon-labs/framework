@@ -33,6 +33,8 @@ public class RepoDetail implements Serializable {
 	private String branch;
 	private String passPhrase;
 	private String stream;
+	private String proName;
+	private String serverPath; 
 	
 	private boolean repoExist;
 
@@ -42,7 +44,7 @@ public class RepoDetail implements Serializable {
 	
 	public RepoDetail(String revision, String repoUrl, String userName, String password, String revisionVal, String commitMessage,
 			List<String> commitableFiles, List<RepoFileInfo> repoInfoFile, String type, boolean testCheckOut, String testRepoUrl,
-			String testUserName, String testPassword, String testRevision, boolean repoExist,String stream) {
+			String testUserName, String testPassword, String testRevision, boolean repoExist, String stream, String proName, String serverPath) {
 		super();
 		this.revision = revision;
 		this.repoUrl = repoUrl;
@@ -60,7 +62,8 @@ public class RepoDetail implements Serializable {
 		this.testRevision = testRevision;
 		this.repoExist = repoExist;
 		this.stream = stream;
-
+        this.proName = proName;
+        this.serverPath = serverPath;
 	}
 
 	public String getRevision() {
@@ -215,6 +218,22 @@ public class RepoDetail implements Serializable {
 		return stream;
 	}
 
+	public String getProName() {
+		return proName;
+	}
+
+	public void setProName(String proName) {
+		this.proName = proName;
+	}
+
+	public String getServerPath() {
+		return serverPath;
+	}
+
+	public void setServerPath(String serverPath) {
+		this.serverPath = serverPath;
+	}
+
 	public String toString() {
 		 return new ToStringBuilder(this,
 	                ToStringStyle.DEFAULT_STYLE)
@@ -229,6 +248,9 @@ public class RepoDetail implements Serializable {
 	                .append("type", getType())
 	                .append("repoInfoFile", getRepoInfoFile())
 	                .append("repoExist", isRepoExist())
+	                .append("stream", getStream())
+	                .append("proName", getProName())
+	                .append("serverPath", getServerPath())
 	                .toString();
 	}
 }

@@ -418,6 +418,7 @@
 			"bitkeeper" : "Bitkeeper",
 			"git" : "GIT",
 			"perforce" : "Perforce",
+			"tfs" : "TFS",
 			"addrepo" : "Add To Repo",
 			"commit" : "Commit",
 			"headrevision" : "Head Revision",

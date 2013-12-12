@@ -245,6 +245,7 @@ public interface FrameworkConstants {
     String ADD_TO_REPO = "addToRepo";
     String TEST_REPO_URL = "testRepoUrl";
     String PROJECT_UPDATE_POPUP = "projectUpdatePopup";
+    String PROJECT_ALREADY_IMPORTED = "Project already imported";
     String CLONED_WORKSPACE = "clonedWorkspace";
 	String CI_SCM = "scm";
 	String CLONE_WORKSPACE_SCM = "hudson.plugins.cloneworkspace.CloneWorkspaceSCM";
@@ -284,6 +285,7 @@ public interface FrameworkConstants {
     String GIT = "git";
     String BITKEEPER = "bitkeeper";
     String PERFORCE = "perforce";
+    String TFS = "tfs";
     String REPO_TYPE = "repoType";
     String REPO = "repo";
     String IS_NOT_WORKING_COPY = "is not a working copy";

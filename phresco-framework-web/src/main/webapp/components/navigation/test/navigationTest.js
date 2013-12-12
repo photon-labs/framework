@@ -927,6 +927,307 @@ define(["navigation/navigation"], function() {
 				setTimeout(function() {
 					equal($("#project_list_import").css("display"), "none", "Import bitkeeper project tested");
 					start();
+					self.importTypeChangeToTfsEveTest();
+				}, 1500);
+			});
+		},
+		
+		importTypeChangeToTfsEveTest : function() {
+			var self = this;
+			asyncTest("Import Application - Import type change to tfs event test", function() {
+				$("#importApp").click();
+				$("#importType").val("tfs");
+				$("#importType").change();
+				setTimeout(function() {
+					var svnDataDisplay = $(".svndata").css("display");
+					equal(svnDataDisplay, "table-row", "Import SVN data shown");
+					var svnDataOptDisplay = $(".svnheadopt").css("display");
+					equal(svnDataOptDisplay, "none", "Import SVN data hided");
+					var perforceDataDisplay = $(".perforcedata").css("display");
+					equal(perforceDataDisplay, "none", "Import Perforce data hidded");
+					var importCredentialDisplay = $(".importCredential").css("display");
+					equal(importCredentialDisplay, "none", "Import credential check box hidded");
+					var gitDataDisplay = $(".gitdata").css("display");
+					equal(gitDataDisplay, "none", "Import Git data shown");
+					var tfsDataDisplay = $(".tfsdata").css("display");
+					equal(tfsDataDisplay, "table-row", "Import tfs data shown");
+					start();
+					self.tfsRepoUrlValidation();
+				}, 1500);
+			});
+		},
+		
+		
+		tfsRepoUrlValidation : function() {
+			var self = this;
+			asyncTest("Import Application - Import tfs repo url empty validation test", function() {
+				$('#importRepourl').val("");
+				$("input[name='importbtn']").click();
+				setTimeout(function() {
+					var errMsg = $('#importRepourl').attr('placeholder');
+					equal(errMsg, "Enter Url", "Import tfs repo url empty validation tested");
+					start();
+					self.tfsInvalidRepoUrlValidation();
+				}, 1500);
+			});
+		},
+		
+		tfsInvalidRepoUrlValidation : function() {
+			var self = this;
+			asyncTest("Import Application - Import tfs invalid repo url validation test", function() {
+				$('#importRepourl').val("sample url");
+				$("input[name='importbtn']").click();
+				setTimeout(function() {
+					var errMsg = $('#importRepourl').attr('placeholder');
+					equal(errMsg, "Invalid Repo Url", "Import tfs invalid repo url validation tested");
+					start();
+					self.tfsUserNameValidation();
+				}, 1500);
+			});
+		},
+		
+		tfsUserNameValidation : function() {
+			var self = this;
+			asyncTest("Import Application - Import tfs user name empty validation test", function() {
+				$('#importRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importUserName').val("");
+				$("input[name='importbtn']").click();
+				setTimeout(function() {
+					var errMsg = $('#importUserName').attr('placeholder');
+					equal(errMsg, "Enter user name", "Import tfs user name empty validation tested");
+					start();
+					self.tfsPwdValidation();
+				}, 1500);
+			});
+		},
+		
+		tfsPwdValidation : function() {
+			var self = this;
+			asyncTest("Import Application - Import tfs password empty validation test", function() {
+				$('#importRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importUserName').val("admin");
+				$('#importPassword').val("");
+				$("input[name='importbtn']").click();
+				setTimeout(function() {
+					var errMsg = $('#importPassword').attr('placeholder');
+					equal(errMsg, "Enter password", "Import tfs password empty validation tested");
+					start();
+					self.importTfsDotPhrescoCheckEventTest();
+				}, 1500);
+			});
+		},
+		
+		importTfsDotPhrescoCheckEventTest : function() {
+			var self = this;
+			asyncTest("Import Application - Import Tfs .phresco check event test", function() {
+				$("#importDotPhrescoSrc").attr("checked", false);
+				$("#importDotPhrescoSrc").click();
+				setTimeout(function() {
+					var hasClass = $("#importDotphresco").hasClass("active in");
+					equal(hasClass, true, "Import Tfs .phresco check event tested");
+					start();
+					self.tfsPhrescoRepoUrlValidation();
+				}, 1500);
+			});
+		},
+		
+		tfsPhrescoRepoUrlValidation : function() {
+			var self = this;
+			asyncTest("Import Application - Import Tfs Phresco repo url empty validation test", function() {
+				$('#importRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importUserName').val("admin");
+				$('#importPassword').val("manage");
+				$('#importPhrescoRepourl').val("");
+				$("input[name='importbtn']").click();
+				setTimeout(function() {
+					var errMsg = $('#importPhrescoRepourl').attr('placeholder');
+					equal(errMsg, "Enter Url", "Import tfs Phresco repo url empty validation tested");
+					start();
+					self.tfsPhrescoInvalidRepoUrlValidation();
+				}, 1500);
+			});
+		},
+		
+		tfsPhrescoInvalidRepoUrlValidation : function() {
+			var self = this;
+			asyncTest("Import Application - Import tfs Phresco invalid repo url validation test", function() {
+				$('#importRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importUserName').val("admin");
+				$('#importPassword').val("manage");
+				$('#importPhrescoRepourl').val("sample phresco repo url");
+				$("input[name='importbtn']").click();
+				setTimeout(function() {
+					var errMsg = $('#importPhrescoRepourl').attr('placeholder');
+					equal(errMsg, "Invalid Repo Url", "Import tfs Phresco invalid repo url validation tested");
+					start();
+					self.tfsPhrescoUserNameValidation();
+				}, 1500);
+			});
+		},
+		
+		tfsPhrescoUserNameValidation : function() {
+			var self = this;
+			asyncTest("Import Application - Import tfs user name empty validation test", function() {
+				$('#importRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importUserName').val("admin");
+				$('#importPassword').val("manage");
+				$('#importPhrescoRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importPhrescoUserName').val("");
+				$("input[name='importbtn']").click();
+				setTimeout(function() {
+					var errMsg = $('#importPhrescoUserName').attr('placeholder');
+					equal(errMsg, "Enter user name", "Import tfs user name empty validation tested");
+					start();
+					self.tfsPhrescoPwdValidation();
+				}, 1500);
+			});
+		},
+		
+		tfsPhrescoPwdValidation : function() {
+			var self = this;
+			asyncTest("Import Application - Import tfs password empty validation test", function() {
+				$('#importRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importUserName').val("admin");
+				$('#importPassword').val("manage");
+				$('#importPhrescoRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importPhrescoUserName').val("admin");
+				$('#importPhrescoPassword').val("");
+				$("input[name='importbtn']").click();
+				setTimeout(function() {
+					var errMsg = $('#importPhrescoPassword').attr('placeholder');
+					equal(errMsg, "Enter password", "Import tfs password empty validation tested");
+					start();
+					self.importTfsTestCheckEventTest();
+				}, 1500);
+			});
+		},
+		
+		importTfsTestCheckEventTest : function() {
+			var self = this;
+			asyncTest("Import Application - Import Tfs test check event test", function() {
+				$("#importTestSrc").attr("checked", false);
+				$("#importTestSrc").click();
+				setTimeout(function() {
+					var hasClass = $("#importTest").hasClass("active in");
+					equal(hasClass, true, "Import test check event tested");
+					start();
+					self.tfsTestRepoUrlValidation();
+				}, 1500);
+			});
+		},
+		
+		tfsTestRepoUrlValidation : function() {
+			var self = this;
+			asyncTest("Import Application - Import tfs test repo url empty validation test", function() {
+				$('#importRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importUserName').val("admin");
+				$('#importPassword').val("manage");
+				$('#importPhrescoRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importPhrescoUserName').val("admin");
+				$('#importPhrescoPassword').val("manage");
+				$('#importTestRepourl').val("");
+				$("input[name='importbtn']").click();
+				setTimeout(function() {
+					var errMsg = $('#importTestRepourl').attr('placeholder');
+					equal(errMsg, "Enter Url", "Import tfs test repo url empty validation tested");
+					start();
+					self.tfsTestInvalidRepoUrlValidation();
+				}, 1500);
+			});
+		},
+		
+		tfsTestInvalidRepoUrlValidation : function() {
+			var self = this;
+			asyncTest("Import Application - Import tfs test invalid repo url validation test", function() {
+				$('#importRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importUserName').val("admin");
+				$('#importPassword').val("manage");
+				$('#importPhrescoRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importPhrescoUserName').val("admin");
+				$('#importPhrescoPassword').val("manage");
+				$('#importTestRepourl').val("sample test repo url");
+				$("input[name='importbtn']").click();
+				setTimeout(function() {
+					var errMsg = $('#importTestRepourl').attr('placeholder');
+					equal(errMsg, "Invalid Repo Url", "Import tfs test invalid repo url validation tested");
+					start();
+					self.tfsTestUserNameValidation();
+				}, 1500);
+			});
+		},
+		
+		tfsTestUserNameValidation : function() {
+			var self = this;
+			asyncTest("Import Application - Import tfs user name empty validation test", function() {
+				$('#importRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importUserName').val("admin");
+				$('#importPassword').val("manage");
+				$('#importPhrescoRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importPhrescoUserName').val("admin");
+				$('#importPhrescoPassword').val("manage");
+				$('#importTestRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importTestUserName').val("");
+				$("input[name='importbtn']").click();
+				setTimeout(function() {
+					var errMsg = $('#importTestUserName').attr('placeholder');
+					equal(errMsg, "Enter user name", "Import tfs user name empty validation tested");
+					start();
+					self.tfsTestPwdValidation();
+				}, 1500);
+			});
+		},
+		
+		tfsTestPwdValidation : function() {
+			var self = this;
+			asyncTest("Import Application - Import tfs password empty validation test", function() {
+				$('#importRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importUserName').val("admin");
+				$('#importPassword').val("manage");
+				$('#importPhrescoRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importPhrescoUserName').val("admin");
+				$('#importPhrescoPassword').val("manage");
+				$('#importTestRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importTestUserName').val("admin");
+				$('#importTestPassword').val("");
+				$("input[name='importbtn']").click();
+				setTimeout(function() {
+					var errMsg = $('#importTestPassword').attr('placeholder');
+					equal(errMsg, "Enter password", "Import tfs password empty validation tested");
+					start();
+					self.tfsImportTest();
+				}, 1500);
+			});
+		},
+		
+		tfsImportTest : function() {
+			var self = this;
+			asyncTest("Import Application - Import tfs project test", function() {
+				$.mockjax({
+					url: commonVariables.webserviceurl+"repository/importApplication?displayName=Admin",
+					type: "POST",
+					dataType: "json",
+					contentType: "application/json",
+					status: 200,
+					response : function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200017","data":null,"status":"success"});
+					}
+				});
+				
+				$('#importRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importUserName').val("vivekraja.vasudevan@photoninfotech.com");
+				$('#importPassword').val("phresco123");
+				$('#projcName').val("raj");
+				$('#servPath').val("raj/jsa");
+				$('#importPhrescoRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importPhrescoUserName').val("vivekraja.vasudevan@photoninfotech.com");
+				$('#importPhrescoPassword').val("phresco123");
+				$('#importTestRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
+				$('#importTestUserName').val("vivekraja.vasudevan@photoninfotech.com");
+				$('#importTestPassword').val("phresco123");
+				$("input[name='importbtn']").click();
+				setTimeout(function() {
+					equal($("#project_list_import").css("display"), "none", "Import TFS project tested");
+					start();
 					self.importCredentialCheckEveTest();
 				}, 1500);
 			});

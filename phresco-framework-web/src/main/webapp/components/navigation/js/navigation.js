@@ -295,6 +295,7 @@ define(["navigation/listener/navigationListener"], function() {
 				$(".svndata").hide();
 				$(".perforcedata").hide();
 				$(".importCredential").hide();
+				$(".tfsdata").hide();
 				$(".gitdata").show();
 			}
 			if (importType === "svn") {
@@ -302,12 +303,14 @@ define(["navigation/listener/navigationListener"], function() {
 				$(".importCredential").show();
 				$(".gitdata").hide();
 				$(".perforcedata").hide();
+				$(".tfsdata").hide();
 			}
 			if (importType === "perforce") {
 				$(".perforcedata").show();
 				$(".svndata").hide();
 				$(".gitdata").hide();
 				$(".importCredential").hide();
+				$(".tfsdata").hide();
 				$(".bitkeeperdata").show();
 			}
 			if (importType === "bitkeeper") {
@@ -315,7 +318,22 @@ define(["navigation/listener/navigationListener"], function() {
 				$(".gitdata").hide();
 				$(".perforcedata").hide();
 				$(".importCredential").hide();
+				$(".tfsdata").hide();
 				$(".bitkeeperdata").show();
+			}
+			if (importType === "tfs") {
+			    $('#importUserName').removeAttr('disabled','disabled');
+				$('#importPassword').removeAttr('disabled','disabled');
+				$('#importUserName').removeAttr('readonly','readonly');
+				$('#importPassword').removeAttr('readonly','readonly');
+				$('#importUserName').val('');
+				$('#importPassword').val('');
+				$(".svndata").show();
+				$(".gitdata").hide();
+				$(".perforcedata").hide();
+				$(".importCredential").hide();
+				$(".svnheadopt").hide();
+				$(".tfsdata").show();
 			}
 		}
 	});
