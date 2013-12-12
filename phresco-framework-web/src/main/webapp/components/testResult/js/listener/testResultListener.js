@@ -191,6 +191,8 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			pie2.Set('chart.gutter.left', 45);
 			pie2.Set('chart.colors', ['orange', 'red', '#6f6']);
 			pie2.Set('chart.key', keyData);
+			pie2.Set('chart.key.position.x', 450);
+			pie2.Set('chart.key.position.y', 80);
 			pie2.Set('chart.key.background', 'white');
 			pie2.Set('chart.strokestyle', 'white');
 			pie2.Set('chart.linewidth', 3);

@@ -12,6 +12,9 @@ define([], function() {
 		deleteJobTemplate : null,
 		configureJob : null, // configuring the CI job
 		ciRequestBody : {},
+		previousLiObj : null,
+		nextLiObj : null,
+		nextJob : null,
 
 		/***
 		 * Called in initialization time of this class 
@@ -2129,7 +2132,7 @@ define([], function() {
 		},
 		
 		sortableTwoChange : function(ui) {
-			var itemText = $(ui.item).find('span').text();
+			var self = this, itemText = $(ui.item).find('span').text();
 			var anchorElem = $(ui.item).find('a');
 			var templateJsonData = $(anchorElem).data("templateJson");
 			var appName = $(anchorElem).attr("appname");
@@ -2145,14 +2148,48 @@ define([], function() {
 					$(".error").hide();
 				},2500);
 			}
+			self.previousLiObj = $(ui.item).prev();
+			self.nextLiObj = $(ui.item).next()
 		},
 		
 		sortableTwohold : function(obj){
 			var self = this;
 			self.downStreamCriteria();
 			self.lastChild();
+			var id = $(obj.item).find('a').attr('id');
+			var prevLis = $('#sortable2').find('a[id='+id+']').closest('li').prevAll();
+			var appName = $('#sortable2').find('a[id='+id+']').attr('appDirName');
+			var templateJson = $(obj.item).find('a').data("templateJson");
+			var sortable2Len = $('#sortable2 > li').length;
+			
+			var firstLi = $('#sortable2 > li:first-child');
+			var anchorElem = $(firstLi).find('a');
+			var templateJsonData = $(anchorElem).data("templateJson");
+			
+			var currentAppName = $(obj.item).find('a').attr('appDirName');
+			if (sortable2Len > 1 && prevLis.length === 0 && !templateJson.enableRepo) {
+				var currentObj = $(obj.item);
+				 self.previousLiObj.after($(obj.item));
+				 $(".msgdisplay").removeClass("success").addClass("error");
+					$(".error").text(templateJson.name + " job Doesn't have the Repo!");
+					$(".error").show();
+					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+					setTimeout(function() {
+						$(".error").hide();
+					},2500);
+			} else if(prevLis.length !== 0 && !templateJsonData.enableRepo) {
+				 self.nextLiObj.before($(obj.item));
+				 $(".msgdisplay").removeClass("success").addClass("error");
+					$(".error").text("DownStream Job of "+ templateJson.name + " job Doesn't have the Repo!");
+					$(".error").show();
+					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+					setTimeout(function() {
+						$(".error").hide();
+					},2500);
+			}
+			
 		},
-
+		
 		dragDrop : function(){
 			$('.connectedSortable').sortable({
 				connectWith: '.connectedSortable',

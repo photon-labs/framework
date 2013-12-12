@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 
 import com.itextpdf.text.pdf.PdfCopy;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ArtifactElement;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.exception.PhrescoException;
@@ -98,6 +99,10 @@ public class DocumentGeneratorImpl implements DocumentGenerator {
 //			}
             
             if(CollectionUtils.isNotEmpty(artifacts)) {
+            	for (ArtifactGroup artifactGroup : artifacts) {
+            		ArtifactElement artifactDescription = serviceManager.getArtifactDescription(artifactGroup.getId());
+            		artifactGroup.setDescription(artifactDescription.getDescription());
+				}
             	DocumentUtil.addPages(artifacts, pdfCopy);
             }
 

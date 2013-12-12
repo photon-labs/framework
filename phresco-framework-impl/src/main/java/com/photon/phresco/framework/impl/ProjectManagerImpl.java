@@ -422,8 +422,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			if (appInfo != null) {	
 				//For Pdf Document Creation In Docs Folder
 				DocumentGenerator documentGenerator = PhrescoFrameworkFactory.getDocumentGenerator();
-				documentGenerator.generate(appInfo, baseDir, null, serviceManager);
-	
+				
+				
 				MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
 				ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
 				if (applicationHandler != null) {
@@ -433,6 +433,15 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(applicationHandler.getClazz());
 					applicationProcessor.postCreate(appInfo);
 				}
+				
+				String selectedFeatures = applicationHandler.getSelectedFeatures();
+				Gson gson = new Gson();
+				Type jsonType = new TypeToken<Collection<ArtifactGroup>>(){}.getType();
+				List<ArtifactGroup> artifactGroups = gson.fromJson(selectedFeatures, jsonType);
+				
+				documentGenerator.generate(appInfo, baseDir, artifactGroups, serviceManager);
+	
+				
 				if (isCallEclipsePlugin(appInfo, "")) {
 					ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 					List<String> buildArgCmds = new ArrayList<String>();
@@ -1066,9 +1075,11 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		Environment defaultEnv = getEnvFromService(serviceManager);
 		if (StringUtils.isNotEmpty(rootModule) && StringUtils.isEmpty(dotPhrescoPath)) {
 			appDirName = rootModule + File.separator + appDirName;
-			 configFile = new File(getConfigurationPath(appDirName).toString());
+			configFile = new File(getConfigurationPath(appDirName).toString());
+		} else if(StringUtils.isEmpty(dotPhrescoPath)) {
+			configFile = new File(getConfigurationPath(appDirName).toString());
 		} else {
-		 configFile = new File(dotPhrescoPath + File.separator + PHRESCO_ENV_CONFIG_FILE_NAME);
+			configFile = new File(dotPhrescoPath + File.separator + PHRESCO_ENV_CONFIG_FILE_NAME);
 		}
 		if (!configFile.exists()) {
 			createEnvironments(configFile, defaultEnv, true);
