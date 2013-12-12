@@ -955,7 +955,7 @@
 	    		<plugin>
 				<groupId>net.awired.jstest</groupId>
 				<artifactId>jstest-maven-plugin</artifactId>
-				<version>3.2.0.2000</version>
+				<version>3.2.0.4001</version>
 				<executions>
 					<execution>
 						<goals>
