@@ -96,6 +96,7 @@ define(["header/listener/headerListener"] , function(template) {
 		 */
 		bindUI : function(){
 			var self = this;
+			$(".scrollable, .dropdown-menu, .cust_sel, .cus_themes").css("height","200px");
 			
 			//Logout event
 			$('#logout').click(function(){
@@ -108,6 +109,7 @@ define(["header/listener/headerListener"] , function(template) {
 				$(this).children().addClass('nav_active');
 				self.headerListener.currentTab = $(this).text();
 				self.onTabChangeEvent.dispatch();
+				$("#aboutPopup").hide();
 			});
 			
 			$(".header_right ul li").click(function(){
