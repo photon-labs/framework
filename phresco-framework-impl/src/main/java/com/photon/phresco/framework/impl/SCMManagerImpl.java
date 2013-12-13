@@ -715,7 +715,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importFromTfs()");
 		}
 		
-		//System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:/builds/TFS/TFS-SDK-11.0.0/redist/native"); 
 		String collectionUrl = repodetail.getRepoUrl();
 		String userName = repodetail.getUserName();
 		String password = repodetail.getPassword();
