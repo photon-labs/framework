@@ -300,10 +300,20 @@
 			<version>1.0</version>
 			<type>js</type>
 		</dependency>
+		<dependency>
+		  	<groupId>jslibraries.files</groupId>
+		  	<artifactId>spin</artifactId>
+		  	<version>1.0</version>
+		  	<type>js</type>
+		</dependency>
+		<dependency>
+		  	<groupId>jslibraries.files</groupId>
+		  	<artifactId>ladda</artifactId>
+		  	<version>1.0</version>
+		  	<type>js</type>
+		</dependency>
 		
-		 <!-- CometD insertions start -->
-	   
-        
+		<!-- CometD insertions start -->
 	    <dependency>
 	      <groupId>org.cometd.java</groupId>
 	      <artifactId>bayeux-api</artifactId>

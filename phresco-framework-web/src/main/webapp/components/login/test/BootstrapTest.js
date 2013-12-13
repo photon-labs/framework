@@ -119,7 +119,9 @@ var commonVariables = {
 	startNodeGoal : "start-node",
 	
 	paramaterContext : "parameter",
-	dependencyContext : "dependency",			
+	dependencyContext : "dependency",
+
+	callLadda : false,		
 	
 	clearInterval : {},
 

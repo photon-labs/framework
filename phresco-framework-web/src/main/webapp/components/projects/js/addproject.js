@@ -181,20 +181,7 @@ define(["projects/listener/projectsListener"], function() {
 				var iterationType = $("#iterationType").val();
 				var weekStart = Number($("#weekStart").val());
 				
-				var buildNumber = "1000";
-				if (iterationType === "iteration") {
-					buildNumber = weekStart * 1000;
-				}
-				if (iterationType === "sprint") {
-					var remainder = weekStart % 2;
-					if (remainder === 0) {
-						buildNumber = (weekStart / 2) * 1000 + 6;
-					}
-					if (remainder !== 0) {
-						buildNumber = Math.round(weekStart / 2) * 1000 + 1;
-					}
-				}
-				var version = majorVersion + "." + minorVersion + "." + fixedVersion + "." + buildNumber + "-SNAPSHOT"
+				var version = majorVersion + "." + minorVersion + "." + fixedVersion + "-SNAPSHOT"
 				$("#projectversion").val(version).attr("major", majorVersion).attr("minor", minorVersion);
 				$("#projectversion").attr("fixed", fixedVersion).attr("iterationType", iterationType).attr("weekStart", weekStart);
 			});

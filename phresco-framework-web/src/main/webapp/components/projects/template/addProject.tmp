@@ -350,8 +350,13 @@
 	        </table>
         </form>
         <div align="right">
-        	<input type="button" class="btn btn_style dyn_popup_close" value="OK" id="submitVersion">
-    	</div>     
+        	<div class="flt_left">
+	        	Ex : 1.0.0-SNAPSHOT
+	        </div>
+	        <div class="flt_right">
+	        	<input type="button" class="btn btn_style dyn_popup_close" value="OK" id="submitVersion">
+	        </div>
+        </div>     
     </div>
     <section class="content_end">
     	<div class="flt_left">

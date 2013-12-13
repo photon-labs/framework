@@ -1332,6 +1332,20 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				});
 				
 			},
+			
+			showBtnLoading : function(btnElement) {
+				if (commonVariables.callLadda) {
+					var laddaBtnObj = Ladda.create(document.querySelector(btnElement));
+					laddaBtnObj.start();
+				}
+			},
+			
+			hideBtnLoading : function(btnElement) {
+				if (commonVariables.callLadda) {
+					var laddaBtnObj = Ladda.create(document.querySelector(btnElement));
+					laddaBtnObj.stop();
+				}
+			}
 		}
 	);
 

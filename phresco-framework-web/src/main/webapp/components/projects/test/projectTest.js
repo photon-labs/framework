@@ -75,7 +75,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				setTimeout(function() {
 					start();
 					var projectversion = $("#projectversion").val();
-					equal(projectversion, "3.2.0.3000-SNAPSHOT", "Submit Project Version Click Event Tested");
+					equal(projectversion, "3.2.0-SNAPSHOT", "Submit Project Version Click Event Tested");
 					self.runDulicateAppCodeValidationTest();
 				}, 1500);
 			});
@@ -87,7 +87,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				$("a[name=addApplnLayer]").click();
 				$("tr[name=staticApplnLayer]").first().find(".appCodeText").val("appCode1");
 				$("tr[name=staticApplnLayer]").last().find(".appCodeText").val("appCode1");
-				$("tr[name=staticApplnLayer]").first().find(".appCodeText").blur();
+				$("tr[name=staticApplnLayer]").first().find(".appCodeText").keyup();
 				setTimeout(function() {
 					start();
 					var errMsg = $("tr[name=staticApplnLayer]").first().find(".appCodeText").attr("placeholder");
@@ -591,21 +591,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 			var self=this;
 			asyncTest("Add Project- AppCode Empty Validate Test", function() {
 				$("input.appCodeText").val('');
-				$("input.appCodeText").blur();
-				setTimeout(function() {
-					start();
-					var errMsg = $("input.appCodeText").attr('placeholder');
-					equal(errMsg, "Enter AppCode", "Add Project - AppCode Empty Validate Tested");
-					self.runAppCodeEmptyValidationTest();
-				}, 1500);
-			});
-		},
-		
-		runAppCodeEmptyValidationTest : function() {
-			var self=this;
-			asyncTest("Add Project- AppCode Empty Validate Test", function() {
-				$("input.appCodeText").val('');
-				$("input.appCodeText").blur();
+				$("input.appCodeText").keyup();
 				setTimeout(function() {
 					start();
 					var errMsg = $("input.appCodeText").attr('placeholder');
@@ -667,7 +653,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				setTimeout(function() {
 					start();
 					var errorMsg = $("#endDate").attr('placeholder');
-					equal(errorMsg, "Start date should be greater than the end date", "Create Project- Date Validation2 Tested");
+					equal(errorMsg, "Start date should be lesser than the end date", "Create Project- Date Validation2 Tested");
 					self.dateValidateTest3();
 				}, 1500);	
 			});
@@ -687,7 +673,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				setTimeout(function() {
 					start();
 					var errorMsg = $("#endDate").attr('placeholder');
-					equal(errorMsg, "Start date should be greater than the end date", "Create Project- Date Validation3 Tested");
+					equal(errorMsg, "Start date should be lesser than the end date", "Create Project- Date Validation3 Tested");
 					self.dateValidateTest4();
 				}, 1500);	
 			});
@@ -707,7 +693,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				setTimeout(function() {
 					start();
 					var errorMsg = $("#endDate").attr('placeholder');
-					equal(errorMsg, "Start date should be greater than the end date", "Create Project- Date Validation4 Tested");
+					equal(errorMsg, "Start date should be lesser than the end date", "Create Project- Date Validation4 Tested");
 					self.runAddApplicationLayerEventTest();
 				}, 1500);	
 			});
@@ -832,7 +818,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				setTimeout(function() {
 					start();
 					var projectversion = $("#projectversion").val();
-					equal(projectversion, "3.2.0.2001-SNAPSHOT", "Submit Project Version Click Event Tested");
+					equal(projectversion, "3.2.0-SNAPSHOT", "Submit Project Version Click Event Tested");
 					self.runEmptyProjectNameTest();
 				}, 1500);
 			});
@@ -881,7 +867,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				setTimeout(function() {
 					start();
 					var errorMsg = $("#endDate").attr('placeholder');
-					equal(errorMsg, "Start date should be greater than the end date", "Add Project - Date Validation Tested");
+					equal(errorMsg, "Start date should be lesser than the end date", "Add Project - Date Validation Tested");
 					self.runEmptyApplicationAppCodeTest();
 				}, 1500);
 			});
@@ -1143,7 +1129,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				$("#submitVersion").click();
 				setTimeout(function() {
 					start();
-					equal($("#projectversion").val(), "3.2.0.1006-SNAPSHOT", "Submit Project Version Click Event Tested");
+					equal($("#projectversion").val(), "3.2.0-SNAPSHOT", "Submit Project Version Click Event Tested");
 					self.runCloseButtonTest();
 				}, 2500);
 			});
@@ -1291,7 +1277,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				  contentType:'application/json',
 				  status: 200,
 				  response: function() {
-					this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200005","data":{"version":"3.2.0.2000-SNAPSHOT","versionInfo":{"major":3,"minor":2,"fix":0,"buildType":"iteration","weekStart":2},"appInfos":[{"version":"1.0","modules":[{"code":"CMS-mod1","techInfo":{"version":"5.6","multiModule":false,"appTypeId":"99d55693-dacd-4f77-994a-f02a66176ff9","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"AEM CQ","id":"0101a91b-559f-4b1b-9e30-a24ed5760d02","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"dependentModules":[],"dependentApps":null,"name":null,"id":"16581ff5-c798-4c9f-8646-43fab047bc24","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},{"code":"CMS-mod2","techInfo":{"version":"8.x","multiModule":false,"appTypeId":"99d55693-dacd-4f77-994a-f02a66176ff9","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"mobile-app-winPhone8","id":"tech-win-phone","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"dependentModules":["CMS-mod1"],"dependentApps":null,"name":null,"id":"1ca0f522-29bf-40ce-a02b-5ba00e867841","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},{"code":"CMS-mod3","techInfo":{"version":"7.x","multiModule":false,"appTypeId":"99d55693-dacd-4f77-994a-f02a66176ff9","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"mobile-app-bb10","id":"tech-blackberry-hybrid","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"dependentModules":["CMS-mod2"],"dependentApps":null,"name":null,"id":"906f8cfa-6910-44d1-936f-76db40f5e619","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false}],"pomFile":"pom.xml","code":"CMS","appDirName":"CMS","techInfo":{"version":"5.6","multiModule":false,"appTypeId":"99d55693-dacd-4f77-994a-f02a66176ff9","techGroupId":"CQ5","techVersions":null,"customerIds":null,"used":false,"name":"AEM CQ","id":"0101a91b-559f-4b1b-9e30-a24ed5760d02","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"functionalFramework":null,"selectedModules":[],"selectedComponents":[],"selectedServers":null,"selectedDatabases":null,"selectedJSLibs":[],"rootModule":"CMS","selectedWebservices":null,"functionalFrameworkInfo":null,"phrescoPomFile":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"dependentModules":null,"created":false,"customerIds":null,"used":false,"name":"CMS","id":"be792a0e-8e47-4eb0-ad88-a433e5a83b4b","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},{"version":"1.0","modules":[{"code":"FrontEnd-mod1","techInfo":{"version":"7.x","multiModule":false,"appTypeId":"1dbcf61c-e7b7-4267-8431-822c4580f9cf","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"mobile-app-winMetro","id":"tech-win-metro","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"dependentModules":[],"dependentApps":null,"name":null,"id":"aa70c97c-7d46-4724-86c6-5da073d36cda","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},{"code":"FrontEnd-mod2","techInfo":{"version":"8.x","multiModule":false,"appTypeId":"1dbcf61c-e7b7-4267-8431-822c4580f9cf","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"mobile-app-winPhone8","id":"tech-win-phone","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"dependentModules":["FrontEnd-mod1"],"dependentApps":null,"name":null,"id":"e202cb4b-4f6f-419c-9cda-5b46813fc6d6","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false}],"pomFile":"pom.xml","code":"FrontEnd","appDirName":"FrontEnd","techInfo":{"version":"7.x","multiModule":false,"appTypeId":"1dbcf61c-e7b7-4267-8431-822c4580f9cf","techGroupId":"Windows","techVersions":null,"customerIds":null,"used":false,"name":"mobile-app-winMetro","id":"tech-win-metro","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"functionalFramework":null,"selectedModules":[],"selectedComponents":[],"selectedServers":null,"selectedDatabases":null,"selectedJSLibs":[],"rootModule":"FrontEnd","selectedWebservices":null,"functionalFrameworkInfo":null,"phrescoPomFile":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"dependentModules":null,"created":false,"customerIds":null,"used":false,"name":"FrontEnd","id":"2efdcfe2-b483-4871-86ea-8c1718abded0","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},{"version":"1.0","modules":[{"code":"MiddleTier-mod1","techInfo":{"version":"2.0.2","multiModule":false,"appTypeId":"e1af3f5b-7333-487d-98fa-46305b9dd6ee","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"mobile-web","id":"tech-html5-jquery-mobile-widget","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"dependentModules":[],"dependentApps":null,"name":null,"id":"8ba6b4d8-1cf5-4d0b-82c9-b31d8dc22bfb","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},{"code":"MiddleTier-mod2","techInfo":{"version":"2.0.2","multiModule":false,"appTypeId":"e1af3f5b-7333-487d-98fa-46305b9dd6ee","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"responsive-web","id":"tech-html5-jquery-widget","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"dependentModules":["MiddleTier-mod1"],"dependentApps":null,"name":null,"id":"317227dc-3e6c-40ca-9199-01dcf0346064","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},{"code":"MiddleTier-mod3","techInfo":{"version":"3.9.1","multiModule":false,"appTypeId":"e1af3f5b-7333-487d-98fa-46305b9dd6ee","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"mobile-web-yui","id":"tech-html5-mobile-widget","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"dependentModules":["MiddleTier-mod2"],"dependentApps":null,"name":null,"id":"3bd96ab1-6425-4e49-9a45-e45e8d4df327","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false}],"pomFile":"pom.xml","code":"MiddleTier","appDirName":"MiddleTier","techInfo":{"version":"1.7","multiModule":false,"appTypeId":"e1af3f5b-7333-487d-98fa-46305b9dd6ee","techGroupId":"Java","techVersions":null,"customerIds":null,"used":false,"name":"java-standalone","id":"tech-java-standalone","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"functionalFramework":null,"selectedModules":["2d41a182-85f1-42a3-a67c-a0836792ba02","2d41a182-85f1-42a3-a67c-a0836792ba02","2d41a182-85f1-42a3-a67c-a0836792ba02"],"selectedComponents":[],"selectedServers":null,"selectedDatabases":null,"selectedJSLibs":[],"rootModule":"MiddleTier","selectedWebservices":null,"functionalFrameworkInfo":null,"phrescoPomFile":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"dependentModules":null,"created":false,"customerIds":null,"used":false,"name":"MiddleTier","id":"241d4131-dc29-4473-9491-c1533e865257","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false}],"projectCode":"test","noOfApps":0,"startDate":null,"endDate":null,"preBuilt":false,"multiModule":true,"integrationTest":false,"customerIds":["photon"],"used":false,"name":"test","id":"4ed26dfb-b7dd-4453-8a1f-0e3171cbffd2","displayName":null,"status":null,"description":"","creationDate":1382429631000,"helpText":null,"system":false},"status":"success"});	
+					this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200005","data":{"version":"3.2.0-SNAPSHOT","versionInfo":{"major":3,"minor":2,"fix":0,"buildType":"iteration","weekStart":2},"appInfos":[{"version":"1.0","modules":[{"code":"CMS-mod1","techInfo":{"version":"5.6","multiModule":false,"appTypeId":"99d55693-dacd-4f77-994a-f02a66176ff9","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"AEM CQ","id":"0101a91b-559f-4b1b-9e30-a24ed5760d02","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"dependentModules":[],"dependentApps":null,"name":null,"id":"16581ff5-c798-4c9f-8646-43fab047bc24","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},{"code":"CMS-mod2","techInfo":{"version":"8.x","multiModule":false,"appTypeId":"99d55693-dacd-4f77-994a-f02a66176ff9","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"mobile-app-winPhone8","id":"tech-win-phone","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"dependentModules":["CMS-mod1"],"dependentApps":null,"name":null,"id":"1ca0f522-29bf-40ce-a02b-5ba00e867841","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},{"code":"CMS-mod3","techInfo":{"version":"7.x","multiModule":false,"appTypeId":"99d55693-dacd-4f77-994a-f02a66176ff9","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"mobile-app-bb10","id":"tech-blackberry-hybrid","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"dependentModules":["CMS-mod2"],"dependentApps":null,"name":null,"id":"906f8cfa-6910-44d1-936f-76db40f5e619","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false}],"pomFile":"pom.xml","code":"CMS","appDirName":"CMS","techInfo":{"version":"5.6","multiModule":false,"appTypeId":"99d55693-dacd-4f77-994a-f02a66176ff9","techGroupId":"CQ5","techVersions":null,"customerIds":null,"used":false,"name":"AEM CQ","id":"0101a91b-559f-4b1b-9e30-a24ed5760d02","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"functionalFramework":null,"selectedModules":[],"selectedComponents":[],"selectedServers":null,"selectedDatabases":null,"selectedJSLibs":[],"rootModule":"CMS","selectedWebservices":null,"functionalFrameworkInfo":null,"phrescoPomFile":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"dependentModules":null,"created":false,"customerIds":null,"used":false,"name":"CMS","id":"be792a0e-8e47-4eb0-ad88-a433e5a83b4b","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},{"version":"1.0","modules":[{"code":"FrontEnd-mod1","techInfo":{"version":"7.x","multiModule":false,"appTypeId":"1dbcf61c-e7b7-4267-8431-822c4580f9cf","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"mobile-app-winMetro","id":"tech-win-metro","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"dependentModules":[],"dependentApps":null,"name":null,"id":"aa70c97c-7d46-4724-86c6-5da073d36cda","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},{"code":"FrontEnd-mod2","techInfo":{"version":"8.x","multiModule":false,"appTypeId":"1dbcf61c-e7b7-4267-8431-822c4580f9cf","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"mobile-app-winPhone8","id":"tech-win-phone","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"dependentModules":["FrontEnd-mod1"],"dependentApps":null,"name":null,"id":"e202cb4b-4f6f-419c-9cda-5b46813fc6d6","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false}],"pomFile":"pom.xml","code":"FrontEnd","appDirName":"FrontEnd","techInfo":{"version":"7.x","multiModule":false,"appTypeId":"1dbcf61c-e7b7-4267-8431-822c4580f9cf","techGroupId":"Windows","techVersions":null,"customerIds":null,"used":false,"name":"mobile-app-winMetro","id":"tech-win-metro","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"functionalFramework":null,"selectedModules":[],"selectedComponents":[],"selectedServers":null,"selectedDatabases":null,"selectedJSLibs":[],"rootModule":"FrontEnd","selectedWebservices":null,"functionalFrameworkInfo":null,"phrescoPomFile":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"dependentModules":null,"created":false,"customerIds":null,"used":false,"name":"FrontEnd","id":"2efdcfe2-b483-4871-86ea-8c1718abded0","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},{"version":"1.0","modules":[{"code":"MiddleTier-mod1","techInfo":{"version":"2.0.2","multiModule":false,"appTypeId":"e1af3f5b-7333-487d-98fa-46305b9dd6ee","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"mobile-web","id":"tech-html5-jquery-mobile-widget","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"dependentModules":[],"dependentApps":null,"name":null,"id":"8ba6b4d8-1cf5-4d0b-82c9-b31d8dc22bfb","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},{"code":"MiddleTier-mod2","techInfo":{"version":"2.0.2","multiModule":false,"appTypeId":"e1af3f5b-7333-487d-98fa-46305b9dd6ee","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"responsive-web","id":"tech-html5-jquery-widget","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"dependentModules":["MiddleTier-mod1"],"dependentApps":null,"name":null,"id":"317227dc-3e6c-40ca-9199-01dcf0346064","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},{"code":"MiddleTier-mod3","techInfo":{"version":"3.9.1","multiModule":false,"appTypeId":"e1af3f5b-7333-487d-98fa-46305b9dd6ee","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"mobile-web-yui","id":"tech-html5-mobile-widget","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"dependentModules":["MiddleTier-mod2"],"dependentApps":null,"name":null,"id":"3bd96ab1-6425-4e49-9a45-e45e8d4df327","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false}],"pomFile":"pom.xml","code":"MiddleTier","appDirName":"MiddleTier","techInfo":{"version":"1.7","multiModule":false,"appTypeId":"e1af3f5b-7333-487d-98fa-46305b9dd6ee","techGroupId":"Java","techVersions":null,"customerIds":null,"used":false,"name":"java-standalone","id":"tech-java-standalone","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false},"functionalFramework":null,"selectedModules":["2d41a182-85f1-42a3-a67c-a0836792ba02","2d41a182-85f1-42a3-a67c-a0836792ba02","2d41a182-85f1-42a3-a67c-a0836792ba02"],"selectedComponents":[],"selectedServers":null,"selectedDatabases":null,"selectedJSLibs":[],"rootModule":"MiddleTier","selectedWebservices":null,"functionalFrameworkInfo":null,"phrescoPomFile":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"dependentModules":null,"created":false,"customerIds":null,"used":false,"name":"MiddleTier","id":"241d4131-dc29-4473-9491-c1533e865257","displayName":null,"status":null,"description":null,"creationDate":1382353553000,"helpText":null,"system":false}],"projectCode":"test","noOfApps":0,"startDate":null,"endDate":null,"preBuilt":false,"multiModule":true,"integrationTest":false,"customerIds":["photon"],"used":false,"name":"test","id":"4ed26dfb-b7dd-4453-8a1f-0e3171cbffd2","displayName":null,"status":null,"description":"","creationDate":1382429631000,"helpText":null,"system":false},"status":"success"});	
 				  }
 				});	
 				
@@ -1321,7 +1307,6 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					equal(majorVersion, "3", "Major Version Display Tested");
 					equal(minorVersion, "2", "Minor Version Display Tested");
 					equal(fixedVersion, "0", "Fix Version Display Tested");
-					equal(iterationType, "iteration", "Build Type Display Tested");
 					equal(weekStart, "2", "Week Start Display Tested");
 					self.runUpdateProjectTest();
 				}, 4000);
@@ -1412,9 +1397,9 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					start();
 					var applnLayer = $("tr[id=MobLayer]").attr('key');
 					equal(applnLayer, "hidden", "Edit Project - Edit Project Close Image Test");
-					require(["applicationTest"], function(applicationTest){
-						applicationTest.runTests();
-					});
+//					require(["applicationTest"], function(applicationTest){
+//						applicationTest.runTests();
+//					});
 				}, 1500);
 			});
 		}

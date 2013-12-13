@@ -897,8 +897,8 @@ define([], function() {
 		technologyAndVersionChangeEvent : function() {
 		
 			var self=this;
-			
-			$("input.appCodeText").keyup(function() {
+			$("input.appCodeText").unbind("keyup");
+			$("input.appCodeText").bind("keyup", function() {
 				var currentCount = $(this).attr('count');
 				var currentVal =  $(this).val();
 				var appCodeTextObj = $(this);

@@ -31,7 +31,7 @@ define(["navigation/navigation"], function() {
 		svnRepoUrlValidation : function() {
 			var self = this;
 			asyncTest("Import Application - Import svn repo url empty validation test", function() {
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importRepourl').attr('placeholder');
 					equal(errMsg, "Enter Url", "Import svn repo url empty validation tested");
@@ -45,7 +45,7 @@ define(["navigation/navigation"], function() {
 			var self = this;
 			asyncTest("Import Application - Import svn invalid repo url validation test", function() {
 				$('#importRepourl').val("sample url");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importRepourl').attr('placeholder');
 					equal(errMsg, "Invalid Repo Url", "Import svn invalid repo url validation tested");
@@ -60,7 +60,7 @@ define(["navigation/navigation"], function() {
 			asyncTest("Import Application - Import svn user name empty validation test", function() {
 				$('#importRepourl').val("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
 				$('#importUserName').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importUserName').attr('placeholder');
 					equal(errMsg, "Enter user name", "Import svn user name empty validation tested");
@@ -76,7 +76,7 @@ define(["navigation/navigation"], function() {
 				$('#importRepourl').val("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
 				$('#importUserName').val("admin");
 				$('#importPassword').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importPassword').attr('placeholder');
 					equal(errMsg, "Enter password", "Import svn password empty validation tested");
@@ -119,7 +119,7 @@ define(["navigation/navigation"], function() {
 				$('#importUserName').val("admin");
 				$('#importPassword').val("manage");
 				$('input[name=headoption]').first().attr("checked", true);
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importPhrescoRepourl').attr('placeholder');
 					equal(errMsg, "Enter Url", "Import svn Phresco repo url empty validation tested");
@@ -137,7 +137,7 @@ define(["navigation/navigation"], function() {
 				$('#importPassword').val("manage");
 				$('input[name=headoption]').first().attr("checked", true);
 				$('#importPhrescoRepourl').val("sample phresco repo url");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importPhrescoRepourl').attr('placeholder');
 					equal(errMsg, "Invalid Repo Url", "Import svn Phresco invalid repo url validation tested");
@@ -156,7 +156,7 @@ define(["navigation/navigation"], function() {
 				$('input[name=headoption]').first().attr("checked", true);
 				$('#importPhrescoRepourl').val("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
 				$('#importPhrescoUserName').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importPhrescoUserName').attr('placeholder');
 					equal(errMsg, "Enter user name", "Import svn Phresco user name validation tested");
@@ -176,7 +176,7 @@ define(["navigation/navigation"], function() {
 				$('#importPhrescoRepourl').val("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
 				$('#importPhrescoUserName').val("admin");
 				$('#importPhrescoPassword').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importPhrescoPassword').attr('placeholder');
 					equal(errMsg, "Enter password", "Import svn Phresco password validation tested");
@@ -210,7 +210,7 @@ define(["navigation/navigation"], function() {
 				$('#importPhrescoUserName').val("admin");
 				$('#importPhrescoPassword').val("manage");
 				$('input[name=phrescoHeadoption]').first().attr("checked", true);
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importTestRepourl').attr('placeholder');
 					equal(errMsg, "Enter Url", "Import svn test repo url empty validation tested");
@@ -232,7 +232,7 @@ define(["navigation/navigation"], function() {
 				$('#importPhrescoPassword').val("manage");
 				$('input[name=phrescoHeadoption]').first().attr("checked", true);
 				$('#importTestRepourl').val("sample test repo url");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importTestRepourl').attr('placeholder');
 					equal(errMsg, "Invalid Repo Url", "Import svn test invalid repo url validation tested");
@@ -255,7 +255,7 @@ define(["navigation/navigation"], function() {
 				$('input[name=phrescoHeadoption]').first().attr("checked", true);
 				$('#importTestRepourl').val("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
 				$('#importTestUserName').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importTestUserName').attr('placeholder');
 					equal(errMsg, "Enter user name", "Import svn test user name validation tested");
@@ -279,7 +279,7 @@ define(["navigation/navigation"], function() {
 				$('#importTestRepourl').val("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
 				$('#importTestUserName').val("admin");
 				$('#importTestPassword').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importTestPassword').attr('placeholder');
 					equal(errMsg, "Enter password", "Import svn test password validation tested");
@@ -315,24 +315,44 @@ define(["navigation/navigation"], function() {
 				$('#importTestUserName').val("admin");
 				$('#importTestPassword').val("manage");
 				$('input[name=testHeadoption]').first().attr("checked", true);
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					equal($("#project_list_import").css("display"), "none", "Import svn project with head option tested");
 					start();
-					self.svnRevisionValidation();
+					self.svnRevisionCheckTest();
 				}, 1500);
+			});
+		},
+		
+		svnRevisionCheckTest : function() {
+			var self = this;
+			asyncTest("Import Application - Import svn revision check event test", function() {
+				$("#importApp").click();
+				$('#importRepourl').val("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
+				$('#importUserName').val("admin");
+				$('#importPassword').val("manage");
+				$('#importDotPhrescoSrc').click();
+				$('#importTestSrc').click();
+				$('input[name=headoption]').last().click();
+				$('input[name=phrescoHeadoption]').last().click();
+				$('input[name=testHeadoption]').last().click();
+				setTimeout(function() {
+					equal($('#revision').attr('readonly'), undefined, "Import svn revision check event tested");
+					equal($('#phrescoRevision').attr('readonly'), undefined, "Import svn .phresco revision check event tested");
+					equal($('#testRevision').attr('readonly'), undefined, "Import svn test revision check event tested");
+					start();
+					self.svnRevisionValidation();
+				}, 3000);
 			});
 		},
 		
 		svnRevisionValidation : function() {
 			var self = this;
 			asyncTest("Import Application - Import svn revision empty validation test", function() {
-				$("#importApp").click();
 				$('#importRepourl').val("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
 				$('#importUserName').val("admin");
 				$('#importPassword').val("manage");
-				$('input[name=headoption]').last().attr("checked", true);
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#revision').attr('placeholder');
 					equal(errMsg, "Enter revision", "Import svn revision empty validation tested");
@@ -348,13 +368,11 @@ define(["navigation/navigation"], function() {
 				$('#importRepourl').val("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
 				$('#importUserName').val("admin");
 				$('#importPassword').val("manage");
-				$('input[name=headoption]').last().attr("checked", true);
 				$('#revision').val("5689455");
 				$('#importPhrescoRepourl').val("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
 				$('#importPhrescoUserName').val("admin");
 				$('#importPhrescoPassword').val("manage");
-				$('input[name=phrescoHeadoption]').last().attr("checked", true);
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#phrescoRevision').attr('placeholder');
 					equal(errMsg, "Enter revision", "Import svn Phresco revision empty validation tested");
@@ -370,18 +388,15 @@ define(["navigation/navigation"], function() {
 				$('#importRepourl').val("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
 				$('#importUserName').val("admin");
 				$('#importPassword').val("manage");
-				$('input[name=headoption]').last().attr("checked", true);
 				$('#revision').val("5689455");
 				$('#importPhrescoRepourl').val("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
 				$('#importPhrescoUserName').val("admin");
 				$('#importPhrescoPassword').val("manage");
-				$('input[name=phrescoHeadoption]').last().attr("checked", true);
 				$('#phrescoRevision').val("9875634");
 				$('#importTestRepourl').val("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
 				$('#importTestUserName').val("admin");
 				$('#importTestPassword').val("manage");
-				$('input[name=testHeadoption]').last().attr("checked", true);
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#testRevision').attr('placeholder');
 					equal(errMsg, "Enter revision", "Import svn Test revision empty validation tested");
@@ -409,7 +424,7 @@ define(["navigation/navigation"], function() {
 				$('#importTestPassword').val("manage");
 				$('input[name=testHeadoption]').last().attr("checked", true);
 				$('#testRevision').val("6549875634");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					equal($("#project_list_import").css("display"), "none", "Import svn project with revision option tested");
 					start();
@@ -442,7 +457,7 @@ define(["navigation/navigation"], function() {
 		gitRepoUrlValidation : function() {
 			var self = this;
 			asyncTest("Import Application - Import git repo url empty validation test", function() {
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importRepourl').attr('placeholder');
 					equal(errMsg, "Enter Url", "Import git repo url empty validation tested");
@@ -456,7 +471,7 @@ define(["navigation/navigation"], function() {
 			var self = this;
 			asyncTest("Import Application - Import git invalid repo url validation test", function() {
 				$('#importRepourl').val("sample url");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importRepourl').attr('placeholder');
 					equal(errMsg, "Invalid Repo Url", "Import git invalid repo url validation tested");
@@ -485,7 +500,7 @@ define(["navigation/navigation"], function() {
 			asyncTest("Import Application - Import git Phresco repo url empty validation test", function() {
 				$('#importRepourl').val("https://github.com/santhosh-ja/TestProject_phresco.git");
 				$('#importPhrescoRepourl').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importPhrescoRepourl').attr('placeholder');
 					equal(errMsg, "Enter Url", "Import git Phresco repo url empty validation tested");
@@ -500,7 +515,7 @@ define(["navigation/navigation"], function() {
 			asyncTest("Import Application - Import git Phresco invalid repo url validation test", function() {
 				$('#importRepourl').val("https://github.com/santhosh-ja/TestProject_phresco.git");
 				$('#importPhrescoRepourl').val("sample phresco repo url");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importPhrescoRepourl').attr('placeholder');
 					equal(errMsg, "Invalid Repo Url", "Import git Phresco invalid repo url validation tested");
@@ -530,7 +545,7 @@ define(["navigation/navigation"], function() {
 				$('#importRepourl').val("https://github.com/santhosh-ja/TestProject_phresco.git");
 				$('#importPhrescoRepourl').val("https://github.com/santhosh-ja/TestProject_phresco.git");
 				$('#importTestRepourl').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importTestRepourl').attr('placeholder');
 					equal(errMsg, "Enter Url", "Import git test repo url empty validation tested");
@@ -546,7 +561,7 @@ define(["navigation/navigation"], function() {
 				$('#importRepourl').val("https://github.com/santhosh-ja/TestProject_phresco.git");
 				$('#importPhrescoRepourl').val("https://github.com/santhosh-ja/TestProject_phresco.git");
 				$('#importTestRepourl').val("sample test repo url");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importTestRepourl').attr('placeholder');
 					equal(errMsg, "Invalid Repo Url", "Import git test invalid repo url validation tested");
@@ -579,7 +594,7 @@ define(["navigation/navigation"], function() {
 				$('#importTestRepourl').val("https://github.com/santhosh-ja/TestProject_phresco.git");
 				$('#importTestUserName').val("admin");
 				$('#importTestPassword').val("manage");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					equal($("#project_list_import").css("display"), "none", "Import git project tested");
 					start();
@@ -613,7 +628,7 @@ define(["navigation/navigation"], function() {
 			var self = this;
 			asyncTest("Import Application - Import perforce repo url empty validation test", function() {
 				$('#importRepourl').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importRepourl').attr('placeholder');
 					equal(errMsg, "Enter Url", "Import perforce repo url empty validation tested");
@@ -627,7 +642,7 @@ define(["navigation/navigation"], function() {
 			var self = this;
 			asyncTest("Import Application - Import perforce invalid repo url validation test", function() {
 				$('#importRepourl').val("sample:url");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importRepourl').attr('placeholder');
 					equal(errMsg, "Invalid Repo Url", "Import perforce invalid repo url validation tested");
@@ -641,7 +656,7 @@ define(["navigation/navigation"], function() {
 			var self = this;
 			asyncTest("Import Application - Import perforce stream validation test", function() {
 				$('#importRepourl').val("localhost:2468");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('.stream').attr('placeholder');
 					equal(errMsg, "Enter Stream", "Import perforce stream validation tested");
@@ -671,7 +686,7 @@ define(["navigation/navigation"], function() {
 				$('#importRepourl').val("localhost:2468");
 				$('.stream').val("sample stream");
 				$('#importPhrescoRepourl').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importPhrescoRepourl').attr('placeholder');
 					equal(errMsg, "Enter Url", "Import perforce phresco repo url empty validation tested");
@@ -686,7 +701,7 @@ define(["navigation/navigation"], function() {
 			asyncTest("Import Application - Import perforce invalid phresco repo url validation test", function() {
 				$('#importRepourl').val("localhost:2468");
 				$('#importPhrescoRepourl').val("sample:url");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importPhrescoRepourl').attr('placeholder');
 					equal(errMsg, "Invalid Repo Url", "Import perforce invalid phresco repo url validation tested");
@@ -701,7 +716,7 @@ define(["navigation/navigation"], function() {
 			asyncTest("Import Application - Import perforce phresco stream validation test", function() {
 				$('#importRepourl').val("localhost:2468");
 				$('#importPhrescoRepourl').val("localhost:2468");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('.phrescoStream').attr('placeholder');
 					equal(errMsg, "Enter Stream", "Import perforce phresco stream validation tested");
@@ -733,7 +748,7 @@ define(["navigation/navigation"], function() {
 				$('#importPhrescoRepourl').val("localhost:2468");
 				$('.phrescoStream').val("sample stream");
 				$('#importTestRepourl').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importTestRepourl').attr('placeholder');
 					equal(errMsg, "Enter Url", "Import perforce test repo url empty validation tested");
@@ -751,7 +766,7 @@ define(["navigation/navigation"], function() {
 				$('#importPhrescoRepourl').val("localhost:2468");
 				$('.phrescoStream').val("sample stream");
 				$('#importTestRepourl').val("sample:url");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importTestRepourl').attr('placeholder');
 					equal(errMsg, "Invalid Repo Url", "Import perforce invalid test repo url validation tested");
@@ -769,7 +784,7 @@ define(["navigation/navigation"], function() {
 				$('#importPhrescoRepourl').val("localhost:2468");
 				$('.phrescoStream').val("sample stream");
 				$('#importTestRepourl').val("localhost:2468");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('.testStream').attr('placeholder');
 					equal(errMsg, "Enter Stream", "Import perforce test stream validation tested");
@@ -799,7 +814,7 @@ define(["navigation/navigation"], function() {
 				$('.phrescoStream').val("sample stream");
 				$('#importTestRepourl').val("localhost:2468");
 				$('.testStream').val("sample stream");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					equal($("#project_list_import").css("display"), "none", "Import perforce project tested");
 					start();
@@ -831,7 +846,7 @@ define(["navigation/navigation"], function() {
 			var self = this;
 			asyncTest("Import Application - Import bitkeeper repo url empty validation test", function() {
 				$('#importRepourl').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importRepourl').attr('placeholder');
 					equal(errMsg, "Enter Url", "Import bitkeeper repo url empty validation tested");
@@ -860,7 +875,7 @@ define(["navigation/navigation"], function() {
 			asyncTest("Import Application - Import bitkeeper phresco repo url empty validation test", function() {
 				$('#importRepourl').val("localhost:2468");
 				$('#importPhrescoRepourl').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importPhrescoRepourl').attr('placeholder');
 					equal(errMsg, "Enter Url", "Import bitkeeper phresco repo url empty validation tested");
@@ -890,7 +905,7 @@ define(["navigation/navigation"], function() {
 				$('#importRepourl').val("localhost:2468");
 				$('#importPhrescoRepourl').val("localhost:2468");
 				$('#importTestRepourl').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importTestRepourl').attr('placeholder');
 					equal(errMsg, "Enter Url", "Import bitkeeper test repo url empty validation tested");
@@ -923,7 +938,7 @@ define(["navigation/navigation"], function() {
 				$('#importTestRepourl').val("localhost:2468");
 				$('#importTestUserName').val("admin");
 				$('#importTestPassword').val("manage");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					equal($("#project_list_import").css("display"), "none", "Import bitkeeper project tested");
 					start();
@@ -962,7 +977,7 @@ define(["navigation/navigation"], function() {
 			var self = this;
 			asyncTest("Import Application - Import tfs repo url empty validation test", function() {
 				$('#importRepourl').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importRepourl').attr('placeholder');
 					equal(errMsg, "Enter Url", "Import tfs repo url empty validation tested");
@@ -976,7 +991,7 @@ define(["navigation/navigation"], function() {
 			var self = this;
 			asyncTest("Import Application - Import tfs invalid repo url validation test", function() {
 				$('#importRepourl').val("sample url");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importRepourl').attr('placeholder');
 					equal(errMsg, "Invalid Repo Url", "Import tfs invalid repo url validation tested");
@@ -991,7 +1006,7 @@ define(["navigation/navigation"], function() {
 			asyncTest("Import Application - Import tfs user name empty validation test", function() {
 				$('#importRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
 				$('#importUserName').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importUserName').attr('placeholder');
 					equal(errMsg, "Enter user name", "Import tfs user name empty validation tested");
@@ -1007,7 +1022,7 @@ define(["navigation/navigation"], function() {
 				$('#importRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
 				$('#importUserName').val("admin");
 				$('#importPassword').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importPassword').attr('placeholder');
 					equal(errMsg, "Enter password", "Import tfs password empty validation tested");
@@ -1038,7 +1053,7 @@ define(["navigation/navigation"], function() {
 				$('#importUserName').val("admin");
 				$('#importPassword').val("manage");
 				$('#importPhrescoRepourl').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importPhrescoRepourl').attr('placeholder');
 					equal(errMsg, "Enter Url", "Import tfs Phresco repo url empty validation tested");
@@ -1055,7 +1070,7 @@ define(["navigation/navigation"], function() {
 				$('#importUserName').val("admin");
 				$('#importPassword').val("manage");
 				$('#importPhrescoRepourl').val("sample phresco repo url");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importPhrescoRepourl').attr('placeholder');
 					equal(errMsg, "Invalid Repo Url", "Import tfs Phresco invalid repo url validation tested");
@@ -1073,7 +1088,7 @@ define(["navigation/navigation"], function() {
 				$('#importPassword').val("manage");
 				$('#importPhrescoRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
 				$('#importPhrescoUserName').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importPhrescoUserName').attr('placeholder');
 					equal(errMsg, "Enter user name", "Import tfs user name empty validation tested");
@@ -1092,7 +1107,7 @@ define(["navigation/navigation"], function() {
 				$('#importPhrescoRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
 				$('#importPhrescoUserName').val("admin");
 				$('#importPhrescoPassword').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importPhrescoPassword').attr('placeholder');
 					equal(errMsg, "Enter password", "Import tfs password empty validation tested");
@@ -1126,7 +1141,7 @@ define(["navigation/navigation"], function() {
 				$('#importPhrescoUserName').val("admin");
 				$('#importPhrescoPassword').val("manage");
 				$('#importTestRepourl').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importTestRepourl').attr('placeholder');
 					equal(errMsg, "Enter Url", "Import tfs test repo url empty validation tested");
@@ -1146,7 +1161,7 @@ define(["navigation/navigation"], function() {
 				$('#importPhrescoUserName').val("admin");
 				$('#importPhrescoPassword').val("manage");
 				$('#importTestRepourl').val("sample test repo url");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importTestRepourl').attr('placeholder');
 					equal(errMsg, "Invalid Repo Url", "Import tfs test invalid repo url validation tested");
@@ -1167,7 +1182,7 @@ define(["navigation/navigation"], function() {
 				$('#importPhrescoPassword').val("manage");
 				$('#importTestRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
 				$('#importTestUserName').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importTestUserName').attr('placeholder');
 					equal(errMsg, "Enter user name", "Import tfs user name empty validation tested");
@@ -1189,7 +1204,7 @@ define(["navigation/navigation"], function() {
 				$('#importTestRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
 				$('#importTestUserName').val("admin");
 				$('#importTestPassword').val("");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					var errMsg = $('#importTestPassword').attr('placeholder');
 					equal(errMsg, "Enter password", "Import tfs password empty validation tested");
@@ -1224,7 +1239,7 @@ define(["navigation/navigation"], function() {
 				$('#importTestRepourl').val("https://vivekraja.visualstudio.com/DefaultCollection");
 				$('#importTestUserName').val("vivekraja.vasudevan@photoninfotech.com");
 				$('#importTestPassword').val("phresco123");
-				$("input[name='importbtn']").click();
+				$("button[name='importbtn']").click();
 				setTimeout(function() {
 					equal($("#project_list_import").css("display"), "none", "Import TFS project tested");
 					start();
@@ -1236,10 +1251,8 @@ define(["navigation/navigation"], function() {
 		importCredentialCheckEveTest : function() {
 			var self = this;
 			asyncTest("Import Application - Credential check event test", function() {
-				
 				var checkbox = $("#importCredential").find('input[type=checkbox]');
-				checkbox.attr("checked", true);
-				checkbox.change();
+				checkbox.click();
 				setTimeout(function() {
 					var userNameReadonly = $('#importUserName').attr("readonly");
 					var userPwdReadonly = $('#importPassword').attr("readonly");
@@ -1255,13 +1268,76 @@ define(["navigation/navigation"], function() {
 			var self = this;
 			asyncTest("Import Application - Credential uncheck event test", function() {
 				var checkbox = $("#importCredential").find('input[type=checkbox]');
-				checkbox.attr("checked", false);
-				checkbox.change();
+				checkbox.click();
 				setTimeout(function() {
 					var userNameReadonly = $('#importUserName').attr("readonly");
 					var userPwdReadonly = $('#importPassword').attr("readonly");
 					equal(userNameReadonly, "readonly", "User Name readonly attribute added");
 					equal(userPwdReadonly, "readonly", "Password readonly attribute added");
+					start();
+					self.importPhrescoCredentialCheckEveTest();
+				}, 1500);
+			});
+		},
+		
+		importPhrescoCredentialCheckEveTest : function() {
+			var self = this;
+			asyncTest("Import Application - Phresco Credential check event test", function() {
+				var checkbox = $("#importPhrescoCredential").find('input[type=checkbox]');
+				checkbox.click();
+				setTimeout(function() {
+					var userNameReadonly = $('#importPhrescoUserName').attr("readonly");
+					var userPwdReadonly = $('#importPhrescoPassword').attr("readonly");
+					equal(userNameReadonly, undefined, "Phresco User Name readonly attribute removed");
+					equal(userPwdReadonly, undefined, "Phresco Password readonly attribute removed");
+					start();
+					self.importPhrescoCredentialUncheckEveTest()
+				}, 1500);
+			});
+		},
+		
+		importPhrescoCredentialUncheckEveTest : function() {
+			var self = this;
+			asyncTest("Import Application - Phresco Credential uncheck event test", function() {
+				var checkbox = $("#importPhrescoCredential").find('input[type=checkbox]');
+				checkbox.click();
+				setTimeout(function() {
+					var userNameReadonly = $('#importPhrescoUserName').attr("readonly");
+					var userPwdReadonly = $('#importPhrescoPassword').attr("readonly");
+					equal(userNameReadonly, "readonly", "Phresco User Name readonly attribute added");
+					equal(userPwdReadonly, "readonly", "Phresco Password readonly attribute added");
+					start();
+					self.importTestCredentialCheckEveTest();
+				}, 1500);
+			});
+		},
+		
+		importTestCredentialCheckEveTest : function() {
+			var self = this;
+			asyncTest("Import Application - Test Credential check event test", function() {
+				var checkbox = $("#importTestCredential").find('input[type=checkbox]');
+				checkbox.click();
+				setTimeout(function() {
+					var userNameReadonly = $('#importTestUserName').attr("readonly");
+					var userPwdReadonly = $('#importTestPassword').attr("readonly");
+					equal(userNameReadonly, undefined, "Test User Name readonly attribute removed");
+					equal(userPwdReadonly, undefined, "Test Password readonly attribute removed");
+					start();
+					self.importTestCredentialUncheckEveTest()
+				}, 1500);
+			});
+		},
+		
+		importTestCredentialUncheckEveTest : function() {
+			var self = this;
+			asyncTest("Import Application - Test Credential uncheck event test", function() {
+				var checkbox = $("#importTestCredential").find('input[type=checkbox]');
+				checkbox.click();
+				setTimeout(function() {
+					var userNameReadonly = $('#importTestUserName').attr("readonly");
+					var userPwdReadonly = $('#importTestPassword').attr("readonly");
+					equal(userNameReadonly, "readonly", "Test User Name readonly attribute added");
+					equal(userPwdReadonly, "readonly", "Test Password readonly attribute added");
 					start();
 					self.importHeadOptionCheckEveTest();
 				}, 1500);
@@ -1272,7 +1348,7 @@ define(["navigation/navigation"], function() {
 			var self = this;
 			asyncTest("Import Application - Head Option check event test", function() {
 				var option = $("input[name=headoption]").first();
-				option.change();
+				option.click();
 				setTimeout(function() {
 					var readonly = $("#revision").attr("readonly");
 					equal(readonly, "readonly", "Head Option check event tested");
@@ -1286,7 +1362,7 @@ define(["navigation/navigation"], function() {
 			var self = this;
 			asyncTest("Import Application - Revision Option check event test", function() {
 				var option = $("input[name=headoption]").last();
-				option.change();
+				option.click();
 				setTimeout(function() {
 					var readonly = $("#revision").attr("readonly");
 					equal(readonly, undefined, "Revision Option check event tested");
@@ -1300,7 +1376,7 @@ define(["navigation/navigation"], function() {
 			var self = this;
 			asyncTest("Import Application - .Phresco Head Option check event test", function() {
 				var option = $("input[name=phrescoHeadoption]").first();
-				option.change();
+				option.click();
 				setTimeout(function() {
 					var readonly = $("#phrescoRevision").attr("readonly");
 					equal(readonly, "readonly", ".Phresco Head Option check event tested");
@@ -1314,7 +1390,7 @@ define(["navigation/navigation"], function() {
 			var self = this;
 			asyncTest("Import Application - .phresco Revision Option check event test", function() {
 				var option = $("input[name=phrescoHeadoption]").last();
-				option.change();
+				option.click();
 				setTimeout(function() {
 					var readonly = $("#phrescoRevision").attr("readonly");
 					equal(readonly, undefined, ".phresco revision Option check event tested");
@@ -1355,7 +1431,7 @@ define(["navigation/navigation"], function() {
 			var self = this;
 			asyncTest("Import Application - Test Revision Option check event test", function() {
 				var option = $("input[name=testHeadoption]").last();
-				option.change();
+				option.click();
 				setTimeout(function() {
 					var readonly = $("#testRevision").attr("readonly");
 					equal(readonly, undefined, "test revision Option check event tested");
@@ -1373,6 +1449,9 @@ define(["navigation/navigation"], function() {
 					var hasClass = $("#importTestSrc").hasClass("active in");
 					equal(hasClass, false, "Import test uncheck event tested");
 					start();
+//					require(["projectlistTest"], function(projectlistTest){
+//						projectlistTest.runTests();
+//					});
 				}, 1500);
 			});
 		},
