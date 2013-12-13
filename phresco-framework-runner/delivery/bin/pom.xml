@@ -15,6 +15,7 @@
 		<device.deploy.version>1.0</device.deploy.version>
 		<phantomjs.version>1.5.0</phantomjs.version>
 		<ios-sim.version>1.0</ios-sim.version>
+		<tfs.version>1.0</tfs.version>
 	</properties>
 
 	<dependencies>
@@ -398,6 +399,17 @@
 									  <overWrite>false</overWrite>
 									  <outputDirectory>../workspace/tools</outputDirectory>
 									</artifactItem>
+                                    
+                                <!--extracting ios-sim zip file-->
+								<artifactItem>
+									  <groupId>com.tfs</groupId>
+									  <artifactId>tfs</artifactId>
+									  <version>${tfs.version}</version>
+									  <type>zip</type>
+									  <overWrite>false</overWrite>
+									  <outputDirectory>../workspace/tools</outputDirectory>
+							    </artifactItem>
+                                    
 							</artifactItems>
 						</configuration>
 					</execution>
