@@ -9,7 +9,7 @@ package com.photon.phresco.framework.impl;
 import com.microsoft.tfs.core.clients.versioncontrol.events.GetEvent;
 import com.microsoft.tfs.core.clients.versioncontrol.events.GetListener;
 
-public class SampleGetEventListener
+public class TfsGetEventListener
     implements GetListener
 {
     public void onGet(final GetEvent e)

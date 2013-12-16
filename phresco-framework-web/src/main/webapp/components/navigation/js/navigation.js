@@ -375,13 +375,24 @@ define(["navigation/listener/navigationListener"], function() {
 				$('#importPassword').removeAttr('disabled','disabled');
 				$('#importUserName').removeAttr('readonly','readonly');
 				$('#importPassword').removeAttr('readonly','readonly');
+				$('#importPhrescoUserName').removeAttr('disabled','disabled');
+				$('#importPhrescoPassword').removeAttr('disabled','disabled');
+				$('#importPhrescoUserName').removeAttr('readonly','readonly');
+				$('#importPhrescoPassword').removeAttr('readonly','readonly');
+				$('#importTestUserName').removeAttr('disabled','disabled');
+				$('#importTestPassword').removeAttr('disabled','disabled');
+				$('#importTestUserName').removeAttr('readonly','readonly');
+				$('#importTestPassword').removeAttr('readonly','readonly');
 				$('#importUserName').val('');
 				$('#importPassword').val('');
+				$('#importPhrescoUserName').val('');
+				$('#importPhrescoPassword').val('');
+				$('#importTestUserName').val('');
+				$('#importTestPassword').val('');
 				$(".svndata").show();
 				$(".gitdata").hide();
 				$(".perforcedata").hide();
 				$(".importCredential").hide();
-				$(".svnheadopt").hide();
 				$(".tfsdata").show();
 			}
 		}

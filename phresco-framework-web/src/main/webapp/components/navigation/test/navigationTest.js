@@ -956,8 +956,6 @@ define(["navigation/navigation"], function() {
 				setTimeout(function() {
 					var svnDataDisplay = $(".svndata").css("display");
 					equal(svnDataDisplay, "table-row", "Import SVN data shown");
-					var svnDataOptDisplay = $(".svnheadopt").css("display");
-					equal(svnDataOptDisplay, "none", "Import SVN data hided");
 					var perforceDataDisplay = $(".perforcedata").css("display");
 					equal(perforceDataDisplay, "none", "Import Perforce data hidded");
 					var importCredentialDisplay = $(".importCredential").css("display");
