@@ -78,7 +78,9 @@ import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.impl.CIManagerImpl;
 import com.photon.phresco.framework.impl.util.FrameworkUtil;
+import com.photon.phresco.framework.model.GlobalSettings;
 import com.photon.phresco.framework.model.RepoDetail;
+import com.photon.phresco.framework.model.TestFlight;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.util.MojoProcessor;
@@ -835,11 +837,50 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	 * @return
 	 * @throws PhrescoException
 	 */
+	@GET
+	@Path("/testFlight")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response getTestFlightConfiguration()	throws PhrescoException {
+		ResponseInfo responseData = new ResponseInfo();
+		ResponseInfo finalOutput = null;
+		List<TestFlight> testFlightDetail = new ArrayList<TestFlight>();
+		try {
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			org.codehaus.jettison.json.JSONArray testFlightConfiguration = ciManager.getTestFlightConfiguration();
+			if (testFlightConfiguration != null) {
+				for (int i = 0; i < testFlightConfiguration.length(); i++) {
+					TestFlight config = new TestFlight();
+					org.codehaus.jettison.json.JSONObject JSONobject = (org.codehaus.jettison.json.JSONObject) testFlightConfiguration.get(i);
+					config.setTokenPairName(JSONobject.getString(TESTFLIGHT_TOKEN_NAME));
+					config.setApiToken(JSONobject.getString(API_TOKEN));
+					config.setTeamToken(JSONobject.getString(TEAM_TOKEN));
+					testFlightDetail.add(config);
+				}
+			}
+			finalOutput = responseDataEvaluation(responseData, null, testFlightDetail, RESPONSE_STATUS_SUCCESS, PHR800026);
+		} catch (PhrescoException e) {
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810043);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			.build();
+		} catch (org.codehaus.jettison.json.JSONException e) {
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810043);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			.build();
+		}
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+		.build();
+	}
+	
+	/**
+	 * @return
+	 * @throws PhrescoException
+	 */
 	@POST
 	@Path("/global")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response setGlobalConfiguration(List<RepoDetail> repodetails, @QueryParam(REST_QUERY_EMAIL_ADDRESS) String emailAddress, @QueryParam(REST_QUERY_EMAIL_PASSWORD) String emailPassword , @QueryParam(REST_QUERY_URL) String url, @QueryParam(REST_QUERY_USER_NAME) String username , @QueryParam(REST_QUERY_PASSWORD) String password) throws PhrescoException {
+	public Response setGlobalConfiguration(GlobalSettings globalInfo, @QueryParam(REST_QUERY_EMAIL_ADDRESS) String emailAddress, @QueryParam(REST_QUERY_EMAIL_PASSWORD) String emailPassword , @QueryParam(REST_QUERY_URL) String url, @QueryParam(REST_QUERY_USER_NAME) String username , @QueryParam(REST_QUERY_PASSWORD) String password) throws PhrescoException {
 		ResponseInfo responseData = new ResponseInfo();
 		ResponseInfo finalOutput = null;
 		boolean setGlobalConfiguration = false;
@@ -861,14 +902,29 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			String jenkinsUrl = FrameworkUtil.getJenkinsUrl();
 			String submitUrl = jenkinsUrl + FrameworkConstants.FORWARD_SLASH + CONFIG_SUBMIT;
 			org.json.JSONArray JSONarray = new org.json.JSONArray();
-			for (RepoDetail repodetail : repodetails) {
-				org.json.JSONObject confluenceObj = new org.json.JSONObject();
-				confluenceObj.put(CONFLUENCE_SITE_URL, repodetail.getRepoUrl());
-				confluenceObj.put(CONFLUENCE_USERNAME, repodetail.getUserName());
-				confluenceObj.put(FrameworkConstants.PASSWORD, repodetail.getPassword());
-				JSONarray.put(confluenceObj);
+			List<RepoDetail> repoDetails = globalInfo.getRepoDetails();
+			if(CollectionUtils.isNotEmpty(repoDetails)) {
+				for (RepoDetail repodetail : repoDetails) {
+					org.json.JSONObject confluenceObj = new org.json.JSONObject();
+					confluenceObj.put(CONFLUENCE_SITE_URL, repodetail.getRepoUrl());
+					confluenceObj.put(CONFLUENCE_USERNAME, repodetail.getUserName());
+					confluenceObj.put(FrameworkConstants.PASSWORD, repodetail.getPassword());
+					JSONarray.put(confluenceObj);
+				}
 			}
-			setGlobalConfiguration = ciManager.setGlobalConfiguration(jenkinsUrl, submitUrl, JSONarray, emailAddress, emailPassword);
+			org.json.JSONArray testFlightJSONarray = new org.json.JSONArray();
+			List<TestFlight> testFlightConfigs = globalInfo.getTestFlight();
+			if(CollectionUtils.isNotEmpty(testFlightConfigs)) {
+				for (TestFlight testFlight : testFlightConfigs) {
+					org.json.JSONObject testFlightObj = new org.json.JSONObject();
+					testFlightObj.put(TESTFLIGHT_TOKEN_NAME, testFlight.getTokenPairName());
+					testFlightObj.put(API_TOKEN, testFlight.getApiToken());
+					testFlightObj.put(TEAM_TOKEN, testFlight.getTeamToken());
+					testFlightJSONarray.put(testFlightObj);
+				}
+			}
+			
+			setGlobalConfiguration = ciManager.setGlobalConfiguration(jenkinsUrl, submitUrl, JSONarray, emailAddress, emailPassword, testFlightJSONarray);
 		} catch (PhrescoException e) {
 			finalOutput = responseDataEvaluation(responseData, e, setGlobalConfiguration, RESPONSE_STATUS_ERROR, PHR810034);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
@@ -1051,7 +1107,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Path("/pipeline")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response PipelineValidation(@QueryParam(REST_QUERY_NAME) String pipelineName, @QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
+	public Response pipeLineValidation(@QueryParam(REST_QUERY_NAME) String pipelineName, @QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		ResponseInfo<Boolean> finalOutput = null;
 		boolean nameExist = false;
