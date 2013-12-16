@@ -349,7 +349,7 @@ public class CIServiceTest extends RestBaseTest {
 			testFlight.setTeamToken("testTeamToken");
 			testFlightConfigs.add(testFlight);
 			gs.setTestFlight(testFlightConfigs);
-			Response builds = ciservice.setGlobalConfiguration(gs, "test@gmail.com", "manage", "", "", "");
+			Response builds = ciservice.setGlobalConfiguration(gs, "test@gmail.com", "manage", "", "", "", "tfsUrl");
 //			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) builds.getEntity();
 //			Assert.assertEquals(200, builds.getStatus());
 		} else {
@@ -360,39 +360,32 @@ public class CIServiceTest extends RestBaseTest {
 	@Test
 	public void getEmailConfigurationTest() throws PhrescoException {
 		
-		String jenkinsAlive = isJenkinsAlive();
-		if(jenkinsAlive.equals("200")) {
 			Response emailConfig = ciservice.getEmailConfiguration();
 			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) emailConfig.getEntity();
 			Assert.assertEquals(200, emailConfig.getStatus());
-		} else {
-			Assert.assertNotSame("200", jenkinsAlive);
-		}
+	}
+	
+	@Test
+	public void getTfsConfigurationTest() throws PhrescoException {
+		
+			 Response tfsSystemConfig = ciservice.getTfsSystemConfig();
+			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) tfsSystemConfig.getEntity();
+			Assert.assertEquals(200, tfsSystemConfig.getStatus());
 	}
 	
 	@Test
 	public void getConfluenceTest() throws PhrescoException {
-		String jenkinsAlive = isJenkinsAlive();
-		if(jenkinsAlive.equals("200")) {
 			Response confluenceConfig = ciservice.getConfluenceConfiguration();
 			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) confluenceConfig.getEntity();
 			Assert.assertEquals(200, confluenceConfig.getStatus());
-		} else {
-			Assert.assertNotSame("200", jenkinsAlive);
-		}
 	}
 	
 
 	@Test
 	public void getTestFlightConfigurationTest() throws PhrescoException {
-//		String jenkinsAlive = isJenkinsAlive();
-//		if(jenkinsAlive.equals("200")) {
 			Response testFlightConfig = ciservice.getTestFlightConfiguration();
 			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) testFlightConfig.getEntity();
 			Assert.assertEquals(200, testFlightConfig.getStatus());
-//		} else {
-//			Assert.assertNotSame("200", jenkinsAlive);
-//		}
 	}
 	
 	@Test

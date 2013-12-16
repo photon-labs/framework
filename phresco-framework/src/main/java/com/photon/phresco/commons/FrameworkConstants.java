@@ -281,6 +281,7 @@ public interface FrameworkConstants {
 	String XPATH_ROOT_NODE = "xpathRootNode";
 	String SMTP_AUTH_USERNAME = "smtpAuthUsername";
 	String SMTP_AUTH_PASSWORD = "smtpAuthPassword";
+	String TFS_EXECUTABLE = "tfExecutable";
 	String ANY = "Any";
     String GIT = "git";
     String BITKEEPER = "bitkeeper";
@@ -337,6 +338,10 @@ public interface FrameworkConstants {
     String SCM_LOCATIONS_REMOTE = "scm/locations//remote";
     String DD_MM_YYYY_HH_MM_SS = "dd/MM/yyyy hh:mm:ss";
 	String HUDSON_TASKS_BUILD_TRIGGER_NODE = "hudson.tasks.BuildTrigger";
+	String TFS_URL = "scm/serverUrl";
+	String TFS_USERNAME = "scm/userName";
+	String TFS_PASSWORD = "scm/userPassword";
+	String TFS_PROJECTPATH = "scm/projectPath";
 	String MAVEN_HOME_ENV = "MAVEN_HOME";
 	String USE_PRIVATE_REPOSITORY_NODE = "usePrivateRepository";
 	String POM_NODE = "pom";
@@ -699,6 +704,7 @@ public interface FrameworkConstants {
     String CI_CONFLUENCE_XML = "com.myyearbook.hudson.plugins.confluence.ConfluencePublisher.xml";
     String CI_TESTFLIGHT_XML = "testflight.TestflightRecorder.xml";
     String CI_MAILER_XML = "hudson.tasks.Mailer.xml";
+    String CI_TFS_XML = "hudson.plugins.tfs.TeamFoundationServerScm.xml";
     String CI_MAIL_EXT_PLUGIN = "email-ext.hpi";
     String CI_HUDSONURL = "hudsonUrl";
     String CI = "ci";

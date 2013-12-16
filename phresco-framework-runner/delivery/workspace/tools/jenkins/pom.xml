@@ -83,6 +83,13 @@
             <version>1.3.9</version>
             <type>hpi</type>
         </dependency>
+		
+		<dependency>
+			<groupId>org.jenkins</groupId>
+			<artifactId>tfs</artifactId>
+			<version>3.0.1</version>
+			<type>hpi</type>
+		</dependency>
 
 		
 	</dependencies>

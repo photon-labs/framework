@@ -514,6 +514,9 @@ public interface ResponseCodes {
 	String PHR810042 = "PHR810042"; // CI pipeline name already exists
 	String PHR800026 = "PHR800026"; // TestFlight configuration retrieved successfully
 	String PHR810043 = "PHR810043"; // returned TestFlight configuration Failed
+	String PHR810044 = "PHR810044"; // returned TFS configuration successfully
+	String PHR810045 = "PHR810045"; // returned TFS configuration Failed
+	
 	
 	/*
 	 * Upgrade Service

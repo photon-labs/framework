@@ -792,7 +792,7 @@ define([], function() {
 			}
 			$("select[name=appIds]").selectpicker('refresh');
 			$("[name=repoTypes]").val(data.repoTypes);
-			
+			$("[name=repoTypes]").selectpicker('refresh');
 			var features = [];
 			if(data.enableRepo) {
 				features.push('enableRepo');
@@ -950,6 +950,13 @@ define([], function() {
 				$(repoTypeElemUrl).html('<td colspan="2"><input type="text" placeholder="SVN Url" name="url"><input name="repoType" type="hidden" value="'+ templateJsonData.repoTypes +'"></td>');
 				
 				$(repoTypeElemCred).html('<td><input type="text" placeholder="Username" name="username"></td>'+
+                        '<td><input type="password" placeholder="Password" name="password"></td>');
+			} else if (templateJsonData.enableRepo && templateJsonData.repoTypes === "tfs") {
+				// For TFS
+				$(repoTypeElemUrl).html('<td colspan="3"><input type="text" placeholder="TFS Url" name="url"><input name="repoType" type="hidden" value="'+ templateJsonData.repoTypes +'"></td>');
+				
+				$(repoTypeElemCred).html('<td><input type="text" placeholder="Username" name="username"></td>'+
+						'<td><input type="text" placeholder="ProjectPath" name="projectPath"></td>'+
                         '<td><input type="password" placeholder="Password" name="password"></td>');
 			} else if (templateJsonData.enableRepo && templateJsonData.repoTypes === "git") {
 				// For GIT
@@ -1185,11 +1192,12 @@ define([], function() {
 							fetchSql = false;
 						} 	
 					}
-					if (templateJsonData.enableRepo && templateJsonData.repoTypes === "svn" || templateJsonData.enableRepo && templateJsonData.repoTypes === "git") {
+					//RepoType value
+					/*if (templateJsonData.enableRepo && templateJsonData.repoTypes === "svn" || templateJsonData.enableRepo && templateJsonData.repoTypes === "git" || templateJsonData.enableRepo && templateJsonData.repoTypes === "tfs") {
 						$("input[name=repoType]").val(templateJsonData.repoTypes);
 					} else {
 						$(repoTypeElemUrl).html('<input name="repoType" type="hidden" value="clonedWorkspace">');
-					}
+					}*/
 					
 					if(templateJsonData.enableUploadSettings) {
 						var upload = templateJsonData.uploadTypes;

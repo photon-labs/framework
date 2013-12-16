@@ -399,6 +399,28 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 		return null;
 	}
+	
+	public String getTfsConfiguration() throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method CIManagerImpl.getTfsConfiguration()");
+		}
+		try {
+			File ciTfsXml = new File(Utility.getJenkinsHome() + File.separator + CI_TFS_XML);
+			if (!ciTfsXml.exists()) {
+				return null;
+			}
+			if (debugEnabled) {
+				S_LOGGER.debug("TFSconfigFilePath ... " + ciTfsXml.getPath());
+			}
+			SvnProcessor processor = new SvnProcessor(ciTfsXml);
+			return processor.getNodeValue(TFS_EXECUTABLE);
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into the catch block of CIManagerImpl.saveMailConfiguration " + e.getLocalizedMessage());
+			}
+		}
+		return null;
+	}
 
 	//Confluence plugin
 	public JSONArray getConfluenceConfiguration() throws PhrescoException {
@@ -786,12 +808,19 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		if (SVN.equals(job.getRepoType())) {
 			S_LOGGER.debug("This is svn type project!!!!!");
 			processor.changeNodeValue(SCM_LOCATIONS_REMOTE, job.getUrl());
-		} 
-		else if (GIT.equals(job.getRepoType())) {
+		//GIT url customization
+		} else if (GIT.equals(job.getRepoType())) {
 			S_LOGGER.debug("This is git type project!!!!!");
 			processor.changeNodeValue(SCM_USER_REMOTE_CONFIGS_URL, job.getUrl());
 			processor.changeNodeValue(SCM_BRANCHES_NAME, job.getBranch());
-			// cloned workspace
+		//TFS url customization
+		} else if (TFS.equals(job.getRepoType())) {
+			S_LOGGER.debug("This is tfs type project!!!!!");
+			processor.changeNodeValue(TFS_URL, job.getUrl());
+			processor.changeNodeValue(TFS_USERNAME, job.getUsername());
+			processor.changeNodeValue(TFS_PASSWORD, job.getPassword());
+			processor.changeNodeValue(TFS_PROJECTPATH, job.getProjectPath());
+		// cloned workspace
 		} else if (CLONED_WORKSPACE.equals(job.getRepoType())) {
 			S_LOGGER.debug("Clonned workspace selected!!!!!!!!!!");
 			processor.useClonedScm(job.getUsedClonnedWorkspace(), SUCCESSFUL);
@@ -1520,7 +1549,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		return false;
 	}
 
-	public boolean setGlobalConfiguration(String jenkinsUrl, String submitUrl, String confluenceUrl, String confluenceUsername, String confluencePassword, String emailAddress, String emailPassword) throws PhrescoException {
+	public boolean setGlobalConfiguration(String jenkinsUrl, String submitUrl, String confluenceUrl, String confluenceUsername, String confluencePassword, String emailAddress, String emailPassword, org.json.JSONArray testFlightJSONarray, String tfsUrl) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.setGlobalConfiguration()");
 		}
@@ -1585,7 +1614,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				nameValuePairs.add(new BasicNameValuePair("_.password", confluencePassword));
 			}
 
-			return postConfigData(jenkinsUrl, client, post, httpContext, nameValuePairs, jsonObj);
+			return postConfigData(jenkinsUrl, client, post, httpContext, nameValuePairs, jsonObj, tfsUrl);
 		} catch (Exception e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into the catch block of CIManagerImpl.setGlobalConfiguration" + e.getLocalizedMessage());
@@ -1594,7 +1623,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 	}
 
-	public boolean setGlobalConfiguration(String jenkinsUrl, String submitUrl, org.json.JSONArray confluenceObj, String emailAddress, String emailPassword, org.json.JSONArray testFlightJSONarray) throws PhrescoException {	
+	public boolean setGlobalConfiguration(String jenkinsUrl, String submitUrl,	org.json.JSONArray confluenceObj, String emailAddress, String emailPassword, org.json.JSONArray testFlightJSONarray, String tfsUrl) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.setGlobalConfiguration()");
 		}
@@ -1652,7 +1681,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			if(testFlightJSONarray != null) {
 				JSONObject testFlights = new JSONObject();
 				testFlights.put("tokenPairs", testFlightJSONarray);
-				jsonObj.put("testflight.TestflightRecorder", testFlights);
+//				jsonObj.put("testflight.TestflightRecorder", testFlights);
 			 	for (int j = 0; j<testFlightJSONarray.length(); j++) {
 			 		JSONObject jsonObject = testFlightJSONarray.getJSONObject(j);
 					nameValuePairs.add(new BasicNameValuePair("tokenPair.tokenPairName", jsonObject.getString("tokenPairName")));
@@ -1661,7 +1690,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			 	}
 			}
 			
-			return postConfigData(jenkinsUrl, client, post, httpContext, nameValuePairs, jsonObj);
+			return postConfigData(jenkinsUrl, client, post, httpContext, nameValuePairs, jsonObj, tfsUrl);
 		} catch (Exception e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into the catch block of CIManagerImpl.setGlobalConfiguration" + e.getLocalizedMessage());
@@ -1670,7 +1699,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 	}
 
-	private boolean postConfigData(String jenkinsUrl, HttpClient client, HttpPost post, HttpContext httpContext, List<NameValuePair> nameValuePairs, JSONObject jsonObj) throws Exception {
+	private boolean postConfigData(String jenkinsUrl, HttpClient client, HttpPost post, HttpContext httpContext, List<NameValuePair> nameValuePairs, JSONObject jsonObj, String tfsUrl) throws Exception {
 		// Default values
 		nameValuePairs.add(new BasicNameValuePair("_.rawWorkspaceDir","${JENKINS_HOME}/workspace/${ITEM_FULLNAME}"));
 		nameValuePairs.add(new BasicNameValuePair("_.rawBuildsDir","${ITEM_ROOTDIR}/builds"));
@@ -1709,6 +1738,8 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		nameValuePairs.add(new BasicNameValuePair("_.home","${M2_HOME}"));
 		nameValuePairs.add(new BasicNameValuePair("stapler-class-bag","true"));
 		nameValuePairs.add(new BasicNameValuePair("_.usageStatisticsCollected","on"));
+		//TFS
+		nameValuePairs.add(new BasicNameValuePair("tfs.tfExecutable",tfsUrl));
 		nameValuePairs.add(new BasicNameValuePair("svn.workspaceFormat","8"));
 		nameValuePairs.add(new BasicNameValuePair("svn.storeAuthToDisk","on"));
 		nameValuePairs.add(new BasicNameValuePair("ext_mailer_admin_address","address not configured yet <nobody>"));

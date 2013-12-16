@@ -50,6 +50,7 @@
                                     <td class="repoDiv"><select name="repoTypes" class="selectpicker">
                                               <option value="svn" data-i18n="projectlist.label.svn"></option>
 											  <option value="git" data-i18n="projectlist.label.git"></option>
+											  <option value="tfs" data-i18n="projectlist.label.tfs"></option>
                                         </select>
                                     </td>
                                     <td class="uploadDiv">

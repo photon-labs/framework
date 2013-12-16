@@ -768,6 +768,34 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	}
 	
 	/**
+	 * @param customerId
+	 * @param projectId
+	 * @param appId
+	 * @return
+	 * @throws PhrescoException
+	 */
+	@GET
+	@Path("/tfs")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response getTfsSystemConfig()
+	throws PhrescoException {
+		ResponseInfo responseData = new ResponseInfo();
+		ResponseInfo finalOutput = null;
+		try {
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			String tfsConfig = ciManager.getTfsConfiguration();
+			finalOutput = responseDataEvaluation(responseData, null, tfsConfig, RESPONSE_STATUS_SUCCESS, PHR810044);
+		} catch (PhrescoException e) {
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810045);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			.build();
+		}
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+		.build();
+	}
+	
+	/**
 	 * @return
 	 * @throws PhrescoException
 	 * @throws UnknownHostException
@@ -880,7 +908,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Path("/global")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response setGlobalConfiguration(GlobalSettings globalInfo, @QueryParam(REST_QUERY_EMAIL_ADDRESS) String emailAddress, @QueryParam(REST_QUERY_EMAIL_PASSWORD) String emailPassword , @QueryParam(REST_QUERY_URL) String url, @QueryParam(REST_QUERY_USER_NAME) String username , @QueryParam(REST_QUERY_PASSWORD) String password) throws PhrescoException {
+	public Response setGlobalConfiguration(GlobalSettings globalInfo, @QueryParam(REST_QUERY_EMAIL_ADDRESS) String emailAddress, @QueryParam(REST_QUERY_EMAIL_PASSWORD) String emailPassword , @QueryParam(REST_QUERY_URL) String url, @QueryParam(REST_QUERY_USER_NAME) String username , @QueryParam(REST_QUERY_PASSWORD) String password, @QueryParam(REST_QUERY_TFS_URL) String tfsUrl) throws PhrescoException {
 		ResponseInfo responseData = new ResponseInfo();
 		ResponseInfo finalOutput = null;
 		boolean setGlobalConfiguration = false;
@@ -924,7 +952,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				}
 			}
 			
-			setGlobalConfiguration = ciManager.setGlobalConfiguration(jenkinsUrl, submitUrl, JSONarray, emailAddress, emailPassword, testFlightJSONarray);
+			setGlobalConfiguration = ciManager.setGlobalConfiguration(jenkinsUrl, submitUrl, JSONarray, emailAddress, emailPassword, testFlightJSONarray, tfsUrl);
 		} catch (PhrescoException e) {
 			finalOutput = responseDataEvaluation(responseData, e, setGlobalConfiguration, RESPONSE_STATUS_ERROR, PHR810034);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)

@@ -133,6 +133,12 @@ public interface CIManager {
 	 * @throws PhrescoException
 	 */
 	String getMailConfiguration(String tag) throws PhrescoException;
+	
+	/**
+	 * @return
+	 * @throws PhrescoException
+	 */
+	String getTfsConfiguration() throws PhrescoException;
 
 	/**
 	 * @return
@@ -297,7 +303,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	public boolean setGlobalConfiguration(String jenkinsUrl, String submitUrl, org.json.JSONArray confluenceObj, String emailAddress, String emailPassword, org.json.JSONArray testFlightJSONarray) throws PhrescoException;
+	public boolean setGlobalConfiguration(String jenkinsUrl, String submitUrl, org.json.JSONArray confluenceObj, String emailAddress, String emailPassword, org.json.JSONArray testFlightJSONarray, String tfsUrl) throws PhrescoException;
 	
 	/**
 	 * @param job

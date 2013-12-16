@@ -59,6 +59,9 @@ define([], function() {
 			} else if (action === "getMail") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/mail";
+			} else if (action === "getTfs") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/tfs";
 			} else if (action === "getConfluence") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/confluence";
@@ -80,9 +83,10 @@ define([], function() {
 				var ePass = $('input[name=password][temp=email]').val();
 				var jUrl = $('input[name=jenkinsUrl][temp=jenkins]').val();
 				var jName = $('input[name=juserName][temp=jenkins]').val();
-				var jPass = $('input[name=jpassword][temp=jenkins]').val();				
+				var jPass = $('input[name=jpassword][temp=jenkins]').val();
+				var tfcle = $('input[name=tfcle][temp=jenkins]').val();	
 				header.requestPostBody = JSON.stringify(ciRequestBody);
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/global?emailAddress=" + eUser + "&emailPassword=" + ePass + "&url=" + jUrl + "&username=" + jName + "&password=" + jPass;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/global?emailAddress=" + eUser + "&emailPassword=" + ePass + "&url=" + jUrl + "&username=" + jName + "&password=" + jPass + "&tfsUrl=" + tfcle;
 			} 
 			return header;
 		},
@@ -99,6 +103,10 @@ define([], function() {
 			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'getMail'), function(response) {
 				$('input[name=username][temp=email]').val(response.data[0]);
 				$('input[name=password][temp=email]').val(response.data[1]);
+			});
+			
+			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'getTfs'), function(tfs) {
+				$('input[name=tfcle][temp=jenkins]').val(tfs.data);
 			});
 			
 			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'getConfluence'), function(response) {
