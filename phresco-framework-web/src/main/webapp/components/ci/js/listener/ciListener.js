@@ -1193,11 +1193,11 @@ define([], function() {
 						} 	
 					}
 					//RepoType value
-					/*if (templateJsonData.enableRepo && templateJsonData.repoTypes === "svn" || templateJsonData.enableRepo && templateJsonData.repoTypes === "git" || templateJsonData.enableRepo && templateJsonData.repoTypes === "tfs") {
+					if (templateJsonData.enableRepo && templateJsonData.repoTypes === "svn" || templateJsonData.enableRepo && templateJsonData.repoTypes === "git" || templateJsonData.enableRepo && templateJsonData.repoTypes === "tfs") {
 						$("input[name=repoType]").val(templateJsonData.repoTypes);
 					} else {
 						$(repoTypeElemUrl).html('<input name="repoType" type="hidden" value="clonedWorkspace">');
-					}*/
+					}
 					
 					if(templateJsonData.enableUploadSettings) {
 						var upload = templateJsonData.uploadTypes;
