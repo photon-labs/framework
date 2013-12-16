@@ -139,7 +139,6 @@ define([], function() {
 						var host = pathArray[2];
 						sonarExternalUrl = sonarExternalUrl.replace(protocol, window.location.protocol);
 						sonarExternalUrl = sonarExternalUrl.replace(host, window.location.host);
-						
 						commonVariables.api.urlExists(sonarExternalUrl, function(response){
 							callback(response);
 						}, function(response){
@@ -237,7 +236,7 @@ define([], function() {
 
 		constructHtml : function(response, output){
 			var self = this;
-				if(response[0].validateAgainst !== null){
+				if(response!== undefined && response[0] !== undefined && response[0].validateAgainst !== null){
 					var typeLi = '';
 					var validateAgainst = response[0].validateAgainst.key;
 					var repTypesData = response[0].validateAgainst.value;
@@ -253,7 +252,25 @@ define([], function() {
 							validateAgainst = resdata.options[0].key;
 							 repTypesData = resdata.options[0].value;
 							$.each(resdata.options, function(index, optvalue) {
-								innerUl += "<li class='dropdown-key' name='selectType' key="+optvalue.key+" data="+optvalue.value+" style='padding-left:8px;cursor:pointer;'>"+optvalue.value+"</li>";
+								var subOptionLi = '', innerLiClass='dropdown-key', innerLiName='selectType';
+								if ('iphone' === optvalue.key) {
+									//To construct sub options inside an LI  (for iphone codevalidation)
+									$.each(resdata.subOptions, function(key, value) {
+										if ('iphone' === key) {
+											if (value !== undefined && value.length > 0) {
+												subOptionLi += '<ul>';
+												$.each(value, function(index, possibleVal) {
+													subOptionLi +="<li class='dropdown-key' name='selectType' key="+possibleVal.key+" data="+possibleVal.value+" style='padding-left:8px;cursor:pointer;'>"+possibleVal.value+"</li>"; 
+													innerLiClass = '';
+													innerLiName = '';
+												});	
+												subOptionLi += '</ul>';
+											}
+										}
+									});	
+								}
+
+								innerUl += "<li class="+innerLiClass+" name="+innerLiName+" key="+optvalue.key+" data="+optvalue.value+" style='padding-left:8px;cursor:pointer;'>"+optvalue.value+subOptionLi+"</li>";
 							});
 							typeLi += "<li disabled='disabled' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:4px;'>"+resdata.validateAgainst.value+'<ul>'+innerUl+"</ul></li>";
 						}

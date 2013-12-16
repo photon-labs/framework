@@ -19,7 +19,6 @@ package com.photon.phresco.framework.rest.api;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,7 +51,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.antlr.stringtemplate.StringTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.xml.sax.SAXException;
@@ -77,6 +75,7 @@ import com.photon.phresco.framework.model.DependantParameters;
 import com.photon.phresco.framework.model.PerformanceDetails;
 import com.photon.phresco.framework.param.impl.IosTargetParameterImpl;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
+import com.photon.phresco.plugins.model.Mojos;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
@@ -413,34 +412,46 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
             ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
             ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
             List<CodeValidationReportType> codeValidationReportTypes = new ArrayList<CodeValidationReportType>();
+            CodeValidationReportType clangOptionReportType = new CodeValidationReportType();
             // To get parameter values for Iphone technology
             PomProcessor pomProcessor = Utility.getPomProcessor(rootModulePath, subModuleName);
             String validateReportUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_VALIDATE_REPORT);
+            List<Value> clangReports = new ArrayList<Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value>();
             if (StringUtils.isNotEmpty(validateReportUrl)) {
-                List<Value> clangReports = getClangReports(appInfo);
-                for (Value value : clangReports) {
-        			CodeValidationReportType codeValidationReportType = new CodeValidationReportType();
-					codeValidationReportType.setValidateAgainst(value);
-					codeValidationReportTypes.add(codeValidationReportType);
-                }
-                return Response.ok(codeValidationReportTypes).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+            	clangReports = getClangReports(appInfo);
             }
             MojoProcessor processor = new MojoProcessor(new File(infoFileDir));
             Parameter parameter = processor.getParameter(Constants.PHASE_VALIDATE_CODE, "sonar");
-            PossibleValues possibleValues = parameter.getPossibleValues();
-            List<Value> values = possibleValues.getValue();
-            for (Value value : values) {
-                CodeValidationReportType codeValidationReportType = new CodeValidationReportType();
-                String key = value.getKey();
-                Parameter depParameter = processor.getParameter(Constants.PHASE_VALIDATE_CODE, key);
-                if (depParameter != null && depParameter.getPossibleValues() != null) {
-                    PossibleValues depPossibleValues = depParameter.getPossibleValues();
-                    List<Value> depValues = depPossibleValues.getValue();
-                    codeValidationReportType.setOptions(depValues);
-                }
-                codeValidationReportType.setValidateAgainst(value);
-                codeValidationReportTypes.add(codeValidationReportType);
-            }
+	        if (parameter != null) {  
+	        	PossibleValues possibleValues = parameter.getPossibleValues();
+	            List<Value> values = possibleValues.getValue();
+	            for (Value value : values) {
+	                CodeValidationReportType codeValidationReportType = new CodeValidationReportType();
+	                String key = value.getKey();
+	                Parameter depParameter = processor.getParameter(Constants.PHASE_VALIDATE_CODE, key);
+	                if (depParameter != null && depParameter.getPossibleValues() != null) {
+	                    PossibleValues depPossibleValues = depParameter.getPossibleValues();
+	                    List<Value> depValues = depPossibleValues.getValue();
+	                    codeValidationReportType.setOptions(depValues);
+	                    for (Value depValue : depValues) {
+	                    	String depKey = depValue.getKey();
+	                    	if ("iphone".equals(depKey)) {
+	                    		Map<String, List<Value>> subOptions = new HashMap<String, List<Value>>();
+	                    		subOptions.put("iphone", clangReports);
+	    	                	codeValidationReportType.setSubOptions(subOptions);
+	    	                }
+						}
+	                }
+	                
+	                codeValidationReportType.setValidateAgainst(value);
+	                codeValidationReportTypes.add(codeValidationReportType);
+	            }
+	        } else if (CollectionUtils.isNotEmpty(clangReports)) {
+        		for (Value value : clangReports) {
+        			clangOptionReportType.setValidateAgainst(value);
+        			codeValidationReportTypes.add(clangOptionReportType);
+        		}
+	        }
             return Response.ok(codeValidationReportTypes).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
         } catch (PhrescoException e) {
             ResponseInfo<List<CodeValidationReportType>> finalOutput = responseDataEvaluation(responseData, e,
@@ -533,7 +544,22 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
             String pomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
 			File pomFile = new File(pomFileLocation);
 //			PomProcessor processor = FrameworkServiceUtil.getPomProcessor(appDirName);
-			String validateReportUrl = processor.getProperty(Constants.POM_PROP_KEY_VALIDATE_REPORT);
+			String validateReportUrl = "";
+			String infoFileDir = getInfoFileDir(appDirName, Constants.PHASE_VALIDATE_CODE, Constants.PHASE_VALIDATE_CODE, rootModulePath, subModuleName);
+			MojoProcessor mojoProcessor = new MojoProcessor(new File(infoFileDir));
+			Parameter srcParameter = mojoProcessor.getParameter(Constants.PHASE_VALIDATE_CODE, "src");
+			if (srcParameter != null && srcParameter.getPossibleValues() != null && CollectionUtils.isNotEmpty(srcParameter.getPossibleValues().getValue())) {
+				List<String> againsts = new ArrayList<String>();
+				List<Value> srcValues = srcParameter.getPossibleValues().getValue();
+				for (Value srcValue : srcValues) {
+					againsts.add(srcValue.getKey());
+				}
+				if (CollectionUtils.isNotEmpty(againsts) && !FUNCTIONALTEST.equals(validateAgainst) && !againsts.contains(validateAgainst)) {
+					validateReportUrl = processor.getProperty(Constants.POM_PROP_KEY_VALIDATE_REPORT);
+				}
+			} else {
+				validateReportUrl = processor.getProperty(Constants.POM_PROP_KEY_VALIDATE_REPORT);
+			}
 			FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			Customer customer = serviceManager.getCustomer(customerId);
@@ -606,7 +632,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			URL sonarURL = new URL(sb.toString());
 			String protocol = sonarURL.getProtocol();
 			HttpURLConnection connection = null;
-			
 			
 			if (protocol.equals(HTTP_PROTOCOL)) {
 				connection = (HttpURLConnection) sonarURL.openConnection();
