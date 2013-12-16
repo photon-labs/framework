@@ -251,6 +251,30 @@ public class ConfigProcessor implements FrameworkConstants {
     	}
     }
     
+    public void enableTestFlightReleasePlugin(CIJob job) throws PhrescoException {
+    	if (DebugEnabled) {
+    		S_LOGGER.debug("Entering Method ConfigProcessor.enableTestFlightReleasePlugin()");
+    	}
+    	try {
+    		org.jdom.Element element = new Element("testflight.TestflightRecorder");
+    		element.addContent(createElement(TESTFLIGHT_TOKEN_NAME, job.getTokenPairName()));
+    		element.addContent(createElement(NOTIFYTEAM, FALSE));
+    		element.addContent(createElement(BUILD_NOTES, job.getBuildNotes()));
+    		element.addContent(createElement(APPEND_CHANGE_LOG, FALSE));
+    		element.addContent(createElement(REPLACE, FALSE));
+    		element.addContent(createElement(DEBUG, FALSE));
+    		XPath  xpath = XPath.newInstance(CI_FILE_RELEASE_PUBLISHER_NODE);
+    		xpath.addNamespace(root_.getNamespace());
+    		Element publisherNode = (Element) xpath.selectSingleNode(root_);
+    		publisherNode.getContent().add(element);
+    	} catch (JDOMException e) {
+    		if (DebugEnabled) {
+        		S_LOGGER.debug("Entering catch block of ConfigProcessor.enableConfluenceReleasePlugin() "+e.getLocalizedMessage());
+        	}
+    		throw new PhrescoException(e);
+    	}
+    }
+    
     public void useClonedScm(String parentJobName, String criteria) throws PhrescoException {
     	if (DebugEnabled) {
     		S_LOGGER.debug("Entering Method ConfigProcessor.useClonedScm()");

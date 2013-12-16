@@ -246,6 +246,9 @@ define([], function() {
 			} else if (action === "getConfluence") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/confluence";
+			} else if (action === "getTestFlight") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/testFlight";
 			} else if (action === "pipeline") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/pipeline?projectId=" + projectId + "&appDirName=" + appDir + "&name=" + ciRequestBody.name + "&customerId="+ customerId;
@@ -1047,6 +1050,43 @@ define([], function() {
 	                	'</table>';
 						$(uploadSettingsElem).append(uploadSettingsHtml);
 					}
+					
+					if (upload[i] === "TestFlight") {
+						
+						var names = [];
+						self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'getTestFlight'), function(testFlight) {
+							for (i in testFlight.data) {
+								var data = testFlight.data[i];
+								var tokenPairName = $('<a>').prop('href', data.tokenPairName).prop('tokenPairName');
+								names.push(data.tokenPairName);
+							}
+							var uploadSettingsHtml = '<table id="testFlightUploadSettings" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">'+
+		                    '<thead><tr><th colspan="3">TestFlight Upload Settings</th></tr></thead>'+
+		                    '<tbody>'+
+		                    '<tr>'+  
+	                    	'<tr><td id="ipDiv">TokenPair Name<br><select id="tokenPairName" name="tokenPairName" class="selectpicker" placeholder="Ip"></td></tr>'+
+	                       	'<input name="enableTestFlight" type="hidden" value="true">'+
+	                        '<tr><td><input name="buildNotes" type="text" placeholder="Build Notes"></td></tr>'+
+	                        '</tbody>'+
+		                	'</table>';
+							$(uploadSettingsElem).append(uploadSettingsHtml);
+							if (!self.isBlank(names)) {
+								var select = document.createElement("select");
+								select.setAttribute("name", "tokenPairName");
+								select.setAttribute("id", "tokenPairName");
+								for (i in names) {
+									var option;
+									option = document.createElement("option");
+									option.setAttribute("value", names[i]);
+									option.innerHTML = names[i];
+									select.appendChild(option);
+								}
+								$('#ipDiv').html('');
+								$('#ipDiv').html(select);
+							}
+							
+						});						
+					}
 				}
 			}
 
@@ -1162,6 +1202,9 @@ define([], function() {
 							}
 							if (upload[i] === "Cobertura") {
 								$("input[name=coberturaPlugin]").val("true");
+							}
+							if (upload[i] === "TestFlight") {
+								$("input[name=enableTestFlight]").val("true");
 							}
 						}
 					}

@@ -57,6 +57,7 @@
 										 	<option value="Collabnet" data-i18n="ci.collabnet"></option>
 											<option value="Confluence" data-i18n="ci.confluence"></option>
 											<option value="Cobertura" data-i18n="ci.cobertura"></option>
+											<option value="TestFlight" data-i18n="ci.testFlight"></option>
 										</select>
 									</td>
                                 </tr>

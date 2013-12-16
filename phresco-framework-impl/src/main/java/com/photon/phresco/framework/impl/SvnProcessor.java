@@ -350,6 +350,82 @@ public class SvnProcessor implements FrameworkConstants{
 		return null;
     }
     
+    public JSONArray readTestFlightXml() throws PhrescoException {
+    	if (debugEnabled) {
+			S_LOGGER.error("Entered Method SvnProcessor.readTestFlightXml");
+		}
+    	try {
+    		String jenkinsJobHome = System.getenv(JENKINS_HOME);
+    		StringBuilder jenkinsHome = new StringBuilder(jenkinsJobHome);
+    		jenkinsHome.append(File.separator);
+    		File testFlightHomeXml = new File(jenkinsHome.toString() + CI_TESTFLIGHT_XML);
+    		if (!testFlightHomeXml.exists()) {
+    			return null;
+    		} else {
+    			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+    			domFactory.setNamespaceAware(true); 
+    			DocumentBuilder builder = domFactory.newDocumentBuilder();
+    			org.w3c.dom.Document doc = builder.parse(testFlightHomeXml);
+    			XPathFactory xpathfactory = XPathFactory.newInstance();
+    			javax.xml.xpath.XPath xpath = xpathfactory.newXPath();
+    			XPathExpression expr = xpath.compile(TESTFLIGHT_TOKENPAIR);
+    			Object result = expr.evaluate(doc, XPathConstants.NODESET);
+    			NodeList nodes = (NodeList) result;
+    			if (nodes.getLength() == 0) {
+    				return null;
+    			}
+    			if (nodes != null) {
+    				JSONArray jsonarray = new JSONArray();
+    				for (int i = 0; i < nodes.getLength(); i++) {
+    					JSONObject json = new JSONObject();
+    					String tokenPairName = "";
+    					String apiToken = "";
+    					String teamToken = "";
+    					String tokenNode = nodes.item(i).getNodeName();
+    					if (TESTFLIGHT_TOKEN_NAME.equalsIgnoreCase(tokenNode)) {
+    						tokenPairName = nodes.item(i).getTextContent();
+    					} else if (API_TOKEN.equalsIgnoreCase(tokenNode)) {
+    						apiToken = nodes.item(i).getTextContent();
+    					} else if (TEAM_TOKEN.equalsIgnoreCase(tokenNode)) {
+    						teamToken = nodes.item(i).getTextContent();
+    					}
+
+    					String apiTokenNode = nodes.item(i).getNextSibling().getNextSibling().getNodeName();
+    					if (TESTFLIGHT_TOKEN_NAME.equalsIgnoreCase(apiTokenNode)) {
+    						tokenPairName = nodes.item(i).getNextSibling().getNextSibling().getTextContent();
+    					} else if (API_TOKEN.equalsIgnoreCase(apiTokenNode)) {
+    						apiToken = nodes.item(i).getNextSibling().getNextSibling().getTextContent();
+    					} else if (TEAM_TOKEN.equalsIgnoreCase(apiTokenNode)) {
+    						teamToken = nodes.item(i).getNextSibling().getNextSibling().getTextContent();
+    					}
+
+    					String teamTokenNode = nodes.item(i).getNextSibling().getNextSibling().getNextSibling().getNextSibling().getNodeName();
+    					if (TESTFLIGHT_TOKEN_NAME.equalsIgnoreCase(teamTokenNode)) {
+    						tokenPairName = nodes.item(i).getNextSibling().getNextSibling().getNextSibling().getNextSibling().getTextContent();
+    					} else if (API_TOKEN.equalsIgnoreCase(teamTokenNode)) {
+    						apiToken = nodes.item(i).getNextSibling().getNextSibling().getNextSibling().getNextSibling().getTextContent();
+    					} else if (TEAM_TOKEN.equalsIgnoreCase(teamTokenNode)) {
+    						teamToken = nodes.item(i).getNextSibling().getNextSibling().getNextSibling().getNextSibling().getTextContent();
+    					}
+    					json.put(TESTFLIGHT_TOKEN_NAME, tokenPairName);
+    					json.put(API_TOKEN, decyPassword(apiToken));
+    					json.put(TEAM_TOKEN, decyPassword(teamToken));
+    					jsonarray.put(json);
+    				}
+
+    				return jsonarray;
+    			}
+    		}
+    	} catch (Exception e) {
+    		if (debugEnabled) {
+    			S_LOGGER.error("Entered into the catch block of SvnProcessor.readConfluenceXml "+e.getLocalizedMessage());
+    		}
+    		throw new PhrescoException(e);
+    	}
+    	
+		return null;
+    }
+    
     public List<String> readConfluenceSites() throws PhrescoException {
     	if (debugEnabled) {
 			S_LOGGER.error("Entered Method SvnProcessor.readConfluenceSites");

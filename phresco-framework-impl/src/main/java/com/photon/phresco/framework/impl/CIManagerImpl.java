@@ -423,6 +423,29 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		return null;
 	}
 
+	//TestFlight plugin
+	public JSONArray getTestFlightConfiguration() throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method CIManagerImpl.getTestFlightConfiguration()");
+		}
+		try {
+			String jenkinsJobHome = System.getenv(JENKINS_HOME);
+			StringBuilder jenkinsHome = new StringBuilder(jenkinsJobHome);
+			jenkinsHome.append(File.separator);
+			File testFlightHomeXml = new File(jenkinsHome.toString() + CI_TESTFLIGHT_XML);
+			if (testFlightHomeXml.exists()) {
+				SvnProcessor processor = new SvnProcessor(testFlightHomeXml);
+				return processor.readTestFlightXml();
+			}
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into the catch block of CIManagerImpl.getTestFlightConfiguration " + e.getLocalizedMessage());
+			}
+			throw new PhrescoException(e);
+		}
+		return null;
+	}
+		
 	public List<String> getConfluenceSites() throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.getConfluenceSites()");
@@ -816,6 +839,12 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			S_LOGGER.debug("Enablebling confluence file release plugin ");
 			processor.enableConfluenceReleasePlugin(job);
 		}
+		//enable testFlight file release plugin integration
+		if (job.isEnableTestFlight()) {
+			S_LOGGER.debug("Enablebling testFlight file release plugin ");
+			processor.enableTestFlightReleasePlugin(job);
+		}
+		
 		// use clonned scm
 		if(CLONED_WORKSPACE.equals(job.getRepoType())) {
 			S_LOGGER.debug("using cloned workspace ");
@@ -1565,7 +1594,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 	}
 
-	public boolean setGlobalConfiguration(String jenkinsUrl, String submitUrl, org.json.JSONArray confluenceObj, String emailAddress, String emailPassword) throws PhrescoException {	
+	public boolean setGlobalConfiguration(String jenkinsUrl, String submitUrl, org.json.JSONArray confluenceObj, String emailAddress, String emailPassword, org.json.JSONArray testFlightJSONarray) throws PhrescoException {	
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.setGlobalConfiguration()");
 		}
@@ -1619,7 +1648,19 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				confluenceSites.put("sites", confluenceObj);
 				jsonObj.put("com-myyearbook-hudson-plugins-confluence-ConfluencePublisher", confluenceSites);
 			}
-
+			
+			if(testFlightJSONarray != null) {
+				JSONObject testFlights = new JSONObject();
+				testFlights.put("tokenPairs", testFlightJSONarray);
+				jsonObj.put("testflight.TestflightRecorder", testFlights);
+			 	for (int j = 0; j<testFlightJSONarray.length(); j++) {
+			 		JSONObject jsonObject = testFlightJSONarray.getJSONObject(j);
+					nameValuePairs.add(new BasicNameValuePair("tokenPair.tokenPairName", jsonObject.getString("tokenPairName")));
+					nameValuePairs.add(new BasicNameValuePair("tokenPair.apiToken", jsonObject.getString("apiToken")));
+					nameValuePairs.add(new BasicNameValuePair("tokenPair.teamToken", jsonObject.getString("teamToken")));
+			 	}
+			}
+			
 			return postConfigData(jenkinsUrl, client, post, httpContext, nameValuePairs, jsonObj);
 		} catch (Exception e) {
 			if (debugEnabled) {
