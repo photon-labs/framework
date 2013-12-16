@@ -75,6 +75,10 @@ public interface ResponseCodes {
 	String PHR110005 = "PHR110005"; // 'user.json' file not found
 	String PHR110006 = "PHR110006"; // parsing failed for file 'user.json'
 	String PHR110007 = "PHR110007"; // user doesn't have valid permissions
+	String PHR100008 = "PHR100008"; // Password emailed
+	String PHR110008 = "PHR110008"; // Failed
+	String PHR100009 = "PHR100009"; // Password changed successfully
+	String PHR110009 = "PHR110009"; // Password updation failed
 	
 	/*
 	 * Project Page
@@ -599,4 +603,9 @@ public interface ResponseCodes {
 	String PHRL000012 = "PHRL000012"; // database tags retrieved successfully
 	String PHRL010013 = "PHRL010013"; // unable to retrieve tags
 	
+	/*
+	 * UploadBuild Service
+	 */
+	String PHRU000001 = "PHRU000001"; // Build uploaded to TestFlight server successfully
+	String PHRU010001 = "PHRU010001"; // Build uploading failed
 }

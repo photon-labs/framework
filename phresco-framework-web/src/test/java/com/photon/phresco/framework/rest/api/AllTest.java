@@ -50,7 +50,8 @@ import com.photon.phresco.framework.rest.api.util.BufferMapTest;
 	ErrorHandlerTest.class,
 	ProjectDeleteServiceTest.class,
 	DashboardServiceTest.class,
-	LiquibaseServiceTest.class
+	LiquibaseServiceTest.class,
+	UploadBuildServiceTest.class
 	}
 )
 
