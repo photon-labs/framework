@@ -1,4 +1,5 @@
 <header class="header_section" id="header">
+	<link id="favicon" rel="icon" type="image/png" href="">
 	<div class="blinkmsg" style="display:none;"></div>
 	<div class="header_left">
 		<figure><img id="bannerlogo" src="" border="0"></figure>

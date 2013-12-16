@@ -6,6 +6,8 @@ public class ClientIdentifyModel {
 	
 	Customer customer;
 	String customerlogo;
+	String favIcon;
+	String loginIcon;
 	Boolean status;
 	String message;
 	
@@ -33,7 +35,17 @@ public class ClientIdentifyModel {
 	public void setCustomerlogo(String customerlogo) {
 		this.customerlogo = customerlogo;
 	}
-	
-	
+	public String getFavIcon() {
+		return favIcon;
+	}
+	public void setFavIcon(String favIcon) {
+		this.favIcon = favIcon;
+	}
+	public String getLoginIcon() {
+		return loginIcon;
+	}
+	public void setLoginIcon(String loginIcon) {
+		this.loginIcon = loginIcon;
+	}
 
 }

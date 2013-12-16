@@ -43,6 +43,11 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 		 */
 		postRender : function(element) {	
 			var self = this;
+			if(commonVariables.api.localVal.getSession('favicon') !== null){
+				$("#favicon").attr("href", "data:image/png;base64," + commonVariables.api.localVal.getSession('favicon'));
+			} else {
+				$("#favicon").attr("href", "themes/default/images/Phresco/favicon.png");
+			}
 			
 			if(commonVariables.api.localVal.getSession('customerlogo') !== null &&
 				commonVariables.api.localVal.getSession('customerlogo') !== ""){

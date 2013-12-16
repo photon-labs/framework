@@ -120,7 +120,7 @@ define(["header/api/headerAPI"], function() {
 			var data = {};
 			data.customerId = customerId;
 			self.performAction(self.getActionHeader("getCustomerTheme", data), function(response) {
-				$('#bannerlogo').attr("src", "data:image/png;base64," + response.data.logo);
+				
 				if (response.data.theme == null) {
 					JSS.css({"":""});
 				} else if (response.data.theme != null || response.data.theme != undefined || response.data.theme != '') {
@@ -140,6 +140,21 @@ define(["header/api/headerAPI"], function() {
 					history.pushState('', 'Phresco', finalUrl);
 				}
 			});
+			
+			var data = {};
+			data.customerId = customerId;
+			self.performAction(self.getActionHeader("getfavIcon", data), function(response) {
+				if(response.data.favIcon !== null){
+					$("#favicon").attr("href", "data:image/png;base64," + response.data.favIcon);
+				} else {
+					$("#favicon").attr("href", "themes/default/images/Phresco/favicon.png");
+				}
+			});	
+			
+			self.performAction(self.getActionHeader("getloginIcon", data), function(response) {
+				$('#bannerlogo').attr("src", "data:image/png;base64," + response.data.loginIcon);
+			});
+			
 		},
 		
 		changeCustomerTitle : function (theme) {
@@ -268,6 +283,14 @@ define(["header/api/headerAPI"], function() {
 			if (action === "logout") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl+ "login/logout";				
+			}
+			if(action === "getfavIcon") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl+ "customer/favIcon?userId="+userId+"&customerId="+requestBody.customerId;
+			}
+			if(action === "getloginIcon") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl+ "customer/loginIcon?userId="+userId+"&customerId="+requestBody.customerId;
 			}
 			return header;
 		},

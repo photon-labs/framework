@@ -2012,6 +2012,8 @@ public interface FrameworkConstants {
 	    String TEST_PERFORMANCE = "performanceTest";
 	    
 	    String LOGO = "logo";
+	    String FAV_ICON = "favIcon";
+	    String LOGIN_ICON = "loginIcon";
 		String THEME = "theme";
 		String TECHNOLOGY_NAME = "technologyName";
 		 /**

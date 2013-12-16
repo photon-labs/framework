@@ -13,6 +13,7 @@
 	               	 	<div id="usernameDiv" class="loginuser">
 							<div class="loginimg">
 								<img src="themes/default/images/Phresco/username_icon.png">
+								<link id="favicon" rel="icon" type="image/png" href="">
 							</div>
 							<div class="logintext">	
 								<input title="63 characters only" maxlength="63" type="text" value="" id="username" data-i18n="[placeholder]login.placeholder.username;" >

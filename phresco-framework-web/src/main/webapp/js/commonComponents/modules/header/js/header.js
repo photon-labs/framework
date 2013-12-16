@@ -38,11 +38,16 @@ define(["header/listener/headerListener"] , function(template) {
 		 */
 		postRender : function(element) {
 			var self = this;
-			if(self.headerListener.headerAPI.localVal.getSession('customerlogo') !== null &&
-				self.headerListener.headerAPI.localVal.getSession('customerlogo') !== ""){
-				$('#bannerlogo').attr("src", "data:image/png;base64," + self.headerListener.headerAPI.localVal.getSession('customerlogo'));
+			if(self.headerListener.headerAPI.localVal.getSession('loginIcon') !== null &&
+				self.headerListener.headerAPI.localVal.getSession('loginIcon') !== ""){
+				$('#bannerlogo').attr("src", "data:image/png;base64," + self.headerListener.headerAPI.localVal.getSession('loginIcon'));
 			} else {
 				$('#bannerlogo').attr("src", "themes/default/images/Phresco/helios_logo.png");
+			}
+			if(self.headerListener.headerAPI.localVal.getSession('favicon') !== null){
+				$("#favicon").attr("href", "data:image/png;base64," + commonVariables.api.localVal.getSession('favicon'));
+			} else {
+				$("#favicon").attr("href", "themes/default/images/Phresco/favicon.png");
 			}
 			var customername = self.headerListener.headerAPI.localVal.getSession('customername');
 			if (customername !== null && customername !== undefined && customername !== "") {
