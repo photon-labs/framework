@@ -221,7 +221,7 @@ define(["projects/listener/projectsListener"], function() {
 			});
 			
 			$("#editprojectversion").unbind('click');
-			$("#editprojectversion").click(function() {
+			$("#editprojectversion").bind("click", function() {
 				var majorVersion = $("#editprojectversion").attr("major");
 				var minorVersion = $("#editprojectversion").attr("minor");
 				var fixedVersion = $("#editprojectversion").attr("fixed");

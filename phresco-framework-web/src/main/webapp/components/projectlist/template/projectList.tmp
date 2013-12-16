@@ -121,7 +121,8 @@
               			{{/if}}
                   
                   <div id="addRepo_{{id}}" class="add_repo dyn_popup" name="addRepo">
-				  	<div class="bs-docs-example repository_tabdiv">
+                  	<div class="flt_right"><img src="themes/default/images/Phresco/question_mark.png" border="0" alt=""></div>
+				  	<div class="bs-docs-example repository_tabdiv">						
 						<ul class="nav nav-tabs" id="myTab">
 							<li class="active"><a data-toggle="tab" href="#source{{id}}">Source</a></li>
 							<li><input type="checkbox" id="splitDotPhresco_{{id}}" class="splitDotPhresco" dynamicId="{{id}}"><a class="repo_tab dotPhrescoA" dynamicId="{{id}}">.Phresco</a></li>
@@ -147,7 +148,7 @@
 									<td><input type="text" name="repoUrl" placeholder="Repo Url" id="repourl_{{id}}"></td>
 								</tr>
 								<tr>
-									<td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="repocredential_{{id}}" repoDynid="{{id}}" class="credential"></td>
+									<td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="repocredential_{{id}}" repoDynid="{{id}}" class="addToRepocredential"></td>
 									<td></td>
 								</tr>
 								<tr>
@@ -155,8 +156,8 @@
 									<td><span data-i18n="login.placeholder.password" name="password"></span><sup>*</sup></td>
 								</tr>
 								<tr>
-									<td><input type="text" name="username" mandatory=true data-i18n="[placeholder]login.placeholder.username" id="uname_{{id}}" class="uname"></td>
-									<td><input type="password" name="password" mandatory=true placeholder="Password" id="pwd_{{id}}" class="pwd"></td>
+									<td><input type="text" name="username" mandatory=true data-i18n="[placeholder]login.placeholder.username" id="uname_{{id}}" class="uname" readonly="readonly"></td>
+									<td><input type="password" name="password" mandatory=true placeholder="Password" id="pwd_{{id}}" class="pwd" readonly="readonly"></td>
 								</tr>
 								<tr class="passPhrase hideContent">
 									<td><label value="passPhrase">PassPhrase</label></td>
@@ -193,7 +194,7 @@
 									<td><input type="text" name="repoUrl" placeholder="Repo Url" id="phrescorepourl_{{id}}"></td>
 								</tr>
 								<tr>
-									<td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="repocredential_{{id}}" repoDynid="{{id}}" class="credential"></td>
+									<td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="repocredential_{{id}}" repoDynid="{{id}}" class="addToRepoPhrescocredential"></td>
 									<td></td>
 								</tr>
 								<tr>
@@ -201,8 +202,8 @@
 									<td><span data-i18n="login.placeholder.password" name="password"></span><sup>*</sup></td>
 								</tr>
 								<tr>
-									<td><input type="text" name="username" mandatory=true data-i18n="[placeholder]login.placeholder.username" id="phrescouname_{{id}}" class="uname"></td>
-									<td><input type="password" name="password" mandatory=true placeholder="Password" id="phrescopwd_{{id}}" class="pwd"></td>
+									<td><input type="text" name="username" mandatory=true data-i18n="[placeholder]login.placeholder.username" id="phrescouname_{{id}}" class="uname" readonly="readonly"></td>
+									<td><input type="password" name="password" mandatory=true placeholder="Password" id="phrescopwd_{{id}}" class="pwd" readonly="readonly"></td>
 								</tr>
 								<tr class="passPhrase hideContent">
 									<td><label value="passPhrase">PassPhrase</label></td>
@@ -239,7 +240,7 @@
 									<td><input type="text" name="repoUrl" placeholder="Repo Url" id="testrepourl_{{id}}"></td>
 								</tr>
 								<tr>
-									<td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="repocredential_{{id}}" repoDynid="{{id}}" class="credential"></td>
+									<td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="repocredential_{{id}}" repoDynid="{{id}}" class="addToRepoTestCredential"></td>
 									<td></td>
 								</tr>
 								<tr>
@@ -247,8 +248,8 @@
 									<td><span data-i18n="login.placeholder.password" name="password"></span><sup>*</sup></td>
 								</tr>
 								<tr>
-									<td><input type="text" name="username" mandatory=true data-i18n="[placeholder]login.placeholder.username" id="testuname_{{id}}" class="uname"></td>
-									<td><input type="password" name="password" mandatory=true placeholder="Password" id="testpwd_{{id}}" class="pwd"></td>
+									<td><input type="text" name="username" mandatory=true data-i18n="[placeholder]login.placeholder.username" id="testuname_{{id}}" class="uname" readonly="readonly"></td>
+									<td><input type="password" name="password" mandatory=true placeholder="Password" id="testpwd_{{id}}" class="pwd" readonly="readonly"></td>
 								</tr>
 								<tr class="passPhrase hideContent">
 									<td><label value="passPhrase">PassPhrase</label></td>
@@ -267,9 +268,8 @@
 							</tbody>
 						 </table>
 						 </div>
-						 <div class="popuploading" id="addRepoLoading_{{id}}">&nbsp</div>
 						 <div class="flt_right" appId="{{id}}" projectId = "{{../id}}" appDirName="{{appDirName}}">
-							<input type="button" name="addrepobtn" id="{{id}}" value="Add To Repo" data-i18n="[value]projectlist.btn.addrepo;" class="btn btn_style">
+							<button class="btn btn_style btn_style_spin ladda-button" id="{{id}}" data-style="expand-left" name="addrepobtn"><span class="ladda-label">Add To Repo</span></button>
 							<input type="button" value="Close" data-i18n="[value]common.btn.close;" class="btn btn_style dyn_popup_close">
 						 </div> 
                   </div>
@@ -495,7 +495,7 @@
 				                                    <option value="perforce" data-i18n="projectlist.label.perforce"></option>
 				                            	</select>
 	                            			</td>
-	                            			<td><input type="text" id="updateTestRepourl{{id}}" data-i18n="[placeholder]navigation.application.apprepourl" readonly="readonly"></td>
+	                            			<td><input type="text" id="updateTestRepourl{{id}}" data-i18n="[placeholder]navigation.application.testrepourl" readonly="readonly"></td>
 	                        			</tr>
 	                        			<tr class="updateImportCredential{{id}}">
 	                            			<td class="seperatetd" id="updateTestCredential{{id}}">
@@ -525,8 +525,8 @@
 											<td><span data-i18n="login.placeholder.password"></span></td>
 	                                	</tr>
 	                                	<tr class="updateGitdata{{id}} updateBitkeeperdata{{id}}">
-	                                    	<td id="gitName"><input type="text" data-i18n="[placeholder]login.placeholder.username" id="testUpdateGitUserName"></td>
-	                                    	<td><input type="password" placeholder="*******" id="testUpdateGitPassword"></td>
+	                                    	<td id="gitName"><input type="text" data-i18n="[placeholder]login.placeholder.username" id="testUpdateGitUserName{{id}}"></td>
+	                                    	<td><input type="password" placeholder="*******" id="testUpdateGitPassword{{id}}"></td>
 	                                	</tr>
 										<tr class="updateGitdata{{id}}">
 											<td><span name="branch" value="branch">Branch</laspanbel></td>
@@ -547,7 +547,7 @@
 							</div>
 							<div class="popuploading" id="updateLoading_{{id}}">&nbsp</div>
 						 	<div class="flt_right" appId="{{id}}" projectId = "{{../id}}" appDirName="{{appDirName}}">
-								<input type="button" name="updatebtn" id="{{id}}" data-i18n="[value]common.btn.updateapp" class="btn btn_style">
+						 		<button class="btn btn_style btn_style_spin ladda-button" id="{{id}}" data-style="expand-left" name="updatebtn"><span class="ladda-label">Update Application</span></button>
 								<input type="button" value="Close" data-i18n="[value]common.btn.close;" class="btn btn_style dyn_popup_close">
 							</div>
 						</div>

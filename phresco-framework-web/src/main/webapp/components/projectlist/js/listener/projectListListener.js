@@ -340,8 +340,8 @@ define([], function() {
 		addRepoEvent : function(obj, dynid){
 			var self = this;
 			var srcRepoDetail = {}, phrescoRepoDetail = {}, testRepoDetail = {}, actionBody = {}, action, repoInfo = {};
-			self.flag1=1;
-			if(!self.validation(dynid)) {
+			if(!self.validateAddToRepoData(dynid)) {
+				self.showBtnLoading("button[name='addrepobtn'][id='"+dynid+"']");
 				if($("#repomessage_"+dynid).val() === '') {
 					var drop = obj.parent().prev().prev().find('tbody').find('.searchdropdown option:first-child').text();
 					$("#repomessage_"+dynid).val(drop);
@@ -382,11 +382,12 @@ define([], function() {
 				
 				action = "repoget";
 				commonVariables.hideloading = true;
-				self.projectListActionForScm(self.getActionHeader(actionBody, action), $("#addRepoLoading_"+dynid), function(response){
+				self.projectListActionForScm(self.getActionHeader(actionBody, action), '', function(response){
+					self.hideBtnLoading("button[name='addrepobtn'][id='"+dynid+"']");
 					if (response.exception === null) {
 						$("#addRepo_"+dynid).hide();
 					}
-				commonVariables.hideloading = false;
+					commonVariables.hideloading = false;
 				});
 			}
 		},
@@ -557,22 +558,10 @@ define([], function() {
 				} else {
 					self.showHideUpdateAppCtrls(srcRepoDetail.type, dynamicId);
 					$('#updateRepourl'+dynamicId).val(srcRepoDetail.repoUrl);
-					$('#updateUserName'+dynamicId).val(srcRepoDetail.userName);
 					// Type Selection based on response
 					$("#updateType"+dynamicId).find('option').each(function(index, value) {
 						if (srcRepoDetail.type === $(value).val()){
 							$(value).attr('selected', 'selected');
-						}
-					});
-					
-					$('.updSrcOtherCredential').bind("click", function() {
-						var dynamicId = $(this).attr("dynamicId");
-						if ($(this).is(":checked")) {
-							$('#updateUserName'+dynamicId).removeAttr("readonly").val("");
-							$('#updatePassword'+dynamicId).removeAttr("readonly").val("");
-						} else {
-							$('#updateUserName'+dynamicId).attr("readonly", "readonly").val(srcRepoDetail.userName);
-							$('#updatePassword'+dynamicId).attr("readonly", "readonly").val("");
 						}
 					});
 					
@@ -583,21 +572,9 @@ define([], function() {
 					if (phrescoRepoDetail !== null && phrescoRepoDetail !== undefined) {
 						$("#updateDotPhresco_"+dynamicId).attr("disabled", false);
 						$('#updatePhrescoRepourl'+dynamicId).val(phrescoRepoDetail.repoUrl);
-						$('#updatePhrescoUserName'+dynamicId).val(phrescoRepoDetail.userName);
 						$("#updatePhrescoType"+dynamicId).find('option').each(function(index, value){
 							if(phrescoRepoDetail.type === $(value).val()){
 								$(value).attr('selected', 'selected');
-							}
-						});
-						
-						$('.updPhrOtherCredential').bind("click", function() {
-							var dynamicId = $(this).attr("dynamicId");
-							if ($(this).is(":checked")) {
-								$('#updatePhrescoUserName'+dynamicId).removeAttr("readonly").val("");
-								$('#updatePhrescoPassword'+dynamicId).removeAttr("readonly").val("");
-							} else {
-								$('#updatePhrescoUserName'+dynamicId).attr("readonly", "readonly").val(phrescoRepoDetail.userName);
-								$('#updatePhrescoPassword'+dynamicId).attr("readonly", "readonly").val("");
 							}
 						});
 					}
@@ -605,21 +582,9 @@ define([], function() {
 					if (testRepoDetail !== null && testRepoDetail !== undefined) {
 						$("#updateTest_"+dynamicId).attr("disabled", false);
 						$('#updateTestRepourl'+dynamicId).val(testRepoDetail.repoUrl);
-						$('#updateTestUserName'+dynamicId).val(testRepoDetail.userName);
 						$("#testUpdateType"+dynamicId).find('option').each(function(index, value){
 							if(testRepoDetail.type === $(value).val()){
 								$(value).attr('selected', 'selected');
-							}
-						});
-						
-						$('.updTestOtherCredential').bind("click", function() {
-							var dynamicId = $(this).attr("dynamicId");
-							if ($(this).is(":checked")) {
-								$('#updateTestUserName'+dynamicId).removeAttr("readonly").val("");
-								$('#updateTestPassword'+dynamicId).removeAttr("readonly").val("");
-							} else {
-								$('#updateTestUserName'+dynamicId).attr("readonly", "readonly").val(testRepoDetail.userName);
-								$('#updateTestPassword'+dynamicId).attr("readonly", "readonly").val("");
 							}
 						});
 					}
@@ -779,6 +744,7 @@ define([], function() {
 		addUpdateEvent : function(obj, dynid) {
 			var self = this;
 			if (!self.validateUpdateData(dynid)) {
+				self.showBtnLoading("button[name='updatebtn'][id='"+dynid+"']");
 				var repoInfo = {}, actionBody = {}, action;
 				repoInfo.srcRepoDetail = self.getUpdateSrcRepoDetail(dynid);
 				if ($('#updateDotPhresco_'+dynid).is(":checked")) {
@@ -795,6 +761,7 @@ define([], function() {
 				action = "updateget";
 				commonVariables.hideloading = true;
 				self.projectListActionForScm(self.getActionHeader(actionBody, action), $("#updateRepoLoading_"+dynid), function(response){
+					self.hideBtnLoading("button[name='updatebtn'][id='"+dynid+"']");
 					if (response.exception === null) {
 						$("#svn_update"+dynid).hide();
 					}
@@ -955,110 +922,16 @@ define([], function() {
 		
 		validation : function(dynid) {	
 			var self=this;	
-			var repourl, uname, pwd, commitRepourl, commitUsername, commitPassword, updateRepourl, updateUsername, updatePassword, revision, mandatoryUser, mandatoryPwd, mandatoryCommitUser, mandatoryCommitPwd, mandatoryUpdateUser, mandatoryUpdatePwd;
-			repourl = $("#repourl_"+dynid).val();
-			uname = $("#uname_"+dynid).val();
-			pwd = $("#pwd_"+dynid).val();
-			mandatoryUser = $("#uname_"+dynid).attr("mandatory");
-			mandatoryPwd = $("#pwd_"+dynid).attr("mandatory");
+			var repourl = $("#repourl_"+dynid).val();
 				
-			commitRepourl = $("#commitRepourl_"+dynid).val();
-			commitUsername = $("#commitUsername_"+dynid).val();
-			commitPassword = $("#commitPassword_"+dynid).val();
-			mandatoryCommitUser = $("#commitUsername_"+dynid).attr("mandatory");
-			mandatoryCommitPwd = $("#commitPassword_"+dynid).attr("mandatory");
+			var commitRepourl = $("#commitRepourl_"+dynid).val();
+			var commitUsername = $("#commitUsername_"+dynid).val();
+			var commitPassword = $("#commitPassword_"+dynid).val();
+			var mandatoryCommitUser = $("#commitUsername_"+dynid).attr("mandatory");
+			var mandatoryCommitPwd = $("#commitPassword_"+dynid).attr("mandatory");
 				
-			var splitDotPhresco = $("#splitDotPhresco_" + dynid).is(":checked");
-			var splitTest = $("#splitTest_" + dynid).is(":checked");
 			self.hasError = false;
-			var hasDotPhrescoErr = false;
-			var hasTestErr = false;
-			if(self.flag1 === 1) {
-				if (repourl === '') {
-					$("#dotphresco" + dynid).removeClass("active in");
-					$("#source" + dynid).addClass("active in");
-					$("#test" + dynid).removeClass("active in");
-					$("#splitDotPhresco_" + dynid).parent().prev().addClass("active");
-					$("#splitDotPhresco_" + dynid).parent().removeClass("active");
-					$("#splitTest_" + dynid).parent().removeClass("active");
-					
-					$("#repourl_"+dynid).focus();
-					$("#repourl_"+dynid).val('');
-					$("#repourl_"+dynid).attr('placeholder','Enter URL');
-					$("#repourl_"+dynid).addClass("errormessage");
-					self.hasError = true;
-				} else if (mandatoryUser === "true" && uname === "") {
-					$("#uname_"+dynid).focus();
-					$("#uname_"+dynid).attr('placeholder','Enter UserName');
-					$("#uname_"+dynid).addClass("errormessage");
-					self.hasError = true;
-				} else if (mandatoryUser === "true" && pwd === "") {
-					$("#pwd_"+dynid).focus();
-					$("#pwd_"+dynid).attr('placeholder','Enter Password');
-					$("#pwd_"+dynid).addClass("errormessage");
-					self.hasError = true;
-				} else if (splitDotPhresco && $("#phrescorepourl_"+dynid).val() === '') {
-					$("#phrescorepourl_"+dynid).focus();
-					$("#phrescorepourl_"+dynid).val('');
-					$("#phrescorepourl_"+dynid).attr('placeholder','Enter URL');
-					$("#phrescorepourl_"+dynid).addClass("errormessage");
-					hasDotPhrescoErr = true;
-					self.hasError = true;
-				} else if (splitDotPhresco && mandatoryUser === "true" && $("#phrescouname_"+dynid).val() === "") {
-					$("#phrescouname_"+dynid).focus();
-					$("#phrescouname_"+dynid).val('');
-					$("#phrescouname_"+dynid).attr('placeholder','Enter UserName');
-					$("#phrescouname_"+dynid).addClass("errormessage");
-					hasDotPhrescoErr = true;
-					self.hasError = true;
-				} else if (splitDotPhresco && mandatoryUser === "true" && $("#phrescopwd_"+dynid).val() === "") {
-					$("#phrescopwd_"+dynid).focus();
-					$("#phrescopwd_"+dynid).val('');
-					$("#phrescopwd_"+dynid).attr('placeholder','Enter Password');
-					$("#phrescopwd_"+dynid).addClass("errormessage");
-					hasDotPhrescoErr = true;
-					self.hasError = true;
-				} else if (splitTest && $("#testrepourl_"+dynid).val() === '') {
-					$("#testrepourl_"+dynid).focus();
-					$("#testrepourl_"+dynid).val('');
-					$("#testrepourl_"+dynid).attr('placeholder','Enter URL');
-					$("#testrepourl_"+dynid).addClass("errormessage");
-					self.hasError = true;
-					hasTestErr = true;
-				} else if (splitTest && mandatoryUser === "true" && $("#testuname_"+dynid).val() === "") {
-					$("#testuname_"+dynid).focus();
-					$("#testuname_"+dynid).val('');
-					$("#testuname_"+dynid).attr('placeholder','Enter UserName');
-					$("#testuname_"+dynid).addClass("errormessage");
-					self.hasError = true;
-					hasTestErr = true;
-				} else if (splitTest && mandatoryUser === "true" && $("#testpwd_"+dynid).val() === "") {
-					$("#testpwd_"+dynid).focus();
-					$("#testpwd_"+dynid).val('');
-					$("#testpwd_"+dynid).attr('placeholder','Enter Password');
-					$("#testpwd_"+dynid).addClass("errormessage");
-					self.hasError = true;
-					hasTestErr = true;
-				}
-				if (hasDotPhrescoErr) {
-					$("#dotphresco" + dynid).addClass("active in");
-					$("#source" + dynid).removeClass("active in");
-					$("#test" + dynid).removeClass("active in");
-					$("#splitDotPhresco_" + dynid).parent().prev().removeClass("active");
-					$("#splitDotPhresco_" + dynid).parent().addClass("active");
-					$("#splitTest_" + dynid).parent().removeClass("active");
-				}
-				if (hasTestErr) {
-					$("#dotphresco" + dynid).removeClass("active in");
-					$("#source" + dynid).removeClass("active in");
-					$("#test" + dynid).addClass("active in");
-					$("#splitDotPhresco_" + dynid).parent().prev().removeClass("active");
-					$("#splitDotPhresco_" + dynid).parent().removeClass("active");
-					$("#splitTest_" + dynid).parent().addClass("active");
-				}
-				self.flag1=0;
-				return self.hasError;
-			} else if(self.flag2 === 1) {
+			if(self.flag2 === 1) {
 				if(commitRepourl === ""){
 					$("#commitRepourl_"+dynid).focus();
 					$("#commitRepourl_"+dynid).val('');
@@ -1068,7 +941,7 @@ define([], function() {
 						$("#commitRepourl_"+dynid).val(repourl); 
 					}, 4000);
 					self.hasError = true;
-				} else if (mandatoryUser === "true") {
+				} else if ($("#commitUsername_"+dynid).attr("mandatory") === "true") {
 					if(commitUsername === ""){
 						$("#commitUsername_"+dynid).focus();
 						$("#commitUsername_"+dynid).attr('placeholder','Enter UserName');
@@ -1086,6 +959,29 @@ define([], function() {
 			}
 		},
 		
+		validateAddToRepoData : function(dynamicId) {
+			var self = this;
+			var hasError = false;
+			
+			hasError = commonVariables.navListener.validateSvnData($("#repourl_"+dynamicId), $("#uname_"+dynamicId), $('#pwd_'+dynamicId));
+			if (hasError) {
+				self.showSrcTab(dynamicId);
+			}
+			if ($('#splitDotPhresco_'+dynamicId).is(":checked") && !hasError) {
+				hasError = commonVariables.navListener.validateSvnData($('#phrescorepourl_'+dynamicId), $('#phrescouname_'+dynamicId), $('#phrescopwd_'+dynamicId));
+				if (hasError) {
+					self.showDotPhrescoTab(dynamicId);
+				}
+			}
+			if ($('#splitTest_'+dynamicId).is(":checked") && !hasError) {
+				hasError = commonVariables.navListener.validateSvnData($('#testrepourl_'+dynamicId), $('#testuname_'+dynamicId), $('#testpwd_'+dynamicId));
+				if (hasError) {
+					self.showTestTab(dynamicId);
+				}
+			}
+			return hasError;
+		},
+		
 		validateUpdateData : function(dynamicId) {
 			var self = this;
 			var hasError = false;
@@ -1093,79 +989,106 @@ define([], function() {
 			if (updateType === "git") {
 				hasError = commonVariables.navListener.validateGitData($('#updateRepourl'+dynamicId));
 				if (hasError) {
-					self.showSrcImportTab(dynamicId);
+					self.showSrcUpdateTab(dynamicId);
 				}
 				if ($('#updateDotPhresco_'+dynamicId).is(":checked") && !hasError) {
 					hasError = commonVariables.navListener.validateGitData($('#updatePhrescoRepourl'+dynamicId));
 					if (hasError) {
-						self.showDotPhrescoImportTab(dynamicId);
+						self.showDotPhrescoUpdateTab(dynamicId);
 					}
 				}
 				if ($('#updateTest_'+dynamicId).is(":checked") && !hasError) {
 					hasError = commonVariables.navListener.validateGitData($('#updateTestRepourl'+dynamicId));
 					if (hasError) {
-						self.showTestImportTab(dynamicId);
+						self.showTestUpdateTab(dynamicId);
 					}
 				}
 			}
 			if (!hasError && updateType === "svn") {
 				hasError = commonVariables.navListener.validateSvnData($('#updateRepourl'+dynamicId), $('#updateUserName'+dynamicId), $('#updatePassword'+dynamicId), $('input[name=updateHeadoption'+dynamicId+']:checked'), $('#updateRevision'+dynamicId));
 				if (hasError) {
-					self.showSrcImportTab(dynamicId);
+					self.showSrcUpdateTab(dynamicId);
 				}
 				if ($('#updateDotPhresco_'+dynamicId).is(":checked") && !hasError) {
 					hasError = commonVariables.navListener.validateSvnData($('#updatePhrescoRepourl'+dynamicId), $('#updatePhrescoUserName'+dynamicId), $('#updatePhrescoPassword'+dynamicId), $('input[name=updatePhrescoHeadoption'+dynamicId+']:checked'), $('#updatePhrescoRevision'+dynamicId));
 					if (hasError) {
-						self.showDotPhrescoImportTab(dynamicId);
+						self.showDotPhrescoUpdateTab(dynamicId);
 					}
 				}
 				if ($('#updateTest_'+dynamicId).is(":checked") && !hasError) {
 					hasError = commonVariables.navListener.validateSvnData($('#updateTestRepourl'+dynamicId), $('#updateTestUserName'+dynamicId), $('#updateTestPassword'+dynamicId), $('input[name=testUpdateHeadoption'+dynamicId+']:checked'), $('#testUpdateRevision'+dynamicId));
 					if (hasError) {
-						self.showTestImportTab(dynamicId);
+						self.showTestUpdateTab(dynamicId);
 					}
 				}
 			}
 			if (!hasError && updateType === "perforce") {
 				hasError = commonVariables.navListener.validatePerforceData($('#updateRepourl'+dynamicId), $('.updateStream'+dynamicId));
 				if (hasError) {
-					self.showSrcImportTab(dynamicId);
+					self.showSrcUpdateTab(dynamicId);
 				}
 				if ($('#updateDotPhresco_'+dynamicId).is(":checked") && !hasError) {
 					hasError = commonVariables.navListener.validatePerforceData($('#updatePhrescoRepourl'+dynamicId), $('.updatePhrescoStream'+dynamicId));
 					if (hasError) {
-						self.showDotPhrescoImportTab(dynamicId);
+						self.showDotPhrescoUpdateTab(dynamicId);
 					}
 				}
 				if ($('#updateTest_'+dynamicId).is(":checked") && !hasError) {
 					hasError = commonVariables.navListener.validatePerforceData($('#updateTestRepourl'+dynamicId), $('.testUpdateStream'+dynamicId));
 					if (hasError) {
-						self.showTestImportTab(dynamicId);
+						self.showTestUpdateTab(dynamicId);
 					}
 				}
 			}
 			if (!hasError && updateType === "bitkeeper") {
 				hasError = commonVariables.navListener.validateBitkeeperData($('#updateRepourl'+dynamicId));
 				if (hasError) {
-					self.showSrcImportTab(dynamicId);
+					self.showSrcUpdateTab(dynamicId);
 				}
 				if ($('#updateDotPhresco_'+dynamicId).is(":checked") && !hasError) {
 					hasError = commonVariables.navListener.validateBitkeeperData($('#updatePhrescoRepourl'+dynamicId));
 					if (hasError) {
-						self.showDotPhrescoImportTab(dynamicId);
+						self.showDotPhrescoUpdateTab(dynamicId);
 					}
 				}
 				if ($('#updateTest_'+dynamicId).is(":checked") && !hasError) {
 					hasError = commonVariables.navListener.validateBitkeeperData($('#updateTestRepourl'+dynamicId));
 					if (hasError) {
-						self.showTestImportTab(dynamicId);
+						self.showTestUpdateTab(dynamicId);
 					}
 				}
 			}
 			return hasError;
 		},
 		
-		showSrcImportTab : function(dynamicId) {
+		showSrcTab : function(dynamicId) {
+			$("#dotphresco"+dynamicId).removeClass("active in");
+			$("#source"+dynamicId).addClass("active in");
+			$("#test"+dynamicId).removeClass("active in");
+			$("#splitDotPhresco_"+dynamicId).parent().prev().addClass("active");
+			$("#splitDotPhresco_"+dynamicId).parent().removeClass("active");
+			$("#splitTest_"+dynamicId).parent().removeClass("active");
+		},
+		
+		showDotPhrescoTab : function(dynamicId) {
+			$("#dotphresco"+dynamicId).addClass("active in");
+			$("#source"+dynamicId).removeClass("active in");
+			$("#test"+dynamicId).removeClass("active in");
+			$("#splitDotPhresco_"+dynamicId).parent().prev().removeClass("active");
+			$("#splitDotPhresco_"+dynamicId).parent().addClass("active");
+			$("#splitTest_"+dynamicId).parent().removeClass("active");
+		},
+		
+		showTestTab : function(dynamicId) {
+			$("#dotphresco"+dynamicId).removeClass("active in");
+			$("#source"+dynamicId).removeClass("active in");
+			$("#test"+dynamicId).addClass("active in");
+			$("#splitDotPhresco_"+dynamicId).parent().prev().removeClass("active");
+			$("#splitDotPhresco_"+dynamicId).parent().removeClass("active");
+			$("#splitTest_"+dynamicId).parent().addClass("active");
+		},
+		
+		showSrcUpdateTab : function(dynamicId) {
 			$("#updateDotphresco"+dynamicId).removeClass("active in");
 			$("#updateSource"+dynamicId).addClass("active in");
 			$("#updateTest"+dynamicId).removeClass("active in");
@@ -1174,7 +1097,7 @@ define([], function() {
 			$("#updateTest_"+dynamicId).parent().removeClass("active");
 		},
 		
-		showDotPhrescoImportTab : function(dynamicId) {
+		showDotPhrescoUpdateTab : function(dynamicId) {
 			$("#updateDotphresco"+dynamicId).addClass("active in");
 			$("#updateSource"+dynamicId).removeClass("active in");
 			$("#updateTest"+dynamicId).removeClass("active in");
@@ -1183,7 +1106,7 @@ define([], function() {
 			$("#updateTest_"+dynamicId).parent().removeClass("active");
 		},
 		
-		showTestImportTab : function(dynamicId) {
+		showTestUpdateTab : function(dynamicId) {
 			$("#updateDotphresco"+dynamicId).removeClass("active in");
 			$("#updateSource"+dynamicId).removeClass("active in");
 			$("#updateTest"+dynamicId).addClass("active in");

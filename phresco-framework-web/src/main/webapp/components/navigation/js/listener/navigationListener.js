@@ -1112,17 +1112,14 @@ define([], function() {
 		},
 		
 		validateSvnData : function(repoUrlObj, userNameObj, pwdObj, headOptObj, revisionObj) {
-			
 			var self = this;
 			userNameObj.removeClass("errormessage");
 			pwdObj.removeClass("errormessage");
-			revisionObj.removeClass("errormessage");
 			repoUrlObj.removeClass("errormessage");
 			
 			var repoUrl = repoUrlObj.val();
 			var userName = userNameObj.val().replace(/\s/g, '');
 			var pswd = pwdObj.val();
-			var revision = headOptObj.val();
 			if (repoUrl === "") {
 				self.validateTextBox(repoUrlObj, 'Enter Url');
 				return true;
@@ -1139,11 +1136,18 @@ define([], function() {
 			if (pswd === "") {
 				self.validateTextBox(pwdObj, 'Enter password');
 				return true;
-			} 
-			if (revision === "revision" && revisionObj.val() === "") {
-				self.validateTextBox(revisionObj, 'Enter revision');
-				return true;
 			}
+			if (headOptObj !== undefined && headOptObj !== null && headOptObj !== "") {
+				var revision = headOptObj.val();
+				if (revisionObj !== undefined && revisionObj !== null && revisionObj !== "") {
+					revisionObj.removeClass("errormessage");
+					if (revision === "revision" && revisionObj.val() === "") {
+						self.validateTextBox(revisionObj, 'Enter revision');
+						return true;
+					}
+				}
+			}
+			
 			return false;
 		},
 		
@@ -1241,7 +1245,7 @@ define([], function() {
 			self.navigationActionForImport(header, function(response){
 				$("#project_list_import").find('input').removeAttr('disabled');
 				$("#project_list_import").find('select').removeAttr('disabled');
-				$("#importloading").hide();
+				self.hideBtnLoading("button[name='importbtn']");
 				if (response.exception === null) {
 					$("#project_list_import").hide();	
 					setTimeout(function() {

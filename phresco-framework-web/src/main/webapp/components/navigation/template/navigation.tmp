@@ -40,8 +40,8 @@
 			                            <td><span data-i18n="login.placeholder.password"></span><sup class="svnpswd">*</sup></td>
 			                        </tr>
 			                        <tr class="svndata">
-			                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="importUserName"></td>
-			                            <td><input type="password" placeholder="*******" id="importPassword"></td>
+			                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="importUserName" readonly="readonly"></td>
+			                            <td><input type="password" placeholder="*******" id="importPassword" readonly="readonly"></td>
 			                        </tr>
 			                        <tr class="svndata svnheadopt">
 			                        	<td>
@@ -231,9 +231,8 @@
                             	</tbody>
                          	</table>
 						</div>
-						 <div class="popuploading hideContent" id="importloading">&nbsp</div>
 						 <div class="flt_right" appId="">
-							 <input class="btn btn_style" type="button" value="Import" name="importbtn" data-i18n="[value]navigation.application.import">
+						 	<button class="btn btn_style btn_style_spin ladda-button" data-style="expand-left" name="importbtn"><span class="ladda-label">Import</span></button>
                         	<input class="btn btn_style dyn_popup_close" type="button" value="Close" data-i18n="[value]common.btn.close">
 						 </div> 
                   </div>

@@ -217,6 +217,8 @@ var commonVariables = {
 	deleted : "Delete",
 	subtabClicked : false,
 	
+	callLadda : true,
+	
 	loadingScreen : null,
 	hideloading : false,
 	continueloading : false,

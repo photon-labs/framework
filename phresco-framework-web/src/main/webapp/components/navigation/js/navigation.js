@@ -121,55 +121,87 @@ define(["navigation/listener/navigationListener"], function() {
 			});
 			
 			$("#importApp").unbind("click");
-			$("#importApp").click(function() {
+			$("#importApp").bind("click", function() {
+				self.hideBtnLoading("button[name='importbtn']");
+				self.navigationListener.showSrcImportTab();
+				
 				$(".importType").val("svn");
 				self.showHideImportAppCtrls($(".importType").val());
 				
 				var currentPrjName = "";
-				$("#importUserName").attr('disabled','disabled');
-				$("#importPassword").attr('disabled','disabled');
 				
-				$('#importUserName').val(data.id);
-				$('#importPassword').val(pass);
+				$('#importUserName').val(data.id).attr("readonly","readonly");
+				$('#importPassword').val(pass).attr("readonly","readonly");
+				
+				$('#importPhrescoUserName').val(data.id).attr("readonly","readonly");
+				$('#importPhrescoPassword').val(pass).attr("readonly","readonly");
+				
+				$('#importTestUserName').val(data.id).attr("readonly","readonly");
+				$('#importTestPassword').val(pass).attr("readonly","readonly");
+				
 				if($("#importType").val() === 'svn') {
 					$(".seperatetd").show();
 					$(".seperatetd").parent().show();
-				}	
-				$("#importRepourl").val('');	
-				$("#testRepoUrl").val("");
-				$("#testImportUserName").val(data.id);
-				$("#testImportPassword").val("");
-				$("#testRevision").val("");
-				$("#importRepourl").removeClass("errormessage");
-				$("#importUserName").removeClass("errormessage");
-				$("#importPassword").removeClass("errormessage");
-				$("#gitUserName").val("");
-				$("#gitPassword").val("");
-				$("#gitUserName").removeClass("errormessage");
-				$("#gitPassword").removeClass("errormessage");
-				$("#revision").removeClass("errormessage");
-				$("#testRepoUrl").removeClass("errormessage");
-				$("#testImportUserName").removeClass("errormessage");
-				$("#testImportPassword").removeClass("errormessage");
-				self.navigationListener.validateTextBox($("#importRepourl"),"");
-				self.navigationListener.validateTextBox($("#importUserName"),"");
-				self.navigationListener.validateTextBox($("#importPassword"),"");
-				self.navigationListener.validateTextBox($("#revision"),"");
-				self.navigationListener.validateTextBox($("#testRepoUrl"),"");
-				self.navigationListener.validateTextBox($("#testImportUserName"),"");
-				self.navigationListener.validateTextBox($("#testImportPassword"),"");
-				self.navigationListener.validateTextBox($("#testRepoUrl"),"");
+				}
+				
+				$("#importRepourl").val('');
+				$('#importCredential').find('input[type=checkbox]').removeAttr("checked");
+				$('input[name=headoption]').last().removeAttr("checked");
+				$('input[name=headoption]').first().attr("checked", "checked");
+				$('#revision').val('').attr("readonly","readonly");
+				$('#gitUserName').val('');
+				$('#gitPassword').val('');
+				$('.branchval').val("");
+				$('.passPhraseval').val('');
+				$(".stream").val('');
+				
+				$("#importDotPhrescoA").removeAttr("data-toggle").removeAttr("href");
+				$('#importDotPhrescoSrc').attr("checked", false);
+				$("#importPhrescoRepourl").val('');
+				$('#importPhrescoCredential').find('input[type=checkbox]').removeAttr("checked");
+				$('input[name=phrescoHeadoption]').last().removeAttr("checked");
+				$('input[name=phrescoHeadoption]').first().attr("checked", "checked");
+				$('#phrescoRevision').val('').attr("readonly","readonly");
+				$('#phrescoGitUserName').val('');
+				$('#phrescoGitPassword').val('');
+				$('.phrescoBranchval').val("");
+				$('.phrescoPassPhraseval').val('');
+				$(".phrescoStream").val('');
+				
+				$("#importTestA").removeAttr("data-toggle").removeAttr("href");
+				$('#importTestSrc').attr("checked", false);
+				$("#importTestRepourl").val('');
+				$('#importTestCredential').find('input[type=checkbox]').removeAttr("checked");
+				$('input[name=testHeadoption]').last().removeAttr("checked");
+				$('input[name=testHeadoption]').first().attr("checked", "checked");
+				$('#testRevision').val('').attr("readonly","readonly");
+				$('#testGitUserName').val('');
+				$('#testGitPassword').val('');
+				$('.testBranchval').val("");
+				$('.testPassPhraseval').val('');
+				$(".testStream").val('');
+				
+				self.navigationListener.validateTextBox($("#importRepourl"), "");
+				self.navigationListener.validateTextBox($("#importUserName"), "");
+				self.navigationListener.validateTextBox($("#importPassword"), "");
+				self.navigationListener.validateTextBox($("#revision"), "");
+				self.navigationListener.validateTextBox($("#importPhrescoRepourl"), "");
+				self.navigationListener.validateTextBox($("#importPhrescoUserName"), "");
+				self.navigationListener.validateTextBox($("#importPhrescoPassword"), "");
+				self.navigationListener.validateTextBox($("#phrescoRevision"), "");
+				self.navigationListener.validateTextBox($("#importTestRepourl"), "");
+				self.navigationListener.validateTextBox($("#importTestUserName"), "");
+				self.navigationListener.validateTextBox($("#importTestPassword"), "");
+				self.navigationListener.validateTextBox($("#testRevision"), "");
 				self.opencc(this, "project_list_import", currentPrjName);
 			});
 			
 			var checkbox = $("#importCredential").find('input[type=checkbox]');
-			checkbox.unbind("change");
-			checkbox.on("change", function(){	
+			checkbox.unbind("click");
+			checkbox.bind("click", function(){
 				if(checkbox.is(':checked')) {
-					$('#importUserName').removeAttr('disabled','disabled');
-					$('#importPassword').removeAttr('disabled','disabled');
-					$('#importUserName').removeAttr('readonly','readonly');
-					$('#importPassword').removeAttr('readonly','readonly');
+					$('#importUserName').removeAttr('readonly');
+					$('#importPassword').removeAttr('readonly');
 					$('#importUserName').val('');
 					$('#importPassword').val('');
 				} else {
@@ -180,11 +212,44 @@ define(["navigation/listener/navigationListener"], function() {
 				}	
 			});
 			
-			$("input[name='importbtn']").unbind("click");
-			$("input[name='importbtn']").click(function() {
+			var phrCredCheckbox = $("#importPhrescoCredential").find('input[type=checkbox]');
+			phrCredCheckbox.unbind("click");
+			phrCredCheckbox.bind("click", function(){	
+				if(phrCredCheckbox.is(':checked')) {
+					$('#importPhrescoUserName').removeAttr('readonly');
+					$('#importPhrescoPassword').removeAttr('readonly');
+					$('#importPhrescoUserName').val('');
+					$('#importPhrescoPassword').val('');
+				} else {
+					$('#importPhrescoUserName').val(data.id);
+					$('#importPhrescoPassword').val(pass);
+					$('#importPhrescoUserName').attr('readonly','readonly');
+					$('#importPhrescoPassword').attr('readonly','readonly');
+				}	
+			});
+			
+			var testCredCheckbox = $("#importTestCredential").find('input[type=checkbox]');
+			testCredCheckbox.unbind("click");
+			testCredCheckbox.bind("click", function(){	
+				if(testCredCheckbox.is(':checked')) {
+					$('#importTestUserName').removeAttr('readonly');
+					$('#importTestPassword').removeAttr('readonly');
+					$('#importTestUserName').val('');
+					$('#importTestPassword').val('');
+				} else {
+					$('#importTestUserName').val(data.id);
+					$('#importTestPassword').val(pass);
+					$('#importTestUserName').attr('readonly','readonly');
+					$('#importTestPassword').attr('readonly','readonly');
+				}	
+			});
+			
+			$("button[name='importbtn']").unbind("click");
+			$("button[name='importbtn']").bind("click", function() {
+				var btnObj = $(this);
 				self.navigationListener.validateImport(function(response) {
 					if (!response) {
-						$("#importloading").show();
+						self.showBtnLoading("button[name='importbtn']");
 						self.onImportEvent.dispatch();
 					}
 				});
@@ -212,19 +277,11 @@ define(["navigation/listener/navigationListener"], function() {
 				$("#testImportType").val(selectedType);
 				if ($(this).is(":checked")) {
 					$("#importDotPhrescoA").attr("data-toggle", "tab").attr("href", "#importDotphresco");
-					$("#importDotphresco").addClass("active in");
-					$("#importSource").removeClass("active in");
-					$("#importTest").removeClass("active in");
-					$(this).parent().addClass("active");
-					$(this).parent().prev().removeClass("active");
-					$(this).parent().next().removeClass("active");
+					self.navigationListener.showDotPhrescoImportTab();
 				} else {
 					$("#importDotPhrescoA").removeAttr("data-toggle").removeAttr("href");
 					if ($(this).parent().hasClass("active")) {
-						$("#importDotphresco").removeClass("active in");
-						$("#importSource").addClass("active in");
-						$(this).parent().removeClass("active");
-						$(this).parent().prev().addClass("active");
+						self.navigationListener.showSrcImportTab();
 					}
 				}
 			});
@@ -236,25 +293,17 @@ define(["navigation/listener/navigationListener"], function() {
 				$("#testImportType").val(selectedType);
 				if ($(this).is(":checked")) {
 					$("#importTestA").attr("data-toggle", "tab").attr("href", "#importTest");
-					$("#importTest").addClass("active in");
-					$("#importSource").removeClass("active in");
-					$("#importDotphresco").removeClass("active in");
-					$(this).parent().addClass("active");
-					$(this).parent().prev().removeClass("active");
-					$(this).parent().next().removeClass("active");
+					self.navigationListener.showTestImportTab();
 				} else {
 					$("#importTestA").removeAttr("data-toggle").removeAttr("href");
 					if ($(this).parent().hasClass("active")) {
-						$("#importTest").removeClass("active in");
-						$("#importSource").addClass("active in");
-						$(this).parent().removeClass("active");
-						$(this).parent().prev().prev().addClass("active");
+						self.navigationListener.showSrcImportTab();
 					}
 				}
 			});
 			
-			$("input[name=headoption]").unbind("change");
-			$("input[name=headoption]").bind("change", function() {
+			$("input[name=headoption]").unbind("click");
+			$("input[name=headoption]").bind("click", function() {
 				$("#revision").removeClass("errormessage");
 				$("#revision").removeAttr("placeholder");
 				if("HEAD" === $(this).val()) {
@@ -264,8 +313,8 @@ define(["navigation/listener/navigationListener"], function() {
 				}
 			});
 			
-			$("input[name=phrescoHeadoption]").unbind("change");
-			$("input[name=phrescoHeadoption]").bind("change", function() {
+			$("input[name=phrescoHeadoption]").unbind("click");
+			$("input[name=phrescoHeadoption]").bind("click", function() {
 				$("#phrescoRevision").removeClass("errormessage");
 				$("#phrescoRevision").removeAttr("placeholder");
 				if("HEAD" === $(this).val()) {
@@ -275,8 +324,8 @@ define(["navigation/listener/navigationListener"], function() {
 				}
 			});
 			
-			$("input[name=testHeadoption]").unbind("change");
-			$("input[name=testHeadoption]").bind("change", function() {
+			$("input[name=testHeadoption]").unbind("click");
+			$("input[name=testHeadoption]").bind("click", function() {
 				$("#testRevision").removeClass("errormessage");
 				$("#testRevision").removeAttr("placeholder");
 				if("HEAD" === $(this).val()) {

@@ -4,17 +4,18 @@
 	<groupId>com.photon.phresco.framework</groupId>
 	<artifactId>PhrescoFrameworkRuntime</artifactId>
 	<packaging>pom</packaging>
-	<version>3.2.0.4003-SNAPSHOT</version>
+	<version>3.2.0.5001-SNAPSHOT</version>
 	<name>Phresco Framework Web Application</name>
 
     <properties>
-		<phresco.framework.version>3.2.0.4003-SNAPSHOT</phresco.framework.version>		
+		<phresco.framework.version>3.2.0.5001-SNAPSHOT</phresco.framework.version>		
 		<tomcat.version>7.0.21.2</tomcat.version>
 		<sonar.version>3.5.1</sonar.version>
 		<checker.version>0.1</checker.version>
 		<device.deploy.version>1.0</device.deploy.version>
 		<phantomjs.version>1.5.0</phantomjs.version>
 		<ios-sim.version>1.0</ios-sim.version>
+		<tfs.version>1.0</tfs.version>
 	</properties>
 
 	<dependencies>
@@ -398,6 +399,17 @@
 									  <overWrite>false</overWrite>
 									  <outputDirectory>../workspace/tools</outputDirectory>
 									</artifactItem>
+                                    
+                                <!--extracting ios-sim zip file-->
+								<artifactItem>
+									  <groupId>com.tfs</groupId>
+									  <artifactId>tfs</artifactId>
+									  <version>${tfs.version}</version>
+									  <type>zip</type>
+									  <overWrite>false</overWrite>
+									  <outputDirectory>../workspace/tools</outputDirectory>
+							    </artifactItem>
+                                    
 							</artifactItems>
 						</configuration>
 					</execution>
