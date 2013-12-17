@@ -101,8 +101,7 @@ define(["header/listener/headerListener"] , function(template) {
 		 */
 		bindUI : function(){
 			var self = this;
-			$(".scrollable, .dropdown-menu, .cust_sel, .cus_themes").css("height","200px");
-			
+			$(".scrollable, .cus_themes").css("height","200px");			
 			//Logout event
 			$('#logout').click(function(){
 				self.onLogoutEvent.dispatch();

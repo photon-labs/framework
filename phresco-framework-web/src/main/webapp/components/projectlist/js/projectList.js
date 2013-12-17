@@ -487,6 +487,7 @@ define(["projectlist/listener/projectListListener"], function() {
 							$('.content_main').prepend(target);
 							$('.content_title').css('z-index', '0');
 							$('.header_section').css('z-index', '0');
+							$('.footer_section').css('z-index', '0');
 							// End Popup Fix
 						} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
 							commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
@@ -510,6 +511,7 @@ define(["projectlist/listener/projectListListener"], function() {
 							$('.content_main').prepend(target);
 							$('.content_title').css('z-index', '0');
 							$('.header_section').css('z-index', '0');
+							$('.footer_section').css('z-index', '0');
 							// End Popup Fix
 						} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
 							commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
@@ -531,6 +533,7 @@ define(["projectlist/listener/projectListListener"], function() {
 							$('.content_main').prepend(target);
 							$('.content_title').css('z-index', '0');
 							$('.header_section').css('z-index', '0');
+							$('.footer_section').css('z-index', '0');
 						} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
 							commonVariables.api.showError(self.getLockErrorMsg(response, lockAction), 'error', true, true);
 						}	

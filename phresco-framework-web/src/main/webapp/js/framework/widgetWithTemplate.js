@@ -894,6 +894,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(".repo_error3").hide();
 					$('.content_title').css('z-index', '6');
 					$('.header_section').css('z-index', '7');
+					$('.footer_section').css('z-index', '4');
 					$('.manualTemp').css('z-index', '1');
 				});
 					
