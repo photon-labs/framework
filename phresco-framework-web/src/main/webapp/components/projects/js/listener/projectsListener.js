@@ -1911,6 +1911,10 @@ define([], function() {
 								appInfo.appDirName = code;
 								appInfo.version = projectversion;
 								appInfo.name = code;
+								appInfo.showServer = true;
+								appInfo.showDatabase = true;
+								appInfo.showWebservice = true;
+								appInfo.showTestingFramework = true;
 								techInfo.id = $(value).children("td.technology").children("select.appln_technology").val();
 								techInfo.appTypeId = "1dbcf61c-e7b7-4267-8431-822c4580f9cf";
 								techInfo.techGroupId = $(value).children("td.frontEnd").children("select.frontEnd").find(":selected").text();
@@ -1980,6 +1984,10 @@ define([], function() {
 												appInfo.name = code;
 												appInfo.version = projectversion;
 												appInfo.techInfo.version = techInfo.version;
+												appInfo.showServer = true;
+												appInfo.showDatabase = true;
+												appInfo.showWebservice = true;
+												appInfo.showTestingFramework = true;
 												self.appInfos.push(appInfo);
 											}
 										});
@@ -2013,6 +2021,10 @@ define([], function() {
 								appInfo.appDirName = code;
 								appInfo.version = projectversion;
 								appInfo.name = code;
+								appInfo.showServer = true;
+								appInfo.showDatabase = true;
+								appInfo.showWebservice = true;
+								appInfo.showTestingFramework = true;
 								techInfo.id = $(value).children("td.widget").children("select.web_widget").val();
 								techInfo.appTypeId = "e1af3f5b-7333-487d-98fa-46305b9dd6ee";
 								techInfo.techGroupId = $(value).children("td.web").children("select.weblayer").find(":selected").text();
@@ -2081,6 +2093,10 @@ define([], function() {
 												appInfo.code = code;
 												appInfo.name = code;
 												appInfo.version = projectversion;
+												appInfo.showServer = true;
+												appInfo.showDatabase = true;
+												appInfo.showWebservice = true;
+												appInfo.showTestingFramework = true;
 												self.appInfos.push(appInfo);
 											}
 										});
@@ -2115,6 +2131,10 @@ define([], function() {
 								appInfo.appDirName = code; 
 								appInfo.version = projectversion;
 								appInfo.name = code; 
+								appInfo.showServer = true;
+								appInfo.showDatabase = true;
+								appInfo.showWebservice = true;
+								appInfo.showTestingFramework = true;
 								techInfo.id = $(value).children("td.types").children("select.mobile_types").find(':selected').val();
 								techInfo.appTypeId = "99d55693-dacd-4f77-994a-f02a66176ff9";
 								techInfo.techGroupId = $(value).children("td.mobile").children("select.mobile_layer").find(':selected').text();
@@ -2187,6 +2207,10 @@ define([], function() {
 												appInfo.code = code;
 												appInfo.name = code;
 												appInfo.version = projectversion;
+												appInfo.showServer = true;
+												appInfo.showDatabase = true;
+												appInfo.showWebservice = true;
+												appInfo.showTestingFramework = true;
 												self.appInfos.push(appInfo);
 											}
 										});

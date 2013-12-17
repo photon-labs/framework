@@ -339,6 +339,10 @@ define([], function() {
 				var serversJson = {};
 				var functionalFrameworkInfo = null;
 				var submitFlag = 0;
+				var showServer = false;
+				var showDatabase = false;
+				var showWebservice = false;
+				var showTestingFramework = false;
 				//console.log($("tbody[name='layercontents']").children().children().children());
 				$.each($("tbody[name='layercontents']").children(), function(index, value){
 				
@@ -364,7 +368,7 @@ define([], function() {
 								selectedServers.push(serverId);
 							}	
 						}
-						
+						showServer = true;
 					}
 					
 					if($(value).attr('class') === "database" && $(value).css('display') !== "none") {
@@ -388,12 +392,14 @@ define([], function() {
 								serverId.artifactInfoIds = selVersion;
 								selectedDatabases.push(serverId);
 							}	
-						}	
+						}
+						showDatabase = true;
 					}
 					if($(value).attr('class') === "webservice" && $(value).css('display') !== "none") {
 						$.each($(this).find(".webservice_chkbox:checked"), function() {
 							selectedWebServices.push($(this).val());
 						});
+						showWebservice = true;
 					}
 					
 					if($(value).attr('class') === "functionalFramework" && $(value).css('display') !== "none") {
@@ -426,7 +432,8 @@ define([], function() {
 								functionalFrameworkInfo.frameworkIds = frameworkIds;
 								functionalFrameworkInfo.version = version;
 							}	
-						}	 
+						}	
+						showTestingFramework =true;
 					}					
 				});
 				if (appInfo.code !== '') {
@@ -435,6 +442,10 @@ define([], function() {
 					appInfo.selectedServers = selectedServers;
 					appInfo.selectedWebservices = selectedWebServices;
 					appInfo.functionalFrameworkInfo = functionalFrameworkInfo;
+					appInfo.showServer = showServer;
+					appInfo.showDatabase = showDatabase;
+					appInfo.showWebservice = showWebservice;
+					appInfo.showTestingFramework = showTestingFramework;
 				}
 
 				if(submitFlag === 0){
