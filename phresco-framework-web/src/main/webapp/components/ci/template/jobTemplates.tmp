@@ -50,6 +50,7 @@
                                     <td class="repoDiv"><select name="repoTypes" class="selectpicker">
                                               <option value="svn" data-i18n="projectlist.label.svn"></option>
 											  <option value="git" data-i18n="projectlist.label.git"></option>
+											  <option value="tfs" data-i18n="projectlist.label.tfs"></option>
                                         </select>
                                     </td>
                                     <td class="uploadDiv">
@@ -57,6 +58,7 @@
 										 	<option value="Collabnet" data-i18n="ci.collabnet"></option>
 											<option value="Confluence" data-i18n="ci.confluence"></option>
 											<option value="Cobertura" data-i18n="ci.cobertura"></option>
+											<option value="TestFlight" data-i18n="ci.testFlight"></option>
 										</select>
 									</td>
                                 </tr>

@@ -72,20 +72,26 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 					
 					String forcompare = url;
 				 	int location = forcompare.lastIndexOf("/");
-				 	String cutomername = forcompare.substring(location);
-				 	cutomername = cutomername.substring(1);
+				 	String cutomerName = forcompare.substring(location);
+				 	cutomerName = cutomerName.substring(1);
 					try {
 						PrintWriter  out = response.getWriter();
+						out.print("<script type=\"text/javascript\"> localStorage.removeItem(\""+ FAV_ICON +"\"); </script> ");
+						out.print("<script type=\"text/javascript\"> localStorage.removeItem(\""+ LOGIN_ICON +"\"); </script> ");
 						out.print("<script type=\"text/javascript\"> localStorage.removeItem(\""+ THEME_KEY +"\"); </script> ");
 						out.print("<script type=\"text/javascript\"> localStorage.removeItem(\""+ LOGO_KEY +"\"); </script> ");
 						out.print("<script type=\"text/javascript\"> localStorage.removeItem(\""+ STATUS_MESSAGE +"\"); </script> ");
 						out.print("<script type=\"text/javascript\"> localStorage.removeItem(\""+ CUSTOMER_NAME_KEY +"\"); </script> ");
-						ClientIdentifyModel customerdetails = getCustomerProperties(cutomername);
+						ClientIdentifyModel customerdetails = getCustomerProperties(cutomerName);
 				    	if(customerdetails.getStatus()) {
 				    		JSONObject cutomer_theme = processCustomerProperties(customerdetails.getCustomer());
 				        	String customer_json_theme = new Gson().toJson(cutomer_theme);
 				        	String customer_logo= customerdetails.getCustomerlogo();
 							String customername= customerdetails.getCustomer().getName();
+							String favIcon = customerdetails.getFavIcon();
+							String loginIcon = customerdetails.getLoginIcon();
+							out.print("<script type=\"text/javascript\"> localStorage.setItem(\""+ FAV_ICON +"\",\""+ favIcon +"\"); </script> ");
+							out.print("<script type=\"text/javascript\"> localStorage.setItem(\""+ LOGIN_ICON +"\",\""+ loginIcon +"\"); </script> ");
 				    		out.print("<script type=\"text/javascript\"> localStorage.setItem(\""+ THEME_KEY +"\",JSON.stringify("+ customer_json_theme +")); </script> ");
 				    		out.print("<script type=\"text/javascript\"> localStorage.setItem(\""+ LOGO_KEY +"\",\""+ customer_logo +"\"); </script> ");
 							out.print("<script type=\"text/javascript\"> localStorage.setItem(\""+ CUSTOMER_NAME_KEY +"\",\""+ customername +"\"); </script> ");							
@@ -107,23 +113,27 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 			}
 	}
 	
-	public ClientIdentifyModel getCustomerProperties(String cutomername) throws PhrescoException, IOException {
+	public ClientIdentifyModel getCustomerProperties(String customerName) throws PhrescoException, IOException {
 		Customer customer = null;
 		InputStream iconStream = null;
+		InputStream favIconStream = null;
+		InputStream loginIconStream = null;
 		FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
 		ClientConfig config = new DefaultClientConfig();
         config.getClasses().add(JacksonJsonProvider.class);
 		Client c = Client.create(config);
 		
 	    WebResource resource = c.resource(configuration.getServerPath() +REST_API_CUSTOMER_ICON);
-	    resource = resource.queryParam("context", cutomername);
+	    resource = resource.queryParam("context", customerName);
 	    resource.accept(org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE);
-	    ClientResponse iconResponse = resource.get(ClientResponse.class);
+	    ClientResponse iconResponse = getIconResponse("icon", customerName);
+	    ClientResponse favIconResponse = getIconResponse("favIcon", customerName);
+	    ClientResponse loginIconResponse = getIconResponse("loginIcon", customerName);
         resource = c.resource(configuration.getServerPath() + REST_API_CUSTOMERINFO);
-	    resource = resource.queryParam("context", cutomername);
+	    resource = resource.queryParam("context", customerName);
 	    resource.accept(org.springframework.http.MediaType.APPLICATION_JSON_VALUE);
 	    ClientResponse customerResponse = resource.get(ClientResponse.class);
-	    if(iconResponse.getStatus() != 200 && customerResponse.getStatus() != 200) {
+	    if(iconResponse.getStatus() != 200 && customerResponse.getStatus() != 200 && favIconResponse.getStatus() != 200 && loginIconResponse.getStatus() != 200) {
 	       ClientIdentifyModel data = new ClientIdentifyModel();
 	       data.setStatus(false);
 	       data.setMessage(INVALID_CUSTOMER);
@@ -135,6 +145,18 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 		    data.setMessage(NO_IMAGE);
 		    return data;
 		}
+	    if(favIconResponse.getStatus() != 200) {
+		    ClientIdentifyModel data = new ClientIdentifyModel();
+		    data.setStatus(false);
+		    data.setMessage(NO_FAV_IMAGE);
+		    return data;
+		}
+	    if(loginIconResponse.getStatus() != 200) {
+	    	ClientIdentifyModel data = new ClientIdentifyModel();
+		    data.setStatus(false);
+		    data.setMessage(NO_LOGIN_IMAGE_IMAGE);
+		    return data;
+	    }
 	    if(customerResponse.getStatus() != 200) {
 			if (isDebugEnabled) {
 				S_LOGGER.debug("Response Status :"+Response.Status.PRECONDITION_FAILED.getReasonPhrase());
@@ -144,16 +166,28 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 		    data.setMessage(NO_ID);
 		    return data;
 		}
-	    if(iconResponse.getStatus() == 200 && customerResponse.getStatus() == 200) {
+	    if(iconResponse.getStatus() == 200 && customerResponse.getStatus() == 200 && favIconResponse.getStatus() == 200 && loginIconResponse.getStatus() == 200) {
 	    	iconStream = iconResponse.getEntityInputStream();
+	    	favIconStream = favIconResponse.getEntityInputStream();
+	    	loginIconStream = loginIconResponse.getEntityInputStream();
 		    customer = customerResponse.getEntity(Customer.class);
 			byte[] imgByte = null;
+			byte[] favIconImgByte = null;
+			byte[] loginImgByte = null;
 			imgByte = IOUtils.toByteArray(iconStream);
+			favIconImgByte = IOUtils.toByteArray(favIconStream);
+			loginImgByte = IOUtils.toByteArray(loginIconStream);
 		    byte[] encodedImage = Base64.encodeBase64(imgByte);
+		    byte[] encodedFavIconImage = Base64.encodeBase64(favIconImgByte);
+		    byte[] encodedloginImage = Base64.encodeBase64(loginImgByte);
 	        String encodeImg = new String(encodedImage);
+	        String encodeFavIconImage = new String(encodedFavIconImage);
+	        String encodedloginIconImage = new String(encodedloginImage);
 	        ClientIdentifyModel data = new ClientIdentifyModel();
 	        data.setCustomer(customer);
 	        data.setCustomerlogo(encodeImg);
+	        data.setFavIcon(encodeFavIconImage);
+	        data.setLoginIcon(encodedloginIconImage);
 	        data.setStatus(true);
 	        return data;
 	    }
@@ -167,6 +201,40 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 //			return null;
 //			}
 		return null;
+	}
+	
+	public ClientResponse getIconResponse(String from, String cutomerName) throws PhrescoException, IOException {
+		FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
+		ClientConfig config = new DefaultClientConfig();
+		config.getClasses().add(JacksonJsonProvider.class);
+		Client c = Client.create(config);
+		ClientResponse iconResponse = null;
+		
+		if(ICON.equals(from)) { 
+			WebResource resource = c.resource(configuration.getServerPath() +REST_API_CUSTOMER_ICON);
+			resource = resource.queryParam("context", cutomerName);
+			resource.accept(org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE);
+			iconResponse = resource.get(ClientResponse.class);
+		} 
+		
+		if(FAVICON.equals(from)) {
+			WebResource resource = c.resource(configuration.getServerPath() +REST_API_CUSTOMER_ICON);
+			resource = resource.queryParam("context", cutomerName);
+			resource = resource.queryParam("favIcon", "true");
+			resource.accept(org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE);
+			iconResponse = resource.get(ClientResponse.class);
+		}
+		
+		if(MAIN_LOGO.equals(from)){
+			WebResource resource = c.resource(configuration.getServerPath() +REST_API_CUSTOMER_ICON);
+			resource = resource.queryParam("context", cutomerName);
+			resource = resource.queryParam("loginIcon", "true");
+			resource.accept(org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE);
+			iconResponse = resource.get(ClientResponse.class);
+		}
+		
+		return iconResponse;
+		
 	}
 	
 	public JSONObject processCustomerProperties(Customer customer) {

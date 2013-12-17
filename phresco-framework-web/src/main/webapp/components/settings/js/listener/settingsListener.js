@@ -59,9 +59,15 @@ define([], function() {
 			} else if (action === "getMail") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/mail";
+			} else if (action === "getTfs") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/tfs";
 			} else if (action === "getConfluence") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/confluence";
+			} else if(action === "getTestFlight") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/testFlight";
 			} else if (action === "setup") {
 				header.requestMethod = "POST";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.mvnCiSetup;
@@ -77,9 +83,10 @@ define([], function() {
 				var ePass = $('input[name=password][temp=email]').val();
 				var jUrl = $('input[name=jenkinsUrl][temp=jenkins]').val();
 				var jName = $('input[name=juserName][temp=jenkins]').val();
-				var jPass = $('input[name=jpassword][temp=jenkins]').val();				
+				var jPass = $('input[name=jpassword][temp=jenkins]').val();
+				var tfcle = $('input[name=tfcle][temp=jenkins]').val();	
 				header.requestPostBody = JSON.stringify(ciRequestBody);
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/global?emailAddress=" + eUser + "&emailPassword=" + ePass + "&url=" + jUrl + "&username=" + jName + "&password=" + jPass;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/global?emailAddress=" + eUser + "&emailPassword=" + ePass + "&url=" + jUrl + "&username=" + jName + "&password=" + jPass + "&tfsUrl=" + tfcle;
 			} 
 			return header;
 		},
@@ -96,6 +103,10 @@ define([], function() {
 			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'getMail'), function(response) {
 				$('input[name=username][temp=email]').val(response.data[0]);
 				$('input[name=password][temp=email]').val(response.data[1]);
+			});
+			
+			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'getTfs'), function(tfs) {
+				$('input[name=tfcle][temp=jenkins]').val(tfs.data);
 			});
 			
 			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'getConfluence'), function(response) {
@@ -122,7 +133,32 @@ define([], function() {
 					
 				}, 500);
 			});
+			
+			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'getTestFlight'), function(response) {
+				for (i in response.data) {
+					var data = response.data[i];
+					var tds = $('#testFlightPrototype').html();
+					var tr = $('<tr class=testFlight>');
+					tr.append(tds);
+					tr.find('[name=tokenPairName]').val(data.tokenPairName);
+					tr.find('[name=apiToken]').val(data.apiToken);
+					tr.find('[name=teamToken]').val(data.teamToken);
+					
+					tr.insertBefore($('#testFlightSave'));
+				}
+				self.switchStatus();
+//				self.iconsmanipulator();
 				
+				setTimeout(function() {
+					
+					
+					$('#testFlightTable').on('click', 'a.deleteTestFlight', function() {
+						$(this).closest('.testFlight').remove();
+					});
+					
+				}, 500);
+			});
+			
 		},
 		
 		switchStatus : function() {
@@ -296,17 +332,34 @@ define([], function() {
 			var status = self.validate();
 			if (status === true) {
 				var ciRequestBody = [];
+				var postdata = {};
 				var confluence = $('.confluence');
+				var confluenceRequestBody = [];
+				var testFlight = $('.testFlight');
+				var testFlightRequestBody = [];
 				
 				confluence.each(function(i, selected) {
 					var confluenceObj = {};
 					confluenceObj.repoUrl = $(this).find('input[name=url]').val();
 					confluenceObj.userName = $(this).find('input[name=username]').val();
 					confluenceObj.password = $(this).find('input[name=password]').val();
-					ciRequestBody.push(confluenceObj);
+					confluenceRequestBody.push(confluenceObj);
 				});
 				
-				self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'save'), function(response) {
+				postdata.repoDetails = confluenceRequestBody;
+				
+				testFlight.each(function(i, selected) {
+					var testFlightObj = {};
+					testFlightObj.tokenPairName = $(this).find('input[name=tokenPairName]').val();
+					testFlightObj.apiToken = $(this).find('input[name=apiToken]').val();
+					testFlightObj.teamToken = $(this).find('input[name=teamToken]').val();
+					testFlightRequestBody.push(testFlightObj);
+				});
+				
+				postdata.testFlight = testFlightRequestBody
+				ciRequestBody.push(postdata);
+				
+				self.getHeaderResponse(self.getRequestHeader(postdata, 'save'), function(response) {
 					commonVariables.api.showError(response.responseCode ,"success", true, false, true);
 				});
 			}

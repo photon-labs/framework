@@ -67,6 +67,14 @@ public class FrameworkUtil implements Constants, FrameworkConstants{
 		
 		String portNo = "";
 		try {
+			String jenkinsUrl = getPropertyValue(URL);
+			if (StringUtils.isNotEmpty(jenkinsUrl)) {
+				URL jenkinsURL = new URL(jenkinsUrl);
+				portNo = Integer.toString(jenkinsURL.getPort());
+				if(StringUtils.isNotEmpty(portNo)) {
+					return portNo;
+				}
+			}
 			String jenkinsHome = Utility.getJenkinsHome();
 			StringBuilder path = new StringBuilder(jenkinsHome);
 			Document document = getDocument(new File(path.toString() + File.separator + POM_FILE));

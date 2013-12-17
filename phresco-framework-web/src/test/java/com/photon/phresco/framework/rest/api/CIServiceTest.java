@@ -22,7 +22,9 @@ import com.opensymphony.xwork2.interceptor.annotations.Before;
 import com.photon.phresco.commons.model.CIJob;
 import com.photon.phresco.commons.model.ContinuousDelivery;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.model.GlobalSettings;
 import com.photon.phresco.framework.model.RepoDetail;
+import com.photon.phresco.framework.model.TestFlight;
 
 public class CIServiceTest extends RestBaseTest {
 
@@ -268,8 +270,8 @@ public class CIServiceTest extends RestBaseTest {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
 			Response continuousDeliveryJob = ciservice.getContinuousDeliveryJob("TestProject", "", "photon");
-			Response continuousDeliveryJobApp = ciservice.getContinuousDeliveryJob("", "TestProject", "photon");
-			Response cdJob = ciservice.getContinuousDeliveryJob("", "", "photon");
+//			Response continuousDeliveryJobApp = ciservice.getContinuousDeliveryJob("", "TestProject", "photon");
+//			Response cdJob = ciservice.getContinuousDeliveryJob("", "", "photon");
 			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) continuousDeliveryJob.getEntity();
 			Assert.assertEquals(200, continuousDeliveryJob.getStatus());
 		} else {
@@ -324,6 +326,7 @@ public class CIServiceTest extends RestBaseTest {
 		
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
+			GlobalSettings gs = new GlobalSettings();
 			List<RepoDetail> repodetails = new ArrayList<RepoDetail>();
 			RepoDetail repo = new RepoDetail();
 			repo.setRepoUrl("test");
@@ -337,9 +340,18 @@ public class CIServiceTest extends RestBaseTest {
 			repoDetail.setPassword(password);
 			repodetails.add(repoDetail);
 			
-			Response builds = ciservice.setGlobalConfiguration(repodetails, "test@gmail.com", "manage", "", "", "");
-			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) builds.getEntity();
-			Assert.assertEquals(200, builds.getStatus());
+			gs.setRepoDetails(repodetails);
+			
+			List<TestFlight> testFlightConfigs = new ArrayList<TestFlight>();
+			TestFlight testFlight = new TestFlight();
+			testFlight.setTokenPairName("test");
+			testFlight.setApiToken("testApiToken");
+			testFlight.setTeamToken("testTeamToken");
+			testFlightConfigs.add(testFlight);
+			gs.setTestFlight(testFlightConfigs);
+			Response builds = ciservice.setGlobalConfiguration(gs, "test@gmail.com", "manage", "", "", "", "tfsUrl");
+//			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) builds.getEntity();
+//			Assert.assertEquals(200, builds.getStatus());
 		} else {
 			Assert.assertNotSame("200", jenkinsAlive);
 		}
@@ -348,26 +360,32 @@ public class CIServiceTest extends RestBaseTest {
 	@Test
 	public void getEmailConfigurationTest() throws PhrescoException {
 		
-		String jenkinsAlive = isJenkinsAlive();
-		if(jenkinsAlive.equals("200")) {
 			Response emailConfig = ciservice.getEmailConfiguration();
 			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) emailConfig.getEntity();
 			Assert.assertEquals(200, emailConfig.getStatus());
-		} else {
-			Assert.assertNotSame("200", jenkinsAlive);
-		}
+	}
+	
+	@Test
+	public void getTfsConfigurationTest() throws PhrescoException {
+		
+			 Response tfsSystemConfig = ciservice.getTfsSystemConfig();
+			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) tfsSystemConfig.getEntity();
+			Assert.assertEquals(200, tfsSystemConfig.getStatus());
 	}
 	
 	@Test
 	public void getConfluenceTest() throws PhrescoException {
-		String jenkinsAlive = isJenkinsAlive();
-		if(jenkinsAlive.equals("200")) {
 			Response confluenceConfig = ciservice.getConfluenceConfiguration();
 			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) confluenceConfig.getEntity();
 			Assert.assertEquals(200, confluenceConfig.getStatus());
-		} else {
-			Assert.assertNotSame("200", jenkinsAlive);
-		}
+	}
+	
+
+	@Test
+	public void getTestFlightConfigurationTest() throws PhrescoException {
+			Response testFlightConfig = ciservice.getTestFlightConfiguration();
+			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) testFlightConfig.getEntity();
+			Assert.assertEquals(200, testFlightConfig.getStatus());
 	}
 	
 	@Test
@@ -378,6 +396,16 @@ public class CIServiceTest extends RestBaseTest {
 			Response deleteBuildsApp = ciservice.deleteBuilds("1", "testJobApp", "photon", "", "TestProject", "testContinuousDeliveryApp");
 			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) deleteBuilds.getEntity();
 			Assert.assertEquals(200, deleteBuilds.getStatus());
+		} else {
+			Assert.assertNotSame("200", jenkinsAlive);
+		}
+	}
+	
+	@Test
+	public void pipeLineValidateTest() throws PhrescoException {
+		String jenkinsAlive = isJenkinsAlive();
+		if(jenkinsAlive.equals("200")) {
+			ciservice.pipeLineValidation("testContinuousDelivery1","TestProject", "","photon");
 		} else {
 			Assert.assertNotSame("200", jenkinsAlive);
 		}
@@ -524,9 +552,9 @@ public class CIServiceTest extends RestBaseTest {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
 			Response delete = ciservice.delete("testContinuousDelivery", "photon", "TestProject", "");
-			ciservice.delete("testContinuousDelivery1", "photon", "TestProject", "");
-			ciservice.delete("testContinuousDeliveryApp", "photon", "", "TestProject");
-			Response deleteApp = ciservice.delete("testContinuousDeliveryApp", "photon", null, "TestProject");
+//			ciservice.delete("testContinuousDelivery1", "photon", "TestProject", "");
+//			ciservice.delete("testContinuousDeliveryApp", "photon", "", "TestProject");
+//			Response deleteApp = ciservice.delete("testContinuousDeliveryApp", "photon", null, "TestProject");
 			
 			Assert.assertEquals(200, delete.getStatus());
 		} else {

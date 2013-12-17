@@ -308,6 +308,10 @@ define([], function() {
 			if(!self.validation()) {
 				var appInfo = {};
 				var techInfo = {};
+				var appdescription = $("#appDesc").val();
+					appdescription = appdescription.replace("<" , "&lt;");
+					appdescription = appdescription.replace(">" , "&gt;");
+
 				appInfo.code = $("input[name='appCode']").val();
 				appInfo.appDirName = $("input[name='appDirName']").val();
 				var rootModule = self.isBlank($('.rootModule').val()) ? "" : $('.rootModule').val();
@@ -319,7 +323,8 @@ define([], function() {
 				appInfo.tabletEnabled = renderData.appdetails.data.projectInfo.appInfos[0].tabletEnabled;
 				appInfo.pilot = renderData.appdetails.data.projectInfo.appInfos[0].pilot;
 				appInfo.id = renderData.appdetails.data.projectInfo.appInfos[0].id;
-				appInfo.description = $("#appDesc").val();
+				appInfo.description = appdescription;
+				
 				appInfo.selectedModules = renderData.appdetails.data.projectInfo.appInfos[0].selectedModules;
 				appInfo.selectedJSLibs = renderData.appdetails.data.projectInfo.appInfos[0].selectedJSLibs;
 				appInfo.selectedComponents = renderData.appdetails.data.projectInfo.appInfos[0].selectedComponents;

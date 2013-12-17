@@ -128,7 +128,7 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 			$('#consoleImg').click(function() {
 				self.onShowHideConsoleEvent.dispatch();
 			});
-   			
+			
    			$('.addConfluence').bind('click', function() {
 				var tds = $('#prototype').html();
 				var tr = $('<tr class=confluence>');
@@ -136,6 +136,13 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 				tr.insertBefore($('#save'));
 			});
    			
+			$('.addTestFlight').bind('click', function() {
+				var tds = $('#testFlightPrototype').html();
+				var tr = $('<tr class=testFlight>');
+				tr.append(tds);
+				tr.insertBefore($('#testFlightSave'));
+			});
+			
    		//To copy the console log content to the clip-board
 			/* $('#copyLog').unbind("click");
 			$('#copyLog').click(function() {

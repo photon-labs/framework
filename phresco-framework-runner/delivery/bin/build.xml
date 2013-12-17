@@ -230,6 +230,7 @@
 			<sysproperty key="SONAR_HOME" value="${sonar.home}"/>
 			<sysproperty key="JENKINS_HOME" value="${jenkins.home}"/>
             <sysproperty key="SERVER_ENVIRONMENT" value="${phresco.server.environment}"/>
+			<sysproperty key="PHRESCO_WORKSPACE" value="${phresco.workspace}"/>
 		</java>
 	</target>
 

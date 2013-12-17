@@ -51,6 +51,23 @@
 						
 						<tr>
 							<td>
+								<table class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0">
+									<thead>
+										<tr>
+											<th colspan="3"><span data-i18n="ci.teamfs"></span></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td><input type="text" name="tfcle" placeholder="TF command line executable" temp="jenkins"></td>
+										</tr>
+								  </tbody>
+							   </table>
+							</td>
+						</tr>
+						
+						<tr>
+							<td>
 								<table id="conflTable" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0">
 									<thead>
 										<tr>
@@ -70,6 +87,32 @@
 										</tr>
 										
 										<tr id="save"><td colspan="4" align="right"></td></tr>
+								  </tbody>
+							   </table>
+							</td>
+						</tr>
+						
+						<tr>
+							<td>
+								<table id="testFlightTable" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0">
+									<thead>
+										<tr>
+											<th colspan="5">TestFlight Configuration &nbsp&nbsp&nbsp
+											<a align="right" class="addTestFlight flt_right"><img  src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr id="testFlightPrototype" class="hideContent">
+											<td><input type="text" name="tokenPairName" placeholder="Token Name"></td>
+											<td><input type="password" name="apiToken" placeholder="Api Token"></td>
+											<td><input type="password" name="teamToken" placeholder="TeamToken"></td>
+											<td>
+												<a class="deleteTestFlight flt_right"><img src="themes/default/images/Phresco/minus_icon.png"  border="0" alt=""></a>
+											</td> 
+											 
+										</tr>
+										
+										<tr id="testFlightSave"><td colspan="4" align="right"></td></tr>
 								  </tbody>
 							   </table>
 							</td>

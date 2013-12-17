@@ -11,7 +11,7 @@ import com.microsoft.tfs.core.clients.versioncontrol.events.OperationCompletedEv
 import com.microsoft.tfs.core.clients.versioncontrol.events.OperationCompletedListener;
 import com.microsoft.tfs.core.clients.versioncontrol.soapextensions.GetRequest;
 
-public class SampleGetOperationCompletedListener
+public class TfsGetOperationCompletedListener
     implements OperationCompletedListener
 {
     public void onGetOperationCompleted(final GetOperationCompletedEvent e)

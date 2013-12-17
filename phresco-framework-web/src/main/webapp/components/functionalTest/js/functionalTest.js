@@ -142,7 +142,7 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			$("#functionalTestBtn").unbind("click");
 			$("#functionalTestBtn").click(function() {
 				var openccObj = this;
-				self.checkForLock("functional", '', function(response){
+				self.checkForLock("functional", '', '', function(response){
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {
 						self.onDynamicPageEvent.dispatch(openccObj, $('#functionalTestDynCtrls'), 'functionalTest_popup', commonVariables.functionalTestGoal);
 					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {

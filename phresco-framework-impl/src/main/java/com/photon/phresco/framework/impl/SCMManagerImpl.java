@@ -715,6 +715,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importFromTfs()");
 		}
 		
+		System.setProperty("com.microsoft.tfs.jni.native.base-directory", System.getenv("TFS_HOME")); 
 		String collectionUrl = repodetail.getRepoUrl();
 		String userName = repodetail.getUserName();
 		String password = repodetail.getPassword();
@@ -755,17 +756,17 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	public static void addGetEventListeners(final TFSTeamProjectCollection tpc) {
 		// Adding a get operation started event listener, this is fired once per
 		// get call
-		SampleGetOperationStartedListener getOperationStartedListener = new SampleGetOperationStartedListener();
+		TfsGetOperationStartedListener getOperationStartedListener = new TfsGetOperationStartedListener();
 		tpc.getVersionControlClient().getEventEngine().addOperationStartedListener(getOperationStartedListener);
 
 		// Adding a get event listener, this fired once per get operation(which
 		// might be multiple times per get call)
-		SampleGetEventListener getListener = new SampleGetEventListener();
+		TfsGetEventListener getListener = new TfsGetEventListener();
 		tpc.getVersionControlClient().getEventEngine().addGetListener(getListener);
 
 		// Adding a get operation completed event listener, this is fired once
 		// per get call
-		SampleGetOperationCompletedListener getOperationCompletedListener = new SampleGetOperationCompletedListener();
+		TfsGetOperationCompletedListener getOperationCompletedListener = new TfsGetOperationCompletedListener();
 		tpc.getVersionControlClient().getEventEngine().addOperationCompletedListener(getOperationCompletedListener);
 	}
 

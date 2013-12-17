@@ -11,7 +11,7 @@ import com.microsoft.tfs.core.clients.versioncontrol.events.OperationStartedEven
 import com.microsoft.tfs.core.clients.versioncontrol.events.OperationStartedListener;
 import com.microsoft.tfs.core.clients.versioncontrol.soapextensions.GetRequest;
 
-public class SampleGetOperationStartedListener
+public class TfsGetOperationStartedListener
     implements OperationStartedListener
 {
     public void onGetOperationStarted(final GetOperationStartedEvent e)
