@@ -69,8 +69,8 @@ public class ManualTestServiceTest extends RestBaseTest {
 			builder.append(appDirName);
 			builder.append(File.separator);
 			builder.append(manualTestReportPath);
-			InputStream resourceStream = this.getClass().getClassLoader().getResourceAsStream("helios_manul_test_template.xls");
-			File file = new File(builder.toString() + "/helios_manul_test_template.xls");
+			InputStream resourceStream = this.getClass().getClassLoader().getResourceAsStream("phtn_phresco - 3.2.0 manual_test_template.xls");
+			File file = new File(builder.toString() + "/phtn_phresco - 3.2.0 manual_test_template.xls");
 			FileUtils.copyInputStreamToFile(resourceStream, file);
 			service.uploadManualTemplate(httpServletRequest, manualTestReportPath);
 		} catch (Exception e) {

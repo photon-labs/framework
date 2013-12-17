@@ -45,7 +45,7 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 	public Response getManualTemplate(@QueryParam(REST_QUERY_FILETYPE) String fileType) throws PhrescoException {
 		ResponseInfo info = new ResponseInfo();
         try {
-        	InputStream resourceStream = this.getClass().getClassLoader().getResourceAsStream("helios_manul_test_template." + fileType);
+        	InputStream resourceStream = this.getClass().getClassLoader().getResourceAsStream("phtn_phresco - 3.2.0 manual_test_template." + fileType);
         	if(resourceStream == null) {
         		return Response.status(Status.OK).header("Access-Control-Allow-Origin", "*").entity(resourceStream).build();
         	}
