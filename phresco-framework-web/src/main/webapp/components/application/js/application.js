@@ -19,7 +19,7 @@ define(["application/listener/applicationListener"], function() {
 			requestPostBody: null,
 			webserviceurl: null
 		},
-	
+		layerDisplay : null,
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -211,6 +211,26 @@ define(["application/listener/applicationListener"], function() {
 				$('select[name=func_framework_tools]').attr("disabled", true);
 				$('select[name=tools_version]').attr("disabled", true);
 			}
+			
+			if (self.layerDisplay.showServer === false) {
+				self.onRemoveLayerEvent.dispatch($("#servers"));
+				self.addLayers();
+			}
+			
+			if (self.layerDisplay.showDatabase === false) {
+				self.onRemoveLayerEvent.dispatch($("#database"));
+				self.addLayers();
+			}
+			
+			if (self.layerDisplay.showWebservice === false) {
+				self.onRemoveLayerEvent.dispatch($("#webservice"));
+				self.addLayers();
+			}
+			
+			if (self.layerDisplay.showTestingFramework === false) {
+				self.onRemoveLayerEvent.dispatch($("#testing"));
+				self.addLayers();
+			}
 		},
 		
 		preRender: function(whereToRender, renderFunction){
@@ -236,6 +256,7 @@ define(["application/listener/applicationListener"], function() {
 						}, 500);
 						
 					});
+					self.layerDisplay = response.appdetails.data.projectInfo.appInfos[0];
 				});
 			}, 200);	
 		},
@@ -266,11 +287,8 @@ define(["application/listener/applicationListener"], function() {
 				$("input[name='appDirName']").val(self.specialCharValidation($(this).val()));
 			}); 
 
-			$(".content_end input").unbind('click');
-			$(".content_end input").bind('click', function(){
-				self.onAddLayerEvent.dispatch($(this));
-				return false;
-			});
+			self.addLayers();
+			
 			$('#cancelbutton').unbind('click');
 			$('#cancelbutton').click(function(){
 				self.onCancelEvent.dispatch();
@@ -311,6 +329,15 @@ define(["application/listener/applicationListener"], function() {
 			
 			self.windowResize();	
 			this.customScroll($(".scrolldiv"));
+		},
+		
+		addLayers : function() {
+			var self=this;
+			$(".content_end input").unbind('click');
+			$(".content_end input").bind('click', function(){
+				self.onAddLayerEvent.dispatch($(this));
+				return false;
+			});
 		}
 	});
 

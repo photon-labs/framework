@@ -2582,9 +2582,12 @@ img[name="close"] {
 	border-bottom:1px solid #ccc;
 	line-height:25px !important;
 	padding:0 8px !important;
-	width:159px;
+	/*width:159px;*/
 }
 
+.fetchSql_table td ul.connectedSortable {
+	width:137px !important;
+}
 
 .z_index {
 	z-index:1;
