@@ -75,8 +75,8 @@ define(["features/listener/featuresListener"], function() {
 								} else {
 									fieldset = '<fieldset class="switch switchOff" depid="dep_'+id+'" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
 								}
-								
-							});							
+							});	
+							return false;						
 						}else {							
 							fieldset = '<fieldset class="switch switchOff" depid="dep_'+id+'" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true" ></label></fieldset>';
 						} //for android null exception
