@@ -21,11 +21,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -38,7 +42,11 @@ import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -54,10 +62,14 @@ import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
+import org.eclipse.jgit.api.ListTagCommand;
+import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.lib.Config;
+import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.StoredConfig;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -85,6 +97,7 @@ import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.LockUtil;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
@@ -545,8 +558,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		}
 	}
 	
-	
-	
 	/**
 	 * Fetch pop up values.
 	 *
@@ -561,12 +572,12 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	public Response getFolderStructure(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_PROJECTID) String projectId,
 			@QueryParam(REST_QUERY_MODULE_NAME) String moduleName) {
+	
 		Response response = null;
-		ResponseInfo<List<DOMSource>> responseData = new ResponseInfo<List<DOMSource>>();
-		JSONObject  domSourceObject = new JSONObject();
+		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
 		List<String> urls = new ArrayList<String>();
+		List<String> documents = new ArrayList<String>();
 		Document document = null;
-		DOMSource domSource = null;
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager != null) {
@@ -583,11 +594,9 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 						urls.add(snapshotRepoURL);
 					}
 					document = constructDomSource(artifact, applicationInfo.getAppDirName(), urls);
-					domSource = new DOMSource();
-					domSource.setNode(document);
-					domSourceObject.put(applicationInfo.getAppDirName(), domSource);
+					documents.add(convertDocumentToString(document));
 				}
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, domSourceObject, status, successCode);
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, documents, status, successCode);
 				response = Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 				.build();
 			}
@@ -597,6 +606,135 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		}
 		return response;
 	}
+	
+	
+	/**
+	 * Fetch pop up values.
+	 *
+	 * @param appDirName the app dir name
+	 * @param action the action
+	 * @param userId the user id
+	 * @return the response
+	 * @throws PhrescoException 
+	 */
+	@GET
+	@Path("/browseGitRepo")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getGitSourceRepo(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+			@QueryParam(REST_QUERY_PROJECTID) String projectId,
+			@QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
+		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
+		List<String> documents = new ArrayList<String>();
+		Response response = null;
+		Document document = null;
+		String url = null;
+		try {
+			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			for (ApplicationInfo applicationInfo : appInfos) {
+				String path = Utility.getProjectHome() + File.separator + applicationInfo.getAppDirName();
+				ProjectInfo projectInfo = Utility.getProjectInfo(path, moduleName);
+				File sourceFolderLocation = Utility.getSourceFolderLocation(projectInfo, path, moduleName);
+				if (!sourceFolderLocation.exists()) {
+					return null;
+				}
+				Git git = Git.open(new File(sourceFolderLocation.getPath()));
+				List<String> branchList = new ArrayList<String>();
+				List<String> tagLists = new ArrayList<String>();
+
+				List<Ref> remoteCall = git.branchList().setListMode(ListMode.REMOTE).call();
+				for (Ref ref : remoteCall) {
+					branchList.add(ref.getName());
+				}
+				
+				ListTagCommand tagList = git.tagList();
+				Map<String, Ref> tags = tagList.getRepository().getTags();
+				Set<Entry<String,Ref>> entrySet = tags.entrySet();
+				for (Entry<String, Ref> entry : entrySet) {
+					tagLists.add(entry.getKey());
+				}
+				
+				StoredConfig config = git.getRepository().getConfig();
+				Set<String> subsections = config.getSubsections(REMOTE);
+				for (String string : subsections) {
+					String[] urlList = config.getStringList(REMOTE, string, URL);
+					for (String urlPath : urlList) {
+						url = urlPath;
+					}
+				}
+				document = constructTree(branchList, tagLists, url);
+				documents.add(convertDocumentToString(document));
+			}
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, documents, status, successCode);
+			response = Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
+		}  catch (PhrescoException e) {
+			e.printStackTrace();
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610020);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		} catch (GitAPIException e) {
+			throw new PhrescoException(e);
+		}
+		return response;
+	}
+	
+	private static Document constructTree(List<String> branchList,	List<String> tagLists, String url) {
+		try {
+			DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+			Document doc = documentBuilder.newDocument();
+
+			Element rootElement = doc.createElement(ROOT);
+			doc.appendChild(rootElement);
+
+			Element rootItem = doc.createElement(ITEM);
+			rootItem.setAttribute(TYPE, FOLDER);
+			rootItem.setAttribute(NAME, ROOT_ITEM);
+
+			rootElement.appendChild(rootItem);
+			
+			Element urlItem = doc.createElement(ITEM);
+			urlItem.setAttribute(TYPE, FOLDER);
+			urlItem.setAttribute(NAME, url);
+			
+			rootItem.appendChild(urlItem);
+			
+			Element branchItem = doc.createElement(ITEM);
+			branchItem.setAttribute(TYPE, FOLDER);
+			branchItem.setAttribute(NAME, BRANCHES);
+			urlItem.appendChild(branchItem);
+
+
+			for (String branch: branchList) {
+				String branchName = branch.substring(branch.lastIndexOf("/") + 1, branch.length());
+				Element branchItems = doc.createElement(ITEM);
+				branchItems.setAttribute(TYPE, FILE);
+				branchItems.setAttribute(NAME, branchName);
+				branchItem.appendChild(branchItems);
+			}
+
+			Element tagItem = doc.createElement(ITEM);
+			tagItem.setAttribute(TYPE, FOLDER);
+			tagItem.setAttribute(NAME, TAGS);
+			urlItem.appendChild(tagItem);
+
+
+			for (String tag: tagLists) {
+				Element tagItems = doc.createElement(ITEM);
+				tagItems.setAttribute(TYPE, FILE);
+				tagItems.setAttribute(NAME, tag);
+				tagItem.appendChild(tagItems);
+			}
+
+			return doc;
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
 	
 	private Artifact readArtifact(ApplicationInfo appInfo, String moduleName) {
 		Artifact artifact = null;
@@ -1735,5 +1873,20 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			boolean delete = path.delete();
 		}
 	}
+	
+	  private static String convertDocumentToString(Document doc) {
+	        TransformerFactory tf = TransformerFactory.newInstance();
+	        Transformer transformer;
+	        try {
+	            transformer = tf.newTransformer();
+	            StringWriter writer = new StringWriter();
+	            transformer.transform(new DOMSource(doc), new StreamResult(writer));
+	            String output = writer.getBuffer().toString();
+	            return output;
+	        } catch (TransformerException e) {
+	            e.printStackTrace();
+	        }
+	        return null;
+	    }
 	
 }

@@ -109,7 +109,6 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		Response authenticationException = repositoryservice.importApplication(repoInfo, "Admin");
 		Assert.assertEquals(200, authenticationException.getStatus());
 	}
-	
 
 	@Test
 	public void  fetchLogMessages() throws PhrescoException {
@@ -212,6 +211,18 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		Response importApplication = repositoryservice.importApplication(repoInfo, "Admin");
 		Assert.assertEquals(200,importApplication.getStatus());
 		Assert.assertEquals(true, true);
+	}
+	
+	@Test
+	public void  buildRepoTest() throws Exception {
+		Response response = repositoryservice.getFolderStructure(customerId, userId, projectId, "");
+		Assert.assertEquals(200, response.getStatus());
+	}
+	
+	@Test
+	public void  gitSourceRepoTest() throws Exception {
+		Response response = repositoryservice.getGitSourceRepo(customerId, "b95a4b23-c7a9-47db-b5a6-f35c6fdb8567", "");
+		Assert.assertEquals(200, response.getStatus());
 	}
 	
 	private RepoInfo getSvnRepoInfo() {

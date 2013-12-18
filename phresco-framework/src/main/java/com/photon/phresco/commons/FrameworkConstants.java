@@ -2113,5 +2113,7 @@ public interface FrameworkConstants {
 	    String SNAPSHOT_ITEM = "//item[@name='SNAPSHOT']";
 	    String RELEASE_ITEM   = "//item[@name='RELEASE']";
 	    String SEPARATOR_CONSTANT = "\\.";
+	    String BRANCHES     = "Branches";
+	    String TAGS         = "Tags";
 
 }
