@@ -27,9 +27,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
-import java.util.Map.Entry;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -62,8 +62,8 @@ import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
-import org.eclipse.jgit.api.ListTagCommand;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
+import org.eclipse.jgit.api.ListTagCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
@@ -744,7 +744,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			File pomFile = new File (pomPath);
 			if (pomFile.exists()) {
 				PomProcessor processor = new PomProcessor(pomFile);
-				String version = "[" + processor.getVersion() + ",)";
+				String version = "[," + processor.getVersion() + "]";
 				artifact = new DefaultArtifact(processor.getGroupId(), processor.getArtifactId(), "", processor.getPackage(), version);
 			}
 		} catch (PhrescoPomException e) {
@@ -1771,14 +1771,17 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 
 			RepositorySystem system = newRepositorySystem();
 			RepositorySystemSession session = newRepositorySystemSession( system );
-			Artifact artifact = new DefaultArtifact(artifactInfo.getGroupId(), artifactInfo.getArtifactId(), "", artifactInfo.getExtension(), artifactInfo.getVersion());
+			Artifact artifact = new DefaultArtifact(artifactInfo.getGroupId() + ":" + artifactInfo.getArtifactId()+ ":" + "[,)");
 			for (String url : urls) {
 				RemoteRepository repo =  new RemoteRepository("", DEFAULT, url);
 				VersionRangeRequest rangeRequest = new VersionRangeRequest();
-				rangeRequest.setArtifact( artifact );
-				rangeRequest.addRepository( repo );
+				rangeRequest.setArtifact(artifact);
+				rangeRequest.addRepository(repo);
 				VersionRangeResult rangeResult = system.resolveVersionRange( session, rangeRequest);
 				List<Version> versions = rangeResult.getVersions();
+				if (versions.size() > 10) {
+					versions = versions.subList(versions.size() - 10, versions.size());
+				}
 				constructArtifactItem(versions, applicationItem, artifact, repo, doc);
 				clearCache(artifact);
 			}
@@ -1792,48 +1795,48 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		}
 	}
 
-
 	private static void constructArtifactItem(List<Version> versions, Element applicationItem, Artifact artifactInfo, RemoteRepository repo, Document doc) throws PhrescoException {
 		try {
 			Element versionItem = null;
 			Element element =  null;
-			for (Version vers : versions) {
-				String version = vers.toString();
-				Artifact repoArtifact = new DefaultArtifact(artifactInfo.getGroupId(), artifactInfo.getArtifactId(), artifactInfo.getExtension(), version);
-				MavenDefaultLayout defaultLayout = new MavenDefaultLayout();
-				URI Paths = defaultLayout.getPath(repoArtifact);
-//				String artifactPath = (repo.getUrl() + repo.getId() + File.separator + Paths).replace("\\", "/");
-				String artifactPath = Paths.getPath();
-				String pathString = Paths.toString();
-				String fileName = pathString.substring(pathString.lastIndexOf("/") + 1);
+			if (CollectionUtils.isNotEmpty(versions)) {
+				for (Version vers : versions) {
+					String version = vers.toString();
+					Artifact repoArtifact = new DefaultArtifact(artifactInfo.getGroupId(), artifactInfo.getArtifactId(), artifactInfo.getExtension(), version);
+					MavenDefaultLayout defaultLayout = new MavenDefaultLayout();
+					URI Paths = defaultLayout.getPath(repoArtifact);
+					String artifactPath = Paths.getPath();
+					String pathString = Paths.toString();
+					String fileName = pathString.substring(pathString.lastIndexOf("/") + 1);
 
-				Element jarItem = doc.createElement(ITEM);
-				jarItem.setAttribute(TYPE, FILE);
-				jarItem.setAttribute(NAME, fileName);
-				jarItem.setAttribute(PATH, artifactPath);
+					Element jarItem = doc.createElement(ITEM);
+					jarItem.setAttribute(TYPE, FILE);
+					jarItem.setAttribute(NAME, fileName);
+					jarItem.setAttribute(PATH, artifactPath);
 
-				versionItem = doc.createElement(ITEM);
-				versionItem.setAttribute(TYPE, FOLDER);
-				versionItem.setAttribute(NAME, version);
-				versionItem.setAttribute(PATH, artifactPath);
+					versionItem = doc.createElement(ITEM);
+					versionItem.setAttribute(TYPE, FOLDER);
+					versionItem.setAttribute(NAME, version);
+					versionItem.setAttribute(PATH, artifactPath);
 
-				versionItem.appendChild(jarItem);
-				
-				if (version.contains(SNAPSHOT)) {
-					XPath xpath = XPathFactory.newInstance().newXPath();
-					String expression = SNAPSHOT_ITEM;
-					Node node = (Node) xpath.compile(expression).evaluate(doc, XPathConstants.NODE);
-					if (node != null) {
-						element = (Element) node;
-						element.appendChild(versionItem);
-					}
-				} else {
-					XPath xpath = XPathFactory.newInstance().newXPath();
-					String expression = RELEASE_ITEM;
-					Node node = (Node) xpath.compile(expression).evaluate(doc, XPathConstants.NODE);
-					if (node != null) {
-						element = (Element) node;
-						element.appendChild(versionItem);
+					versionItem.appendChild(jarItem);
+					
+					if (version.contains(SNAPSHOT)) {
+						XPath xpath = XPathFactory.newInstance().newXPath();
+						String expression = SNAPSHOT_ITEM;
+						Node node = (Node) xpath.compile(expression).evaluate(doc, XPathConstants.NODE);
+						if (node != null) {
+							element = (Element) node;
+							element.appendChild(versionItem);
+						}
+					} else {
+						XPath xpath = XPathFactory.newInstance().newXPath();
+						String expression = RELEASE_ITEM;
+						Node node = (Node) xpath.compile(expression).evaluate(doc, XPathConstants.NODE);
+						if (node != null) {
+							element = (Element) node;
+							element.appendChild(versionItem);
+						}
 					}
 				}
 			}
