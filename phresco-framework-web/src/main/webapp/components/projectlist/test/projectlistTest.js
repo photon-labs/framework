@@ -2,11 +2,11 @@ define(["projectlist/projectList"], function(ProjectList) {
 
 	return {
 		runTests: function() {
-			var self = this, projectlistdata, updateRepoMock;
+			var self = this, projectlistdata, updateRepoMock, checkForLockUpdateMock, checkForLockCommitMock, checkForLockAddMock;
 			var projectlist = new ProjectList();
 			module("projectlist.js");
 			asyncTest("Test - Project List addrepo popup rendered", function() {
-				$.mockjax({
+				self.checkForLockAddMock = $.mockjax({
 				  url: commonVariables.webserviceurl+"util/checkLock?actionType=addToRepo&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f",
 				  type: "GET",
 				  dataType: "json",
@@ -16,7 +16,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":null,"status":"success"});
 				  }
 				});
-				$.mockjax({
+				self.checkForLockCommitMock = $.mockjax({
 				  url: commonVariables.webserviceurl+"util/checkLock?actionType=commit&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f",
 				  type: "GET",
 				  dataType: "json",
@@ -26,7 +26,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":null,"status":"success"});
 				  }
 				});
-				$.mockjax({
+				self.checkForLockUpdateMock = $.mockjax({
 				  url: commonVariables.webserviceurl+"util/checkLock?actionType=update&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f",
 				  type: "GET",
 				  dataType: "json",
@@ -76,6 +76,20 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();
 					equal($(".splitDotPhresco").first().parent().hasClass("active"), true, "Test - Project List addrepo split .phresco checked tested");
+					self.dotPhrescoTabClickEventTest(projectlist);
+				}, 1500);
+			});
+		},
+		
+		dotPhrescoTabClickEventTest : function(projectlist) {
+			var self = this;
+			asyncTest("Update Repo - .phresco tab click event test", function() {
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$(".dotPhrescoA").click();
+				setTimeout(function() {
+					var val = $("#phrescotype_" + dynamicId).val();
+					equal(val, "svn", ".phresco tab click event tested");
+					start();
 					self.splitDotPhrescoNotCheckedTest(projectlist);
 				}, 1500);
 			});
@@ -142,19 +156,84 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var techid = $(commonVariables.contentPlaceholder).find(".wordpress-WordPress").attr("techid");
 					equal(techid, "tech-wordpress", "Project List Service Tested");
-					self.addToRepoPopupRenderTest(projectlist);					
+					self.addToRepoHasLock(projectlist);					
 				}, 1500);
+			});
+		},
+		
+		addToRepoHasLock : function(projectlist) {
+			var self = this;
+			asyncTest("Add To Repo - Has lock Test", function() {
+				$.mockjaxClear(self.checkForLockAddMock);
+				self.checkForLockAddMock = $.mockjax({
+					url: commonVariables.webserviceurl+"util/checkLock?actionType=addToRepo&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f",
+					type: "GET",
+					dataType: "json",
+					contentType: "application/json",
+					status: 200,
+					response : function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00001","data":{"subModuleLock": false},"status":"success"});
+					}
+				});
+				
+				$('.tooltiptop[name^="addRepo"]').click();
+				setTimeout(function() {
+					start();
+					var dynid = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+					equal($(commonVariables.contentPlaceholder).find('.content_end .msgdisplay').css("display"), "block", 'Add to repo has lock tested');
+					self.addToRepoPopupRenderTest(projectlist);
+				}, 1000);
 			});
 		},
 		
 		addToRepoPopupRenderTest : function(projectlist) {
 			var self = this;
 			asyncTest("Add To Repo - Popup render Test", function() {
+				$.mockjaxClear(self.checkForLockAddMock);
+				self.checkForLockAddMock = $.mockjax({
+					url: commonVariables.webserviceurl+"util/checkLock?actionType=addToRepo&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f",
+					type: "GET",
+					dataType: "json",
+					contentType: "application/json",
+					status: 200,
+					response : function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":{"subModuleLock": false},"status":"success"});
+					}
+				});
+				
 				$('.tooltiptop[name^="addRepo"]').click();
 				setTimeout(function() {
 					start();
 					var dynid = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
 					equal($('#addRepo_'+dynid).css("display"), "block", 'Add to repo popup render tested');
+					self.addToRepoOpenHelpTest(projectlist);
+				}, 1000);
+				
+			});
+		},
+		
+		addToRepoOpenHelpTest : function(projectlist) {
+			var self = this;
+			asyncTest("Add To Repo - Help display test", function() {
+				$(".addToRepoHelp").click();
+				setTimeout(function() {
+					start();
+					var dynid = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+					equal($("#addToRepoHelp"+dynid).css("display"), "block", 'Add to repo help display tested');
+					self.addToRepoCloseHelpTest(projectlist);
+				}, 1000);
+				
+			});
+		},
+		
+		addToRepoCloseHelpTest : function(projectlist) {
+			var self = this;
+			asyncTest("Add To Repo - Close Help test", function() {
+				$(".closeAddToRepoHelp").click();
+				setTimeout(function() {
+					start();
+					var dynid = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+					equal($("#addToRepoHelp"+dynid).css("display"), "none", 'Add to repo close help tested');
 					self.addToRepoChkOthrCredTest(projectlist);
 				}, 1000);
 				
@@ -520,14 +599,52 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();
 					equal($("#addRepo_"+dynid).css("display"), "none", "Addrepo service call");
-					self.updateRepoPopupRenderTest(projectlist);
+					self.updateRepoHasLock(projectlist);
 				}, 2500);
+			});
+		},
+		
+		updateRepoHasLock : function(projectlist) {
+			var self = this;
+			asyncTest("Update Repo - Has lock Test", function() {
+				$.mockjaxClear(self.checkForLockUpdateMock);
+				self.checkForLockUpdateMock = $.mockjax({
+					url: commonVariables.webserviceurl+"util/checkLock?actionType=update&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f",
+					type: "GET",
+					dataType: "json",
+					contentType: "application/json",
+					status: 200,
+					response : function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00001","data":{"subModuleLock": false},"status":"success"});
+					}
+				});
+				
+				$('.tooltiptop[name^="svn_update"]').click();
+				setTimeout(function() {
+					start();
+					var dynid = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+					equal($(commonVariables.contentPlaceholder).find('.content_end .msgdisplay').css("display"), "block", 'Update repo has lock tested');
+					self.updateRepoPopupRenderTest(projectlist);
+				}, 1000);
+				
 			});
 		},
 		
 		updateRepoPopupRenderTest : function(projectlist) {
 			var self=this;
 			asyncTest("Update Repo - Popup Render Test", function() {
+				$.mockjaxClear(self.checkForLockUpdateMock);
+				self.checkForLockUpdateMock = $.mockjax({
+					url: commonVariables.webserviceurl+"util/checkLock?actionType=update&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f",
+					type: "GET",
+					dataType: "json",
+					contentType: "application/json",
+					status: 200,
+					response : function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":null,"status":"success"});
+					}
+				});
+				
 				self.updateRepoMock = $.mockjax({
 					url: commonVariables.webserviceurl + 'repository/popupValues?appDirName=wordpress-WordPress&userId=admin&action=update',
 					type:'GET',
@@ -547,21 +664,6 @@ define(["projectlist/projectList"], function(ProjectList) {
 				}, 1500);
 			});
 		},
-		
-		/*updateSVNOthrCredentialsUncheckEvent : function(projectlist) {
-			var self = this;
-			asyncTest("Update Repo - svn uncheck other credentials test", function() {
-				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
-				$('.updSrcOtherCredential').attr("checked", true);
-				$('.updSrcOtherCredential').click();
-				setTimeout(function() {
-					equal($('#updateUserName'+dynamicId).attr("readonly"), "readonly", "Readonly attr added for user name field");
-					equal($('#updatePassword'+dynamicId).attr("readonly"), "readonly", "Readonly attr added for password field");
-					start();
-//					self.updateSVNRepoUrlValidation(projectlist);
-				}, 1500);
-			});
-		},*/
 		
 		updateSVNRepoUrlValidation : function(projectlist) {
 			var self = this;
@@ -669,22 +771,6 @@ define(["projectlist/projectList"], function(ProjectList) {
 			});
 		},
 		
-		/*updateSVNDotPhrescoUncheckEventTest : function(projectlist) {
-			var self = this;
-			asyncTest("Update Repo - svn .phresco uncheck event test", function() {
-				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
-				$("#updateDotPhresco_"+dynamicId).attr("checked", true);
-				$("#updateDotPhresco_"+dynamicId).parent().addClass("active");
-				$("#updateDotPhresco_"+dynamicId).click();
-				setTimeout(function() {
-					var hasClass = $("#updateDotphresco"+dynamicId).hasClass("active in");
-					equal(hasClass, false, "update .phresco uncheck event tested");
-					start();
-					self.updateSVNDotPhrescoCheckEventTest(projectlist);
-				}, 1500);
-			});
-		},*/
-		
 		updateSVNDotPhrescoCheckEventTest : function(projectlist) {
 			var self = this;
 			asyncTest("Update Repo - svn .phresco check event test", function() {
@@ -713,21 +799,6 @@ define(["projectlist/projectList"], function(ProjectList) {
 				}, 1500);
 			});
 		},
-		
-		/*updateSVNDotPhrescoOthrCredentialsUncheckEvent : function(projectlist) {
-			var self = this;
-			asyncTest("Update Repo - svn .phresco uncheck other credentials test", function() {
-				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
-				$('.updPhrOtherCredential').attr("checked", true);
-				$('.updPhrOtherCredential').click();
-				setTimeout(function() {
-					equal($('#updatePhrescoUserName'+dynamicId).attr("readonly"), "readonly", "Readonly attr added for user name field");
-					equal($('#updatePhrescoPassword'+dynamicId).attr("readonly"), "readonly", "Readonly attr added for password field");
-					start();
-					self.updateSVNPhrescoRepoUrlValidation(projectlist);
-				}, 1500);
-			});
-		},*/
 		
 		updateSVNPhrescoRepoUrlValidation : function(projectlist) {
 			var self = this;
@@ -833,22 +904,6 @@ define(["projectlist/projectList"], function(ProjectList) {
 				}, 1500);
 			});
 		},
-		
-		/*updateSVNTestUncheckEventTest : function(projectlist) {
-			var self = this;
-			asyncTest("Update Repo - svn test uncheck event test", function() {
-				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
-				$("#updateTest_"+dynamicId).attr("checked", true);
-				$("#updateTest_"+dynamicId).parent().addClass("active");
-				$("#updateTest_"+dynamicId).click();
-				setTimeout(function() {
-					var hasClass = $("#updateTest"+dynamicId).hasClass("active in");
-					equal(hasClass, false, "update svn test uncheck event tested");
-					start();
-					self.updateSVNTestCheckEventTest(projectlist);
-				}, 1500);
-			});
-		},*/
 		
 		updateSVNTestCheckEventTest : function(projectlist) {
 			var self = this;
@@ -1735,137 +1790,336 @@ define(["projectlist/projectList"], function(ProjectList) {
 					var errMsg = $("#svn_update"+dynamicId).css("display");
 					equal(errMsg, "none", "update git tested");
 					start();
-					self.runValidationCommitRepoTest(projectlist);
+					self.openUpdateRepoPopup(projectlist);
 				}, 1500);
 			});
 		},
 		
-		runValidationCommitRepoTest : function (projectlist){
-			var self = this;			
-				asyncTest("CommitRepo URL Validation Test", function() {
-					$("input#commitRepourl_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("");
-					projectlist.projectslistListener.flag2 =1;
-					projectlist.projectslistListener.addCommitEvent($("input[name='commitbtn']"),"294187d7-f75a-4adc-bb25-ce9465e0e82f");
-					setTimeout(function() {
-						start();
-						var repo = $(commonVariables.contentPlaceholder).find('#commitRepourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-						equal(repo, "errormessage", 'URL div error class added test');
-						self.runValidationCommitusernameTest(projectlist);
-					}, 1000);
-					
-				});
-		},
-		
-		runValidationCommitusernameTest : function (projectlist){
-			var self = this;
-			asyncTest("Commit username Validation Test", function() {
-				$("input#commitRepourl_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("http://localhost:8080/framework/");
-				$("input#commitUsername_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("");
-				projectlist.projectslistListener.flag2 =1;
-				projectlist.projectslistListener.addCommitEvent($("input[name='commitbtn']"),"294187d7-f75a-4adc-bb25-ce9465e0e82f");
-				setTimeout(function() {
-					start();
-					var username = $(commonVariables.contentPlaceholder).find('#commitUsername_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-					equal(username, "uname errormessage", 'username div error class added test');
-					self.runValidationCommiPasswordTest(projectlist);
-				}, 1000);
-			});
-		},
-		
-		runValidationCommiPasswordTest : function (projectlist){
-			var self = this;
-			asyncTest("Commit password Validation Test", function() {
-				$("input#commitRepourl_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("http://localhost:8080/framework/");
-				$("input#commitUsername_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("admin");
-				$("input#commitPassword_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("");
-				projectlist.projectslistListener.flag2 =1;
-				projectlist.projectslistListener.addCommitEvent($("input[name='commitbtn']"),"294187d7-f75a-4adc-bb25-ce9465e0e82f");
-				setTimeout(function() {
-					start();
-					var password = $(commonVariables.contentPlaceholder).find('#commitPassword_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-					equal(password, "pwd errormessage", 'Password div error class added test');
-					self.commituiver(projectlist);
-				}, 1000);
-			}); 
-		},
-		
-		commituiver : function(projectlist) {
-			var self = this;
-			asyncTest("Test - Project List Commit popup rendered(Not Working Copy)", function() {
-				var getcommitfile = $.mockjax({
-					url: commonVariables.webserviceurl + 'repository/popupValues?appDirName=wordpress-WordPress&userId=admin&action=commit',
-					type:'GET',
-					contentType: 'application/json',
-					status: 200,
-					response: function() {
-						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR210035","data":{"revision":null,"repoUrl":"","testCheckOut":false,"testUserName":null,"testPassword":null,"testRepoUrl":null,"testRevision":null,"branch":null,"revisionVal":null,"commitMessage":null,"commitableFiles":null,"repoExist":false,"repoInfoFile":null,"type":"","password":null,"userName":"admin"},"status":"failure"});
-					}
-				});
-				
-				$('.tooltiptop[name^="commit"]').click();
-				setTimeout(function() {
-					start();
-					var t = $('.commitErr_294187d7-f75a-4adc-bb25-ce9465e0e82f').css('display');
-					equal("block",t,"Commit Popup Rendered(Not Working Copy)");
-					self.projectCommitTypeChangeVerification(projectlist);
-				}, 2500);
-			});
-		},
-		
-		projectCommitTypeChangeVerification : function(projectlist) {
-			var self = this;
-			asyncTest("Test - Project List Commit type change event test", function() {
-				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
-				$("#commitType_"+dynamicId).val("svn");
-				$("#commitType_"+dynamicId).change();
-				setTimeout(function() {
-					start();
-					equal($(".seperatetdSvn").css("display"), "table-cell", "Project List Commit type change event tested");
-					self.projectCommitUiVerification(projectlist);
-				}, 2500);
-			});
-		},
-		
-		projectCommitUiVerification : function(projectlist) {
-			var self = this;
-			asyncTest("Test - Project List Commit popup rendered", function() {
-				var getcommitfile = $.mockjax({
-					url: commonVariables.webserviceurl + 'repository/popupValues?appDirName=wordpress-WordPress&userId=admin&action=commit',
-					type:'GET',
-					contentType: 'application/json',
-					status: 200,
-					response: function() {
-						this.responseText = JSON.stringify({"response":null,"message":"Repo Exist for commit","exception":null,"data":{"revision":null,"repoUrl":"https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0/wordpress-WordPress","testCheckOut":false,"testUserName":null,"testPassword":null,"testRepoUrl":null,"testRevision":null,"revisionVal":null,"commitMessage":null,"commitableFiles":null,"repoExist":true,"repoInfoFile":[],"type":"svn","password":null,"userName":"admin"}});
-					}
-				});
-				
-				$('.tooltiptop[name^="commit"]').click();
-				setTimeout(function() {
-					start();
-					var getval = $(commonVariables.contentPlaceholder).find("select#type_294187d7-f75a-4adc-bb25-ce9465e0e82f").val();
-					var visibility =  $('#commit294187d7-f75a-4adc-bb25-ce9465e0e82f').css('display').trim();
-					equal("block", visibility, "Add to Commit popup shown");
-					equal("svn", getval, "Commit type svn listed");
-					projectlist.projectslistListener.trimValue("randomtestvalues12345");
-					$("#type_294187d7-f75a-4adc-bb25-ce9465e0e82f").change();
-					$("#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0/wordpress-WordPress');
-					$("#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f").val('aaa');
-					$("#pwd_294187d7-f75a-4adc-bb25-ce9465e0e82f").val('aaa');
-					$(".search").click();
-					$('.searchdropdown').click();
-					self.projectcommitVerification(projectlist);
-				}, 2500);
-			});
-		},
-		
-		projectcommitVerification : function(projectlist) {
+		openUpdateRepoPopup : function(projectlist) {
 			var self=this;
-			asyncTest("Test -Commit trigger", function() {
-				$("input[name='repoUrl']").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0/wordpress-WordPress');
-				$("input[name='username']").val("admin");
-				$("input[name='password']").val("manage");
-				$("textarea[name='commitMsg']").val("Project comitted");
-				var addcommitAjax = $.mockjax({
+			asyncTest("Update Repo - Popup Render Test", function() {
+				$('.tooltiptop[name^="svn_update"]').click();
+				setTimeout(function() {
+					start();
+					var visibility =  $('#svn_update294187d7-f75a-4adc-bb25-ce9465e0e82f').css('display');
+					equal(visibility, "block", "Update repo popup shown");
+					self.makeSVNDotPhrescoChecked(projectlist);
+				}, 1500);
+			});
+		},
+
+		makeSVNDotPhrescoChecked : function(projectlist) {
+			var self = this;
+			asyncTest("Update Repo - svn .phresco check event test", function() {
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$("#updateDotPhresco_"+dynamicId).click();
+				setTimeout(function() {
+					var hasClass = $("#updateDotphresco"+dynamicId).hasClass("active in");
+					equal(hasClass, true, "update .phresco check event tested");
+					start();
+					self.runSVNDotPhrescoUncheckTest(projectlist);
+				}, 1500);
+			});
+		},
+
+		runSVNDotPhrescoUncheckTest : function(projectlist) {
+			var self = this;
+			asyncTest("Update Repo - svn .phresco uncheck event test", function() {
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$("#updateDotPhresco_"+dynamicId).click();
+				setTimeout(function() {
+					var hasClass = $("#updateDotphresco"+dynamicId).hasClass("active in");
+					equal(hasClass, false, "update .phresco uncheck event tested");
+					start();
+					self.makeSVNTestChecked(projectlist);
+				}, 1500);
+			});
+		},
+
+		makeSVNTestChecked : function(projectlist) {
+			var self = this;
+			asyncTest("Update Repo - svn test check event test", function() {
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$("#updateTest_"+dynamicId).click();
+				setTimeout(function() {
+					var hasClass = $("#updateTest"+dynamicId).hasClass("active in");
+					equal(hasClass, true, "update svn test check event tested");
+					start();
+					self.runSVNTestUncheckEventTest(projectlist);
+				}, 1500);
+			});
+		},
+
+		runSVNTestUncheckEventTest : function(projectlist) {
+			var self = this;
+			asyncTest("Update Repo - svn test uncheck event test", function() {
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$("#updateTest_"+dynamicId).click();
+				setTimeout(function() {
+					var hasClass = $("#updateTest"+dynamicId).hasClass("active in");
+					equal(hasClass, false, "update svn test check event tested");
+					start();
+					self.commitRepoHasLock(projectlist);
+				}, 1500);
+			});
+		},
+		
+		commitRepoHasLock : function(projectlist) {
+			var self = this;
+			asyncTest("Commit Repo - Has lock Test", function() {
+				$.mockjaxClear(self.checkForLockCommitMock);
+				self.checkForLockCommitMock = $.mockjax({
+					url: commonVariables.webserviceurl+"util/checkLock?actionType=commit&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f",
+					type: "GET",
+					dataType: "json",
+					contentType: "application/json",
+					status: 200,
+					response : function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00001","data":{"subModuleLock": false},"status":"success"});
+					}
+				});
+				
+				$('.tooltiptop[name^="commit"]').click();
+				setTimeout(function() {
+					start();
+					var dynid = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+					equal($(commonVariables.contentPlaceholder).find('.content_end .msgdisplay').css("display"), "block", 'Commit repo has lock tested');
+					self.commitPopupRenderTest(projectlist);
+				}, 1000);
+				
+			});
+		},
+		
+		commitPopupRenderTest : function(projectlist) {
+			var self=this;
+			asyncTest("Commit Repo - Popup Render Test", function() {
+				$.mockjaxClear(self.checkForLockCommitMock);
+				self.checkForLockCommitMock = $.mockjax({
+					url: commonVariables.webserviceurl+"util/checkLock?actionType=commit&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f",
+					type: "GET",
+					dataType: "json",
+					contentType: "application/json",
+					status: 200,
+					response : function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":null,"status":"success"});
+					}
+				});
+				
+				self.updateRepoMock = $.mockjax({
+					url: commonVariables.webserviceurl + 'repository/popupValues?appDirName=wordpress-WordPress&userId=admin&action=commit',
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200021","data":{"srcRepoDetail":{"type":"svn","stream":null,"password":null,"userName":"loheswaran_g","revision":null,"serverPath":null,"repoUrl":"https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/trunk/TestProject","commitableFiles":null,"commitMessage":null,"branch":null,"revisionVal":null,"repoInfoFile":[{"status":"M","contentsStatus":{"id":2,"code":"M"},"commitFilePath":"/Users/kaleeswaran/workspace/projects/TestProject/TestProject/docs/README.txt"}],"repoExist":true,"testCheckOut":false,"testRepoUrl":null,"testUserName":null,"testPassword":null,"testRevision":null,"testRevisionVal":null,"passPhrase":null,"proName":null},"phrescoRepoDetail":{"type":"","stream":null,"password":null,"userName":"loheswaran_g","revision":null,"serverPath":null,"repoUrl":"https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/trunk/TestProject-phresco","commitableFiles":null,"commitMessage":null,"branch":null,"revisionVal":null,"repoInfoFile":[{"status":"M","contentsStatus":{"id":2,"code":"M"},"commitFilePath":"/Users/kaleeswaran/workspace/projects/TestProject/TestProject-phresco/.phresco/phresco-application-handler-info.xml"}],"repoExist":true,"testCheckOut":false,"testRepoUrl":null,"testUserName":null,"testPassword":null,"testRevision":null,"testRevisionVal":null,"passPhrase":null,"proName":null},"testRepoDetail":{"type":"","stream":null,"password":null,"userName":"loheswaran_g","revision":null,"serverPath":null,"repoUrl":"https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/trunk/TestProject-test","commitableFiles":null,"commitMessage":null,"branch":null,"revisionVal":null,"repoInfoFile":[{"status":"M","contentsStatus":{"id":2,"code":"M"},"commitFilePath":"/Users/kaleeswaran/workspace/projects/TestProject/TestProject-test/test/component/pom.xml"}],"repoExist":true,"testCheckOut":false,"testRepoUrl":null,"testUserName":null,"testPassword":null,"testRevision":null,"testRevisionVal":null,"passPhrase":null,"proName":null},"splitTest":false,"splitPhresco":false},"status":"success"});
+					}
+				});
+				
+				$('.tooltiptop[name^="commit"]').click();
+				setTimeout(function() {
+					start();
+					var visibility =  $('#commit294187d7-f75a-4adc-bb25-ce9465e0e82f').css('display');
+					equal(visibility, "block", "Commit repo popup shown");
+					self.runCommitSrcOthrCredCheckEventTest(projectlist);
+				}, 1500);
+			});
+		},
+		
+		runCommitSrcOthrCredCheckEventTest : function (projectlist) {
+			var self = this;			
+			asyncTest("Commit Repo - Source other credentials check Test", function() {
+				$(".cmtSrcOtherCredential").click();
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				setTimeout(function() {
+					start();
+					equal($('#commitUserName'+dynamicId).attr("readonly"), undefined, 'Readonly attr removed for user name');
+					equal($('#commitPassword'+dynamicId).attr("readonly"), undefined, 'Readonly attr removed for password');
+					self.runCommitSrcUserNameValidationTest(projectlist);
+				}, 1000);
+			});
+		},
+		
+		runCommitSrcUserNameValidationTest : function (projectlist) {
+			var self = this;			
+			asyncTest("Commit Repo - Source user name validation test Test", function() {
+				$("button[name='commitbtn']").click();
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				setTimeout(function() {
+					start();
+					equal($('#commitUserName'+dynamicId).attr("placeholder"), "Enter user name", 'Source user name validation test Tested');
+					self.runCommitSrcPwdValidationTest(projectlist);
+				}, 1000);
+			});
+		},
+		
+		runCommitSrcPwdValidationTest : function (projectlist) {
+			var self = this;			
+			asyncTest("Commit Repo - Source password validation test Test", function() {
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$('#commitUserName'+dynamicId).val("admin");
+				$("button[name='commitbtn']").click();
+				setTimeout(function() {
+					start();
+					equal($('#commitPassword'+dynamicId).attr("placeholder"), "Enter password", 'Source password validation test Tested');
+					self.runCommitSrcOthrCredUncheckEventTest(projectlist);
+				}, 1000);
+			});
+		},
+		
+		runCommitSrcOthrCredUncheckEventTest : function (projectlist) {
+			var self = this;			
+			asyncTest("Commit Repo - Source other credentials uncheck Test", function() {
+				$(".cmtSrcOtherCredential").click();
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				setTimeout(function() {
+					start();
+					equal($('#commitUserName'+dynamicId).attr("readonly"), "readonly", 'Readonly attr added for user name');
+					equal($('#commitPassword'+dynamicId).attr("readonly"), "readonly", 'Readonly attr added for password');
+					self.runCommitPhrCheckEventTest(projectlist);
+				}, 1000);
+			});
+		},
+		
+		runCommitPhrCheckEventTest : function (projectlist) {
+			var self = this;			
+			asyncTest("Commit Repo - .phresco check event Test", function() {
+				$(".commitDotPhresco").click();
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				setTimeout(function() {
+					start();
+					equal($('#commitDotphresco'+dynamicId).hasClass("active in"), true, '.phresco check event Tested');
+					self.runCommitPhrOthrCredCheckEventTest(projectlist);
+				}, 1000);
+			});
+		},
+		
+		runCommitPhrOthrCredCheckEventTest : function (projectlist) {
+			var self = this;			
+			asyncTest("Commit Repo - .phresco other credentials check Test", function() {
+				$(".phrCmtSrcOtherCredential").click();
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				setTimeout(function() {
+					start();
+					equal($('#phrCommitUserName'+dynamicId).attr("readonly"), undefined, 'Readonly attr removed for user name');
+					equal($('#phrCommitPassword'+dynamicId).attr("readonly"), undefined, 'Readonly attr removed for password');
+					self.runCommitPhrUserNameValidationTest(projectlist);
+				}, 1000);
+			});
+		},
+		
+		runCommitPhrUserNameValidationTest : function (projectlist) {
+			var self = this;			
+			asyncTest("Commit Repo - .phresco user name validation test Test", function() {
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$("button[name='commitbtn']").click();
+				setTimeout(function() {
+					start();
+					equal($('#phrCommitUserName'+dynamicId).attr("placeholder"), "Enter user name", '.phresco user name validation test Tested');
+					self.runCommitPhrPwdValidationTest(projectlist);
+				}, 1000);
+			});
+		},
+		
+		runCommitPhrPwdValidationTest : function (projectlist) {
+			var self = this;			
+			asyncTest("Commit Repo - .phresco password validation test Test", function() {
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$('#phrCommitUserName'+dynamicId).val("admin");
+				$("button[name='commitbtn']").click();
+				setTimeout(function() {
+					start();
+					equal($('#phrCommitPassword'+dynamicId).attr("placeholder"), "Enter password", '.phresco password validation test Tested');
+					self.runCommitPhrOthrCredUncheckEventTest(projectlist);
+				}, 1000);
+			});
+		},
+		
+		runCommitPhrOthrCredUncheckEventTest : function (projectlist) {
+			var self = this;			
+			asyncTest("Commit Repo - .phresco other credentials uncheck Test", function() {
+				$(".phrCmtSrcOtherCredential").click();
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				setTimeout(function() {
+					start();
+					equal($('#phrCommitUserName'+dynamicId).attr("readonly"), "readonly", 'Readonly attr added for user name');
+					equal($('#phrCommitPassword'+dynamicId).attr("readonly"), "readonly", 'Readonly attr added for password');
+					self.runCommitTestCheckEventTest(projectlist);
+				}, 1000);
+			});
+		},
+		
+		runCommitTestCheckEventTest : function (projectlist) {
+			var self = this;			
+			asyncTest("Commit Repo - test check event Test", function() {
+				$(".commitTest").click();
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				setTimeout(function() {
+					start();
+					equal($('#commitTest'+dynamicId).hasClass("active in"), true, 'test check event Tested');
+					self.runCommitTestOthrCredCheckEventTest(projectlist);
+				}, 1000);
+			});
+		},
+		
+		runCommitTestOthrCredCheckEventTest : function (projectlist) {
+			var self = this;			
+			asyncTest("Commit Repo - test other credentials check Test", function() {
+				$(".testCmtSrcOtherCredential").click();
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				setTimeout(function() {
+					start();
+					equal($('#testCommitUserName'+dynamicId).attr("readonly"), undefined, 'Readonly attr removed for user name');
+					equal($('#testCommitPassword'+dynamicId).attr("readonly"), undefined, 'Readonly attr removed for password');
+					self.runCommitTestUserNameValidationTest(projectlist);
+				}, 1000);
+			});
+		},
+		
+		runCommitTestUserNameValidationTest : function (projectlist) {
+			var self = this;			
+			asyncTest("Commit Repo - Test user name validation test Test", function() {
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$("button[name='commitbtn']").click();
+				setTimeout(function() {
+					start();
+					equal($('#testCommitUserName'+dynamicId).attr("placeholder"), "Enter user name", 'Test user name validation test Tested');
+					self.runCommitTestPwdValidationTest(projectlist);
+				}, 1000);
+			});
+		},
+		
+		runCommitTestPwdValidationTest : function (projectlist) {
+			var self = this;			
+			asyncTest("Commit Repo - Test password validation test Test", function() {
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				$('#testCommitUserName'+dynamicId).val("admin");
+				$("button[name='commitbtn']").click();
+				setTimeout(function() {
+					start();
+					equal($('#testCommitPassword'+dynamicId).attr("placeholder"), "Enter password", 'Test password validation test Tested');
+					self.runCommitTestOthrCredUncheckEventTest(projectlist);
+				}, 1000);
+			});
+		},
+		
+		runCommitTestOthrCredUncheckEventTest : function (projectlist) {
+			var self = this;			
+			asyncTest("Commit Repo - test other credentials uncheck Test", function() {
+				$(".testCmtSrcOtherCredential").click();
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				setTimeout(function() {
+					start();
+					equal($('#testCommitUserName'+dynamicId).attr("readonly"), "readonly", 'Readonly attr added for user name');
+					equal($('#testCommitPassword'+dynamicId).attr("readonly"), "readonly", 'Readonly attr added for password');
+					self.runCommitEventTest(projectlist);
+				}, 1000);
+			});
+		},
+		
+		runCommitEventTest : function (projectlist) {
+			var self = this;			
+			asyncTest("Commit Repo - Trigger Test", function() {
+				$.mockjax({
 					url: commonVariables.webserviceurl + 'repository/commitProjectToRepo?appDirName=wordpress-WordPress&displayName=Admin',
 					type:'POST',
 					contentType: 'application/json',
@@ -1874,13 +2128,79 @@ define(["projectlist/projectList"], function(ProjectList) {
 						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200020","data":null,"status":"success"});
 					}
 				});
-				$("input[name='commitbtn']").click();
+			
+				$("button[name='commitbtn']").click();
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
 				setTimeout(function() {
 					start();
-					var getvalue = $(".msgdisplay,.success").text();
-					equal("Project committed successfully", getvalue, "Commit service call");
+					equal($("#commit"+dynamicId).css("display"), "none", 'Commit to repo trigger tested');
+					self.openCommitPopup(projectlist);
+				}, 1000);
+			});
+		},
+		
+		openCommitPopup : function(projectlist) {
+			var self=this;
+			asyncTest("Commit Repo - Popup Render Test", function() {
+				$('.tooltiptop[name^="commit"]').click();
+				setTimeout(function() {
+					start();
+					var visibility =  $('#commit294187d7-f75a-4adc-bb25-ce9465e0e82f').css('display');
+					equal(visibility, "block", "Commit repo popup shown");
+					self.makeCommitPhrChecked(projectlist);
+				}, 1500);
+			});
+		},
+		
+		makeCommitPhrChecked : function (projectlist) {
+			var self = this;			
+			asyncTest("Commit Repo - .phresco check event Test", function() {
+				$(".commitDotPhresco").click();
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				setTimeout(function() {
+					start();
+					equal($('#commitDotphresco'+dynamicId).hasClass("active in"), true, '.phresco check event Tested');
+					self.commitPhrUncheckTest(projectlist);
+				}, 1000);
+			});
+		},
+		
+		commitPhrUncheckTest : function (projectlist) {
+			var self = this;			
+			asyncTest("Commit Repo - .phresco uncheck event Test", function() {
+				$(".commitDotPhresco").click();
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				setTimeout(function() {
+					start();
+					equal($('#commitDotphresco'+dynamicId).hasClass("active in"), false, '.phresco uncheck event Tested');
+					self.makeCommitTestChecked(projectlist);
+				}, 1000);
+			});
+		},
+		
+		makeCommitTestChecked : function (projectlist) {
+			var self = this;			
+			asyncTest("Commit Repo - test check event Test", function() {
+				$(".commitTest").click();
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				setTimeout(function() {
+					start();
+					equal($('#commitTest'+dynamicId).hasClass("active in"), true, 'test check event Tested');
+					self.commitTestUncheckTest(projectlist);
+				}, 1000);
+			});
+		},
+		
+		commitTestUncheckTest : function (projectlist) {
+			var self = this;			
+			asyncTest("Commit Repo - test uncheck event Test", function() {
+				$(".commitTest").click();
+				var dynamicId = "294187d7-f75a-4adc-bb25-ce9465e0e82f";
+				setTimeout(function() {
+					start();
+					equal($('#commitTest'+dynamicId).hasClass("active in"), false, 'test uncheck event Tested');
 					self.projectAddPdfUiVerification(projectlist);
-				}, 2500);
+				}, 1000);
 			});
 		},
 		

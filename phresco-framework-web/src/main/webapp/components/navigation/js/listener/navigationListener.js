@@ -950,6 +950,9 @@ define([], function() {
 							}
 							callback(response);						
 						} else {
+							if (commonVariables.callLadda) {
+								Ladda.stopAll();
+							}
 							commonVariables.api.showError(response.responseCode ,"error", true);
 							if(response.responseCode === 'PHR210050' || response.responseCode === 'PHR210049') {
 								$("#importloading").hide();
@@ -977,121 +980,121 @@ define([], function() {
 			if (importType === "git") {
 				hasError = self.validateGitData($('#importRepourl'));
 				if (hasError) {
-					self.showSrcImportTab();
+					self.showSrcTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 				}
 				if ($('#importDotPhrescoSrc').is(":checked") && !hasError) {
 					hasError = self.validateGitData($('#importPhrescoRepourl'));
 					if (hasError) {
-						self.showDotPhrescoImportTab();
+						self.showDotPhrescoTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 					}
 				}
 				if ($('#importTestSrc').is(":checked") && !hasError) {
 					hasError = self.validateGitData($('#importTestRepourl'));
 					if (hasError) {
-						self.showTestImportTab();
+						self.showTestTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 					}
 				}
 			}
 			if (!hasError && importType === "svn") {
 				hasError = self.validateSvnData($('#importRepourl'), $('#importUserName'), $('#importPassword'), $('input[name=headoption]:checked'), $('#revision'));
 				if (hasError) {
-					self.showSrcImportTab();
+					self.showSrcTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 				}
 				if ($('#importDotPhrescoSrc').is(":checked") && !hasError) {
 					hasError = self.validateSvnData($('#importPhrescoRepourl'), $('#importPhrescoUserName'), $('#importPhrescoPassword'), $('input[name=phrescoHeadoption]:checked'), $('#phrescoRevision'));
 					if (hasError) {
-						self.showDotPhrescoImportTab();
+						self.showDotPhrescoTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 					}
 				}
 				if ($('#importTestSrc').is(":checked") && !hasError) {
 					hasError = self.validateSvnData($('#importTestRepourl'), $('#importTestUserName'), $('#importTestPassword'), $('input[name=testHeadoption]:checked'), $('#testRevision'));
 					if (hasError) {
-						self.showTestImportTab();
+						self.showTestTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 					}
 				}
 			}
 			if (!hasError && importType === "perforce") {
 				hasError = self.validatePerforceData($('#importRepourl'), $('.stream'));
 				if (hasError) {
-					self.showSrcImportTab();
+					self.showSrcTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 				}
 				if ($('#importDotPhrescoSrc').is(":checked") && !hasError) {
 					hasError = self.validatePerforceData($('#importPhrescoRepourl'), $('.phrescoStream'));
 					if (hasError) {
-						self.showDotPhrescoImportTab();
+						self.showDotPhrescoTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 					}
 				}
 				if ($('#importTestSrc').is(":checked") && !hasError) {
 					hasError = self.validatePerforceData($('#importTestRepourl'), $('.testStream'));
 					if (hasError) {
-						self.showTestImportTab();
+						self.showTestTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 					}
 				}
 			}
 			if (!hasError && importType === "bitkeeper") {
 				hasError = self.validateBitkeeperData($("#importRepourl"));
 				if (hasError) {
-					self.showSrcImportTab();
+					self.showSrcTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 				}
 				if ($('#importDotPhrescoSrc').is(":checked") && !hasError) {
 					hasError = self.validateBitkeeperData($('#importPhrescoRepourl'));
 					if (hasError) {
-						self.showDotPhrescoImportTab();
+						self.showDotPhrescoTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 					}
 				}
 				if ($('#importTestSrc').is(":checked") && !hasError) {
 					hasError = self.validateBitkeeperData($('#importTestRepourl'));
 					if (hasError) {
-						self.showTestImportTab();
+						self.showTestTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 					}
 				}
 			}
 			if (!hasError && importType === "tfs") {
 				hasError = self.validateTfsData($('#importRepourl'), $('#importUserName'), $('#importPassword'));
 				if (hasError) {
-					self.showSrcImportTab();
+					self.showSrcTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 				}
 				if ($('#importDotPhrescoSrc').is(":checked") && !hasError) {
 					hasError = self.validateTfsData($('#importPhrescoRepourl'), $('#importPhrescoUserName'), $('#importPhrescoPassword'));
 					if (hasError) {
-						self.showDotPhrescoImportTab();
+						self.showDotPhrescoTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 					}
 				}
 				if ($('#importTestSrc').is(":checked") && !hasError) {
 					hasError = self.validateTfsData($('#importTestRepourl'), $('#importTestUserName'), $('#importTestPassword'));
 					if (hasError) {
-						self.showTestImportTab();
+						self.showTestTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 					}
 				}
 			}
 			callback(hasError);
 		},
 		
-		showSrcImportTab : function() {
-			$("#importDotphresco").removeClass("active in");
-			$("#importSource").addClass("active in");
-			$("#importTest").removeClass("active in");
-			$("#importDotPhrescoSrc").parent().prev().addClass("active");
-			$("#importDotPhrescoSrc").parent().removeClass("active");
-			$("#importTestSrc").parent().removeClass("active");
+		showSrcTab : function(dotPhrCntObj, srcCntObj, tstCntObj, dotPhrChkObj, tstChkObj) {
+			dotPhrCntObj.removeClass("active in");
+			srcCntObj.addClass("active in");
+			tstCntObj.removeClass("active in");
+			dotPhrChkObj.parent().prev().addClass("active");
+			dotPhrChkObj.parent().removeClass("active");
+			tstChkObj.parent().removeClass("active");
 		},
 		
-		showDotPhrescoImportTab : function() {
-			$("#importDotphresco").addClass("active in");
-			$("#importSource").removeClass("active in");
-			$("#importTest").removeClass("active in");
-			$("#importDotPhrescoSrc").parent().prev().removeClass("active");
-			$("#importDotPhrescoSrc").parent().addClass("active");
-			$("#importTestSrc").parent().removeClass("active");
+		showDotPhrescoTab : function(dotPhrCntObj, srcCntObj, tstCntObj, dotPhrChkObj, tstChkObj) {
+			dotPhrCntObj.addClass("active in");
+			srcCntObj.removeClass("active in");
+			tstCntObj.removeClass("active in");
+			dotPhrChkObj.parent().prev().removeClass("active");
+			dotPhrChkObj.parent().addClass("active");
+			tstChkObj.parent().removeClass("active");
 		},
 		
-		showTestImportTab : function() {
-			$("#importDotphresco").removeClass("active in");
-			$("#importSource").removeClass("active in");
-			$("#importTest").addClass("active in");
-			$("#importDotPhrescoSrc").parent().prev().removeClass("active");
-			$("#importDotPhrescoSrc").parent().removeClass("active");
-			$("#importTestSrc").parent().addClass("active");
+		showTestTab : function(dotPhrCntObj, srcCntObj, tstCntObj, dotPhrChkObj, tstChkObj) {
+			dotPhrCntObj.removeClass("active in");
+			srcCntObj.removeClass("active in");
+			tstCntObj.addClass("active in");
+			dotPhrChkObj.parent().prev().removeClass("active");
+			dotPhrChkObj.parent().removeClass("active");
+			tstChkObj.parent().addClass("active");
 		},
 		
 		validateGitData : function(repoUrlObj) {

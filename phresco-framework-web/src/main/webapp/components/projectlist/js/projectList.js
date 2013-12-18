@@ -224,6 +224,12 @@ define(["projectlist/listener/projectListListener"], function() {
 			$(".dyn_popup").hide();
 			$(".pdf_popup").hide();
 			
+			$(".addToRepoHelp").unbind("click");
+			$(".addToRepoHelp").click(function() {
+				var dynamicId = $(this).attr("dynamicId");
+				self.openAddToRepoHelp($(this), dynamicId);
+			});
+			
 			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			var password = commonVariables.api.localVal.getSession('password');
 			
@@ -310,10 +316,6 @@ define(["projectlist/listener/projectListListener"], function() {
 
 			$(".tooltiptop").unbind("click");
 			$(".tooltiptop").click(function() {
-				var selectObj;
-				var checkObj;
-				var usrObj;
-				var pwdObj;		
 				var counter;				
 				var obj_del = this;
 				var action = $(this).attr("data-original-title");
@@ -324,16 +326,10 @@ define(["projectlist/listener/projectListListener"], function() {
 				//for hiding and clearing the dropdown values
 				$('.searchdropdown').hide();
 				$('.searchdropdown').html('');
-				if ($("#updateType_"+dynamicId).val() !== "perforce") {
-					$('.perforcedata').hide();
-			    } else {
-				 	$('.perforcedata').show();
-				 	$('#updateRepourl_'+dynamicId).attr('placeholder','host:portnumber');
-			    }
 				//end for hiding and clearing dropdown value
 				if (action === "Add Repo") {
 					self.hideBtnLoading("button[name='addrepobtn'][id='"+dynamicId+"']");
-					self.projectslistListener.showSrcUpdateTab(dynamicId);
+					commonVariables.navListener.showSrcTab($("#updateDotphresco"+dynamicId), $("#updateSource"+dynamicId), $("#updateTest"+dynamicId), $("#updateDotPhresco_"+dynamicId), $("#updateTest_"+dynamicId));
 					
 					$('#splitDotPhresco_'+dynamicId).attr("checked", false);
 					$('#splitTest_'+dynamicId).attr("checked", false);
@@ -367,28 +363,39 @@ define(["projectlist/listener/projectListListener"], function() {
 					$('#testuname_'+dynamicId).val(userInfo.id);
 					$('#testpwd_'+dynamicId).val(password);
 				} else if (action === "Commit") {
-					selectObj = $("#commitType_"+dynamicId);
-					checkObj = $("#commitCredential_"+dynamicId);
-					usrObj = $("#commitUsername_"+dynamicId);
-					pwdObj = $("#commitPassword_"+dynamicId);
-					$("textarea[name='commitMsg']").val('');
-					if($("#commitRepourl_"+dynamicId).hasClass('errormessage')) {
-						$("#commitRepourl_"+dynamicId).removeClass('errormessage');
-						$("#commitRepourl_"+dynamicId).removeAttr('placeholder');
-						$("#commitRepourl_"+dynamicId).attr('placeholder','Repo Url');
-					}
-					if($("#commitUsername_"+dynamicId).hasClass('errormessage')) {
-						$("#commitUsername_"+dynamicId).removeClass('errormessage');
-						$("#commitUsername_"+dynamicId).removeAttr('placeholder');
-					}
-					if($("#commitPassword_"+dynamicId).hasClass('errormessage')) {
-						$("#commitPassword_"+dynamicId).removeClass('errormessage');
-						$("#commitPassword_"+dynamicId).removeAttr('placeholder');
-						$("#commitPassword_"+dynamicId).attr('placeholder','Password');
-					}
+					self.hideBtnLoading("button[name='commitbtn'][id='"+dynamicId+"']");
+					commonVariables.navListener.showSrcTab($("#commitDotphresco"+dynamicId), $("#commitSource"+dynamicId), $("#commitTest"+dynamicId), $("#commitDotPhresco_"+dynamicId), $("#commitTest_"+dynamicId));
+					
+					$('#commitDotPhresco_'+dynamicId).attr("checked", false);
+					$('#commitTest_'+dynamicId).attr("checked", false);
+					
+					$('.cmtSrcOtherCredential').attr("checked", false);
+					$('.phrCmtSrcOtherCredential').attr("checked", false);
+					$('.testCmtSrcOtherCredential').attr("checked", false);
+					
+					$('#commitUserName'+dynamicId).attr('readonly','readonly').removeClass('errormessage').removeAttr('placeholder');
+					$('#commitPassword'+dynamicId).attr('readonly','readonly').removeClass('errormessage').removeAttr('placeholder');
+					$('#phrCommitUserName'+dynamicId).attr('readonly','readonly').removeClass('errormessage').removeAttr('placeholder');
+					$('#phrCommitPassword'+dynamicId).attr('readonly','readonly').removeClass('errormessage').removeAttr('placeholder');
+					$('#testCommitUserName'+dynamicId).attr('readonly','readonly').removeClass('errormessage').removeAttr('placeholder');
+					$('#testCommitPassword'+dynamicId).attr('readonly','readonly').removeClass('errormessage').removeAttr('placeholder');
+					
+					$("#commit" + dynamicId).find(".updateDotPhrescoA").removeAttr("data-toggle").removeAttr("href");
+					$("#commit" + dynamicId).find(".updateTestA").removeAttr("data-toggle").removeAttr("href");
+					
+					$(".commitPassPhraseval"+dynamicId).val("");
+					$(".phrCommitPassPhraseval"+dynamicId).val("");
+					$(".testCommitPassPhraseval"+dynamicId).val("");
+					
+					$('#commitUserName'+dynamicId).val(userInfo.id);
+					$('#commitPassword'+dynamicId).val(password);
+					$('#phrCommitUserName'+dynamicId).val(userInfo.id);
+					$('#phrCommitPassword'+dynamicId).val(password);
+					$('#testCommitUserName'+dynamicId).val(userInfo.id);
+					$('#testCommitPassword'+dynamicId).val(password);
 				} else if (action === "Update") {
 					self.hideBtnLoading("button[name='updatebtn'][id='"+dynamicId+"']");
-					self.projectslistListener.showSrcUpdateTab(dynamicId);
+					commonVariables.navListener.showSrcTab($("#updateDotphresco"+dynamicId), $("#updateSource"+dynamicId), $("#updateTest"+dynamicId), $("#updateDotPhresco_"+dynamicId), $("#updateTest_"+dynamicId));
 					
 					$('#updateDotPhresco_'+dynamicId).attr("checked", false);
 					$('#updateTest_'+dynamicId).attr("checked", false);
@@ -443,31 +450,8 @@ define(["projectlist/listener/projectListListener"], function() {
 					$('#updatePhrescoPassword'+dynamicId).val(password);
 					$('#updateTestUserName'+dynamicId).val(userInfo.id);
 					$('#updateTestPassword'+dynamicId).val(password);
-					
-					selectObj = $("#updateType_"+dynamicId);
-					checkObj = $("#updateCredential_"+dynamicId);
-					usrObj = $("#updateUserName"+dynamicId);
-					pwdObj = $("#updatePassword"+dynamicId);
 				}
 				
-				if(selectObj !== null  && selectObj !== undefined && selectObj !== '') {
-					selectObj.unbind("change");
-					selectObj.on("change", function(){				
-						self.projectslistListener.hideShowCredentials($(this).find(':selected').val(), usrObj, pwdObj, checkObj);
-						self.projectslistListener.typeChangeEvent(selectObj, $(this).find(':selected').val(), dynamicId);
-					});
-				}
-				
-				$('.uname').val(userInfo.id);
-				$('.pwd').val(password);
-				$('#phrescouname_'+dynamicId).val(userInfo.id);
-				$('#phrescopwd_'+dynamicId).val(password);
-				$('#testuname_'+dynamicId).val(userInfo.id);
-				$('#testpwd_'+dynamicId).val(password);
-				
-				$('.commit').hide();
-				$('.add_repo').hide();
-				$('.svn_update').hide();
 				var action = $(this).attr("data-original-title"), openccObj = this;
 				if (action === "Commit") {
 					commonVariables.hideloading = true;
@@ -479,7 +463,7 @@ define(["projectlist/listener/projectListListener"], function() {
 							data.dynamicId = dynamicId;
 							$("#dummyCommit_"+dynamicId).css("height","10px");
 							commonVariables.loadingScreen.removeLoading();
-							self.projectslistListener.getCommitableFiles(data, openccObj, usrObj,pwdObj,checkObj);
+							self.projectslistListener.getCommitableFiles(data, openccObj);
 
 							// Popup Fix
 							var targetName = $(openccObj).attr('name');
@@ -503,7 +487,7 @@ define(["projectlist/listener/projectListListener"], function() {
 							data.appdirname = appDirName;
 							data.dynamicId = dynamicId;
 							$("#dummyUpdate_"+dynamicId).css("height","10px");
-							self.projectslistListener.getUpdatableFiles(data, openccObj, usrObj, pwdObj, checkObj);
+							self.projectslistListener.getUpdatableFiles(data, openccObj);
 
 							// Popup Fix
 							var targetName = $(openccObj).attr('name');
@@ -609,7 +593,6 @@ define(["projectlist/listener/projectListListener"], function() {
 				$('.searchdropdown').focusout(function() {
 					counter = 0;
 				});
-				
 				//end of functionality for search log messages
 			});
 			
@@ -689,112 +672,58 @@ define(["projectlist/listener/projectListListener"], function() {
 				$('.header_section').css('z-index', '7');
 			});			
 			
-			$(".credential").unbind("click");
-			$(".credential").click(function() {
-				if ($(".credential").is(':checked')) {
-					$(".uname").val('');
-					$(".pwd").val('');
-				} else {
-					var data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
-					$(".uname").val(data.id);
-					$(".pwd").val('');
-				}
-			});
-			
 			$(".addToRepocredential").unbind("click");
 			$(".addToRepocredential").bind("click", function() {
 				var dynamicId = $(this).attr("repoDynid");
-				if ($(this).is(':checked')) {
-					$('#uname_'+dynamicId).removeAttr('readonly');
-					$('#pwd_'+dynamicId).removeAttr('readonly');
-					$("#uname_"+dynamicId).val('');
-					$("#pwd_"+dynamicId).val('');
-				} else {
-					$('#uname_'+dynamicId).val(userInfo.id);
-					$('#pwd_'+dynamicId).val(password);
-					$('#uname_'+dynamicId).attr('readonly','readonly');
-					$('#pwd_'+dynamicId).attr('readonly','readonly');
-				}
+				self.otherCredentialClickEvent($(this), $('#uname_'+dynamicId), $('#pwd_'+dynamicId));
 			});
 			
 			$(".addToRepoPhrescocredential").unbind("click");
 			$(".addToRepoPhrescocredential").bind("click", function() {
 				var dynamicId = $(this).attr("repoDynid");
-				if ($(this).is(':checked')) {
-					$('#phrescouname_'+dynamicId).removeAttr('readonly');
-					$('#phrescopwd_'+dynamicId).removeAttr('readonly');
-					$("#phrescouname_"+dynamicId).val('');
-					$("#phrescopwd_"+dynamicId).val('');
-				} else {
-					$('#phrescouname_'+dynamicId).val(userInfo.id);
-					$('#phrescopwd_'+dynamicId).val(password);
-					$('#phrescouname_'+dynamicId).attr('readonly','readonly');
-					$('#phrescopwd_'+dynamicId).attr('readonly','readonly');
-				}
+				self.otherCredentialClickEvent($(this), $('#phrescouname_'+dynamicId), $('#phrescopwd_'+dynamicId));
 			});
 			
 			$(".addToRepoTestCredential").unbind("click");
 			$(".addToRepoTestCredential").bind("click", function() {
 				var dynamicId = $(this).attr("repoDynid");
-				if ($(this).is(':checked')) {
-					$('#testuname_'+dynamicId).removeAttr('readonly');
-					$('#testpwd_'+dynamicId).removeAttr('readonly');
-					$("#testuname_"+dynamicId).val('');
-					$("#testpwd_"+dynamicId).val('');
-				} else {
-					$('#testuname_'+dynamicId).val(userInfo.id);
-					$('#testpwd_'+dynamicId).val(password);
-					$('#testuname_'+dynamicId).attr('readonly','readonly');
-					$('#testpwd_'+dynamicId).attr('readonly','readonly');
-				}
+				self.otherCredentialClickEvent($(this), $('#testuname_'+dynamicId), $('#testpwd_'+dynamicId));
+			});
+			
+			$(".cmtSrcOtherCredential").unbind("click");
+			$(".cmtSrcOtherCredential").bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				self.otherCredentialClickEvent($(this), $('#commitUserName'+dynamicId), $('#commitPassword'+dynamicId));
+			});
+			
+			$(".phrCmtSrcOtherCredential").unbind("click");
+			$(".phrCmtSrcOtherCredential").bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				self.otherCredentialClickEvent($(this), $('#phrCommitUserName'+dynamicId), $('#phrCommitPassword'+dynamicId));
+			});
+			
+			$(".testCmtSrcOtherCredential").unbind("click");
+			$(".testCmtSrcOtherCredential").bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				self.otherCredentialClickEvent($(this), $('#testCommitUserName'+dynamicId), $('#testCommitPassword'+dynamicId));
 			});
 			
 			$(".updSrcOtherCredential").unbind("click");
 			$(".updSrcOtherCredential").bind("click", function() {
 				var dynamicId = $(this).attr("dynamicId");
-				if ($(this).is(':checked')) {
-					$('#updateUserName'+dynamicId).removeAttr('readonly');
-					$('#updatePassword'+dynamicId).removeAttr('readonly');
-					$("#updateUserName"+dynamicId).val('');
-					$("#updatePassword"+dynamicId).val('');
-				} else {
-					$('#updateUserName'+dynamicId).val(userInfo.id);
-					$('#updatePassword'+dynamicId).val(password);
-					$('#updateUserName'+dynamicId).attr('readonly','readonly');
-					$('#updatePassword'+dynamicId).attr('readonly','readonly');
-				}
+				self.otherCredentialClickEvent($(this), $('#updateUserName'+dynamicId), $('#updatePassword'+dynamicId));
 			});
 			
 			$(".updPhrOtherCredential").unbind("click");
 			$(".updPhrOtherCredential").bind("click", function() {
 				var dynamicId = $(this).attr("dynamicId");
-				if ($(this).is(':checked')) {
-					$('#updatePhrescoUserName'+dynamicId).removeAttr('readonly');
-					$('#updatePhrescoPassword'+dynamicId).removeAttr('readonly');
-					$("#updatePhrescoUserName"+dynamicId).val('');
-					$("#updatePhrescoPassword"+dynamicId).val('');
-				} else {
-					$('#updatePhrescoUserName'+dynamicId).val(userInfo.id);
-					$('#updatePhrescoPassword'+dynamicId).val(password);
-					$('#updatePhrescoUserName'+dynamicId).attr('readonly','readonly');
-					$('#updatePhrescoPassword'+dynamicId).attr('readonly','readonly');
-				}
+				self.otherCredentialClickEvent($(this), $('#updatePhrescoUserName'+dynamicId), $('#updatePhrescoPassword'+dynamicId));
 			});
 			
 			$(".updTestOtherCredential").unbind("click");
 			$(".updTestOtherCredential").bind("click", function() {
 				var dynamicId = $(this).attr("dynamicId");
-				if ($(this).is(':checked')) {
-					$('#updateTestUserName'+dynamicId).removeAttr('readonly');
-					$('#updateTestPassword'+dynamicId).removeAttr('readonly');
-					$("#updateTestUserName"+dynamicId).val('');
-					$("#updateTestPassword"+dynamicId).val('');
-				} else {
-					$('#updateTestUserName'+dynamicId).val(userInfo.id);
-					$('#updateTestPassword'+dynamicId).val(password);
-					$('#updateTestUserName'+dynamicId).attr('readonly','readonly');
-					$('#updateTestPassword'+dynamicId).attr('readonly','readonly');
-				}
+				self.otherCredentialClickEvent($(this), $('#updateTestUserName'+dynamicId), $('#updateTestPassword'+dynamicId));
 			});
 			
 			$("button[name='addrepobtn']").unbind("click");
@@ -803,8 +732,8 @@ define(["projectlist/listener/projectListListener"], function() {
 				self.onAddRepoEvent.dispatch($(this), dynid);				
 			});				
 			
-			$("input[name='commitbtn']").unbind("click");
-			$("input[name='commitbtn']").click(function() {
+			$("button[name='commitbtn']").unbind("click");
+			$("button[name='commitbtn']").bind("click", function() {
 				var dynid = $(this).attr('id');
 				self.onAddCommitEvent.dispatch($(this), dynid);				
 			});
@@ -829,11 +758,11 @@ define(["projectlist/listener/projectListListener"], function() {
 				var dynamicId = $(this).attr("dynamicId");
 				if ($(this).is(":checked")) {
 					$("#addRepo_" + dynamicId).find(".dotPhrescoA").attr("data-toggle", "tab").attr("href", "#dotphresco"+dynamicId);
-					self.projectslistListener.showDotPhrescoTab(dynamicId);
+					commonVariables.navListener.showDotPhrescoTab($("#dotphresco"+dynamicId), $("#source"+dynamicId), $("#test"+dynamicId), $("#splitDotPhresco_"+dynamicId), $("#splitTest_"+dynamicId));
 				} else {
 					$("#addRepo_" + dynamicId).find(".dotPhrescoA").removeAttr("data-toggle").removeAttr("href");
 					if ($(this).parent().hasClass("active")) {
-						self.projectslistListener.showSrcTab(dynamicId);
+						commonVariables.navListener.showSrcTab($("#dotphresco"+dynamicId), $("#source"+dynamicId), $("#test"+dynamicId), $("#splitDotPhresco_"+dynamicId), $("#splitTest_"+dynamicId));
 					}
 				}
 			});
@@ -843,11 +772,39 @@ define(["projectlist/listener/projectListListener"], function() {
 				var dynamicId = $(this).attr("dynamicId");
 				if ($(this).is(":checked")) {
 					$("#addRepo_" + dynamicId).find(".testA").attr("data-toggle", "tab").attr("href", "#test"+dynamicId);
-					self.projectslistListener.showTestTab(dynamicId);
+					commonVariables.navListener.showTestTab($("#dotphresco"+dynamicId), $("#source"+dynamicId), $("#test"+dynamicId), $("#splitDotPhresco_"+dynamicId), $("#splitTest_"+dynamicId));
 				} else {
 					$("#addRepo_" + dynamicId).find(".testA").removeAttr("data-toggle").removeAttr("href");
 					if ($(this).parent().hasClass("active")) {
-						self.projectslistListener.showSrcTab(dynamicId);
+						commonVariables.navListener.showSrcTab($("#dotphresco"+dynamicId), $("#source"+dynamicId), $("#test"+dynamicId), $("#splitDotPhresco_"+dynamicId), $("#splitTest_"+dynamicId));
+					}
+				}
+			});
+			
+			$(".commitDotPhresco").unbind("click");
+			$(".commitDotPhresco").bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				if ($(this).is(":checked")) {
+					$("#commit" + dynamicId).find(".commitDotPhrescoA").attr("data-toggle", "tab").attr("href", "#commitDotphresco"+dynamicId);
+					commonVariables.navListener.showDotPhrescoTab($("#commitDotphresco"+dynamicId), $("#commitSource"+dynamicId), $("#commitTest"+dynamicId), $("#commitDotPhresco_"+dynamicId), $("#commitTest_"+dynamicId));
+				} else {
+					$("#commit" + dynamicId).find(".commitDotPhrescoA").removeAttr("data-toggle").removeAttr("href");
+					if ($(this).parent().hasClass("active")) {
+						commonVariables.navListener.showSrcTab($("#commitDotphresco"+dynamicId), $("#commitSource"+dynamicId), $("#commitTest"+dynamicId), $("#commitDotPhresco_"+dynamicId), $("#commitTest_"+dynamicId));
+					}
+				}
+			});
+			
+			$(".commitTest").unbind("click");
+			$(".commitTest").bind("click", function() {
+				var dynamicId = $(this).attr("dynamicId");
+				if ($(this).is(":checked")) {
+					$("#commit" + dynamicId).find(".commitTestA").attr("data-toggle", "tab").attr("href", "#commitTest"+dynamicId);
+					commonVariables.navListener.showTestTab($("#commitDotphresco"+dynamicId), $("#commitSource"+dynamicId), $("#commitTest"+dynamicId), $("#commitDotPhresco_"+dynamicId), $("#commitTest_"+dynamicId));
+				} else {
+					$("#commit" + dynamicId).find(".commitTestA").removeAttr("data-toggle").removeAttr("href");
+					if ($(this).parent().hasClass("active")) {
+						commonVariables.navListener.showSrcTab($("#commitDotphresco"+dynamicId), $("#commitSource"+dynamicId), $("#commitTest"+dynamicId), $("#commitDotPhresco_"+dynamicId), $("#commitTest_"+dynamicId));
 					}
 				}
 			});
@@ -865,11 +822,11 @@ define(["projectlist/listener/projectListListener"], function() {
 				var dynamicId = $(this).attr("dynamicId");
 				if ($(this).is(":checked")) {
 					$("#svn_update" + dynamicId).find(".updateDotPhrescoA").attr("data-toggle", "tab").attr("href", "#updateDotphresco"+dynamicId);
-					self.projectslistListener.showDotPhrescoUpdateTab(dynamicId);
+					commonVariables.navListener.showDotPhrescoTab($("#updateDotphresco"+dynamicId), $("#updateSource"+dynamicId), $("#updateTest"+dynamicId), $("#updateDotPhresco_"+dynamicId), $("#updateTest_"+dynamicId));
 				} else {
 					$("#svn_update" + dynamicId).find(".updateDotPhrescoA").removeAttr("data-toggle").removeAttr("href");
 					if ($(this).parent().hasClass("active")) {
-						self.projectslistListener.showSrcUpdateTab(dynamicId);
+						commonVariables.navListener.showSrcTab($("#updateDotphresco"+dynamicId), $("#updateSource"+dynamicId), $("#updateTest"+dynamicId), $("#updateDotPhresco_"+dynamicId), $("#updateTest_"+dynamicId));
 					}
 				}
 			});
@@ -879,11 +836,11 @@ define(["projectlist/listener/projectListListener"], function() {
 				var dynamicId = $(this).attr("dynamicId");
 				if ($(this).is(":checked")) {
 					$("#svn_update" + dynamicId).find(".updateTestA").attr("data-toggle", "tab").attr("href", "#updateTest"+dynamicId);
-					self.projectslistListener.showTestUpdateTab(dynamicId);
+					commonVariables.navListener.showTestTab($("#updateDotphresco"+dynamicId), $("#updateSource"+dynamicId), $("#updateTest"+dynamicId), $("#updateDotPhresco_"+dynamicId), $("#updateTest_"+dynamicId));
 				} else {
 					$("#svn_update" + dynamicId).find(".updateTestA").removeAttr("data-toggle").removeAttr("href");
 					if ($(this).parent().hasClass("active")) {
-						self.projectslistListener.showSrcUpdateTab(dynamicId);
+						commonVariables.navListener.showSrcTab($("#updateDotphresco"+dynamicId), $("#updateSource"+dynamicId), $("#updateTest"+dynamicId), $("#updateDotPhresco_"+dynamicId), $("#updateTest_"+dynamicId));
 					}
 				}
 			});
@@ -918,9 +875,60 @@ define(["projectlist/listener/projectListListener"], function() {
 				}
 			});
 			
+			$('.closeAddToRepoHelp').unbind("click");
+			$('.closeAddToRepoHelp').bind("click", function() {
+				$(this).parent().parent().hide();
+			});
+			
 			self.windowResize();
 			self.tableScrollbar();
 			this.customScroll($(".customer_names"));
+		},
+		
+		openAddToRepoHelp : function(thisObj, dynamicId) {
+			var self = this;
+			$('.content_main').addClass('z_index_ci');
+			var clicked = thisObj;
+			var target = $("#addToRepoHelp"+dynamicId);
+			var twowidth = window.innerWidth/1.5;
+		
+			if (clicked.offset().left < twowidth) {
+				$(target).toggle();
+				var a = target.height()/2;
+				var b = clicked.height()/2;
+				var t=clicked.offset().top + (b+12) - (a+12) ;
+				var l=clicked.offset().left + clicked.width()+ 4;
+				$(target).offset({
+					top: t,
+					left: l
+				});
+				$(target).addClass('speakstyleleft').removeClass('speakstyleright');
+			} else {
+				$(target).toggle();
+				var t=clicked.offset().top - target.height()/2;
+				var l=clicked.offset().left - (target.width()+ 15);
+				$(target).offset({
+					top: t,
+					left: l
+				});
+				$(target).addClass('speakstyleright').removeClass('speakstyleleft');
+			}
+		},
+		
+		otherCredentialClickEvent : function(thisObj, userNameObj, pwdObj) {
+			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+			var password = commonVariables.api.localVal.getSession('password');
+			if (thisObj.is(':checked')) {
+				userNameObj.removeAttr('readonly');
+				pwdObj.removeAttr('readonly');
+				userNameObj.val('');
+				pwdObj.val('');
+			} else {
+				userNameObj.val(userInfo.id);
+				pwdObj.val(password);
+				userNameObj.attr('readonly','readonly');
+				pwdObj.attr('readonly','readonly');
+			}
 		}
 	});
 

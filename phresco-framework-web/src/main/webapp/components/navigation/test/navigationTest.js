@@ -1447,9 +1447,9 @@ define(["navigation/navigation"], function() {
 					var hasClass = $("#importTestSrc").hasClass("active in");
 					equal(hasClass, false, "Import test uncheck event tested");
 					start();
-//					require(["projectlistTest"], function(projectlistTest){
-//						projectlistTest.runTests();
-//					});
+					require(["projectlistTest"], function(projectlistTest){
+						projectlistTest.runTests();
+					});
 				}, 1500);
 			});
 		},

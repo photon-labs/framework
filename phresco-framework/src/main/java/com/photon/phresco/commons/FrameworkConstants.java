@@ -216,6 +216,7 @@ public interface FrameworkConstants {
     String SCM = "scm";
 	String ZIP_FILE = "zip";
     String SVN = "svn";
+    String TRUNK = "trunk";
     String MASTER = "master";
     String UPDATE = "update";
     String DELETE_APPLN = "deleteAppln";

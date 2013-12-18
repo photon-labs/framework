@@ -121,7 +121,15 @@
               			{{/if}}
                   
                   <div id="addRepo_{{id}}" class="add_repo dyn_popup" name="addRepo">
-                  	<div class="flt_right"><img src="themes/default/images/Phresco/question_mark.png" border="0" alt=""></div>
+                  	<div class="flt_right">
+                  		<img src="themes/default/images/Phresco/question_mark.png" border="0" alt="" style="cursor:pointer;" dynamicId="{{id}}" class="addToRepoHelp">
+              		</div>
+                  	<div id="addToRepoHelp{{id}}" class="dyn_popup pdf_report">
+						.Phresco and Test tab allows the user to split .phresco and test contents from the application and add them to the appropriate repositories.
+						<div id="popupBtns" class="flt_right">
+							<input class="btn btn_style dyn_popupcon_close closeAddToRepoHelp" type="button" value="Close" data-i18n="[value]common.btn.close">
+						</div>
+					</div>
 				  	<div class="bs-docs-example repository_tabdiv">						
 						<ul class="nav nav-tabs" id="myTab">
 							<li class="active"><a data-toggle="tab" href="#source{{id}}">Source</a></li>
@@ -276,66 +284,203 @@
                   <!--add_repo div ends here --> 
                   
                   <div id="commit{{id}}" class="commit dyn_popup popup_bg commit_table" name="commitpopup">
-                      <div class="hideContent commit_data_{{id}}">
-                            <table  class="commitable_files_{{id}}" width="100%" border="0" cellspacing="0" cellpadding="5">
-                                  
-                            </table>                               
-                            <table class="commitData_{{id}} commit_tab" width="100%" border="0" cellspacing="0" cellpadding="0">
-                                <tbody>
-                                    <tr>
-                                        <td><span data-i18n="commonlabel.label.type"></span><sup>*</sup></td>
-										<td><span data-i18n="navigation.application.apprepourl"></span><sup>*</sup></td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <select id="commitType_{{id}}" class="co_Select">
-                                                <option value="svn" data-i18n="projectlist.label.svn"></option>
-                                        		<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
-                                        		<option value="git" data-i18n="projectlist.label.git"></option>
-                                            </select>
-                                        </td>
-                                        <td><input type="text" name="repoUrl" placeholder="Repo Url" id="commitRepourl_{{id}}"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="seperatetdSvn"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="commitCredential_{{id}}" class="credential"></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td><span data-i18n="login.placeholder.username" name="username"></span><sup>*</sup></td>
-										<td><span data-i18n="login.placeholder.password" name="password"></span><sup>*</sup></td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="text" data-i18n="[placeholder]login.placeholder.username" mandatory=true id="commitUsername_{{id}}" class="uname" name="username"></td>
-                                        <td><input type="password" mandatory=true placeholder="Password" id="commitPassword_{{id}}" class="pwd" name="password"></td>
-                                    </tr>
-									<tr class="passPhrase" style="display:none">
-										<td><label value="passPhrase">PassPhrase</label></td>
-									</tr>
-									<tr class="passPhrase" style="display:none">
-										<td><input type="text" id="commitPhrase_{{id}}"/></td>
-									</tr>
-                                    <tr>
-                                        <td colspan="2">
-                                            <textarea class="popuptextarea" data-i18n="[placeholder]projectlist.label.message" id="commitMessage_{{id}}" name="commitMsg"></textarea>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                             </table> 
-							 
-                         <div class="flt_right roll_data" appDirName="{{appDirName}}">
-                          <input type="button" value="Commit" data-i18n="[value]projectlist.label.commit" disabled class="btn" id="{{id}}" name="commitbtn">
-                            <input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
-                         </div>
-					 </div> 
-				 	<div class="dummyCommit" id="dummyCommit_{{id}}"></div>
-				 	<div class="popuploading" id="commitLoading_{{id}}">&nbsp</div>
-					<div class="hideContent commitErr_{{id}} popup_btn" width="100%" border="0" cellspacing="0" cellpadding="0">
-						<p><span data-i18n="projectlist.label.notworkingcopy"></span></p>
-						<div class="popupCloseBtn">
-							<input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
-						</div>		
-					 </div>
+						<div class="bs-docs-example repository_tabdiv hideContent">
+							<ul class="nav nav-tabs" id="myTab">
+								<li class="active"><a data-toggle="tab" href="#commitSource{{id}}">Source</a></li>
+								<li><input type="checkbox" id="commitDotPhresco_{{id}}" class="commitDotPhresco" dynamicId="{{id}}" disabled><a class="repo_tab commitDotPhrescoA" dynamicId="{{id}}">.Phresco</a></li>
+								<li><input type="checkbox" id="commitTest_{{id}}" class="commitTest" dynamicId="{{id}}" disabled><a class="repo_tab commitTestA" dynamicId="{{id}}">Test</a></li>
+							</ul>
+						</div>
+						<div class="tab-content hideContent" id="myTabContent">
+					  		<div id="commitSource{{id}}" class="tab-pane fade active in">
+								<table width="100%">
+									<thead>
+										<tr style="font-size: 12px;">
+											<th style="text-align: left;">
+												<input checkVal="check" dynamicId="{{id}}" class="commitParentChk" type="checkbox">
+											</th>
+											<th>File</th>
+											<th>Status</th>
+										</tr>
+									</thead>
+									<tbody class="commitable_files_{{id}}">
+									</tbody>
+								</table>
+						  		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+									<tbody>
+				                        <tr>
+				                            <td><span data-i18n="project.create.label.type"></span><sup>*</sup></td>
+				                            <td><span data-i18n="navigation.application.apprepourl"></span><sup>*</sup></td>
+				                        </tr>
+	                        			<tr>
+	                        				<td>
+				                            	<select id="commitType_{{id}}" class="co_Select" disabled>
+	                                                <option value="svn" data-i18n="projectlist.label.svn"></option>
+	                                        		<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
+	                                        		<option value="git" data-i18n="projectlist.label.git"></option>
+	                                            </select>
+	                            			</td>
+	                            			<td><input type="text" id="commitRepourl{{id}}" data-i18n="[placeholder]navigation.application.apprepourl" readonly="readonly"></td>
+	                        			</tr>
+	                        			<tr class="commitOthrCredential{{id}}">
+	                            			<td class="seperatetd" id="commitCredential{{id}}">
+	                            				<span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" dynamicId="{{id}}" class="cmtSrcOtherCredential">
+                            				</td>
+	                            			<td></td>
+	                        			</tr>
+				                        <tr>
+				                            <td><span data-i18n="login.placeholder.username"></span><sup class="svnusr">*</sup></td>
+				                            <td><span data-i18n="login.placeholder.password"></span><sup class="svnpswd">*</sup></td>
+				                        </tr>
+				                        <tr>
+				                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="commitUserName{{id}}" readonly="readonly"></td>
+				                            <td><input type="password" placeholder="*******" id="commitPassword{{id}}" readonly="readonly"></td>
+				                        </tr>
+				                        <tr class="commitGitdata{{id}}">
+											<td><span name="branch" value="passPhrase">PassPhrase</span></td>
+										</tr>
+										<tr class="commitGitdata{{id}}">
+											<td><input type="password" class="commitPassPhraseval{{id}}"></td>
+										</tr>
+	                                	<tr>
+	                                        <td colspan="2">
+	                                            <textarea class="popuptextarea" data-i18n="[placeholder]projectlist.label.message" id="commitMessage_{{id}}" name="commitMsg"></textarea>
+	                                        </td>
+	                                    </tr>
+	                            	</tbody>
+							 	</table>
+						 	</div>
+						 	<div id="commitDotphresco{{id}}" class="tab-pane fade">
+						 		<table width="100%">
+									<thead>
+										<tr style="font-size: 12px;">
+											<th style="text-align: left;">
+												<input checkVal="check" dynamicId="{{id}}" class="phrCommitParentChk" type="checkbox">
+											</th>
+											<th>File</th>
+											<th>Status</th>
+										</tr>
+									</thead>
+									<tbody class="phrCommitable_files_{{id}}">
+									</tbody>
+								</table>
+						  		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+									<tbody>
+				                        <tr>
+				                            <td><span data-i18n="project.create.label.type"></span><sup>*</sup></td>
+				                            <td><span data-i18n="navigation.application.apprepourl"></span><sup>*</sup></td>
+				                        </tr>
+	                        			<tr>
+	                        				<td>
+				                            	<select id="phrCommitType_{{id}}" class="co_Select" disabled>
+	                                                <option value="svn" data-i18n="projectlist.label.svn"></option>
+	                                        		<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
+	                                        		<option value="git" data-i18n="projectlist.label.git"></option>
+	                                            </select>
+	                            			</td>
+	                            			<td><input type="text" id="phrCommitRepourl{{id}}" data-i18n="[placeholder]navigation.application.apprepourl" readonly="readonly"></td>
+	                        			</tr>
+	                        			<tr class="phrCommitOthrCredential{{id}}">
+	                            			<td class="seperatetd" id="phrCommitCredential{{id}}">
+	                            				<span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" dynamicId="{{id}}" class="phrCmtSrcOtherCredential">
+                            				</td>
+	                            			<td></td>
+	                        			</tr>
+				                        <tr>
+				                            <td><span data-i18n="login.placeholder.username"></span><sup class="svnusr">*</sup></td>
+				                            <td><span data-i18n="login.placeholder.password"></span><sup class="svnpswd">*</sup></td>
+				                        </tr>
+				                        <tr>
+				                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="phrCommitUserName{{id}}" readonly="readonly"></td>
+				                            <td><input type="password" placeholder="*******" id="phrCommitPassword{{id}}" readonly="readonly"></td>
+				                        </tr>
+				                        <tr class="commitGitdata{{id}}">
+											<td><span name="branch" value="passPhrase">PassPhrase</span></td>
+										</tr>
+										<tr class="commitGitdata{{id}}">	
+											<td><input type="password" class="phrCommitPassPhraseval{{id}}"></td>
+										</tr>
+	                                	<tr>
+	                                        <td colspan="2">
+	                                            <textarea class="popuptextarea" data-i18n="[placeholder]projectlist.label.message" id="phrCommitMessage_{{id}}" name="phrCommitMsg"></textarea>
+	                                        </td>
+	                                    </tr>
+	                            	</tbody>
+							 	</table>
+							 </div>
+						 	<div id="commitTest{{id}}" class="tab-pane fade">
+						 		<table width="100%">
+									<thead>
+										<tr style="font-size: 12px;">
+											<th style="text-align: left;">
+												<input checkVal="check" dynamicId="{{id}}" class="tesCommitParentChk" type="checkbox">
+											</th>
+											<th>File</th>
+											<th>Status</th>
+										</tr>
+									</thead>
+									<tbody class="testCommitable_files_{{id}}">
+									</tbody>
+								</table>
+						  		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+									<tbody>
+				                        <tr>
+				                            <td><span data-i18n="project.create.label.type"></span><sup>*</sup></td>
+				                            <td><span data-i18n="navigation.application.apprepourl"></span><sup>*</sup></td>
+				                        </tr>
+	                        			<tr>
+	                        				<td>
+				                            	<select id="testCommitType_{{id}}" class="co_Select" disabled>
+	                                                <option value="svn" data-i18n="projectlist.label.svn"></option>
+	                                        		<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
+	                                        		<option value="git" data-i18n="projectlist.label.git"></option>
+	                                            </select>
+	                            			</td>
+	                            			<td><input type="text" id="testCommitRepourl{{id}}" data-i18n="[placeholder]navigation.application.apprepourl" readonly="readonly"></td>
+	                        			</tr>
+	                        			<tr class="testCommitOthrCredential{{id}}">
+	                            			<td class="seperatetd" id="testCommitCredential{{id}}">
+	                            				<span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" dynamicId="{{id}}" class="testCmtSrcOtherCredential">
+                            				</td>
+	                            			<td></td>
+	                        			</tr>
+				                        <tr>
+				                            <td><span data-i18n="login.placeholder.username"></span><sup class="svnusr">*</sup></td>
+				                            <td><span data-i18n="login.placeholder.password"></span><sup class="svnpswd">*</sup></td>
+				                        </tr>
+				                        <tr>
+				                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="testCommitUserName{{id}}" readonly="readonly"></td>
+				                            <td><input type="password" placeholder="*******" id="testCommitPassword{{id}}" readonly="readonly"></td>
+				                        </tr>
+				                        <tr class="commitGitdata{{id}}">
+											<td><span name="branch" value="passPhrase">PassPhrase</span></td>
+										</tr>
+										<tr class="commitGitdata{{id}}">	
+											<td><input type="password" class="testCommitPassPhraseval{{id}}"></td>
+										</tr>
+	                                	<tr>
+	                                        <td colspan="2">
+	                                            <textarea class="popuptextarea" data-i18n="[placeholder]projectlist.label.message" id="testCommitMessage_{{id}}" name="testCommitMsg"></textarea>
+	                                        </td>
+	                                    </tr>
+	                            	</tbody>
+							 	</table>
+							</div>
+							<div class="popuploading" id="updateLoading_{{id}}">&nbsp</div>
+						 	<div class="flt_right" appId="{{id}}" projectId = "{{../id}}" appDirName="{{appDirName}}">
+						 		<button class="btn btn_style btn_style_spin ladda-button" id="{{id}}" data-style="expand-left" name="commitbtn"><span class="ladda-label">Commit</span></button>
+								<input type="button" value="Close" data-i18n="[value]common.btn.close;" class="btn btn_style dyn_popup_close">
+							</div>
+						</div>
+						<div class="hideContent commitErr_{{id}} popup_btn" width="100%" border="0" cellspacing="0" cellpadding="0">
+							<p><span data-i18n="projectlist.label.notworkingcopy"></span></p>
+							<div class="popupCloseBtn">
+								<input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
+							</div>		
+				 		</div>
+						<!--svn_update div ends here -->	
                   </div>
+                  
                   <!--commit div ends here -->	
                    
 					<div id="svn_update{{id}}" class="svn_update dyn_popup popup_bg" name="updatepopup">

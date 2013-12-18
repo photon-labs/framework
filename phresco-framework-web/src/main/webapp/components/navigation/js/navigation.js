@@ -123,7 +123,7 @@ define(["navigation/listener/navigationListener"], function() {
 			$("#importApp").unbind("click");
 			$("#importApp").bind("click", function() {
 				self.hideBtnLoading("button[name='importbtn']");
-				self.navigationListener.showSrcImportTab();
+				self.navigationListener.showSrcTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 				
 				$(".importType").val("svn");
 				self.showHideImportAppCtrls($(".importType").val());
@@ -277,11 +277,11 @@ define(["navigation/listener/navigationListener"], function() {
 				$("#testImportType").val(selectedType);
 				if ($(this).is(":checked")) {
 					$("#importDotPhrescoA").attr("data-toggle", "tab").attr("href", "#importDotphresco");
-					self.navigationListener.showDotPhrescoImportTab();
+					self.navigationListener.showDotPhrescoTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 				} else {
 					$("#importDotPhrescoA").removeAttr("data-toggle").removeAttr("href");
 					if ($(this).parent().hasClass("active")) {
-						self.navigationListener.showSrcImportTab();
+						self.navigationListener.showSrcTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 					}
 				}
 			});
@@ -293,11 +293,11 @@ define(["navigation/listener/navigationListener"], function() {
 				$("#testImportType").val(selectedType);
 				if ($(this).is(":checked")) {
 					$("#importTestA").attr("data-toggle", "tab").attr("href", "#importTest");
-					self.navigationListener.showTestImportTab();
+					self.navigationListener.showTestTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 				} else {
 					$("#importTestA").removeAttr("data-toggle").removeAttr("href");
 					if ($(this).parent().hasClass("active")) {
-						self.navigationListener.showSrcImportTab();
+						self.navigationListener.showSrcTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 					}
 				}
 			});

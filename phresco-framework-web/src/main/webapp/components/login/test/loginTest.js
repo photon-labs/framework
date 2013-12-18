@@ -89,8 +89,8 @@ define(["login/login"], function(Login) {
 					start();
 					equal($(commonVariables.headerPlaceholder).find("font:first").text(), "Photon", "Login Service Tested");
 					equal($("#footer").attr('id'), "footer", "Footer Rendering Tested");
-					require(["projectlistTest"], function(projectlistTest){
-						projectlistTest.runTests();
+					require(["navigationTest"], function(navigationTest){
+						navigationTest.runTests();
 					});
 				}, 4000);
 			});
