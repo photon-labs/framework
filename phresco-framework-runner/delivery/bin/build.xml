@@ -231,6 +231,7 @@
 			<sysproperty key="JENKINS_HOME" value="${jenkins.home}"/>
             <sysproperty key="SERVER_ENVIRONMENT" value="${phresco.server.environment}"/>
 			<sysproperty key="PHRESCO_WORKSPACE" value="${phresco.workspace}"/>
+			<sysproperty key="com.microsoft.tfs.jni.native.base-directory" value="${phresco.home}/workspace/tools/native/native"/>
 		</java>
 	</target>
 

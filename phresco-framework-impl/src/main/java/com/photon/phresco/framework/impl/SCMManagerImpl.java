@@ -254,40 +254,44 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
     	return str.toString();
 	}
 	
-	private ApplicationInfo validatePhrescoProject(RepoDetail phrescoRepoDetail) throws Exception {
+	private ApplicationInfo validatePhrescoProject(RepoDetail phrescoRepoDetail) throws PhrescoException {
 		ApplicationInfo appInfo = null;
-		if(phrescoRepoDetail.getType().equals(SVN)) {
-			appInfo = checkOutFilter(phrescoRepoDetail);
-		}
-		if(phrescoRepoDetail.getType().equals(GIT)) {
-			String uuid = UUID.randomUUID().toString();
-			File gitImportTemp = new File(Utility.getPhrescoTemp(), uuid);
-			importFromGit(phrescoRepoDetail, gitImportTemp);
-			ProjectInfo gitAppInfo = getGitAppInfo(gitImportTemp);
-			if(gitAppInfo != null) {
-				appInfo = returnAppInfo(gitAppInfo);
+		try {
+			if(phrescoRepoDetail.getType().equals(SVN)) {
+				appInfo = checkOutFilter(phrescoRepoDetail);
 			}
-		}
-		if(phrescoRepoDetail.getType().equals(BITKEEPER)) {
-			String uuid = UUID.randomUUID().toString();
-			File bkImportTemp = new File(Utility.getPhrescoTemp(), uuid);
-			boolean imported = importFromBitKeeper(phrescoRepoDetail.getRepoUrl(), bkImportTemp);
-			if(imported) {
-				ProjectInfo projectInfo = getGitAppInfo(bkImportTemp);
-	        	if (projectInfo != null) {
-	        		appInfo = returnAppInfo(projectInfo);
-	        	}
+			if(phrescoRepoDetail.getType().equals(GIT)) {
+				String uuid = UUID.randomUUID().toString();
+				File gitImportTemp = new File(Utility.getPhrescoTemp(), uuid);
+				importFromGit(phrescoRepoDetail, gitImportTemp);
+				ProjectInfo gitAppInfo = getGitAppInfo(gitImportTemp);
+				if(gitAppInfo != null) {
+					appInfo = returnAppInfo(gitAppInfo);
+				}
 			}
-		}
-		if(phrescoRepoDetail.getType().equals(PERFORCE)) {
-			String uuid = UUID.randomUUID().toString();
-			File bkImportTemp = new File(Utility.getPhrescoTemp(), uuid);
-			appInfo = importFromPerforce(phrescoRepoDetail, bkImportTemp);
-		}
-		if (phrescoRepoDetail.getType().equals(TFS)) {
-			String uuid = UUID.randomUUID().toString();
-			File tfsTemp = new File(Utility.getPhrescoTemp(), uuid);
-			appInfo = importFromTfs(phrescoRepoDetail, tfsTemp);
+			if(phrescoRepoDetail.getType().equals(BITKEEPER)) {
+				String uuid = UUID.randomUUID().toString();
+				File bkImportTemp = new File(Utility.getPhrescoTemp(), uuid);
+				boolean imported = importFromBitKeeper(phrescoRepoDetail.getRepoUrl(), bkImportTemp);
+				if(imported) {
+					ProjectInfo projectInfo = getGitAppInfo(bkImportTemp);
+					if (projectInfo != null) {
+						appInfo = returnAppInfo(projectInfo);
+					}
+				}
+			}
+			if(phrescoRepoDetail.getType().equals(PERFORCE)) {
+				String uuid = UUID.randomUUID().toString();
+				File bkImportTemp = new File(Utility.getPhrescoTemp(), uuid);
+				appInfo = importFromPerforce(phrescoRepoDetail, bkImportTemp);
+			}
+			if (phrescoRepoDetail.getType().equals(TFS)) {
+				String uuid = UUID.randomUUID().toString();
+				File tfsTemp = new File(Utility.getPhrescoTemp(), uuid);
+				appInfo = importFromTfs(phrescoRepoDetail, tfsTemp);
+			}
+		} catch(Exception e){
+			throw new PhrescoException(e);
 		}
 		return appInfo;
 	}
@@ -442,6 +446,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				S_LOGGER.debug("gitImportTemp " + gitImportTemp);
 				S_LOGGER.debug("workspaceProjectDir " + workspaceProjectDir);
 			}
+			
 			FileUtils.copyDirectory(gitImportTemp, workspaceProjectDir);
 			if(debugEnabled){
 				S_LOGGER.debug("Deleting pack file");
@@ -710,50 +715,60 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		return true;
 	}
 	
-	private ApplicationInfo importFromTfs(RepoDetail repodetail, File tfsImportTemp) throws Exception {
+	private ApplicationInfo importFromTfs(RepoDetail repodetail, File tfsImportTemp) throws PhrescoException {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importFromTfs()");
 		}
-		
-		System.setProperty("com.microsoft.tfs.jni.native.base-directory", System.getenv("TFS_HOME")); 
-		String collectionUrl = repodetail.getRepoUrl();
-		String userName = repodetail.getUserName();
-		String password = repodetail.getPassword();
-		String proName = repodetail.getProName();
-		String serverPath = "$/" +repodetail.getServerPath();
-		String localPath = tfsImportTemp.getAbsolutePath();
-		
-		final TFSTeamProjectCollection tpc = connectToTFS(userName, password, collectionUrl  );
-		ProjectCollection projects = tpc.getWorkItemClient().getProjects();
-		VersionControlClient client = tpc.getVersionControlClient();
-		final Workspace workspace = createAndMapWorkspace(tpc, localPath, serverPath);
-		addGetEventListeners(tpc);
-		getLatest(workspace, localPath);
-		ProjectInfo projectInfo = getGitAppInfo(tfsImportTemp);
-		
+		ProjectInfo projectInfo = null;
+		try {
+			System.getProperty("com.microsoft.tfs.jni.native.base-directory"); 
+			String collectionUrl = repodetail.getRepoUrl();
+			String userName = repodetail.getUserName();
+			String password = repodetail.getPassword();
+			String proName = repodetail.getProName();
+			String serverPath = "$/" +repodetail.getServerPath();
+			String localPath = tfsImportTemp.getAbsolutePath();
+			
+			final TFSTeamProjectCollection tpc = connectToTFS(userName, password, collectionUrl);
+			ProjectCollection projects = tpc.getWorkItemClient().getProjects();
+			VersionControlClient client = tpc.getVersionControlClient();
+			final Workspace workspace = createAndMapWorkspace(tpc, localPath, serverPath);
+			addGetEventListeners(tpc);
+			getLatest(workspace, localPath);
+			projectInfo = getGitAppInfo(tfsImportTemp);
+		} catch(Exception e) {
+			throw new PhrescoException(e);
+		}
+
 		return returnAppInfo(projectInfo);
 	}
 	
-	private static Workspace createAndMapWorkspace(final TFSTeamProjectCollection tpc,String localPath, String serverPath) {
-		final String workspaceName = "SampleVCWorkspace" + System.currentTimeMillis();
+	private static Workspace createAndMapWorkspace(final TFSTeamProjectCollection tpc,String localPath, String serverPath) throws PhrescoException {
+		final String workspaceName = "VCWorkspace" + System.currentTimeMillis();
 		Workspace workspace = null;
 
-		// Get the workspace
-		workspace = tpc.getVersionControlClient().tryGetWorkspace(localPath);
-		// Create and map the workspace if it does not exist
-		if (workspace == null) {
-			workspace = tpc.getVersionControlClient().createWorkspace(null, workspaceName, "Sample workspace comment", WorkspaceLocation.SERVER,
-					null, WorkspacePermissionProfile.getPrivateProfile());
+		try {
+			// Get the workspace
+			workspace = tpc.getVersionControlClient().tryGetWorkspace(localPath);
+			// Create and map the workspace if it does not exist
+			if (workspace == null) {
+				workspace = tpc.getVersionControlClient().createWorkspace(null, workspaceName, "workspace comment", WorkspaceLocation.SERVER,
+						null, WorkspacePermissionProfile.getPrivateProfile());
 
-			// Map the workspace
-			WorkingFolder workingFolder = new WorkingFolder(serverPath, LocalPath.canonicalize(localPath));
-			workspace.createWorkingFolder(workingFolder);
+				// Map the workspace
+				WorkingFolder workingFolder = new WorkingFolder(serverPath, LocalPath.canonicalize(localPath));
+				workspace.createWorkingFolder(workingFolder);
+			}
+		} catch(Exception e){
+			throw new PhrescoException(e);
 		}
 
 		return workspace;
 	}
 	
-	public static void addGetEventListeners(final TFSTeamProjectCollection tpc) {
+	public static void addGetEventListeners(final TFSTeamProjectCollection tpc) throws PhrescoException {
+		
+		try {
 		// Adding a get operation started event listener, this is fired once per
 		// get call
 		TfsGetOperationStartedListener getOperationStartedListener = new TfsGetOperationStartedListener();
@@ -768,6 +783,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		// per get call
 		TfsGetOperationCompletedListener getOperationCompletedListener = new TfsGetOperationCompletedListener();
 		tpc.getVersionControlClient().getEventEngine().addOperationCompletedListener(getOperationCompletedListener);
+		} catch (Exception e){
+			throw new PhrescoException(e);
+		}
 	}
 
 	public static void getLatest(final Workspace workspace, String localPath) {
@@ -776,42 +794,35 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		workspace.get(request, GetOptions.NONE);
 	}
 	
-	 public static TFSTeamProjectCollection connectToTFS(String userName, String password, String collectionUrl ) {
-	        TFSTeamProjectCollection tpc = null;
-	        Credentials credentials;
+	public static TFSTeamProjectCollection connectToTFS(String userName, String password, String collectionUrl ) throws PhrescoException {
+		TFSTeamProjectCollection tpc = null;
+		Credentials credentials;
 
-	        // In case no username is provided and the current platform supports
-	        // default credentials, use default credentials
-	        if ((userName == null || userName.length() == 0) && CredentialsUtils.supportsDefaultCredentials())
-	        {
-	            credentials = new DefaultNTCredentials();
-	        }
-	        else
-	        {
-	            credentials = new UsernamePasswordCredentials(userName, password);
-	        }
-	        URI httpProxyURI = null;
+		try {
+		// In case no username is provided and the current platform supports
+		// default credentials, use default credentials
+		if ((userName == null || userName.length() == 0) && CredentialsUtils.supportsDefaultCredentials()) {
+			credentials = new DefaultNTCredentials();
+		} else {
+			credentials = new UsernamePasswordCredentials(userName, password);
+		}
 
-	        if (HTTP_PROXY_URL != null && HTTP_PROXY_URL.length() > 0)
-	        {
-	            try
-	            {
-	                httpProxyURI = new URI(HTTP_PROXY_URL);
-	            }
-	            catch (URISyntaxException e)
-	            {
-	                // Do Nothing
-	            }
-	        }
+		URI httpProxyURI = null;
+		if (HTTP_PROXY_URL != null && HTTP_PROXY_URL.length() > 0) {
+			try {
+				httpProxyURI = new URI(HTTP_PROXY_URL);
+			} catch (URISyntaxException e) {
+				// Do Nothing
+			}
+		}
+		ConsoleSamplesConnectionAdvisor connectionAdvisor = new ConsoleSamplesConnectionAdvisor(httpProxyURI);
+		tpc = new TFSTeamProjectCollection(URIUtils.newURI(collectionUrl), credentials, connectionAdvisor);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
 
-	        ConsoleSamplesConnectionAdvisor connectionAdvisor = new ConsoleSamplesConnectionAdvisor(httpProxyURI);
-
-	        tpc = new TFSTeamProjectCollection(URIUtils.newURI(collectionUrl), credentials, connectionAdvisor);
-
-	        return tpc;
-	    }
-
-
+		return tpc;
+	}
 
 	private void importFromGit(RepoDetail repodetail, File gitImportTemp)throws Exception {
 		if(debugEnabled){
