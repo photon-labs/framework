@@ -1193,7 +1193,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			
 			return createJsonJobs;
 		} catch (PhrescoException e) {
-			throw new PhrescoException();
+			throw new PhrescoException(e);
 		}
 	}
 	
@@ -1212,9 +1212,9 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				FileUtils.copyFile(new File(srcDir), new File(destDir));
 			}
 		} catch (IOException e) {
-			throw new PhrescoException();
+			throw new PhrescoException(e);
 		} catch (PhrescoException e) {
-			throw new PhrescoException();
+			throw new PhrescoException(e);
 		}
 	}
 	
@@ -1443,7 +1443,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 
 			job.setPrebuildStepCommands(preBuildStepCmds);		
 		} catch (PhrescoPomException e) {
-			throw new PhrescoException();
+			throw new PhrescoException(e);
 		}
 		return job;
 	}
