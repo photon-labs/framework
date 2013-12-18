@@ -1802,7 +1802,8 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				Artifact repoArtifact = new DefaultArtifact(artifactInfo.getGroupId(), artifactInfo.getArtifactId(), artifactInfo.getExtension(), version);
 				MavenDefaultLayout defaultLayout = new MavenDefaultLayout();
 				URI Paths = defaultLayout.getPath(repoArtifact);
-				String artifactPath = (repo.getUrl() + repo.getId() + File.separator + Paths).replace("\\", "/");
+//				String artifactPath = (repo.getUrl() + repo.getId() + File.separator + Paths).replace("\\", "/");
+				String artifactPath = Paths.getPath();
 				String pathString = Paths.toString();
 				String fileName = pathString.substring(pathString.lastIndexOf("/") + 1);
 
