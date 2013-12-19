@@ -802,6 +802,17 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 		System.out.println(result.toString());
 	}*/
+	
+	private String scramble(String secret) {
+        if(secret==null) {    
+        	return null;
+        }
+        try {
+            return new String(Base64.encode(secret.getBytes("UTF-8")));
+        } catch (UnsupportedEncodingException e) {
+            throw new Error(e); 
+        }
+    }
 
 	private void customizeNodes(ConfigProcessor processor, CIJob job) throws JDOMException,PhrescoException {
 		//SVN url customization
@@ -818,7 +829,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			S_LOGGER.debug("This is tfs type project!!!!!");
 			processor.changeNodeValue(TFS_URL, job.getUrl());
 			processor.changeNodeValue(TFS_USERNAME, job.getUsername());
-			processor.changeNodeValue(TFS_PASSWORD, job.getPassword());
+			processor.changeNodeValue(TFS_PASSWORD, scramble(job.getPassword()));
 			processor.changeNodeValue(TFS_PROJECTPATH, job.getProjectPath());
 		// cloned workspace
 		} else if (CLONED_WORKSPACE.equals(job.getRepoType())) {
