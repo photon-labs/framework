@@ -1013,10 +1013,22 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		try {
 			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
 			Set<String> environmentSet = new HashSet<String>();
+			List<Environment> environments = new ArrayList<Environment>();
 			for (ApplicationInfo appInfo : appInfos) {
-				List<Environment> environments = getEnvironments(appInfo);
-				for (Environment environment : environments) {
-					environmentSet.add(environment.getName());
+				List<ModuleInfo> modules = appInfo.getModules();
+				if(CollectionUtils.isNotEmpty(modules)) {
+					for (ModuleInfo module : modules) {
+						String code = module.getCode();
+						environments = getEnvironments(appInfo.getAppDirName() + File.separator + code);
+					}
+					for (Environment environment : environments) {
+						environmentSet.add(environment.getName());
+					}
+				} else {
+					environments = getEnvironments(appInfo.getAppDirName());
+					for (Environment environment : environments) {
+						environmentSet.add(environment.getName());
+					}
 				}
 			}
 			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
@@ -1372,8 +1384,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					String[] splits = property.split(Constants.STR_COMMA);
 					for (String split : splits) {
 						split = split.replace("\\", "/");
-						String pomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
-						File pomFile = new File(pomFileLocation);
+						File pomFile =  Utility.getpomFileLocation(rootModulePath, subModuleName);
 						StringBuilder sb = new StringBuilder(pomFile.getParent());
 						StringBuilder targetDir = getTargetDir(configType, rootModulePath, subModuleName);
 						if (targetDir == null) {
@@ -1435,8 +1446,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				FileUtil.delete(new File(sb.toString()));
 			} else {
 				if (StringUtils.isNotEmpty(appDirName)) {
-					String pomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
-					File pomFile = new File(pomFileLocation);
+					File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
 					StringBuilder sb = new StringBuilder(pomFile.getParent()).append(
 							File.separator).append(DO_NOT_CHECKIN_DIR).append(File.separator).append(envName);
 					File envNameDir = new File(sb.toString());
@@ -1493,9 +1503,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		StringBuilder sb = null;
 		try {
 			String targetDir = getTargetDirFromPom(configType, rootModulePath, subModule);
-			String pomFileLocation = Utility.getpomFileLocation(rootModulePath, subModule);
-			File pomFile = new File(pomFileLocation);
-			
+			File pomFile = Utility.getpomFileLocation(rootModulePath, subModule);
 			if (StringUtils.isEmpty(targetDir)) {
 				return null;
 			}
@@ -1833,8 +1841,8 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	 * @return the environments
 	 * @throws ConfigurationException the configuration exception
 	 */
-	private List<Environment> getEnvironments(ApplicationInfo appInfo) throws ConfigurationException {
-		String configFile = FrameworkServiceUtil.getConfigFileDir(appInfo.getAppDirName());
+	private List<Environment> getEnvironments(String appDirName) throws ConfigurationException {
+		String configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
 		ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
 		List<Environment> environments = configManager.getEnvironmentsAlone();
 		return environments;
@@ -2162,8 +2170,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
         File srcDir = new File(srcSb.toString());
         try {
             if (srcDir.exists()) {
-            	String pomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
-            	File pomFile = new File(pomFileLocation);
+            	File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
                 StringBuilder destSb = new StringBuilder(pomFile.getParentFile().toString())
                 .append(File.separator)
                 .append(DO_NOT_CHECKIN_DIR);

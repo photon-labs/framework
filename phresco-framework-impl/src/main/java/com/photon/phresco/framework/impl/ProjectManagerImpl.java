@@ -538,8 +538,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					}
 					
 					if (isCallEclipsePlugin(appInfo , "")) {
-						String pom = Utility.getpomFileLocation(rootModulePath, subModuleName);
-						File pomFilePath = new File(pom);
+						File pomFilePath = Utility.getpomFileLocation(rootModulePath, subModuleName);
 						ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 						List<String> buildArgCmds = new ArrayList<String>();
 						if(!POM_NAME.equals(pomFilePath.getName())) {
@@ -606,21 +605,21 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 
 					String projectInfoPath = Utility.getProjectInfoPath(rootPath, moduleName);
 					ProjectUtils.updateProjectInfo(projectInfo, new File(projectInfoPath));
-					String pom = Utility.getpomFileLocation(rootPath, moduleName);
-					writeSplitProperties(pom, rootPath);
+					File pom = Utility.getpomFileLocation(rootPath, moduleName);
+					writeSplitProperties(pom.getPath(), rootPath);
 					ProjectUtils pu = new ProjectUtils();
 					String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootPath, moduleName);
-					pu.deletePluginFromPom(new File(pom));
-					pu.addServerPlugin(appInfo, new File(pom), dotPhrescoFolderPath);
-				if (isCallEclipsePlugin(appInfo, pom)) {
+					pu.deletePluginFromPom(pom);
+					pu.addServerPlugin(appInfo,pom, dotPhrescoFolderPath);
+				if (isCallEclipsePlugin(appInfo, pom.getPath())) {
 					ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-					File pomFilePath = new File(pom);
+//					File pomFilePath = new File(pom);
 					List<String> buildArgCmds = new ArrayList<String>();
-					if(!POM_NAME.equals(pomFilePath.getName())) {
+					if(!POM_NAME.equals(pom.getName())) {
 						buildArgCmds.add(HYPHEN_F);
-						buildArgCmds.add(pomFilePath.getName());
+						buildArgCmds.add(pom.getName());
 					}
-					applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds,pomFilePath.getParent());
+					applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds,pom.getParent());
 				}
 				createConfigurationXml(serviceManager, rootModulePath, appDirName, dotPhrescoFolderPath);
 			} else if (response.getStatus() == 401) {
@@ -693,10 +692,10 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		File src = null;
 		File dest = null;
 		try {
-			String getpomFileLocation = Utility.getpomFileLocation(rootPath, moduleName);
+			File pomFile = Utility.getpomFileLocation(rootPath, moduleName);
 			String appDirName = projectinfo.getAppInfos().get(0).getAppDirName();
 			
-			PomProcessor pomPro = new PomProcessor(new File(getpomFileLocation));
+			PomProcessor pomPro = new PomProcessor(pomFile);
 			String srcProp = pomPro.getProperty(POM_PROP_KEY_SPLIT_SRC_DIR);
 			String testProp = pomPro.getProperty(POM_PROP_KEY_SPLIT_TEST_DIR);
 			String dotProp = pomPro.getProperty(POM_PROP_KEY_SPLIT_PHRESCO_DIR);
@@ -849,8 +848,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		}
 		try {
 			updatePomInfo(applicationInfo, pomFile);
-			String pomFileLocation = Utility.getpomFileLocation(rootPath, module);
-			File phrescoPom = new File(pomFileLocation);
+			File phrescoPom = Utility.getpomFileLocation(rootPath, module);
 			if(!phrescoPom.exists()) {
 				return;
 			}
@@ -977,8 +975,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	throws PhrescoException {
 		String dbName = "";
 		try {
-			String getpomFileLocation = Utility.getpomFileLocation(rootPath, module);
-			PomProcessor pompro = new PomProcessor(new File(getpomFileLocation));
+			File pomFile = Utility.getpomFileLocation(rootPath, module);
+			PomProcessor pompro = new PomProcessor(pomFile);
 			String sqlFolderPath = pompro.getProperty(POM_PROP_KEY_SQL_FILE_DIR);
 			File srcDirLocation = Utility.getSourceFolderLocation(projectinfo, rootPath, module);
 			if(srcDirLocation.exists()) {
@@ -1130,8 +1128,9 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		 }
 	 }
 	
-	private String getProjectPhresoFolder(String appDir) {
-		File projectDotPhr = new File(Utility.getProjectHome().concat(FORWARD_SLASH).concat(appDir).concat(FORWARD_SLASH).concat(DOT_PHRESCO_FOLDER));
+	private String getProjectPhresoFolder(String rootModulePath) throws PhrescoException {
+		String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, "");
+		File projectDotPhr = new File(dotPhrescoFolderPath);
 		if (projectDotPhr.exists()) {
 			return projectDotPhr.getAbsolutePath().toString();
 		}
@@ -1149,7 +1148,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		HashMap<String, Dashboard> dashboardMap;
 		Dashboard dashboard = new Dashboard();
 		try {
-			File dashboardInfoFile = new File(getProjectPhresoFolder(dashboardInfo.getAppdirname()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			String rootModulePath = Utility.getProjectHome() + dashboardInfo.getAppdirname();
+			File dashboardInfoFile = new File(getProjectPhresoFolder(rootModulePath).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 			if( dashboardInfoFile.exists()) {
 				json = FileUtils.readFileToString(dashboardInfoFile);
 				dashboards = gson.fromJson(json, Dashboards.class);
@@ -1175,9 +1175,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			FileUtils.writeStringToFile(dashboardInfoFile, json);
 			return dashboardId;
 		} catch (IOException e) {
-			e.printStackTrace();
-		} 
-		return null;
+			throw new PhrescoException(e);
+		}
 	}
 	
 	
@@ -1189,7 +1188,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		String json;
 		HashMap<String, Dashboard> dashboardMap;
 		try {
-			File dashboardInfoFile = new File(getProjectPhresoFolder(appdirname).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			String rootModulePath = Utility.getProjectHome() + appdirname;
+			File dashboardInfoFile = new File(getProjectPhresoFolder(rootModulePath).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 			if( dashboardInfoFile.exists()) {
 				json = FileUtils.readFileToString(dashboardInfoFile);
 				dashboards = gson.fromJson(json, Dashboards.class);
@@ -1200,7 +1200,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				return null;
 			} 
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		}
 		return null;
 	}
@@ -1214,7 +1214,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		HashMap<String, Dashboard> dashboardMap;
 		Dashboard dashboard = new Dashboard();
 		try {
-			File dashboardInfoFile = new File(getProjectPhresoFolder(dashboardInfo.getAppdirname()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			String rootModulePath = Utility.getProjectHome() + dashboardInfo.getAppdirname();
+			File dashboardInfoFile = new File(getProjectPhresoFolder(rootModulePath).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 			if( dashboardInfoFile.exists()) {
 				json = FileUtils.readFileToString(dashboardInfoFile);
 				dashboards = gson.fromJson(json, Dashboards.class);
@@ -1235,7 +1236,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				return false;
 			} 
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		}
 		return false;
 	}
@@ -1249,14 +1250,15 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			for (ProjectInfo projectInfo : projectInfos) {
 				if (projectInfo.getId().equals(projectid)) {
 					try {
-						File dashboardInfoFile = new File(getProjectPhresoFolder(projectInfo.getAppInfos().get(0).getAppDirName()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+						String rootModulePath = Utility.getProjectHome() + projectInfo.getAppInfos().get(0).getAppDirName();
+						File dashboardInfoFile = new File(getProjectPhresoFolder(rootModulePath).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 						if(dashboardInfoFile.exists()) {
 						String json = FileUtils.readFileToString(dashboardInfoFile);
 						Dashboards dashboards =  gson.fromJson(json, Dashboards.class);
 						appDashboards.put(dashboards.getAppname(), dashboards);
 						}
 					} catch (IOException e) {
-						e.printStackTrace();
+						throw new PhrescoException(e);
 					}
 				}
 			}
@@ -1272,7 +1274,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		String json;
 		HashMap<String, Dashboard> dashboardMap;
 		try {
-			File dashboardInfoFile = new File(getProjectPhresoFolder(dashboardInfo.getAppdirname()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			String rootModulePath = Utility.getProjectHome() + dashboardInfo.getAppdirname();
+			File dashboardInfoFile = new File(getProjectPhresoFolder(rootModulePath).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 			if( dashboardInfoFile.exists()) {
 				json = FileUtils.readFileToString(dashboardInfoFile);
 				dashboards = gson.fromJson(json, Dashboards.class);
@@ -1287,7 +1290,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				return false;
 			} 
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		}
 		return false;
 	}
@@ -1304,7 +1307,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		HashMap<String, HashMap<String, String>> colorcodes = new HashMap<String, HashMap<String,String>>();
 
 		try {
-			File dashboardInfoFile = new File(getProjectPhresoFolder(dashboardInfo.getAppdirname()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			String rootModulePath = Utility.getProjectHome() + dashboardInfo.getAppdirname();
+			File dashboardInfoFile = new File(getProjectPhresoFolder(rootModulePath).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 			if( dashboardInfoFile.exists()) {
 				json = FileUtils.readFileToString(dashboardInfoFile);
 				dashboards = gson.fromJson(json, Dashboards.class);
@@ -1347,7 +1351,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				return null;
 			} 
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		}
 		return null;
 	}
@@ -1360,7 +1364,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		String json;
 		HashMap<String, Dashboard> dashboardMap;
 		try {
-			File dashboardInfoFile = new File(getProjectPhresoFolder(appdirname).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			String rootModulePath = Utility.getProjectHome() + appdirname;
+			File dashboardInfoFile = new File(getProjectPhresoFolder(rootModulePath).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 			if( dashboardInfoFile.exists()) {
 				json = FileUtils.readFileToString(dashboardInfoFile);
 				dashboards = gson.fromJson(json, Dashboards.class);
@@ -1375,7 +1380,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				return null;
 			} 
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		}
 		return null;
 	}
@@ -1389,7 +1394,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		HashMap<String, String[]> widProperties = new HashMap<String, String[]>();
 		HashMap<String, HashMap<String, String>> colorcodes = new HashMap<String, HashMap<String,String>>();
 		try {
-			File dashboardInfoFile = new File(getProjectPhresoFolder(dashboardInfo.getAppdirname()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			String rootModulePath = Utility.getProjectHome() + dashboardInfo.getAppdirname();
+			File dashboardInfoFile = new File(getProjectPhresoFolder(rootModulePath).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 			if( dashboardInfoFile.exists()) {
 				json = FileUtils.readFileToString(dashboardInfoFile);
 				dashboards = gson.fromJson(json, Dashboards.class);
@@ -1436,7 +1442,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				return false;
 			} 
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		}
 		return false;
 	}
@@ -1447,14 +1453,15 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		Dashboards dashboards;
 		String json;
 		try {
-			File dashboardInfoFile = new File(getProjectPhresoFolder(appdirname).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			String rootModulePath = Utility.getProjectHome() + appdirname;
+			File dashboardInfoFile = new File(getProjectPhresoFolder(rootModulePath).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 			if( dashboardInfoFile.exists()) {
 				json = FileUtils.readFileToString(dashboardInfoFile);
 				dashboards = gson.fromJson(json, Dashboards.class);
 				return dashboards;
 			} 
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		}
 		return null;
 	}
@@ -1466,7 +1473,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		String json;
 		HashMap<String, Dashboard> dashboardMap;
 		try {
-			File dashboardInfoFile = new File(getProjectPhresoFolder(dashboardInfo.getAppdirname()).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
+			String rootModulePath = Utility.getProjectHome() + dashboardInfo.getAppdirname();
+			File dashboardInfoFile = new File(getProjectPhresoFolder(rootModulePath).concat(FORWARD_SLASH).concat(DASHBOARD_INFO_FILE));
 			if( dashboardInfoFile.exists()) {
 				json = FileUtils.readFileToString(dashboardInfoFile);
 				dashboards = gson.fromJson(json, Dashboards.class);
@@ -1485,7 +1493,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				return false;
 			} 
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		}
 		return false;
 	}

@@ -189,8 +189,8 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
         return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
     }
     
-    public String getSeleniumToolType(String appDirName) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
+    public String getSeleniumToolType(String rootModulePath, String module) throws PhrescoException, PhrescoPomException {
+        return Utility.getPomProcessor(rootModulePath, module).getProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
     }
     
     public String getFunctionalTestDir(String appDirName) throws PhrescoException, PhrescoPomException {
@@ -432,10 +432,11 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 	    return serverUrl;
     }
     
-	public List<String> getSonarProfiles(String appDirName) throws PhrescoException {
+	public List<String> getSonarProfiles(String rootModulePath, String subModule) throws PhrescoException {
 		List<String> sonarTechReports = new ArrayList<String>(6);
 		try {
-			PomProcessor pomProcessor = frameworkUtil.getPomProcessor(appDirName);
+//			PomProcessor pomProcessor = frameworkUtil.getPomProcessor(appDirName);
+			PomProcessor pomProcessor = Utility.getPomProcessor(rootModulePath, subModule);
 			Model model = pomProcessor.getModel();
 			S_LOGGER.debug("model... " + model);
 			Profiles modelProfiles = model.getProfiles();
@@ -2011,7 +2012,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 		return osName.concat(osBit);
 	}
 	
-	public void addNew(String filePath, String testName,String cellValue[]) {
+	public void addNew(String filePath, String testName,String cellValue[]) throws PhrescoException {
 		try {
 			//FileInputStream myInput = new FileInputStream(filePath);
 
@@ -2252,10 +2253,11 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
    	        	}
    	        }
 		} catch (Exception e) {
+//			throw new PhrescoException(e);
 		}
 	}
 	
-	private static void addTestSuiteToOds(File file, String cellValue[]) throws IOException {
+	private static void addTestSuiteToOds(File file, String cellValue[]) throws PhrescoException {
 		org.jopendocument.dom.spreadsheet.Sheet sheet;
 		try {
 			ODPackage createFromFile = ODPackage.createFromFile(file);
@@ -2287,11 +2289,11 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 			createFromFile.save(out);
 			out.close();
 		} catch(Exception e) {
-			e.printStackTrace();
+            throw new PhrescoException(e);
 		}
 	}
 	
-	public void addNewTestCase(String filePath, String testSuiteName,String cellValue[], String status) {
+	public void addNewTestCase(String filePath, String testSuiteName,String cellValue[], String status) throws PhrescoException {
 		try {
 			int numCol = 13;
 			int cellno = 0;
@@ -2307,6 +2309,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 							 if (file1.isFile()) {
 								sb.append(File.separator);
 						    	sb.append(file1.getName());
+						    	break;
 						    }
 						}
 						writeTestCasesToXLSX(testSuiteName, cellValue, status, numCol, cellno, tryStyle, sb);
@@ -2319,6 +2322,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 	     	            	if (file2.isFile()) {
 	     	            		sb.append(File.separator);
 	    	                	sb.append(file2.getName());
+	    	                	break;
 	     	            	}
 	     	            }
 	     	            writeTestCaseToXLS(testSuiteName, cellValue, status, numCol, cellno, tryStyle, sb);
@@ -2330,6 +2334,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 	  	     	            	if (file2.isFile()) {
 	  	     	            		sb.append(File.separator);
 	  	    	                	sb.append(file2.getName());
+	  	    	                	break;
 	  	     	            	}
 	  	     	            }
 	  	     	            writeTestCasesToODS(testSuiteName, cellValue, sb, status);
@@ -2338,7 +2343,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
                 }
    	        }
 		} catch (Exception e) {
-//			e.printStackTrace();
+			throw new PhrescoException(e);
 		}
 	}
 	
@@ -2459,15 +2464,14 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 			 	Utility.closeStream(out);
 			
 		} catch (IOException e) {
-			//e.printStackTrace();
+			throw new PhrescoException(e);
 		}
 	}
 	private void writeTestCasesToXLSX(String testSuiteName, String[] cellValue,
 			String status, int numCol, int cellno, CellStyle[] tryStyle,
-			StringBuilder sb) throws FileNotFoundException,
-			InvalidFormatException, IOException, UnknownHostException,
-			PhrescoException {
+			StringBuilder sb) throws PhrescoException {
 		Iterator<Row> rowIterator;
+		try {
 		FileInputStream myInput = new FileInputStream(sb.toString());
 		OPCPackage opc=OPCPackage.open(myInput); 
 		XSSFWorkbook myWorkBook = new XSSFWorkbook(opc);
@@ -2559,13 +2563,20 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 			}
 			 	
 		}
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		} catch (InvalidFormatException e) {
+			throw new PhrescoException(e);
+		}
 	}
 
 	private void writeTestCaseToXLS(String testSuiteName, String[] cellValue,
 			String status, int numCol, int cellno, CellStyle[] tryStyle,
-			StringBuilder sb) throws FileNotFoundException, IOException,
-			UnknownHostException, PhrescoException {
+			StringBuilder sb) throws PhrescoException {
 		Iterator<Row> rowIterator;
+		try {
 		FileInputStream myInput = new FileInputStream(sb.toString());
 		HSSFWorkbook myWorkBook = new HSSFWorkbook(myInput);
 		int numberOfSheets = myWorkBook.getNumberOfSheets();
@@ -2659,6 +2670,13 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 				}
 		    	 	
 			}
+		} catch(PhrescoException e) {
+			throw new PhrescoException(e);
+		} catch (FileNotFoundException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		}
 	}
 
 	private static void addCalculationsToIndex(float totalPass,

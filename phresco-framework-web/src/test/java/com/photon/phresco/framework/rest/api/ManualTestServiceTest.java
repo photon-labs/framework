@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -24,6 +25,7 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -64,7 +66,7 @@ public class ManualTestServiceTest extends RestBaseTest {
 			
 			ManualTestService service = new ManualTestService();
 			PomProcessor pomProcessor = FrameworkUtil.getInstance().getPomProcessor(appDirName);
-	    	String manualTestReportPath = pomProcessor.getProperty("phresco.manualTest.testcase.path");
+	    	String manualTestReportPath = pomProcessor.getProperty("phresco.manualTest.report.dir");
 	    	StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 			builder.append(appDirName);
 			builder.append(File.separator);
@@ -162,7 +164,7 @@ public class ManualTestServiceTest extends RestBaseTest {
 	}
 
 
-	@Test
+//	@Test
 	public void createTestSuiteTest() throws PhrescoException {
 		ManualTestService service = new ManualTestService();
 		Response response = service.createTestSuite("", "", "");
@@ -196,7 +198,7 @@ public class ManualTestServiceTest extends RestBaseTest {
 		Assert.assertEquals("PHRQ400005", responseInfo.getResponseCode());
 	}
 
-	@Test
+//	@Test
 	public void createTestCaseTest() throws PhrescoException {
 		ManualTestService service = new ManualTestService();
 		Response response = service.createTestCase(createTestCase() , testSuiteName, "", "");
@@ -219,7 +221,7 @@ public class ManualTestServiceTest extends RestBaseTest {
 		Assert.assertEquals("PHRQ400006", responseInfo.getResponseCode());
 	}
 	
-	@Test
+//	@Test
 	public void updateTestCaseTest() throws PhrescoException {
 		ManualTestService service = new ManualTestService();
 		TestCase testCase = createTestCase();
@@ -264,6 +266,18 @@ public class ManualTestServiceTest extends RestBaseTest {
 		Assert.assertEquals("PHRQ410004", responseInfo.getResponseCode());
 	}
 	
+	@AfterClass
+	public static void deleteFile() throws PhrescoException, PhrescoPomException, IOException {
+		PomProcessor pomProcessor = FrameworkUtil.getInstance().getPomProcessor("TestProject");
+    	String manualTestReportPath = pomProcessor.getProperty("phresco.manualTest.report.dir");
+    	StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+		builder.append("TestProject");
+		builder.append(File.separator);
+		builder.append(manualTestReportPath);
+		File file = new File(builder.toString() + "/phtn_phresco - 3.2.0 manual_test_template.xls");
+		FileUtils.deleteQuietly(file);
+		
+	}
 	private TestCase createTestCase() {
 		TestCase testCase = new TestCase();
 		testCase.setBugComment("Manual Testing Comment");

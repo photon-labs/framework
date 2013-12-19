@@ -938,8 +938,8 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 				}else {
 					rootModulePath = Utility.getProjectHome() + appInfo.getAppDirName();
 				}
-				String getpomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
-				PomProcessor pomProcessor = new PomProcessor(new File (getpomFileLocation));
+				File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
+				PomProcessor pomProcessor = new PomProcessor(pomFile);
                 pomProcessor.setProperty(Constants.POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL, functionalFramework.getName());
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_FUNCTEST_DIR, testDir);
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_FUNCTEST_RPT_DIR, testReportDir);
@@ -1265,8 +1265,8 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			ServiceManager serviceManager, String rootModulePath,String subModuleName) throws PhrescoException {
 		try {
 			File sqlPath = null;
-			String pomFileLoc = Utility.getpomFileLocation(rootModulePath, subModuleName);
-				PomProcessor pom = new PomProcessor(new File(pomFileLoc));
+			File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
+				PomProcessor pom = new PomProcessor(pomFile);
 				String sql = pom.getProperty(PHRESCO_SQL_PATH);
 				File docFolderLocation = Utility.getSourceFolderLocation(projectinfo, rootModulePath, subModuleName);
 				if(docFolderLocation.exists()) {

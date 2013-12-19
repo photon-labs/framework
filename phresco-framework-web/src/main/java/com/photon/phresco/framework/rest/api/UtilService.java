@@ -96,15 +96,25 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
 			if (Desktop.isDesktopSupported()) {
+//				if (StringUtils.isNotEmpty(moduleName)) {
+//					appDirName = appDirName + File.separator + moduleName;
+//				}
+				
+				String rootModulePath = "";
+				String subModuleName = "";
+				
 				if (StringUtils.isNotEmpty(moduleName)) {
-					appDirName = appDirName + File.separator + moduleName;
+					rootModulePath = Utility.getProjectHome() + appDirName;
+					subModuleName = moduleName;
+				} else {
+					rootModulePath = Utility.getProjectHome() + appDirName;
 				}
-				File file = new File(getPath(appDirName, type));
+				
+				File file = new File(getPath(rootModulePath, subModuleName, type));
 				if (file.exists()) {
 					Desktop.getDesktop().open(file);
 				} else {
-					StringBuilder sbOpenPath = new StringBuilder(Utility.getProjectHome());
-					sbOpenPath.append(appDirName);
+					StringBuilder sbOpenPath = new StringBuilder(rootModulePath);
 					Desktop.getDesktop().open(new File(sbOpenPath.toString()));
 				}
 			}
@@ -132,17 +142,27 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 			@QueryParam(REST_QUERY_TYPE) String type, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
+//			if (StringUtils.isNotEmpty(moduleName)) {
+//				appDirName = appDirName + File.separator + moduleName;
+//			}
+			
+			String rootModulePath = "";
+			String subModuleName = "";
+			
 			if (StringUtils.isNotEmpty(moduleName)) {
-				appDirName = appDirName + File.separator + moduleName;
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = moduleName;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
-			File file = new File(getPath(appDirName, type));
+			
+			File file = new File(getPath(rootModulePath, subModuleName, type));
 			String pathToCopy = "";
 			if (file.exists()) {
 				pathToCopy = file.getPath();
 			} else {
-				StringBuilder sbCopyPath = new StringBuilder(Utility.getProjectHome());
-				sbCopyPath.append(appDirName);
-				pathToCopy = Utility.getProjectHome() + sbCopyPath.toString();
+				StringBuilder sbCopyPath = new StringBuilder(rootModulePath);
+				pathToCopy =  sbCopyPath.toString();
 			}
 			copyToClipboard(pathToCopy);
 			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
@@ -415,9 +435,20 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response killProcess(@QueryParam("actionType") String actionType, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
 		ResponseInfo responseData = new ResponseInfo();
+	// Pass module as param ------------------
+		String moduleName =""; /* for temporary*/
 		try {
-		String applicationHome = FrameworkServiceUtil.getApplicationHome(appDirName);
-		File do_not_checkin = new File(applicationHome + File.separator + Constants.DO_NOT_CHECKIN_DIRY);
+			String rootModulePath = "";
+			String subModuleName = "";
+			if (StringUtils.isNotEmpty(moduleName)) {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = moduleName;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+			}
+			
+			File getpomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
+		File do_not_checkin = new File(getpomFileLocation.getParent() + File.separator + Constants.DO_NOT_CHECKIN_DIRY);
 		File jsonFile = new File(do_not_checkin.getPath() + File.separator + "process.json");
 		if(!jsonFile.exists()) {
 			ResponseInfo<List<ApplicationInfo>> finalOutput = responseDataEvaluation(responseData, null,
@@ -480,10 +511,21 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 		ActionResponse response = null;
 		String envNames = request.getParameter("environmentName");
 		try {
+//			if (StringUtils.isNotEmpty(module)) {
+//				appDirName = appDirName + File.separator + module;
+//			}
+			
+			String rootModulePath = "";
+			String subModuleName = "";
 			if (StringUtils.isNotEmpty(module)) {
-				appDirName = appDirName + File.separator + module;
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = module;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
-			response = futil.mandatoryValidation(request, phase, appDirName);
+			
+			
+			response = futil.mandatoryValidation(request, phase, rootModulePath, subModuleName);
 			if (response.isErrorFound()) {	
 				return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 			}
@@ -619,23 +661,25 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 	 * @return the path
 	 * @throws PhrescoException the phresco exception
 	 */
-	private String getPath(String appDirName, String type) throws PhrescoException {
-		StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(File.separator);
+	private String getPath(String rootModulePath, String subModuleName, String type) throws PhrescoException {
+		ProjectInfo info = Utility.getProjectInfo(rootModulePath, subModuleName);
+		File testFolderLocation = Utility.getTestFolderLocation(info, rootModulePath, subModuleName);
+		StringBuilder sb = new StringBuilder(testFolderLocation.getPath()).append(File.separator);
 		try {
 			if (TEST_UNIT.equals(type)) {
-				sb.append(FrameworkServiceUtil.getUnitTestDir(appDirName));
+				sb.append(FrameworkServiceUtil.getUnitTestDir(rootModulePath, subModuleName));
 			} else if (TEST_FUNCTIONAL.equals(type)) {
-				sb.append(FrameworkServiceUtil.getFunctionalTestDir(appDirName));
+				sb.append(FrameworkServiceUtil.getFunctionalTestDir(rootModulePath, subModuleName));
 			} else if (TEST_COMPONENT.equals(type)) {
-				sb.append(FrameworkServiceUtil.getComponentTestDir(appDirName));
+				sb.append(FrameworkServiceUtil.getComponentTestDir(rootModulePath, subModuleName));
 			} else if (TEST_LOAD.equals(type)) {
-				sb.append(FrameworkServiceUtil.getLoadTestDir(appDirName));
+				sb.append(FrameworkServiceUtil.getLoadTestDir(rootModulePath, subModuleName));
 			} else if (TEST_MANUAL.equals(type)) {
-				sb.append(FrameworkServiceUtil.getManualTestDir(appDirName));
+				sb.append(FrameworkServiceUtil.getManualTestDir(rootModulePath, subModuleName));
 			} else if (TEST_PERFORMANCE.equals(type)) {
-				sb.append(FrameworkServiceUtil.getPerformanceTestDir(appDirName));
+				sb.append(FrameworkServiceUtil.getPerformanceTestDir(rootModulePath, subModuleName));
 			} else if (BUILD.equals(type)) {
-				sb = new StringBuilder(FrameworkServiceUtil.getBuildDir(appDirName));
+				sb = new StringBuilder(FrameworkServiceUtil.getBuildDir(rootModulePath, subModuleName));
 			}
 		} catch (Exception e) {
 			throw new PhrescoException(e);

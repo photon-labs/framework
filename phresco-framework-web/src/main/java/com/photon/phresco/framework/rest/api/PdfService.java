@@ -83,13 +83,19 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 		ResponseInfo responseData = new ResponseInfo();
 		try {
 			String pdfLOC = "";
-			String applicationHome = FrameworkServiceUtil.getApplicationHome(appDirName);
+
+			String rootModulePath = "";
+			String subModuleName = "";
 			
 			if (StringUtils.isNotEmpty(moduleName)) {
-				applicationHome = applicationHome + File.separator + moduleName;
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = moduleName;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
 			
-			String archivePath = applicationHome + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator;
+			File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
+			String archivePath = pomFile.getParent() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator;
 			if ((FrameworkConstants.ALL).equals(fromPage)) {
 				pdfLOC = archivePath + CUMULATIVE + File.separator + reportFileName;
 			} else {
@@ -136,11 +142,22 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 		ResponseInfo responseData = new ResponseInfo();
 		try {
 			String pdfLOC = "";
-			String applicationHome = FrameworkServiceUtil.getApplicationHome(appDirName);
+//			String applicationHome = FrameworkServiceUtil.getApplicationHome(appDirName);
+//			if (StringUtils.isNotEmpty(moduleName)) {
+//				applicationHome = applicationHome + File.separator + moduleName;
+//			}
+			
+			String rootModulePath = "";
+			String subModuleName = "";
+			
 			if (StringUtils.isNotEmpty(moduleName)) {
-				applicationHome = applicationHome + File.separator + moduleName;
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = moduleName;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
-			String archivePath = applicationHome + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator;
+			File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
+			String archivePath = pomFile.getParent() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator;
 			if ((FrameworkConstants.ALL).equals(fromPage)) {
 				pdfLOC = archivePath + CUMULATIVE + File.separator + reportFileName;
 			} else {
@@ -197,21 +214,28 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 			boolean isReportAvailable = false;
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 			FrameworkServiceUtil futil = new FrameworkServiceUtil();
+
+			String rootModulePath = "";
+			String subModuleName = "";
 			
 			if (StringUtils.isNotEmpty(moduleName)) {
-				appDirName = appDirName + File.separator + moduleName; 
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = moduleName;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
-			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
-			existingPDFs = getExistingPDFs(fromPage, appDirName);
+			
+			File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
+			existingPDFs = getExistingPDFs(fromPage, pomFile.getParent());
 				
 			// is sonar report available
 			if ((FrameworkConstants.ALL).equals(fromPage)) {
-				isReportAvailable = futil.isSonarReportAvailable(frameworkUtil, request, appDirName);
+				isReportAvailable = futil.isSonarReportAvailable(frameworkUtil, request, rootModulePath, subModuleName);
 			}
 
 			// is test report available
 			if (!isReportAvailable) {
-				isReportAvailable = futil.isTestReportAvailable(frameworkUtil, appDirName);
+				isReportAvailable = futil.isTestReportAvailable(frameworkUtil, rootModulePath, subModuleName);
 			}
 			
 			paramMap.put("value", isReportAvailable);
@@ -244,11 +268,11 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 	 * @return the existing pd fs
 	 * @throws PhrescoException the phresco exception
 	 */
-	private List<PdfReportInfo> getExistingPDFs(String fromPage, String appDirName) {
+	private List<PdfReportInfo> getExistingPDFs(String fromPage, String targetDir) {
 		List<PdfReportInfo> pdfList = new ArrayList<PdfReportInfo>();
 		
 		// popup showing list of pdf's already created
-		String pdfDirLoc = Utility.getProjectHome() + appDirName + File.separator;
+		String pdfDirLoc = targetDir + File.separator;
 		if (StringUtils.isEmpty(fromPage) || FROMPAGE_ALL.equals(fromPage)) {
 			pdfDirLoc =  pdfDirLoc + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator + CUMULATIVE;
 		} else {

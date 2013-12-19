@@ -46,6 +46,7 @@ import com.photon.phresco.framework.rest.api.util.ActionResponse;
 import com.photon.phresco.framework.rest.api.util.ActionServiceConstant;
 import com.photon.phresco.framework.rest.api.util.BufferMap;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
+import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
@@ -873,19 +874,26 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 			String fromPage = request.getParameter(FROM_PAGE);
 			String moduleName = request.getParameter(MODULE_NAME);
 			
-			if (StringUtils.isNotEmpty(moduleName)) {
-				appDirName = appDirName + File.separator + moduleName;
-			}
+//			if (StringUtils.isNotEmpty(moduleName)) {
+//				appDirName = appDirName + File.separator + moduleName;
+//			}
 			
+			String rootModulePath = "";
+			String subModuleName = "";
+			if (StringUtils.isNotEmpty(moduleName)) {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = moduleName;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+			}
 			
 			// is sonar report available
 			if ((FrameworkConstants.ALL).equals(fromPage)) {
-				isReportAvailable = futil.isSonarReportAvailable(frameworkUtil, request, appDirName);
+				isReportAvailable = futil.isSonarReportAvailable(frameworkUtil, request, rootModulePath, subModuleName);
 			}
-
 			// is test report available
 			if (!isReportAvailable) {
-				isReportAvailable = futil.isTestReportAvailable(frameworkUtil, appDirName);
+				isReportAvailable = futil.isTestReportAvailable(frameworkUtil, rootModulePath, subModuleName);
 			}
 //			boolean testReportAvailable = actionFunction.isTestReportAvailable(frameworkUtil, appInfo, fromPage);
 			if (isReportAvailable) {

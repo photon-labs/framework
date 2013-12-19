@@ -34,7 +34,7 @@ public class IpaDownloadServiceTest {
 			File buildDir = new File(buildDirectoryPath);
 			Response response = null;
 			if (appDir.exists() && buildDir.exists() && buildNo == 1) {
-				response = downloadService.downloadIpa("PHONE-iphonenative", String.valueOf(buildNo));
+				response = downloadService.downloadIpa("PHONE-iphonenative", String.valueOf(buildNo), "");
 			}
 			Assert.assertEquals(200, response.getStatus());
 		}

@@ -24,7 +24,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PushbackInputStream;
 import java.io.SequenceInputStream;
 import java.lang.reflect.Type;
@@ -35,7 +34,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.cli.CommandLineException;
@@ -311,16 +309,14 @@ public class ApplicationManagerImpl implements ApplicationManager {
 	 }
 	 
 	 private String getBuildInfoHome(String rootModulePath, String subModuleName) throws PhrescoException {
-			String pomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
-			File pomFile = new File(pomFileLocation);
+			File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
 			StringBuilder buildInfoFilePath = new StringBuilder(pomFile.getParent());
 			buildInfoFilePath.append(FrameworkConstants.BUILD_DIR).append(File.separator);
 		 return buildInfoFilePath.toString();
 	 }
 	 
 	 private String getBuildInfoFilePath(String rootModulePath, String subModuleName) throws PhrescoException {
-			String pomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
-			File pomFile = new File(pomFileLocation);
+			File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
 			StringBuilder buildInfoFilePath = new StringBuilder(pomFile.getParent());
 			buildInfoFilePath.append(FrameworkConstants.BUILD_DIR).append(File.separator).append(FrameworkConstants.BUILD_INFO_FILE_NAME);
 		 return buildInfoFilePath.toString();

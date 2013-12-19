@@ -539,11 +539,8 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			} else {
 				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
-//			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
             PomProcessor processor = Utility.getPomProcessor(rootModulePath, subModuleName);
-            String pomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
-			File pomFile = new File(pomFileLocation);
-//			PomProcessor processor = FrameworkServiceUtil.getPomProcessor(appDirName);
+            File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
 			String validateReportUrl = "";
 			String infoFileDir = getInfoFileDir(appDirName, Constants.PHASE_VALIDATE_CODE, Constants.PHASE_VALIDATE_CODE, rootModulePath, subModuleName);
 			MojoProcessor mojoProcessor = new MojoProcessor(new File(infoFileDir));

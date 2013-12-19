@@ -1,6 +1,24 @@
 package com.photon.phresco.framework.rest.api;
 
-import com.google.gson.Gson;
+import java.util.HashMap;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.apache.wink.json4j.OrderedJSONObject;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.Dashboard;
@@ -9,34 +27,9 @@ import com.photon.phresco.commons.model.Dashboards;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.commons.model.Widget;
-import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.logger.SplunkLog4JFactory;
 import com.photon.phresco.util.DashboardSearchInfo;
 import com.photon.phresco.util.ServiceConstants;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import org.apache.log4j.Logger;
-import org.apache.wink.json4j.OrderedJSONObject;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path(ServiceConstants.REST_API_DASHBOARD)

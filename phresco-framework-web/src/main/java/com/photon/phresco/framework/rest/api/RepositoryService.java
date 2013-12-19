@@ -740,8 +740,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		Artifact artifact = null;
 		try {
 			String appDirPath = Utility.getProjectHome() + File.separator + appInfo.getAppDirName();
-			String pomPath = Utility.getpomFileLocation(appDirPath, moduleName);
-			File pomFile = new File (pomPath);
+			File pomFile = Utility.getpomFileLocation(appDirPath, moduleName);
 			if (pomFile.exists()) {
 				PomProcessor processor = new PomProcessor(pomFile);
 				String version = "[," + processor.getVersion() + "]";

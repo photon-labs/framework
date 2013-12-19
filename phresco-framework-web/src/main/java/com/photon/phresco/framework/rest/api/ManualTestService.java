@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.model.ManualTestResult;
@@ -71,15 +72,20 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
         	String fileName = URLDecoder.decode(uploadedFileName, "UTF-8");
         	InputStream inputStream = request.getInputStream();
         	String moduleName = request.getHeader("moduleName");
-        	if (StringUtils.isNotEmpty(moduleName)) {
-				appDirName = appDirName + File.separator + moduleName;
-			} 
-        	PomProcessor pomProcessor = FrameworkUtil.getInstance().getPomProcessor(appDirName);
-        	String manualTestReportPath = pomProcessor.getProperty("phresco.manualTest.report.dir");
-        	StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-    		builder.append(appDirName);
-    		builder.append(File.separator);
-    		builder.append(manualTestReportPath);
+        	String rootModulePath = "";
+			String subModuleName = "";
+			if (StringUtils.isNotEmpty(moduleName)) {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = moduleName;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+			}
+			
+			String manualTestPath = getManualTestReportDir(rootModulePath, subModuleName);
+        	ProjectInfo projectinfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+        	File manualDir = Utility.getTestFolderLocation(projectinfo, rootModulePath, subModuleName);
+        	StringBuilder builder = new StringBuilder(manualDir.toString());
+    		builder.append(manualTestPath);
     		File existingFile = new File(builder.toString());
     		FileUtils.cleanDirectory(existingFile); 
     		File file = new File(builder.toString() + File.separator + fileName);
@@ -103,14 +109,21 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 		ManualTestResult createManualTestResult = null;
 		ResponseInfo<List<TestSuite>> finalOutput = null;
 		try {
+			String rootModulePath = "";
+			String subModuleName = "";
 			if (StringUtils.isNotEmpty(moduleName)) {
-				appDirName = appDirName + File.separator + moduleName;
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = moduleName;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-			String manualTestDir = getManualTestReportDir(appDirName);
-			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(manualTestDir);
-			File file = new File(sb.toString());
-			if (! new File(sb.toString()).exists()) {
+			ProjectInfo projectinfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+        	File manualDir = Utility.getTestFolderLocation(projectinfo, rootModulePath, subModuleName);
+			String manualTestDir = getManualTestReportDir(rootModulePath, subModuleName);
+			StringBuilder sb = new StringBuilder(manualDir.toString()).append(manualTestDir);
+			File manualFilePath = new File(sb.toString());
+			if (!manualFilePath.exists()) {
 				finalOutput = responseDataEvaluation(responseData, null, createManualTestResult, RESPONSE_STATUS_FAILURE, PHRQ000003);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
@@ -133,14 +146,21 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 		ManualTestResult createManualTestResult = null;
 		ResponseInfo<Boolean> finalOutput = null;
 		try {
+			String rootModulePath = "";
+			String subModuleName = "";
 			if (StringUtils.isNotEmpty(moduleName)) {
-				appDirName = appDirName + File.separator + moduleName;
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = moduleName;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-			String manualTestDir = getManualTestReportDir(appDirName);
-			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(manualTestDir);
-			File file = new File(sb.toString());
-			if (! new File(sb.toString()).exists()) {
+			ProjectInfo projectinfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+        	File manualDir = Utility.getTestFolderLocation(projectinfo, rootModulePath, subModuleName);
+			String manualTestDir = getManualTestReportDir(rootModulePath, subModuleName);
+			StringBuilder sb = new StringBuilder(manualDir.toString()).append(manualTestDir);
+			File manualFilePath = new File(sb.toString());
+			if (!manualFilePath.exists()) {
 				finalOutput = responseDataEvaluation(responseData, null, createManualTestResult, RESPONSE_STATUS_FAILURE, PHRQ000003);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
@@ -162,12 +182,19 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 			ResponseInfo<List<com.photon.phresco.commons.model.TestCase>>();
 		List<com.photon.phresco.commons.model.TestCase> readTestCase = null;
 		try {
+			String rootModulePath = "";
+			String subModuleName = "";
 			if (StringUtils.isNotEmpty(moduleName)) {
-				appDirName = appDirName + File.separator + moduleName;
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = moduleName;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-			String manualTestDir = getManualTestReportDir(appDirName);
-			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(manualTestDir);
+			ProjectInfo projectinfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+        	File manualDir = Utility.getTestFolderLocation(projectinfo, rootModulePath, subModuleName);
+			String manualTestDir = getManualTestReportDir(rootModulePath, subModuleName);
+			StringBuilder sb = new StringBuilder(manualDir.toString()).append(manualTestDir);
 			readTestCase = frameworkUtil.readManualTestCaseFile(sb.toString(), testsuitename, null);
 			ResponseInfo<List<com.photon.phresco.commons.model.TestCase>> finalOutput = 
 				responseDataEvaluation(responseData, null, readTestCase, RESPONSE_STATUS_SUCCESS, PHRQ400003);
@@ -186,17 +213,25 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
 		ResponseInfo responseData = new ResponseInfo();
 		try {
+			String rootModulePath = "";
+			String subModuleName = "";
 			if (StringUtils.isNotEmpty(moduleName)) {
-				appDirName = appDirName + File.separator + moduleName;
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = moduleName;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-			String path = getManualTestReportDir(appDirName);
-			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(path);
+			ProjectInfo projectinfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+        	File manualDir = Utility.getTestFolderLocation(projectinfo, rootModulePath, subModuleName);
+			String manualTestDir = getManualTestReportDir(rootModulePath, subModuleName);
+			StringBuilder sb = new StringBuilder(manualDir.toString()).append(manualTestDir);
 			String cellValue[] = {"", "", testSuiteName, "", "", "", "", "", "", "", "", "", ""};
 			frameworkUtil.addNew(sb.toString(), testSuiteName, cellValue);
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_SUCCESS, PHRQ400004);
 			return Response.status(Status.OK).entity(finalOutput).build();
 		} catch(PhrescoException e) {
+			e.printStackTrace();
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHRQ410006);
 			return Response.status(Status.OK).entity(finalOutput).build();
 		}
@@ -210,18 +245,26 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
 		ResponseInfo responseData = new ResponseInfo();
 		try {
+			String rootModulePath = "";
+			String subModuleName = "";
 			if (StringUtils.isNotEmpty(moduleName)) {
-				appDirName = appDirName + File.separator + moduleName;
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = moduleName;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-			String path = getManualTestReportDir(appDirName);
-			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(path);
+			ProjectInfo projectinfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+        	File manualDir = Utility.getTestFolderLocation(projectinfo, rootModulePath, subModuleName);
+			String manualTestDir = getManualTestReportDir(rootModulePath, subModuleName);
+			StringBuilder sb = new StringBuilder(manualDir.toString()).append(manualTestDir);
 			String cellValue[] = {"", testCase.getFeatureId(), "",testCase.getTestCaseId(), testCase.getDescription(), testCase.getPreconditions(),testCase.getSteps(), "", "",
 					testCase.getExpectedResult(), testCase.getActualResult(), testCase.getStatus(), testCase.getBugComment()};
 			frameworkUtil.addNewTestCase(sb.toString(), testSuiteName,cellValue, testCase.getStatus());
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, testCase, RESPONSE_STATUS_SUCCESS, PHRQ400005);
 			return Response.status(Status.OK).entity(finalOutput).build();
 		} catch(PhrescoException e) {
+			e.printStackTrace();
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHRQ410007);
 			return Response.status(Status.OK).entity(finalOutput).build();
 		}
@@ -235,12 +278,19 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
 		ResponseInfo responseData = new ResponseInfo();
 		try {
+			String rootModulePath = "";
+			String subModuleName = "";
 			if (StringUtils.isNotEmpty(moduleName)) {
-				appDirName = appDirName + File.separator + moduleName;
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = moduleName;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-			String path = getManualTestReportDir(appDirName);
-			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(path);
+			ProjectInfo projectinfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+        	File manualDir = Utility.getTestFolderLocation(projectinfo, rootModulePath, subModuleName);
+			String manualTestDir = getManualTestReportDir(rootModulePath, subModuleName);
+			StringBuilder sb = new StringBuilder(manualDir.toString()).append(manualTestDir);
 			frameworkUtil.readManualTestCaseFile(sb.toString(), testSuiteName, testCase);
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, testCase, RESPONSE_STATUS_SUCCESS, PHRQ400006);
 			return Response.status(Status.OK).entity(finalOutput).build();
@@ -260,12 +310,19 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 			List<com.photon.phresco.commons.model.TestCase> readTestCase = null;
 			boolean hasTrue = false;
 			try {
+				String rootModulePath = "";
+				String subModuleName = "";
 				if (StringUtils.isNotEmpty(moduleName)) {
-					appDirName = appDirName + File.separator + moduleName;
+					rootModulePath = Utility.getProjectHome() + appDirName;
+					subModuleName = moduleName;
+				} else {
+					rootModulePath = Utility.getProjectHome() + appDirName;
 				}
 				FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-				String manualTestDir = getManualTestReportDir(appDirName);
-				StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(manualTestDir);
+				ProjectInfo projectinfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+	        	File manualDir = Utility.getTestFolderLocation(projectinfo, rootModulePath, subModuleName);
+				String manualTestDir = getManualTestReportDir(rootModulePath, subModuleName);
+				StringBuilder sb = new StringBuilder(manualDir.toString()).append(manualTestDir);
 				hasTrue = frameworkUtil.deleteManualTestCaseFile(sb.toString(), testSuiteName, testCaseId);
 				ResponseInfo<Boolean> finalOutput = 
 					responseDataEvaluation(responseData, null, hasTrue, RESPONSE_STATUS_SUCCESS, PHRQ400009);
@@ -286,12 +343,19 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 		List<com.photon.phresco.commons.model.TestCase> readTestCase = null;
 		boolean hasError = true;
 		try {
+			String rootModulePath = "";
+			String subModuleName = "";
 			if (StringUtils.isNotEmpty(moduleName)) {
-				appDirName = appDirName + File.separator + moduleName;
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = moduleName;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-			String manualTestDir = getManualTestReportDir(appDirName);
-			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(manualTestDir);
+			ProjectInfo projectinfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+        	File manualDir = Utility.getTestFolderLocation(projectinfo, rootModulePath, subModuleName);
+			String manualTestDir = getManualTestReportDir(rootModulePath, subModuleName);
+			StringBuilder sb = new StringBuilder(manualDir.toString()).append(manualTestDir);
 			readTestCase = frameworkUtil.readManualTestCaseFile(sb.toString(), testsuitename, null);
 			for (com.photon.phresco.commons.model.TestCase testCase : readTestCase) {
 				if(testCase.getTestCaseId().equalsIgnoreCase(testCaseId)) {
@@ -340,9 +404,11 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 		return mtr;
 	}
 
-	private String getManualTestReportDir(String appDirName) throws PhrescoException {
+	private String getManualTestReportDir(String rootModulePath, String subModuleName) throws PhrescoException {
         try {
-			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_MANUALTEST_RPT_DIR);
+        	PomProcessor pomProcessor = Utility.getPomProcessor(rootModulePath, subModuleName);
+        	String manualDir = pomProcessor.getProperty(Constants.POM_PROP_KEY_MANUALTEST_RPT_DIR);
+        	return manualDir;
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		}

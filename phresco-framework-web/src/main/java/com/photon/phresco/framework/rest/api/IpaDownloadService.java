@@ -34,6 +34,7 @@ import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.util.ServiceConstants;
+import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path(ServiceConstants.REST_API_DOWNLOADIPA)
@@ -41,16 +42,22 @@ public class IpaDownloadService extends RestBase implements ServiceConstants, Fr
 	
 	@GET
 	@Produces(MediaType.MULTIPART_FORM_DATA)
-	public Response downloadIpa(@QueryParam(ServiceConstants.REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(ServiceConstants.REST_QUERY_BUILD_NUMBER) String buildNumber) 
+	public Response downloadIpa(@QueryParam(ServiceConstants.REST_QUERY_MODULE_NAME) String moduleName, @QueryParam(ServiceConstants.REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(ServiceConstants.REST_QUERY_BUILD_NUMBER) String buildNumber) 
 		throws PhrescoException {
 		ResponseInfo responseData = new ResponseInfo();
 		try {
-			Gson gson = new Gson();
+			
+			String rootModulePath = "";
+			String subModuleName = "";
+			if (StringUtils.isNotEmpty(moduleName)) {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = moduleName;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+			}
+			
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			File projectInfoPath = new File(FrameworkServiceUtil.getApplicationHome(appDirName) + File.separator + FrameworkConstants.FOLDER_DOT_PHRESCO + 
-					File.separator + FrameworkConstants.PROJECT_INFO);
-			BufferedReader reader = new BufferedReader(new FileReader(projectInfoPath));
-			ProjectInfo info = gson.fromJson(reader, ProjectInfo.class);
+			ProjectInfo info = Utility.getProjectInfo(rootModulePath, subModuleName);
 			ApplicationInfo applicationInfo = info.getAppInfos().get(0);
 			
 			if (StringUtils.isEmpty(buildNumber)) {
@@ -58,15 +65,16 @@ public class IpaDownloadService extends RestBase implements ServiceConstants, Fr
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 			String ipaFileName = applicationInfo.getName();
-			String buildName = getBuildName(appDirName, buildNumber).getDeployLocation();
-			String workingDirectory = FrameworkServiceUtil.getApplicationHome(appDirName);
+			File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
+			String buildName = getBuildName(rootModulePath,subModuleName, buildNumber).getDeployLocation();
+//			String workingDirectory = FrameworkServiceUtil.getApplicationHome(appDirName);
 			String buildNameSubstring = buildName.substring(0, buildName.lastIndexOf( File.separator));
 			String appBuildName = buildNameSubstring.substring(buildNameSubstring.lastIndexOf( File.separator) + 1);
 			List<String> buildArgCmds = new ArrayList<String>();
 			buildArgCmds.add("-Dapplication.name=" + ipaFileName);
 			buildArgCmds.add("-Dapp.path=" + buildName);
 			buildArgCmds.add("-Dbuild.name=" + appBuildName);
-			BufferedInputStream readers = applicationManager.performAction(info, ActionType.IPA_DOWNLOAD, buildArgCmds, workingDirectory);
+			BufferedInputStream readers = applicationManager.performAction(info, ActionType.IPA_DOWNLOAD, buildArgCmds, pomFile.getParent());
 			
 			int available = readers.available();
 			while (available != 0) {
@@ -80,7 +88,7 @@ public class IpaDownloadService extends RestBase implements ServiceConstants, Fr
                 available = readers.available();
 			}
 			
-			String ipaPath = getBuildName(appDirName, buildNumber).getDeployLocation();
+			String ipaPath = getBuildName(rootModulePath,subModuleName, buildNumber).getDeployLocation();
 			ipaPath = ipaPath.substring(0, ipaPath.lastIndexOf( File.separator)) +  File.separator + ipaFileName + ".ipa";
 			InputStream fileInputStream = new FileInputStream(new File(ipaPath));
 			return Response.status(Status.OK).entity(fileInputStream).header("Content-Disposition", "attachment; filename=" + new File(ipaPath).getName())
@@ -95,10 +103,10 @@ public class IpaDownloadService extends RestBase implements ServiceConstants, Fr
 	}
 	
 	
-	private BuildInfo getBuildName(String appdir, String buildNo) throws PhrescoException {
+	private BuildInfo getBuildName(String rootModulePath, String subModuleName, String buildNo) throws PhrescoException {
 		try {
 			Gson gson = new Gson();
-			File buildInfoPath = new File(FrameworkServiceUtil.getBuildInfosFilePath(appdir));
+			File buildInfoPath = new File(FrameworkServiceUtil.getBuildInfosFilePath(rootModulePath, subModuleName));
 			BufferedReader reader = new BufferedReader(new FileReader(buildInfoPath));
 			Type type = new TypeToken<List<BuildInfo>>() {}  .getType();
 			List<BuildInfo> buildInfos = (List<BuildInfo>)gson.fromJson(reader, type);

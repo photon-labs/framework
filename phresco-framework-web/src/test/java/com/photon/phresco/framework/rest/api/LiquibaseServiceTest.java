@@ -714,13 +714,15 @@ public class LiquibaseServiceTest extends RestBaseTest{
 	@Test
 	public void liquibaseGetDbConfigNullTest() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		ActionFunction actionFunction = new ActionFunction();
-		Class[] cArg = new Class[1];
+		Class[] cArg = new Class[2];
 		cArg[0] = String.class;
+		cArg[1] = String.class;
 		Method persist = ActionFunction.class.
 		        getDeclaredMethod("getDbConfiguration", cArg);
 		persist.setAccessible(true);
-		Object[] args = new Object[1];
+		Object[] args = new Object[2];
 		args[0] = null;
+		args[1] = "dshfjsd";
 		persist.invoke(actionFunction, args);
 	}
 	

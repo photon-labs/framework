@@ -137,8 +137,8 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 			}
 			
 //			String pomPath = FrameworkServiceUtil.getAppPom(appDirName);
-			String pomPath = Utility.getpomFileLocation(rootModulePath, subModuleName);
-			PomProcessor pomProcessor = new PomProcessor(new File(pomPath));
+			File pomPath = Utility.getpomFileLocation(rootModulePath, subModuleName);
+			PomProcessor pomProcessor = new PomProcessor(pomPath);
 			com.phresco.pom.model.Plugin.Configuration pluginConfig = pomProcessor.getPlugin(MINIFY_PLUGIN_GROUPID,
 					MINIFY_PLUGIN_ARTFACTID).getConfiguration();
 			// To check for availability of minification plugin in pom.xml
@@ -200,8 +200,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 		StringBuilder builder = new StringBuilder();
 		try {
 			String buildInfoFilePath = getBuildInfoFilePath(rootModulePath, subModuleName);
-			String pomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
-			File pomFile = new File(pomFileLocation);
+			File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
 			String fileName = "";
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			BuildInfo buildInfo = applicationManager.getBuildInfo(buildNumber, buildInfoFilePath);
@@ -244,8 +243,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 	}
 
 	private String getBuildInfoFilePath(String rootModulePath, String subModuleName) throws PhrescoException {
-		String pomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
-		File pomFile = new File(pomFileLocation);
+		File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
 		StringBuilder buildInfoFilePath = new StringBuilder(pomFile.getParent());
 		buildInfoFilePath.append(File.separator).append(BUILD_DIR).append(File.separator).append(BUILD_INFO_FILE_NAME);
 		
@@ -374,9 +372,8 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
 			
-			String pomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
+			File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
 			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModuleName);
-			File pomFile = new File(pomFileLocation);
 			if (StringUtils.isNotEmpty(status) && status.equals("true")) {
 				
 				readLogFile = readRunAgsSrcLogFile(pomFile.getParent());
