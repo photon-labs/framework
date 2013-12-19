@@ -1473,7 +1473,15 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         },
 
         showHideRegexExtractor : function(obj) {
-            obj.is(':checked') ? obj.closest('tbody').find('.regexTr').show() : obj.closest('tbody').find('.regexTr').hide();
+            /* obj.is(':checked') ? obj.closest('tbody').find('.regexTr').show() : obj.closest('tbody').find('.regexTr').hide(); */
+			if(obj.is(':checked')){
+				obj.closest('tbody').find('.regexTr').show();
+				$(".regexTr").css("border","1px solid #dddddd");
+				$('tbody > tr:nth-child(4)').children().css("border-bottom","1px solid #ffffff");
+				$('tbody > tr:nth-child(5)').children().css("border-bottom","1px solid #ffffff");
+			} else {
+				obj.closest('tbody').find('.regexTr').hide();
+			}
         },
         /********************************** TEMPLATE METHODS ENDS ***********************************************/
 

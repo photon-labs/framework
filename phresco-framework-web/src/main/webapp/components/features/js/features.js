@@ -197,9 +197,9 @@ define(["features/listener/featuresListener"], function() {
 		
 		selectedCount : function(){
 			var jsLibCount = null, moduleCount = null, componentCount = null;
-			jsLibCount = $("#jsibrariesContent").find(".switchOn").size();
-			moduleCount = $("#moduleContent").find(".switchOn").size();
-			componentCount = $("#componentsContent").find(".switchOn").size();
+			jsLibCount = $("#jsibrariesContent").find(".switchOn").size() + $("#jsibrariesContent").find(".default").size();
+			moduleCount = $("#moduleContent").find(".switchOn").size() + $("#moduleContent").find(".default").size();
+			componentCount = $("#componentsContent").find(".switchOn").size() + $("#componentsContent").find(".default").size();
 			$(".totalModules").text(moduleCount);
 			$(".totalComponent").text(componentCount);
 			$(".totalJslibraries").text(jsLibCount);
@@ -265,6 +265,45 @@ define(["features/listener/featuresListener"], function() {
 			var property = '';
 			callback(response[key]); 
 		}, 
+		
+		searchon : function(){
+			var self = this;
+			self.featuresListener.showSelected('');
+			$("#norecord1, #norecord2, #norecord3").hide();
+			var classval = $("#search").attr("class");
+			var txtSearch1 = $('#module').val();
+			var txtSearch2 = $('#jsibraries').val();
+			var txtSearch3 = $('#components').val();
+			if(txtSearch1 !== "") {
+				self.featuresListener.search(txtSearch1, "moduleContent", classval);
+			}
+			if(txtSearch2 !== "") {
+				self.featuresListener.search(txtSearch2, "jsibrariesContent", classval);
+			}
+			if(txtSearch3 !== "") {
+				self.featuresListener.search(txtSearch3, "componentsContent", classval);
+			}
+		},
+		
+		searchoff : function(){
+			var self = this;
+			$("#featureTest ul li").show();
+			self.featuresListener.scrollbarUpdate();
+			$("#norecord1, #norecord2, #norecord3").hide();
+			var classval = $("#search").attr("class");
+			var txtSearch1 = $('#module').val();
+			var txtSearch2 = $('#jsibraries').val();
+			var txtSearch3 = $('#components').val();
+			if(txtSearch1 !== "") {
+				self.featuresListener.search(txtSearch1, "moduleContent", classval);
+			}
+			if(txtSearch2 !== "") {
+				self.featuresListener.search(txtSearch2, "jsibrariesContent", classval);
+			}
+			if(txtSearch3 !== "") {
+				self.featuresListener.search(txtSearch3, "componentsContent", classval);
+			}
+		},
 		
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
@@ -340,13 +379,16 @@ define(["features/listener/featuresListener"], function() {
 				else if(temp === 'jsibraries')
 					$("#norecord2").hide();	
 				else if(temp === 'components')
-					$("#norecord3").hide();	
+					$("#norecord3").hide();
+				if(classval === "switch switchOn"){
+					self.searchon();
+				} else {
+					self.searchoff();
+				}
 			});
 
            	$('#switchoffbutton').on("click", function(event) {
-           		self.featuresListener.showSelected('');
-				$("#norecord1, #norecord2, #norecord3").hide();
-				
+				self.searchon();
            	});
 			
 			$('label.on').click(function() {
@@ -359,12 +401,11 @@ define(["features/listener/featuresListener"], function() {
 				if (value === "switch switchOn") {
 					self.featuresListener.showSelected('');	      		
 				}
+				
            	});
 			
            	$('#switchonbutton').on("click", function(event) {
-           		$("#featureTest ul li").show();
-           		self.featuresListener.scrollbarUpdate();
-				$("#norecord1, #norecord2, #norecord3").hide();
+           		self.searchoff();
            	});
 
        		$('#cancelUpdateFeature').click(function() {
