@@ -714,7 +714,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 */
 	private List<TestCase> getTestCases(String appDirName, NodeList testSuites, String testSuitePath, String testCasePath, String testType) throws PhrescoException {
 		InputStream fileInputStream = null;
-		StringBuilder screenShotDir = null;
+		StringBuilder screenShotDir = new StringBuilder();
 		try {
 			StringBuilder sb = new StringBuilder(); 
 			sb.append(testSuitePath);

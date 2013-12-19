@@ -39,7 +39,7 @@ define(["testResult/listener/testResultListener"], function() {
 		registerEvents : function() {
 			var self = this;
 			Handlebars.registerHelper('removeDot', function(string) {
-				return string.replace(/\./g, '');
+				return string.replace(/\./g, '').replace(/\s/g, '');
 			});
 		
 			Handlebars.registerHelper('statusUpdate', function(status) {
