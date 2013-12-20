@@ -292,6 +292,16 @@ define(["header/api/headerAPI"], function() {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl+ "customer/loginIcon?userId="+userId+"&customerId="+requestBody.customerId;
 			}
+			if(action === "changepassword") {
+				header.requestMethod = "POST";
+				var temp = [], oldpass, newpass;
+				oldpass = $("#old_password").val();
+				newpass = $("#new_password").val();
+				temp.push({"username":userInfo.id,"password":oldpass});
+				temp.push({"username":userInfo.id,"password":newpass});
+				header.requestPostBody = JSON.stringify(temp);
+				header.webserviceurl = commonVariables.webserviceurl+ "login/changePassword";
+			}
 			return header;
 		},
 
@@ -299,6 +309,12 @@ define(["header/api/headerAPI"], function() {
 			var self = this;
 			try {
 				commonVariables.api.ajaxRequest(header, function(response) {
+					if(response.responseCode === 'PHR110009') {
+						commonVariables.api.showError(response.responseCode ,"error", true);
+					} else if(response.responseCode === 'PHR100009') {
+						commonVariables.api.showError(response.responseCode ,"success", true);
+						$("#change_password").hide();
+					}
 					if (response !== null) {
 						callback(response);
 					} else {

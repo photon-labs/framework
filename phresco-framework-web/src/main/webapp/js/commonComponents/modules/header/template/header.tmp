@@ -15,9 +15,46 @@
 	<input type="hidden" class="hProjectId" value=""/>
 	<input type="hidden" class="moduleName" value=""/>
 	<input type="hidden" class="rootModule" value=""/>
+	
+	<div id="change_password" class="dyn_popup" style="display:none;">
+                    <table cellspacing="0" cellpadding="0" border="0" class="table">
+                        	<tbody>
+                            	<tr>
+	                                <td>
+                                    	<label>Old Password</label>
+                                    </td>
+                                    <td>
+                                        <input type="password" id="old_password">
+                                    </td>
+                    			</tr>
+                                <tr>
+	                               <td>
+                                    	<label>New Password</label>
+                                    </td>
+                                    <td>
+                                        <input type="password" id="new_password">
+                                    </td>
+                    			</tr>
+                                <tr>
+	                                 <td>
+                                    	<label>Reenter New Password</label>
+                                    </td>
+                                    <td>
+                                        <input type="password" id="new_password_reenter">
+                                    </td>
+                    			</tr>
+                            </tbody>
+                        </table>
+						<div class="flt_right">
+							<input type="button" id="confirm_change_password" class="btn btn_style" value="Change">
+							<input type="button" class="btn btn_style dyn_popup_close" value="Close">
+						</div>
+                 </div>
+	
 	<div class="header_right flt_right">
 		<div class="user_login">
 			<div class="user_icon">&nbsp;</div><span id="displayname">{{displayName}}</span>&nbsp;&nbsp; | &nbsp;&nbsp; 
+			<a id="changepassword" href="javascript:void(0)"><span >Change Password</span></a>&nbsp;&nbsp; | &nbsp;&nbsp;
 			<a id="logout" href="javascript:;"><span data-i18n="header.userinfo.logout"></span><div class="logout_icon">&nbsp;</div></a>
 		</div>
 		<div class="navbar navbar-static">

@@ -567,6 +567,10 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					if(placeId === 'add_widget') {
 						var BottomHeight = clicked.position().top + clicked.height() + scrollHeight + 8 ;
 						$(target).css({"left":clicked.offset().left-15,"margin-top":10,"top": BottomHeight});		
+					} else if(placeId === 'forgot_password') {
+						var BottomHeight = clicked.position().top + clicked.height() +4 ;
+						var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 265;
+						$(target).css({"left":"auto" ,"margin-top":10,"right": d,"top": BottomHeight});
 					} else {
 						if(flag === 0) {
 							var BottomHeight = clicked.position().top + clicked.height() +4 ;
@@ -606,6 +610,9 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstyletopright').addClass('speakstylebottomleft').addClass('dyn_popup');	
 					if(placeId === 'add_widget') {
 						BottomHeight = clicked.offset().top + clicked.height() + scrollHeight - 490 ;
+						$(target).css({"right":"auto","top": BottomHeight});		
+					} else if(placeId === 'forgot_password') {
+						BottomHeight = clicked.offset().top + clicked.height() + scrollHeight - 265 ;
 						$(target).css({"right":"auto","top": BottomHeight});		
 					} else {
 						if(flag ===0) {

@@ -144,6 +144,25 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 					e.preventDefault();
 				} 
 			});
+			
+			$("#forgotpassword").click(function() {
+				self.openccdashboardsettings(this,'forgot_password');
+				$("#userid").removeClass('errormessage');
+				
+			});
+			
+			$("#confirm_forgot_password").click(function() {
+				var userid = $("#userid");
+				if(userid.val() === '') {
+					userid.addClass('errormessage');
+					userid.focus();
+					userid.attr('placeholder','Enter user');
+				} else {
+					 self.loginListener.forgotpassword(self.loginListener.getRequestHeader("forgotpassword"), function(response) {
+					});
+				}	
+			});
+			
 		}
 	});
 

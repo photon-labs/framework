@@ -42,7 +42,11 @@
 							<span data-i18n="login.label.txt.remember;"></span>
 						</label>
 						<div class="flt_right"><input type="button" id="login" data-i18n="[value]login.label.btn.login;" class="btn btn_style"></div>
-						<div id="contex_er" class="context_txt" style="display:none">Sample context : /Photon</div>
+						<div id="contex_er" class="context_txt flt_right" style="display:none">Sample context : /Photon</div>
+						<div style="clear:both"></div>
+                        <div class="flt_left">
+							<a id="forgotpassword" href="javascript:void(0)" >Forgot password</a>
+						</div>	
 					</div>
                 </form>
 	    		<!--login_right div ends here -->
@@ -50,4 +54,22 @@
 	        <div class="clear"></div>
 	    </section>
         <div class="loginshadow"><img src="themes/default/images/Phresco/login_shadow.png"></div>
+		<div id="forgot_password" class="dyn_popup" style="display:none;">
+                    <table cellspacing="0" cellpadding="0" border="0" class="table">
+                        	<tbody>
+                            	<tr>
+	                                <td>
+                                    	<label>Enter user name</label>
+                                    </td>
+                                    <td>
+                                        <input type="text" id="userid">
+                                    </td>
+                    			</tr>
+                            </tbody>
+                        </table>
+						<div class="flt_right">
+							<input type="button" id="confirm_forgot_password" class="btn btn_style" value="Submit">
+							<input type="button" class="btn btn_style dyn_popup_close" value="Close">
+						</div>
+                 </div>
 	</div>  

@@ -21,6 +21,8 @@
 		"PHR110005" : "'user.json' file not found",
 		"PHR110006" : "Parsing failed for file 'user.json'",
 		"PHR110007" : "User doesn't have valid permissions",
+		"PHR110008" : "Failed",
+		"PHR110009" : "Password updation failed",
 		"PHR210001" : " Failed to list projects",
 		"PHR210003" : "Unauthorized user",
 		"PHR210004" : "Project creation failed",
@@ -241,6 +243,8 @@
 		"PHRD100010" : "Unable to retrieve the search result."
 	},
 	"successCodes" : {
+		"PHR100008" : "Password emailed",
+		"PHR100009" : "Password changed successfully",
 		"PHR200004" : "Project created successfully",
 		"PHR200006" : "Project updated successfully",
 		"PHR200007" : "Features updated successfully", 	

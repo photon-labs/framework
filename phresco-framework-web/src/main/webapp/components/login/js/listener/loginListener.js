@@ -63,6 +63,44 @@ define([], function() {
 			}
 		},
 		
+		forgotpassword : function() {
+			try{
+				var self = this, header = self.getRequestHeader('forgotpassword');
+					//TODO: call login service here and call appendPlaceholder in the success function
+					commonVariables.api.bCheck = true;
+					commonVariables.api.ajaxRequest(header, 
+						function(response){
+						if(response.responseCode === 'PHR110008') {
+						$(".login_error_msg").css('color','red');
+						$("#forgot_password").hide();
+								$(".login_error_msg").attr('data-i18n', 'errorCodes.' + response.responseCode);
+								self.renderlocales(commonVariables.basePlaceholder);
+								setTimeout(function() {
+									$(".login_error_msg").text('');
+								},3000);
+						} else if(response.responseCode === 'PHR100008') {
+						$("#forgot_password").hide();
+						$(".login_error_msg").css('color','green');
+						$(".login_error_msg").attr('data-i18n', 'successCodes.' + response.responseCode);
+						self.renderlocales(commonVariables.basePlaceholder);
+						setTimeout(function() {
+							$(".login_error_msg").text('');
+						},3000);
+						//$("#change_password").hide();
+						} 
+						
+						}, 
+						function(serviceError){
+							//service access failed
+							commonVariables.api.showError(response.responseCode ,"error", true);
+						} 
+						
+					);
+			}catch(error){
+				//Exception
+			}
+		},
+		
 		pageRefresh : function(contentObj){
 			var self = this;
 			self.appendPlaceholder();
@@ -118,7 +156,7 @@ define([], function() {
 		 * provides the request header
 		 * @return: returns the contructed header
 		 */
-		getRequestHeader : function() {
+		getRequestHeader : function(action) {
 			var header = {
 				contentType: "application/json",
 				requestMethod: "POST",
@@ -126,6 +164,13 @@ define([], function() {
 				requestPostBody: JSON.stringify({"username" : $("#username").val().trim(), "password" : $("#password").val().trim()}),
 				webserviceurl: commonVariables.webserviceurl + commonVariables.loginContext
 			};
+			
+			if(action === "forgotpassword") {
+				header.requestMethod = "POST";
+				var userid = $("#userid").val();
+				header.requestPostBody = userid;
+				header.webserviceurl = commonVariables.webserviceurl+ "login/forgotPassword";
+			}
 
 			return header;
 		},

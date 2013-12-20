@@ -130,6 +130,54 @@ define(["header/listener/headerListener"] , function(template) {
 			$('a[name=customers]').click(function(){
 				self.onSelectCustomerEvent.dispatch($(this).text(), $(this).attr("id"));
 			});
+			
+			$("#changepassword").click(function() {
+				self.openccdashboardsettings(this,'change_password');
+				
+			});
+			
+			$("#confirm_change_password").click(function() {
+				var oldpass = $("#old_password");
+				var newpass = $("#new_password");
+				var confirmnewpass = $("#new_password_reenter");
+				if(oldpass.val() === '') {
+					oldpass.addClass('errormessage');
+					oldpass.focus();
+					oldpass.attr('placeholder','Enter Old Password');
+					oldpass.bind('keypress', function() {
+						$(this).removeClass("errormessage");
+						$(this).removeAttr("placeholder");
+					});
+				} else if(newpass.val() === '') {
+					newpass.addClass('errormessage');
+					newpass.focus();
+					newpass.attr('placeholder','Enter New Password');
+					newpass.bind('keypress', function() {
+						$(this).removeClass("errormessage");
+						$(this).removeAttr("placeholder");
+					});
+				} else if(confirmnewpass.val() === '') {
+					confirmnewpass.addClass('errormessage');
+					confirmnewpass.focus();
+					confirmnewpass.attr('placeholder','Enter Confirm New Password');
+					confirmnewpass.bind('keypress', function() {
+						$(this).removeClass("errormessage");
+						$(this).removeAttr("placeholder");
+					});
+				} else if(newpass.val() !== confirmnewpass.val()) {
+					confirmnewpass.val('');
+					confirmnewpass.addClass('errormessage');
+					confirmnewpass.focus();
+					confirmnewpass.attr('placeholder','Re-enter password');
+					confirmnewpass.bind('keypress', function() {
+						$(this).removeClass("errormessage");
+						$(this).removeAttr("placeholder");
+					});
+				} else {
+					self.headerListener.performAction(self.headerListener.getActionHeader("changepassword"), function(response) {
+					});
+				}	
+			});
 		}
 	});
 

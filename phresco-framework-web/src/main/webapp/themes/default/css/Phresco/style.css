@@ -354,6 +354,10 @@ select:focus, input[type="file"]:focus, input[type="radio"]:focus, input[type="c
 	font-weight: bold;
 }
 
+#forgotpassword {
+ color: #EF7B43;
+}
+
 /* *************************************************************************** HACK FOR CROME BROWSER ************************************************************************** */
 
 @media screen and (-webkit-min-device-pixel-ratio:0) {
@@ -5334,7 +5338,9 @@ textarea[name="regex"] {
 	padding: 5px 4px 3px 11px !important;
 }
 
-
+#change_password input[type="password"] {
+	width:175px;
+}
 
 /***************************** STYLES FOR THE TABLE SORTING STARTS *************************************/
 .tablesorter-default {
