@@ -962,6 +962,14 @@ define([], function() {
 			return hasError;
 		},
 		
+		validatedotPhrescoAndTest : function(dynamicId, repourl, uname, pwd){
+			var self = this;
+			var hasError = false;
+			hasError = commonVariables.navListener.validateSvnData($("#"+repourl+"_"+dynamicId), $("#"+uname+"_"+dynamicId), $("#"+pwd+"_"+dynamicId));
+			return hasError;
+		
+		},
+		
 		validateAddToRepoData : function(dynamicId) {
 			var self = this;
 			var hasError = false;

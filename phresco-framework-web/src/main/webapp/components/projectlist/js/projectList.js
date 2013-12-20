@@ -317,6 +317,8 @@ define(["projectlist/listener/projectListListener"], function() {
 			$(".tooltiptop").unbind("click");
 			$(".tooltiptop").click(function() {
 				var counter;				
+				var dotphresco;				
+				var testsearch;				
 				var obj_del = this;
 				var action = $(this).attr("data-original-title");
 				var currentPrjName = $(this).closest("tr").attr("class");
@@ -326,6 +328,10 @@ define(["projectlist/listener/projectListListener"], function() {
 				//for hiding and clearing the dropdown values
 				$('.searchdropdown').hide();
 				$('.searchdropdown').html('');
+				$('.dotphrescosearchdropdown').hide();
+				$('.dotphrescosearchdropdown').html('');
+				$('.testsearchdropdown').hide();
+				$('.testsearchdropdown').html('');
 				//end for hiding and clearing dropdown value
 				if (action === "Add Repo") {
 					self.hideBtnLoading("button[name='addrepobtn'][id='"+dynamicId+"']");
@@ -547,20 +553,33 @@ define(["projectlist/listener/projectListListener"], function() {
 					if($(this).val() !== 'svn') {
 						$(".search").hide();
 						$('.searchdropdown').hide();
-					} else
+						$(".phrescosearch").hide();
+						$('.dotphrescosearchdropdown').hide();
+						$(".testsearch").hide();
+						$('.testsearchdropdown').hide();
+					} else{
 						$(".search").show();
+						$(".phrescosearch").show();
+						$(".testsearch").show();
+					}	
 				});
 				
-				if($("#type_"+dynamicId).val() === 'svn')
+				if($("#type_"+dynamicId).val() === 'svn'){
 					$('.search').show();
-				else
+					$('.phrescosearch').show();
+					$('.testsearch').show();
+				} else {
 					$(".search").hide();
+					$(".phrescosearch").hide();
+					$(".testsearch").hide();
+				}	
 				
 				$('.search').unbind("click");
 				$('.search').bind("click", function() {
 					self.projectslistListener.flag1 = 1;
-					var idval = $(this).parent().parent().parent().parent().next('div').next().children('input').attr('id');
-					if(!(self.projectslistListener.validation(idval))) {
+					//var idval = $(this).parent().parent().parent().parent().next('div').next().children('input').attr('id');
+					var idval = $(this).attr('dynId');
+					if(!(self.projectslistListener.validateAddToRepoData(idval))) {
 						$('.searchdropdown').empty();
 						counter = 0;
 						var actionBody = {};
@@ -578,7 +597,55 @@ define(["projectlist/listener/projectListListener"], function() {
 						});
 						$('.searchdropdown').show();
 					}
+				});	
+				
+				$('.phrescosearch').unbind("click");
+				$('.phrescosearch').bind("click", function() {
+					var idval = $(this).attr('dynId');
+					if(!(self.projectslistListener.validatedotPhrescoAndTest(idval, 'phrescorepourl' , 'phrescouname', 'phrescopwd'))) {
+						$('.dotphrescosearchdropdown').empty();
+						dotphresco = 0;
+						var actionBody = {};
+						actionBody.repoUrl = $("#phrescorepourl_"+dynamicId).val();
+						actionBody.userName = $("#phrescouname_"+dynamicId).val();
+						actionBody.password = $("#phrescopwd_"+dynamicId).val();
+						commonVariables.hideloading = true;
+						self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
+						self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {
+							 $.each(response.data, function(index, value) {
+								$('.dotphrescosearchdropdown').append('<option value='+value+'>'+value+'</option>');
+							});
+							commonVariables.hideloading = false;
+							self.projectslistListener.hidePopupLoad();
+						});
+						$('.dotphrescosearchdropdown').show();
+					}
 				});
+				
+				$('.testsearch').unbind("click");
+				$('.testsearch').bind("click", function() {
+					var idval = $(this).attr('dynId');
+					if(!(self.projectslistListener.validatedotPhrescoAndTest(idval, 'testrepourl' , 'testuname', 'testpwd'))) {
+						$('.testsearchdropdown').empty();
+						testsearch = 0;
+						var actionBody = {};
+						actionBody.repoUrl = $("#testrepourl"+dynamicId).val();
+						actionBody.userName = $("#testuname"+dynamicId).val();
+						actionBody.password = $("#testpwd"+dynamicId).val();
+						commonVariables.hideloading = true;
+						self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
+						self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {
+							 $.each(response.data, function(index, value) {
+								$('.testsearchdropdown').append('<option value='+value+'>'+value+'</option>');
+							});
+							commonVariables.hideloading = false;
+							self.projectslistListener.hidePopupLoad();
+						});
+						$('.testsearchdropdown').show();
+					}
+				});
+				
+				
 				counter = 0;
 				$('.searchdropdown').click(function() {
 					counter++;
@@ -592,6 +659,36 @@ define(["projectlist/listener/projectListListener"], function() {
 				
 				$('.searchdropdown').focusout(function() {
 					counter = 0;
+				});	
+				
+				dotphresco = 0;
+				$('.dotphrescosearchdropdown').click(function() {
+					dotphresco++;
+					if(dotphresco == 2) {
+						$('.dotphrescosearchdropdown').hide();
+						var temp = $(this).find(':selected').text();
+						$("#phrescorepomessage_"+dynamicId).val(temp);
+						dotphresco = 0;
+					}	
+				});	
+				
+				$('.dotphrescosearchdropdown').focusout(function() {
+					dotphresco = 0;
+				});
+				
+				testsearch = 0;
+				$('.testsearchdropdown').click(function() {
+					testsearch++;
+					if(testsearch == 2) {
+						$('.testsearchdropdown').hide();
+						var temp = $(this).find(':selected').text();
+						$("#testrepomessage_"+dynamicId).val(temp);
+						testsearch = 0;
+					}	
+				});	
+				
+				$('.testsearchdropdown').focusout(function() {
+					testsearch = 0;
 				});
 				//end of functionality for search log messages
 			});

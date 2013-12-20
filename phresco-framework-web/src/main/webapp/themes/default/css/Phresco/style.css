@@ -614,6 +614,13 @@ a.dropdown-toggle b.caret  {
 	margin: -38px 0 0 -22px !important;
 }
 
+.phrescosearch{
+	margin: -38px 0 0 -22px !important;
+}
+
+.testsearch{
+	margin: -38px 0 0 -22px !important;
+}
 .cust_sel ul li{
 	color: #000 !important;
 	line-height: 29px;
