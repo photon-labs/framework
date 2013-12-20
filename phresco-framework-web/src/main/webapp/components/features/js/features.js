@@ -197,9 +197,27 @@ define(["features/listener/featuresListener"], function() {
 		
 		selectedCount : function(){
 			var jsLibCount = null, moduleCount = null, componentCount = null;
-			jsLibCount = $("#jsibrariesContent").find(".switchOn").size() + $("#jsibrariesContent").find(".default").size();
-			moduleCount = $("#moduleContent").find(".switchOn").size() + $("#moduleContent").find(".default").size();
-			componentCount = $("#componentsContent").find(".switchOn").size() + $("#componentsContent").find(".default").size();
+			$("#jsibrariesContent").find(".switchOn").each(function() {
+				if(!($(this).hasClass('default'))) {
+					jsLibCount++;
+				}
+			});
+			
+			$("#moduleContent").find(".switchOn").each(function() {
+				if(!($(this).hasClass('default'))) {
+					moduleCount++;
+				}
+			});
+			
+			$("#componentsContent").find(".switchOn").each(function() {
+				if(!($(this).hasClass('default'))) {
+					componentCount++;
+				}	
+			});
+			
+			jsLibCount = jsLibCount + $("#jsibrariesContent").find(".default").size();
+			moduleCount = moduleCount + $("#moduleContent").find(".default").size();
+			componentCount = componentCount + $("#componentsContent").find(".default").size();
 			$(".totalModules").text(moduleCount);
 			$(".totalComponent").text(componentCount);
 			$(".totalJslibraries").text(jsLibCount);

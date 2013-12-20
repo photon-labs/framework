@@ -192,6 +192,12 @@ define(["projects/listener/projectsListener"], function() {
 				}
 			});
 			
+			$(document).click(function(e) {
+				if($(e.target).attr('id') !== 'projectversion' && $(e.target).parents('div').attr('id') !== 'version_popup' && $(e.target).attr('id') !== 'version_popup') {
+					$("#version_popup").hide();
+				}
+			});
+			
 			$("img[name='close']").dblclick(function(){
 				self.projectsListener.counter--;
 				$('img[name="close"]').show();
