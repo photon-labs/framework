@@ -1015,7 +1015,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.cloneFilter()");
 		}
-		File pomFromGit = null;
 		if (appDir.isDirectory()) {
 			//generate import lock
         	String appId = applicationInfo.getId();
@@ -1034,9 +1033,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			}
 			// update connection in pom.xml
 //			updateSCMConnection(applicationInfo, repoInfo.getSrcRepoDetail().getRepoUrl());
-			if(pomFromGit.exists()) {
-				FileUtil.delete(pomFromGit.getParentFile());
-			}
 		}
 	}
 	
