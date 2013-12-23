@@ -399,6 +399,10 @@ define(["projectlist/listener/projectListListener"], function() {
 					$('#phrCommitPassword'+dynamicId).val(password);
 					$('#testCommitUserName'+dynamicId).val(userInfo.id);
 					$('#testCommitPassword'+dynamicId).val(password);
+					
+					$('.srcCommitableFiles').hide();
+					$('.phrCommitableFiles').hide();
+					$('.testCommitableFiles').hide();
 				} else if (action === "Update") {
 					self.hideBtnLoading("button[name='updatebtn'][id='"+dynamicId+"']");
 					commonVariables.navListener.showSrcTab($("#updateDotphresco"+dynamicId), $("#updateSource"+dynamicId), $("#updateTest"+dynamicId), $("#updateDotPhresco_"+dynamicId), $("#updateTest_"+dynamicId));

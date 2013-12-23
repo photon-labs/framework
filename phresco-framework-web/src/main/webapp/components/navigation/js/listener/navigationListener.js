@@ -937,11 +937,11 @@ define([], function() {
 		navigationActionForImport : function(header, callback) {
 			var self = this;			
 			try {
-				commonVariables.loadingScreen.showLoading();
+//				commonVariables.loadingScreen.showLoading();
 				$("#importloading").hide();
 				commonVariables.api.ajaxRequestForScm(header,
 					function(response) {
-						commonVariables.loadingScreen.removeLoading();
+//						commonVariables.loadingScreen.removeLoading();
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							if(response.responseCode === "PHR200017") {
 								commonVariables.api.showError(response.responseCode ,"success", true);

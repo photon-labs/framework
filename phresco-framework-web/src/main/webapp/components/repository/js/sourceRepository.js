@@ -6,6 +6,7 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 		// template URL, used to indicate where to get the template
 		templateUrl: commonVariables.contexturl + "components/repository/template/sourceRepository.tmp",
 		configUrl: "components/repository/config/config.json",
+		name : commonVariables.sourceRepo,
 		repositoryListener : null,
 
 		/***
@@ -27,6 +28,16 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 		 */
 		postRender : function(element) {	
 			var self = this;
+			var self = this;
+			var requestBody = {};
+			self.repositoryListener.repository(self.repositoryListener.getActionHeader(requestBody, "browseGitRepo"), function(response) {
+				var responseData = response.data;
+				if (responseData !== undefined && responseData !== null && responseData.length > 0) {
+					$.each(responseData, function(index, value) {
+						self.repositoryListener.constructTree(value)
+					});
+				}
+			});
 		},
 
 		/***
@@ -46,6 +57,9 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 			$("input[name=rep_release]").click(function() {
 				self.opencc(this, $(this).attr('name'));
 			});
+			
+			self.customScroll($(".tree_view"));
+			self.customScroll($(".file_view"));
 		}
 	});
 

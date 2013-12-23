@@ -138,9 +138,6 @@ define([], function() {
 							}	
 							callback(response);		
 						} else {
-							if (commonVariables.callLadda) {
-								Ladda.stopAll();
-							}
 							if(response.responseCode === "PHR210035") {
 								callback(response);
 								self.hidePopupLoad();
@@ -379,7 +376,6 @@ define([], function() {
 				action = "repoget";
 				commonVariables.hideloading = true;
 				self.projectListActionForScm(self.getActionHeader(actionBody, action), '', function(response){
-					self.hideBtnLoading("button[name='addrepobtn'][id='"+dynid+"']");
 					if (response.exception === null) {
 						$("#addRepo_"+dynid).hide();
 					}
@@ -397,11 +393,11 @@ define([], function() {
 				var repoInfo = {};
 				var srcRepoDetail = {};
 				srcRepoDetail.type = $("#commitType_"+dynid).val();
-				srcRepoDetail.repoUrl = $("#commitRepourl_"+dynid).val();
-				srcRepoDetail.userName = $("#commitUsername_"+dynid).val();
-				srcRepoDetail.password = $("#commitPassword_"+dynid).val();
+				srcRepoDetail.repoUrl = $("#commitRepourl"+dynid).val();
+				srcRepoDetail.userName = $("#commitUserName"+dynid).val();
+				srcRepoDetail.password = $("#commitPassword"+dynid).val();
 				srcRepoDetail.commitMessage = $("#commitMessage_"+dynid).val();
-				srcRepoDetail.passPhrase = $("#commitPhrase_"+dynid).val();
+				srcRepoDetail.passPhrase = $(".commitPassPhraseval"+dynid).val();
 				var arrayCommitableFiles = [];
 				$.each($('.commitChildChk[dynamicId='+dynid+'][from=src]') , function(index, value) {
 					if ($(this).is(':checked')) {
@@ -417,8 +413,8 @@ define([], function() {
 					phrescoRepoDetail.repoUrl = $("#phrCommitRepourl"+dynid).val();
 					phrescoRepoDetail.userName = $("#phrCommitUserName"+dynid).val();
 					phrescoRepoDetail.password = $("#phrCommitPassword"+dynid).val();
-					phrescoRepoDetail.commitMessage = $(".phrCommitPassPhraseval"+dynid).val();
-					phrescoRepoDetail.passPhrase = $("#phrCommitMessage_"+dynid).val();
+					phrescoRepoDetail.commitMessage = $("#phrCommitMessage_"+dynid).val();
+					phrescoRepoDetail.passPhrase = $(".phrCommitPassPhraseval"+dynid).val();
 					var phrCommitableFiles = [];
 					$.each($('.commitChildChk[dynamicId='+dynid+'][from=phr]') , function(index, value) {
 						if ($(this).is(':checked')) {
@@ -435,8 +431,8 @@ define([], function() {
 					testRepoDetail.repoUrl = $("#testCommitRepourl"+dynid).val();
 					testRepoDetail.userName = $("#testCommitUserName"+dynid).val();
 					testRepoDetail.password = $("#testCommitPassword"+dynid).val();
-					testRepoDetail.commitMessage = $(".testCommitPassPhraseval"+dynid).val();
-					testRepoDetail.passPhrase = $("#testCommitMessage_"+dynid).val();
+					testRepoDetail.commitMessage = $("#testCommitMessage_"+dynid).val();
+					testRepoDetail.passPhrase = $(".testCommitPassPhraseval"+dynid).val();
 					var testCommitableFiles = [];
 					$.each($('.commitChildChk[dynamicId='+dynid+'][from=test]') , function(index, value) {
 						if ($(this).is(':checked')) {
@@ -446,15 +442,14 @@ define([], function() {
 					testRepoDetail.commitableFiles = testCommitableFiles;
 					repoInfo.testRepoDetail = testRepoDetail;
 				}
-				repoInfo.splitPhresco = $("#splitDotPhresco_"+dynid).is(":checked");
-				repoInfo.splitTest = $("#splitTest_"+dynid).is(":checked");
+				repoInfo.splitPhresco = $("#commitDotPhresco_"+dynid).is(":checked");
+				repoInfo.splitTest = $("#commitTest_"+dynid).is(":checked");
 				commitdata.repoInfo = repoInfo;
 				
 				commitdata.appdirname = obj.parent("div").attr("appDirName");
 				action = "commitget";
 				commonVariables.hideloading = true;
 				self.projectListActionForScm(self.getActionHeader(commitdata, action), $('#commitLoading_'+dynid), function(response){
-					self.hideBtnLoading("button[name='commitbtn'][id='"+dynid+"']");
 					if (response.exception === null) {
 						$("#commit"+dynid).hide();
 					}
@@ -518,14 +513,14 @@ define([], function() {
 				}
 	      		$("#dummyCommit_"+dynamicId).css("height","0");
 	      		
-	      		$('#commit'+dynamicId).find(".repository_tabdiv").show();
-				$('#commit'+dynamicId).find("#myTabContent").show();
+	      		$('#commit'+dynamicId).find(".repository_tabdiv").hide();
+				$('#commit'+dynamicId).find("#myTabContent").hide();
 				$('.commitErr_'+dynamicId).hide();
 				
 				var responseData = response.data;
 				var srcRepoDetail = responseData.srcRepoDetail;
 				
-				if (srcRepoDetail !== undefined && srcRepoDetail !== null && !srcRepoDetail.repoExist) {
+				if (srcRepoDetail === undefined || srcRepoDetail === null || !srcRepoDetail.repoExist) {
 					$('.commitErr_'+dynamicId).show();
 				} else {
 					$('#commit'+dynamicId).find(".repository_tabdiv").show();
@@ -540,12 +535,15 @@ define([], function() {
 						}
 					});
 					
-					self.constructCommitableFiles(dynamicId, srcRepoDetail, $('.commitable_files_'+dynamicId), "src");
-					self.checkBoxEvent($('.commitParentChk[dynamicId='+dynamicId+']'), 'commitChildChk[dynamicId='+dynamicId+'][from=src]', $('input[name=commitbtn][id='+dynamicId+']'));
-					self.checkAllEvent('.commitParentChk[dynamicId='+dynamicId+']', 'commitChildChk[dynamicId='+dynamicId+'][from=src]', $('input[name=commitbtn][id='+dynamicId+']'));
+					if (srcRepoDetail.repoInfoFile !== undefined && srcRepoDetail.repoInfoFile !== null && srcRepoDetail.repoInfoFile.length > 0) {
+						$('.srcCommitableFiles').show();
+						self.constructCommitableFiles(dynamicId, srcRepoDetail, $('.commitable_files_'+dynamicId), "src");
+						self.checkBoxEvent($('.commitParentChk[dynamicId='+dynamicId+']'), 'commitChildChk[dynamicId='+dynamicId+'][from=src]', $('input[name=commitbtn][id='+dynamicId+']'));
+						self.checkAllEvent('.commitParentChk[dynamicId='+dynamicId+']', 'commitChildChk[dynamicId='+dynamicId+'][from=src]', $('input[name=commitbtn][id='+dynamicId+']'));
+					}
 					
 					var phrescoRepoDetail = responseData.phrescoRepoDetail;
-					if (phrescoRepoDetail !== null && phrescoRepoDetail !== undefined) {
+					if (phrescoRepoDetail !== null && phrescoRepoDetail !== undefined && responseData.splitPhresco) {
 						$("#commitDotPhresco_"+dynamicId).attr("disabled", false);
 						$('#phrCommitRepourl'+dynamicId).val(phrescoRepoDetail.repoUrl);
 						$("#phrCommitType_"+dynamicId).find('option').each(function(index, value){
@@ -554,12 +552,15 @@ define([], function() {
 							}
 						});
 						
-						self.constructCommitableFiles(dynamicId, phrescoRepoDetail, $('.phrCommitable_files_'+dynamicId), "phr");
-						self.checkBoxEvent($('.phrCommitParentChk[dynamicId='+dynamicId+']'), 'commitChildChk[dynamicId='+dynamicId+'][from=phr]', $('input[name=commitbtn][id='+dynamicId+']'));
-						self.checkAllEvent('.phrCommitParentChk[dynamicId='+dynamicId+']', 'commitChildChk[dynamicId='+dynamicId+'][from=phr]', $('input[name=commitbtn][id='+dynamicId+']'));
+						if (phrescoRepoDetail.repoInfoFile !== undefined && phrescoRepoDetail.repoInfoFile !== null && phrescoRepoDetail.repoInfoFile.length > 0) {
+							$('.phrCommitableFiles').show();
+							self.constructCommitableFiles(dynamicId, phrescoRepoDetail, $('.phrCommitable_files_'+dynamicId), "phr");
+							self.checkBoxEvent($('.phrCommitParentChk[dynamicId='+dynamicId+']'), 'commitChildChk[dynamicId='+dynamicId+'][from=phr]', $('input[name=commitbtn][id='+dynamicId+']'));
+							self.checkAllEvent('.phrCommitParentChk[dynamicId='+dynamicId+']', 'commitChildChk[dynamicId='+dynamicId+'][from=phr]', $('input[name=commitbtn][id='+dynamicId+']'));
+						}
 					}
 					var testRepoDetail = responseData.testRepoDetail;
-					if (testRepoDetail !== null && testRepoDetail !== undefined) {
+					if (testRepoDetail !== null && testRepoDetail !== undefined && responseData.splitTest) {
 						$("#commitTest_"+dynamicId).attr("disabled", false);
 						$('#testCommitRepourl'+dynamicId).val(testRepoDetail.repoUrl);
 						$("#testCommitType_"+dynamicId).find('option').each(function(index, value){
@@ -568,9 +569,12 @@ define([], function() {
 							}
 						});
 						
-						self.constructCommitableFiles(dynamicId, testRepoDetail, $('.testCommitable_files_'+dynamicId), "test");
-						self.checkBoxEvent($('.tesCommitParentChk[dynamicId='+dynamicId+']'), 'commitChildChk[dynamicId='+dynamicId+'][from=test]', $('input[name=commitbtn][id='+dynamicId+']'));
-						self.checkAllEvent('.tesCommitParentChk[dynamicId='+dynamicId+']', 'commitChildChk[dynamicId='+dynamicId+'][from=test]', $('input[name=commitbtn][id='+dynamicId+']'));
+						if (testRepoDetail.repoInfoFile !== undefined && testRepoDetail.repoInfoFile !== null && testRepoDetail.repoInfoFile.length > 0) {
+							$('.testCommitableFiles').show();
+							self.constructCommitableFiles(dynamicId, testRepoDetail, $('.testCommitable_files_'+dynamicId), "test");
+							self.checkBoxEvent($('.tesCommitParentChk[dynamicId='+dynamicId+']'), 'commitChildChk[dynamicId='+dynamicId+'][from=test]', $('input[name=commitbtn][id='+dynamicId+']'));
+							self.checkAllEvent('.tesCommitParentChk[dynamicId='+dynamicId+']', 'commitChildChk[dynamicId='+dynamicId+'][from=test]', $('input[name=commitbtn][id='+dynamicId+']'));
+						}
 					}
 				}
 				commonVariables.hideloading = false;
@@ -616,7 +620,7 @@ define([], function() {
 				
 				var responseData = response.data;
 				var srcRepoDetail = responseData.srcRepoDetail;
-				if (srcRepoDetail !== undefined && srcRepoDetail !== null && !srcRepoDetail.repoExist) {
+				if (srcRepoDetail === undefined || srcRepoDetail === null || !srcRepoDetail.repoExist) {
 					$('.updateErr_'+dynamicId).show();
 				} else {
 					self.showHideUpdateAppCtrls(srcRepoDetail.type, dynamicId);
@@ -632,7 +636,7 @@ define([], function() {
 					$('#svn_update'+dynamicId).find("#myTabContent").show();
 					
 					var phrescoRepoDetail = responseData.phrescoRepoDetail;
-					if (phrescoRepoDetail !== null && phrescoRepoDetail !== undefined) {
+					if (responseData.splitPhresco && phrescoRepoDetail !== null && phrescoRepoDetail !== undefined) {
 						$("#updateDotPhresco_"+dynamicId).attr("disabled", false);
 						$('#updatePhrescoRepourl'+dynamicId).val(phrescoRepoDetail.repoUrl);
 						$("#updatePhrescoType"+dynamicId).find('option').each(function(index, value){
@@ -642,7 +646,7 @@ define([], function() {
 						});
 					}
 					var testRepoDetail = responseData.testRepoDetail;
-					if (testRepoDetail !== null && testRepoDetail !== undefined) {
+					if (responseData.splitTest && testRepoDetail !== null && testRepoDetail !== undefined) {
 						$("#updateTest_"+dynamicId).attr("disabled", false);
 						$('#updateTestRepourl'+dynamicId).val(testRepoDetail.repoUrl);
 						$("#testUpdateType"+dynamicId).find('option').each(function(index, value){

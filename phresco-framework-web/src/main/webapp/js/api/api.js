@@ -209,6 +209,9 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				},
 				
 				complete : function(response, e ,xhr){
+					if (commonVariables.callLadda) {
+						Ladda.stopAll();
+					}
 					if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading){
 						commonVariables.hideloading = false;
 						commonVariables.loadingScreen.removeLoading();

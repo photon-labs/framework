@@ -5463,12 +5463,112 @@ textarea[name="regex"] {
 	margin-right: 15px;
 }
 
+.tree_view ul li span.badge {
+	background:none !important;	
+}
+
+.tree_view ul li span.badge a {
+	font-size:13px !important;
+	font-weight:normal !important;
+	color:#313131 !important;
+	text-decoration:none !important;
+	margin:3px 0px !important;
+}
+
+.tree_view ul li span.badge i {
+	height:13px !important;
+	line-height:20px !important;
+	margin-top:0 !important;
+	padding-right:4px !important;
+}
+
+.tree a {
+    display: inline;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 90%
+}
+
+.tree li {
+    list-style-type: none;
+    margin: 0;
+    padding: 4px 0 0 2px;
+    position: relative;
+}
+
+.tree li::before, .tree li::after {
+    content: '';
+    left: -15px;
+    position: absolute;
+    right: auto;
+}
+
+.tree li::before {
+    border-left: 1px solid #999;
+    bottom: 50px;
+    height: 100%;
+    top: -1px;
+    width: 1px;
+    -webkit-transition: "border-color 0.1s ease 0.1s";
+    -moz-transition: "border-color 0.1s ease 0.1s";
+    -o-transition: "border-color 0.1s ease 0.1s";
+    transition: "border-color 0.1s ease 0.1s"}
+.tree li::after {
+    border-top: 1px solid #999;
+    height: 20px;
+    top: 19px;
+    width: 17px;
+    -webkit-transition: "border-color 0.1s ease 0.1s";
+    -moz-transition: "border-color 0.1s ease 0.1s";
+    -o-transition: "border-color 0.1s ease 0.1s";
+    transition: "border-color 0.1s ease 0.1s"}
+.tree li span {
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border: 1px solid #999;
+    border-radius: 5px;
+    display: inline-block;
+    padding: 7px 5px;	
+	margin:1px 0px;
+    text-decoration: none;
+    -webkit-transition: color .2s ease .1s, background-color .2s ease .1s, border-color .3s ease .2s;
+    -moz-transition: color .2s ease .1s, background-color .2s ease .1s, border-color .3s ease .2s;
+    -o-transition: color .2s ease .1s, background-color .2s ease .1s, border-color .3s ease .2s;
+    transition: color .2s ease .1s, background-color .2s ease .1s, border-color .3s ease .2s;
+}
+.tree li.parent_li>span {
+    cursor: pointer;
+}
+.tree li.parent_li>span:hover {
+    background-color: #e3e3e3 !important;
+    border: 1px solid #9c9c9c;
+    color: #fff;
+}
+.tree li.parent_li>span:hover+ul li::after {
+    border-top-color: #9c9c9c;
+}
+.tree li.parent_li>span:hover+ul li::before {
+    border-left-color: #9c9c9c;
+}
+.tree li.parent_li>span:hover+ul li span {
+    background: #e3e3e3 !important;
+    border: 1px solid #9c9c9c;
+    color: #000;
+}
+.tree li:last-child::before {
+    height: 20px;
+}
+.tree>ul>li::before, .tree>ul>li::after {
+    border: 0;
+}
+
 .file_view {
 	width:76%;
 	height:670px;
 	border:1px solid #cecece;
 	float:left;
 	border-radius:6px;
+	background:#FFF;
 }
 
 .files_list {

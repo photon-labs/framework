@@ -293,7 +293,7 @@
 						</div>
 						<div class="tab-content hideContent" id="myTabContent">
 					  		<div id="commitSource{{id}}" class="tab-pane fade active in">
-								<table width="100%">
+								<table width="100%" class="hideContent srcCommitableFiles">
 									<thead>
 										<tr style="font-size: 12px;">
 											<th style="text-align: left;">
@@ -351,7 +351,7 @@
 							 	</table>
 						 	</div>
 						 	<div id="commitDotphresco{{id}}" class="tab-pane fade">
-						 		<table width="100%">
+						 		<table width="100%" class="hideContent phrCommitableFiles">
 									<thead>
 										<tr style="font-size: 12px;">
 											<th style="text-align: left;">
@@ -409,7 +409,7 @@
 							 	</table>
 							 </div>
 						 	<div id="commitTest{{id}}" class="tab-pane fade">
-						 		<table width="100%">
+						 		<table width="100%" class="hideContent testCommitableFiles">
 									<thead>
 										<tr style="font-size: 12px;">
 											<th style="text-align: left;">

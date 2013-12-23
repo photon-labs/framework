@@ -1,133 +1,11 @@
-<section class="content_main">
-	<div class="tree_view">
-		<ul class="tree">
-				<li>
-				  <a href="#" role="branch" class="tree-toggle" data-toggle="branch">https://insight.photoninfotech.com/svn/repo</a>
-				  <ul class="branch in">
-					  <li>
-						<a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">trunck</a>
-						  <ul class="branch">
-							<li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">Bootstrap-Tree</a>
-								<ul class="branch ul_margin">
-									<li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
-									<li><span class="build_repo_arrow"><a href="#">source</a></span></li>
-									<li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
-								</ul>
-							</li>
-							<li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">ajaxPager</a>
-								<ul class="branch ul_margin">
-									<li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
-									<li><span class="build_repo_arrow"><a href="#">source</a></span></li>
-									<li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
-								</ul>
-							</li>
-							<li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">CFQueryReader</a>
-								<ul class="branch ul_margin">
-									<li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
-									<li><span class="build_repo_arrow"><a href="#">source</a></span></li>
-									<li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
-								</ul>
-							</li>
-						  </ul>
-					  </li>
-					  <li>
-						<a href="#" role="branch" class="tree-toggle" data-toggle="branch">branches</a>
-						  <ul class="branch in">
-							<li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">agra</a>
-								<ul class="branch ul_margin">
-									<li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
-									<li><span class="build_repo_arrow"><a href="#">source</a></span></li>
-									<li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
-								</ul>
-							</li>
-							<li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">agra-macys</a>
-								<ul class="branch ul_margin">
-									<li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
-									<li><span class="build_repo_arrow"><a href="#">source</a></span></li>
-									<li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
-								</ul>
-							</li>
-							<li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">boston</a>
-								<ul class="branch ul_margin">
-									<li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
-									<li><span class="build_repo_arrow"><a href="#">source</a></span></li>
-									<li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
-								</ul>
-							</li>
-							<li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">release</a>
-								<ul class="branch ul_margin">
-									<li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
-									<li><span class="build_repo_arrow"><a href="#">source</a></span></li>
-									<li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
-								</ul>
-							</li>
-						  </ul>
-					  </li>
-					  <li>
-						<a href="#" role="branch" class="tree-toggle" data-toggle="branch">tags</a>
-						  <ul class="branch in">
-							<li>
-								<a href="#" role="branch" class="tree-toggle" data-toggle="branch">1501</a>
-									<ul class="branch in">
-										<li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">archtypes</a>
-											<ul class="branch ul_margin">
-												<li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
-												<li><span class="build_repo_arrow"><a href="#">source</a></span></li>
-												<li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
-											</ul>
-										</li>
-										<li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">commons</a>
-											<ul class="branch ul_margin">
-												<li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
-												<li><span class="build_repo_arrow"><a href="#">source</a></span></li>
-												<li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
-											</ul>
-										</li>
-										<li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">framework</a>
-											<ul class="branch ul_margin">
-												<li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
-												<li><span class="build_repo_arrow"><a href="#">source</a></span></li>
-												<li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
-											</ul>
-										</li>
-										<li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">libraries</a>
-											<ul class="branch ul_margin">
-												<li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
-												<li><span class="build_repo_arrow"><a href="#">source</a></span></li>
-												<li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
-											</ul>
-										</li>
-										<li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">phresco-pom</a>
-											<ul class="branch ul_margin">
-												<li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
-												<li><span class="build_repo_arrow"><a href="#">source</a></span></li>
-												<li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
-											</ul>
-										</li>
-										<li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">service</a>
-											<ul class="branch ul_margin">
-												<li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
-												<li><span class="build_repo_arrow"><a href="#">source</a></span></li>
-												<li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
-											</ul>
-										</li>
-										<li><a href="#" role="branch" class="tree-toggle closed" data-toggle="branch">plugins</a>
-											<ul class="branch ul_margin">
-												<li><span class="build_repo_arrow"><a href="#">framework</a></span></li>
-												<li><span class="build_repo_arrow"><a href="#">source</a></span></li>
-												<li><span class="build_repo_arrow"><a href="#">Reader</a></span></li>
-											</ul>
-										</li>
-									</ul>
-							   </li>
-						  </ul>
-					  </li>
-				  </ul>
-			 </li>
-	   </ul>   
-	</div>	
-	<div class="file_view">
-		<div class="bs-docs-example build_repo_tab">
+<div class="optiontitle">
+	<div class="unit_text">Build Repo</div>
+</div>
+<section class="features_content_main">
+	<div id="messagedisp" class="alert alert-block hideContent" style="text-align: center; margin: auto 0;">No builds available</div>
+	<div class="tree_view tree"></div>
+	<div class="file_view hideContent">
+		<div class="bs-docs-example build_repo_tab" id="infoTabDiv">
 			<ul class="nav nav-tabs" id="myTab">
 				<li class="active"><a data-toggle="tab" href="#maven_info">Maven Information</a></li>
 				<li><a data-toggle="tab" href="#artifact_info">Artifact Information</a></li>
@@ -162,23 +40,23 @@
 				<table class="build_repo_table">
 					<tr>
 						<td class="build_repo_font">Repository Path : </label></td>
-						<td>/archtypes/phresco-consumer-mobile-site-archtype/maven-metadata.xml</td>
+						<td id="repoPath"></td>
 					</tr>
 					<tr>
 						<td class="build_repo_font">Uploaded By : </label></td>
-						<td>admin</td>
+						<td id="uploader"></td>
 					</tr>
 					<tr>
 						<td class="build_repo_font">Size : </label></td>
-						<td>338 Bytes</td>
+						<td id="size"></td>
 					</tr>
 					<tr>
 						<td class="build_repo_font">Uploaded Date : </label></td>
-						<td>Thu August 01, 2013 15:02:55</td>
+						<td id="uploadedDate"></td>
 					</tr>
 					<tr>
 						<td class="build_repo_font">Last Modified : </label></td>
-						<td>Thu August 01, 2013 15:02:55</td>
+						<td id="modifiedDate"></td>
 					</tr>
 				</table>
 				<div class="flt_right">
@@ -187,6 +65,7 @@
 			</div>	
 		</div>		
 	</div>
-	<section class="content_end" style="display:none;">
-	</section>	
+</section>
+<section class="content_end hideContent">
+	<div class="msgdisplay error"></div>
 </section>
