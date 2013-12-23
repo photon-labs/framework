@@ -18,13 +18,20 @@
 package com.photon.phresco.framework.rest.api;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -39,6 +46,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -56,10 +64,15 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.maven.artifact.repository.metadata.Metadata;
+import org.apache.maven.artifact.repository.metadata.Snapshot;
+import org.apache.maven.artifact.repository.metadata.Versioning;
+import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
@@ -78,6 +91,9 @@ import org.sonatype.aether.RepositorySystemSession;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
+import org.sonatype.aether.resolution.ArtifactRequest;
+import org.sonatype.aether.resolution.ArtifactResolutionException;
+import org.sonatype.aether.resolution.ArtifactResult;
 import org.sonatype.aether.resolution.VersionRangeRequest;
 import org.sonatype.aether.resolution.VersionRangeResolutionException;
 import org.sonatype.aether.resolution.VersionRangeResult;
@@ -85,22 +101,35 @@ import org.sonatype.aether.util.artifact.DefaultArtifact;
 import org.sonatype.aether.util.layout.MavenDefaultLayout;
 import org.sonatype.aether.version.Version;
 import org.tmatesoft.svn.core.SVNAuthenticationException;
+import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.SVNNodeKind;
+import org.tmatesoft.svn.core.SVNURL;
+import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
+import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
+import org.tmatesoft.svn.core.internal.wc.DefaultSVNOptions;
+import org.tmatesoft.svn.core.io.SVNRepository;
+import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
+import org.tmatesoft.svn.core.wc.SVNClientManager;
+import org.tmatesoft.svn.core.wc.SVNWCUtil;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.google.gson.Gson;
 import com.perforce.p4java.exception.ConnectionException;
 import com.perforce.p4java.exception.RequestException;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.LockUtil;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ModuleInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.impl.ClientHelper;
 import com.photon.phresco.framework.impl.SCMManagerImpl;
 import com.photon.phresco.framework.model.RepoDetail;
 import com.photon.phresco.framework.model.RepoFileInfo;
@@ -109,12 +138,20 @@ import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.service.client.impl.ServiceManagerImpl;
 import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.MavenArtifactResolver;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Scm;
 import com.phresco.pom.util.PomProcessor;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientHandlerException;
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
+import com.sun.jersey.api.client.UniformInterfaceException;
+import com.sun.jersey.api.client.WebResource;
+import org.sonatype.nexus.rest.model.ArtifactInfoResource;
+import org.sonatype.nexus.rest.model.ArtifactInfoResourceResponse;
 
 
 /**
@@ -122,11 +159,11 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  */
 @Path("/repository")
 public class RepositoryService extends RestBase implements FrameworkConstants, ServiceConstants, ResponseCodes {
-	
+
 	String status;
 	String errorCode;
 	String successCode;
-	
+
 	/**
 	 * Import application from repository.
 	 *
@@ -171,7 +208,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			errorCode = PHR210028;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		}
 	}
 
@@ -218,17 +255,17 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		try {
 			ProjectInfo projectInfo = Utility.getProjectInfo(Utility.getProjectHome() + appDirName, "");
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
-			
+
 			RepoDetail phrescoRepoDetail = repoInfo.getPhrescoRepoDetail();
 			StringBuilder rootDir = new StringBuilder(Utility.getProjectHome()).append(appDirName);
 			File phrescoDir = new File(rootDir.toString(), appDirName + Constants.SUFFIX_PHRESCO);
 			if (repoInfo.isSplitPhresco() && phrescoRepoDetail != null) {
 				if (phrescoDir.exists() && phrescoDir.isDirectory()) {
-					
+
 					response = commitProject(phrescoRepoDetail, applicationInfo, displayName, unique_key, phrescoDir);
 				}
 			}
-			
+
 			RepoDetail srcRepoDetail = repoInfo.getSrcRepoDetail();
 			File srcDir = new File(rootDir.toString(), appDirName);
 			if (!srcDir.exists()) {
@@ -237,7 +274,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			if (srcRepoDetail != null) {
 				response = commitProject(srcRepoDetail, applicationInfo, displayName, unique_key, srcDir);
 			}
-			
+
 			RepoDetail testRepoDetail = repoInfo.getTestRepoDetail();
 			if (repoInfo.isSplitTest() && testRepoDetail != null) {
 				File pomFile = getPomFromWrokDir(applicationInfo);
@@ -251,17 +288,17 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			errorCode = PHR210028;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (PhrescoPomException e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210028;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		}
 		return response;
 	}
-	
+
 	private Response commitProject(RepoDetail repoDetail, ApplicationInfo applicationInfo, 
 			String displayName, String unique_key, File workingDir) {
 		Response response = null;
@@ -323,24 +360,24 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()),
 						null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			} else if (e.getLocalizedMessage().contains("OPTIONS request failed on")
 					|| (e.getLocalizedMessage().contains("PROPFIND") && e.getLocalizedMessage().contains(
-							"405 Method Not Allowed"))
+					"405 Method Not Allowed"))
 					|| e.getLocalizedMessage().contains("Repository moved temporarily to")) {
 				status = RESPONSE_STATUS_ERROR;
 				errorCode = PHR210038;
 				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()),
 						null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			} else {
 				status = RESPONSE_STATUS_ERROR;
 				errorCode = PHR210039;
 				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()),
 						null, status ,errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			}
 		}
 		status = RESPONSE_STATUS_SUCCESS;
@@ -387,7 +424,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			ApplicationInfo importProject = scmi.importProject(repoInfo, displayName, unique_key);
 			if(repoInfo.isSplitTest()) {
 				scmi.importTest(importProject, repoInfo);
-				}
+			}
 			if(repoInfo.isSplitPhresco()) {
 				scmi.importPhresco(importProject, repoInfo);
 			}
@@ -396,56 +433,56 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			successCode = PHR200017;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (SVNAuthenticationException e) {
 			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210023;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (SVNException e) {
 			if (e.getMessage().indexOf(SVN_FAILED) != -1) {
 				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210024;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			} else if (e.getMessage().indexOf(SVN_INTERNAL) != -1) {
 				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210025;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			} else {
 				status = RESPONSE_STATUS_ERROR;
 				errorCode = PHR210026;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			}
 		} catch (FileExistsException e) {
 			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210027;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (PhrescoException e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210026;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (Exception e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210026;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} finally {
 			try {
 				LockUtil.removeLock(unique_key);
 			} catch (PhrescoException e) {
-				
+
 			}
 		}
 	}
@@ -469,32 +506,32 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				successCode = PHR200017;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-						.build();
+				.build();
 			} else {
 				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210022;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			}
 		} catch (FileExistsException e) {
 			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210027;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (PhrescoException e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210026;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (Exception e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210026;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} finally {
 			try {
 				LockUtil.removeLock(unique_key);
@@ -522,13 +559,13 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				successCode = PHR200017;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-						.build();
+				.build();
 			} else {
 				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210022;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			}
 		} catch (Exception e) {
 			if ("Project already imported".equals(e.getLocalizedMessage())) {
@@ -536,19 +573,19 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				errorCode = PHR210027;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			} else if ("Failed to import project".equals(e.getLocalizedMessage())) {
 				status = RESPONSE_STATUS_ERROR;
 				errorCode = PHR210026;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			} else {
 				status = RESPONSE_STATUS_ERROR;
 				errorCode = PHR210026;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			}
 		} finally {
 			try {
@@ -557,7 +594,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			}
 		}
 	}
-	
+
 	/**
 	 * Fetch pop up values.
 	 *
@@ -570,9 +607,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	@Path("/browseBuildRepo")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getFolderStructure(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_PROJECTID) String projectId,
-			@QueryParam(REST_QUERY_MODULE_NAME) String moduleName) {
-	
+			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_PROJECTID) String projectId) throws PhrescoException {
 		Response response = null;
 		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
 		List<String> urls = new ArrayList<String>();
@@ -584,30 +619,77 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				com.photon.phresco.commons.model.RepoInfo repo = serviceManager.getCustomer(customerId).getRepoInfo();
 				String releaseRepoURL = repo.getReleaseRepoURL();
 				String snapshotRepoURL = repo.getSnapshotRepoURL();
+
 				List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
 				for (ApplicationInfo applicationInfo : appInfos) {
-					Artifact artifact = readArtifact(applicationInfo, moduleName);
-					if (StringUtils.isNotEmpty(releaseRepoURL)) {
-						urls.add(releaseRepoURL);
-					} 
-					if (StringUtils.isNotEmpty(snapshotRepoURL)) {
-						urls.add(snapshotRepoURL);
+					DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+					DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+					Document doc = docBuilder.newDocument();
+					Element rootElement = doc.createElement(ROOT);
+					doc.appendChild(rootElement);
+
+					Element rootItem = doc.createElement(ITEM);
+					rootItem.setAttribute(TYPE, FOLDER);
+					rootItem.setAttribute(PATH, "");
+					rootItem.setAttribute(NAME, ROOT_ITEM);
+
+					rootElement.appendChild(rootItem);
+
+					Element applicationItem = doc.createElement(ITEM);
+					applicationItem.setAttribute(TYPE, FOLDER);
+					applicationItem.setAttribute(PATH, "");
+					applicationItem.setAttribute(NAME, applicationInfo.getAppDirName());
+
+					rootItem.appendChild(applicationItem);
+
+					List<ModuleInfo> modules = applicationInfo.getModules();
+					if (CollectionUtils.isNotEmpty(modules)) {
+						for (ModuleInfo module : modules) {
+							Artifact artifact = readArtifact(applicationInfo.getAppDirName(), "", module.getCode());
+							String moduleName = module.getCode();
+
+							Element moduleItem = doc.createElement(ITEM);
+							moduleItem.setAttribute(TYPE, FOLDER);
+							moduleItem.setAttribute(NAME, moduleName);
+							applicationItem.appendChild(moduleItem);
+
+							if (StringUtils.isNotEmpty(releaseRepoURL)) {
+								urls.add(releaseRepoURL);
+							} 
+							if (StringUtils.isNotEmpty(snapshotRepoURL)) {
+								urls.add(snapshotRepoURL);
+							}
+							doc = constructDomSource(artifact, applicationInfo.getAppDirName(), urls, moduleName, doc, moduleItem, rootElement, rootItem);
+						}
+						documents.add(convertDocumentToString(doc));
+					} else {
+						Artifact artifact = readArtifact(applicationInfo.getAppDirName(), "", "");
+						if (StringUtils.isNotEmpty(releaseRepoURL)) {
+							urls.add(releaseRepoURL);
+						} 
+						if (StringUtils.isNotEmpty(snapshotRepoURL)) {
+							urls.add(snapshotRepoURL);
+						}
+						document = constructDomSource(artifact, applicationInfo.getAppDirName(), urls, "", doc, applicationItem, rootElement, rootItem);
+						documents.add(convertDocumentToString(document));
 					}
-					document = constructDomSource(artifact, applicationInfo.getAppDirName(), urls);
-					documents.add(convertDocumentToString(document));
 				}
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, documents, status, successCode);
 				response = Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 				.build();
 			}
-		}  catch (PhrescoException e) {
-			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610020);
-			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		} catch (DOMException e) {
+			throw new PhrescoException(e);
+		} catch (ParserConfigurationException e) {
+			throw new PhrescoException(e);
 		}
+
 		return response;
 	}
-	
-	
+
 	/**
 	 * Fetch pop up values.
 	 *
@@ -620,8 +702,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	@GET
 	@Path("/browseGitRepo")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getGitSourceRepo(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_PROJECTID) String projectId,
+	public Response getGitSourceRepo(@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_PROJECTID) String projectId,
 			@QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
 		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
 		List<String> documents = new ArrayList<String>();
@@ -645,14 +726,14 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				for (Ref ref : remoteCall) {
 					branchList.add(ref.getName());
 				}
-				
+
 				ListTagCommand tagList = git.tagList();
 				Map<String, Ref> tags = tagList.getRepository().getTags();
 				Set<Entry<String,Ref>> entrySet = tags.entrySet();
 				for (Entry<String, Ref> entry : entrySet) {
 					tagLists.add(entry.getKey());
 				}
-				
+
 				StoredConfig config = git.getRepository().getConfig();
 				Set<String> subsections = config.getSubsections(REMOTE);
 				for (String string : subsections) {
@@ -661,14 +742,13 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 						url = urlPath;
 					}
 				}
-				document = constructTree(branchList, tagLists, url);
+				document = constructGitTree(branchList, tagLists, url);
 				documents.add(convertDocumentToString(document));
 			}
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, documents, status, successCode);
 			response = Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 			.build();
 		}  catch (PhrescoException e) {
-			e.printStackTrace();
 			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610020);
 			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (IOException e) {
@@ -678,8 +758,221 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		}
 		return response;
 	}
-	
-	private static Document constructTree(List<String> branchList,	List<String> tagLists, String url) {
+
+
+	/**
+	 * Fetch pop up values.
+	 *
+	 * @param appDirName the app dir name
+	 * @param action the action
+	 * @param userId the user id
+	 * @return the response
+	 * @throws PhrescoException 
+	 */
+
+	@GET
+	@Path("/browseSvnRepo")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSvnSourceRepo(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+			@QueryParam(REST_QUERY_PROJECTID) String projectId,
+			@QueryParam(REST_QUERY_MODULE_NAME) String moduleName, @QueryParam(USERNAME) String username, @QueryParam(REQ_PASSWORD) String password,
+			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) throws PhrescoException {
+		String pomPath  = "";
+		Document document = null;
+		List<String> documents = new ArrayList<String>();
+		Response response = null;
+		Map<String, List<String>> paths = new HashMap<String, List<String>>();
+		List<String> branches = new ArrayList<String>();
+		List<String> trunks = new ArrayList<String>();
+		List<String> tags = new ArrayList<String>();
+		try {
+			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			for (ApplicationInfo applicationInfo : appInfos) {
+				String url = readSvnUrl(applicationInfo, moduleName, "");		
+				if (url.endsWith(TRUNK)) {
+					url = url.substring(0, url.lastIndexOf("/")+1);
+				}
+				ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
+				String trunkUrl = url + TRUNK;
+				List<String> trunksList = getSvnData(trunkUrl, trunks, username, password);
+				String branchUrl = url + BRANCHES;
+				List<String> branchesList = getSvnData(branchUrl, branches, username, password);
+				String tagUrl = url + TAGS;
+				List<String> tagsList = getSvnData(tagUrl, tags, username, password);
+				paths.put(TRUNK, trunksList);
+				paths.put(BRANCHES, branchesList);
+				paths.put(TAGS, tagsList);
+
+				document = constructSvnTree(paths,url);
+				documents.add(convertDocumentToString(document));
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, documents, status, successCode);
+				response = Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+				.build();
+			}
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Fetch pop up values.
+	 *
+	 * @param appDirName the app dir name
+	 * @param action the action
+	 * @param userId the user id
+	 * @return the response
+	 */
+
+	@GET
+	@Path("/artifactInfo")
+	@Produces(MediaType.APPLICATION_JSON)
+	@SuppressWarnings({"unchecked","rawtypes"})
+	public Response getArtifactInfo(@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_NATURE) String nature, @QueryParam(REST_QUERY_VERSION) String version) throws PhrescoException {
+		List<String> urls = new ArrayList<String>();
+		Map<String, Object> infoMap = new HashMap<String, Object>();
+		ResponseInfo<Map<String, Object>> responseData = new ResponseInfo<Map<String, Object>>();
+		RemoteRepository repo = null;
+		Response response = null;
+		ArtifactInfoResource infos = null;
+		Artifact artifact = null;
+		String artifactPath = "";
+		try {
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			if (serviceManager != null) {
+				com.photon.phresco.commons.model.RepoInfo repos = serviceManager.getCustomer(customerId).getRepoInfo();
+				artifact = readArtifact(appDirName, version, "");
+				MavenDefaultLayout defaultLayout = new MavenDefaultLayout();
+				URI paths = defaultLayout.getPath(artifact);
+				MetadataXpp3Reader reader = new MetadataXpp3Reader();
+				if (nature.equalsIgnoreCase(SNAPSHOT)) {
+					repo = new RemoteRepository("", DEFAULT, repos.getSnapshotRepoURL());
+					artifactPath =(repo.getUrl() + repo.getId() + paths).replace("\\", "/");
+					String path = artifactPath.substring(0, artifactPath.lastIndexOf("/"));
+					URL metadataPath = new URL(path + MVN_METADATA_XML);
+					InputStream inputStream = metadataPath.openStream();
+					Metadata metadata = reader.read(inputStream);
+
+					version = version.substring(0, version.indexOf(HYPEN_CHAR)+1) +  metadata.getVersioning().getSnapshot().getTimestamp();
+					artifactPath = artifactPath.substring(0, artifactPath.lastIndexOf(HYPEN_CHAR));
+					artifactPath = artifactPath.substring(0, artifactPath.lastIndexOf(HYPEN_CHAR) + 1);
+					artifactPath =  artifactPath + version + PRIORITY_JAR ;
+
+				} else {
+					repo = new RemoteRepository("", DEFAULT, repos.getReleaseRepoURL());
+					artifactPath =(repo.getUrl() + repo.getId() + paths).replace("\\", "/");
+				}
+				Client client = ClientHelper.createClient();
+				WebResource webResource = client.resource(artifactPath + DESCRIBE_INFO);
+				ClientResponse clientResponse = webResource.get(ClientResponse.class);
+				String info = (String)clientResponse.getEntity(String.class);
+				ArtifactInfoResourceResponse artifactInfo = new Gson().fromJson(info, ArtifactInfoResourceResponse.class);
+				infos = artifactInfo.getData();
+				infoMap.put(ARTIFACT_INFO, infos);
+				infoMap.put(MAVEN_INFO, artifact);
+			}
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, infoMap, status, successCode);
+			response = Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
+		} catch (MalformedURLException e) {
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610020);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (UniformInterfaceException e) {
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610020);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (ClientHandlerException e) {
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610020);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (IOException e) {
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610020);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (XmlPullParserException e) {
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610020);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		}
+		return response;
+	}
+
+	/**
+	 * @param appDirName
+	 * @param version
+	 * @return
+	 * @throws PhrescoException
+	 */
+	@GET
+	@Path("/download")
+	@Produces(MediaType.MULTIPART_FORM_DATA)
+	public Response downloadService(@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam(REST_QUERY_USERID) String userId,  @QueryParam(REST_QUERY_NATURE) String nature,  @QueryParam(REST_QUERY_VERSION) String version) throws PhrescoException {
+		Artifact artifact = null;
+		RemoteRepository repo = null;
+		InputStream inputStream = null;
+		Response response = null;
+		String fileName = "";
+		File artifactFile = null;
+		List<Artifact> artifacts = new ArrayList<Artifact>();
+		ResponseInfo<InputStream> responseData = new ResponseInfo<InputStream>();
+		try {
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			RepositorySystem system = newRepositorySystem();
+			RepositorySystemSession session = newRepositorySystemSession(system, null, Utility.getLocalRepoPath());
+			String url = "";
+			if (serviceManager != null) {
+				com.photon.phresco.commons.model.RepoInfo repos = serviceManager.getCustomer(customerId).getRepoInfo();
+				if (nature.equalsIgnoreCase(RELEASE)) {
+					url = repos.getReleaseRepoURL();
+				} else {
+					url = repos.getSnapshotRepoURL();
+				}
+				artifact = readArtifact(appDirName, version, "");
+				artifacts.add(artifact);
+				MavenArtifactResolver artifactResolver = new MavenArtifactResolver();
+				URL artifacturl = MavenArtifactResolver.resolveSingleArtifact(url, "", "", artifacts);
+				artifactFile = new File(artifacturl.toURI());
+				inputStream = new FileInputStream(artifactFile);
+			}
+			return Response.status(Status.OK).entity(inputStream).header("Content-Disposition", "attachment; filename=" + artifactFile.getName()).build();
+
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
+
+
+	private List<String> getSvnData(String url, List<String> paths, String username, String password) throws PhrescoException {
+		try {
+			getSVNClientManager(username, password);
+			SVNRepository repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(url));
+			ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(username, password);
+			repository.setAuthenticationManager(authManager);
+			SVNNodeKind nodeKind = repository.checkPath("", -1);
+			if (nodeKind == SVNNodeKind.NONE) {
+				return paths;
+			}
+			Collection entries = repository.getDir("", -1, null, (Collection) null);
+			SVNURL svnURL = getSVNURL(url);
+			Iterator iterator = entries.iterator();
+			if (entries.size() != 0) {
+				while (iterator.hasNext()) {
+					SVNDirEntry entry = (SVNDirEntry) iterator.next();
+					if ((entry.getKind() == SVNNodeKind.DIR)) {
+						SVNURL svnnewURL = svnURL.appendPath("/" + entry.getName(), true);
+						String urls = svnnewURL.toString();
+						String path = urls.substring(urls.lastIndexOf("/")+1, urls.length());
+						paths.add(path);
+					}
+				}
+			}
+		} catch (SVNException e) {
+			throw new PhrescoException(e);
+		}
+		return paths;
+	}
+
+
+	private static Document constructGitTree(List<String> branchList,	List<String> tagLists, String url) throws PhrescoException {
 		try {
 			DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
@@ -693,13 +986,13 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			rootItem.setAttribute(NAME, ROOT_ITEM);
 
 			rootElement.appendChild(rootItem);
-			
+
 			Element urlItem = doc.createElement(ITEM);
 			urlItem.setAttribute(TYPE, FOLDER);
 			urlItem.setAttribute(NAME, url);
-			
+
 			rootItem.appendChild(urlItem);
-			
+
 			Element branchItem = doc.createElement(ITEM);
 			branchItem.setAttribute(TYPE, FOLDER);
 			branchItem.setAttribute(NAME, BRANCHES);
@@ -729,30 +1022,124 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 
 			return doc;
 		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		}
-		return null;
 	}
-	
-	
-	
-	private Artifact readArtifact(ApplicationInfo appInfo, String moduleName) {
+
+
+	private static Document constructSvnTree(Map<String , List<String>> list,  String url) throws PhrescoException {
+		try {
+			DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+			Document doc = documentBuilder.newDocument();
+
+			Element rootElement = doc.createElement(ROOT);
+			doc.appendChild(rootElement);
+
+			Element rootItem = doc.createElement(ITEM);
+			rootItem.setAttribute(TYPE, FOLDER);
+			rootItem.setAttribute(NAME, ROOT_ITEM);
+
+			rootElement.appendChild(rootItem);
+
+			Element urlItem = doc.createElement(ITEM);
+			urlItem.setAttribute(TYPE, FOLDER);
+			urlItem.setAttribute(NAME, url);
+
+			rootItem.appendChild(urlItem);
+
+			Element branchItem = doc.createElement(ITEM);
+			branchItem.setAttribute(TYPE, FOLDER);
+			branchItem.setAttribute(NAME, BRANCHES);
+			urlItem.appendChild(branchItem);
+
+			Element tagItem = doc.createElement(ITEM);
+			tagItem.setAttribute(TYPE, FOLDER);
+			tagItem.setAttribute(NAME, TAGS);
+			urlItem.appendChild(tagItem);
+
+
+			Element trunkItem = doc.createElement(ITEM);
+			trunkItem.setAttribute(TYPE, FOLDER);
+			trunkItem.setAttribute(NAME, TRUNK);
+			urlItem.appendChild(trunkItem);
+
+			List<String> trunkList = list.get(TRUNK);
+			for (String trunk: trunkList) {
+				Element trunkItems = doc.createElement(ITEM);
+				trunkItems.setAttribute(NAME, trunk);
+				trunkItem.appendChild(trunkItems);
+			}
+
+			List<String> branchList = list.get(BRANCHES);
+			for (String branch: branchList) {
+				Element branchItems = doc.createElement(ITEM);
+				branchItems.setAttribute(NAME, branch);
+				branchItem.appendChild(branchItems);
+			}
+
+			List<String> tagList = list.get(TAGS);
+			for (String tag: tagList) {
+				Element tagItems = doc.createElement(ITEM);
+				tagItems.setAttribute(NAME, tag);
+				tagItem.appendChild(tagItems);
+			}
+
+			return doc;
+		} catch (ParserConfigurationException e) {
+			throw new PhrescoException(e);
+		}
+	}
+
+	private Artifact readArtifact(String appDirName, String version, String moduleName) throws PhrescoException {
 		Artifact artifact = null;
 		try {
-			String appDirPath = Utility.getProjectHome() + File.separator + appInfo.getAppDirName();
-			File pomFile = Utility.getpomFileLocation(appDirPath, moduleName);
+			String appDirPath = Utility.getProjectHome() + File.separator + appDirName;
+			ProjectInfo projectInfo = Utility.getProjectInfo(appDirPath, "");
+			File sourceFolderLocation = Utility.getSourceFolderLocation(projectInfo, appDirPath, moduleName);
+			File pomFile = new File (sourceFolderLocation, POM_FILE);
 			if (pomFile.exists()) {
 				PomProcessor processor = new PomProcessor(pomFile);
-				String version = "[," + processor.getVersion() + "]";
-				artifact = new DefaultArtifact(processor.getGroupId(), processor.getArtifactId(), "", processor.getPackage(), version);
+				if (StringUtils.isNotEmpty(version)) {
+					artifact = new DefaultArtifact(processor.getGroupId(), processor.getArtifactId(), "", processor.getPackage(), version);
+				} else {
+					artifact = new DefaultArtifact(processor.getGroupId(), processor.getArtifactId(), "", "", "");
+				}
 			}
 		} catch (PhrescoPomException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		} catch (PhrescoException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		}
 		return artifact;
 	}
+
+	private String readSvnUrl(ApplicationInfo appInfo,String moduleName, String appDirName) throws PhrescoException {
+		String connectionPath= "";
+		String appDirPath = "";
+		try {
+			if (StringUtils.isNotEmpty(appDirName)) {
+				appDirPath = Utility.getProjectHome() + File.separator + appDirName;
+			} else if (appInfo != null && appInfo.getModules() != null)  {
+				appDirPath = Utility.getProjectHome() + File.separator + appInfo.getRootModule();
+			} else if (appInfo != null &&  appInfo.getModules() == null) {
+				appDirPath = Utility.getProjectHome() + File.separator + appInfo.getAppDirName();
+			}
+			File pomFile = Utility.getpomFileLocation(appDirPath, moduleName);
+			if (pomFile.exists()) {
+				if (pomFile.exists()) {
+					PomProcessor processor = new PomProcessor(pomFile);
+					connectionPath = processor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
+				}
+			}
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+		return connectionPath;
+	}
+
 
 	private Response importPerforceApplication(String type, RepoDetail repodetail, String displayName) throws Exception {
 		SCMManagerImpl scmi = new SCMManagerImpl();
@@ -766,46 +1153,46 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				successCode = PHR200017;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-						.build();
+				.build();
 			} else {
 				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210022;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			}
 		} catch (FileExistsException e) {
 			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210027;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (PhrescoException e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210026;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (ConnectionException e) {
 			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210049;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} 
 		catch (RequestException e) {
 			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210050;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} 
 		catch (Exception e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210026;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} finally {
 			try {
 				LockUtil.removeLock(unique_key);
@@ -813,7 +1200,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			}
 		}
 	}
-	
+
 	private Response importTfsApplication(String type, RepoInfo repodetail, String displayName) throws Exception {
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		ResponseInfo responseData = new ResponseInfo();
@@ -826,13 +1213,13 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				successCode = PHR200017;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-						.build();
+				.build();
 			} else {
 				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210022;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			}
 		} catch (Exception e) {
 			if (PROJECT_ALREADY_IMPORTED.equals(e.getLocalizedMessage())) {
@@ -840,19 +1227,19 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				errorCode = PHR210027;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			} else if ("Failed to import project".equals(e.getLocalizedMessage())) {
 				status = RESPONSE_STATUS_ERROR;
 				errorCode = PHR210026;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			} else {
 				status = RESPONSE_STATUS_ERROR;
 				errorCode = PHR210026;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			}
 		} finally {
 			try {
@@ -861,7 +1248,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			}
 		}
 	}
-	
+
 	/**
 	 * Update git project.
 	 *
@@ -877,9 +1264,9 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		try {
 			//To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), FrameworkConstants.UPDATE, displayName, uniqueKey)), true);
-			
+
 			scmi.updateProject(repodetail, new File(""));
-			
+
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200018;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
@@ -890,57 +1277,57 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			errorCode = PHR210024;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (TransportException e) {
 			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210024;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (SVNAuthenticationException e) {
 			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210023;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (SVNException e) {
 			if (e.getMessage().indexOf(SVN_FAILED) != -1) {
 				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210024;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			} else if (e.getMessage().indexOf(SVN_INTERNAL) != -1) {
 				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210025;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			} else {
 				status = RESPONSE_STATUS_ERROR;
 				errorCode = PHR210028;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			}
 		} catch (FileExistsException e) {
 			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210027;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (PhrescoException e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210028;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (Exception e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210028;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} finally {
 			try {
 				LockUtil.removeLock(uniqueKey);
@@ -974,7 +1361,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			String splitTestFolderName = "";
 			File splitPhrescoDir = new File(workingDir.toString(), appDirName + Constants.SUFFIX_PHRESCO);
 			File splitSrcDir = new File(workingDir.toString(), appDirName);
-			
+
 			File pomFile = null;
 			if (splitPhrescoDir.exists()) {
 				if (StringUtils.isNotEmpty(applicationInfo.getPhrescoPomFile())) {
@@ -994,14 +1381,14 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				splitSrcFolderName = pomProcessor.getProperty(Constants.POM_PROP_KEY_SPLIT_SRC_DIR);
 				splitTestFolderName = pomProcessor.getProperty(Constants.POM_PROP_KEY_SPLIT_TEST_DIR);
 			}
-			
+
 			if (repoInfo.isSplitPhresco() && phrescoRepoDetail != null && splitPhrescoDir.exists()) {
 				scmi.updateProject(phrescoRepoDetail, splitPhrescoDir);
 			}
 			if (repoInfo.isSplitTest() && testRepoDetail != null && StringUtils.isNotEmpty(splitTestFolderName)) {
 				scmi.updateProject(srcRepoDetail, new File(workingDir.toString(), splitTestFolderName));
 			}
-			
+
 			if (srcRepoDetail != null) {
 				if (splitSrcDir.exists()) {
 					workingDir.append(File.separator).append(splitSrcFolderName);
@@ -1020,63 +1407,63 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			errorCode = PHR210024;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (TransportException e) {
 			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210024;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (SVNAuthenticationException e) {
 			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210023;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (SVNException e) {
 			if (e.getMessage().indexOf(SVN_FAILED) != -1) {
 				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210024;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			} else if (e.getMessage().indexOf(SVN_INTERNAL) != -1) {
 				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210025;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			} else if (e.getMessage().indexOf(SVN_IS_NOT_WORKING_COPY) != -1) {
 				status = RESPONSE_STATUS_ERROR;
 				errorCode = PHR210029;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			} else {
 				status = RESPONSE_STATUS_ERROR;
 				errorCode = PHR210028;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			}
 		} catch (FileExistsException e) {
 			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210027;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (PhrescoException e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210028;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (Exception e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210028;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} finally {
 			try {
 				LockUtil.removeLock(uniqueKey);
@@ -1098,7 +1485,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		ResponseInfo responseData = new ResponseInfo();
 		try {
-	    	//To generate the lock for the particular operation
+			//To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), FrameworkConstants.UPDATE, displayName, uniqueKey)), true);
 			scmi.updateProject(repodetail, new File(""));
 			status = RESPONSE_STATUS_SUCCESS;
@@ -1112,20 +1499,20 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				errorCode = PHR210030;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			} else {
 				status = RESPONSE_STATUS_ERROR;
 				errorCode = PHR210028;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			}
 		} catch (Exception e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210028;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} finally {
 			try {
 				LockUtil.removeLock(uniqueKey);
@@ -1134,12 +1521,12 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			}
 		}
 	}
-	
+
 	private Response updatePerforceProject(String type, ApplicationInfo applicationInfo, RepoDetail repodetail, String uniqueKey, String displayName) {
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		ResponseInfo responseData = new ResponseInfo();
 		try {
-	    	//To generate the lock for the particular operation
+			//To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), FrameworkConstants.UPDATE, displayName, uniqueKey)), true);
 			scmi.updateProject(repodetail, new File(""));
 			status = RESPONSE_STATUS_SUCCESS;
@@ -1153,32 +1540,32 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				errorCode = PHR210030;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			} else {
 				status = RESPONSE_STATUS_ERROR;
 				errorCode = PHR210028;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			}
 		} catch (ConnectionException e) {
 			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210049;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (RequestException e) {
 			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210050;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (Exception e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210028;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} finally {
 			try {
 				LockUtil.removeLock(uniqueKey);
@@ -1221,13 +1608,13 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()),
 						null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			} else {
 				status = RESPONSE_STATUS_ERROR;
 				errorCode = PHR210031;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			}
 		} finally {
 			try {
@@ -1255,7 +1642,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				}
 				//To generate the lock for the particular operation
 				LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), COMMIT, displayName, uniqueKey)), true);
-				
+
 				scmi.commitSpecifiedFiles(listModifiedFiles, repodetail.getUserName(), repodetail.getPassword(),
 						repodetail.getCommitMessage());
 			}
@@ -1269,7 +1656,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			errorCode = PHR210033;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} finally {
 			try {
 				LockUtil.removeLock(uniqueKey);
@@ -1305,20 +1692,20 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				errorCode = PHR210034;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			} else {
 				status = RESPONSE_STATUS_ERROR;
 				errorCode = PHR210033;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), COMMIT_PROJECT_FAIL, null);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				"*").build();
 			}
 		} catch (Exception e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210033;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} finally {
 			try {
 				LockUtil.removeLock(uniqueKey);
@@ -1355,7 +1742,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			errorCode = PHR210033;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} finally {
 			try {
 				LockUtil.removeLock(uniqueKey);
@@ -1401,9 +1788,9 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			String srcRepoURL = processor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
 			String dotPhresoRepoURL = processor.getProperty(Constants.POM_PROP_KEY_PHRESCO_REPO_URL);
 			String testRepoURL = processor.getProperty(Constants.POM_PROP_KEY_TEST_REPO_URL);
-			
+
 			StringBuilder rootDir = new StringBuilder(Utility.getProjectHome()).append(appDirName);
-			
+
 			RepoInfo repoInfo = new RepoInfo();
 			File srcDir = new File(rootDir.toString(), appDirName);
 			if (!srcDir.exists()) {
@@ -1413,14 +1800,14 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				RepoDetail srcRepoDetail = createRepoDetail(srcRepoURL, userId, action, srcDir);
 				repoInfo.setSrcRepoDetail(srcRepoDetail);
 			}
-			
+
 			File phrescoDir = new File(rootDir.toString(), appDirName + Constants.SUFFIX_PHRESCO);
 			if (StringUtils.isNotEmpty(dotPhresoRepoURL) && phrescoDir.exists()) {
 				RepoDetail phrescoRepoDetail = createRepoDetail(dotPhresoRepoURL, userId, action, phrescoDir);
 				repoInfo.setPhrescoRepoDetail(phrescoRepoDetail);
 				repoInfo.setSplitPhresco(true);
 			}
-			
+
 			String splitTestDirName = processor.getProperty(Constants.POM_PROP_KEY_SPLIT_TEST_DIR);
 			File testDir = new File(rootDir.toString(), splitTestDirName);
 			if (testDir.exists() && StringUtils.isNotEmpty(testRepoURL)) {
@@ -1428,7 +1815,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				repoInfo.setTestRepoDetail(testRepoDetail);
 				repoInfo.setSplitTest(true);
 			}
-			
+
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200021;
 			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, null,
@@ -1439,16 +1826,16 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			errorCode = PHR210036;
 			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (PhrescoPomException e) {
 			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210036;
 			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		}
 	}
-	
+
 	private RepoDetail createRepoDetail(String repoUrl, String userId, String action, File workingDir) throws PhrescoException {
 		RepoDetail repodetail = new RepoDetail();
 		boolean setRepoExistForCommit = false;
@@ -1472,7 +1859,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		}
 		return repodetail;
 	}
-	
+
 	/**
 	 * Repo exist check for update.
 	 *
@@ -1491,7 +1878,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			String srcRepoURL = processor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
 			String dotPhresoRepoURL = processor.getProperty(Constants.POM_PROP_KEY_PHRESCO_REPO_URL);
 			String testRepoURL = processor.getProperty(Constants.POM_PROP_KEY_TEST_REPO_URL);
-			
+
 			RepoInfo repoInfo = new RepoInfo();
 			RepoDetail sourceRepoDetail = new RepoDetail();
 			if (StringUtils.isNotEmpty(srcRepoURL)) {
@@ -1510,7 +1897,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				repoInfo.setTestRepoDetail(testRepoDetail);
 				repoInfo.setSplitTest(true);
 			}
-			
+
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200022;
 			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, null, repoInfo, status, successCode);
@@ -1520,23 +1907,23 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			errorCode = PHR210036;
 			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (PhrescoPomException e) {
 			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210036;
 			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		}
 	}
-	
+
 	private void fillRepoDetail(RepoDetail repoDetail, String url, String userId, boolean exist) {
 		repoDetail.setUserName(userId);
 		repoDetail.setRepoUrl(url);
 		repoDetail.setRepoExist(exist);
 		repoDetail.setType(getRepoType(url));
 	}
-	
+
 	private File getPomFromWrokDir(ApplicationInfo appInfo) {
 		String appDirName = appInfo.getAppDirName();
 		StringBuilder filePath = new StringBuilder(Utility.getProjectHome()).append(appDirName);
@@ -1552,7 +1939,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			filePath.append(File.separator).append(appDirName).append(File.separator).append(appInfo.getPomFile());
 			return new File(filePath.toString());
 		}
-		
+
 		return new File(filePath.toString(), appInfo.getPomFile());
 	}
 
@@ -1587,7 +1974,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @throws PhrescoException the phresco exception
 	 */
 	private boolean checkGitProject(File  workingDir, boolean setRepoExistForCommit)
-			throws PhrescoException {
+	throws PhrescoException {
 		setRepoExistForCommit = true;
 		String url = "";
 		InitCommand initCommand = Git.init();
@@ -1685,47 +2072,30 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			throw new PhrescoException(e);
 		}
 	}
-	
-	private static Document constructDomSource(Artifact artifactInfo, String appDirName, List<String> urls) throws PhrescoException {
+
+	private static Document constructDomSource(Artifact artifacts, String appDirName, List<String> urls, String moduleName, Document doc, Element appendItem, Element rootElement, Element rootItem) throws PhrescoException {
+		Artifact artifact = null;
+		List<UUID> randomIds = new ArrayList<UUID>();
 		try {
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-
-			Document doc = docBuilder.newDocument();
-			Element rootElement = doc.createElement(ROOT);
-			doc.appendChild(rootElement);
-
-			Element rootItem = doc.createElement(ITEM);
-			rootItem.setAttribute(TYPE, FOLDER);
-			rootItem.setAttribute(PATH, "");
-			rootItem.setAttribute(NAME, ROOT_ITEM);
-
-			Element applicationItem = doc.createElement(ITEM);
-			applicationItem.setAttribute(TYPE, FOLDER);
-			applicationItem.setAttribute(PATH, "");
-			applicationItem.setAttribute(NAME, appDirName);
-
 			Element snapshot = doc.createElement(ITEM);
 			snapshot.setAttribute(TYPE, FOLDER);
 			snapshot.setAttribute(PATH, "");
 			snapshot.setAttribute(NAME, SNAPSHOT);
-			applicationItem.appendChild(snapshot);
+			appendItem.appendChild(snapshot);
 
 
 			Element release = doc.createElement(ITEM);
 			release.setAttribute(TYPE, FOLDER);
 			release.setAttribute(PATH, "");
 			release.setAttribute(NAME, RELEASE);
-			applicationItem.appendChild(release);
-
-			rootElement.appendChild(rootItem);
-
-			rootItem.appendChild(applicationItem);
+			appendItem.appendChild(release);
 
 			RepositorySystem system = newRepositorySystem();
-			RepositorySystemSession session = newRepositorySystemSession( system );
-			Artifact artifact = new DefaultArtifact(artifactInfo.getGroupId() + ":" + artifactInfo.getArtifactId()+ ":" + "[,)");
+			artifact = new DefaultArtifact(artifacts.getGroupId() + ":" + artifacts.getArtifactId()+ ":" + "[,)");
 			for (String url : urls) {
+				UUID randomUUID = UUID.randomUUID();
+				randomIds.add(randomUUID);
+				RepositorySystemSession session = newRepositorySystemSession( system , randomUUID, "");
 				RemoteRepository repo =  new RemoteRepository("", DEFAULT, url);
 				VersionRangeRequest rangeRequest = new VersionRangeRequest();
 				rangeRequest.setArtifact(artifact);
@@ -1735,20 +2105,24 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				if (versions.size() > 10) {
 					versions = versions.subList(versions.size() - 10, versions.size());
 				}
-				constructArtifactItem(versions, applicationItem, artifact, repo, doc);
-				clearCache(artifact);
+				constructArtifactItem(versions, artifact, repo, doc, appDirName, moduleName);
+				clearCache(randomUUID);
 			}
-			return doc;
+		} catch (DOMException e) {
+			throw new PhrescoException(e);
 		} catch (VersionRangeResolutionException e) {
 			throw new PhrescoException(e);
-		} catch (ParserConfigurationException e) {
-			throw new PhrescoException(e);
-		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
+		} finally {
+			if (CollectionUtils.isNotEmpty(randomIds)) {
+				for (UUID uuid : randomIds) {
+					clearCache(uuid);
+				}
+			}
 		}
+		return doc;
 	}
 
-	private static void constructArtifactItem(List<Version> versions, Element applicationItem, Artifact artifactInfo, RemoteRepository repo, Document doc) throws PhrescoException {
+	private static void constructArtifactItem(List<Version> versions, Artifact artifactInfo, RemoteRepository repo, Document doc, String appDirName, String moduleName) throws PhrescoException {
 		try {
 			Element versionItem = null;
 			Element element =  null;
@@ -1765,7 +2139,8 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 					Element jarItem = doc.createElement(ITEM);
 					jarItem.setAttribute(TYPE, FILE);
 					jarItem.setAttribute(NAME, fileName);
-					jarItem.setAttribute(PATH, artifactPath);
+					jarItem.setAttribute(REQ_APP_DIR_NAME, appDirName);
+					jarItem.setAttribute(MODULE_NAME, moduleName);
 
 					versionItem = doc.createElement(ITEM);
 					versionItem.setAttribute(TYPE, FOLDER);
@@ -1773,8 +2148,9 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 					versionItem.setAttribute(PATH, artifactPath);
 
 					versionItem.appendChild(jarItem);
-					
+
 					if (version.contains(SNAPSHOT)) {
+						jarItem.setAttribute(NATURE, SNAPSHOT);
 						XPath xpath = XPathFactory.newInstance().newXPath();
 						String expression = SNAPSHOT_ITEM;
 						Node node = (Node) xpath.compile(expression).evaluate(doc, XPathConstants.NODE);
@@ -1783,6 +2159,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 							element.appendChild(versionItem);
 						}
 					} else {
+						jarItem.setAttribute(NATURE, RELEASE);
 						XPath xpath = XPathFactory.newInstance().newXPath();
 						String expression = RELEASE_ITEM;
 						Node node = (Node) xpath.compile(expression).evaluate(doc, XPathConstants.NODE);
@@ -1799,7 +2176,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			throw new PhrescoException(e);
 		}
 	}
-	
+
 	private static RepositorySystem newRepositorySystem() throws PhrescoException {
 		try {
 			return new DefaultPlexusContainer().lookup(RepositorySystem.class);
@@ -1810,40 +2187,57 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		}
 	}
 
-	private static RepositorySystemSession newRepositorySystemSession(RepositorySystem system) {
+	private static RepositorySystemSession newRepositorySystemSession(RepositorySystem system, UUID randomUUID, String localPath) {
 		MavenRepositorySystemSession session = new MavenRepositorySystemSession();
-		LocalRepository localRepo = new LocalRepository(Utility.getPhrescoTemp() + File.separator + REPO);
+		LocalRepository localRepo = null;
+		if (randomUUID != null) {
+			localRepo = new LocalRepository(Utility.getPhrescoTemp() + File.separator + randomUUID);
+		} else if (StringUtils.isNotEmpty(localPath)) {
+			localRepo = new LocalRepository(localPath);
+		}
 		session.setLocalRepositoryManager(system.newLocalRepositoryManager(localRepo));
 		return session;
 	}
 
-	private static void clearCache(Artifact artifact) {
-		String groupIds = artifact.getGroupId();
-		StringBuffer pathBuilder = new StringBuffer();
-		String[] pathSplited = groupIds.split(SEPARATOR_CONSTANT);
-		for (String path : pathSplited) {
-			pathBuilder.append(path);
-			pathBuilder.append(File.separator);
-		}
-		File path = new File(Utility.getPhrescoTemp() + File.separator + REPO + File.separator + pathBuilder + artifact.getArtifactId() + File.separator +  "maven-metadata-.xml");
-		if (path.exists()) {
-			boolean delete = path.delete();
+	private static void clearCache(UUID randomUUID)  throws PhrescoException {
+		try {
+			File path = new File(Utility.getPhrescoTemp() + File.separator + randomUUID);
+			if (path.exists()) {
+				FileUtils.deleteDirectory(path);
+			}
+		} catch (IOException e) {
+			throw new PhrescoException(e);
 		}
 	}
-	
-	  private static String convertDocumentToString(Document doc) {
-	        TransformerFactory tf = TransformerFactory.newInstance();
-	        Transformer transformer;
-	        try {
-	            transformer = tf.newTransformer();
-	            StringWriter writer = new StringWriter();
-	            transformer.transform(new DOMSource(doc), new StreamResult(writer));
-	            String output = writer.getBuffer().toString();
-	            return output;
-	        } catch (TransformerException e) {
-	            e.printStackTrace();
-	        }
-	        return null;
-	    }
-	
+
+	private static String convertDocumentToString(Document doc) throws PhrescoException {
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Transformer transformer;
+		try {
+			transformer = tf.newTransformer();
+			StringWriter writer = new StringWriter();
+			transformer.transform(new DOMSource(doc), new StreamResult(writer));
+			String output = writer.getBuffer().toString();
+			return output;
+		} catch (TransformerException e) {
+			throw new PhrescoException(e);
+		}
+	}
+
+	private static SVNClientManager getSVNClientManager(String userName, String password) {
+		DAVRepositoryFactory.setup();
+		DefaultSVNOptions options = new DefaultSVNOptions();
+		return SVNClientManager.newInstance(options, userName, password);
+	}
+
+	private static SVNURL getSVNURL(String repoURL) throws PhrescoException { 
+		SVNURL svnurl = null;
+		try {
+			svnurl = SVNURL.parseURIEncoded(repoURL);
+		} catch (SVNException e) {
+			throw new PhrescoException(e);
+		}
+		return svnurl;
+	}
+
 }

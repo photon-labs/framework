@@ -2102,18 +2102,24 @@ public interface FrameworkConstants {
 	     *  Version Range service constants
 	     */
 	    
-	    String ITEM  		= "item";
-	    String TYPE  		= "type";
-	    String FOLDER 		= "folder";
-	    String SNAPSHOT     = "SNAPSHOT";
-	    String RELEASE      = "RELEASE";
-	    String ROOT_ITEM 	= "rootItem";
-	    String ROOT 		= "root";
-	    String DEFAULT 		= "default";
-	    String SNAPSHOT_ITEM = "//item[@name='SNAPSHOT']";
-	    String RELEASE_ITEM   = "//item[@name='RELEASE']";
+	    String ITEM  			= "item";
+	    String TYPE  			= "type";
+	    String FOLDER 			= "folder";
+	    String SNAPSHOT     	= "SNAPSHOT";
+	    String RELEASE      	= "RELEASE";
+	    String ROOT_ITEM 		= "rootItem";
+	    String ROOT 			= "root";
+	    String DEFAULT 			= "default";
+	    String SNAPSHOT_ITEM 	= "//item[@name='SNAPSHOT']";
+	    String RELEASE_ITEM   	= "//item[@name='RELEASE']";
 	    String SEPARATOR_CONSTANT = "\\.";
-	    String BRANCHES     = "Branches";
-	    String TAGS         = "Tags";
-
+	    String BRANCHES     	= "branches";
+	    String TAGS				= "tags";
+	    String NATURE			= "nature";
+	    String MVN_METADATA_XML	= "/maven-metadata.xml";
+	    String PRIORITY_JAR     = "-1.jar";
+	    String HYPEN_CHAR 		= "-";
+	    String DESCRIBE_INFO    = "?describe=info";
+	    String ARTIFACT_INFO    = "artifactInfo";
+	    String MAVEN_INFO       = "mavenInfo";
 }

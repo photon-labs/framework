@@ -831,6 +831,21 @@
 			<artifactId>ojdbc14</artifactId>
 			<version>1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.sonatype.nexus</groupId>
+			<artifactId>nexus-indexer-lucene-rest-api</artifactId>
+			<version>1.7.2</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.sonatype.nexus</groupId>
+					<artifactId>nexus-indexer-lucene-app</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.sonatype.nexus</groupId>
+					<artifactId>nexus-rest-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
      </dependencies>
 	 
