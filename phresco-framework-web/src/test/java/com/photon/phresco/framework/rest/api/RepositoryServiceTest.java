@@ -215,7 +215,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	
 	@Test
 	public void  buildRepoTest() throws Exception {
-		Response response = repositoryservice.getFolderStructure(customerId, userId, projectId, "");
+		Response response = repositoryservice.getFolderStructure(customerId, userId, projectId);
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
