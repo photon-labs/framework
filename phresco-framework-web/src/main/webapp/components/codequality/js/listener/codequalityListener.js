@@ -289,6 +289,9 @@ define([], function() {
 		
 		onProjects : function() {
 			var self = this, validateAgainst ;
+			$("#codereportTypes").click(function() {
+				$('#code_popup').hide();
+			});
 			$("#reportUl li[name=selectType]").click(function() {
 				$('.dyn_popup').hide();
 				validateAgainst = $(this).attr('key');

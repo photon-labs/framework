@@ -214,9 +214,10 @@ define(["testResult/listener/testResultListener"], function() {
 				var target = $('#' + dynClass);
 				console.info(target);
 				$('.features_content_main').prepend(target);
-				$('.content_title').css('z-index', '0');
-				$('.manualTemp').css('z-index', '0');
-				$('.header_section').css('z-index', '0');
+				$('.content_title').css('z-index', '6');
+				$('.header_section').css('z-index', '7');
+				$('.footer_section').css('z-index', '4');
+				$('.manualTemp').css('z-index', '1');
 				var testsuiteName = commonVariables.testSuiteName;
 				$('#testSuiteId').val(testsuiteName);
 			});
