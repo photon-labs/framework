@@ -15,6 +15,7 @@ import org.xml.sax.SAXException;
 import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
@@ -31,9 +32,18 @@ public class WarProjectModuleImpl implements DynamicParameter, Constants {
 	public PossibleValues getValues(Map<String, Object> paramMap)
 			throws IOException, ParserConfigurationException, SAXException,
 			ConfigurationException, PhrescoException {
+		String rootModulePath = "";
+		String subModuleName = "";
 		PossibleValues possibleValues = new PossibleValues();
 		ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
-		List<String> warProjectModules = getWarProjectModules(applicationInfo.getAppDirName());
+		String rootModule = (String) paramMap.get(KEY_ROOT_MODULE);
+		if (StringUtils.isNotEmpty(rootModule)) {
+			rootModulePath = Utility.getProjectHome() + rootModule;
+			subModuleName = applicationInfo.getAppDirName();
+		} else {
+			rootModulePath = Utility.getProjectHome() + applicationInfo.getAppDirName();
+		}
+		List<String> warProjectModules = getWarProjectModules(rootModulePath, subModuleName, applicationInfo);
 		if(warProjectModules != null) {
 			for (String module : warProjectModules) {
 				Value value = new Value();
@@ -45,17 +55,21 @@ public class WarProjectModuleImpl implements DynamicParameter, Constants {
 		return null;
 	}
 
-	private StringBuilder getPomPath(String appDirName) {
+/*	private StringBuilder getPomPath(String appDirName) {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 		 builder.append(appDirName);
 		 builder.append(File.separator);
 		 builder.append(POM_NAME);
 		return builder;
 	}
-	
-	protected List<String> getProjectModules(String appDirName) throws PhrescoException {
+	*/
+	protected List<String> getProjectModules(String rootModulePath, String subModuleName, ApplicationInfo applicationInfo) throws PhrescoException {
     	try {
-    		 StringBuilder builder = getPomPath(appDirName);
+    		ProjectInfo info = Utility.getProjectInfo(rootModulePath, subModuleName);
+    		File srcFolderLocation = Utility.getSourceFolderLocation(info, rootModulePath, subModuleName);
+    		 StringBuilder builder = new StringBuilder(srcFolderLocation.toString());
+    		 builder.append(File.separator);
+             builder.append(applicationInfo.getPomFile());
      		File pomPath = new File(builder.toString());
      		if(pomPath.exists()) {
 	     		PomProcessor processor = new PomProcessor(pomPath);
@@ -78,24 +92,24 @@ public class WarProjectModuleImpl implements DynamicParameter, Constants {
     	}
     	return null;
     }
-	
+/*	
 	private StringBuilder getProjectHome(String appDirName) {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 		builder.append(appDirName);
 		return builder;
-	}
+	}*/
 	
-	protected List<String> getWarProjectModules(String appDirName) throws PhrescoException {
+	protected List<String> getWarProjectModules(String rootModulePath, String subModuleName, ApplicationInfo applicationInfo) throws PhrescoException {
     	try {
-			List<String> projectModules = getProjectModules(appDirName);
+			List<String> projectModules = getProjectModules(rootModulePath, subModuleName, applicationInfo);
 			List<String> warModules = new ArrayList<String>(5);
 			if (CollectionUtils.isNotEmpty(projectModules)) {
 				for (String projectModule : projectModules) {
-					StringBuilder pathBuilder = getProjectHome(appDirName);
+					ProjectInfo info = Utility.getProjectInfo(rootModulePath, projectModule);
+		    		File srcFolderLocation = Utility.getSourceFolderLocation(info, rootModulePath, projectModule);
+					StringBuilder pathBuilder = new StringBuilder(srcFolderLocation.toString());
 					pathBuilder.append(File.separatorChar);
-					pathBuilder.append(projectModule);
-					pathBuilder.append(File.separatorChar);
-					pathBuilder.append(POM_NAME);
+					pathBuilder.append(applicationInfo.getPomFile());
 					PomProcessor processor = new PomProcessor(new File(pathBuilder.toString()));
 					String packaging = processor.getModel().getPackaging();
 					if (StringUtils.isNotEmpty(packaging) && FrameworkConstants.WAR.equalsIgnoreCase(packaging)) {

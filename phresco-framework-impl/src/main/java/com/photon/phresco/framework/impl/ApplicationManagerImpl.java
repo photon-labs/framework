@@ -256,7 +256,6 @@ public class ApplicationManagerImpl implements ApplicationManager {
 		 S_LOGGER.debug("Entering Method ApplicationManagerImpl.deleteBuildInfos(ProjectInfo project, int[] buildNumbers)");
 
 		 String buildInfoFile = getBuildInfoFilePath(rootModulePath, subModule);
-		 
 		 List<BuildInfo> totalBuildInfos = getBuildInfos(new File(buildInfoFile));
 		 List<BuildInfo> buildInfos = new CopyOnWriteArrayList<BuildInfo>();
 		 BuildInfo buildInfo;
@@ -309,16 +308,16 @@ public class ApplicationManagerImpl implements ApplicationManager {
 	 }
 	 
 	 private String getBuildInfoHome(String rootModulePath, String subModuleName) throws PhrescoException {
-			File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
+			File pomFile = Utility.getPomFileLocation(rootModulePath, subModuleName);
 			StringBuilder buildInfoFilePath = new StringBuilder(pomFile.getParent());
-			buildInfoFilePath.append(FrameworkConstants.BUILD_DIR).append(File.separator);
+			buildInfoFilePath.append(File.separator).append(FrameworkConstants.BUILD_DIR).append(File.separator);
 		 return buildInfoFilePath.toString();
 	 }
 	 
 	 private String getBuildInfoFilePath(String rootModulePath, String subModuleName) throws PhrescoException {
-			File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
+			File pomFile = Utility.getPomFileLocation(rootModulePath, subModuleName);
 			StringBuilder buildInfoFilePath = new StringBuilder(pomFile.getParent());
-			buildInfoFilePath.append(FrameworkConstants.BUILD_DIR).append(File.separator).append(FrameworkConstants.BUILD_INFO_FILE_NAME);
+			buildInfoFilePath.append(File.separator).append(FrameworkConstants.BUILD_DIR).append(File.separator).append(FrameworkConstants.BUILD_INFO_FILE_NAME);
 		 return buildInfoFilePath.toString();
 	 }
 	 

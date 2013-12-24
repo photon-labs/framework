@@ -17,21 +17,25 @@
  */
 package com.photon.phresco.framework.param.impl;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.collections.*;
-import org.sonatype.aether.util.*;
-import org.xml.sax.*;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.xml.sax.SAXException;
 
-import com.photon.phresco.api.*;
-import com.photon.phresco.commons.model.*;
-import com.photon.phresco.exception.*;
+import com.photon.phresco.api.DynamicParameter;
+import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.BuildInfo;
+import com.photon.phresco.exception.ConfigurationException;
+import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.*;
-import com.photon.phresco.util.*;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
+import com.photon.phresco.util.Utility;
 
 public class IosShowFunctionalDeviceIdValidationImpl implements DynamicParameter {
 	private static final String DEVICE_DEPLOY = "deviceDeploy";
@@ -43,15 +47,25 @@ public class IosShowFunctionalDeviceIdValidationImpl implements DynamicParameter
 	
     @Override
     public PossibleValues getValues(Map<String, Object> map) throws IOException, ParserConfigurationException, SAXException, ConfigurationException, PhrescoException {
-        PossibleValues possibleValues = new PossibleValues();
+    	String rootModulePath = "";
+		String subModuleName = "";
+    	PossibleValues possibleValues = new PossibleValues();
         ApplicationInfo applicationInfo = (ApplicationInfo) map.get(KEY_APP_INFO);
-        String buildInfoPath = getBuildInfoPath(applicationInfo.getAppDirName()).toString();
+        String rootModule = (String) map.get(KEY_ROOT_MODULE);
+        if (StringUtils.isNotEmpty(rootModule)) {
+			rootModulePath = Utility.getProjectHome() + rootModule;
+			subModuleName = applicationInfo.getAppDirName();
+		} else {
+			rootModulePath = Utility.getProjectHome() + applicationInfo.getAppDirName();
+		}
+        
+        String buildInfoPath = getBuildInfoPath(rootModulePath, subModuleName).toString();
         List<BuildInfo> buildInfos = Utility.getBuildInfos(new File(buildInfoPath));
         if (buildInfos != null) {
             for (BuildInfo buildInfo : buildInfos) {
                 Value value = new Value();
                 value.setValue(Integer.toString(buildInfo.getBuildNo()));
-                String dependency = getDependency(buildInfo.getBuildNo(), applicationInfo.getAppDirName());
+                String dependency = getDependency(buildInfo.getBuildNo(),rootModulePath, subModuleName);
                 if (!StringUtils.isEmpty(dependency)) {
                 	value.setDependency(dependency);
                 }
@@ -61,9 +75,9 @@ public class IosShowFunctionalDeviceIdValidationImpl implements DynamicParameter
         return possibleValues;
     }
     
-	private String getDependency(int buildNumber, String appDirName) throws PhrescoException {
+	private String getDependency(int buildNumber, String rootModulePath, String subModuleName) throws PhrescoException {
 		try {
-            BuildInfo buildInfo = Utility.getBuildInfo(buildNumber, getBuildInfoPath(appDirName).toString());
+            BuildInfo buildInfo = Utility.getBuildInfo(buildNumber, getBuildInfoPath(rootModulePath ,subModuleName).toString());
             if (buildInfo == null) {
             	throw new PhrescoException("Build info is not found for build number " + buildNumber);
             }
@@ -86,9 +100,9 @@ public class IosShowFunctionalDeviceIdValidationImpl implements DynamicParameter
 		return "";
 	}
 
-	private StringBuilder getBuildInfoPath(String projectDirectory) {
-	    StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-	    builder.append(projectDirectory);
+	private StringBuilder getBuildInfoPath(String rootModulePath, String subModuleName) throws PhrescoException {
+		File pomFileLocation = Utility.getPomFileLocation(rootModulePath, subModuleName);
+	    StringBuilder builder = new StringBuilder(pomFileLocation.getParent());
 	    builder.append(File.separator);
 	    builder.append(DO_NOT_CHECKIN_DIR);
 	    builder.append(File.separator);

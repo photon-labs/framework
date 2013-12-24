@@ -65,7 +65,7 @@ public class IpaDownloadService extends RestBase implements ServiceConstants, Fr
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 			String ipaFileName = applicationInfo.getName();
-			File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
+			File pomFile = Utility.getPomFileLocation(rootModulePath, subModuleName);
 			String buildName = getBuildName(rootModulePath,subModuleName, buildNumber).getDeployLocation();
 //			String workingDirectory = FrameworkServiceUtil.getApplicationHome(appDirName);
 			String buildNameSubstring = buildName.substring(0, buildName.lastIndexOf( File.separator));

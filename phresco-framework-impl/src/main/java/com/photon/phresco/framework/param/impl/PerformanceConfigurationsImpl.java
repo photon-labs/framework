@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
 import com.photon.phresco.api.ConfigManager;
@@ -50,8 +51,15 @@ public class PerformanceConfigurationsImpl implements DynamicParameter, Constant
     	String testAgainst = (String) paramMap.get(KEY_TEST_AGAINST);
     	String src = (String) paramMap.get("src");
     	String configurationType = "";
-    	boolean isMultiModule = (Boolean) paramMap.get(KEY_MULTI_MODULE);
+    	String rootModulePath = "";
+		String subModuleName = "";
     	String rootModule = (String) paramMap.get(KEY_ROOT_MODULE);
+    	if (StringUtils.isNotEmpty(rootModule)) {
+			rootModulePath = Utility.getProjectHome() + rootModule;
+			subModuleName = applicationInfo.getAppDirName();
+		} else {
+			rootModulePath = Utility.getProjectHome() + applicationInfo.getAppDirName();
+		}
     	if (Constants.SETTINGS_TEMPLATE_SERVER.equalsIgnoreCase(testAgainst)) {
     		configurationType = Constants.SETTINGS_TEMPLATE_SERVER;
     	} else if (Constants.SETTINGS_TEMPLATE_WEBSERVICE.equalsIgnoreCase(testAgainst) || "js".equalsIgnoreCase(testAgainst) || "js".equalsIgnoreCase(src)) {
@@ -71,8 +79,7 @@ public class PerformanceConfigurationsImpl implements DynamicParameter, Constant
     	
     	//To search for db type in phresco-env-config.xml if it doesn't exist in settings.xml
     	if (CollectionUtils.isEmpty(possibleValues.getValue())) {
-    		String appDirectory = applicationInfo.getAppDirName();
-    		String configPath = getConfigurationPath(appDirectory, isMultiModule, rootModule).toString();
+    		String configPath = getConfigurationPath(rootModulePath, subModuleName).toString();
         	configManager = new ConfigManagerImpl(new File(configPath)); 
         	configurations = configManager.getConfigurations(envName, configurationType);
         	for (Configuration configuration : configurations) {
@@ -85,14 +92,9 @@ public class PerformanceConfigurationsImpl implements DynamicParameter, Constant
     	return possibleValues;
 	}
 	
-	private StringBuilder getConfigurationPath(String projectDirectory, boolean isMultiModule, String rootModule) {
-		 StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		 if (isMultiModule) {
-			 builder.append(rootModule).append(File.separator);
-		 }
-		 builder.append(projectDirectory);
-		 builder.append(File.separator);
-		 builder.append(DOT_PHRESCO_FOLDER);
+	private StringBuilder getConfigurationPath(String rootModulePath, String subModuleName) throws PhrescoException {
+		 String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModuleName);
+		 StringBuilder builder = new StringBuilder(dotPhrescoFolderPath);
 		 builder.append(File.separator);
 		 builder.append(CONFIGURATION_INFO_FILE);
 		 return builder;

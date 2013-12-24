@@ -94,7 +94,7 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
 			
-			File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
+			File pomFile = Utility.getPomFileLocation(rootModulePath, subModuleName);
 			String archivePath = pomFile.getParent() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator;
 			if ((FrameworkConstants.ALL).equals(fromPage)) {
 				pdfLOC = archivePath + CUMULATIVE + File.separator + reportFileName;
@@ -156,7 +156,7 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 			} else {
 				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
-			File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
+			File pomFile = Utility.getPomFileLocation(rootModulePath, subModuleName);
 			String archivePath = pomFile.getParent() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator;
 			if ((FrameworkConstants.ALL).equals(fromPage)) {
 				pdfLOC = archivePath + CUMULATIVE + File.separator + reportFileName;
@@ -225,7 +225,7 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
 			
-			File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
+			File pomFile = Utility.getPomFileLocation(rootModulePath, subModuleName);
 			existingPDFs = getExistingPDFs(fromPage, pomFile.getParent());
 				
 			// is sonar report available

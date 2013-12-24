@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.api.DynamicParameter;
@@ -43,11 +44,19 @@ public class DynamicDataBaseImpl implements DynamicParameter, Constants {
 	public PossibleValues getValues(Map<String, Object> paramMap) throws PhrescoException {
 		PossibleValues possibleValues = new PossibleValues();
 		try {
+			String rootModulePath = "";
+			String subModuleName = "";
 			ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
 			String envName = (String) paramMap.get(KEY_ENVIRONMENT);
-			boolean isMultiModule = (Boolean) paramMap.get(KEY_MULTI_MODULE);
         	String rootModule = (String) paramMap.get(KEY_ROOT_MODULE);
         	String projectCode = (String) paramMap.get(KEY_PROJECT_CODE);
+        	if (StringUtils.isNotEmpty(rootModule)) {
+    			rootModulePath = Utility.getProjectHome() + rootModule;
+    			subModuleName = applicationInfo.getAppDirName();
+    		} else {
+    			rootModulePath = Utility.getProjectHome() + applicationInfo.getAppDirName();
+    		}
+        	
 			//To search for db type in settings.xml
 			String settingsPath = getSettingsPath(projectCode);
 			ConfigManager configManager = new ConfigManagerImpl(new File(settingsPath)); 
@@ -62,8 +71,7 @@ public class DynamicDataBaseImpl implements DynamicParameter, Constants {
 			
 			//To search for db type in phresco-env-config.xml if it doesn't exist in settings.xml
 			if (CollectionUtils.isEmpty(possibleValues.getValue())) {
-				String appDirectory = applicationInfo.getAppDirName();
-				String configPath = getConfigurationPath(appDirectory, isMultiModule, rootModule).toString();
+				String configPath = getConfigurationPath(rootModulePath, subModuleName).toString();
 				configManager = new ConfigManagerImpl(new File(configPath)); 
 				configurations = configManager.getConfigurations(envName, Constants.SETTINGS_TEMPLATE_DB);
 				if(CollectionUtils.isNotEmpty(configurations)) {
@@ -93,14 +101,9 @@ public class DynamicDataBaseImpl implements DynamicParameter, Constants {
 		return possibleValues;
     }
     
-    private StringBuilder getConfigurationPath(String projectDirectory, boolean isMultiModule, String rootModule) {
-		 StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		 if (isMultiModule) {
-			 builder.append(rootModule).append(File.separator);
-		 }
-		 builder.append(projectDirectory);
-		 builder.append(File.separator);
-		 builder.append(DOT_PHRESCO_FOLDER);
+    private StringBuilder getConfigurationPath(String rootModulePath, String subModuleName) throws PhrescoException {
+    	 String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModuleName);
+    	 StringBuilder builder = new StringBuilder(dotPhrescoFolderPath);
 		 builder.append(File.separator);
 		 builder.append(CONFIGURATION_INFO_FILE);
 		 

@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
 import com.photon.phresco.api.ConfigManager;
@@ -45,9 +46,18 @@ public class EnvironmentDataBasesImpl implements DynamicParameter, Constants {
 
 	@Override
 	public PossibleValues getValues(Map<String, Object> paramMap) throws IOException, ParserConfigurationException, SAXException, ConfigurationException, PhrescoException {
+		String rootModulePath = "";
+		String subModuleName = "";
 		PossibleValues possibleValues = new PossibleValues();
     	ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
+    	String rootModule = (String) paramMap.get(KEY_ROOT_MODULE);
     	String envName = (String) paramMap.get(KEY_ENVIRONMENT);
+    	if (StringUtils.isNotEmpty(rootModule)) {
+			rootModulePath = Utility.getProjectHome() + rootModule;
+			subModuleName = applicationInfo.getAppDirName();
+		} else {
+			rootModulePath = Utility.getProjectHome() + applicationInfo.getAppDirName();
+		}
     	//To search for db type in settings.xml
     	ConfigManager configManager = new ConfigManagerImpl(new File(getSettingsPath())); 
     	List<Configuration> configurations = configManager.getConfigurations(envName, Constants.SETTINGS_TEMPLATE_DB);
@@ -59,8 +69,7 @@ public class EnvironmentDataBasesImpl implements DynamicParameter, Constants {
     	
     	//To search for db type in phresco-env-config.xml if it doesn't exist in settings.xml
     	if (CollectionUtils.isEmpty(possibleValues.getValue())) {
-    		String appDirectory = applicationInfo.getAppDirName();
-    		String configPath = getConfigurationPath(appDirectory).toString();
+    		String configPath = getConfigurationPath(rootModulePath, subModuleName).toString();
         	configManager = new ConfigManagerImpl(new File(configPath)); 
         	configurations = configManager.getConfigurations(envName, Constants.SETTINGS_TEMPLATE_DB);
         	for (Configuration configuration : configurations) {
@@ -73,11 +82,9 @@ public class EnvironmentDataBasesImpl implements DynamicParameter, Constants {
     	return possibleValues;
     }
     
-    private StringBuilder getConfigurationPath(String projectDirectory) {
-		 StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		 builder.append(projectDirectory);
-		 builder.append(File.separator);
-		 builder.append(DOT_PHRESCO_FOLDER);
+    private StringBuilder getConfigurationPath(String rootModulePath, String subModuleName) throws PhrescoException {
+    	String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModuleName);
+		 StringBuilder builder = new StringBuilder(dotPhrescoFolderPath);
 		 builder.append(File.separator);
 		 builder.append(CONFIGURATION_INFO_FILE);
 		 

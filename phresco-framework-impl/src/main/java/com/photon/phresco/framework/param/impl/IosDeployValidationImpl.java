@@ -17,23 +17,26 @@
  */
 package com.photon.phresco.framework.param.impl;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.collections.*;
-import org.sonatype.aether.util.*;
-import org.xml.sax.*;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.xml.sax.SAXException;
 
-import com.photon.phresco.api.*;
-import com.photon.phresco.commons.model.*;
-import com.photon.phresco.exception.*;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.*;
+import com.photon.phresco.api.DynamicParameter;
+import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.BuildInfo;
+import com.photon.phresco.exception.ConfigurationException;
+import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.*;
-import com.photon.phresco.plugins.util.*;
-import com.photon.phresco.util.*;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
+import com.photon.phresco.plugins.util.MojoProcessor;
+import com.photon.phresco.util.Utility;
 
 public class IosDeployValidationImpl implements DynamicParameter {
 	private String BUILD_INFO_FILE_NAME = "build.info";
@@ -45,15 +48,26 @@ public class IosDeployValidationImpl implements DynamicParameter {
 	public PossibleValues getValues(Map<String, Object> paramsMap)
 			throws IOException, ParserConfigurationException, SAXException,
 			ConfigurationException, PhrescoException {
+		String rootModulePath = "";
+		String subModuleName = "";
 		PossibleValues possibleValues = new PossibleValues();
+		
 		try {
             ApplicationInfo applicationInfo = (ApplicationInfo) paramsMap.get(KEY_APP_INFO);
             String buildNumber = (String) paramsMap.get(KEY_BUILD_NO);
+            String rootModule = (String) paramsMap.get(KEY_ROOT_MODULE);
+            if (StringUtils.isNotEmpty(rootModule)) {
+    			rootModulePath = Utility.getProjectHome() + rootModule;
+    			subModuleName = applicationInfo.getAppDirName();
+    		} else {
+    			rootModulePath = Utility.getProjectHome() + applicationInfo.getAppDirName();
+    		}
+            
             if (StringUtils.isEmpty(buildNumber)) {
             	throw new PhrescoException("Build number is empty ");
             }
             
-            BuildInfo buildInfo = Utility.getBuildInfo(Integer.parseInt(buildNumber), getBuildInfoPath(applicationInfo.getAppDirName()).toString());
+            BuildInfo buildInfo = Utility.getBuildInfo(Integer.parseInt(buildNumber), getBuildInfoPath(rootModulePath,subModuleName).toString());
             if (buildInfo == null) {
             	throw new PhrescoException("Build info is not found for build number " + buildNumber);
             }
@@ -111,9 +125,9 @@ public class IosDeployValidationImpl implements DynamicParameter {
     	mojo.save();
 	}
 	
-	private StringBuilder getBuildInfoPath(String projectDirectory) {
-	    StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-	    builder.append(projectDirectory);
+	private StringBuilder getBuildInfoPath(String rootModulePath, String subModuleName) throws PhrescoException {
+		File pomFileLocation = Utility.getPomFileLocation(rootModulePath, subModuleName);
+	    StringBuilder builder = new StringBuilder(pomFileLocation.getParent());
 	    builder.append(File.separator);
 	    builder.append(DO_NOT_CHECKIN_DIR);
 	    builder.append(File.separator);

@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
 import com.photon.phresco.api.DynamicParameter;
@@ -44,13 +45,21 @@ public class DynamicallyFetchDependencyJarsImpl implements DynamicParameter,
 	public PossibleValues getValues(Map<String, Object> paramMap)
 			throws IOException, ParserConfigurationException, SAXException,
 			ConfigurationException, PhrescoException {
+		String rootModulePath = "";
+		String subModuleName = "";
 		PossibleValues possibleValues = new PossibleValues();
 		ApplicationInfo applicationInfo = (ApplicationInfo) paramMap
 				.get(KEY_APP_INFO);
-		boolean isMultiModule = (Boolean) paramMap.get(KEY_MULTI_MODULE);
     	String rootModule = (String) paramMap.get(KEY_ROOT_MODULE);
-		List<String> projectDependencies = getProjectDependencies(applicationInfo
-				.getAppDirName(), isMultiModule, rootModule);
+    
+    	if (StringUtils.isNotEmpty(rootModule)) {
+			rootModulePath = Utility.getProjectHome() + rootModule;
+			subModuleName = applicationInfo.getAppDirName();
+		} else {
+			rootModulePath = Utility.getProjectHome() + applicationInfo.getAppDirName();
+		}
+    	
+		List<String> projectDependencies = getProjectDependencies(rootModulePath, subModuleName);
 		if (projectDependencies != null) {
 			for (String module : projectDependencies) {
 				Value value = new Value();
@@ -61,12 +70,9 @@ public class DynamicallyFetchDependencyJarsImpl implements DynamicParameter,
 		return possibleValues;
 	}
 
-	private StringBuilder getDependencyJarPath(String appDirName, boolean isMultiModule, String rootModule) {
-		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		if (isMultiModule) {
-			builder.append(rootModule).append(File.separator);
-		}
-		builder.append(appDirName);
+	private StringBuilder getDependencyJarPath(String rootModulePath, String subModuleName) throws PhrescoException {
+		 File pomLoc = Utility.getPomFileLocation(rootModulePath, subModuleName);
+		StringBuilder builder = new StringBuilder(pomLoc.getParent());
 		builder.append(File.separator);
 		builder.append("do_not_checkin");
 		builder.append(File.separator);
@@ -74,10 +80,10 @@ public class DynamicallyFetchDependencyJarsImpl implements DynamicParameter,
 		return builder;
 	}
 
-	protected List<String> getProjectDependencies(String appDirName, boolean isMultiModule, String rootModule)
+	protected List<String> getProjectDependencies(String rootModulePath, String subModuleName)
 			throws PhrescoException {
 		try {
-			StringBuilder builder = getDependencyJarPath(appDirName, isMultiModule, rootModule);
+			StringBuilder builder = getDependencyJarPath(rootModulePath, subModuleName);
 			File dir = new File(builder.toString());
 			List<String> fileList = new ArrayList<String>();
 			if (dir.exists()) {

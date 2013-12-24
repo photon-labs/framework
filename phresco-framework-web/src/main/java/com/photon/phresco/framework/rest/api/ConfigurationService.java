@@ -1384,7 +1384,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					String[] splits = property.split(Constants.STR_COMMA);
 					for (String split : splits) {
 						split = split.replace("\\", "/");
-						File pomFile =  Utility.getpomFileLocation(rootModulePath, subModuleName);
+						File pomFile =  Utility.getPomFileLocation(rootModulePath, subModuleName);
 						StringBuilder sb = new StringBuilder(pomFile.getParent());
 						StringBuilder targetDir = getTargetDir(configType, rootModulePath, subModuleName);
 						if (targetDir == null) {
@@ -1446,7 +1446,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				FileUtil.delete(new File(sb.toString()));
 			} else {
 				if (StringUtils.isNotEmpty(appDirName)) {
-					File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
+					File pomFile = Utility.getPomFileLocation(rootModulePath, subModuleName);
 					StringBuilder sb = new StringBuilder(pomFile.getParent()).append(
 							File.separator).append(DO_NOT_CHECKIN_DIR).append(File.separator).append(envName);
 					File envNameDir = new File(sb.toString());
@@ -1503,7 +1503,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		StringBuilder sb = null;
 		try {
 			String targetDir = getTargetDirFromPom(configType, rootModulePath, subModule);
-			File pomFile = Utility.getpomFileLocation(rootModulePath, subModule);
+			File pomFile = Utility.getPomFileLocation(rootModulePath, subModule);
 			if (StringUtils.isEmpty(targetDir)) {
 				return null;
 			}
@@ -2170,7 +2170,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
         File srcDir = new File(srcSb.toString());
         try {
             if (srcDir.exists()) {
-            	File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
+            	File pomFile = Utility.getPomFileLocation(rootModulePath, subModuleName);
                 StringBuilder destSb = new StringBuilder(pomFile.getParentFile().toString())
                 .append(File.separator)
                 .append(DO_NOT_CHECKIN_DIR);

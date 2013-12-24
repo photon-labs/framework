@@ -853,7 +853,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			String rootModulePath = getAppDirBasedOnMultiModule(module);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, module);
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 //			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(directory);
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PACKAGE ,rootModulePath ,module)));
@@ -887,7 +887,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			String rootModulePath = getAppDirBasedOnMultiModule(module);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, module);
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_DEPLOY,rootModulePath ,module)));
 
@@ -922,7 +922,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 //			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
 //			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PROCESS_BUILD, rootModulePath, getModule())));
@@ -948,7 +948,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		try {
 			String rootModulePath = getAppDirBasedOnMultiModule(module);
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, module);
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 			String phrescoUnitInfoFilePath = getPhrescoPluginInfoFilePath(PHASE_UNIT_TEST,rootModulePath, module);
 			List<String> buildArgCmds = new ArrayList<String>();
@@ -1015,7 +1015,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		try {
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, getModule());
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_COMPONENT_TEST, rootModulePath, getModule())));
 			persistValuesToXml(mojo, PHASE_COMPONENT_TEST);
@@ -1046,7 +1046,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		try {
 			String rootModulePath = getAppDirBasedOnMultiModule(module);
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, module);
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_VALIDATE_CODE, rootModulePath, module)));
 			persistValuesToXml(mojo, PHASE_VALIDATE_CODE);
@@ -1081,7 +1081,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
 			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, getModule());
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(LIQUIBASE, rootModulePath,getModule())));
 			Configuration selectedConfiguration = getDbConfiguration(request.getParameter(ENV_NAME), dotPhrescoFolderPath);
 			Properties dbProperties = selectedConfiguration.getProperties();
@@ -1197,7 +1197,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
 			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, getModule());
 			File sourceFolderLocation = Utility.getSourceFolderLocation(projectInfo, rootModulePath, getModule());
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(LIQUIBASE, rootModulePath, getModule())));
 			Configuration selectedConfiguration = getDbConfiguration(request.getParameter(ENV_NAME), dotPhrescoFolderPath);
 			Properties dbProperties = selectedConfiguration.getProperties();
@@ -1388,7 +1388,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
 			File sourceFolderLocation = Utility.getSourceFolderLocation(projectInfo, rootModulePath, getModule());
 			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, getModule());
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 //			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
 //			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(LIQUIBASE,rootModulePath, getModule())));
@@ -1460,7 +1460,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, getModule());
 //			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
 //			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
@@ -1540,7 +1540,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, getModule());
 //			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
 //			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
@@ -1570,7 +1570,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, getModule());
 //			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
 //			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
@@ -1599,7 +1599,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, getModule());
 //			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
 //			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
@@ -1629,7 +1629,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, getModule());
 //			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
 //			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
@@ -1659,7 +1659,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, getModule());
 //			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
 //			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
@@ -1688,7 +1688,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 //			String directory = getAppDirBasedOnMultiModule(getModule());
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, getModule());
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");		
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");		
 			String workingDir = pomFileLocation.getParent();
 			//To generate the lock for the particular operation
 			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
@@ -1768,7 +1768,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		try {
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			String workingDir = pomFileLocation.getParent();
 			handleStopServer(true);
 			BufferedReader compileReader = compileSource(workingDir);
@@ -1801,7 +1801,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, getModule());
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PERFORMANCE_TEST, rootModulePath, getModule())));
 			persistValuesToXml(mojo, PHASE_PERFORMANCE_TEST);
@@ -1833,7 +1833,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		try {
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, getModule());
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_LOAD_TEST, rootModulePath, getModule())));
 			persistValuesToXml(mojo, PHASE_LOAD_TEST);
@@ -1860,7 +1860,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		try {
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, getModule());
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			
 //			String directory = getAppDirBasedOnMultiModule(getModule());
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
@@ -1913,7 +1913,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		try {
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_START_HUB, rootModulePath, getModule())));
 			persistValuesToXml(mojo, PHASE_START_HUB);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
@@ -1942,7 +1942,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		try {
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_START_NODE, rootModulePath, getModule())));
 			persistValuesToXml(mojo, PHASE_START_NODE);
@@ -1966,7 +1966,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		try {
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			
 //			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
 //			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
@@ -1992,7 +1992,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		try {
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			
 //			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
 //			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
@@ -2024,7 +2024,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		try {
 			String rootModulePath = getAppDirBasedOnMultiModule(module);
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, module);
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_FUNCTIONAL_TEST,rootModulePath, module)));
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
@@ -2067,7 +2067,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 //			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(getAppDirName());
 //			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 //			String workingDirectory = getAppDirectoryPath(appInfo);
@@ -2100,7 +2100,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 //			String workingDirectory = getAppDirectoryPath(appInfo);
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			List<String> buildArgCmds = new ArrayList<String>();
 			buildArgCmds.add(HYPHEN_N);
 			appendMultiModuleCommand(getModule(), buildArgCmds);
@@ -2368,7 +2368,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
-			File getpomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File getpomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, getModule());
 			String sonarURL = FrameworkServiceUtil.getSonarURL(request);
 			String customerId = projectInfo.getCustomerIds().get(0);
@@ -2627,7 +2627,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		} else {
 			rootModulePath = Utility.getProjectHome() + appDirName;
 		}
-		File pomFile = Utility.getpomFileLocation(rootModulePath, module);
+		File pomFile = Utility.getPomFileLocation(rootModulePath, module);
 		ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
 		File testFolderLocation = Utility.getTestFolderLocation(projectInfo, rootModulePath, module);
 		try {
@@ -2710,7 +2710,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 				}
 				
 //				ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
-				File pomFile = Utility.getpomFileLocation(rootModulePath, module);
+				File pomFile = Utility.getPomFileLocation(rootModulePath, module);
 				File testFolderLocation = Utility.getTestFolderLocation(projectInfo, rootModulePath, module);
 				PomProcessor processor = new PomProcessor(pomFile);					
 		        String performTestDir = processor.getProperty(property);	        
@@ -2763,7 +2763,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		BufferedInputStream reader = null;
 		try {
 			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 //			String workingDirectory = Utility.getWorkingDirectoryPath(getAppDirName());

@@ -447,7 +447,7 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
 			
-			File getpomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
+			File getpomFileLocation = Utility.getPomFileLocation(rootModulePath, subModuleName);
 		File do_not_checkin = new File(getpomFileLocation.getParent() + File.separator + Constants.DO_NOT_CHECKIN_DIRY);
 		File jsonFile = new File(do_not_checkin.getPath() + File.separator + "process.json");
 		if(!jsonFile.exists()) {

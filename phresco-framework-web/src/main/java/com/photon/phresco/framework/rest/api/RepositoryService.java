@@ -1125,7 +1125,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			} else if (appInfo != null &&  appInfo.getModules() == null) {
 				appDirPath = Utility.getProjectHome() + File.separator + appInfo.getAppDirName();
 			}
-			File pomFile = Utility.getpomFileLocation(appDirPath, moduleName);
+			File pomFile = Utility.getPomFileLocation(appDirPath, moduleName);
 			if (pomFile.exists()) {
 				if (pomFile.exists()) {
 					PomProcessor processor = new PomProcessor(pomFile);
@@ -1783,7 +1783,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		try {
 			ProjectInfo projectInfo = Utility.getProjectInfo(Utility.getProjectHome() + appDirName, "");
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
-			File pomFile = Utility.getpomFileLocation(Utility.getProjectHome() + appDirName, "");
+			File pomFile = Utility.getPomFileLocation(Utility.getProjectHome() + appDirName, "");
 			PomProcessor processor = new PomProcessor(pomFile);
 			String srcRepoURL = processor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
 			String dotPhresoRepoURL = processor.getProperty(Constants.POM_PROP_KEY_PHRESCO_REPO_URL);

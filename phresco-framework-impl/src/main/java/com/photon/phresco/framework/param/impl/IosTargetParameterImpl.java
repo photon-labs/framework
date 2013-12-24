@@ -57,21 +57,32 @@ public class IosTargetParameterImpl implements DynamicParameter {
              SAXException, ConfigurationException, PhrescoException {
         PossibleValues possibleValues = new PossibleValues();
         try {
+        	String rootModulePath = "";
+    		String subModuleName = "";
             ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
-            String appDirName = applicationInfo.getAppDirName();
-            StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-            builder.append(appDirName);
-            builder.append(File.separatorChar);
+            String rootModule = (String) paramMap.get(KEY_ROOT_MODULE);
+//            String appDirName = applicationInfo.getAppDirName();
             
-            File pomPath = new File(builder.toString(), Utility.getPomFileName(applicationInfo));
-            PomProcessor pomProcessor = new PomProcessor(pomPath);
+            if (StringUtils.isNotEmpty(rootModule)) {
+    			rootModulePath = Utility.getProjectHome() + rootModule;
+    			subModuleName = applicationInfo.getAppDirName();
+    		} else {
+    			rootModulePath = Utility.getProjectHome() + applicationInfo.getAppDirName();
+    		}
+        	File pomFileLocation = Utility.getPomFileLocation(rootModulePath, subModuleName);
+//            StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+//            builder.append(appDirName);
+//            builder.append(File.separatorChar);
+            
+//            File pomPath = new File(builder.toString(), Utility.getPomFileName(applicationInfo));
+            PomProcessor pomProcessor = new PomProcessor(pomFileLocation);
             File sourceDir = null;
             String sourceDirectory = pomProcessor.getSourceDirectory();
 			if (sourceDirectory.startsWith("${project.basedir}")) {
 				sourceDirectory = sourceDirectory.substring("${project.basedir}".length());
-            	sourceDir = new File(builder.toString() + sourceDirectory);
+            	sourceDir = new File(pomFileLocation.getParent() + sourceDirectory);
 			} else if (sourceDirectory.startsWith("/source")) {
-				sourceDir = new File(builder.toString() + File.separatorChar + sourceDirectory);
+				sourceDir = new File(pomFileLocation.getParent() + File.separatorChar + sourceDirectory);
 			} else {
 				sourceDir = new File(sourceDirectory);
 			}

@@ -27,9 +27,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.gson.Gson;
 import com.photon.phresco.api.DynamicPageParameter;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.model.PerformanceDetails;
 import com.photon.phresco.util.Constants;
@@ -45,13 +48,20 @@ public class PerformanceTestDetailsImpl implements DynamicPageParameter, Constan
     public Map<String, Object> getObjects(Map<String, Object> paramsMap) throws PhrescoException {
 		 Reader read = null;
         try {
+        	String rootModulePath = "";
+			String subModuleName = "";
         	Map<String, Object> resultMap = new HashMap<String, Object>();
             ApplicationInfo applicationInfo = (ApplicationInfo) paramsMap.get(KEY_APP_INFO);
             String testAgainst = (String) paramsMap.get(KEY_TEST_AGAINST);
             String testResultName = (String) paramsMap.get(KEY_TEST_RESULT_NAME);
-            boolean isMultiModule = (Boolean) paramsMap.get(KEY_MULTI_MODULE);
         	String rootModule = (String) paramsMap.get(KEY_ROOT_MODULE);
-            String testResultJsonFile = testResultJsonFile(applicationInfo, testAgainst, testResultName, isMultiModule, rootModule);
+        	if (StringUtils.isNotEmpty(rootModule)) {
+    			rootModulePath = Utility.getProjectHome() + rootModule;
+    			subModuleName = applicationInfo.getAppDirName();
+    		} else {
+    			rootModulePath = Utility.getProjectHome() + applicationInfo.getAppDirName();
+    		}
+            String testResultJsonFile = testResultJsonFile(rootModulePath,subModuleName, testAgainst, testResultName);
             Gson gson = new Gson();
             File file = new File(testResultJsonFile);
             List<PerformanceDetails> performanceDetails = new ArrayList<PerformanceDetails>();
@@ -80,13 +90,12 @@ public class PerformanceTestDetailsImpl implements DynamicPageParameter, Constan
 		 return null;
     }
     
-    private String testResultJsonFile(ApplicationInfo appInfo, String testAgainst, String testResultName, boolean isMultiModule, String rootModule) throws PhrescoPomException {
-        StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-        if (isMultiModule) {
-        	builder.append(rootModule + File.separator);
-        }
-        builder.append(appInfo.getAppDirName());
-        PomProcessor processor = new PomProcessor(getPOMFile(appInfo, isMultiModule, rootModule));
+    private String testResultJsonFile(String  rootModulePath, String subModuleName, String testAgainst, String testResultName) throws PhrescoPomException, PhrescoException {
+    	ProjectInfo info = Utility.getProjectInfo(rootModulePath, subModuleName);
+		File testFolderLocation = Utility.getTestFolderLocation(info, rootModulePath, subModuleName);
+    	StringBuilder builder = new StringBuilder(testFolderLocation.toString());
+        File pomFileLocation = Utility.getPomFileLocation(rootModulePath, subModuleName);
+        PomProcessor processor = new PomProcessor(pomFileLocation);
         String performDir = processor.getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
         builder.append(performDir);
         builder.append(File.separator);
@@ -99,7 +108,7 @@ public class PerformanceTestDetailsImpl implements DynamicPageParameter, Constan
         return builder.toString();
     }
     
-    private File getPOMFile(ApplicationInfo appInfo, boolean isMultiModule, String rootModule) {
+    /*private File getPOMFile(ApplicationInfo appInfo, boolean isMultiModule, String rootModule) {
         StringBuilder builder = new StringBuilder(Utility.getProjectHome());
         if (isMultiModule) {
         	builder.append(rootModule + File.separator);
@@ -110,5 +119,5 @@ public class PerformanceTestDetailsImpl implements DynamicPageParameter, Constan
         .append(pomFile);
         
         return new File(builder.toString());
-    }
+    }*/
 }

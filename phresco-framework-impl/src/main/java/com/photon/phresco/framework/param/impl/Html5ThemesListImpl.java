@@ -21,9 +21,11 @@ import java.io.File;
 import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
@@ -37,9 +39,18 @@ public class Html5ThemesListImpl implements DynamicParameter, Constants {
 	@Override
 	public PossibleValues getValues(Map<String, Object> paramMap) throws PhrescoException {
 	    try {
+	    	String rootModulePath = "";
+			String subModuleName = "";
 	        PossibleValues possibleValues = new PossibleValues();
 	        ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
-	        File file = new File(getResourcesPath(applicationInfo.getAppDirName()).toString());
+	        String rootModule = (String) paramMap.get(KEY_ROOT_MODULE);
+	        if (StringUtils.isNotEmpty(rootModule)) {
+	 			rootModulePath = Utility.getProjectHome() + rootModule;
+	 			subModuleName = applicationInfo.getAppDirName();
+	 		} else {
+	 			rootModulePath = Utility.getProjectHome() + applicationInfo.getAppDirName();
+	 		}
+	        File file = new File(getResourcesPath(rootModulePath, subModuleName).toString());
 	        if (file.exists()) {
 	            File[] listFiles = file.listFiles();
 	            if (!ArrayUtils.isEmpty(listFiles)) {
@@ -60,9 +71,10 @@ public class Html5ThemesListImpl implements DynamicParameter, Constants {
 	    }
 	}
 	
-	private StringBuilder getResourcesPath(String projectDirectory) {
-        StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-        builder.append(projectDirectory);
+	private StringBuilder getResourcesPath(String rootModulePath, String subModuleName) throws PhrescoException {
+		ProjectInfo info = Utility.getProjectInfo(rootModulePath, subModuleName);
+		File srcFolderLocation = Utility.getSourceFolderLocation(info, rootModulePath, subModuleName);
+        StringBuilder builder = new StringBuilder(srcFolderLocation.toString());
         builder.append(File.separator);
         builder.append("src");
         builder.append(File.separator);

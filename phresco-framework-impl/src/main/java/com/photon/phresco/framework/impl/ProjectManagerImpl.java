@@ -538,7 +538,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					}
 					
 					if (isCallEclipsePlugin(appInfo , "")) {
-						File pomFilePath = Utility.getpomFileLocation(rootModulePath, subModuleName);
+						File pomFilePath = Utility.getPomFileLocation(rootModulePath, subModuleName);
 						ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 						List<String> buildArgCmds = new ArrayList<String>();
 						if(!POM_NAME.equals(pomFilePath.getName())) {
@@ -605,7 +605,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 
 					String projectInfoPath = Utility.getProjectInfoPath(rootPath, moduleName);
 					ProjectUtils.updateProjectInfo(projectInfo, new File(projectInfoPath));
-					File pom = Utility.getpomFileLocation(rootPath, moduleName);
+					File pom = Utility.getPomFileLocation(rootPath, moduleName);
 					writeSplitProperties(pom.getPath(), rootPath);
 					ProjectUtils pu = new ProjectUtils();
 					String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootPath, moduleName);
@@ -692,7 +692,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		File src = null;
 		File dest = null;
 		try {
-			File pomFile = Utility.getpomFileLocation(rootPath, moduleName);
+			File pomFile = Utility.getPomFileLocation(rootPath, moduleName);
 			String appDirName = projectinfo.getAppInfos().get(0).getAppDirName();
 			
 			PomProcessor pomPro = new PomProcessor(pomFile);
@@ -848,7 +848,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		}
 		try {
 			updatePomInfo(applicationInfo, pomFile);
-			File phrescoPom = Utility.getpomFileLocation(rootPath, module);
+			File phrescoPom = Utility.getPomFileLocation(rootPath, module);
 			if(!phrescoPom.exists()) {
 				return;
 			}
@@ -881,22 +881,73 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		plugins.add(artifactGroup);
 		return plugins;
 	}
+
 	@Override
 	public boolean delete(DeleteProjectInfo deleteProjectInfo) throws PhrescoException {
 		boolean deletionSuccess = false;
-		String projectsPath = Utility.getProjectHome();
-		List<String> appDirNames = deleteProjectInfo.getAppDirNames();
-		if (CollectionUtils.isNotEmpty(appDirNames)) {
-			for (String appDirName : appDirNames) {
-				if (REQ_MODULE.equals(deleteProjectInfo.getActionType())) {
-					appDirName = deleteProjectInfo.getRootModule() + File.separator + appDirName;
-				}
-				File application = new File(projectsPath + appDirName);
-				if (application.exists()) {
-					deletionSuccess = FileUtil.delete(application);
+		String rootModulePath = "";
+		String subModule = "";
+		File application = null;
+		try {
+			List<String> appDirNames = deleteProjectInfo.getAppDirNames();
+			if (CollectionUtils.isNotEmpty(appDirNames)) {
+				for (String appDirName : appDirNames) {
+					if (REQ_MODULE.equals(deleteProjectInfo.getActionType())) {
+						rootModulePath = Utility.getProjectHome() + deleteProjectInfo.getRootModule();
+						subModule = appDirName;
+					} else {
+						rootModulePath = Utility.getProjectHome() + appDirName;
+					}
+					String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModule);
+					File pomFile = Utility.getPomFileLocation(rootModulePath, subModule);
+					ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModule);
+					PomProcessor pomPro = new PomProcessor(pomFile);
+					String src = pomPro.getProperty(POM_PROP_KEY_SPLIT_TEST_DIR);
+					String test = pomPro.getProperty(POM_PROP_KEY_SPLIT_SRC_DIR);
+					if (projectInfo.isMultiModule() && StringUtils.isNotEmpty(test)) {
+						application = new File(rootModulePath + File.separator + test + File.separator + subModule);
+						deletionSuccess = deleteFile(deletionSuccess, application);
+
+					}
+					if (projectInfo.isMultiModule() && StringUtils.isNotEmpty(src)) {
+						application = new File(rootModulePath + File.separator + src + File.separator + subModule);
+						deletionSuccess = deleteFile(deletionSuccess, application);
+
+					}
+					if (projectInfo.isMultiModule() && StringUtils.isEmpty(src)) {
+						application = new File(rootModulePath + File.separator + subModule);
+						deletionSuccess = deleteFile(deletionSuccess, application);
+					}
+					if (!projectInfo.isMultiModule() && StringUtils.isNotEmpty(test)) {
+						application = new File(rootModulePath + File.separator + test);
+						deletionSuccess = deleteFile(deletionSuccess, application);
+					}
+					
+					if (!projectInfo.isMultiModule() && StringUtils.isNotEmpty(src)) {
+						application = new File(rootModulePath + File.separator + src);
+						deletionSuccess = deleteFile(deletionSuccess, application);
+					}  
+					
+					File dotFolder = new File(dotPhrescoFolderPath);
+					application = new File(dotFolder.getParent());
+					deletionSuccess = deleteFile(deletionSuccess, application);
+					
+					if(StringUtils.isEmpty(src) && StringUtils.isEmpty(test) && StringUtils.isEmpty(subModule) ) {
+						application = new File(rootModulePath);
+						deletionSuccess = deleteFile(deletionSuccess, application);
+					}
 				}
 			}
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
 		}
+		return deletionSuccess;
+	}
+
+	private boolean deleteFile(boolean deletionSuccess, File application) {
+		if (application.exists()) {
+				deletionSuccess = FileUtil.delete(application);
+			}
 		return deletionSuccess;
 	}
 
@@ -975,7 +1026,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	throws PhrescoException {
 		String dbName = "";
 		try {
-			File pomFile = Utility.getpomFileLocation(rootPath, module);
+			File pomFile = Utility.getPomFileLocation(rootPath, module);
 			PomProcessor pompro = new PomProcessor(pomFile);
 			String sqlFolderPath = pompro.getProperty(POM_PROP_KEY_SQL_FILE_DIR);
 			File srcDirLocation = Utility.getSourceFolderLocation(projectinfo, rootPath, module);

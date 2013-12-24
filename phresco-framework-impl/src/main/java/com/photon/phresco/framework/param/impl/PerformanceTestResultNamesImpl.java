@@ -24,11 +24,13 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
 import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
@@ -42,13 +44,20 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 
 	@Override
 	public PossibleValues getValues(Map<String, Object> paramMap) throws IOException, ParserConfigurationException, SAXException, ConfigurationException, PhrescoException {
+		String rootModulePath = "";
+		String subModuleName = "";
 		PossibleValues possibleValues = new PossibleValues();
 		ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
 		String testAgainst = (String) paramMap.get(KEY_TEST_AGAINST);
 		String goal = (String) paramMap.get(KEY_GOAL);
-		boolean isMultiModule = (Boolean) paramMap.get(KEY_MULTI_MODULE);
     	String rootModule = (String) paramMap.get(KEY_ROOT_MODULE);
-		String testDirPath = getTestDirPath(applicationInfo, testAgainst, goal, isMultiModule, rootModule);
+    	if (StringUtils.isNotEmpty(rootModule)) {
+			rootModulePath = Utility.getProjectHome() + rootModule;
+			subModuleName = applicationInfo.getAppDirName();
+		} else {
+			rootModulePath = Utility.getProjectHome() + applicationInfo.getAppDirName();
+		}
+		String testDirPath = getTestDirPath(testAgainst, goal, rootModulePath, subModuleName);
 		String dependencyStr = "";
 		
 		if (PHASE_LOAD_TEST.equals(goal)) {
@@ -76,8 +85,10 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 		return possibleValues;
 	}
 	
-	private String getTestDirPath(ApplicationInfo appInfo, String testAgainst, String goal, boolean isMultiModule, String rootModule) throws PhrescoException {
-		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+	private String getTestDirPath(String testAgainst, String goal, String rootModulePath, String subModuleName) throws PhrescoException {
+    	ProjectInfo info = Utility.getProjectInfo(rootModulePath, subModuleName);
+		File testFolderLocation = Utility.getTestFolderLocation(info, rootModulePath, subModuleName);
+		StringBuilder builder = new StringBuilder(testFolderLocation.toString());
 		try {
 			String property = "";
 			if (PHASE_LOAD_TEST.equals(goal)) {
@@ -85,13 +96,10 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 			} else {
 				property = POM_PROP_KEY_PERFORMANCETEST_DIR;
 			}
-			PomProcessor processor = new PomProcessor(getPOMFile(appInfo, isMultiModule, rootModule));
+			 File pomFileLocation = Utility.getPomFileLocation(rootModulePath, subModuleName);
+			PomProcessor processor = new PomProcessor(pomFileLocation);
 			String performDir = processor.getProperty(property);
-			if (isMultiModule) {
-				 builder.append(rootModule).append(File.separator);
-			 }
-			builder.append(appInfo.getAppDirName())
-			.append(performDir)
+			builder.append(performDir)
 			.append(File.separator)
 			.append(testAgainst.toString())
 			.append(FrameworkConstants.SLASH_JSON);
@@ -101,7 +109,7 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
     	}
 	}
 	
-	private File getPOMFile(ApplicationInfo appInfo, boolean isMultiModule, String rootModule) {
+/*	private File getPOMFile(ApplicationInfo appInfo, boolean isMultiModule, String rootModule) {
         StringBuilder builder = new StringBuilder(Utility.getProjectHome());
         if (isMultiModule) {
 			 builder.append(rootModule).append(File.separator);
@@ -111,7 +119,7 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
         builder.append(File.separatorChar)
         .append(pomName);
         return new File(builder.toString());
-    }
+    }*/
 	
 	 public class XmlNameFileFilter implements FilenameFilter {
 	        private String filter_;

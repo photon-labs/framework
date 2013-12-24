@@ -435,7 +435,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	 * @throws PhrescoException
 	 */
 	public static String getBuildDir(String rootModulePath, String subModuleName) throws PhrescoException {
-		File getpomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
+		File getpomFileLocation = Utility.getPomFileLocation(rootModulePath, subModuleName);
 		StringBuilder builder = new StringBuilder(getpomFileLocation.getParent())
 		.append(File.separator)
 		.append(BUILD_DIR);
@@ -532,7 +532,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
     }
     
     public static String getBuildInfosFilePath(String rootModulePath, String subModuleName) throws PhrescoException {
-    	File pomFile =  Utility.getpomFileLocation(rootModulePath, subModuleName);
+    	File pomFile =  Utility.getPomFileLocation(rootModulePath, subModuleName);
     	return pomFile.getParent() + FILE_SEPARATOR + BUILD_DIR + FILE_SEPARATOR + BUILD_INFO_FILE_NAME;
     }
     
@@ -1135,7 +1135,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 					}
 				}
 			} else {
-				File pomFile = Utility.getpomFileLocation(rootModulePath, subModule);
+				File pomFile = Utility.getPomFileLocation(rootModulePath, subModule);
 				StringBuilder sb = new StringBuilder(pomFile.getParent()).append(
 						File.separatorChar).append(DO_NOT_CHECKIN_DIR).append(File.separatorChar).append(
 						STATIC_ANALYSIS_REPORT);
@@ -1200,7 +1200,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 					builder.append(File.separatorChar);
 					builder.append(Constants.POM_NAME);
 				} else {
-				File getpomFileLocation = Utility.getpomFileLocation(rootModulePath, module);
+				File getpomFileLocation = Utility.getPomFileLocation(rootModulePath, module);
 				builder.append(getpomFileLocation.getPath());
 				}
 
@@ -1274,7 +1274,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 					builder.append(File.separatorChar);
 					builder.append(Constants.POM_NAME);
 				} else {
-					File pomFile = Utility.getpomFileLocation(rootModulePath, subModule);
+					File pomFile = Utility.getPomFileLocation(rootModulePath, subModule);
 					builder.append(pomFile.getPath());
 				}
 
@@ -1359,7 +1359,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 				List<String> moduleNames = new ArrayList<String>();
 				
 				File sourceFolderLocation = Utility.getSourceFolderLocation(projectInfo, rootModulePath, subModuleName);
-				File testDir = Utility.getpomFileLocation( rootModulePath, subModuleName);
+				File testDir = Utility.getPomFileLocation( rootModulePath, subModuleName);
 				PomProcessor processor = new PomProcessor(new File(sourceFolderLocation + File.separator + Constants.POM_NAME));
 				Modules pomModules = processor.getPomModule();
 //				List<String> modules = null;
@@ -1372,7 +1372,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 						}
 					}
 					for (String moduleName : moduleNames) {
-						File testFolderLocation = Utility.getpomFileLocation(rootModulePath, moduleName);
+						File testFolderLocation = Utility.getPomFileLocation(rootModulePath, moduleName);
 						String moduleXmlPath = testFolderLocation.getParent() + File.separator +  unitDir;
 						file = new File(moduleXmlPath);
 						xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);

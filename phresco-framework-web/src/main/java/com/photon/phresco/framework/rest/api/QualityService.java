@@ -231,7 +231,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			if (StringUtils.isNotEmpty(moduleName)) {
 				appDirName = appDirName + File.separator + moduleName;
 			}
-			File pomFileLocation = Utility.getpomFileLocation(rootModulePath, subModuleName);
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, subModuleName);
 			Utility.killProcess(pomFileLocation.getParent(), testType);
 			String testSuitePath = getTestSuitePath(appDirName, rootModulePath, subModuleName, testType, techReport);
 			String testCasePath = getTestCasePath(appDirName, rootModulePath, subModuleName, testType, techReport);
@@ -1056,7 +1056,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 */
 	private String getUnitTestResultPath(String rootModulePath, String subModule, String techReport)
 			throws PhrescoException {
-		File pomFile = Utility.getpomFileLocation(rootModulePath, subModule);
+		File pomFile = Utility.getPomFileLocation(rootModulePath, subModule);
 		StringBuilder sb = new StringBuilder(pomFile.getParent());
 		// TODO Need to change this
 		StringBuilder tempsb = new StringBuilder(pomFile.getParent());

@@ -938,7 +938,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 				}else {
 					rootModulePath = Utility.getProjectHome() + appInfo.getAppDirName();
 				}
-				File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
+				File pomFile = Utility.getPomFileLocation(rootModulePath, subModuleName);
 				PomProcessor pomProcessor = new PomProcessor(pomFile);
                 pomProcessor.setProperty(Constants.POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL, functionalFramework.getName());
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_FUNCTEST_DIR, testDir);
@@ -1018,6 +1018,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 						rootModulePath = Utility.getProjectHome() + appDirName;
 					}
 					String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModule);
+					File getpomFileLocation = Utility.getPomFileLocation(rootModulePath, subModule);
 					StringBuilder sb = new StringBuilder(dotPhrescoFolderPath).append(File.separator).append(
 							RUNAGNSRC_INFO_FILE);
 					File file = new File(sb.toString());
@@ -1036,13 +1037,13 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 									ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 						}
 					}
-					String applicationHome = FrameworkServiceUtil.getApplicationHome(appDirName);
-					Utility.killProcess(applicationHome, REQ_EQLIPSE); // need to handle for build version
+//					String applicationHome = FrameworkServiceUtil.getApplicationHome(appDirName);
+					Utility.killProcess(getpomFileLocation.getParent(), REQ_EQLIPSE); // need to handle for build version
 				}
 			}
 			
 			if (REQ_MODULE.equals(actionType) && StringUtils.isNotEmpty(rootModule)) {
-				removeAllEntriesOfModuleToBeDeleted(deleteProjectInfo.getDependents(), deleteProjectInfo.getAppDirNames().get(0), rootModule, rootModulePath);
+				removeAllEntriesOfModuleToBeDeleted(deleteProjectInfo.getDependents(), deleteProjectInfo.getAppDirNames().get(0), rootModulePath);
 			}
 			boolean status  = projectManager.delete(deleteProjectInfo);
 			if(status && actionType.equals(APPLICATION_PROJECT)) {
@@ -1073,23 +1074,23 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		}
 	}
 	
-	private void removeAllEntriesOfModuleToBeDeleted(List<String> dependents, String moduleNameToDelete, String rootModule, String rootModulePath) throws PhrescoException {
+	private void removeAllEntriesOfModuleToBeDeleted(List<String> dependents, String moduleNameToDelete, String rootModulePath) throws PhrescoException {
 		try {
 			//To delete entries in root project
-			removeModuleInfoFromRootProject(moduleNameToDelete, rootModule, rootModulePath);
+			removeModuleInfoFromRootProject(moduleNameToDelete, rootModulePath);
 			if (CollectionUtils.isNotEmpty(dependents)) {
 				//To remove dependency entry in other sub module's pom
-				removeDependencies(dependents, moduleNameToDelete, rootModule, rootModulePath);
+				removeDependencies(dependents, moduleNameToDelete, rootModulePath);
 			}
 		} catch (Exception e) {
 			throw new PhrescoException(e);
 		}
 	}
 
-	private void removeDependencies(List<String> dependents, String moduleNameToDelete, String rootModule, String rootModulePath) throws PhrescoException, PhrescoPomException {
+	private void removeDependencies(List<String> dependents, String moduleNameToDelete, String rootModulePath) throws PhrescoException, PhrescoPomException {
 		ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, moduleNameToDelete);
 		File docFolderLocation = Utility.getSourceFolderLocation(projectInfo, rootModulePath, moduleNameToDelete);
-		File currentPomFile = new File(docFolderLocation.getParent() + File.separator + Constants.POM_NAME);
+		File currentPomFile = new File(docFolderLocation + File.separator + Constants.POM_NAME);
 		if (currentPomFile.exists()) {
 			PomProcessor processor = new PomProcessor(currentPomFile);
 			String groupId = processor.getGroupId();
@@ -1110,14 +1111,15 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		}
 	}
 
-	private void removeModuleInfoFromRootProject(String moduleNameToDelete, String rootModule, String rootModulePath) throws PhrescoException {
+	private void removeModuleInfoFromRootProject(String moduleNameToDelete, String rootModulePath) throws PhrescoException {
 		try {
+			
 			ProjectInfo rootProjectInfo = Utility.getProjectInfo(rootModulePath, "");
 			String rootProjectInfoPath = Utility.getProjectInfoPath(rootModulePath, "");
 			File rootProjectInfoFile = new File(rootProjectInfoPath);
 			ApplicationInfo rootAppInfo = rootProjectInfo.getAppInfos().get(0);
 			File docFolderLocation = Utility.getSourceFolderLocation(rootProjectInfo, rootModulePath, "");
-			File rootPom = new File(docFolderLocation.getParent() + File.separator + Constants.POM_NAME);
+			File rootPom = new File(docFolderLocation + File.separator + Constants.POM_NAME);
 			//To remove modules entry in root pom
 			if (rootPom.exists()) {
 				PomProcessor processor = new PomProcessor(rootPom);
@@ -1265,7 +1267,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			ServiceManager serviceManager, String rootModulePath,String subModuleName) throws PhrescoException {
 		try {
 			File sqlPath = null;
-			File pomFile = Utility.getpomFileLocation(rootModulePath, subModuleName);
+			File pomFile = Utility.getPomFileLocation(rootModulePath, subModuleName);
 				PomProcessor pom = new PomProcessor(pomFile);
 				String sql = pom.getProperty(PHRESCO_SQL_PATH);
 				File docFolderLocation = Utility.getSourceFolderLocation(projectinfo, rootModulePath, subModuleName);
