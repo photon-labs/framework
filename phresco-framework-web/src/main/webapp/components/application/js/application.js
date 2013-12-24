@@ -231,6 +231,23 @@ define(["application/listener/applicationListener"], function() {
 				self.onRemoveLayerEvent.dispatch($("#testing"));
 				self.addLayers();
 			}
+			
+			$('#cancelbutton').unbind('click');
+			$('#cancelbutton').bind('click', function(){
+				self.onCancelEvent.dispatch();
+			});
+			
+			$("#updatebutton").unbind('click');
+			$("#updatebutton").bind('click', function(){
+				self.checkForLock("applnUpdate", '', '', function(response){
+					if (response.status === "success" && response.responseCode === "PHR10C00002") {
+						self.updateApp.dispatch(self.renderData);
+					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
+						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true, true);
+					}	
+				});	
+			});
+						
 		},
 		
 		preRender: function(whereToRender, renderFunction){
@@ -288,25 +305,11 @@ define(["application/listener/applicationListener"], function() {
 			}); 
 
 			self.addLayers();
-			
-			$('#cancelbutton').unbind('click');
-			$('#cancelbutton').click(function(){
-				self.onCancelEvent.dispatch();
-			}); 
+	
 			self.editApplicationListener.serverDBChangeEvent();
 			self.editApplicationListener.addServerDatabaseEvent();
 			self.editApplicationListener.removeServerDatabaseEvent();
 			
-			$("#updatebutton").unbind('click');
-			$("#updatebutton").bind('click', function(){
-				self.checkForLock("applnUpdate", '', '', function(response){
-					if (response.status === "success" && response.responseCode === "PHR10C00002") {
-						self.updateApp.dispatch(self.renderData);
-					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
-						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true, true);
-					}	
-				});	
-			});
 			
 			$("input[name='appDirName']").focusout(function() {
 				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
@@ -329,6 +332,8 @@ define(["application/listener/applicationListener"], function() {
 			
 			self.windowResize();	
 			this.customScroll($(".scrolldiv"));
+			
+					
 		},
 		
 		addLayers : function() {
