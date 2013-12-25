@@ -2110,6 +2110,7 @@ public interface FrameworkConstants {
 	    String ROOT_ITEM 		= "rootItem";
 	    String ROOT 			= "root";
 	    String DEFAULT 			= "default";
+	    String ROOT_ITEM_XPATH  = "root//item[@name='";
 	    String SNAPSHOT_ITEM 	= "//item[@name='SNAPSHOT']";
 	    String RELEASE_ITEM   	= "//item[@name='RELEASE']";
 	    String SEPARATOR_CONSTANT = "\\.";

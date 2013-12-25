@@ -46,7 +46,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -65,8 +64,6 @@ import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.repository.metadata.Metadata;
-import org.apache.maven.artifact.repository.metadata.Snapshot;
-import org.apache.maven.artifact.repository.metadata.Versioning;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.codehaus.plexus.DefaultPlexusContainer;
@@ -91,15 +88,14 @@ import org.sonatype.aether.RepositorySystemSession;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
-import org.sonatype.aether.resolution.ArtifactRequest;
-import org.sonatype.aether.resolution.ArtifactResolutionException;
-import org.sonatype.aether.resolution.ArtifactResult;
 import org.sonatype.aether.resolution.VersionRangeRequest;
 import org.sonatype.aether.resolution.VersionRangeResolutionException;
 import org.sonatype.aether.resolution.VersionRangeResult;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
 import org.sonatype.aether.util.layout.MavenDefaultLayout;
 import org.sonatype.aether.version.Version;
+import org.sonatype.nexus.rest.model.ArtifactInfoResource;
+import org.sonatype.nexus.rest.model.ArtifactInfoResourceResponse;
 import org.tmatesoft.svn.core.SVNAuthenticationException;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
@@ -150,8 +146,6 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
-import org.sonatype.nexus.rest.model.ArtifactInfoResource;
-import org.sonatype.nexus.rest.model.ArtifactInfoResourceResponse;
 
 
 /**
@@ -660,7 +654,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 							if (StringUtils.isNotEmpty(snapshotRepoURL)) {
 								urls.add(snapshotRepoURL);
 							}
-							doc = constructDomSource(artifact, applicationInfo.getAppDirName(), urls, moduleName, doc, moduleItem, rootElement, rootItem);
+							doc = constructDomSource(artifact, applicationInfo.getAppDirName(), urls, moduleName, doc, moduleItem);
 						}
 						documents.add(convertDocumentToString(doc));
 					} else {
@@ -671,7 +665,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 						if (StringUtils.isNotEmpty(snapshotRepoURL)) {
 							urls.add(snapshotRepoURL);
 						}
-						document = constructDomSource(artifact, applicationInfo.getAppDirName(), urls, "", doc, applicationItem, rootElement, rootItem);
+						document = constructDomSource(artifact, applicationInfo.getAppDirName(), urls, "", doc, applicationItem);
 						documents.add(convertDocumentToString(document));
 					}
 				}
@@ -689,140 +683,151 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 
 		return response;
 	}
-
+	
 	/**
-	 * Fetch pop up values.
-	 *
-	 * @param appDirName the app dir name
-	 * @param action the action
-	 * @param userId the user id
-	 * @return the response
-	 * @throws PhrescoException 
+	 * To Fetch the branches and tags of the given project
+	 * @param customerId
+	 * @param projectId
+	 * @return
+	 * @throws PhrescoException
 	 */
+	
 	@GET
-	@Path("/browseGitRepo")
+	@Path("/browseSourceRepo")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getGitSourceRepo(@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_PROJECTID) String projectId,
-			@QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
+	public Response getSourceRepo(@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(USERNAME) String username, @QueryParam(REQ_PASSWORD) String password) throws PhrescoException {
 		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
-		List<String> documents = new ArrayList<String>();
 		Response response = null;
-		Document document = null;
-		String url = null;
+		List<String> documents = new ArrayList<String>();
 		try {
 			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
 			for (ApplicationInfo applicationInfo : appInfos) {
-				String path = Utility.getProjectHome() + File.separator + applicationInfo.getAppDirName();
-				ProjectInfo projectInfo = Utility.getProjectInfo(path, moduleName);
-				File sourceFolderLocation = Utility.getSourceFolderLocation(projectInfo, path, moduleName);
-				if (!sourceFolderLocation.exists()) {
-					return null;
-				}
-				Git git = Git.open(new File(sourceFolderLocation.getPath()));
-				List<String> branchList = new ArrayList<String>();
-				List<String> tagLists = new ArrayList<String>();
-
-				List<Ref> remoteCall = git.branchList().setListMode(ListMode.REMOTE).call();
-				for (Ref ref : remoteCall) {
-					branchList.add(ref.getName());
-				}
-
-				ListTagCommand tagList = git.tagList();
-				Map<String, Ref> tags = tagList.getRepository().getTags();
-				Set<Entry<String,Ref>> entrySet = tags.entrySet();
-				for (Entry<String, Ref> entry : entrySet) {
-					tagLists.add(entry.getKey());
-				}
-
-				StoredConfig config = git.getRepository().getConfig();
-				Set<String> subsections = config.getSubsections(REMOTE);
-				for (String string : subsections) {
-					String[] urlList = config.getStringList(REMOTE, string, URL);
-					for (String urlPath : urlList) {
-						url = urlPath;
+				String appDirName = applicationInfo.getAppDirName();
+				File pomFileLocation = Utility.getPomFileLocation(Utility.getProjectHome() + appDirName, "");
+				PomProcessor pomProcessor = new PomProcessor(pomFileLocation);
+				String srcRepoUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
+				if (StringUtils.isNotEmpty(srcRepoUrl)) {
+					String repoType = getRepoType(srcRepoUrl);
+					Document document = null;
+					if (repoType.equalsIgnoreCase(SVN)) {
+						document = getSvnSourceRepo(username, password, srcRepoUrl);
 					}
+					if (repoType.equalsIgnoreCase(GIT)) {
+						document = getGitSourceRepo(appDirName);
+					}
+					documents.add(convertDocumentToString(document));
 				}
-				document = constructGitTree(branchList, tagLists, url);
-				documents.add(convertDocumentToString(document));
 			}
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, documents, status, successCode);
-			response = Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		}  catch (PhrescoException e) {
-			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610020);
-			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoPomException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHRSR10001;
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+		}
+		status = RESPONSE_STATUS_SUCCESS;
+		successCode = PHRSR00001;
+		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, documents, status, successCode);
+		response = Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		
+		return response;
+	}
+	
+	/**
+	 * To fetch the branches and tags from git repo
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 */
+	private Document getGitSourceRepo(String appDirName) throws PhrescoException {
+		Document document = null;
+		String url = null;
+		try {
+			String path = Utility.getProjectHome() + File.separator + appDirName;
+			ProjectInfo projectInfo = Utility.getProjectInfo(path, "");
+			File sourceFolderLocation = Utility.getSourceFolderLocation(projectInfo, path, "");
+			if (!sourceFolderLocation.exists()) {
+				return null;
+			}
+			Git git = Git.open(new File(sourceFolderLocation.getPath()));
+			List<String> branchList = new ArrayList<String>();
+			List<String> tagLists = new ArrayList<String>();
+
+			List<Ref> remoteCall = git.branchList().setListMode(ListMode.REMOTE).call();
+			for (Ref ref : remoteCall) {
+				branchList.add(ref.getName());
+			}
+
+			ListTagCommand tagList = git.tagList();
+			Map<String, Ref> tags = tagList.getRepository().getTags();
+			Set<Entry<String,Ref>> entrySet = tags.entrySet();
+			for (Entry<String, Ref> entry : entrySet) {
+				tagLists.add(entry.getKey());
+			}
+
+			StoredConfig config = git.getRepository().getConfig();
+			Set<String> subsections = config.getSubsections(REMOTE);
+			for (String string : subsections) {
+				String[] urlList = config.getStringList(REMOTE, string, URL);
+				for (String urlPath : urlList) {
+					url = urlPath;
+				}
+			}
+			document = constructGitTree(branchList, tagLists, url);
 		} catch (IOException e) {
 			throw new PhrescoException(e);
 		} catch (GitAPIException e) {
 			throw new PhrescoException(e);
 		}
-		return response;
+
+		return document;
 	}
 
-
 	/**
-	 * Fetch pop up values.
-	 *
-	 * @param appDirName the app dir name
-	 * @param action the action
-	 * @param userId the user id
-	 * @return the response
-	 * @throws PhrescoException 
+	 * To fetch the branches and tags from svn repo
+	 * @param username
+	 * @param password
+	 * @param url
+	 * @return
+	 * @throws PhrescoException
 	 */
-
-	@GET
-	@Path("/browseSvnRepo")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getSvnSourceRepo(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_PROJECTID) String projectId,
-			@QueryParam(REST_QUERY_MODULE_NAME) String moduleName, @QueryParam(USERNAME) String username, @QueryParam(REQ_PASSWORD) String password,
-			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) throws PhrescoException {
-		String pomPath  = "";
+	public Document getSvnSourceRepo(String username, String password, String url) throws PhrescoException {
 		Document document = null;
-		List<String> documents = new ArrayList<String>();
-		Response response = null;
-		Map<String, List<String>> paths = new HashMap<String, List<String>>();
-		List<String> branches = new ArrayList<String>();
-		List<String> trunks = new ArrayList<String>();
-		List<String> tags = new ArrayList<String>();
 		try {
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
-			for (ApplicationInfo applicationInfo : appInfos) {
-				String url = readSvnUrl(applicationInfo, moduleName, "");		
-				if (url.endsWith(TRUNK)) {
-					url = url.substring(0, url.lastIndexOf("/")+1);
-				}
-				ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
-				String trunkUrl = url + TRUNK;
-				List<String> trunksList = getSvnData(trunkUrl, trunks, username, password);
-				String branchUrl = url + BRANCHES;
-				List<String> branchesList = getSvnData(branchUrl, branches, username, password);
-				String tagUrl = url + TAGS;
-				List<String> tagsList = getSvnData(tagUrl, tags, username, password);
-				paths.put(TRUNK, trunksList);
-				paths.put(BRANCHES, branchesList);
-				paths.put(TAGS, tagsList);
-
-				document = constructSvnTree(paths,url);
-				documents.add(convertDocumentToString(document));
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, documents, status, successCode);
-				response = Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-				.build();
+			Map<String, List<String>> paths = new HashMap<String, List<String>>();
+			if (url.endsWith(TRUNK) || url.endsWith(TRUNK + FrameworkConstants.FORWARD_SLASH)) {
+				url = url.substring(0, url.lastIndexOf(TRUNK));
 			}
+			String trunkUrl = url + TRUNK;
+			List<String> trunks = new ArrayList<String>();
+			List<String> trunksList = getSvnData(trunkUrl, trunks, username, password);
+			paths.put(TRUNK, trunksList);
+
+			String branchUrl = url + BRANCHES;
+			List<String> branches = new ArrayList<String>();
+			List<String> branchesList = getSvnData(branchUrl, branches, username, password);
+			paths.put(BRANCHES, branchesList);
+
+			String tagUrl = url + TAGS;
+			List<String> tags = new ArrayList<String>();
+			List<String> tagsList = getSvnData(tagUrl, tags, username, password);
+			paths.put(TAGS, tagsList);
+			document = constructSvnTree(paths,url);
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
 		}
-
-		return response;
+		return document;
 	}
 
 	/**
-	 * Fetch pop up values.
-	 *
-	 * @param appDirName the app dir name
-	 * @param action the action
-	 * @param userId the user id
-	 * @return the response
+	 * To get the artifact information
+	 * @param customerId
+	 * @param appDirName
+	 * @param userId
+	 * @param nature
+	 * @param version
+	 * @param moduleName
+	 * @return
+	 * @throws PhrescoException
 	 */
 
 	@GET
@@ -830,7 +835,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	@Produces(MediaType.APPLICATION_JSON)
 	@SuppressWarnings({"unchecked","rawtypes"})
 	public Response getArtifactInfo(@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_NATURE) String nature, @QueryParam(REST_QUERY_VERSION) String version) throws PhrescoException {
+			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_NATURE) String nature, @QueryParam(REST_QUERY_VERSION) String version, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
 		List<String> urls = new ArrayList<String>();
 		Map<String, Object> infoMap = new HashMap<String, Object>();
 		ResponseInfo<Map<String, Object>> responseData = new ResponseInfo<Map<String, Object>>();
@@ -843,7 +848,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager != null) {
 				com.photon.phresco.commons.model.RepoInfo repos = serviceManager.getCustomer(customerId).getRepoInfo();
-				artifact = readArtifact(appDirName, version, "");
+				artifact = readArtifact(appDirName, version, moduleName);
 				MavenDefaultLayout defaultLayout = new MavenDefaultLayout();
 				URI paths = defaultLayout.getPath(artifact);
 				MetadataXpp3Reader reader = new MetadataXpp3Reader();
@@ -896,8 +901,13 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	}
 
 	/**
+	 * To download the artifact
+	 * @param customerId
 	 * @param appDirName
+	 * @param userId
+	 * @param nature
 	 * @param version
+	 * @param moduleName
 	 * @return
 	 * @throws PhrescoException
 	 */
@@ -905,7 +915,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	@Path("/download")
 	@Produces(MediaType.MULTIPART_FORM_DATA)
 	public Response downloadService(@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_USERID) String userId,  @QueryParam(REST_QUERY_NATURE) String nature,  @QueryParam(REST_QUERY_VERSION) String version) throws PhrescoException {
+			@QueryParam(REST_QUERY_USERID) String userId,  @QueryParam(REST_QUERY_NATURE) String nature,  @QueryParam(REST_QUERY_VERSION) String version, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
 		Artifact artifact = null;
 		RemoteRepository repo = null;
 		InputStream inputStream = null;
@@ -926,7 +936,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				} else {
 					url = repos.getSnapshotRepoURL();
 				}
-				artifact = readArtifact(appDirName, version, "");
+				artifact = readArtifact(appDirName, version, moduleName);
 				artifacts.add(artifact);
 				MavenArtifactResolver artifactResolver = new MavenArtifactResolver();
 				URL artifacturl = MavenArtifactResolver.resolveSingleArtifact(url, "", "", artifacts);
@@ -1094,7 +1104,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	private Artifact readArtifact(String appDirName, String version, String moduleName) throws PhrescoException {
 		Artifact artifact = null;
 		try {
-			String appDirPath = Utility.getProjectHome() + File.separator + appDirName;
+			String appDirPath = Utility.getProjectHome() + appDirName;
 			ProjectInfo projectInfo = Utility.getProjectInfo(appDirPath, "");
 			File sourceFolderLocation = Utility.getSourceFolderLocation(projectInfo, appDirPath, moduleName);
 			File pomFile = new File (sourceFolderLocation, POM_FILE);
@@ -1113,33 +1123,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		}
 		return artifact;
 	}
-
-	private String readSvnUrl(ApplicationInfo appInfo,String moduleName, String appDirName) throws PhrescoException {
-		String connectionPath= "";
-		String appDirPath = "";
-		try {
-			if (StringUtils.isNotEmpty(appDirName)) {
-				appDirPath = Utility.getProjectHome() + File.separator + appDirName;
-			} else if (appInfo != null && appInfo.getModules() != null)  {
-				appDirPath = Utility.getProjectHome() + File.separator + appInfo.getRootModule();
-			} else if (appInfo != null &&  appInfo.getModules() == null) {
-				appDirPath = Utility.getProjectHome() + File.separator + appInfo.getAppDirName();
-			}
-			File pomFile = Utility.getPomFileLocation(appDirPath, moduleName);
-			if (pomFile.exists()) {
-				if (pomFile.exists()) {
-					PomProcessor processor = new PomProcessor(pomFile);
-					connectionPath = processor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
-				}
-			}
-		} catch (PhrescoPomException e) {
-			throw new PhrescoException(e);
-		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
-		}
-		return connectionPath;
-	}
-
 
 	private Response importPerforceApplication(String type, RepoDetail repodetail, String displayName) throws Exception {
 		SCMManagerImpl scmi = new SCMManagerImpl();
@@ -2073,8 +2056,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		}
 	}
 
-	private static Document constructDomSource(Artifact artifacts, String appDirName, List<String> urls, String moduleName, Document doc, Element appendItem, Element rootElement, Element rootItem) throws PhrescoException {
-		Artifact artifact = null;
+	private static Document constructDomSource(Artifact artifacts, String appDirName, List<String> urls, String moduleName, Document doc, Element appendItem) throws PhrescoException {
 		List<UUID> randomIds = new ArrayList<UUID>();
 		try {
 			Element snapshot = doc.createElement(ITEM);
@@ -2091,7 +2073,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			appendItem.appendChild(release);
 
 			RepositorySystem system = newRepositorySystem();
-			artifact = new DefaultArtifact(artifacts.getGroupId() + ":" + artifacts.getArtifactId()+ ":" + "[,)");
+			Artifact artifact = new DefaultArtifact(artifacts.getGroupId() + ":" + artifacts.getArtifactId()+ ":" + "[,)");
 			for (String url : urls) {
 				UUID randomUUID = UUID.randomUUID();
 				randomIds.add(randomUUID);
@@ -2148,11 +2130,15 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 					versionItem.setAttribute(PATH, artifactPath);
 
 					versionItem.appendChild(jarItem);
-
+					String expression = "";
+					if (StringUtils.isNotEmpty(moduleName)) {
+						expression = ROOT_ITEM_XPATH + moduleName + NAME_FILTER_SUFIX;
+					}
+					
 					if (version.contains(SNAPSHOT)) {
 						jarItem.setAttribute(NATURE, SNAPSHOT);
 						XPath xpath = XPathFactory.newInstance().newXPath();
-						String expression = SNAPSHOT_ITEM;
+						expression = expression + SNAPSHOT_ITEM;
 						Node node = (Node) xpath.compile(expression).evaluate(doc, XPathConstants.NODE);
 						if (node != null) {
 							element = (Element) node;
@@ -2161,7 +2147,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 					} else {
 						jarItem.setAttribute(NATURE, RELEASE);
 						XPath xpath = XPathFactory.newInstance().newXPath();
-						String expression = RELEASE_ITEM;
+						expression = expression + RELEASE_ITEM;
 						Node node = (Node) xpath.compile(expression).evaluate(doc, XPathConstants.NODE);
 						if (node != null) {
 							element = (Element) node;

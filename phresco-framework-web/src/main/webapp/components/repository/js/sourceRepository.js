@@ -30,7 +30,7 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 			var self = this;
 			var self = this;
 			var requestBody = {};
-			self.repositoryListener.repository(self.repositoryListener.getActionHeader(requestBody, "browseGitRepo"), function(response) {
+			self.repositoryListener.repository(self.repositoryListener.getActionHeader(requestBody, "browseSourceRepo"), function(response) {
 				var responseData = response.data;
 				if (responseData !== undefined && responseData !== null && responseData.length > 0) {
 					$.each(responseData, function(index, value) {
@@ -58,7 +58,6 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 				self.opencc(this, $(this).attr('name'));
 			});
 			
-			self.customScroll($(".tree_view"));
 			self.customScroll($(".file_view"));
 		}
 	});

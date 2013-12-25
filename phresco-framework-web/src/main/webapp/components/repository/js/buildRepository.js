@@ -51,7 +51,21 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 		bindUI : function(){
 			var self = this;
 			
-			self.customScroll($(".tree_view"));
+			$("input[name=downloadArtifact]").unbind("click");
+			$("input[name=downloadArtifact]").bind("click", function() {
+				var appDirName = $(this).attr('appdirname');
+				var nature = $(this).attr('nature');
+				var version = $(this).attr("version");
+				var moduleName = $(this).attr("moduleName");
+				var requestBody = {};
+				requestBody.appDirName = appDirName;
+				requestBody.nature = nature;
+				requestBody.version = version;
+				requestBody.moduleName = moduleName;
+				var header = self.repositoryListener.getActionHeader(requestBody, "downloadBuild");
+				$.fileDownload(header.webserviceurl);
+			});
+			
 			self.customScroll($(".file_view"));
 		}
 	});
