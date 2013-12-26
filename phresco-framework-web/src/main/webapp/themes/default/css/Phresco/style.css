@@ -4493,7 +4493,6 @@ button::-moz-focus-inner {
   border: 0; }
 
 .mfp-close {
-  display: none !important;
   width: 44px;
   height: 44px;
   line-height: 44px;
