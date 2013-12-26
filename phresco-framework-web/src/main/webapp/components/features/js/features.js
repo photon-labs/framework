@@ -58,26 +58,30 @@ define(["features/listener/featuresListener"], function() {
 
 		registerHandlebars : function () {
 			var self = this, appdetails, techid = '';
-			if(commonVariables.api.localVal.getProjectInfo() !== null){
-				appdetails = commonVariables.api.localVal.getProjectInfo();
-				techid = appdetails.data.projectInfo.appInfos[0].techInfo.id;
-			}	
 			Handlebars.registerHelper('versiondata', function(versions, id) {
+				if(commonVariables.api.localVal.getProjectInfo() !== null){
+					appdetails = commonVariables.api.localVal.getProjectInfo();
+					techid = appdetails.data.projectInfo.appInfos[0].techInfo.id;
+				}	
 				var selectedList = commonVariables.api.localVal.getSession("selectedFeatures");				
 				var fieldset;
 				if(versions.length > 0){
 					$.each(versions, function(index, value){
 						if(JSON.stringify(value.appliesTo) !== "null"){
+							var reqArray = [];
+							var techidArray = [];
 							$.each(value.appliesTo, function(index, value){
-								if(value.required === true && value.techId === techid){
-									fieldset = '<fieldset class="switch default" depid="dep_'+id+'" id="feature_'+ id +'" value="false"><label value="false"></label><label class="on" value="true"></label></fieldset>';
-									return false;
-								} else {
-									fieldset = '<fieldset class="switch switchOff" depid="dep_'+id+'" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
-								}
+								reqArray.push(value.required);
+								techidArray.push(value.techId);
 							});	
-							return false;						
-						}else {							
+							
+							if ($.inArray(true, reqArray) > -1 && $.inArray(techid, techidArray) > -1) {
+								fieldset = '<fieldset class="switch default" depid="dep_'+id+'" id="feature_'+ id +'" value="false"><label value="false"></label><label class="on" value="true"></label></fieldset>';
+								return false;
+							} else {
+								fieldset = '<fieldset class="switch switchOff" depid="dep_'+id+'" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
+							} 
+						}else {		
 							fieldset = '<fieldset class="switch switchOff" depid="dep_'+id+'" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true" ></label></fieldset>';
 						} //for android null exception
 					});
