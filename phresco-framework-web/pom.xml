@@ -170,7 +170,7 @@
 		<dependency>
 			<groupId>jslibraries.files</groupId>
 			<artifactId>jquery_magnific_popup_min</artifactId>
-			<version>1.0</version>
+			<version>1.1</version>
 			<type>js</type>
 		</dependency>
 		
