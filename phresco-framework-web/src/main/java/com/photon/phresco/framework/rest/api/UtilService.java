@@ -511,10 +511,6 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 		ActionResponse response = null;
 		String envNames = request.getParameter("environmentName");
 		try {
-//			if (StringUtils.isNotEmpty(module)) {
-//				appDirName = appDirName + File.separator + module;
-//			}
-			
 			String rootModulePath = "";
 			String subModuleName = "";
 			if (StringUtils.isNotEmpty(module)) {
@@ -523,20 +519,18 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 			} else {
 				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
-			
-			
 			response = futil.mandatoryValidation(request, phase, rootModulePath, subModuleName);
 			if (response.isErrorFound()) {	
 				return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 			}
 			
 			if ((PHASE_LOAD.equals(phase) || PERFORMANCE_TEST.equals(phase)) && REQ_PARAMETERS.equals(request.getParameter(REQ_TEST_BASIS))) {
-				response = FrameworkServiceUtil.checkForConfigurations(appDirName, envNames, customerId);
+				response = FrameworkServiceUtil.checkForConfigurations(rootModulePath, subModuleName, envNames, customerId);
 				if (response.isErrorFound()) {
 					return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 				}
 			} else if (!PHASE_LOAD.equals(phase) && !PERFORMANCE_TEST.equals(phase)) {
-				response = FrameworkServiceUtil.checkForConfigurations(appDirName, envNames, customerId);
+				response = FrameworkServiceUtil.checkForConfigurations(rootModulePath, subModuleName , envNames, customerId);
 				if (response.isErrorFound()) {
 					return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 				}

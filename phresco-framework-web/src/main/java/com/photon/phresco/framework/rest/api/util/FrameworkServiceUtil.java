@@ -677,16 +677,23 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 		}
 	}
 	
-	public static ActionResponse checkForConfigurations( String appDirName, String environmentName, String customerId) throws PhrescoException {
+	public static ActionResponse checkForConfigurations( String rootModulePath, String subModule, String environmentName, String customerId) throws PhrescoException {
 		ConfigManager configManager = null;
 		ActionResponse actionresponse = new ActionResponse();
 		try {
-			File baseDir = new File(Utility.getProjectHome() + appDirName);
-			File configFile = new File(baseDir +  File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator + Constants.CONFIGURATION_INFO_FILE);
-			File settingsFile = new File(Utility.getProjectHome()+ customerId + SETTINGS_INFO_FILE_NAME);
+			System.out.println("rootModulePath ::" + rootModulePath);
+			System.out.println("subModule ::" + subModule);
+			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModule);
+			System.out.println("dotPhrescoFolderPath ::" + dotPhrescoFolderPath);
+			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModule);
+			System.out.println("projectInfo ::" + projectInfo.getProjectCode());
+			File configFile = new File(dotPhrescoFolderPath + File.separator + Constants.CONFIGURATION_INFO_FILE);
+			File settingsFile = new File(Utility.getProjectHome()+ File.separator + projectInfo.getProjectCode() + Constants.SETTINGS_XML);
+			System.out.println("configFile ::" + configFile);
+			System.out.println("settingsFile ::" + settingsFile);
 			if (StringUtils.isNotEmpty(environmentName)) {
 				List<String> selectedEnvs = csvToList(environmentName);
-				List<String> selectedConfigTypeList = getSelectedConfigTypeList(appDirName);
+				List<String> selectedConfigTypeList = getSelectedConfigTypeList(projectInfo.getAppInfos().get(0));
 				List<String> nullConfig = new ArrayList<String>();
 				if (settingsFile.exists()) {
 					configManager = PhrescoFrameworkFactory.getConfigManager(settingsFile);
@@ -722,7 +729,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 							}
 						}
 					} if(CollectionUtils.isNotEmpty(nullConfig)) {
-						String errMsg = environment.getName() + " environment in " + baseDir.getName() + " doesnot have "+ nullConfig + " configurations";
+						String errMsg = environment.getName() + " environment in " + projectInfo.getAppInfos().get(0).getAppDirName() + " doesnot have "+ nullConfig + " configurations";
 						actionresponse.setErrorFound(true);
 						actionresponse.setConfigErr(true);
 						actionresponse.setConfigErrorMsg(errMsg);
@@ -751,23 +758,18 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 		return envs;
 	}
 	
-	private static List<String> getSelectedConfigTypeList(String  baseDir) throws PhrescoException {
-		try {
-			ApplicationInfo appInfo = getApplicationInfo(baseDir);
-			List<String> selectedList = new ArrayList<String>();
-			if(CollectionUtils.isNotEmpty(appInfo.getSelectedServers())) {
-				selectedList.add("Server");
-			}
-			if(CollectionUtils.isNotEmpty(appInfo.getSelectedDatabases())) {
-				selectedList.add("Database");
-			}
-			if(CollectionUtils.isNotEmpty(appInfo.getSelectedWebservices())) {
-				selectedList.add("WebService");
-			}
-			return selectedList;
-		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
+	private static List<String> getSelectedConfigTypeList(ApplicationInfo  appInfo) throws PhrescoException {
+		List<String> selectedList = new ArrayList<String>();
+		if(CollectionUtils.isNotEmpty(appInfo.getSelectedServers())) {
+			selectedList.add("Server");
 		}
+		if(CollectionUtils.isNotEmpty(appInfo.getSelectedDatabases())) {
+			selectedList.add("Database");
+		}
+		if(CollectionUtils.isNotEmpty(appInfo.getSelectedWebservices())) {
+			selectedList.add("WebService");
+		}
+		return selectedList;
 	}
 
 	public List<Configuration> configurationList(String configType) throws PhrescoException {

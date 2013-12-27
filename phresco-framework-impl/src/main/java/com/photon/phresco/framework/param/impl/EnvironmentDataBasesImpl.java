@@ -52,6 +52,7 @@ public class EnvironmentDataBasesImpl implements DynamicParameter, Constants {
     	ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
     	String rootModule = (String) paramMap.get(KEY_ROOT_MODULE);
     	String envName = (String) paramMap.get(KEY_ENVIRONMENT);
+    	String projectCode = (String) paramMap.get(KEY_PROJECT_CODE);
     	if (StringUtils.isNotEmpty(rootModule)) {
 			rootModulePath = Utility.getProjectHome() + rootModule;
 			subModuleName = applicationInfo.getAppDirName();
@@ -59,7 +60,7 @@ public class EnvironmentDataBasesImpl implements DynamicParameter, Constants {
 			rootModulePath = Utility.getProjectHome() + applicationInfo.getAppDirName();
 		}
     	//To search for db type in settings.xml
-    	ConfigManager configManager = new ConfigManagerImpl(new File(getSettingsPath())); 
+    	ConfigManager configManager = new ConfigManagerImpl(new File(getSettingsPath(projectCode))); 
     	List<Configuration> configurations = configManager.getConfigurations(envName, Constants.SETTINGS_TEMPLATE_DB);
     	for (Configuration configuration : configurations) {
     	    Value value = new Value();
@@ -91,7 +92,7 @@ public class EnvironmentDataBasesImpl implements DynamicParameter, Constants {
 		 return builder;
 	 }
     
-    private String getSettingsPath() {
-    	return Utility.getProjectHome() + SETTINGS_XML;
+    private String getSettingsPath(String projectCode) {
+    	return Utility.getProjectHome() + projectCode +  SETTINGS_XML;
     }
 }
