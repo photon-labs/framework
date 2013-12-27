@@ -34,7 +34,12 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 				var responseData = response.data;
 				if (responseData !== undefined && responseData !== null && responseData.length > 0) {
 					$.each(responseData, function(index, value) {
-						self.repositoryListener.constructTree(value)
+						self.repositoryListener.constructTree(value);
+						if (responseData.length === index + 1) {
+							setTimeout(function() {
+								self.customScroll($(".tree_view"));
+							}, 700);
+						}
 					});
 				} else {
 					$('.tree_view').hide();

@@ -92,7 +92,8 @@ define([], function() {
 						}, "plugins" : [ "themes", "html_data", "ui" ]}).bind("loaded.jstree");
 						
 						$('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
-						$('.tree li.parent_li > span').on('click', function (e) {
+						$('.tree li.parent_li > span').unbind('click');
+						$('.tree li.parent_li > span').bind('click', function (e) {
 							var children = $(this).parent('li.parent_li').find(' > ul > li');
 							if (children.is(":visible")) {
 								children.hide('fast');
@@ -122,14 +123,14 @@ define([], function() {
 								var nature = $(this).find('a').attr('nature');
 								var moduleName = $(this).find('a').attr('modulename');
 								var version = $(this).parent().parent().prev().find('a').text();
-								self.getArtifactInformation(appDirName, nature, version, moduleName);
+								if (appDirName !== undefined && nature !== undefined) {
+									self.getArtifactInformation(appDirName, nature, version, moduleName);
+								}
 							}
 							if (currentTab === "sourceRepo") {
 								
 							}
 						});
-						
-						self.customScroll($(".tree_view"));
 					}, 500);
 				});
 			});
@@ -185,8 +186,20 @@ define([], function() {
 					strItems += '<li role=treeItem class=parent_li>' + '<span class="badge badge-success" title="Collapse this branch">'+
 								'<i class="icon-plus-sign"></i>' + '<a version="'+ strRoot +'">' + strRoot + '</a></span>' + strCollection +'</li>';
 				} else {
-					strItems += '<li role=treeItem class="parent_li hideContent">' + '<span class="badge badge-warning" title="Expand this branch">'+ '<i></i>' +
-								'<a moduleName="'+$(value).attr('moduleName')+'" appDirName="'+$(value).attr('appDirName')+'" nature="'+$(value).attr('nature')+'">' + $(value).attr('name') + '</a></span></li>';
+					var moduleName = $(value).attr('moduleName');
+					var appDirName = $(value).attr('appDirName');
+					var nature = $(value).attr('nature');
+					strItems += '<li role=treeItem class="parent_li hideContent">' + '<span class="badge badge-warning" title="Expand this branch">'+ '<i></i><a ';
+					if (moduleName !== undefined) {
+						strItems += 'moduleName="'+moduleName+'"';
+					}
+					if (appDirName !== undefined) {
+						strItems += 'appDirName="'+appDirName+'"';
+					}
+					if (nature !== undefined) {
+						strItems += 'nature="'+nature+'"';
+					}
+					strItems += '>' + $(value).attr('name') + '</a></span></li>';
 				}
 			});
 			
