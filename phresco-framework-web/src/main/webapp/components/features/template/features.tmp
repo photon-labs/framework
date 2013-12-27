@@ -31,7 +31,7 @@
                                 {{#versiondata versions id}}{{/versiondata}}
 								{{#versionShowHide versions id}}{{/versionShowHide}} 
 								<input type="hidden" class="moduleId" value="{{id}}">
-                                <select class="flt_right jarscope">
+                                <select class="input-mini flt_right">
                                     {{#each versions}}									
                                         <option value="{{id}}" {{#selectDefaultVersion appliesTo}}{{/selectDefaultVersion}} scope="{{scope}}">{{version}}</option>  
                                     {{/each}} 
@@ -69,7 +69,7 @@
 								{{#versionShowHide versions id}}{{/versionShowHide}} 
 								<input type="hidden" class="moduleId" value="{{id}}">
                                 {{#if versions}}
-									<select class="flt_right jarscope">
+									<select class="input-mini flt_right">
 										{{#each versions}}										
 											<option value="{{id}}" {{#selectDefaultVersion appliesTo}}{{/selectDefaultVersion}} scope="{{scope}}">{{version}}</option>  
 										{{/each}} 
@@ -109,7 +109,7 @@
 								{{#versionShowHide versions id}}{{/versionShowHide}}
 								<input type="hidden" class="moduleId" value="{{id}}">
 								{{#if versions}}
-									<select class="flt_right jarscope">
+									<select class="input-mini flt_right">
 										{{#each versions}}										
 											<option value="{{id}}" {{#selectDefaultVersion appliesTo}}{{/selectDefaultVersion}} scope="{{scope}}">{{version}}</option>  
 										{{/each}} 
