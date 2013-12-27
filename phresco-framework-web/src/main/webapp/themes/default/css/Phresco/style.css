@@ -1655,8 +1655,9 @@ img[name="close"] {
 	padding:2px !important;
 	height:23px;
 	font-size:11px;
-	width:70px !important;
+	width:90px !important;
 	margin-top:9px;
+	margin-left:4px;
 }
 
 .features_box .box_div ul li span {
