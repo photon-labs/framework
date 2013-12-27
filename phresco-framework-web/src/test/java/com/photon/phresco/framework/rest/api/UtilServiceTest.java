@@ -171,13 +171,13 @@ public class UtilServiceTest extends RestBaseTest {
 	
 	@Test
 	public void killprocessTest() {
-		Response killProcess = utilService.killProcess("create", appDirName);
+		Response killProcess = utilService.killProcess("create", "TestProject", appDirName);
 		Assert.assertEquals(200, killProcess.getStatus());
 	}
 	
 	@Test
 	public void killprocess() {
-		Response killProcess = utilService.killProcess("build", appDirName);
+		Response killProcess = utilService.killProcess("build", "TestProject", appDirName);
 		Assert.assertEquals(200, killProcess.getStatus());
 	}
 
