@@ -1,3 +1,4 @@
+
 /**
  * Phresco Framework
  *
@@ -611,4 +612,7 @@ public interface ResponseCodes {
 	 */
 	String PHRU000001 = "PHRU000001"; // Build uploaded to TestFlight server successfully
 	String PHRU010001 = "PHRU010001"; // Build uploading failed
+	
+	String PHRSR00001 = "PHRSR00001"; //Source repo branches and tags listed successfully
+	String PHRSR10001 = "PHRSR10001"; //Failed to list source repo branches and tags
 }

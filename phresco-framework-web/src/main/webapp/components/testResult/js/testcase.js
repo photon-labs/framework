@@ -114,6 +114,14 @@ define(["testResult/listener/testResultListener"], function() {
 				$('.functional').show();
 			}
 			
+			if (currentTab === 'unitTest') {
+				commonVariables.runType = 'unit';
+			} else if (currentTab === 'componentTest') {
+				commonVariables.runType = 'component';
+			} else if (currentTab === 'functionalTest') {
+				commonVariables.runType = 'Functional';
+			} 
+			
 			var testcases = commonVariables.testcases;
 			if (testcases !== undefined && testcases !== null) {
 				if ("manualTest" === currentTab) {
@@ -175,6 +183,7 @@ define(["testResult/listener/testResultListener"], function() {
 		 */
 		bindUI : function() {
 			var self = this;
+			self.killProcess();
 			var currentTab = commonVariables.navListener.currentTab;
 			if ("manualTest" === currentTab) {
 				$('.unit_close').hide();
@@ -214,9 +223,10 @@ define(["testResult/listener/testResultListener"], function() {
 				var target = $('#' + dynClass);
 				console.info(target);
 				$('.features_content_main').prepend(target);
-				$('.content_title').css('z-index', '0');
-				$('.manualTemp').css('z-index', '0');
-				$('.header_section').css('z-index', '0');
+				$('.content_title').css('z-index', '6');
+				$('.header_section').css('z-index', '7');
+				$('.footer_section').css('z-index', '4');
+				$('.manualTemp').css('z-index', '1');
 				var testsuiteName = commonVariables.testSuiteName;
 				$('#testSuiteId').val(testsuiteName);
 			});

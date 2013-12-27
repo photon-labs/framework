@@ -46,13 +46,23 @@ define([], function() {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + 'repository/browseBuildRepo?userId='+userId+'&customerId='+customerId+'&projectId='+projectId;
 			}
-			if (action === "browseGitRepo") {
+			if (action === "browseSourceRepo") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + 'repository/browseGitRepo?userId='+userId+'&customerId='+customerId+'&projectId='+projectId;
+				header.webserviceurl = commonVariables.webserviceurl + 'repository/browseSourceRepo?userId='+userId+'&customerId='+customerId+'&projectId='+projectId+'&userName=loheswaran_g&password=SaveAnimals56';
 			}
 			if (action === "artifactInfo") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + 'repository/artifactInfo?userId='+userId+'&customerId='+customerId+'&appDirName='+requestBody.appDirName+'&version='+requestBody.version+'&nature='+requestBody.nature;
+				if (!self.isBlank(requestBody.moduleName)) {
+					header.webserviceurl = header.webserviceurl + "&moduleName="+requestBody.moduleName
+				}
+			}
+			if (action === "downloadBuild") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + 'repository/download?userId='+userId+'&customerId='+customerId+'&appDirName='+requestBody.appDirName+'&version='+requestBody.version+'&nature='+requestBody.nature;
+				if (!self.isBlank(requestBody.moduleName)) {
+					header.webserviceurl = header.webserviceurl + "&moduleName="+requestBody.moduleName
+				}
 			}
 			
 			return header;
@@ -64,15 +74,6 @@ define([], function() {
 				parseXml = function(xmlStr) {
 					return ( new window.DOMParser() ).parseFromString(xmlStr, "text/xml");
 				};
-			} else if (typeof window.ActiveXObject != "undefined" && new window.ActiveXObject("Microsoft.XMLDOM")) {
-				parseXml = function(xmlStr) {
-					var xmlDoc = new window.ActiveXObject("Microsoft.XMLDOM");
-					xmlDoc.async = "false";
-					xmlDoc.loadXML(xmlStr);
-					return xmlDoc;
-				};
-			} else {
-				parseXml = function() { return null; }
 			}
 			callback(parseXml(xmlStr));
 		},
@@ -88,22 +89,11 @@ define([], function() {
 							"select_limit" : 2,
 							"select_multiple_modifier" : "alt",
 							"selected_parent_close" : "select_parent"
-						}, "plugins" : [ "themes", "html_data", "ui" ]}).bind("loaded.jstree", function (event, data) {
-							$('span.folder').click(function(e) {
-								if ($(this).find("a").attr('class') === "selected") {
-									$(this).find("a").removeClass('selected');
-									$(this).removeAttr("selected");
-								} else {
-									$(this).find("a").attr("class", "selected");
-									$(this).attr("selected", "selected");
-								}
-								var path = $(this).parent().attr('value');
-								path = path.replace(/\+/g,' ');
-							});
-						});
+						}, "plugins" : [ "themes", "html_data", "ui" ]}).bind("loaded.jstree");
 						
 						$('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
-						$('.tree li.parent_li > span').on('click', function (e) {
+						$('.tree li.parent_li > span').unbind('click');
+						$('.tree li.parent_li > span').bind('click', function (e) {
 							var children = $(this).parent('li.parent_li').find(' > ul > li');
 							if (children.is(":visible")) {
 								children.hide('fast');
@@ -127,34 +117,61 @@ define([], function() {
 						
 						$(".badge-warning").unbind("click");
 						$(".badge-warning").bind("click", function() {
-							var appDirName = $(this).find('a').attr('appdirname');
-							var nature = $(this).find('a').attr('nature');
-							var version = $(this).parent().parent().prev().find('a').text()
-							self.getArtifactInformation(appDirName, nature, version);
+							var currentTab = commonVariables.navListener.currentTab;
+							if (currentTab === "buildRepo") {
+								var appDirName = $(this).find('a').attr('appdirname');
+								var nature = $(this).find('a').attr('nature');
+								var moduleName = $(this).find('a').attr('modulename');
+								var version = $(this).parent().parent().prev().find('a').text();
+								if (appDirName !== undefined && nature !== undefined) {
+									self.getArtifactInformation(appDirName, nature, version, moduleName);
+								}
+							}
+							if (currentTab === "sourceRepo") {
+								
+							}
 						});
 					}, 500);
 				});
 			});
 		},
 		
-		getArtifactInformation : function(appDirName, nature, version) {
+		getArtifactInformation : function(appDirName, nature, version, moduleName) {
 			var self = this;
 			var requestBody = {};
 			requestBody.appDirName = appDirName;
 			requestBody.nature = nature;
 			requestBody.version = version;
+			requestBody.moduleName = moduleName;
 			self.repository(self.getActionHeader(requestBody, "artifactInfo"), function(response) {
 				var responseData = response.data;
 				if (responseData !== undefined && responseData !== null) {
 					$('#infoMessagedisp').hide();
 					$('.file_view').show();
-					$('#repoPath').text(responseData.repositoryPath);
-					$('#uploader').text(responseData.uploader);
-					$('#size').text(responseData.size/1024 + " KB");
-					$('#uploadedDate').text(new Date(responseData.uploaded));
-					$('#modifiedDate').text(new Date(responseData.lastChanged));
+					var artifactInfo = responseData.artifactInfo;
+					$('#repoPath').text(artifactInfo.repositoryPath);
+					$('#uploader').text(artifactInfo.uploader);
+					$('#size').text((artifactInfo.size/1024).toFixed(2) + " KB");
+					$('#uploadedDate').text(new Date(artifactInfo.uploaded));
+					$('#modifiedDate').text(new Date(artifactInfo.lastChanged));
+					var mavenInfo = responseData.mavenInfo;
+					$('#groupId').text(mavenInfo.groupId);
+					$('#artifactId').text(mavenInfo.artifactId);
+					$('#artifactVersion').text(mavenInfo.version);
+					$('#artifactType').text(mavenInfo.extension);
+					var xmlContent = "<dependency>" + 
+										"<groupId>" + mavenInfo.groupId + "</groupId>" +
+					  					"<artifactId>"+ mavenInfo.artifactId +"</artifactId>" +
+				  						"<version>" + mavenInfo.version + "</version>";
+					if (!self.isBlank(mavenInfo.extension)) {
+						xmlContent = xmlContent + "<type>"+ mavenInfo.extension +"</type"
+					}
+					xmlContent = xmlContent + "</dependency>";
+					$('#artifactXml').val(xmlContent);
 				}
 			});
+			
+			$("input[name=downloadArtifact]").attr("appdirname", appDirName).attr("nature", nature).attr("version", version).attr("moduleName", moduleName);
 		},
 		
 		getList : function (ItemList, callback) {
@@ -169,8 +186,20 @@ define([], function() {
 					strItems += '<li role=treeItem class=parent_li>' + '<span class="badge badge-success" title="Collapse this branch">'+
 								'<i class="icon-plus-sign"></i>' + '<a version="'+ strRoot +'">' + strRoot + '</a></span>' + strCollection +'</li>';
 				} else {
-					strItems += '<li role=treeItem class="parent_li hideContent">' + '<span class="badge badge-warning" title="Expand this branch">'+ '<i></i>' +
-								'<a appDirName="'+$(value).attr('appDirName')+'" nature="'+$(value).attr('nature')+'">' + $(value).attr('name') + '</a></span></li>';
+					var moduleName = $(value).attr('moduleName');
+					var appDirName = $(value).attr('appDirName');
+					var nature = $(value).attr('nature');
+					strItems += '<li role=treeItem class="parent_li hideContent">' + '<span class="badge badge-warning" title="Expand this branch">'+ '<i></i><a ';
+					if (moduleName !== undefined) {
+						strItems += 'moduleName="'+moduleName+'"';
+					}
+					if (appDirName !== undefined) {
+						strItems += 'appDirName="'+appDirName+'"';
+					}
+					if (nature !== undefined) {
+						strItems += 'nature="'+nature+'"';
+					}
+					strItems += '>' + $(value).attr('name') + '</a></span></li>';
 				}
 			});
 			

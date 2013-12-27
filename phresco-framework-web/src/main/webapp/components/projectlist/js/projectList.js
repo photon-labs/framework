@@ -633,9 +633,9 @@ define(["projectlist/listener/projectListListener"], function() {
 						$('.testsearchdropdown').empty();
 						testsearch = 0;
 						var actionBody = {};
-						actionBody.repoUrl = $("#testrepourl"+dynamicId).val();
-						actionBody.userName = $("#testuname"+dynamicId).val();
-						actionBody.password = $("#testpwd"+dynamicId).val();
+						actionBody.repoUrl = $("#testrepourl_"+dynamicId).val();
+						actionBody.userName = $("#testuname_"+dynamicId).val();
+						actionBody.password = $("#testpwd_"+dynamicId).val();
 						commonVariables.hideloading = true;
 						self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
 						self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {

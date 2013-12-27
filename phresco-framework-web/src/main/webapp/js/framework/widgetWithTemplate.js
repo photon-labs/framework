@@ -1206,11 +1206,22 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					contentType: "application/json",				
 					dataType: "json",
 					webserviceurl: ''
-				}, appId = self.isBlank(repoAppId) ? $('.headerAppId').val() : repoAppId;
+				},
+				appId = self.isBlank(repoAppId) ? $('.headerAppId').val() : repoAppId;
+				var moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
+				if (!self.isBlank(moduleParam)) {
+					appdirName = $('.rootModule').val()
+				} else if(commonVariables.api.localVal.getProjectInfo() !== null){
+					var projectInfo = commonVariables.api.localVal.getProjectInfo();
+					appdirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+				}
 				if (action === "checkForLock") {
 					header.requestMethod = "GET";
 					var subModuleIds = self.isBlank(requestBody.subModuleIds) ? "" : "&subModuleIds="+requestBody.subModuleIds;
 					header.webserviceurl = commonVariables.webserviceurl + "util/checkLock?actionType="+requestBody.actionType+"&appId="+appId+subModuleIds;
+				} else if(action === "killProcess") {
+					header.requestMethod = "GET";
+					header.webserviceurl = commonVariables.webserviceurl + "util/killProcess?actionType="+requestBody.actionType+"&appId="+appId+subModuleIds+"&appDirName="+appdirName+moduleParam;
 				}
 
 				return header;
@@ -1353,6 +1364,22 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					var laddaBtnObj = Ladda.create(document.querySelector(btnElement));
 					laddaBtnObj.stop();
 				}
+			},
+			
+			killProcess : function() {
+				var self = this, requestBody = {};
+				$("input[name=kill]").unbind('click');
+				$("input[name=kill]").bind("click", function() {
+					requestBody.actionType = commonVariables.runType;
+					commonVariables.api.ajaxRequest(self.getRequestHeader(requestBody, '', "killProcess"), function(response) {
+						if (response !== null) {
+							setTimeout( function() {
+								$("#logContent ").html('Process Terminated!');
+								$(".console_pad").html('Process Terminated!');
+							}, 5000);
+						}
+					});
+				});
 			}
 		}
 	);

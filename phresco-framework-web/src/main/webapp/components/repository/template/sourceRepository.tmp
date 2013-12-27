@@ -9,7 +9,239 @@
 			<span style="vertical-align: text-top;">Files</span>
 			<div class="flt_right">
 				<input type="submit" name="rep_release" data-i18n="[value]repository.build.release" class="btn btn_style release_btn">
+				<div id="rep_release" class="dyn_popup hideContent">
+					<table>
+						<tr>
+							<td>Version</td>
+							<td>Tag Name</td>
+						</tr>
+						<tr>
+							<td><input type="text" style="margin-right:10px;"></td>
+							<td><input type="text"></td>
+						</tr>
+						<tr>
+							<td><input type="checkbox">Deploy</td>
+							<td>Enviornment</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td>
+								<select><option>Select</option></select>
+							</td>
+						</tr>
+					</table>
+					<div class="flt_right">
+						<input type="button" value="Execute" class="btn btn_style">
+						<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+					</div>
+				</div>
 				<input type="submit" name="rep_create" data-i18n="[value]repository.build.create" class="btn btn_style createrepo_btn">
+				<div id="rep_create" class="dyn_popup popup_bg hideContent">
+					<div class="bs-docs-example repository_tabdiv">
+						<ul class="nav nav-tabs" id="myTab">
+							<li class="active"><a data-toggle="tab" href="#branch">Branch</a></li>
+							<li><a data-toggle="tab" href="#tags">Tags</a></li>
+						</ul>
+					</div>
+					<div class="tab-content" id="myTabContent" style="border-radius: 5px 0px 5px -2px;">
+						<div id="branch" class="tab-pane fade active in">
+							<table>
+								<tr>
+									<td>From Branch/Trunck</td>
+									<td>Version</td>
+								</tr>
+								<tr>
+									<td><input type="text" style="margin-right:10px" disabled="disabled"></td>
+									<td><input type="text"  disabled="disabled"></td>
+								</tr>
+								<tr>
+									<td>Branch To</td>
+									<td>Version</td>
+								</tr>
+								<tr>
+									<td><input type="text"></td>
+									<td>
+										<input class="ver_popup" id="createBranchVersion" type="text" readonly style="cursor:pointer;"><img class="dropdown_icon" src="themes/default/images/Phresco/dropdown_icon.png">
+										<div id="version_popup" class="dyn_popup hideContent">
+											<form id="versionForm">
+												<table>
+										            <tr>
+										               	<td>Major</td>
+														<td>Minor</td>
+										                <td>Fixed</td>
+										            </tr>
+										            <tr>
+										            	<td>
+										                    <select id="majorVersion">
+																<option value="1">1</option>
+																<option value="2">2</option>
+																<option value="3">3</option>
+																<option value="4">4</option>
+																<option value="5">5</option>
+																<option value="6">6</option>
+																<option value="7">7</option>
+																<option value="8">8</option>
+																<option value="9">9</option>
+																<option value="10">10</option>
+																<option value="11">11</option>
+																<option value="12">12</option>
+																<option value="13">13</option>
+																<option value="14">14</option>
+																<option value="15">15</option>
+																<option value="16">16</option>
+																<option value="17">17</option>
+																<option value="18">18</option>
+																<option value="19">19</option>
+																<option value="20">20</option>
+										                    </select>
+										                </td>
+										                <td>
+										                	<select id="minorVersion">
+										                		<option value="0">0</option>
+										                       	<option value="1">1</option>
+																<option value="2">2</option>
+																<option value="3">3</option>
+																<option value="4">4</option>
+																<option value="5">5</option>
+																<option value="6">6</option>
+																<option value="7">7</option>
+																<option value="8">8</option>
+																<option value="9">9</option>
+																<option value="10">10</option>
+																<option value="11">11</option>
+																<option value="12">12</option>
+																<option value="13">13</option>
+																<option value="14">14</option>
+																<option value="15">15</option>
+																<option value="16">16</option>
+																<option value="17">17</option>
+																<option value="18">18</option>
+																<option value="19">19</option>
+																<option value="20">20</option>
+										                    </select>
+										                </td>
+										                <td>
+										                	<select id="fixedVersion">
+										                		<option value="0">0</option>
+										                       	<option value="1">1</option>
+																<option value="2">2</option>
+																<option value="3">3</option>
+																<option value="4">4</option>
+																<option value="5">5</option>
+																<option value="6">6</option>
+																<option value="7">7</option>
+																<option value="8">8</option>
+																<option value="9">9</option>
+																<option value="10">10</option>
+																<option value="11">11</option>
+																<option value="12">12</option>
+																<option value="13">13</option>
+																<option value="14">14</option>
+																<option value="15">15</option>
+																<option value="16">16</option>
+																<option value="17">17</option>
+																<option value="18">18</option>
+																<option value="19">19</option>
+																<option value="20">20</option>
+										                    </select>
+										                </td>
+										            </tr>
+													<tr>
+														<td>Build Type</td>
+													</tr>
+													<tr>
+														<td colspan="3">
+										                    <select class="type_build" id="iterationType">
+										                       	<option value="iteration">Iteration</option>
+										                       	<option value="sprint">Sprint</option>
+										                       	<option value="date">Date</option>
+										                    </select>
+										                </td>
+													</tr>
+													<tr>
+														<td>Week Start</td>
+													</tr>
+													<tr>
+														<td colspan="3">
+										                    <select class="type_build" id="weekStart">
+										                       	<option value="1">1</option>
+																<option value="2">2</option>
+																<option value="3">3</option>
+																<option value="4">4</option>
+																<option value="5">5</option>
+																<option value="6">6</option>
+																<option value="7">7</option>
+																<option value="8">8</option>
+																<option value="9">9</option>
+																<option value="10">10</option>
+																<option value="11">11</option>
+																<option value="12">12</option>
+																<option value="13">13</option>
+																<option value="14">14</option>
+																<option value="15">15</option>
+																<option value="16">16</option>
+																<option value="17">17</option>
+																<option value="18">18</option>
+																<option value="19">19</option>
+																<option value="20">20</option>
+										                    </select>
+										                </td>
+													</tr>
+										        </table>
+									        </form>
+									        <div align="right">
+									        	<div class="flt_left">
+										        	Ex : 1.0.0-SNAPSHOT
+										        </div>
+										        <div class="flt_right">
+										        	<input type="button" class="btn btn_style" value="OK" id="submitVersion">
+										        </div>
+									        </div>     
+									    </div>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2"><textarea></textarea></td>
+								</tr>
+								<tr>
+									<td><input type="checkbox">Download to Workspace</td>
+									<td class="flt_right">
+										<input type="button" value="Create" class="btn btn_style">
+										<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div id="tags" class="tab-pane fade ">
+							<table>
+								<tr>
+									<td>From Branch/Trunck</td>
+									<td>Version</td>
+								</tr>
+								<tr>
+									<td><input type="text" style="margin-right:10px" disabled="disabled"></td>
+									<td><input type="text"  disabled="disabled"></td>
+								</tr>
+								<tr>
+									<td>Tags To</td>
+								</tr>
+								<tr>
+									<td><input type="text"></td>
+								</tr>
+								<tr>
+									<td colspan="2"><textarea></textarea></td>
+								</tr>
+								<tr>
+									<td><input type="checkbox">Download to Workspace</td>
+									<td class="flt_right">
+										<input type="button" value="Create" class="btn btn_style">
+										<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 		<table class="filerepo_list" cellpadding="0" cellspacing="0" border="0" width="100%">
@@ -35,147 +267,6 @@
 			</tr>
 		</table>
 	</div>
-	<div id="rep_release" class="dyn_popup hideContent">
-		<table>
-			<tr>
-				<td>Version</td>
-				<td>Tag Name</td>
-			</tr>
-			<tr>
-				<td><input type="text" style="margin-right:10px;"></td>
-				<td><input type="text"></td>
-			</tr>
-			<tr>
-				<td><input type="checkbox">Deploy</td>
-				<td>Enviornment</td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>
-					<select><option>Select</option></select>
-				</td>
-			</tr>
-		</table>
-		<div class="flt_right">
-			<input type="button" value="Execute" class="btn btn_style">
-			<input type="button" value="Close" class="btn btn_style dyn_popup_close">
-		</div>
-	</div>
-	<div id="rep_create" class="dyn_popup popup_bg hideContent">
-		<div class="bs-docs-example repository_tabdiv">
-			<ul class="nav nav-tabs" id="myTab">
-				<li class="active"><a data-toggle="tab" href="#branch">Branch</a></li>
-				<li><a data-toggle="tab" href="#tags">Tags</a></li>
-			</ul>
-		</div>
-		<div class="tab-content" id="myTabContent">
-			<div id="branch" class="tab-pane fade active in">
-				<table>
-					<tr>
-						<td>From Branch/Trunck</td>
-						<td>Version</td>
-					</tr>
-					<tr>
-						<td><input type="text" style="margin-right:10px" disabled="disabled"></td>
-						<td><input type="text"  disabled="disabled"></td>
-					</tr>
-					<tr>
-						<td>Branch To</td>
-						<td>Version</td>
-					</tr>
-					<tr>
-						<td><input type="text"></td>
-						<td><input class="ver_popup" type="text"><img class="dropdown_icon" src="themes/default/images/Phresco/dropdown_icon.png"></td>
-					</tr>
-					<tr>
-						<td colspan="2"><textarea></textarea></td>
-					</tr>
-					<tr>
-						<td><input type="checkbox">Download to Workspace</td>
-						<td class="flt_right">
-							<input type="button" value="Create" class="btn btn_style">
-							<input type="button" value="Close" class="btn btn_style dyn_popup_close">
-						</td>
-					</tr>
-				</table>
-			</div>
-			<div id="tags" class="tab-pane fade ">
-				<table>
-					<tr>
-						<td>From Branch/Trunck</td>
-						<td>Version</td>
-					</tr>
-					<tr>
-						<td><input type="text" style="margin-right:10px" disabled="disabled"></td>
-						<td><input type="text"  disabled="disabled"></td>
-					</tr>
-					<tr>
-						<td>Tags To</td>
-					</tr>
-					<tr>
-						<td><input type="text"></td>
-					</tr>
-					<tr>
-						<td colspan="2"><textarea></textarea></td>
-					</tr>
-					<tr>
-						<td><input type="checkbox">Download to Workspace</td>
-						<td class="flt_right">
-							<input type="button" value="Create" class="btn btn_style">
-							<input type="button" value="Close" class="btn btn_style dyn_popup_close">
-						</td>
-					</tr>
-				</table>
-			</div>
-		</div>
-	</div>
-	<div id="version_popup" class="dyn_popup hideContent">
-		<table>
-			<tr>
-				<td> Major </td>
-				<td> Minor </td>
-				<td> Fixed </td>
-			</tr>
-			<tr>
-				<td>
-					<select>
-					<option>20</option>
-					</select>
-				</td>
-				<td>
-					<select>
-					<option>20</option>
-					</select>
-				</td>
-				<td>
-					<select>
-					<option>20</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Build Type</td>
-			</tr>
-			<tr>
-				<td colspan="3">
-					<select class="type_build">
-						<option>Sprint</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Week Start</td>
-			</tr>
-			<tr>
-				<td colspan="3">
-					<select class="type_build">
-						<option>30</option>
-					</select>
-				</td>
-			</tr>
-		</table>
-		<div align="right"><input type="button" class="btn btn_style dyn_popup_close_ok" value="OK"></div>     
- 	</div>
 </section>
 <section class="content_end hideContent">
 	<div class="msgdisplay error"></div>

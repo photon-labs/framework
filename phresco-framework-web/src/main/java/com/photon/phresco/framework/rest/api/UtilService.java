@@ -239,7 +239,7 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 	@GET
 	@Path("/checkLock")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response checkForLock(@QueryParam("actionType") String actionType, @QueryParam("appId") String appId, @QueryParam("subModuleIds") String subModuleIds) {
+	public Response checkForLock(@QueryParam(REST_ACTION_TYPE) String actionType, @QueryParam(REST_QUERY_APPID) String appId, @QueryParam(REST_QUERY_SUBMODULEIDS) String subModuleIds) {
 		ResponseInfo<CheckLockInfo> responseData = new ResponseInfo<CheckLockInfo>();
 		try {
 			List<String> appIds = StringUtils.isNotEmpty(appId) ? Arrays.asList(appId.split(COMMA)) : new ArrayList<String>();
@@ -433,7 +433,7 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 	@GET
 	@Path("/killProcess")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response killProcess(@QueryParam("actionType") String actionType, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+	public Response killProcess(@QueryParam("actionType") String actionType,  @QueryParam(REST_QUERY_APPID) String appId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
 		ResponseInfo responseData = new ResponseInfo();
 	// Pass module as param ------------------
 		String moduleName =""; /* for temporary*/
@@ -471,9 +471,8 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 				Runtime.getRuntime().exec("cmd /X /C taskkill /F /T /PID " + processId.toString());
 			} else if (System.getProperty(Constants.OS_NAME).startsWith("Mac")) {
 				Runtime.getRuntime().exec(Constants.JAVA_UNIX_PROCESS_KILL_CMD + processId.toString());
-			} else {
-				Runtime.getRuntime().exec(Constants.JAVA_UNIX_PROCESS_KILL_CMD + processId.toString());
-			}
+			} 
+			LockUtil.removeLock(appId, actionType);
 			jsonObject.remove(actionType);
 			FileWriter writer = new FileWriter(jsonFile);
 			writer.write(jsonObject.toString());

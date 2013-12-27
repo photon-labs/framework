@@ -19,7 +19,7 @@ define(["codequality/listener/codequalityListener"], function() {
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			
+			commonVariables.runType = "codeValidate";
 			if(self.codequalityListener === null){
 				self.codequalityListener = new Clazz.com.components.codequality.js.listener.CodequalityListener();
 			}
@@ -122,7 +122,7 @@ define(["codequality/listener/codequalityListener"], function() {
 			var self = this;
 			$(".tooltiptop").tooltip();
 			$(".dyn_popup").hide();
-			
+			self.killProcess();
 			$("#codeAnalysis").click(function() {
 				var whereToRender = $('#code_popup ul');
                 commonVariables.goal = "validate-code";

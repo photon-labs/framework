@@ -56,6 +56,26 @@ public class LockUtil implements Constants {
 		}
 	}
 	
+	public  static void removeLock(String appId, String actionType) throws PhrescoException {
+		try {
+			List<LockDetail> lockDetails = getLockDetails();
+			
+			if (CollectionUtils.isNotEmpty(lockDetails)) {
+				List<LockDetail> availableLockDetails = new ArrayList<LockDetail>();
+				for (LockDetail lockDetail : lockDetails) {
+					if ((!lockDetail.getActionType().equalsIgnoreCase(actionType)) && (!lockDetail.getAppId().equalsIgnoreCase(appId))) {
+						availableLockDetails.add(lockDetail);
+					} 
+				}
+				LOCK_DETAILS.clear();
+				LOCK_DETAILS.addAll(availableLockDetails);
+				System.out.println("availableLockDetails =====>"+availableLockDetails);
+			}
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
 	public static List<LockDetail> getLockDetails() throws PhrescoException {
 		return LOCK_DETAILS;
 	}

@@ -3,7 +3,7 @@
 	<groupId>com.photon.phresco.ci</groupId>
 	<artifactId>ci</artifactId>
 	<packaging>war</packaging>
-	<version>3.2.0.6001-SNAPSHOT</version>
+	<version>3.2.0.6002-SNAPSHOT</version>
 	<name>CI Web Application</name>
    
 	<dependencies>
@@ -57,10 +57,10 @@
 		</dependency>
         
 		<dependency>
-              <groupId>jenkins.clone.workspace.scm.plugin</groupId>
-              <artifactId>clone.workspace.scm</artifactId>
-              <version>0.4</version>
-              <type>hpi</type>
+			<groupId>org.hudsonci.plugins</groupId>
+			<artifactId>clone-workspace-scm</artifactId>
+			<version>0.5-h-1</version>
+			<type>hpi</type>
 		</dependency>
 		
 		<dependency>

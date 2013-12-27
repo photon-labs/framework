@@ -275,8 +275,13 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             optionalAttrs = self.getOptionalAttr(parameter, optionalAttrs);
             whereToRender.append('<li class="ctrl textCtrl '+columnClass+'" ' +optionalAttrs.show+'  id="'+parameter.key+'Li"><label>'+parameter.name.value[0].value+optionalAttrs.required+'</label>' + 
                                  '<input type="'+inputType+'" parameterType="'+ parameter.type+'" showHide="'+parameter.show+'" name="'+ parameter.key +'" value="'+textBoxValue+'" id="'+parameter.key+'" ' +optionalAttrs.editable+' maxlength="253" /></li>');
+			if(parameter.type === "Number" && parameter.key ==="rampUpPeriod") {
+				$("#"+parameter.key).attr("maxlength", "8");
+			}
         },
         
+		
+		
         constructHiddenCtrl : function(parameter, columnClass, whereToRender) {
             var self = this, textBoxValue = "";
             if (!self.isBlank(parameter.value)) {

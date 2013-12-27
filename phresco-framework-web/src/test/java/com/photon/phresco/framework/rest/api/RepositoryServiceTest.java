@@ -219,11 +219,11 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
-	@Test
-	public void  gitSourceRepoTest() throws Exception {
-		Response response = repositoryservice.getGitSourceRepo(customerId, "b95a4b23-c7a9-47db-b5a6-f35c6fdb8567", "");
-		Assert.assertEquals(200, response.getStatus());
-	}
+//	@Test
+//	public void  gitSourceRepoTest() throws Exception {
+//		Response response = repositoryservice.getGitSourceRepo(customerId, "b95a4b23-c7a9-47db-b5a6-f35c6fdb8567", "");
+//		Assert.assertEquals(200, response.getStatus());
+//	}
 	
 	private RepoInfo getSvnRepoInfo() {
 		RepoInfo repoInfo = new RepoInfo();

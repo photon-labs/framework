@@ -29,6 +29,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 		 */
 		initialize : function(globalConfig) {
 			var self = this;
+			commonVariables.runType = "load";
 			commonVariables.testType = commonVariables.load;
 			if (self.loadTestListener === null ) {
 				self.loadTestListener = new Clazz.com.components.performanceLoadListener.js.listener.PerformanceLoadListener();
@@ -261,6 +262,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 		 */
 		bindUI : function() {
 			var self = this;
+			self.killProcess();
 			$(".tooltiptop").tooltip();
 
 			//To show performance popup

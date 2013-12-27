@@ -16,23 +16,25 @@
 				<table class="build_repo_table">
 					<tr>
 						<td class="build_repo_font">Group : </td>
-						<td>archtypes</td>
+						<td id="groupId"></td>
 					</tr>
 					<tr>
 						<td class="build_repo_font">Artifact : </label></td>
-						<td>phresco-consumer-mobile-site-archetype</td>
+						<td id="artifactId"></td>
 					</tr>
 					<tr>
 						<td class="build_repo_font">Version : </label></td>
-						<td>2.3.0.9000</td>
+						<td id="artifactVersion"></td>
 					</tr>
 					<tr>
 						<td class="build_repo_font">Extension : </label></td>
-						<td>jar</td>
+						<td id="artifactType">jar</td>
 					</tr>
 					<tr>
 						<td class="build_repo_font">XML : </label></td>
-						<td>sample text</td>
+						<td>
+							<textarea class="popuptextarea" id="artifactXml"></textarea>
+						</td>
 					</tr>
 				</table>
 			</div>
@@ -60,7 +62,7 @@
 					</tr>
 				</table>
 				<div class="flt_right">
-					<input type="button" name="download" value="Download" class="btn btn_style downoad_icon" style="margin-right:10px;">
+					<input type="button" name="downloadArtifact" value="Download" class="btn btn_style downoad_icon" style="margin-right:10px;">
 				</div>	
 			</div>	
 		</div>		

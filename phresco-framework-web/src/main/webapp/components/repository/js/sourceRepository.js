@@ -30,11 +30,16 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 			var self = this;
 			var self = this;
 			var requestBody = {};
-			self.repositoryListener.repository(self.repositoryListener.getActionHeader(requestBody, "browseGitRepo"), function(response) {
+			self.repositoryListener.repository(self.repositoryListener.getActionHeader(requestBody, "browseSourceRepo"), function(response) {
 				var responseData = response.data;
 				if (responseData !== undefined && responseData !== null && responseData.length > 0) {
 					$.each(responseData, function(index, value) {
-						self.repositoryListener.constructTree(value)
+						self.repositoryListener.constructTree(value);
+						if (responseData.length === index + 1) {
+							setTimeout(function() {
+								self.customScroll($(".tree_view"));
+							}, 700);
+						}
 					});
 				}
 			});
@@ -44,23 +49,69 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
 		 */
-		bindUI : function(){
+		bindUI : function() {
 			var self = this;
-			$(".dyn_popup").hide();
 			
 			$("input[name=rep_create]").unbind("click");
-			$("input[name=rep_create]").click(function() {
+			$("input[name=rep_create]").bind("click", function() {
 				self.opencc(this, $(this).attr('name'));
 			});
 			
 			$("input[name=rep_release]").unbind("click");
-			$("input[name=rep_release]").click(function() {
+			$("input[name=rep_release]").bind("click", function() {
 				self.opencc(this, $(this).attr('name'));
 			});
 			
-			self.customScroll($(".tree_view"));
+			$("#createBranchVersion").unbind('click');
+			$("#createBranchVersion").bind("click", function() {
+				self.openVersionPopup($(this));
+			});
+			
+			$("#submitVersion").unbind('click');
+			$("#submitVersion").bind("click", function() {
+				$("#version_popup").toggle();
+				var majorVersion = $("#majorVersion").val();
+				var minorVersion = $("#minorVersion").val();
+				var fixedVersion = $("#fixedVersion").val();
+				var iterationType = $("#iterationType").val();
+				var weekStart = Number($("#weekStart").val());
+				
+				var version = majorVersion + "." + minorVersion + "." + fixedVersion + "-SNAPSHOT"
+				$("#createBranchVersion").val(version);
+			});
+			
 			self.customScroll($(".file_view"));
-		}
+		},
+		
+		openVersionPopup : function(thisObj) {
+			var self = this;
+			$('.content_main').addClass('z_index_ci');
+			var clicked = thisObj;
+			var target = $("#version_popup");
+			var twowidth = window.innerWidth/1.5;
+		
+			if (clicked.offset().left < twowidth) {
+				$(target).toggle();
+				var a = target.height()/2;
+				var b = clicked.height()/2;
+				var t=clicked.offset().top + (b+12) - (a+12) ;
+				var l=clicked.offset().left + clicked.width()+ 4;
+				$(target).offset({
+					top: t,
+					left: l
+				});
+				$(target).addClass('speakstyleleft').removeClass('speakstyleright');
+			} else {
+				$(target).toggle();
+				var t=clicked.offset().top - target.height()/2;
+				var l=clicked.offset().left - (target.width()+ 15);
+				$(target).offset({
+					top: t,
+					left: l
+				});
+				$(target).addClass('speakstyleright').removeClass('speakstyleleft');
+			}
+		},
 	});
 
 	return Clazz.com.components.repository.js.SourceRepository;

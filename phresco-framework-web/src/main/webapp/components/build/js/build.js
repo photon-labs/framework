@@ -24,7 +24,7 @@ define(["build/listener/buildListener"], function() {
 		 */
 		initialize : function(globalConfig) {
 			var self = this;
-			
+			commonVariables.runType = "build";
 			if(self.buildListener === null){
 				self.buildListener = new Clazz.com.components.build.js.listener.BuildListener();
 			}
@@ -292,7 +292,7 @@ define(["build/listener/buildListener"], function() {
 			$("img[name=deployBuild]").unbind('click');
 			$("img[name=deployBuild]").click(function(){
 				var current = this,  sqlParam = "", queryStr = "", divId = $(this).closest('tr').find('td:eq(0)').text(), whereToRender = $('#deploye_' + divId + ' ul'), deviceDeploy = $(this).attr("deviceDeploy");
-				
+				commonVariables.runType = "deploy";
 				commonVariables.goal = "deploy";
 				commonVariables.phase = "deploy";
 				commonVariables.buildNo = divId;
@@ -646,7 +646,7 @@ define(["build/listener/buildListener"], function() {
 		 */
 		bindUI : function() {
 			var self = this;
-
+			self.killProcess();
 			//Run again source popup click event
 			$("input[name=build_runagsource]").unbind("click");
 			$("input[name=build_runagsource]").click(function() {
@@ -780,6 +780,7 @@ define(["build/listener/buildListener"], function() {
 			//build run click event
 			$("#buildRun").unbind("click");
 			$("#buildRun").click(function(){
+				commonVariables.runType = "build";
 				var sqlParam = "";
 				
 				var targetFolders = [];
@@ -908,7 +909,6 @@ define(["build/listener/buildListener"], function() {
 				commonVariables.hideloading = true;
 				commonVariables.navListener.copyPath(paramJson);
 			});
-			
 			
 			$(window).resize(function() {
 				$(".dyn_popup").hide();
