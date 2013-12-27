@@ -412,7 +412,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
             ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
             ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
             List<CodeValidationReportType> codeValidationReportTypes = new ArrayList<CodeValidationReportType>();
-            CodeValidationReportType clangOptionReportType = new CodeValidationReportType();
+            
             // To get parameter values for Iphone technology
             PomProcessor pomProcessor = Utility.getPomProcessor(rootModulePath, subModuleName);
             String validateReportUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_VALIDATE_REPORT);
@@ -437,17 +437,18 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	                    	String depKey = depValue.getKey();
 	                    	if ("iphone".equals(depKey)) {
 	                    		Map<String, List<Value>> subOptions = new HashMap<String, List<Value>>();
+	                    		 
 	                    		subOptions.put("iphone", clangReports);
 	    	                	codeValidationReportType.setSubOptions(subOptions);
 	    	                }
 						}
 	                }
-	                
 	                codeValidationReportType.setValidateAgainst(value);
 	                codeValidationReportTypes.add(codeValidationReportType);
 	            }
 	        } else if (CollectionUtils.isNotEmpty(clangReports)) {
         		for (Value value : clangReports) {
+        			CodeValidationReportType clangOptionReportType = new CodeValidationReportType();
         			clangOptionReportType.setValidateAgainst(value);
         			codeValidationReportTypes.add(clangOptionReportType);
         		}
