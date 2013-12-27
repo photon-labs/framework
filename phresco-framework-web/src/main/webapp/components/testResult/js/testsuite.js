@@ -70,6 +70,14 @@ define(["testResult/listener/testResultListener"], function() {
 			var self = this;
 			commonVariables.from = "all";
 			var currentTab = commonVariables.navListener.currentTab;
+			
+			if (currentTab === 'unitTest') {
+				commonVariables.runType = 'unit';
+			} else if (currentTab === 'componentTest') {
+				commonVariables.runType = 'component';
+			} else if (currentTab === 'functionalTest') {
+				commonVariables.runType = 'Functional';
+			} 
 			//To get the testsuites
 			self.testResultListener.getTestsuites(function(response) {
 				var data = {};
@@ -143,6 +151,7 @@ define(["testResult/listener/testResultListener"], function() {
 		 */
 		bindUI : function() {
 			var self = this;
+			self.killProcess();
 			var currentTab = commonVariables.navListener.currentTab;
 			if ("manualTest" === currentTab) {
 				$('.unit_close').hide();

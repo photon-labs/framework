@@ -112,6 +112,7 @@ var commonVariables = {
 
 	megabyte : "MB",
 	kilobyte : "KB",
+	runType  : "",
 	
 	mavenService : "mavenService",
 	mavenServiceContext : "mavenService",

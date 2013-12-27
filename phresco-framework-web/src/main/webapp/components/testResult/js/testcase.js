@@ -114,6 +114,14 @@ define(["testResult/listener/testResultListener"], function() {
 				$('.functional').show();
 			}
 			
+			if (currentTab === 'unitTest') {
+				commonVariables.runType = 'unit';
+			} else if (currentTab === 'componentTest') {
+				commonVariables.runType = 'component';
+			} else if (currentTab === 'functionalTest') {
+				commonVariables.runType = 'Functional';
+			} 
+			
 			var testcases = commonVariables.testcases;
 			if (testcases !== undefined && testcases !== null) {
 				if ("manualTest" === currentTab) {
@@ -175,6 +183,7 @@ define(["testResult/listener/testResultListener"], function() {
 		 */
 		bindUI : function() {
 			var self = this;
+			self.killProcess();
 			var currentTab = commonVariables.navListener.currentTab;
 			if ("manualTest" === currentTab) {
 				$('.unit_close').hide();

@@ -926,8 +926,9 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			}
 			pom.save();
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-//			String jenkinsUrl = FrameworkUtil.getLocaJenkinsUrl();
-			String jenkinsUrl = FrameworkUtil.getJenkinsUrl();
+			String jenkinsUrl = FrameworkUtil.getLocaJenkinsUrl();
+			//To enable remote global configuration changing
+//			String jenkinsUrl = FrameworkUtil.getJenkinsUrl();
 			String submitUrl = jenkinsUrl + FrameworkConstants.FORWARD_SLASH + CONFIG_SUBMIT;
 			org.json.JSONArray JSONarray = new org.json.JSONArray();
 			List<RepoDetail> repoDetails = globalInfo.getRepoDetails();
@@ -1231,7 +1232,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			
 			// jenkins configurations
 			job.setJenkinsUrl(FrameworkUtil.getJenkinsHost()); // here we are setting the host only
-			job.setJenkinsPort(FrameworkUtil.getJenkinsPortNo());
+			job.setJenkinsPort(FrameworkUtil.getJenkinsPort());
 			job.setJenkinsPath(FrameworkUtil.getJenkinsPath());
 			job.setJenkinsProtocol(FrameworkUtil.getJenkinsProtocol());
 			
