@@ -362,7 +362,7 @@ select:focus, input[type="file"]:focus, input[type="radio"]:focus, input[type="c
 
 @media screen and (-webkit-min-device-pixel-ratio:0) {
 
-.btn_style { padding: 4px 12px !important; }  
+/*.btn_style { padding: 4px 12px !important; }  */
 
 html, body {
 	font-family:Helvetica !important;

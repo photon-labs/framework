@@ -262,8 +262,10 @@ define([], function() {
 									self.mvnlogService(response.uniquekey, divId, callback);
 								}
 							}else if(response.status.toUpperCase() === 'COMPLETED'){
-								self.setContentEndHeight();
-								callback(response);
+								setTimeout(function() {
+									self.setContentEndHeight();
+									callback(response);
+								},5000); 
 							}else if(response.status.toUpperCase() === 'ERROR'){
 								self.setContentEndHeight();
 								$(divId).append('<font style = "color:red">' + response.service_exception + '</font><br>');
