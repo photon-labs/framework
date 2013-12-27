@@ -40,7 +40,7 @@
 									</thead>
 									<tbody>
 										<tr>
-											<td><input type="text" name="username" placeholder="Username" temp="email"></td>
+											<td><input type="text" name="username" placeholder="Email Id" temp="email"></td>
 											<td><input type="password" name="password" placeholder="Password" temp="email"></td>
 										   <!-- <td><input type="button" value="Save" class="btn btn_style"></td> -->
 										</tr>
