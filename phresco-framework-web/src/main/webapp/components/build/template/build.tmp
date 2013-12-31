@@ -33,7 +33,7 @@
 					<input type="submit" data-i18n="[value]build.label.generatebuild" name="build_genbuild" class="btn btn_style" disabled>
 				{{/if}}
 				
-				<div id="build_genbuild" class="dyn_popup dynamic_cont" style="display:none;width:310px;">
+				<div id="build_genbuild" class="dyn_popup dynamic_cont" style="display:none;width:340px;">
 					<form name="buildForm">
 						<ul class="row dynamicControls">
 						</ul>

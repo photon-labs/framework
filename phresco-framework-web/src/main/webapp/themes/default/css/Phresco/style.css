@@ -5733,6 +5733,9 @@ textarea[name="regex"] {
 	background:#FFF;
 }
 
+.browse_table tr td input[type="text"]{
+	width:53px !important;
+}
 
 
 

@@ -745,6 +745,7 @@ define(["build/listener/buildListener"], function() {
 			//Generate build popup click event
 			$("input[name=build_genbuild]").unbind("click");
 			$("input[name=build_genbuild]").click(function() {
+				$("#package_browse").find("tbody").html('');
 				var openccObj = this;
 				var openccObjName = $(this).attr('name');
 				self.checkForLock("build", '', '', function(response){
@@ -756,21 +757,24 @@ define(["build/listener/buildListener"], function() {
 							commonVariables.phase = "package";
 							self.dynamicpage.getHtml(whereToRender, openccObj, openccObjName, function(retVal){
 								var totalControls = whereToRender.find('li.ctrl').length;
-								/* if (totalControls > 7) {
 									var sectionHeight = $('.testSuiteTable').height()*3/4;
 									$('#build_genbuild').css("max-height", sectionHeight - 40 + 'px');
 									$('form[name=buildForm]').css("max-height", sectionHeight - 92 + 'px');
-									$("form[name=buildForm]").mCustomScrollbar({
+									$('form[name=buildForm]').css("overflow-y", "auto");
+									/* $("form[name=buildForm]").mCustomScrollbar({
 										autoHideScrollbar:true,
 										theme:"light-thin",
 										advanced:{ updateOnContentResize: true}
-									}); 
-								} */
+									});  */
 								$("#buildNumber").bind('keypress',function(e) {
 									if((e.which >= 48 && e.which <= 57) || (e.which === 8)){return true;}else {e.preventDefault();}
 								});
 							});
-						}else{self.opencc(openccObj,openccObjName);}
+						}else{
+							self.opencc(openccObj,openccObjName);
+							$("#package_browse").find("tbody").append('<tr><td><input type="text" class="browse_build" name="targetFolder"></td><td><input type="text" class="browse_build" name="selectedFileOrFolderValue" disabled><input type="hidden" name="selectedFileOrFolder" value=""><input type="hidden" name="selectedFiles" value=""><input type="button" class="btn btn_style" value="Browse" name="browseFile"><a href="#"><img name=jsAdd src="themes/default/images/Phresco/plus_icon.png" alt=""></a><a name="remove"></a><div id="browseFile" class="dyn_popup" style="display:none"><div name="treeContent"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div></td></tr>');
+							self.dynamicpage.dynamicPageListener.packageBrowseEvents();
+						}
 					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
 						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 					}
