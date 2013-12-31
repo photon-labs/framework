@@ -255,7 +255,7 @@ public class LoginService extends RestBase implements FrameworkConstants, Respon
 	        result = response.getEntity(Boolean.class);
 		if (!result) {
 			status = RESPONSE_STATUS_FAILURE;
-			errorCode = PHR110008;
+			errorCode = PHR110010;
 			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, null, null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOuptut).header(
 					"Access-Control-Allow-Origin", "*").build();

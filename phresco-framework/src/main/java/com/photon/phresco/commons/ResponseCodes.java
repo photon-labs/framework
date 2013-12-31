@@ -77,9 +77,11 @@ public interface ResponseCodes {
 	String PHR110006 = "PHR110006"; // parsing failed for file 'user.json'
 	String PHR110007 = "PHR110007"; // user doesn't have valid permissions
 	String PHR100008 = "PHR100008"; // Password emailed
-	String PHR110008 = "PHR110008"; // Failed
+	String PHR110008 = "PHR110008"; // Invalid user
 	String PHR100009 = "PHR100009"; // Password changed successfully
 	String PHR110009 = "PHR110009"; // Password updation failed
+	String PHR110010 = "PHR110010"; // User not local
+
 	
 	/*
 	 * Project Page

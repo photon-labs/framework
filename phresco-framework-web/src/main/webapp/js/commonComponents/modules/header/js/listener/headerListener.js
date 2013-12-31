@@ -297,8 +297,8 @@ define(["header/api/headerAPI"], function() {
 				var temp = [], oldpass, newpass;
 				oldpass = $("#old_password").val();
 				newpass = $("#new_password").val();
-				temp.push({"username":userInfo.id,"password":oldpass});
-				temp.push({"username":userInfo.id,"password":newpass});
+				temp.push({"username":userInfo.name,"password":oldpass});
+				temp.push({"username":userInfo.name,"password":newpass});
 				header.requestPostBody = JSON.stringify(temp);
 				header.webserviceurl = commonVariables.webserviceurl+ "login/changePassword";
 			}

@@ -70,7 +70,7 @@ define([], function() {
 					commonVariables.api.bCheck = true;
 					commonVariables.api.ajaxRequest(header, 
 						function(response){
-						if(response.responseCode === 'PHR110008') {
+						if(response.responseCode === 'PHR110008' || response.responseCode === 'PHR110010') {
 						$(".login_error_msg").css('color','red');
 						$("#forgot_password").hide();
 								$(".login_error_msg").attr('data-i18n', 'errorCodes.' + response.responseCode);

@@ -175,6 +175,9 @@ define(["header/listener/headerListener"] , function(template) {
 					});
 				} else {
 					self.headerListener.performAction(self.headerListener.getActionHeader("changepassword"), function(response) {
+						setTimeout(function(){
+							self.onLogoutEvent.dispatch();
+						},3000);
 					});
 				}	
 			});
