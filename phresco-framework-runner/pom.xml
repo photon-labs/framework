@@ -2,7 +2,7 @@
 
      <parent>
         <groupId>com.photon.phresco.framework</groupId>
-        <artifactId>phresco-framework-runner</artifactId>
+        <artifactId>phresco-framework-root</artifactId>
         <version>3.2.0.7001-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
@@ -11,7 +11,7 @@
     <groupId>com.photon.phresco.framework</groupId>
     <artifactId>phresco-framework-runner</artifactId>
     <packaging>pom</packaging>
-    <name>phresco-framework</name>
+    <name>Framework Runner</name>
     <version>3.2.0.7001-SNAPSHOT</version>
     <description>Module for creating archive which will be delivered</description>
     <url>http://www.phresco.org</url>
