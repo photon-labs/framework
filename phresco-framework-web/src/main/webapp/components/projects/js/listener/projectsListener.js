@@ -2243,9 +2243,9 @@ define([], function() {
 					self.counter = null;
 					self.projectRequestBody = {};
 					commonVariables.api.localVal.deleteSession("projectId");
-					self.getEditProject(self.getRequestHeader(self.projectRequestBody, "", "projectlist"), function(response) {
+//					self.getEditProject(self.getRequestHeader(self.projectRequestBody, "", "projectlist"), function(response) {
 						self.pageRefresh(response);
-					});
+//					});
 				});
 			}
 		},

@@ -332,6 +332,12 @@
 		},
 		
 		"source" : {
+			"frombranch" : "From Branch/Trunck",
+			"version" : "Version",
+			"branchto" : "Branch To",
+			"tagto" : "Tags To",
+			"username" : "User Name",
+			"password" : "Password"
 		}
 	},
 	"codequality" : {

@@ -17,6 +17,7 @@
  */
 package com.photon.phresco.framework.rest.api;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -949,6 +950,296 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			throw new PhrescoException(e);
 		}
 	}
+	
+	@POST
+	@Path("/createBranch")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response createBranch(@QueryParam(REST_QUERY_URL) String connectionUrl, @QueryParam(REST_QUERY_VERSION) String version, @QueryParam(REST_QUERY_USER_NAME) String username, @QueryParam(REST_QUERY_PASSWORD) String password, 
+			@QueryParam(REST_QUERY_COMMENT) String comment, @QueryParam(REST_QUERY_CURRENT_BRANCH_NAME) String currentBranch, 
+			@QueryParam(REST_QUERY_BRANCH_NAME) String branchName, @QueryParam(REST_QUERY_DOWNLOAD_OPTION) boolean downloadOption) {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		String phrescoTemp = Utility.getPhrescoTemp();
+		String uuid = UUID.randomUUID().toString();
+		String workingDir = phrescoTemp + uuid;
+		try {
+			StringBuilder checkout = checkout(connectionUrl, currentBranch, phrescoTemp, uuid, false);
+			if (checkout.length() > 0) {
+				status = RESPONSE_STATUS_ERROR;
+				errorCode = PHRSR10002;
+				ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, null,
+						checkout, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+						.build();
+			}
+			// Construct command for branch
+			StringBuilder builder = new StringBuilder();
+			builder.append(Constants.MVN_COMMAND)
+			.append(Constants.STR_BLANK_SPACE)
+			.append(Constants.SCM_RELEASE).append(Constants.STR_COLON).append(Constants.SCM_BRANCH)
+			.append(Constants.STR_BLANK_SPACE)
+			.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_BRANCH_NAME)
+			.append(Constants.STR_EQUALS).append(branchName)
+//			.append(Constants.STR_BLANK_SPACE)
+			.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_USERNAME)
+			.append(Constants.STR_EQUALS).append(username)
+//			.append(Constants.STR_BLANK_SPACE)
+			.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_PASSWORD)
+			.append(Constants.STR_EQUALS).append(password)
+			.append(Constants.STR_BLANK_SPACE)
+			.append(Constants.SCM_HYPHEN_D)
+			.append(Constants.SCM_UPDATE_BRANCH_VERSIONS + Constants.STR_EQUALS + true)
+			.append(Constants.STR_BLANK_SPACE)
+			.append(Constants.SCM_HYPHEN_D)
+			.append(Constants.SCM_UPDATE_WORKING_COPY_VERSIONS + Constants.STR_EQUALS + false)
+			.append(Constants.STR_BLANK_SPACE)
+			.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_RELEASE_VERSION).append(Constants.STR_EQUALS)
+			.append(version)
+//			.append(Constants.STR_BLANK_SPACE)
+			.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_COMMENT_PREFIX).append(Constants.STR_EQUALS)
+			.append("\"" + comment + "\"");
+			
+			BufferedReader branchReader = Utility.executeCommand(builder.toString(), workingDir);
+			StringBuilder error = new StringBuilder();
+			String line = "";
+			while ((line = branchReader.readLine()) != null) {
+				if (line.startsWith("[ERROR]")) {
+					error.append(line);
+				}
+			}
+			if (error.length() > 0) {
+				status = RESPONSE_STATUS_ERROR;
+				errorCode = PHRSR10003;
+				
+				ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
+						"Error", status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+						.build();
+			}
+			// copy into workspace
+			if (downloadOption) {
+				ProjectInfo projectInfo = Utility.getProjectInfo(workingDir, "");
+				ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+				String appDirName = applicationInfo.getAppDirName();
+				FileUtils.copyDirectory(new File(phrescoTemp + uuid), new File(Utility.getProjectHome() + appDirName));
+			}
+		} catch (IOException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHRSR10004;
+			ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, e,
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+					.build();
+		} catch (PhrescoException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHRSR10004;
+			ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, e,
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+					.build();
+		}
+		finally {
+			try {
+				FileUtils.deleteDirectory(new File(workingDir));
+			} catch (IOException e) {
+				status = RESPONSE_STATUS_ERROR;
+				errorCode = PHRSR10006;
+				ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, e,
+						null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+						.build();
+			}
+		}
+		status = RESPONSE_STATUS_SUCCESS;
+		successCode = PHRSR00002;
+		ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, null,
+				null, status, successCode);
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+	}
+	
+	@POST
+	@Path("/createTag")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response createTag(@QueryParam(REST_QUERY_URL) String connectionUrl, @QueryParam(REST_QUERY_USER_NAME) String username, @QueryParam(REST_QUERY_PASSWORD) String password, 
+			@QueryParam(REST_QUERY_COMMENT) String comment, @QueryParam(REST_QUERY_CURRENT_BRANCH_NAME) String currentBranch, 
+			@QueryParam(REST_QUERY_TAG_NAME) String tagName, @QueryParam(REST_QUERY_VERSION) String version) {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		
+		String phrescoTemp = Utility.getPhrescoTemp();
+		String uuid = UUID.randomUUID().toString();
+		String workingDir = phrescoTemp + uuid;
+		try {
+			version = "1.9";
+			StringBuilder checkout = checkout(connectionUrl, currentBranch, phrescoTemp, uuid, false);
+			if (checkout.length() > 0) {
+				status = RESPONSE_STATUS_ERROR;
+				errorCode = PHRSR10002;
+				ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, null,
+						checkout, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+						.build();
+			}
+			// Construct command for branch
+			StringBuilder builder = new StringBuilder();
+			builder.append(Constants.MVN_COMMAND)
+			.append(Constants.STR_BLANK_SPACE)
+			.append(Constants.SCM_RELEASE).append(Constants.STR_COLON).append(Constants.SCM_PREPARE)
+			.append(Constants.STR_BLANK_SPACE)
+			.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_USERNAME)
+			.append(Constants.STR_EQUALS).append(username)
+			.append(Constants.STR_BLANK_SPACE)
+			.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_PASSWORD)
+			.append(Constants.STR_EQUALS).append(password)
+			.append(Constants.STR_BLANK_SPACE)
+			.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_TAG).append(Constants.STR_EQUALS)
+			.append(tagName)
+			.append(Constants.STR_BLANK_SPACE)
+			.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_RELEASE_VERSION).append(Constants.STR_EQUALS)
+			.append(version)
+			.append(Constants.STR_BLANK_SPACE)
+			.append(Constants.SCM_HYPHEN_D)
+			.append(Constants.SCM_UPDATE_WORKING_COPY_VERSIONS + Constants.STR_EQUALS + false)
+			.append(Constants.STR_BLANK_SPACE)
+			.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_COMMENT_PREFIX).append(Constants.STR_EQUALS)
+			.append("\"" + comment + "\"");
+			BufferedReader branchReader = Utility.executeCommand(builder.toString(), workingDir);
+			String line = "";
+			StringBuilder error = new StringBuilder();
+			while ((line = branchReader.readLine()) != null) {
+				if (line.startsWith("[ERROR]")) {
+					error.append(line);
+				}
+			}
+			if (error.length() > 0) {
+				status = RESPONSE_STATUS_ERROR;
+				errorCode = PHRSR10005;
+				ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, null,
+						error, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+						.build();
+			}
+		} catch (IOException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHRSR10005;
+			ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, e,
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+					.build();
+		}
+		finally {
+			try {
+				FileUtils.deleteDirectory(new File(workingDir));
+			} catch (IOException e) {
+				status = RESPONSE_STATUS_ERROR;
+				errorCode = PHRSR10005;
+				ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, e,
+						null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+						.build();
+			}
+		}
+		status = RESPONSE_STATUS_SUCCESS;
+		successCode = PHRSR00003;
+		ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, null,
+				null, status, successCode);
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+	}
+	
+	@GET
+	@Path("/version")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getVersion(@QueryParam(REST_QUERY_URL) String connectionUrl, @QueryParam(REST_QUERY_USER_NAME) String username, @QueryParam(REST_QUERY_PASSWORD) String password, 
+			@QueryParam(REST_QUERY_CURRENT_BRANCH_NAME) String currentBranch) {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		String version = "";
+		String phrescoTemp = Utility.getPhrescoTemp();
+		String uuid = UUID.randomUUID().toString();
+		String workingDir = phrescoTemp + uuid;
+		try {
+			StringBuilder checkout = checkout(connectionUrl, currentBranch, phrescoTemp, uuid, true);
+			if (checkout.length() > 0) {
+				status = RESPONSE_STATUS_ERROR;
+				errorCode = PHRSR10002;
+				ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, null,
+						checkout, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+						.build();
+			}
+			PomProcessor processor = new PomProcessor(new File(workingDir + File.separatorChar + Constants.POM_NAME));
+			version = processor.getVersion();
+		} catch (IOException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHRSR10005;
+			ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, e,
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+					.build();
+		} catch (PhrescoPomException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHRSR10005;
+			ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, e,
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+					.build();
+		}
+		finally {
+			try {
+				FileUtils.deleteDirectory(new File(workingDir));
+			} catch (IOException e) {
+				status = RESPONSE_STATUS_ERROR;
+				errorCode = PHRSR10005;
+				ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, e,
+						null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+						.build();
+			}
+		}
+		status = RESPONSE_STATUS_SUCCESS;
+		successCode = PHRSR00003;
+		ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, version, status, successCode);
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+	}
+	
+	
+
+	private StringBuilder checkout(String connectionUrl, String currentBranch,
+			String phrescoTemp, String uuid, boolean checkoutPomAlone) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		String repoType = getRepoType(connectionUrl);
+		ResponseInfo<StringBuilder> responseData = new ResponseInfo<StringBuilder>();
+		//Construct command for checkout
+		sb.append(Constants.MVN_COMMAND)
+		.append(Constants.STR_BLANK_SPACE)
+		.append(Constants.SCM)
+		.append(Constants.STR_COLON)
+		.append(Constants.SCM_CHECKOUT)
+		.append(Constants.STR_BLANK_SPACE)
+		.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_CONNECTION_URL).append(Constants.STR_EQUALS)
+		.append(Constants.SCM).append(Constants.STR_COLON)
+		.append(repoType).append(Constants.STR_COLON).append(connectionUrl)
+		.append(Constants.STR_BLANK_SPACE)
+		.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_CHECKOUT_DIRECTORY)
+		.append(Constants.STR_EQUALS).append(uuid)
+		.append(Constants.STR_BLANK_SPACE)
+		.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_VERSION_TYPE)
+		.append(Constants.STR_EQUALS).append(Constants.SCM_BRANCH)
+		.append(Constants.STR_BLANK_SPACE)
+		.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_VERSION)
+		.append(Constants.STR_EQUALS).append(currentBranch);
+		if (checkoutPomAlone) {
+			sb.append(Constants.STR_BLANK_SPACE)
+			.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_INCLUDES)
+			.append(Constants.STR_EQUALS).append(Constants.POM_NAME);
+		}
+		BufferedReader checkoutReader = Utility.executeCommand(sb.toString(), phrescoTemp);
+		String line = "";
+		StringBuilder builder = new StringBuilder();
+		while ((line = checkoutReader.readLine()) != null) {
+			if (line.startsWith("[ERROR]")) {
+				builder.append(line);
+			}
+		}
+		return builder;
+	  }
 
 
 	private List<String> getSvnData(String url, List<String> paths, String username, String password) throws PhrescoException {
@@ -1006,6 +1297,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			Element branchItem = doc.createElement(ITEM);
 			branchItem.setAttribute(TYPE, FOLDER);
 			branchItem.setAttribute(NAME, BRANCHES);
+			branchItem.setAttribute(URL, url);
 			urlItem.appendChild(branchItem);
 
 
@@ -1014,19 +1306,23 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				Element branchItems = doc.createElement(ITEM);
 				branchItems.setAttribute(TYPE, FILE);
 				branchItems.setAttribute(NAME, branchName);
+				branchItems.setAttribute(URL, url);
+				branchItems.setAttribute(NATURE, BRANCHES);
 				branchItem.appendChild(branchItems);
 			}
 
 			Element tagItem = doc.createElement(ITEM);
 			tagItem.setAttribute(TYPE, FOLDER);
 			tagItem.setAttribute(NAME, TAGS);
+			tagItem.setAttribute(URL, url);
 			urlItem.appendChild(tagItem);
-
 
 			for (String tag: tagLists) {
 				Element tagItems = doc.createElement(ITEM);
 				tagItems.setAttribute(TYPE, FILE);
 				tagItems.setAttribute(NAME, tag);
+				tagItems.setAttribute(URL, url);
+				tagItems.setAttribute(NATURE, TAGS);
 				tagItem.appendChild(tagItems);
 			}
 

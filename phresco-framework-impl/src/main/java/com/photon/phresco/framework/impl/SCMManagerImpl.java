@@ -1150,18 +1150,19 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			RepoDetail srcRepoDetail = repoInfo.getSrcRepoDetail();
 			String repoType = srcRepoDetail.getType();
 			String srcRepoUrl = srcRepoDetail.getRepoUrl();
-			
 			StringBuilder appendedSrcUrl = new StringBuilder(srcRepoUrl);
-			if (SVN.equalsIgnoreCase(repoType) && !srcRepoUrl.endsWith(TRUNK) && !srcRepoUrl.endsWith(TRUNK + FORWARD_SLASH)) {
-				if (!srcRepoUrl.endsWith(FORWARD_SLASH)) {
+			if (SVN.equalsIgnoreCase(repoType)) {
+				if (!srcRepoUrl.endsWith(TRUNK) && !srcRepoUrl.endsWith(TRUNK + FORWARD_SLASH)) {
+					if (!srcRepoUrl.endsWith(FORWARD_SLASH)) {
+						appendedSrcUrl.append(FORWARD_SLASH);
+					}
+					appendedSrcUrl.append(TRUNK);
+				}
+				if (!appendedSrcUrl.toString().endsWith(FORWARD_SLASH)) {
 					appendedSrcUrl.append(FORWARD_SLASH);
 				}
-				appendedSrcUrl.append(TRUNK);
+				appendedSrcUrl.append(srcDirName);
 			}
-			if (!appendedSrcUrl.toString().endsWith(FORWARD_SLASH)) {
-				appendedSrcUrl.append(FORWARD_SLASH);
-			}
-			appendedSrcUrl.append(srcDirName);
 			
 			File dir = new File(Utility.getProjectHome() + appDirName);
 			boolean hasSplit = false; 

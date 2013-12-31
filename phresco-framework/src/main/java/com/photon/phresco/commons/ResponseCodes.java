@@ -617,4 +617,11 @@ public interface ResponseCodes {
 	
 	String PHRSR00001 = "PHRSR00001"; //Source repo branches and tags listed successfully
 	String PHRSR10001 = "PHRSR10001"; //Failed to list source repo branches and tags
+	String PHRSR00002 = "PHRSR00002"; //Branch created successfully
+	String PHRSR10002 = "PHRSR10002"; //Failed to checkout
+	String PHRSR10003 = "PHRSR10003"; //Failed to create branch
+	String PHRSR10004 = "PHRSR10004"; //Failed to create branch or download in to workspace
+	String PHRSR10005 = "PHRSR10005"; //Failed to create tag
+	String PHRSR00003 = "PHRSR00003"; //Tag created succesfully
+	String PHRSR10006 = "PHRSR10006"; //Delete temp failure
 }

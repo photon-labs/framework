@@ -12,6 +12,9 @@ define([], function() {
 			try {
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
+						if (commonVariables.callLadda) {
+							Ladda.stopAll();
+						}
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							callback(response);
 						} else {
@@ -48,7 +51,7 @@ define([], function() {
 			}
 			if (action === "browseSourceRepo") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + 'repository/browseSourceRepo?userId='+userId+'&customerId='+customerId+'&projectId='+projectId+'&userName=loheswaran_g&password=SaveAnimals56';
+				header.webserviceurl = commonVariables.webserviceurl + 'repository/browseSourceRepo?userId='+userId+'&customerId='+customerId+'&projectId='+projectId+'&userName=admin&password=manage';
 			}
 			if (action === "artifactInfo") {
 				header.requestMethod = "GET";
@@ -63,6 +66,20 @@ define([], function() {
 				if (!self.isBlank(requestBody.moduleName)) {
 					header.webserviceurl = header.webserviceurl + "&moduleName="+requestBody.moduleName
 				}
+			}
+			if (action === "createBranch") {
+				header.requestMethod = "POST";
+				header.webserviceurl = commonVariables.webserviceurl + 'repository/createBranch?url='+requestBody.url+'&version='+requestBody.version+'&username='+requestBody.username+'&password='+requestBody.password + 
+										'&comment='+requestBody.comment+'&currentbranchname='+requestBody.currentbranchname+'&branchname='+requestBody.branchname+'&downloadoption='+requestBody.downloadoption;
+			}
+			if (action === "createTag") {
+				header.requestMethod = "POST";
+				header.webserviceurl = commonVariables.webserviceurl + 'repository/createTag?url='+requestBody.url+'&username='+requestBody.username+'&password='+requestBody.password+'&version='+requestBody.version +
+										'&comment='+requestBody.comment+'&currentbranchname='+requestBody.currentbranchname+'&tagname='+requestBody.tagname+'&downloadoption='+requestBody.downloadoption;
+			}
+			if (action === "getVersion") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + 'repository/version?url='+requestBody.url+'&currentbranchname='+requestBody.currentbranchname;
 			}
 			
 			return header;
@@ -128,7 +145,27 @@ define([], function() {
 								}
 							}
 							if (currentTab === "sourceRepo") {
-								
+								var nature = $(this).find('a').attr("nature");
+								if (nature === "branches") {
+									var baseRepoUrl = $(this).find('a').attr("url");
+									$("input[name=baseRepoUrl]").val(baseRepoUrl);
+									var selectedBranch = $(this).find('a').text();
+									$('#fileListHead').text(selectedBranch);
+									$("input[name=selectedBranchName]").val(selectedBranch);
+									var requestBody = {};
+									requestBody.url = baseRepoUrl;
+									requestBody.currentbranchname = selectedBranch;
+									self.repository(self.getActionHeader(requestBody, "getVersion"), function(response) {
+										$("#branchFromVersion").val(response.data);
+										$("#tagFromVersion").val(response.data);
+										$(".file_view").show();
+										setTimeout(function() {
+											$(this).css("background", "#e3e3e3 !important");
+										}, 1000);
+									});
+								} else {
+									$(".file_view").hide();
+								}
 							}
 						});
 					}, 500);
@@ -189,6 +226,7 @@ define([], function() {
 					var moduleName = $(value).attr('moduleName');
 					var appDirName = $(value).attr('appDirName');
 					var nature = $(value).attr('nature');
+					var url = $(value).attr('url');
 					strItems += '<li role=treeItem class="parent_li hideContent">' + '<span class="badge badge-warning" title="Expand this branch">'+ '<i></i><a ';
 					if (moduleName !== undefined) {
 						strItems += 'moduleName="'+moduleName+'"';
@@ -199,12 +237,103 @@ define([], function() {
 					if (nature !== undefined) {
 						strItems += 'nature="'+nature+'"';
 					}
+					if (url !== undefined) {
+						strItems += 'url="'+url+'"';
+					}
+					
 					strItems += '>' + $(value).attr('name') + '</a></span></li>';
 				}
 			});
 			
 			strUl = '<ul role=group >' + strItems + '</ul>';
 			callback(strUl); 
+		},
+		
+		createBranch : function() {
+			var self = this;
+			if (!self.validateCreateBranch()) {
+				commonVariables.hideloading = true;
+				self.showBtnLoading("#createBranch");
+				var requestBody = {};
+				requestBody.url = $("input[name=baseRepoUrl]").val();
+				requestBody.version = $("#createBranchVersion").val();
+				requestBody.username = $("#branchUsername").val();
+				requestBody.password = $("#branchPassword").val();
+				requestBody.comment = $("#branchComment").val();
+				requestBody.currentbranchname = $("#branchFromName").val();
+				requestBody.branchname = $("#newBranchName").val();
+				requestBody.downloadoption = $("#downloadBrToWorkspace").is(":checked");
+				self.repository(self.getActionHeader(requestBody, "createBranch"), function(response) {
+					commonVariables.hideloading = false;
+					commonVariables.navListener.onMytabEvent(commonVariables.sourceRepo);
+				});
+			}
+		},
+		
+		validateCreateBranch : function() {
+			var self = this;
+			var branchName = $("#newBranchName").val();
+			var version = $("#createBranchVersion").val();
+			var username = $("#branchUsername").val();
+			var password = $("#branchPassword").val();
+			if (self.isBlank(branchName)) {
+				commonVariables.navListener.validateTextBox( $("#newBranchName"), 'Enter branch name');
+				return true;
+			}
+			if (self.isBlank(version)) {
+				commonVariables.navListener.validateTextBox( $("#createBranchVersion"), 'Enter version');
+				return true;
+			}
+			if (self.isBlank(username)) {
+				commonVariables.navListener.validateTextBox( $("#branchUsername"), 'Enter Username');
+				return true;
+			}
+			if (self.isBlank(password)) {
+				commonVariables.navListener.validateTextBox( $("#branchPassword"), 'Enter Password');
+				return true;
+			}
+			return false;
+		},
+		
+		createTag : function() {
+			var self = this;
+			if (!self.validateCreateTag()) {
+				commonVariables.hideloading = true;
+				self.showBtnLoading("#createTag");
+				var requestBody = {};
+				requestBody.url = $("input[name=baseRepoUrl]").val();
+				requestBody.username = $("#tagUsername").val();
+				requestBody.password = $("#tagPassword").val();
+				requestBody.comment = $("#tagComment").val();
+				requestBody.currentbranchname = $("#tagFromName").val();
+				requestBody.version = $("#tagFromVersion").val();
+				requestBody.tagname = $("#tagName").val();
+				requestBody.downloadoption = $("#downloadTagToWorkspace").is(":checked");
+				self.repository(self.getActionHeader(requestBody, "createTag"), function(response) {
+					commonVariables.hideloading = false;
+					commonVariables.navListener.onMytabEvent(commonVariables.sourceRepo);
+				});
+			}
+		},
+		
+		validateCreateTag : function() {
+			var self = this;
+			var tagName = $("#tagName").val();
+			var username = $("#tagUsername").val();
+			var password = $("#tagPassword").val();
+			if (self.isBlank(tagName)) {
+				commonVariables.navListener.validateTextBox( $("#tagName"), 'Enter Tag name');
+				return true;
+			}
+			if (self.isBlank(username)) {
+				commonVariables.navListener.validateTextBox( $("#tagUsername"), 'Enter Username');
+				return true;
+			}
+			if (self.isBlank(password)) {
+				commonVariables.navListener.validateTextBox( $("#tagPassword"), 'Enter Password');
+				return true;
+			}
+			return false;
 		}
 	});
 
