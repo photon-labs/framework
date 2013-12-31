@@ -29,7 +29,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 			var self = this;
 			if (txtSearch !== "" && txtSearch !== undefined) {
 				var txtSearch = txtSearch.toLowerCase();
-				if(classval === "switch switchOff") {
+				if(classval === "switch switchOff" || classval === "switch switchOn") {
 					if (txtSearch !== "" && txtSearch !== undefined) {
 						$("#"+divId+" li").hide();//To hide all the ul
 						var hasRecord = false;				
