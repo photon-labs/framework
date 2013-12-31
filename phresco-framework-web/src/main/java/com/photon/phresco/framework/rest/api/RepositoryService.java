@@ -600,7 +600,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	@GET
 	@Path("/browseBuildRepo")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getFolderStructure(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+	public Response getBuildRepoStructure(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_PROJECTID) String projectId) throws PhrescoException {
 		Response response = null;
 		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
