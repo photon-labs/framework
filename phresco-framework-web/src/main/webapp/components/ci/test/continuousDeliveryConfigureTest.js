@@ -30,7 +30,7 @@ define(["ci/continuousDeliveryConfigure"], function(ContinuousDeliveryConfigure)
 				});
 
 				self.sortList = $.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.jobTemplates + "/getJobTemplatesByEnvironment?customerId=photon&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&envName=Production",
+					url: commonVariables.webserviceurl + commonVariables.jobTemplates + "/getJobTemplatesByEnvironment?customerId=photon&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&rootModule=&envName=Production",
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
@@ -64,7 +64,7 @@ define(["ci/continuousDeliveryConfigure"], function(ContinuousDeliveryConfigure)
 				commonVariables.projectLevel = true;
 				ciAPI.localVal.setSession("customerId" , "photon");
 				self.sortList = $.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.jobTemplates + "/getJobTemplatesByEnvironment?customerId=photon&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&envName=Testing",						
+					url: commonVariables.webserviceurl + commonVariables.jobTemplates + "/getJobTemplatesByEnvironment?customerId=photon&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&rootModule=&envName=Testing",						
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,

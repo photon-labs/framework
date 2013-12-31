@@ -162,13 +162,13 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 			});
 		},
 		
-		getAction : function(ciRequestBody, action, param, callback) {
+		getAction : function(ciRequestBody, action, param, callback, modules) {
 			var self = this;
 			// Content place holder for the Job template
 			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, action, param), function(response) {	
 				if (action === "edit") {				
 					// only for edit popup value population
-					self.editEvent.dispatch(response.data);
+					self.editEvent.dispatch(response.data, modules);
 				} else if (action === "getAppInfos") {
 					callback(response);
 				} else {
@@ -223,6 +223,7 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 
 		constructApplicationsHtml : function(jobTemplateName, action, callback) {
 				var self = this;
+				var modules;
 				// show applications names in popup
 				self.getAction(self.ciRequestBody, 'getAppInfos', '', function(appInfos) {
 					// empty the applist element
@@ -230,7 +231,7 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 					var obj = $('select[name=appIds]');
 					if (!self.isBlank(appInfos.data)) {
 						$.each(appInfos.data, function(key, value) {
-							if (self.isBlank(value.modules) || action === 'edit') {
+							if (self.isBlank(value.modules)) {
 								var opt = document.createElement("option");
 								opt.setAttribute('class',value.name);
 								opt.value = value.name;
@@ -245,6 +246,7 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 								rootModule.value = value.name;
 								rootModule.appName = value.name;
 								optGroup.appendChild(rootModule);*/
+								modules = value.modules;
 								$.each(value.modules, function(moduleIndex, module) {
 									objOption=document.createElement("option");
 									objOption.innerHTML = module.code;
@@ -261,7 +263,7 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 					$('.selectpicker').selectpicker('refresh');
 					if (jobTemplateName !== '') {
 						// Restore values
-						self.getAction(self.configRequestBody, 'edit', jobTemplateName);
+						self.getAction(self.configRequestBody, 'edit', jobTemplateName,'', modules);
 					}
 				});
 				callback();

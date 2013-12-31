@@ -12,7 +12,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 			asyncTest("Continuous Delivery View empty template render test", function() {
 				$('#content').html('');
 				self.contViewList = $.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.ci +"/list?projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&customerId=photon",
+					url: commonVariables.webserviceurl + commonVariables.ci +"/list?projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&customerId=photon&rootModule=",
 					type:'GET',
 					dataType: "json",
 					contentType: "application/json",
@@ -57,7 +57,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 				// list existing continuous delivery views
 				$.mockjaxClear(self.contViewList);
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.ci +"/list?projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&customerId=photon",
+					url: commonVariables.webserviceurl + commonVariables.ci +"/list?projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&customerId=photon&rootModule=",
 					type:'GET',
 					dataType: "json",
 					contentType: "application/json",
@@ -90,7 +90,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 				});
 				
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.ci + "/jobStatus?name=IndependentCode&continuousName=independent&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&customerId=photon",
+					url: commonVariables.webserviceurl + commonVariables.ci + "/jobStatus?name=IndependentCode&continuousName=independent&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&customerId=photon&rootModule=",
 					type:'GET',
 					dataType: "json",
 					contentType: "application/json",
@@ -124,7 +124,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 				// Trigger Build
 				$.mockjax({
 					
-					url: commonVariables.webserviceurl + commonVariables.ci +"/build?name=IndependentCode&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&continuousName=independent&customerId=photon",
+					url: commonVariables.webserviceurl + commonVariables.ci +"/build?name=IndependentCode&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&continuousName=independent&customerId=photon&rootModule=",
 					type:'POST',
 					dataType: "json",
 					contentType: "application/json",
@@ -153,7 +153,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 			asyncTest("List Builds test", function() {
 
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.ci + "/builds?projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&name=IndependentCode&appDirName=&continuousName=independent&customerId=photon",
+					url: commonVariables.webserviceurl + commonVariables.ci + "/builds?projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&name=IndependentCode&appDirName=&continuousName=independent&customerId=photon&rootModule=",
 					type:'GET',
 					dataType: "json",
 					contentType: "application/json",
@@ -179,7 +179,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 			var self = this;
 			asyncTest("Last Build Status test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.ci + "/lastBuildStatus?name=IndependentCode&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&continuousName=independent&customerId=photon",
+					url: commonVariables.webserviceurl + commonVariables.ci + "/lastBuildStatus?name=IndependentCode&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&continuousName=independent&customerId=photon&rootModule=",
 					type:'GET',
 					dataType: "json",
 					contentType: "application/json",
@@ -203,7 +203,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 			var self = this;
 			asyncTest("Download Build test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.ci +"/downloadBuild?buildDownloadUrl=do_not_checkin/build/PHR1_07-Aug-2013-11-49-40.zip&downloadJobName=IndependentCode&customerId=photon&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&continuousName=independent",
+					url: commonVariables.webserviceurl + commonVariables.ci +"/downloadBuild?buildDownloadUrl=do_not_checkin/build/PHR1_07-Aug-2013-11-49-40.zip&downloadJobName=IndependentCode&customerId=photon&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&continuousName=independent&rootModule=",
 					type:'GET',
 					dataType: "json",
 					contentType: "application/json",
@@ -228,7 +228,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 			asyncTest("Delete Builds test", function() {
 
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.ci +"/deletebuilds?buildNumber=2&name=IndependentCode&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&continuousName=independent",
+					url: commonVariables.webserviceurl + commonVariables.ci +"/deletebuilds?buildNumber=2&name=IndependentCode&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&continuousName=independent&rootModule=",
 					type:'DELETE',
 					dataType: "json",
 					contentType: "application/json",
@@ -289,7 +289,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 			asyncTest("Clone CI test", function() {
 				$.mockjaxClear(self.contViewList);
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.ci +"/clone?customerId=photon&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&userId=admin&cloneName=newCloned&envName=Production&continuousName=independent",
+					url: commonVariables.webserviceurl + commonVariables.ci +"/clone?customerId=photon&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&userId=admin&cloneName=newCloned&envName=Production&continuousName=independent&rootModule=",
 					type:'POST',
 					dataType: "json",
 					contentType: "application/json",
@@ -300,7 +300,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 				});
 				
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.ci + "/pipeline?projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&name=newCloned&customerId=photon",						
+					url: commonVariables.webserviceurl + commonVariables.ci + "/pipeline?projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&name=newCloned&customerId=photon&rootModule=",						
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
@@ -344,7 +344,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 			ciAPI.localVal.setSession("customerId" , "photon");
 			asyncTest("confirmDelete CI", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.ci +"/delete?continuousName=independent&customerId=photon&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=",
+					url: commonVariables.webserviceurl + commonVariables.ci +"/delete?continuousName=independent&customerId=photon&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&rootModule=",
 					type:'DELETE',
 					dataType: "json",
 					contentType: "application/json",
@@ -371,7 +371,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 			var self = this;
 			asyncTest("editContinuousDelivery test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.jobTemplates + "/getJobTemplatesByEnvironment?customerId=photon&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&envName=Production",
+					url: commonVariables.webserviceurl + commonVariables.jobTemplates + "/getJobTemplatesByEnvironment?customerId=photon&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&rootModule=&envName=Production",
 					type:'GET',
 					dataType: "json",
 					contentType: "application/json",
@@ -382,7 +382,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 				});
 
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.jobTemplates + "/getJobTemplatesByEnvironment?customerId=photon&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&envName=Testing",
+					url: commonVariables.webserviceurl + commonVariables.jobTemplates + "/getJobTemplatesByEnvironment?customerId=photon&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&rootModule=&envName=Testing",
 					type:'GET',
 					dataType: "json",
 					contentType: "application/json",
@@ -393,7 +393,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 				});
 
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.ci + "/editContinuousView?projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&name=independent&customerId=photon",
+					url: commonVariables.webserviceurl + commonVariables.ci + "/editContinuousView?projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&name=independent&customerId=photon&rootModule=",
 					type:'GET',
 					dataType: "json",
 					contentType: "application/json",
@@ -427,7 +427,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 				});
 				
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.ci + "/update?customerId=photon&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&userId=admin&oldname=jseries",						
+					url: commonVariables.webserviceurl + commonVariables.ci + "/update?customerId=photon&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&rootModule=&userId=admin&oldname=jseries",						
 					type:'PUT',
 					contentType: 'application/json',
 					status: 200,
@@ -437,7 +437,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 				});
 				
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.ci + "/pipeline?projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&name=jseries&customerId=photon",						
+					url: commonVariables.webserviceurl + commonVariables.ci + "/pipeline?projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&appDirName=&name=jseries&customerId=photon&rootModule=",						
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,

@@ -261,7 +261,7 @@ public class CIManagerImplTest implements FrameworkConstants{
 //	@Test
 	public void testListAllJobTemplates() throws Exception {
 		System.out.println("ListAll job template ");
-		List<CIJobTemplate> jobTemplates = ciManager.getJobTemplates("TestProject");
+		List<CIJobTemplate> jobTemplates = ciManager.getJobTemplates("TestProject", null);
 		if (CollectionUtils.isEmpty(jobTemplates)) {
 			Assert.assertTrue(false);
 		}
@@ -280,7 +280,7 @@ public class CIManagerImplTest implements FrameworkConstants{
 	public void testpListByAppIdJobTemplates() throws Exception {
 		System.out.println("ListByAppId job template ");
 		String appId = "a123";
-		List<CIJobTemplate> jobTemplatesByAppId = ciManager.getJobTemplatesByAppId(appId, "TestProject");
+		List<CIJobTemplate> jobTemplatesByAppId = ciManager.getJobTemplatesByAppId(appId, "TestProject", null);
 		System.out.println("jobTemplatesByAppId size " + jobTemplatesByAppId.size());
 		Assert.assertTrue(jobTemplatesByAppId.size() > 0 && jobTemplatesByAppId.size() < 2);
 		

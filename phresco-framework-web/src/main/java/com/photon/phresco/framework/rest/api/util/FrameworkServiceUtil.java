@@ -459,14 +459,18 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 		return new ArrayList<ApplicationInfo>();
 	}
 	
-	public static String getConfigFileDir(String appDirName) {
+	public static String getConfigFileDir(String appDirName, String moduleName) {
 		StringBuilder builder = new StringBuilder();
-		builder.append(Utility.getProjectHome())
-		.append(appDirName)
-		.append(File.separatorChar)
-		.append(Constants.DOT_PHRESCO_FOLDER)
-		.append(File.separatorChar)
-		.append(Constants.CONFIGURATION_INFO_FILE);
+		builder.append(Utility.getProjectHome());
+		builder.append(appDirName);
+		builder.append(File.separatorChar);
+		if(StringUtils.isNotEmpty(moduleName)) {
+			builder.append(moduleName);
+			builder.append(File.separatorChar);
+		}
+		builder.append(Constants.DOT_PHRESCO_FOLDER);
+		builder.append(File.separatorChar);
+		builder.append(Constants.CONFIGURATION_INFO_FILE);
 		return builder.toString();
 	}
 	

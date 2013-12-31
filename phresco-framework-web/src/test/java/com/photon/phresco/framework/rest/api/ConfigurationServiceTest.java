@@ -1084,7 +1084,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	}
 	
 	private String getConnectionUrl(String envName, String type, String configName) throws PhrescoException {
-		String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
+		String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName,null);
 		try {
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFileDir));
 			Configuration configuration = configManager.getConfiguration(envName, type, configName);

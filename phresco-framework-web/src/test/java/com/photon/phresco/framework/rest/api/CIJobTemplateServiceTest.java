@@ -113,10 +113,10 @@ public class CIJobTemplateServiceTest extends RestBaseTest {
 
 	@Test
 	public void getJobTemplatesByEnvironemnt() {
-		Response jobTemplate = ciJobTemplateService.getJobTemplatesByEnvironemnt(customerId, projectId, "Production","");
+		Response jobTemplate = ciJobTemplateService.getJobTemplatesByEnvironemnt(customerId, projectId, "Production","", "");
 		Assert.assertEquals(200, jobTemplate.getStatus());
-		Response jobTemplateFail = ciJobTemplateService.getJobTemplatesByEnvironemnt("", "sample",  "tt","");
-		Response jobTemplateByName = ciJobTemplateService.getJobTemplatesByEnvironemnt(customerId, projectId, "Production",appId);
+		Response jobTemplateFail = ciJobTemplateService.getJobTemplatesByEnvironemnt("", "sample",  "tt","", "");
+		Response jobTemplateByName = ciJobTemplateService.getJobTemplatesByEnvironemnt(customerId, projectId, "Production",appId, "");
 //		Assert.assertEquals(417, jobTemplateFail.getStatus());
 	}
 

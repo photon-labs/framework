@@ -50,6 +50,7 @@ import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.CIJob;
 import com.photon.phresco.commons.model.ContinuousDelivery;
+import com.photon.phresco.commons.model.ModuleInfo;
 import com.photon.phresco.commons.model.ProjectDelivery;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.configuration.Environment;
@@ -413,18 +414,29 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getJobTemplatesByEnvironemnt(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_EVN_NAME) String envName, 
-			@QueryParam(REST_QUERY_APPDIR_NAME) String appDir) {
+			@QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule) {
 		ResponseInfo<CIJobTemplate> responseData = new ResponseInfo<CIJobTemplate>();
 		Map<JSONObject, List<CIJobTemplate>> jobTemplateMap = new HashMap<JSONObject, List<CIJobTemplate>>();
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			if(StringUtils.isNotEmpty(appDir)) {
+				if(StringUtils.isNotEmpty(rootModule)) {
+					appDir = rootModule + "/" + appDir;
+				}
 				ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDir);
-				getJobTemplateByAppDir(envName, jobTemplateMap, ciManager, applicationInfo);
+				getJobTemplateByAppDir(envName, jobTemplateMap, ciManager, applicationInfo, null);
 			} else {
 				List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
 				for (ApplicationInfo appInfo : appInfos) {
-					getJobTemplateByAppDir(envName, jobTemplateMap, ciManager, appInfo);
+					if(CollectionUtils.isNotEmpty(appInfo.getModules())) {
+						List<ModuleInfo> modules = appInfo.getModules();
+						for (ModuleInfo moduleInfo : modules) {
+							getJobTemplateByAppDir(envName, jobTemplateMap, ciManager, appInfo, moduleInfo.getCode());
+						}
+					} else {
+						getJobTemplateByAppDir(envName, jobTemplateMap, ciManager, appInfo, null);
+					}
+					
 				}
 			}
 			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, jobTemplateMap, RESPONSE_STATUS_SUCCESS, PHR800019);
@@ -444,16 +456,23 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 	
 	private void getJobTemplateByAppDir(String envName,
 			Map<JSONObject, List<CIJobTemplate>> jobTemplateMap,
-			CIManager ciManager, ApplicationInfo applicationInfo)
+			CIManager ciManager, ApplicationInfo applicationInfo, String moduleName)
 			throws ConfigurationException, PhrescoException, JSONException {
-		List<Environment> environments = getEnvironments(applicationInfo);
+		List<Environment> environments = getEnvironments(applicationInfo, moduleName);
 		for (Environment environment : environments) {
 			if (envName.equals(environment.getName())) {
-				List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByAppId(applicationInfo.getAppDirName(), applicationInfo.getName());
+				String appDirName = applicationInfo.getAppDirName();
+				if(StringUtils.isNotEmpty(applicationInfo.getRootModule())) {
+					appDirName = applicationInfo.getRootModule() + "/" + appDirName;
+				}
+				List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByAppId(appDirName, applicationInfo.getName(), moduleName);
 				if (CollectionUtils.isNotEmpty(jobTemplates)) {
 					JSONObject jsonObject = new JSONObject();
 					jsonObject.put("appName", applicationInfo.getName());
 					jsonObject.put("appDirName", applicationInfo.getAppDirName());
+					if(StringUtils.isNotEmpty(moduleName)) {
+						jsonObject.put("moduleName", moduleName);
+					}
 					jobTemplateMap.put(jsonObject, jobTemplates);
 				}
 			}
@@ -467,11 +486,19 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 	 * @return the environments
 	 * @throws ConfigurationException the configuration exception
 	 */
-	private List<Environment> getEnvironments(ApplicationInfo appInfo) throws ConfigurationException {
+	private List<Environment> getEnvironments(ApplicationInfo appInfo, String moduleName) throws ConfigurationException {
 		List<Environment> environments = new ArrayList<Environment>();
-		String configFile = FrameworkServiceUtil.getConfigFileDir(appInfo.getAppDirName());
-		ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
-		environments = configManager.getEnvironmentsAlone();
+		
+		if(StringUtils.isNotEmpty(appInfo.getRootModule())) {
+			String configFile = FrameworkServiceUtil.getConfigFileDir(appInfo.getRootModule(), appInfo.getAppDirName());
+			ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
+			environments = configManager.getEnvironmentsAlone();
+		} else {
+			String configFile = FrameworkServiceUtil.getConfigFileDir(appInfo.getAppDirName(), moduleName);
+			ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
+			environments = configManager.getEnvironmentsAlone();
+		}
+		
 		return environments;
 	}
 }

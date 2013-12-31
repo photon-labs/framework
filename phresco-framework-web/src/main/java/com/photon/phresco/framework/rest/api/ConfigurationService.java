@@ -1020,10 +1020,14 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					for (ModuleInfo module : modules) {
 						String code = module.getCode();
 						environments = getEnvironments(appInfo.getAppDirName() + File.separator + code);
+						for (Environment environment : environments) {
+							environmentSet.add(environment.getName());
+						}
 					}
-					for (Environment environment : environments) {
-						environmentSet.add(environment.getName());
-					}
+//					System.out.println("environments====>>>>>"+environments);
+//					for (Environment environment : environments) {
+//						environmentSet.add(environment.getName());
+//					}
 				} else {
 					environments = getEnvironments(appInfo.getAppDirName());
 					for (Environment environment : environments) {
@@ -1050,13 +1054,13 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Path("/environmentList")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEnvironmentList(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName,
+			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule,
 			@QueryParam(REST_QUERY_PROJECT_CODE) String projectCode) {
 		String rootModulePath = "";
 		String subModuleName = "";
-		if (StringUtils.isNotEmpty(moduleName)) {
-			rootModulePath = Utility.getProjectHome() + appDirName;
-			subModuleName = moduleName;
+		if (StringUtils.isNotEmpty(rootModule)) {
+			rootModulePath = Utility.getProjectHome() + rootModule;
+			subModuleName = appDirName;
 		} else {
 			rootModulePath = Utility.getProjectHome() + appDirName;
 		}
@@ -1842,7 +1846,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	 * @throws ConfigurationException the configuration exception
 	 */
 	private List<Environment> getEnvironments(String appDirName) throws ConfigurationException {
-		String configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
+		String configFile = FrameworkServiceUtil.getConfigFileDir(appDirName, null);
 		ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
 		List<Environment> environments = configManager.getEnvironmentsAlone();
 		return environments;

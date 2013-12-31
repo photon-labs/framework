@@ -18,6 +18,7 @@
 package com.photon.phresco.framework.impl;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -55,6 +56,7 @@ import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.CIJob;
+import com.photon.phresco.commons.model.CIJobTemplate;
 import com.photon.phresco.commons.model.ContinuousDelivery;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.Dashboard;
@@ -393,6 +395,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 							File moduleDir = new File(Utility.getProjectHome() + module.getRootModule() + File.separator + module.getCode());
 							String pluginInfoFile = moduleDir.getPath() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  APPLICATION_HANDLER_INFO_FILE;
 							ApplicationInfo subModuleAppInfo = ProjectUtils.getApplicationInfo(moduleDir);
+							updateJobTemplates(moduleDir, module);
 							postProjectCreation(projectInfo, serviceManager, projectUtils, repoInfo, subModuleAppInfo, pluginInfoFile, moduleDir);
 						}
 					} else {
@@ -413,6 +416,68 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		}
 
 		return projectInfo;
+	}
+	
+	private void updateJobTemplates(File moduleDir, ModuleInfo module) throws PhrescoException {
+		FileWriter fw = null;
+		BufferedWriter bw = null;
+		try {
+			String path = moduleDir.getPath() + File.separator + DOT_PHRESCO_FOLDER +File.separator + CI_JOB_TEMPLATE_NAME;
+			List<CIJobTemplate> jobTemplates = getJobTemplates(path);
+			if(CollectionUtils.isNotEmpty(jobTemplates)) {
+				for (CIJobTemplate ciJobTemplate : jobTemplates) {
+					ciJobTemplate.setModule(module.getCode());
+					ciJobTemplate.setName(ciJobTemplate.getName() + HYPHEN + module.getCode());
+				}
+			}
+			
+			Gson gson = new Gson();
+			fw = new FileWriter(path);
+			bw = new BufferedWriter(fw);
+			String templatesJson = gson.toJson(jobTemplates);
+			bw.write(templatesJson);
+			bw.flush();
+			bw.close();
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		} finally {
+			try {
+				if (bw != null) {
+					bw.close();
+				}
+			} catch (IOException e) {
+				throw new PhrescoException(e);
+			}
+			Utility.closeStream(fw);
+		}
+	}
+
+	public List<CIJobTemplate> getJobTemplates(String path) throws PhrescoException {
+		
+		FileReader jobTemplateFileReader = null;
+		BufferedReader br = null;
+		List<CIJobTemplate> ciJobTemplates = null;
+		try {
+			
+			File jobTemplateFile = new File(path);
+			if (!jobTemplateFile.exists()) {
+				return ciJobTemplates;
+			}
+
+			jobTemplateFileReader = new FileReader(jobTemplateFile);
+			br = new BufferedReader(jobTemplateFileReader);
+
+			Type type = new TypeToken<List<CIJobTemplate>>() {
+			}.getType();
+			Gson gson = new Gson();
+			ciJobTemplates = gson.fromJson(br, type);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		} finally {
+			Utility.closeStream(br);
+			Utility.closeStream(jobTemplateFileReader);
+		}
+		return ciJobTemplates;
 	}
 	
 	private void postProjectCreation(ProjectInfo projectInfo, ServiceManager serviceManager, ProjectUtils projectUtils,

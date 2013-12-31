@@ -2616,13 +2616,14 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		String property = "";
 		String module = request.getParameter("moduleName");
 		String appDirName = request.getParameter("appDirName");
+		String rootModule = request.getParameter("rootModule");
 //		if (StringUtils.isNotEmpty(module)) {
 //			appDirName = appDirName + File.separator + module;
 //		}
 		String rootModulePath = "";
 		String subModuleName = "";
 		if (StringUtils.isNotEmpty(module)) {
-			rootModulePath = Utility.getProjectHome() + appDirName;
+			rootModulePath = Utility.getProjectHome() + rootModule;
 			subModuleName = module;
 		} else {
 			rootModulePath = Utility.getProjectHome() + appDirName;

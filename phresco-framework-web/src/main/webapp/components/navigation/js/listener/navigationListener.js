@@ -504,9 +504,9 @@ define([], function() {
 					$("#settingsNav").hide();
 					$("#downloadsNav").hide();
 					if (self.isBlank(commonVariables.editAppFrom) && commonVariables.editAppHasModules) {
-						$("li[name=editMenu]").not("#featurelist, .continuousDeliveryView").hide();
-					} else if (commonVariables.editAppFrom === "multimodule") {
-						$("li[name=editMenu]").not(".continuousDeliveryView").show();
+						$("li[name=editMenu]").not("#featurelist").hide();
+//					} else if (commonVariables.editAppFrom === "multimodule") {
+//						$("li[name=editMenu]").not(".continuousDeliveryView").show();
 					} else {
 						$("li[name=editMenu]").show();
 					}
@@ -602,9 +602,9 @@ define([], function() {
 			} else {
 				$("#manualTest").show();
 			}
-			if (jQuery.inArray(commonVariables.optionsCI, applicableOptions) === -1 || commonVariables.editAppFrom === "multimodule") {
+			if (jQuery.inArray(commonVariables.optionsCI, applicableOptions) === -1) {
 				$(".continuousDeliveryView").hide();
-			} else if (commonVariables.editAppFrom !== "multimodule") {
+			} else if (commonVariables.editAppFrom === "multimodule") {
 				$(".continuousDeliveryView").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsRunAgainstSrc, applicableOptions) === -1) {

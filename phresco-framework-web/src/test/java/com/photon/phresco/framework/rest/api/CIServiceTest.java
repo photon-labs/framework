@@ -53,8 +53,8 @@ public class CIServiceTest extends RestBaseTest {
 		ContinuousDelivery continuousDelivery = continuousDeliveryInfo();
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response createJob = ciservice.createJob(httpServletRequest, continuousDelivery, "photon", "TestProject","", userId);
-			Response createJobApp = ciservice.createJob(httpServletRequest, continuousDeliveryInfoAppLevel(), "photon", null,"TestProject",userId);
+			Response createJob = ciservice.createJob(httpServletRequest, continuousDelivery, "photon", "TestProject","", userId,"");
+			Response createJobApp = ciservice.createJob(httpServletRequest, continuousDeliveryInfoAppLevel(), "photon", null,"TestProject",userId,"");
 			Assert.assertEquals(200, createJob.getStatus());
 		} else {
 			Assert.assertNotSame("200", jenkinsAlive);
@@ -242,8 +242,8 @@ public class CIServiceTest extends RestBaseTest {
 	public void createBuildTest() throws PhrescoException {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response build = ciservice.build("testJob", "TestProject", "", "testContinuousDelivery", "photon");
-			Response buildApp = ciservice.build("testJobApp", null, "TestProject", "testContinuousDeliveryApp", "photon");
+			Response build = ciservice.build("testJob", "TestProject", "", "", "testContinuousDelivery", "photon");
+			Response buildApp = ciservice.build("testJobApp", null, "TestProject", "", "testContinuousDeliveryApp", "photon");
 			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) build.getEntity();
 			Assert.assertEquals(200, build.getStatus());
 		} else {
@@ -269,8 +269,8 @@ public class CIServiceTest extends RestBaseTest {
 	public void getContinuousDeliveryTest() throws PhrescoException {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response continuousDeliveryJob = ciservice.getContinuousDeliveryJob("TestProject", "", "photon");
-//			Response continuousDeliveryJobApp = ciservice.getContinuousDeliveryJob("", "TestProject", "photon");
+			Response continuousDeliveryJob = ciservice.getContinuousDeliveryJob("TestProject", "", "", "photon");
+			Response continuousDeliveryJobApp = ciservice.getContinuousDeliveryJob("", "TestProject", "","photon");
 //			Response cdJob = ciservice.getContinuousDeliveryJob("", "", "photon");
 			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) continuousDeliveryJob.getEntity();
 			Assert.assertEquals(200, continuousDeliveryJob.getStatus());
@@ -284,8 +284,8 @@ public class CIServiceTest extends RestBaseTest {
 		
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response builds = ciservice.getBuilds("TestProject", "", "testJob", "testContinuousDelivery", "photon");
-			Response buildsApp = ciservice.getBuilds("", "TestProject", "testJobApp", "testContinuousDeliveryApp", "photon");
+			Response builds = ciservice.getBuilds("TestProject", "", "testJob", "testContinuousDelivery", "photon","");
+			Response buildsApp = ciservice.getBuilds("", "TestProject", "testJobApp", "testContinuousDeliveryApp", "photon","");
 			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) builds.getEntity();
 			Assert.assertEquals(200, builds.getStatus());
 		} else {
@@ -298,8 +298,8 @@ public class CIServiceTest extends RestBaseTest {
 		
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response lastBuildStatus = ciservice.getLastBuildStatus("testJob", "testContinuousDelivery", "TestProject", "", "photon");
-//			Response buildsApp = ciservice.getBuilds("", "TestProject", "testJobApp", "testContinuousDeliveryApp");
+			Response lastBuildStatus = ciservice.getLastBuildStatus("testJob", "testContinuousDelivery", "TestProject", "", "", "photon");
+			Response buildsApp = ciservice.getBuilds("", "TestProject", "testJobApp", "testContinuousDeliveryApp","","");
 //			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) builds.getEntity();
 			Assert.assertEquals(200, lastBuildStatus.getStatus());
 		} else {
@@ -313,7 +313,7 @@ public class CIServiceTest extends RestBaseTest {
 		String url = "do_not_checkin/build/PHR1_07-Aug-2013-11-49-40.zip";	
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response builds = ciservice.CIBuildDownload(url, "testJob", "photon", "TestProject", "", "testContinuousDelivery");
+			Response builds = ciservice.CIBuildDownload(url, "testJob", "photon", "TestProject", "", "testContinuousDelivery","");
 			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) builds.getEntity();
 			Assert.assertEquals(200, builds.getStatus());
 		} else {
@@ -392,8 +392,8 @@ public class CIServiceTest extends RestBaseTest {
 	public void deleteBuildsTest() throws PhrescoException {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response deleteBuilds = ciservice.deleteBuilds("1", "testJob", "photon", "TestProject", "", "testContinuousDelivery");
-			Response deleteBuildsApp = ciservice.deleteBuilds("1", "testJobApp", "photon", "", "TestProject", "testContinuousDeliveryApp");
+			Response deleteBuilds = ciservice.deleteBuilds("1", "testJob", "photon", "TestProject", "", "", "testContinuousDelivery");
+			Response deleteBuildsApp = ciservice.deleteBuilds("1", "testJobApp", "photon", "", "TestProject", "", "testContinuousDeliveryApp");
 			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) deleteBuilds.getEntity();
 			Assert.assertEquals(200, deleteBuilds.getStatus());
 		} else {
@@ -405,7 +405,7 @@ public class CIServiceTest extends RestBaseTest {
 	public void pipeLineValidateTest() throws PhrescoException {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			ciservice.pipeLineValidation("testContinuousDelivery1","TestProject", "","photon");
+			ciservice.pipeLineValidation("testContinuousDelivery1","TestProject", "","photon","");
 		} else {
 			Assert.assertNotSame("200", jenkinsAlive);
 		}
@@ -420,8 +420,8 @@ public class CIServiceTest extends RestBaseTest {
 		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response createClone = ciservice.createClone(httpServletRequest, "testContinuousDelivery1", "Testing", "testContinuousDelivery", "Photon", "TestProject", "", userId);
-			ciservice.createClone(httpServletRequest, "testContinuousDeliveryApp", "Testing", "testContinuousDeliveryApp", "Photon", "", "TestProject", userId);
+			Response createClone = ciservice.createClone(httpServletRequest, "testContinuousDelivery1", "Testing", "testContinuousDelivery", "Photon", "TestProject", "", userId,"");
+			ciservice.createClone(httpServletRequest, "testContinuousDeliveryApp", "Testing", "testContinuousDeliveryApp", "Photon", "", "TestProject", userId,"");
 			Assert.assertEquals(200, createClone.getStatus());
 		} else {
 			Assert.assertNotSame("200", jenkinsAlive);
@@ -438,8 +438,8 @@ public class CIServiceTest extends RestBaseTest {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
 			ContinuousDelivery continuousDelivery = continuousDeliveryInfoUpdate();
-			Response updateJob = ciservice.updateJob(httpServletRequest, continuousDelivery, "Photon", "TestProject", "", userId, "testContinuousDelivery");
-//			ciservice.updateJob(httpServletRequest, continuousDeliveryInfoUpdateApp(), "Photon", "", "TestProject", "admin");
+			Response updateJob = ciservice.updateJob(httpServletRequest, continuousDelivery, "Photon", "TestProject", "", userId, "testContinuousDelivery","");
+//			ciservice.updateJob(httpServletRequest, continuousDeliveryInfoUpdateApp(), "Photon", "", "TestProject", "admin","","");
 			Assert.assertEquals(200, updateJob.getStatus());
 		} else {
 			Assert.assertNotSame("200", jenkinsAlive);
@@ -528,8 +528,8 @@ public class CIServiceTest extends RestBaseTest {
 	public void editContinuousDeliveryTest() throws PhrescoException {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response editContinuousView = ciservice.editContinuousView("TestProject", "testContinuousDelivery", "", "photon");
-			Response editContinuousViewApp = ciservice.editContinuousView("", "testContinuousDeliveryApp", "TestProject", "photon");
+			Response editContinuousView = ciservice.editContinuousView("TestProject", "testContinuousDelivery", "", "photon","");
+			Response editContinuousViewApp = ciservice.editContinuousView("", "testContinuousDeliveryApp", "TestProject", "photon","");
 			Assert.assertEquals(200, editContinuousView.getStatus());
 		} else {
 			Assert.assertNotSame("200", jenkinsAlive);
@@ -540,8 +540,8 @@ public class CIServiceTest extends RestBaseTest {
 	public void getStatusTest() throws PhrescoException {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			ciservice.getStatus("testJob", "testContinuousDelivery", "TestProject", "", "photon");
-			ciservice.getStatus("testJobApp", "testContinuousDeliveryApp", "", "TestProject", "photon");
+			ciservice.getStatus("testJob", "testContinuousDelivery", "TestProject", "", "", "photon");
+			ciservice.getStatus("testJobApp", "testContinuousDeliveryApp", "", "TestProject", "", "photon");
 		} else {
 			Assert.assertNotSame("200", jenkinsAlive);
 		}
@@ -551,10 +551,10 @@ public class CIServiceTest extends RestBaseTest {
 	public void deleteContinuousDeliveryTest() throws PhrescoException {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response delete = ciservice.delete("testContinuousDelivery", "photon", "TestProject", "");
-//			ciservice.delete("testContinuousDelivery1", "photon", "TestProject", "");
-//			ciservice.delete("testContinuousDeliveryApp", "photon", "", "TestProject");
-//			Response deleteApp = ciservice.delete("testContinuousDeliveryApp", "photon", null, "TestProject");
+			Response delete = ciservice.delete("testContinuousDelivery", "photon", "TestProject", "","");
+//			ciservice.delete("testContinuousDelivery1", "photon", "TestProject", "","");
+//			ciservice.delete("testContinuousDeliveryApp", "photon", "", "TestProject","");
+//			Response deleteApp = ciservice.delete("testContinuousDeliveryApp", "photon", null, "TestProject","");
 			
 			Assert.assertEquals(200, delete.getStatus());
 		} else {
