@@ -17,12 +17,14 @@
  */
 package com.photon.phresco.framework.rest.api;
 
+import java.io.File;
 import java.util.Arrays;
 
 import javax.ws.rs.core.Response;
 
 import junit.framework.Assert;
 
+import org.codehaus.plexus.util.FileUtils;
 import org.junit.Test;
 
 import com.photon.phresco.exception.PhrescoException;
@@ -61,7 +63,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		Assert.assertEquals(200, fetchPopUpValues.getStatus());
 	}
 	
-	@Test
+@Test
 	public void  commitProjectToRepo() {
 		RepoDetail repodetail = new RepoDetail();
 		repodetail.setUserName("santhosh_ja");
@@ -215,15 +217,27 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	
 	@Test
 	public void  buildRepoTest() throws Exception {
-		Response response = repositoryservice.getFolderStructure(customerId, userId, projectId);
+		Response response = repositoryservice.getBuildRepoStructure(customerId, userId, projectId);
+		Assert.assertEquals(200, response.getStatus());
+	} 
+	
+	@Test
+	public void  getSourceRepoTest() throws Exception {
+		Response response = repositoryservice.getSourceRepo(customerId, "TestGitProject", "santhosh_ja", "farewellJ123");
+		Assert.assertEquals(200, response.getStatus());
+	} 
+
+	@Test
+	public void  getArtifactInfo() throws Exception {
+		Response response = repositoryservice.getArtifactInfo(customerId, appDirName, userId, "release", "1.0", "");
 		Assert.assertEquals(200, response.getStatus());
 	}
-	
-//	@Test
-//	public void  gitSourceRepoTest() throws Exception {
-//		Response response = repositoryservice.getGitSourceRepo(customerId, "b95a4b23-c7a9-47db-b5a6-f35c6fdb8567", "");
-//		Assert.assertEquals(200, response.getStatus());
-//	}
+
+	@Test
+	public void  downloadTest() throws Exception {
+		Response response = repositoryservice.downloadService(customerId, appDirName, userId, "release", "1.0", "");
+		Assert.assertEquals(200, response.getStatus());
+	}
 	
 	private RepoInfo getSvnRepoInfo() {
 		RepoInfo repoInfo = new RepoInfo();
