@@ -979,10 +979,10 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			.append(Constants.STR_BLANK_SPACE)
 			.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_BRANCH_NAME)
 			.append(Constants.STR_EQUALS).append(branchName)
-//			.append(Constants.STR_BLANK_SPACE)
+			.append(Constants.STR_BLANK_SPACE)
 			.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_USERNAME)
 			.append(Constants.STR_EQUALS).append(username)
-//			.append(Constants.STR_BLANK_SPACE)
+			.append(Constants.STR_BLANK_SPACE)
 			.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_PASSWORD)
 			.append(Constants.STR_EQUALS).append(password)
 			.append(Constants.STR_BLANK_SPACE)
@@ -994,7 +994,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			.append(Constants.STR_BLANK_SPACE)
 			.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_RELEASE_VERSION).append(Constants.STR_EQUALS)
 			.append(version)
-//			.append(Constants.STR_BLANK_SPACE)
+			.append(Constants.STR_BLANK_SPACE)
 			.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_COMMENT_PREFIX).append(Constants.STR_EQUALS)
 			.append("\"" + comment + "\"");
 			
@@ -1068,7 +1068,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		String uuid = UUID.randomUUID().toString();
 		String workingDir = phrescoTemp + uuid;
 		try {
-			version = "1.9";
 			StringBuilder checkout = checkout(connectionUrl, currentBranch, phrescoTemp, uuid, false);
 			if (checkout.length() > 0) {
 				status = RESPONSE_STATUS_ERROR;
