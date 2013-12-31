@@ -168,6 +168,26 @@ define(["projects/listener/projectsListener"], function() {
 			commonVariables.navListener.currentTab = commonVariables.editproject;
 			self.projectsListener.editSeriveTechnolyEvent(self.getData);
 			self.projectsListener.enablebuttonEdit($("#editPrjprojectname").attr("preBuilt"));
+			var selectedPilot = $("select[name='prebuiltapps']").find(':selected').text();
+			var selectedPilotData = commonVariables.api.localVal.getSession(selectedPilot);
+			if(selectedPilotData === "null" || selectedPilotData === null || selectedPilotData === "" || selectedPilotData === undefined){
+				self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, '', "pilotlist"), function(response) {
+					if (response !== null && (response.status !== "error" || response.status !== "failure")){
+						$.each(response.data, function(index, value){
+							commonVariables.api.localVal.setJson(value.name, value);
+						});
+					} else {
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").show();
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".error").hide();
+						},2500);
+					}
+				});
+			}
 		},
 		
 		/***
