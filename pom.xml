@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.photon.phresco.framework</groupId>
-    <artifactId>phresco-framework-runner</artifactId>
+    <artifactId>phresco-framework-root</artifactId>
     <packaging>pom</packaging>
-    <name>phresco-framework</name>
+    <name>Phresco Framework</name>
     <version>3.2.0.7001-SNAPSHOT</version>
     <description>phresco-framework-root</description>
     <url>http://www.phresco.org</url>
