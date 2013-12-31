@@ -622,10 +622,8 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			sb.append(artifactId);
 
 			if (StringUtils.isNotEmpty(validateAgainst) && !REQ_SRC.equals(validateAgainst)) {
-				if (!validateAgainst.equalsIgnoreCase(JAVA)) {
-					sb.append(FrameworkConstants.COLON);
-					sb.append(validateAgainst);
-				}
+				sb.append(FrameworkConstants.COLON);
+				sb.append(validateAgainst);
 			}
 			
 			int responseCode = 0;
