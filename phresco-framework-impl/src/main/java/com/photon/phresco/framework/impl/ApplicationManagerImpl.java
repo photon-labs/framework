@@ -181,7 +181,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
     		S_LOGGER.debug("executeMavenCommand() Command = " + command.toString());
     		S_LOGGER.debug("executeMavenCommand() ActionType Name = " + action.getActionType());
 		}
-    	createPomArg(projectInfo, command);
+    	createPomArg(projectInfo, command, workingDirectory);
 		Commandline cl = new Commandline(command.toString());
         if (StringUtils.isNotEmpty(workingDirectory)) {
             cl.setWorkingDirectory(workingDirectory);
@@ -202,7 +202,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
     		S_LOGGER.debug("executeMavenCommand() ActionType Name = " + action.getActionType());
 		}
 
-    	createPomArg(projectInfo, command);
+    	createPomArg(projectInfo, command, workingDirectory);
 		Commandline cl = new Commandline(command.toString());
         if (StringUtils.isNotEmpty(workingDirectory)) {
             cl.setWorkingDirectory(workingDirectory);
@@ -218,16 +218,27 @@ public class ApplicationManagerImpl implements ApplicationManager {
         }
     }
 	
-	private StringBuilder createPomArg(ProjectInfo projectInfo, StringBuilder builder) {
-		if(projectInfo != null) {
+	private StringBuilder createPomArg(ProjectInfo projectInfo, StringBuilder builder, String workingDir) {
+		if (projectInfo != null) {
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
-			String pomFileName = Utility.getPhrescoPomFile(applicationInfo);
-			builder.append(Constants.SPACE);
-			builder.append("-f");
-			builder.append(Constants.SPACE);
-			builder.append(pomFileName);
+			String pomFileName = "";
+			File pomFile = new File(workingDir + File.separator + applicationInfo.getPhrescoPomFile());
+			if (pomFile.exists()) {
+				pomFileName = applicationInfo.getPhrescoPomFile();
+			} else {
+				pomFile = new File(workingDir + File.separator + applicationInfo.getPomFile());
+				if (pomFile.exists()) {
+					pomFileName = applicationInfo.getPomFile();
+				}
+				// String pomFileName = Utility.getPhrescoPomFile(applicationInfo);
+				builder.append(Constants.SPACE);
+				builder.append("-f");
+				builder.append(Constants.SPACE);
+				builder.append(pomFileName);
+			}
 		}
 		return builder;
+
 	}
 	
 	private List<BuildInfo> readBuildInfo(File path) throws IOException, PhrescoException {
