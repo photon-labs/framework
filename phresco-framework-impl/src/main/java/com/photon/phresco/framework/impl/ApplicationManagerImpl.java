@@ -230,13 +230,13 @@ public class ApplicationManagerImpl implements ApplicationManager {
 				if (pomFile.exists()) {
 					pomFileName = applicationInfo.getPomFile();
 				}
+			}
 				// String pomFileName = Utility.getPhrescoPomFile(applicationInfo);
 				builder.append(Constants.SPACE);
 				builder.append("-f");
 				builder.append(Constants.SPACE);
 				builder.append(pomFileName);
 			}
-		}
 		return builder;
 
 	}
