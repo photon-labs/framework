@@ -716,7 +716,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 					String repoType = getRepoType(srcRepoUrl);
 					Document document = null;
 					if (repoType.equalsIgnoreCase(SVN)) {
-						document = getSvnSourceRepo(username, password, srcRepoUrl);
+						document = getSvnSourceRepo(username, password, srcRepoUrl, appDirName);
 					}
 					if (repoType.equalsIgnoreCase(GIT)) {
 						document = getGitSourceRepo(appDirName);
@@ -778,7 +778,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 					url = urlPath;
 				}
 			}
-			document = constructGitTree(branchList, tagLists, url);
+			document = constructGitTree(branchList, tagLists, url, appDirName);
 		} catch (IOException e) {
 			throw new PhrescoException(e);
 		} catch (GitAPIException e) {
@@ -796,7 +796,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @return
 	 * @throws PhrescoException
 	 */
-	public Document getSvnSourceRepo(String username, String password, String url) throws PhrescoException {
+	public Document getSvnSourceRepo(String username, String password, String url, String appDirName) throws PhrescoException {
 		Document document = null;
 		try {
 			Map<String, List<String>> paths = new HashMap<String, List<String>>();
@@ -817,7 +817,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			List<String> tags = new ArrayList<String>();
 			List<String> tagsList = getSvnData(tagUrl, tags, username, password);
 			paths.put(TAGS, tagsList);
-			document = constructSvnTree(paths,url);
+			document = constructSvnTree(paths, url, appDirName);
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
 		}
@@ -1203,11 +1203,10 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 	}
 	
-	@GET
+	@POST
 	@Path("/release")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response releaseService(@QueryParam("sourceRepoURL") String sourceRepoURL,
-			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam("username") String username,
+	public Response releaseService(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam("username") String username,
 			@QueryParam("password") String password, @QueryParam("message") String message,
 			@QueryParam("developmentVersion") String developmentVersion,
 			@QueryParam("releaseVersion") String releaseVersion, @QueryParam("tag") String tag,
@@ -1222,7 +1221,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			String workingDirectory = pomFileLocation.getParent();
 			ProjectInfo rootprojectInfo = Utility.getProjectInfo(rootModulePath, "");
-			mavenArgCommands.add("-DsourceRepoURL=" + sourceRepoURL);
 			mavenArgCommands.add("-Dusername=" + username);
 			mavenArgCommands.add("-Dpassword=" + password);
 			mavenArgCommands.add("-Dmessage=" + message);
@@ -1231,6 +1229,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			mavenArgCommands.add("-Dtag=" + tag);
 			mavenArgCommands.add("-DbranchName=" + branchName);
 			mavenArgCommands.add("-DappDirName=" + appDirName);
+			System.out.println("mavenArgCommands::::" + mavenArgCommands);
 			reader = applicationManager.performAction(rootprojectInfo, ActionType.RELEASE, mavenArgCommands,
 					workingDirectory);
 			dis = new DataInputStream(reader);
@@ -1331,7 +1330,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	}
 
 
-	private static Document constructGitTree(List<String> branchList,	List<String> tagLists, String url) throws PhrescoException {
+	private static Document constructGitTree(List<String> branchList,	List<String> tagLists, String url, String appDirName) throws PhrescoException {
 		try {
 			DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
@@ -1365,6 +1364,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				branchItems.setAttribute(TYPE, FILE);
 				branchItems.setAttribute(NAME, branchName);
 				branchItems.setAttribute(URL, url);
+				branchItems.setAttribute(REQ_APP_DIR_NAME, appDirName);
 				branchItems.setAttribute(NATURE, BRANCHES);
 				branchItem.appendChild(branchItems);
 			}
@@ -1380,6 +1380,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				tagItems.setAttribute(TYPE, FILE);
 				tagItems.setAttribute(NAME, tag);
 				tagItems.setAttribute(URL, url);
+				tagItems.setAttribute(REQ_APP_DIR_NAME, appDirName);
 				tagItems.setAttribute(NATURE, TAGS);
 				tagItem.appendChild(tagItems);
 			}
@@ -1391,7 +1392,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	}
 
 
-	private static Document constructSvnTree(Map<String , List<String>> list,  String url) throws PhrescoException {
+	private static Document constructSvnTree(Map<String , List<String>> list,  String url, String appDirName) throws PhrescoException {
 		try {
 			DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
@@ -1415,23 +1416,29 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			Element branchItem = doc.createElement(ITEM);
 			branchItem.setAttribute(TYPE, FOLDER);
 			branchItem.setAttribute(NAME, BRANCHES);
+			branchItem.setAttribute(URL, url);
 			urlItem.appendChild(branchItem);
 
 			Element tagItem = doc.createElement(ITEM);
 			tagItem.setAttribute(TYPE, FOLDER);
 			tagItem.setAttribute(NAME, TAGS);
+			tagItem.setAttribute(URL, url);
 			urlItem.appendChild(tagItem);
 
 
 			Element trunkItem = doc.createElement(ITEM);
 			trunkItem.setAttribute(TYPE, FOLDER);
 			trunkItem.setAttribute(NAME, TRUNK);
+			trunkItem.setAttribute(URL, url);
 			urlItem.appendChild(trunkItem);
 
 			List<String> trunkList = list.get(TRUNK);
 			for (String trunk: trunkList) {
 				Element trunkItems = doc.createElement(ITEM);
 				trunkItems.setAttribute(NAME, trunk);
+				trunkItems.setAttribute(URL, url);
+				trunkItems.setAttribute(REQ_APP_DIR_NAME, appDirName);
+				trunkItems.setAttribute(NATURE, TRUNK);
 				trunkItem.appendChild(trunkItems);
 			}
 
@@ -1439,6 +1446,9 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			for (String branch: branchList) {
 				Element branchItems = doc.createElement(ITEM);
 				branchItems.setAttribute(NAME, branch);
+				branchItems.setAttribute(URL, url);
+				branchItems.setAttribute(REQ_APP_DIR_NAME, appDirName);
+				branchItems.setAttribute(NATURE, BRANCHES);
 				branchItem.appendChild(branchItems);
 			}
 
@@ -1446,6 +1456,9 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			for (String tag: tagList) {
 				Element tagItems = doc.createElement(ITEM);
 				tagItems.setAttribute(NAME, tag);
+				tagItems.setAttribute(URL, url);
+				tagItems.setAttribute(REQ_APP_DIR_NAME, appDirName);
+				tagItems.setAttribute(NATURE, TAGS);
 				tagItem.appendChild(tagItems);
 			}
 

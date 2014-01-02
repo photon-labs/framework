@@ -10,6 +10,7 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 		repositoryListener : null,
 		createBranchEvent : null,
 		createTagEvent : null,
+		releaseEvent : null,
 
 		/***
 		 * Called in initialization time of this class 
@@ -34,6 +35,11 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 				self.createTagEvent = new signals.Signal();
 			}
 			self.createTagEvent.add(repositoryListener.createTag, repositoryListener);
+			
+			if (self.releaseEvent === null) {
+				self.releaseEvent = new signals.Signal();
+			}
+			self.releaseEvent.add(repositoryListener.release, repositoryListener);
 		},
 		
 		/***
@@ -113,6 +119,11 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 			$("#createTag").unbind('click');
 			$("#createTag").bind("click", function() {
 				self.createTagEvent.dispatch();
+			});
+			
+			$("#release").unbind('click');
+			$("#release").bind("click", function() {
+				self.releaseEvent.dispatch();
 			});
 			
 			self.customScroll($(".file_view"));

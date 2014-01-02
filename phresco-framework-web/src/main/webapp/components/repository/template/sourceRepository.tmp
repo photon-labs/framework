@@ -9,31 +9,48 @@
 			<span id="fileListHead" style="vertical-align: text-top;">Files</span>
 			<input type="hidden" name="baseRepoUrl" value=""/>
 			<input type="hidden" name="selectedBranchName" value=""/>
+			<input type="hidden" name="selectedAppDirName" value=""/>
 			<div class="flt_right">
 				<input type="submit" name="rep_release" data-i18n="[value]repository.build.release" class="btn btn_style release_btn">
 				<div id="rep_release" class="dyn_popup hideContent">
 					<table>
 						<tr>
-							<td>Version</td>
-							<td>Tag Name</td>
+							<td><span data-i18n="repository.source.releaseversion"></span><sup>*</sup></td>
+							<td><span data-i18n="repository.source.tagname"></span><sup>*</sup></td>
 						</tr>
 						<tr>
-							<td><input type="text" style="margin-right:10px;"></td>
-							<td><input type="text"></td>
+							<td><input type="text" id="releaseVersion" style="margin-right:10px;"></td>
+							<td><input type="text" id="releaseTagName"></td>
 						</tr>
 						<tr>
-							<td><input type="checkbox">Deploy</td>
+							<td><span data-i18n="repository.source.username"></span><sup>*</sup></td>
+							<td><span data-i18n="repository.source.password"></span><sup>*</sup></td>
+						</tr>
+						<tr>
+							<td><input type="text" id="releaseUsername" style="margin-right:10px"></td>
+							<td><input type="password" id="releasePassword"></td>
+						</tr>
+						<tr>
+							<td><span data-i18n="repository.source.devversion"></span><sup>*</sup></td>
+							<td><span data-i18n="repository.source.comment"></span></td>
+						</tr>
+						<tr>
+							<td style="vertical-align: top;"><input type="text" id="devVersion" style="margin-right:10px;"></td>
+							<td><textarea id="releaseComment"></textarea></td>
+						</tr>
+						<tr>
+							<td><input type="checkbox" id="releaseDeploy">Deploy</td>
 							<td>Enviornment</td>
 						</tr>
 						<tr>
 							<td></td>
 							<td>
-								<select><option>Select</option></select>
+								<select id="releaseEnv"><option>Select</option></select>
 							</td>
 						</tr>
 					</table>
 					<div class="flt_right">
-						<input type="button" value="Execute" class="btn btn_style">
+						<input type="button" value="Execute" class="btn btn_style" id="release">
 						<input type="button" value="Close" class="btn btn_style dyn_popup_close">
 					</div>
 				</div>

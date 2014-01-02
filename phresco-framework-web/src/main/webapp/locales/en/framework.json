@@ -337,7 +337,11 @@
 			"branchto" : "Branch To",
 			"tagto" : "Tags To",
 			"username" : "User Name",
-			"password" : "Password"
+			"password" : "Password",
+			"devversion" : "Development Version",
+			"comment" : "Comment",
+			"releaseversion" : "Release Version",
+			"tagname" : "Tag Name"
 		}
 	},
 	"codequality" : {

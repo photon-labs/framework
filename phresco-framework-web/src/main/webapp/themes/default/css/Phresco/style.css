@@ -5592,11 +5592,11 @@ textarea[name="regex"] {
 }
 
 #rep_release select, #rep_create select {
-	width:178px;
+	width:100%;
 }
 
-#rep_create textarea {
-	width: 96%;
+#rep_create textarea, #rep_release textarea {
+	width: 100%;
 }
 
 #rep_release table tr td input[type="checkbox"], #rep_create table tr td input[type="checkbox"]{

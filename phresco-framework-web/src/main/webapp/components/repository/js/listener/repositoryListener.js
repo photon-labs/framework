@@ -81,6 +81,12 @@ define([], function() {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + 'repository/version?url='+requestBody.url+'&currentbranchname='+requestBody.currentbranchname;
 			}
+			if (action === "release") {
+				header.requestMethod = "POST";
+				header.webserviceurl = commonVariables.webserviceurl + 'repository/release?appDirName='+requestBody.appDirName+'&username='+requestBody.username+'&password='+requestBody.password +
+										'&message='+requestBody.comment+'&developmentVersion='+requestBody.developmentVersion+'&releaseVersion='+requestBody.releaseVersion+'&tag='+requestBody.tag+'&environmentName='+requestBody.environmentName +
+										'&branchName='+requestBody.branchName+'&deploy='+requestBody.deploy;
+			}
 			
 			return header;
 		},
@@ -135,8 +141,8 @@ define([], function() {
 						$(".badge-warning").unbind("click");
 						$(".badge-warning").bind("click", function() {
 							var currentTab = commonVariables.navListener.currentTab;
+							var appDirName = $(this).find('a').attr('appdirname');
 							if (currentTab === "buildRepo") {
-								var appDirName = $(this).find('a').attr('appdirname');
 								var nature = $(this).find('a').attr('nature');
 								var moduleName = $(this).find('a').attr('modulename');
 								var version = $(this).parent().parent().prev().find('a').text();
@@ -147,6 +153,7 @@ define([], function() {
 							if (currentTab === "sourceRepo") {
 								var nature = $(this).find('a').attr("nature");
 								if (nature === "branches") {
+									$('input[name=selectedAppDirName]').val(appDirName);
 									var baseRepoUrl = $(this).find('a').attr("url");
 									$("input[name=baseRepoUrl]").val(baseRepoUrl);
 									var selectedBranch = $(this).find('a').text();
@@ -158,6 +165,7 @@ define([], function() {
 									self.repository(self.getActionHeader(requestBody, "getVersion"), function(response) {
 										$("#branchFromVersion").val(response.data);
 										$("#tagFromVersion").val(response.data);
+										$("#releaseVersion").val(response.data);
 										$(".file_view").show();
 										setTimeout(function() {
 											$(this).css("background", "#e3e3e3 !important");
@@ -334,7 +342,60 @@ define([], function() {
 				return true;
 			}
 			return false;
-		}
+		},
+		
+		release : function() {
+			var self = this;
+			if (!self.validateReleaseData()) {
+				commonVariables.hideloading = true;
+				self.showBtnLoading("#release");
+				var requestBody = {};
+				requestBody.releaseVersion = $("#releaseVersion").val();
+				requestBody.developmentVersion = $("#devVersion").val();
+				requestBody.tag = $("#releaseTagName").val();
+				requestBody.username = $("#releaseUsername").val();
+				requestBody.password = $("#releasePassword").val();
+				requestBody.comment = $("#releaseComment").val();
+				requestBody.environmentName = $("#releaseEnv").val();
+				requestBody.deploy = $("#releaseDeploy").is(":checked");
+				requestBody.branchName = $("input[name=selectedBranchName]").val();
+				requestBody.appDirName = $('input[name=selectedAppDirName]').val();
+				self.repository(self.getActionHeader(requestBody, "release"), function(response) {
+					commonVariables.hideloading = false;
+					commonVariables.navListener.onMytabEvent(commonVariables.sourceRepo);
+				});
+			}
+		},
+		
+		validateReleaseData : function() {
+			var self = this;
+			var releaseVersion = $("#releaseVersion").val();
+			var tagName = $("#releaseTagName").val();
+			var username = $("#releaseUsername").val();
+			var password = $("#releasePassword").val();
+			var devVersion = $("#devVersion").val();
+			if (self.isBlank(releaseVersion)) {
+				commonVariables.navListener.validateTextBox( $("#releaseVersion"), 'Enter Release Version');
+				return true;
+			}
+			if (self.isBlank(tagName)) {
+				commonVariables.navListener.validateTextBox( $("#releaseTagName"), 'Enter Tag name');
+				return true;
+			}
+			if (self.isBlank(username)) {
+				commonVariables.navListener.validateTextBox( $("#releaseUsername"), 'Enter Username');
+				return true;
+			}
+			if (self.isBlank(password)) {
+				commonVariables.navListener.validateTextBox( $("#releasePassword"), 'Enter Password');
+				return true;
+			}
+			if (self.isBlank(devVersion)) {
+				commonVariables.navListener.validateTextBox( $("#devVersion"), 'Enter Development Version');
+				return true;
+			}
+			return false;
+		},
 	});
 
 	return Clazz.com.components.repository.js.listener.RepositoryListener;
