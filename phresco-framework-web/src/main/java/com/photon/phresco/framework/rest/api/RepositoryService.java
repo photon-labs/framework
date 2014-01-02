@@ -17,7 +17,9 @@
  */
 package com.photon.phresco.framework.rest.api;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -125,6 +127,9 @@ import com.photon.phresco.commons.model.ModuleInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.framework.api.ActionType;
+import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.impl.ClientHelper;
 import com.photon.phresco.framework.impl.SCMManagerImpl;
@@ -1198,8 +1203,62 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 	}
 	
-	
+	@GET
+	@Path("/release")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response releaseService(@QueryParam("sourceRepoURL") String sourceRepoURL,
+			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam("username") String username,
+			@QueryParam("password") String password, @QueryParam("message") String message,
+			@QueryParam("developmentVersion") String developmentVersion,
+			@QueryParam("releaseVersion") String releaseVersion, @QueryParam("tag") String tag,
+			@QueryParam("branchName") String branchName, @QueryParam("deploy") String deploy, @QueryParam("environmentName") String environmentName) {
+		BufferedInputStream reader = null;
+		DataInputStream dis = null;
+		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
+		List<String> mavenArgCommands = new ArrayList<String>();
+		try {
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			String rootModulePath = Utility.getProjectHome() + appDirName;
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
+			String workingDirectory = pomFileLocation.getParent();
+			ProjectInfo rootprojectInfo = Utility.getProjectInfo(rootModulePath, "");
+			mavenArgCommands.add("-DsourceRepoURL=" + sourceRepoURL);
+			mavenArgCommands.add("-Dusername=" + username);
+			mavenArgCommands.add("-Dpassword=" + password);
+			mavenArgCommands.add("-Dmessage=" + message);
+			mavenArgCommands.add("-DdevelopmentVersion=" + developmentVersion);
+			mavenArgCommands.add("-DreleaseVersion=" + releaseVersion);
+			mavenArgCommands.add("-Dtag=" + tag);
+			mavenArgCommands.add("-DbranchName=" + branchName);
+			mavenArgCommands.add("-DappDirName=" + appDirName);
+			reader = applicationManager.performAction(rootprojectInfo, ActionType.RELEASE, mavenArgCommands,
+					workingDirectory);
+			dis = new DataInputStream(reader);
 
+			while (dis.available() != 0) {
+				if (dis.readLine().startsWith("[ERROR]")) {
+					ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "",
+							RESPONSE_STATUS_SUCCESS, PHR610043);
+					return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
+							"*").build();
+				}
+			}
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "", RESPONSE_STATUS_SUCCESS,
+					PHR600028);
+			return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		} catch (PhrescoException e) {
+			e.printStackTrace();
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610044);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (IOException e) {
+			e.printStackTrace();
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610045);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		}
+
+	}
+	
 	private StringBuilder checkout(String connectionUrl, String currentBranch,
 			String phrescoTemp, String uuid, boolean checkoutPomAlone) throws IOException {
 		StringBuilder sb = new StringBuilder();
