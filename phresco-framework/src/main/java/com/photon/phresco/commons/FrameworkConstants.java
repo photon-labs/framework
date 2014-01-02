@@ -2132,4 +2132,20 @@ public interface FrameworkConstants {
 	    String MAIL_PASSWORD = "phresco123";
 	    String MAIL_SUBJECT  = "Phresco framework error report";
 
+	    /**
+	     * delete sonar project constants
+	     * 
+	     */
+	    
+	    String SONAR_USERNAME = "admin";
+	    String SONAR_PASSWORD = "admin";
+	    String SONAR_API_URL  = "/api/projects/";
+	    String SONAR_COLON	  = ":";
+	    String JAVA_PROFILE   = "java";
+	    String JS_PROFILE  	  = "js";
+	    String WEB_PROFILE    = "web";
+	    String HTML_PROFILE   = "html";
+	    String CSHARP_PROFILE = "c#";
+	    String DASHBORAD_INDEX = "/dashboard/index/";
+	    
 }
