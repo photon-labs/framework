@@ -632,6 +632,24 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
+	
+	@POST
+	@Path("/sendErrorReport")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response sendErrorReport(String errorReport, @QueryParam("emailId") String emailId) throws PhrescoException {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		try {
+			Utility.sendTemplateEmail(emailId, MAIL_ID, MAIL_SUBJECT, errorReport, MAIL_ID, MAIL_PASSWORD);
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, null,
+					RESPONSE_STATUS_SUCCESS, PHR14C00001);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (Exception e) {
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e, null,
+					RESPONSE_STATUS_ERROR, PHR14C10001);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+	
 
 	private boolean isRequestFromLocalMachine(InetAddress addr) {
 		// Check if the address is a valid special local or loop back

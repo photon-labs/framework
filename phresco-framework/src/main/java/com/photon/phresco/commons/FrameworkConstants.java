@@ -2123,4 +2123,13 @@ public interface FrameworkConstants {
 	    String DESCRIBE_INFO    = "?describe=info";
 	    String ARTIFACT_INFO    = "artifactInfo";
 	    String MAVEN_INFO       = "mavenInfo";
+	    
+	    /**
+	     *  Send error report mail constants
+	     */
+	   
+	    String MAIL_ID  	 = "phresco.do.not.reply@gmail.com";
+	    String MAIL_PASSWORD = "phresco123";
+	    String MAIL_SUBJECT  = "Phresco framework error report";
+
 }

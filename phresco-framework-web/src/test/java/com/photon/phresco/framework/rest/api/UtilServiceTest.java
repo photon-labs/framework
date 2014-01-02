@@ -240,5 +240,27 @@ public class UtilServiceTest extends RestBaseTest {
 		Assert.assertEquals(200, checkMachine.getStatus());
 	}
 	
+	@Test
+	public void testSendErrorReport() throws PhrescoException, UnknownHostException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+		Response sendReport = utilService.sendErrorReport("test error report","rohan.lukose@photoninfotech.net");
+		System.out.println(sendReport.getStatus());
+		ResponseInfo<String> responseInfo = (ResponseInfo<String> )sendReport.getEntity();
+		System.out.println(responseInfo.getResponseCode());
+		Assert.assertEquals("PHR14C00001", responseInfo.getResponseCode());
+	}
+	
+	@Test
+	public void testSendErrorReportFail() throws PhrescoException, UnknownHostException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+		Response sendReport = utilService.sendErrorReport("test error report","rohan.lukosephotoninfotech.net");
+		System.out.println(sendReport.getStatus());
+		ResponseInfo<String> responseInfo = (ResponseInfo<String> )sendReport.getEntity();
+		System.out.println(responseInfo.getResponseCode());
+		Assert.assertEquals("PHR14C10001", responseInfo.getResponseCode());
+	}                        
+	
 	
 }
