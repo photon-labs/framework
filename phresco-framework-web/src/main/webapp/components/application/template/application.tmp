@@ -39,6 +39,7 @@
 							<td colspan="3"><img name="close" id="servers" src="themes/default/images/Phresco/close_icon.png"  border="0" alt=""></td>
 						</tr>
 					{{/if}}
+					{{#if projectlist.serverData}}
 					{{#each projectlist.appdetails.data.projectInfo.appInfos}}
 						{{#each selectedServers}}
 							 <tr class="servers" key="displayed">
@@ -76,6 +77,7 @@
 							
 						{{/each}}
 					{{/each}}
+					{{/if}}
 					{{#if projectlist.serverData}}
 					{{#unless projectlist.appdetails.data.projectInfo.appInfos.0.selectedServers}}
 						<tr class="servers" key="displayed">
