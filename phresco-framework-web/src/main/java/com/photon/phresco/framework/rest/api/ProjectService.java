@@ -57,8 +57,6 @@ import org.sonar.wsclient.Host;
 import org.sonar.wsclient.Sonar;
 import org.sonar.wsclient.connectors.HttpClient4Connector;
 import org.sonar.wsclient.services.DeleteQuery;
-import org.sonar.wsclient.services.ManualMeasure;
-import org.sonar.wsclient.services.ManualMeasureQuery;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -87,7 +85,6 @@ import com.photon.phresco.exception.PhrescoWebServiceException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
-import com.photon.phresco.framework.impl.ClientHelper;
 import com.photon.phresco.framework.model.DeleteProjectInfo;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
@@ -103,9 +100,6 @@ import com.phresco.pom.model.Dependency;
 import com.phresco.pom.model.Model.Modules;
 import com.phresco.pom.model.Profile;
 import com.phresco.pom.util.PomProcessor;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
@@ -1153,34 +1147,30 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 
 	}
 
-	private boolean checkUrlExists(String sonarPath) throws PhrescoException {
+	private boolean checkUrlExists(String sonarPath) {
 		boolean urlExists = false;
 		try {
 			HttpURLConnection httpURLConnection = null;
 			try {
 				java.net.URL url = new java.net.URL(sonarPath);
 				URLConnection urlConnection = url.openConnection();
-
 				HttpURLConnection.setFollowRedirects(false);  
 				httpURLConnection = (HttpURLConnection) urlConnection;  
 				httpURLConnection.setRequestMethod(HEAD_REVISION);  
-
 				if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {  
 					urlExists = true;	
 				} else {  
 					urlExists = false;  
 				}  
 			} catch (MalformedURLException e) {
-				e.printStackTrace();
+				urlExists = false;  
 			} catch (ProtocolException e) {
-				e.printStackTrace();
+				urlExists = false;  
 			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				httpURLConnection = null;
-			}
+				urlExists = false;  
+			} 
 		} catch (Exception e) {
-			throw new PhrescoException(e);
+			urlExists = false;  
 		}
 		return urlExists;
 	}
