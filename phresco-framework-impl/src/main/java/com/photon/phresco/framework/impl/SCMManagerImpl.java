@@ -438,7 +438,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				if(debugEnabled){
 					S_LOGGER.debug("workspaceProjectDir exists "+ workspaceProjectDir);
 				}
-				throw new PhrescoException(PROJECT_ALREADY);
+				throw new PhrescoException(workspaceProjectDir.getName() + " " + "Already Exists");
 			}
 
 			if(debugEnabled){
