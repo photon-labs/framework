@@ -23,8 +23,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,6 +40,11 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -2106,7 +2113,32 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		try {
 			URL url = new URL(protocol, host, port, "");
 			URLConnection connection = url.openConnection();
-			connection.connect();
+			if(protocol.equalsIgnoreCase("http")) {
+				HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
+				httpConnection.connect();
+			} else {
+				TrustManager[] trustAllCerts = new TrustManager[] { 
+					    new X509TrustManager() {     
+					        public java.security.cert.X509Certificate[] getAcceptedIssuers() { 
+					            return null;
+					        } 
+					        public void checkClientTrusted( 
+					            java.security.cert.X509Certificate[] certs, String authType) {
+					            } 
+					        public void checkServerTrusted( 
+					            java.security.cert.X509Certificate[] certs, String authType) {
+					        }
+					    } 
+					}; 
+				
+				SSLContext sc = SSLContext.getInstance(SSL); 
+			    sc.init(null, trustAllCerts, new java.security.SecureRandom()); 
+			    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+			    HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
+				https.connect();
+				   
+			}
+			
 		} catch (Exception e) {
 			isAlive = false;
 		}

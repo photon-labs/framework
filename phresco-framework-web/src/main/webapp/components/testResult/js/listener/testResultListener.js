@@ -509,6 +509,7 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			self.performAction(self.getActionHeader(requestBody, "deleteTestSuite"), function(response) {
 				if(response.data) {
 					$("tr[testSuiteName='"+testsuitename+"']").remove();
+					commonVariables.api.showError(response.responseCode ,"success", true, false, true);
 				} 
 			});
 		},
@@ -521,6 +522,7 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			self.performAction(self.getActionHeader(requestBody, "deleteTestCase"), function(response) {
 				if(response.data) {
 					$("tr[testCaseId='"+testCaseName+"']").remove();
+					commonVariables.api.showError(response.responseCode ,"success", true, false, true);
 				} 
 			});
 		},

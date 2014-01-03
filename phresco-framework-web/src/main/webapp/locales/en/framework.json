@@ -280,6 +280,8 @@
 		"PHR800017" : "Job templates updated successfully",
 		"PHR800022" : "Email and Confluence configuration saved successfully",
 		"PHRQ400004" : "Test suite added successfully",
+		"PHRQ400008" : "TestSuite deleted successfully",
+		"PHRQ400009" : "TestCase deleted successfully",
 		"PHRQ400005" : "Test case added successfully",
 		"PHRQ400006" : "Test case updated successfully",
 		"PHR12C00001" : "No Downloads available",
