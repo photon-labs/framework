@@ -67,7 +67,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	public void  commitProjectToRepo() {
 		RepoDetail repodetail = new RepoDetail();
 		repodetail.setUserName("santhosh_ja");
-		repodetail.setPassword("farewellJ123");
+		repodetail.setPassword("itkillsme!23");
 		repodetail.setType("svn");
 		repodetail.setCommitMessage("[artf710705]testcommit");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/" + appDirName);
