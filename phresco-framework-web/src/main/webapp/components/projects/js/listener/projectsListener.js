@@ -713,7 +713,7 @@ define([], function() {
 								"<td name='technology' class='technology'><select name='technology' class='selectpicker' title='Select Technology'><option value='' data-i18n='project.create.label.seltech'>Select Technology</option>" + techOptions + "</select></td>"+
 								"<td name='version' class='version'><select name='version' class='selectpicker' title='Select Version'><option value='Select Version'>Select Version</option></select></td>"+
 								"<td><select class='selectpicker appdependencySelect' title='Select Dependency' data-selected-text-format='count>2' multiple><option value=''>Select Dependency</option>"+depndOptions+"</select></td>"+
-								"<td><div class='icon_center'><img style='cursor:pointer;' position='"+position+"' layer='"+layer+"' src='themes/default/images/Phresco/plus_icon.png' border='0' alt='' class='addDependency' data-params='"+ JSON.stringify(subModules) +"'> <img style='cursor:pointer;' src='themes/default/images/Phresco/minus_icon.png' border='0' alt='' class='removeDependency'></div></td></tr>";
+								"<td><div class='icon_center'><img style='cursor:pointer;' position='"+position+"' layer='"+layer+"' src='themes/default/images/Phresco/plus_icon.png' border='0' alt='' class='addDependency' data-params='"+ JSON.stringify(subModules) +"'> <img style='cursor:pointer;' src='themes/default/images/Phresco/minus_icon.png' border='0' alt='' class='removeDependency'></div></td><td>&nbsp;</td></tr>";
 			renderElement.after(multiModule);
 			self.multiselect();
 			self.dependencyEvent();
@@ -1643,7 +1643,7 @@ define([], function() {
 												"<td name='technology' class='technology'><select name='technology' class='selectpicker' disabled><option value='"+module.techInfo.id+"'>"+module.techInfo.name+"</option>" + techOptions + "</select></td>"+
 												"<td name='version' class='version'><select name='version' class='selectpicker' disabled><option value='"+module.techInfo.version+"'>"+module.techInfo.version+"</option></select></td>"+
 												"<td><select class='selectpicker appdependencySelect' title='Select Dependency' "+selectedDepndtModsAttr+" data-selected-text-format='count>2' multiple>"+dependOptions+"</select></td>"+
-												"<td><div class='icon_center'><img style='cursor:pointer;' position='"+position+"' layer='"+layer+"' src='themes/default/images/Phresco/plus_icon.png' border='0' alt='' class='"+imgClass+"' data-params='"+ JSON.stringify(subModules) +"'></div></td></tr>";
+												"<td><div class='icon_center'><img style='cursor:pointer;' position='"+position+"' layer='"+layer+"' src='themes/default/images/Phresco/plus_icon.png' border='0' alt='' class='"+imgClass+"' data-params='"+ JSON.stringify(subModules) +"'></div></td><td>&nbsp;</td></tr>";
 							});
 							$("tbody.applnLayer").append(appendData);
 							self.multiselect();
@@ -1722,7 +1722,7 @@ define([], function() {
 												"<td name='technology' class='technology'><select name='technology' class='selectpicker' disabled><option value='"+module.techInfo.id+"'>"+module.techInfo.name+"</option>" + techOptions + "</select></td>"+
 												"<td name='version' class='version'><select name='version' class='selectpicker' disabled><option value='"+module.techInfo.version+"'>"+module.techInfo.version+"</option></select></td>"+
 												"<td><select class='selectpicker appdependencySelect' title='Select Dependency' "+selectedDepndtModsAttr+" data-selected-text-format='count>2' multiple>"+dependOptions+"</select></td>"+
-												"<td><div class='icon_center'><img style='cursor:pointer;' position='"+position+"' layer='"+layer+"' src='themes/default/images/Phresco/plus_icon.png' border='0' alt='' class='"+imgClass+"' data-params='"+ JSON.stringify(subModules) +"'></div></td></tr>";
+												"<td><div class='icon_center'><img style='cursor:pointer;' position='"+position+"' layer='"+layer+"' src='themes/default/images/Phresco/plus_icon.png' border='0' alt='' class='"+imgClass+"' data-params='"+ JSON.stringify(subModules) +"'></div></td><td>&nbsp;</td></tr>";
 							});
 							$("tbody.WebLayer").append(appendData);
 							self.multiselect();
@@ -1799,7 +1799,7 @@ define([], function() {
 												"<td name='technology' class='technology'><select name='technology' class='selectpicker' disabled><option value='"+module.techInfo.id+"'>"+module.techInfo.name+"</option>" + techOptions + "</select></td>"+
 												"<td name='version' class='version'><select name='version' class='selectpicker' disabled><option value='"+module.techInfo.version+"'>"+module.techInfo.version+"</option></select></td>"+
 												"<td><select class='selectpicker appdependencySelect' title='Select Dependency' "+selectedDepndtModsAttr+" data-selected-text-format='count>2' multiple>"+dependOptions+"</select></td>"+
-												"<td><div class='icon_center'><img style='cursor:pointer;' position='"+position+"' layer='"+layer+"' src='themes/default/images/Phresco/plus_icon.png' border='0' alt='' class='"+imgClass+"' data-params='"+ JSON.stringify(subModules) +"'></div></td></tr>";
+												"<td><div class='icon_center'><img style='cursor:pointer;' position='"+position+"' layer='"+layer+"' src='themes/default/images/Phresco/plus_icon.png' border='0' alt='' class='"+imgClass+"' data-params='"+ JSON.stringify(subModules) +"'></div></td><td>&nbsp;</td></tr>";
 							});
 							$("tbody.MobLayer").append(appendData);
 							self.multiselect();
