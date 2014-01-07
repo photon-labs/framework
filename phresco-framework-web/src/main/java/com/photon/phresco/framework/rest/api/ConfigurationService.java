@@ -1019,7 +1019,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			@QueryParam(REST_QUERY_PROJECTID) String projectId) throws PhrescoException, PhrescoPomException {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = com.photon.phresco.framework.impl.util.FrameworkUtil.getAppInfos(customerId, projectId);
 			Set<String> environmentSet = new HashSet<String>();
 			List<Environment> environments = new ArrayList<Environment>();
 			for (ApplicationInfo appInfo : appInfos) {

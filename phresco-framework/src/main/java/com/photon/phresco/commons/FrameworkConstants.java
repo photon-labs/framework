@@ -2154,4 +2154,10 @@ public interface FrameworkConstants {
 	    String PHRESCO_MAVEN_PLUGIN = "phresco-maven-plugin";
 	    String ORG_APACHE_MAVEN_PLUGINS = "org.apache.maven.plugins";
 	    String MAVEN_RELEASE_PLUGIN = "maven-release-plugin";
+		String DOT_GIT 		   = ".git";	
+	    String DOT_SVN         = "svn";
+	    String BIT_KEEPER     = "bk";
+	    String SSH            = "ssh";
+	    String GERRIT         = "gerrit";
+
 }

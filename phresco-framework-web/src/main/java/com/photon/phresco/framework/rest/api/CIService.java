@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
@@ -136,7 +137,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				projectId = projectInfo.getId();
 			}
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
@@ -312,7 +313,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			List<CIJob> ciJobs = new ArrayList<CIJob>(); 
 			List<CIJob> jobs = new ArrayList<CIJob>();
 
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
@@ -412,7 +413,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			List<CIJob> tempCiJobs = new ArrayList<CIJob>(); 
 			List<CIJob> tempJobs = new ArrayList<CIJob>();
 			List<CIJob> newJobs = continuousDelivery.getJobs();
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
@@ -573,8 +574,8 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				projectId = projectInfo.getId();
 			}
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
@@ -632,7 +633,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			}
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			ProjectDelivery projectContinuousDelivery = new ProjectDelivery();
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
@@ -740,7 +741,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			}
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
@@ -808,7 +809,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			CIJobStatus deleteBuilds = null;
 			
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
@@ -875,7 +876,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			CIJobStatus buildJobs = null;
 			ResponseInfo<CIJobStatus> finalOutput; 
 			
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
 			//proj Level
 			if (CollectionUtils.isNotEmpty(appInfos)) {
@@ -1174,7 +1175,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		String splitPath = "";
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
@@ -1301,7 +1302,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			CIJob job = null;
 			
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
@@ -1358,7 +1359,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			CIJob job = null;
 			
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
@@ -1400,7 +1401,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		String module = "";
 		String splitPath = "";
 		try {
-		List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+		List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 		String globalInfo = "";
 		if (CollectionUtils.isNotEmpty(appInfos)) {
 			globalInfo = appInfos.get(0).getAppDirName();
@@ -1497,7 +1498,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		try {
 			String srcDir = Utility.getProjectHome() + CI_JOB_INFO_NAME;
 			List<String> appDirs =  new ArrayList<String>();
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				for (ApplicationInfo appInfo : appInfos) {
 					String dirName = Utility.splitPathConstruction(appInfo.getAppDirName());

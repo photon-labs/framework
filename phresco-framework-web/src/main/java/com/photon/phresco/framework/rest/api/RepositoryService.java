@@ -17,7 +17,9 @@
  */
 package com.photon.phresco.framework.rest.api;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -129,8 +131,10 @@ import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.framework.RepositoryFactory;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
+import com.photon.phresco.framework.api.RepositoryManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.impl.ClientHelper;
 import com.photon.phresco.framework.impl.SCMManagerImpl;
@@ -620,8 +624,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				com.photon.phresco.commons.model.RepoInfo repo = serviceManager.getCustomer(customerId).getRepoInfo();
 				String releaseRepoURL = repo.getReleaseRepoURL();
 				String snapshotRepoURL = repo.getSnapshotRepoURL();
-
-				List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+				List<ApplicationInfo> appInfos = com.photon.phresco.framework.impl.util.FrameworkUtil.getAppInfos(customerId, projectId);
 				for (ApplicationInfo applicationInfo : appInfos) {
 					DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 					DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -663,7 +666,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 							}
 							doc = constructDomSource(artifact, applicationInfo.getAppDirName(), urls, moduleName, doc, moduleItem);
 						}
-						documents.add(convertDocumentToString(doc));
+						documents.add(com.photon.phresco.framework.impl.util.FrameworkUtil.convertDocumentToString(doc));
 					} else {
 						Artifact artifact = readArtifact(applicationInfo.getAppDirName(), "", "");
 						if (StringUtils.isNotEmpty(releaseRepoURL)) {
@@ -672,8 +675,9 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 						if (StringUtils.isNotEmpty(snapshotRepoURL)) {
 							urls.add(snapshotRepoURL);
 						}
+						
 						document = constructDomSource(artifact, applicationInfo.getAppDirName(), urls, "", doc, applicationItem);
-						documents.add(convertDocumentToString(document));
+						documents.add(com.photon.phresco.framework.impl.util.FrameworkUtil.convertDocumentToString(document));
 					}
 				}
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, documents, status, successCode);
@@ -687,7 +691,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		} catch (ParserConfigurationException e) {
 			throw new PhrescoException(e);
 		}
-
 		return response;
 	}
 	
@@ -707,7 +710,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		Response response = null;
 		List<String> documents = new ArrayList<String>();
 		try {
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = com.photon.phresco.framework.impl.util.FrameworkUtil.getAppInfos(customerId, projectId);
 			for (ApplicationInfo applicationInfo : appInfos) {
 				String appDirName = applicationInfo.getAppDirName();
 				File pomFileLocation = Utility.getPomFileLocation(Utility.getProjectHome() + appDirName, "");
@@ -715,14 +718,8 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				String srcRepoUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
 				if (StringUtils.isNotEmpty(srcRepoUrl)) {
 					String repoType = getRepoType(srcRepoUrl);
-					Document document = null;
-					if (repoType.equalsIgnoreCase(SVN)) {
-						document = getSvnSourceRepo(username, password, srcRepoUrl, appDirName);
-					}
-					if (repoType.equalsIgnoreCase(GIT)) {
-						document = getGitSourceRepo(appDirName);
-					}
-					documents.add(convertDocumentToString(document));
+					RepositoryManager repositoryManager = RepositoryFactory.getRepository(repoType);
+					documents = repositoryManager.getSource(customerId, projectId, username, password, srcRepoUrl);
 				}
 			}
 		} catch (PhrescoPomException e) {
@@ -737,92 +734,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		response = Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		
 		return response;
-	}
-	
-	/**
-	 * To fetch the branches and tags from git repo
-	 * @param appDirName
-	 * @return
-	 * @throws PhrescoException
-	 */
-	private Document getGitSourceRepo(String appDirName) throws PhrescoException {
-		Document document = null;
-		String url = null;
-		try {
-			String path = Utility.getProjectHome() + File.separator + appDirName;
-			ProjectInfo projectInfo = Utility.getProjectInfo(path, "");
-			File sourceFolderLocation = Utility.getSourceFolderLocation(projectInfo, path, "");
-			if (!sourceFolderLocation.exists()) {
-				return null;
-			}
-			Git git = Git.open(new File(sourceFolderLocation.getPath()));
-			List<String> branchList = new ArrayList<String>();
-			List<String> tagLists = new ArrayList<String>();
-
-			List<Ref> remoteCall = git.branchList().setListMode(ListMode.REMOTE).call();
-			for (Ref ref : remoteCall) {
-				branchList.add(ref.getName());
-			}
-
-			ListTagCommand tagList = git.tagList();
-			Map<String, Ref> tags = tagList.getRepository().getTags();
-			Set<Entry<String,Ref>> entrySet = tags.entrySet();
-			for (Entry<String, Ref> entry : entrySet) {
-				tagLists.add(entry.getKey());
-			}
-
-			StoredConfig config = git.getRepository().getConfig();
-			Set<String> subsections = config.getSubsections(REMOTE);
-			for (String string : subsections) {
-				String[] urlList = config.getStringList(REMOTE, string, URL);
-				for (String urlPath : urlList) {
-					url = urlPath;
-				}
-			}
-			document = constructGitTree(branchList, tagLists, url, appDirName);
-		} catch (IOException e) {
-			throw new PhrescoException(e);
-		} catch (GitAPIException e) {
-			throw new PhrescoException(e);
-		}
-
-		return document;
-	}
-
-	/**
-	 * To fetch the branches and tags from svn repo
-	 * @param username
-	 * @param password
-	 * @param url
-	 * @return
-	 * @throws PhrescoException
-	 */
-	public Document getSvnSourceRepo(String username, String password, String url, String appDirName) throws PhrescoException {
-		Document document = null;
-		try {
-			Map<String, List<String>> paths = new HashMap<String, List<String>>();
-			if (url.endsWith(TRUNK) || url.endsWith(TRUNK + FrameworkConstants.FORWARD_SLASH)) {
-				url = url.substring(0, url.lastIndexOf(TRUNK));
-			}
-			String trunkUrl = url + TRUNK;
-			List<String> trunks = new ArrayList<String>();
-			List<String> trunksList = getSvnData(trunkUrl, trunks, username, password);
-			paths.put(TRUNK, trunksList);
-
-			String branchUrl = url + BRANCHES;
-			List<String> branches = new ArrayList<String>();
-			List<String> branchesList = getSvnData(branchUrl, branches, username, password);
-			paths.put(BRANCHES, branchesList);
-
-			String tagUrl = url + TAGS;
-			List<String> tags = new ArrayList<String>();
-			List<String> tagsList = getSvnData(tagUrl, tags, username, password);
-			paths.put(TAGS, tagsList);
-			document = constructSvnTree(paths, url, appDirName);
-		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
-		}
-		return document;
 	}
 
 	/**

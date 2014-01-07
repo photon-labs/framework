@@ -445,20 +445,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	public static String getFunctionalTestFramework(String rootModulePath, String subModule) throws PhrescoException, PhrescoPomException {
 		return  Utility.getPomProcessor(rootModulePath, subModule).getProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
 	}
-	
-	public static List<ApplicationInfo> getAppInfos(String customerId, String projectId) throws PhrescoException {
-		try {
-			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-			ProjectInfo projectInfo = projectManager.getProject(projectId, customerId);
-			if(projectInfo != null) {
-				return projectInfo.getAppInfos();
-			}
-		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
-		}	
-		return new ArrayList<ApplicationInfo>();
-	}
-	
+
 	public static String getConfigFileDir(String appDirName, String moduleName) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(Utility.getProjectHome());
