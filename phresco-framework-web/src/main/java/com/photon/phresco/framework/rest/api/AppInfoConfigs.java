@@ -160,7 +160,8 @@ public class AppInfoConfigs extends RestBase implements ServiceConstants, Framew
 	@GET
 	@Path("/functionalFrameworks")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getFunctionalFrameworks(@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_TECHID) String techId) {
+	public Response getFunctionalFrameworks(@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_TECHID) String techId, 
+			@QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
 		ResponseInfo<List<FunctionalFrameworkGroup>> responseData = new ResponseInfo<List<FunctionalFrameworkGroup>>();
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
@@ -174,7 +175,7 @@ public class AppInfoConfigs extends RestBase implements ServiceConstants, Framew
 			}
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR300001;
-			List<FunctionalFrameworkGroup> webServices = serviceManager.getFunctionalTestFramework(techId);
+			List<FunctionalFrameworkGroup> webServices = serviceManager.getFunctionalTestFramework(techId, customerId);
 			ResponseInfo<List<FunctionalFrameworkGroup>> finalOutput = responseDataEvaluation(responseData, null,
 					webServices, status, successCode);
 			return Response.status(ClientResponse.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",

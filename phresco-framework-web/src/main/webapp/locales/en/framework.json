@@ -670,6 +670,8 @@
 			"testing" : "Testing",
 			"webservice" : "Webservice",
 			"funcframework" : "Functional Framework",
+			"funcframeworkIframeUrl" : "IFrame Url",
+			"url" : "Functional IFrame URL",
 			"phpunit" : "PHPunit",
 			"junit" : "Junit",
 			"testng" : "TestNG",
