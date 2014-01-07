@@ -300,6 +300,7 @@ public interface ResponseCodes {
 	String PHR610043 = "PHR610043"; // release failed
 	String PHR610044 = "PHR610044"; // release failed
 	String PHR610045 = "PHR610045"; // release failed
+	String PHR610046 = "PHR610046"; // release failed
 	String PHR600028 = "PHR600028"; // release success
 	
 	/*

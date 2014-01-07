@@ -17,15 +17,14 @@
  */
 package com.photon.phresco.framework.rest.api;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -72,6 +71,8 @@ import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.util.cli.CommandLineException;
+import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
@@ -1290,40 +1291,57 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	@POST
 	@Path("/release")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response releaseService(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam("username") String username,
-			@QueryParam("password") String password, @QueryParam("message") String message,
-			@QueryParam("developmentVersion") String developmentVersion,
+	public Response release(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam("username") String username, @QueryParam("password") String password,
+			@QueryParam("message") String message, @QueryParam("developmentVersion") String developmentVersion,
 			@QueryParam("releaseVersion") String releaseVersion, @QueryParam("tag") String tag,
-			@QueryParam("branchName") String branchName, @QueryParam("deploy") String deploy, @QueryParam("environmentName") String environmentName) {
-		BufferedInputStream reader = null;
-		DataInputStream dis = null;
+			@QueryParam("branchName") String branchName, @QueryParam("deploy") String deploy,
+			@QueryParam("environmentName") String environmentName) {
+		InputStream inputStream = null;
+		InputStreamReader isr = null;
+		BufferedReader reader = null;
+		String line = null;
 		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
-		List<String> mavenArgCommands = new ArrayList<String>();
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			String rootModulePath = Utility.getProjectHome() + appDirName;
-			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
-			String workingDirectory = pomFileLocation.getParent();
 			ProjectInfo rootprojectInfo = Utility.getProjectInfo(rootModulePath, "");
-			mavenArgCommands.add("-Dusername=" + username);
-			mavenArgCommands.add("-Dpassword=" + password);
-			mavenArgCommands.add("-Dmessage=" + message);
-			mavenArgCommands.add("-DdevelopmentVersion=" + developmentVersion);
-			mavenArgCommands.add("-DreleaseVersion=" + releaseVersion);
-			mavenArgCommands.add("-Dtag=" + tag);
-			mavenArgCommands.add("-DbranchName=" + branchName);
-			mavenArgCommands.add("-DappDirName=" + appDirName);
-			System.out.println("mavenArgCommands::::" + mavenArgCommands);
-			reader = applicationManager.performAction(rootprojectInfo, ActionType.RELEASE, mavenArgCommands,
-					workingDirectory);
-			dis = new DataInputStream(reader);
+			File sourceFolderLocation = Utility.getSourceFolderLocation(rootprojectInfo, rootModulePath, "");
+			StringBuilder builder = new StringBuilder(Constants.MVN_COMMAND);
+			builder.append(Constants.MVN_COMMAND);
+			builder.append(Constants.SPACE);
+			builder.append(ActionType.RELEASE.getActionType());
+			builder.append("-Dusername=" + username);
+			builder.append(Constants.SPACE);
+			builder.append("-Dpassword=" + password);
+			builder.append(Constants.SPACE);
+			builder.append("-Dmessage=" + message);
+			builder.append(Constants.SPACE);
+			builder.append("-DdevelopmentVersion=" + developmentVersion);
+			builder.append(Constants.SPACE);
+			builder.append("-DreleaseVersion=" + releaseVersion);
+			builder.append(Constants.SPACE);
+			builder.append("-Dtag=" + tag);
+			builder.append(Constants.SPACE);
+			builder.append("-DbranchName=" + branchName);
+			builder.append(Constants.SPACE);
+			builder.append("-DappDirName=" + appDirName);
 
-			while (dis.available() != 0) {
-				if (dis.readLine().startsWith("[ERROR]")) {
+			Commandline cl = new Commandline(builder.toString());
+			if (StringUtils.isNotEmpty(sourceFolderLocation.getPath())) {
+				cl.setWorkingDirectory(sourceFolderLocation.getPath());
+			}
+			Process process = cl.execute();
+			inputStream = process.getInputStream();
+			isr = new InputStreamReader(inputStream);
+			reader = new BufferedReader(isr);
+			
+			while ((line = reader.readLine()) != null) {
+				if (line.startsWith("[ERROR]")) {
 					ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "",
 							RESPONSE_STATUS_SUCCESS, PHR610043);
-					return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-							"*").build();
+					return Response.status(Response.Status.OK).entity(finalOutput).header(
+							"Access-Control-Allow-Origin", "*").build();
 				}
 			}
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "", RESPONSE_STATUS_SUCCESS,
@@ -1331,13 +1349,21 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		} catch (PhrescoException e) {
-			e.printStackTrace();
-			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610044);
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR,
+					PHR610044);
 			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (IOException e) {
-			e.printStackTrace();
-			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610045);
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR,
+					PHR610045);
 			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (CommandLineException e) {
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR,
+					PHR610046);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} finally {
+			Utility.closeStream(inputStream);
+			Utility.closeStream(isr);
+			Utility.closeReader(reader);
 		}
 
 	}
