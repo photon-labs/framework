@@ -328,6 +328,7 @@ define([], function() {
 				appInfo.description = appdescription;
 				
 				appInfo.selectedModules = renderData.appdetails.data.projectInfo.appInfos[0].selectedModules;
+				appInfo.selectedFeatureMap = renderData.appdetails.data.projectInfo.appInfos[0].selectedFeatureMap;
 				appInfo.selectedJSLibs = renderData.appdetails.data.projectInfo.appInfos[0].selectedJSLibs;
 				appInfo.selectedComponents = renderData.appdetails.data.projectInfo.appInfos[0].selectedComponents;
 				appInfo.phrescoPomFile = renderData.appdetails.data.projectInfo.appInfos[0].phrescoPomFile;
