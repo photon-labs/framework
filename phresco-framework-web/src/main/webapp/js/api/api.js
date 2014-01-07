@@ -359,7 +359,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 
 		showError : function(errorCode, msgType, timeOut, noCode, hideErrorOnly){
 			var self = this, errorMsg = '';
-			
+			//console.info('errorCode ' , errorCode + 'errorMsg =' + errorMsg + ' noCode = ' +noCode);
 			try {
 				if(noCode){ errorMsg = errorCode; }else{errorMsg = self[msgType][errorCode];}
 			} catch(ex) {
@@ -373,18 +373,34 @@ define(["framework/base", "api/localStorageAPI"], function(){
 			if ($(".msgdisplay").attr("class") === "msgdisplay error") {
 				$(".msgdisplay").removeClass("error");
 			}
-			$("." + msgType).css("display", "block");
-			if($(commonVariables.contentPlaceholder).find('.content_end .msgdisplay').length > 0){	
-				if($(commonVariables.contentPlaceholder).find('.content_end').css("display") === "none") {
-					$(commonVariables.contentPlaceholder).find('.content_end').css("display","block");
-				}
-				$(commonVariables.contentPlaceholder).find('.content_end .msgdisplay').addClass(msgType).html(errorMsg);
-				$(commonVariables.contentPlaceholder).find('.content_end .msgdisplay').show();
-			}else{
-				$(commonVariables.basePlaceholder).append('<section id="serviceError" class="content_end" style="display:block;"><div class="msgdisplay '+ msgType +'">'+   errorMsg +'</div></section>');
-				msgType = 'content_end';
-			}
 			
+			if(errorCode === "PHR210003" || errorCode === "PHR310001" || errorCode === "PHR410001" ||  errorCode === "PHR610006" ||  errorCode === "PHR110002"){
+				//console.info('if' ,  errorCode)
+				var url = location.href;
+				if (commonVariables.customerContext == undefined) {
+					commonVariables.customerContext = '#';
+				}
+				url = url.substr(0, url.lastIndexOf('/')) + "/" + commonVariables.customerContext;
+				//self.clearSession();
+				Clazz.navigationController.jQueryContainer = commonVariables.basePlaceholder;
+				//self.removePlaceholder();
+				//self.headerAPI.localVal.setSession('loggedout', 'true');
+				location.hash = '';
+				commonVariables.customerContext = '';
+				location.href = url;
+			} else {
+				$("." + msgType).css("display", "block");
+				if($(commonVariables.contentPlaceholder).find('.content_end .msgdisplay').length > 0){	
+					if($(commonVariables.contentPlaceholder).find('.content_end').css("display") === "none") {
+						$(commonVariables.contentPlaceholder).find('.content_end').css("display","block");
+					}
+					$(commonVariables.contentPlaceholder).find('.content_end .msgdisplay').addClass(msgType).html(errorMsg);
+					$(commonVariables.contentPlaceholder).find('.content_end .msgdisplay').show();
+				}else{
+					$(commonVariables.basePlaceholder).append('<section id="serviceError" class="content_end" style="display:block;"><div class="msgdisplay '+ msgType +'">'+   errorMsg +'</div></section>');
+					msgType = 'content_end';
+				}
+			}
 			if(timeOut){
 				setTimeout(function(){
 					if(hideErrorOnly) {
@@ -396,6 +412,8 @@ define(["framework/base", "api/localStorageAPI"], function(){
 					}
 				}, 7000);
 			}
+			
+			
 		}
 	});
 

@@ -11,7 +11,7 @@
                   <th><div class="th-inner" data-i18n="projectlist.label.technology"></div></th>
                   <th><div class="th-inner" data-i18n="projectlist.label.report"></div></th>
                   <th><div class="th-inner" data-i18n="projectlist.label.repository"></div></th>
-                  <th><div class="th-inner" data-i18n="commonlabel.label.delete"></div></th>                  
+                  <th><div class="th-inner" data-i18n="commonlabel.label.action"></div></th>                  
                   <th><div class="th-inner">&nbsp;</div></th>
                 </tr>
               </thead>
