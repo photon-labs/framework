@@ -890,7 +890,8 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				} else {
 					rootModulePath = Utility.getProjectHome() + appDirName;
 				}
-			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+	        ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+		    ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 			StringTemplate constructDynamicTemplate = new StringTemplate();
 			String filePath = getInfoFileDir(appDirName, goal, phase,rootModulePath,subModuleName);
 			File file = new File(filePath);
