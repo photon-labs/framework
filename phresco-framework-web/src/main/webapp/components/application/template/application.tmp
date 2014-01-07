@@ -229,6 +229,13 @@
                             </td>
                             <td></td>
                       </tr>	
+                     <tr class="functionalFrameworkURL" name="testingcontent" key="displayed" style="{{#showFunctionalIframeUrl}}{{/showFunctionalIframeUrl}}">
+						<td class="func_framewrk_url"> <span data-i18n="application.edit.funcframeworkIframeUrl"></span><sup>*</sup></td>
+						<td name="framewwork_iframe_url">
+							<input type="text" data-i18n="[placeholder]application.edit.url" value="{{#functionalIframeUrl projectlist.appdetails.data.projectInfo.appInfos.0.functionalFrameworkInfo}}{{/functionalIframeUrl}}" title="" maxlength="" name="funcionalIframeUrl" class="funcionalIframeUrl">
+						</td>
+						<td></td>
+					</tr>
 					{{/if}}						
               	</tbody>
             </table>

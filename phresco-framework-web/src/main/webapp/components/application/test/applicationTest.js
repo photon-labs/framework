@@ -54,7 +54,7 @@ define(["jquery", "application/application"], function($, Application) {
 			});
 			
 			$.mockjax({
-			  url: commonVariables.webserviceurl+"appConfig/functionalFrameworks?techId=tech-phpdru7&userId=admin",
+			  url: commonVariables.webserviceurl+"appConfig/functionalFrameworks?techId=tech-phpdru7&userId=admin&customerId=photon",
 			  type: "GET",
 			  dataType: "json",
 			  contentType: "application/json",

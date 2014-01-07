@@ -131,6 +131,8 @@ define([], function() {
 			$("select[name='func_framework_tools']").bind('change', function(){
 				var currentData = $(this).val();
 				self.getToolsVersion($(this), currentData, 'functionalFrameworkData', 'tools_version');
+				var selectFramework = $(this).find(":selected").text();
+				("TAW" === selectFramework) ? $('.functionalFrameworkURL').show(): $('.functionalFrameworkURL').hide();
 			});
 		},
 		
@@ -277,7 +279,7 @@ define([], function() {
 				webserviceurl: ''
 			};
 			if("functionalFrameworks" === type){
-				header.webserviceurl = commonVariables.webserviceurl+ "appConfig/functionalFrameworks?techId="+techId+"&userId="+userId;			
+				header.webserviceurl = commonVariables.webserviceurl+ "appConfig/functionalFrameworks?techId="+techId+"&userId="+userId+"&customerId="+customerId;			
 			}else{
 				header.webserviceurl = commonVariables.webserviceurl+ "appConfig/list?techId="+techId+"&customerId="+customerId+"&type="+type+"&platform=Windows64&userId="+userId;
 			}
@@ -343,6 +345,8 @@ define([], function() {
 				var showDatabase = false;
 				var showWebservice = false;
 				var showTestingFramework = false;
+				var regex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+				var isValid = regex.test($('.funcionalIframeUrl').val()) ;
 				//console.log($("tbody[name='layercontents']").children().children().children());
 				$.each($("tbody[name='layercontents']").children(), function(index, value){
 				
@@ -406,6 +410,8 @@ define([], function() {
 						var frameworkGroupId = $("select[name=func_framework]").val();
 						var frameworkIds = $("select[name=func_framework_tools]").val();
 						var version = $("select[name=tools_version]").val();
+						var selectFrameworkTool = $("select[name=func_framework_tools]").find(":selected").text();
+						
 						if(frameworkGroupId === "0"){
 							$("#fferror").focus();
 							$("#fferror").addClass("errormessage");
@@ -426,11 +432,22 @@ define([], function() {
 									$("#fferror").removeClass("errormessage");
 								});
 								submitFlag = 1;
+							} else if ("TAW" === selectFrameworkTool && self.isBlank($('.funcionalIframeUrl').val())) {
+								$("#fferror").focus();
+								$("#fferror").addClass("errormessage");
+								$("#fferror").text('Please enter iframe url');
+								submitFlag = 1;
+							} else if ("TAW" === selectFrameworkTool && !self.isBlank($('.funcionalIframeUrl').val()) && !isValid) {
+						    	$("#fferror").focus();
+								$("#fferror").addClass("errormessage");
+								$("#fferror").text('Please enter valid url');
+						    	submitFlag = 1;
 							} else {
 								functionalFrameworkInfo = {};							
 								functionalFrameworkInfo.frameworkGroupId = frameworkGroupId;
 								functionalFrameworkInfo.frameworkIds = frameworkIds;
 								functionalFrameworkInfo.version = version;
+								functionalFrameworkInfo.iframeUrl = self.isBlank($('.funcionalIframeUrl').val()) ? "" : $('.funcionalIframeUrl').val();
 							}	
 						}	
 						showTestingFramework =true;

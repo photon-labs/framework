@@ -20,6 +20,7 @@ define(["application/listener/applicationListener"], function() {
 			webserviceurl: null
 		},
 		layerDisplay : null,
+		selectedFunctionalFramework : null,
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -130,6 +131,7 @@ define(["application/listener/applicationListener"], function() {
 					if(frameworkGroupId === value.id){
 						$.each(value.functionalFrameworks, function(index, value){
 							if (value.id === frameworkIds) {
+								self.selectedFunctionalFramework = value.displayName;
 								option +='<option selected="selected" value='+value.id+'>'+ value.displayName +'</option>';
 							} else {
 								option +='<option value='+value.id+'>'+ value.displayName +'</option>';
@@ -173,7 +175,17 @@ define(["application/listener/applicationListener"], function() {
 				return option;
 			});
 			
-						
+			Handlebars.registerHelper('showFunctionalIframeUrl', function() {
+				var display = ("TAW" === self.selectedFunctionalFramework) ? 'display:table-row;' : 'display:none;';
+				self.selectedFunctionalFramework = null;
+				return display;
+			});
+			
+			Handlebars.registerHelper('functionalIframeUrl', function(functionalFrameworkInfo) {
+				var iframeUrl = (functionalFrameworkInfo !== null && functionalFrameworkInfo !== undefined && !self.isBlank(functionalFrameworkInfo.iframeUrl)) ?
+					functionalFrameworkInfo.iframeUrl : "";
+				return iframeUrl;
+			});
 		},
 		 
 		
@@ -341,6 +353,8 @@ define(["application/listener/applicationListener"], function() {
 			$(".content_end input").unbind('click');
 			$(".content_end input").bind('click', function(){
 				self.onAddLayerEvent.dispatch($(this));
+				var selectedFwTool = $("select[name='func_framework_tools']").find(":selected").text();
+				("testing" === $(this).attr("name")) ? ("TAW" === selectedFwTool ? $('.functionalFrameworkURL').show() :  $('.functionalFrameworkURL').hide()) : "";
 				return false;
 			});
 		}
