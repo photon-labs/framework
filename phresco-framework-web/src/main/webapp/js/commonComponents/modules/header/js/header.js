@@ -64,6 +64,11 @@ define(["header/listener/headerListener"] , function(template) {
 					self.headerListener.changeCustomerTitle(response.data.theme);
 				}
 			});
+			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+			
+			if (userInfo.authType == "LOCAL") {
+				$("#changepassword").show();
+			}
 		},
 		
 		/***

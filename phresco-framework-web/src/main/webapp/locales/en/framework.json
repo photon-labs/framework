@@ -22,7 +22,7 @@
 		"PHR110006" : "Parsing failed for file 'user.json'",
 		"PHR110007" : "User doesn't have valid permissions",
 		"PHR110008" : "Invalid user",
-		"PHR110009" : "User not local",
+		"PHR110009" : "Wrong password",
 		"PHR110010" : "User not local",
 		"PHR210001" : " Failed to list projects",
 		"PHR210003" : "Unauthorized user",
