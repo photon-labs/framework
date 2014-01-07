@@ -10,7 +10,7 @@ define([], function() {
 		repository : function(header, callback) {
 			var self = this;
 			try {
-				commonVariables.api.ajaxRequest(header,
+				commonVariables.api.ajaxRequestForScm(header,
 					function(response) {
 						if (commonVariables.callLadda) {
 							Ladda.stopAll();
@@ -69,12 +69,12 @@ define([], function() {
 			}
 			if (action === "createBranch") {
 				header.requestMethod = "POST";
-				header.webserviceurl = commonVariables.webserviceurl + 'repository/createBranch?url='+requestBody.url+'&version='+requestBody.version+'&username='+requestBody.username+'&password='+requestBody.password + 
+				header.webserviceurl = commonVariables.webserviceurl + 'repository/createBranch?appDirName='+requestBody.appDirName+'&version='+requestBody.version+'&username='+requestBody.username+'&password='+requestBody.password + 
 										'&comment='+requestBody.comment+'&currentbranchname='+requestBody.currentbranchname+'&branchname='+requestBody.branchname+'&downloadoption='+requestBody.downloadoption;
 			}
 			if (action === "createTag") {
 				header.requestMethod = "POST";
-				header.webserviceurl = commonVariables.webserviceurl + 'repository/createTag?url='+requestBody.url+'&username='+requestBody.username+'&password='+requestBody.password+'&version='+requestBody.version +
+				header.webserviceurl = commonVariables.webserviceurl + 'repository/createTag?appDirName='+requestBody.appDirName+'&username='+requestBody.username+'&password='+requestBody.password+'&version='+requestBody.version +
 										'&comment='+requestBody.comment+'&currentbranchname='+requestBody.currentbranchname+'&tagname='+requestBody.tagname+'&downloadoption='+requestBody.downloadoption;
 			}
 			if (action === "getVersion") {
@@ -263,7 +263,7 @@ define([], function() {
 				commonVariables.hideloading = true;
 				self.showBtnLoading("#createBranch");
 				var requestBody = {};
-				requestBody.url = $("input[name=baseRepoUrl]").val();
+				requestBody.appDirName = $('input[name=selectedAppDirName]').val();
 				requestBody.version = $("#createBranchVersion").val();
 				requestBody.username = $("#branchUsername").val();
 				requestBody.password = $("#branchPassword").val();
@@ -309,7 +309,7 @@ define([], function() {
 				commonVariables.hideloading = true;
 				self.showBtnLoading("#createTag");
 				var requestBody = {};
-				requestBody.url = $("input[name=baseRepoUrl]").val();
+				requestBody.appDirName = $('input[name=selectedAppDirName]').val();
 				requestBody.username = $("#tagUsername").val();
 				requestBody.password = $("#tagPassword").val();
 				requestBody.comment = $("#tagComment").val();

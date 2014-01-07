@@ -15,24 +15,24 @@
 				<div id="rep_release" class="dyn_popup hideContent">
 					<table>
 						<tr>
-							<td><span data-i18n="repository.source.releaseversion"></span><sup>*</sup></td>
-							<td><span data-i18n="repository.source.tagname"></span><sup>*</sup></td>
+							<td><span>Release Version</span><sup>*</sup></td>
+							<td><span>Tag Name</span><sup>*</sup></td>
 						</tr>
 						<tr>
 							<td><input type="text" id="releaseVersion" style="margin-right:10px;"></td>
 							<td><input type="text" id="releaseTagName"></td>
 						</tr>
 						<tr>
-							<td><span data-i18n="repository.source.username"></span><sup>*</sup></td>
-							<td><span data-i18n="repository.source.password"></span><sup>*</sup></td>
+							<td><span>User Name</span><sup>*</sup></td>
+							<td><span>Password</span><sup>*</sup></td>
 						</tr>
 						<tr>
 							<td><input type="text" id="releaseUsername" style="margin-right:10px"></td>
 							<td><input type="password" id="releasePassword"></td>
 						</tr>
 						<tr>
-							<td><span data-i18n="repository.source.devversion"></span><sup>*</sup></td>
-							<td><span data-i18n="repository.source.comment"></span></td>
+							<td><span>Development Version</span><sup>*</sup></td>
+							<td><span>Comment</span></td>
 						</tr>
 						<tr>
 							<td style="vertical-align: top;"><input type="text" id="devVersion" style="margin-right:10px;"></td>
@@ -50,7 +50,7 @@
 						</tr>
 					</table>
 					<div class="flt_right">
-						<input type="button" value="Execute" class="btn btn_style" id="release">
+						<button class="btn btn_style btn_style_spin ladda-button" data-style="expand-left" id="release"><span class="ladda-label">Execute</span></button>
 						<input type="button" value="Close" class="btn btn_style dyn_popup_close">
 					</div>
 				</div>
@@ -66,16 +66,16 @@
 						<div id="branch" class="tab-pane fade active in">
 							<table>
 								<tr>
-									<td><span data-i18n="repository.source.frombranch"></span></td>
-									<td><span data-i18n="repository.source.version"></span></td>
+									<td><span>From Branch/Trunck</span></td>
+									<td><span>Version</span></td>
 								</tr>
 								<tr>
 									<td><input type="text" id="branchFromName" style="margin-right:10px" readonly></td>
 									<td><input type="text" id="branchFromVersion" readonly></td>
 								</tr>
 								<tr>
-									<td><span data-i18n="repository.source.branchto"></span><sup>*</sup></td>
-									<td><span data-i18n="repository.source.version"></span><sup>*</sup></td>
+									<td><span>Branch To</span><sup>*</sup></td>
+									<td><span>Version</span><sup>*</sup></td>
 								</tr>
 								<tr>
 									<td><input type="text" id="newBranchName"></td>
@@ -220,8 +220,8 @@
 									</td>
 								</tr>
 								<tr>
-									<td><span data-i18n="repository.source.username"></span><sup>*</sup></td>
-									<td><span data-i18n="repository.source.password"></span><sup>*</sup></td>
+									<td><span>User Name</span><sup>*</sup></td>
+									<td><span>Password</span><sup>*</sup></td>
 								</tr>
 								<tr>
 									<td><input type="text" id="branchUsername" style="margin-right:10px"></td>
@@ -242,22 +242,22 @@
 						<div id="tags" class="tab-pane fade ">
 							<table>
 								<tr>
-									<td><span data-i18n="repository.source.frombranch"></span></td>
-									<td><span data-i18n="repository.source.version"></span></td>
+									<td><span>From Branch/Trunck</span></td>
+									<td><span>Version</span></td>
 								</tr>
 								<tr>
 									<td><input type="text" id="tagFromName" style="margin-right:10px" readonly></td>
 									<td><input type="text" id="tagFromVersion" readonly></td>
 								</tr>
 								<tr>
-									<td><span data-i18n="repository.source.tagto"></span><sup>*</sup></td>
+									<td><span>Tags To</span><sup>*</sup></td>
 								</tr>
 								<tr>
 									<td><input type="text" id="tagName"></td>
 								</tr>
 								<tr>
-									<td><span data-i18n="repository.source.username"></span><sup>*</sup></td>
-									<td><span data-i18n="repository.source.password"></span><sup>*</sup></td>
+									<td><span>User Name</span><sup>*</sup></td>
+									<td><span>Password</span><sup>*</sup></td>
 								</tr>
 								<tr>
 									<td><input type="text" id="tagUsername" style="margin-right:10px"></td>

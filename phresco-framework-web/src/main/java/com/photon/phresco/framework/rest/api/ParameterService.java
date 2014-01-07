@@ -540,6 +540,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			} else {
 				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
+			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
             PomProcessor processor = Utility.getPomProcessor(rootModulePath, subModuleName);
             File pomFile = Utility.getPomFileLocation(rootModulePath, subModuleName);
 			String validateReportUrl = "";
@@ -580,6 +581,15 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 					sb.append(phrescoFileServerNumber);
 					sb.append(FrameworkConstants.FORWARD_SLASH);
 					sb.append(appDirName);
+					ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+					String splitPhrDir = processor.getProperty(Constants.POM_PROP_KEY_SPLIT_PHRESCO_DIR);
+					if (StringUtils.isNotEmpty(applicationInfo.getPhrescoPomFile()) && StringUtils.isNotEmpty(splitPhrDir)) {
+						sb.append(File.separator);
+						sb.append(splitPhrDir);
+					} else {
+						sb.append(File.separator);
+						sb.append(appDirName);
+					}
 					sb.append(validateReportUrl);
 					sb.append(validateAgainst);
 					sb.append(FrameworkConstants.FORWARD_SLASH);
@@ -599,7 +609,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			serverUrl = frameworkUtil.getSonarHomeURL();
 			StringBuilder reportPath = new StringBuilder();
 			if (StringUtils.isNotEmpty(validateAgainst) && FUNCTIONALTEST.equals(validateAgainst)) {
-				ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
 				File testFolderLocation = Utility.getTestFolderLocation(projectInfo, rootModulePath, subModuleName);
 				String funcDir = processor.getProperty(Constants.POM_PROP_KEY_FUNCTEST_DIR);
 				reportPath.append(testFolderLocation.toString());

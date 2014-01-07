@@ -34,7 +34,7 @@ public class AppInfoConfigsTest extends RestBaseTest {
 	
 	@Test
 	public void testGetFunctionalFrameworks() {
-		appInfoConfigs.getFunctionalFrameworks(userId, "tech-php");
+		appInfoConfigs.getFunctionalFrameworks(userId, "tech-php", "photon");
 	}
 	
 }

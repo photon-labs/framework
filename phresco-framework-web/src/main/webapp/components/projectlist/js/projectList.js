@@ -544,7 +544,7 @@ define(["projectlist/listener/projectListListener"], function() {
 							$('.footer_section').css('z-index', '0');
 						} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
 							commonVariables.api.showError(self.getLockErrorMsg(response, lockAction), 'error', true, true);
-						}	
+						}
 					});			
 				} else if ($(this).hasClass('del_submodule')){
 					var openccName = $(this).attr('name'), rootModule = $(this).closest('tr').attr('rootModule');
@@ -595,7 +595,6 @@ define(["projectlist/listener/projectListListener"], function() {
 				$('.search').unbind("click");
 				$('.search').bind("click", function() {
 					self.projectslistListener.flag1 = 1;
-					//var idval = $(this).parent().parent().parent().parent().next('div').next().children('input').attr('id');
 					var idval = $(this).attr('dynId');
 					if(!(self.projectslistListener.validateAddToRepoData(idval))) {
 						$('.searchdropdown').empty();
@@ -889,6 +888,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			$(".splitDotPhresco").bind("click", function() {
 				var dynamicId = $(this).attr("dynamicId");
 				if ($(this).is(":checked")) {
+					self.makeRepoTypeSelected(dynamicId);
 					$("#addRepo_" + dynamicId).find(".dotPhrescoA").attr("data-toggle", "tab").attr("href", "#dotphresco"+dynamicId);
 					commonVariables.navListener.showDotPhrescoTab($("#dotphresco"+dynamicId), $("#source"+dynamicId), $("#test"+dynamicId), $("#splitDotPhresco_"+dynamicId), $("#splitTest_"+dynamicId));
 				} else {
@@ -903,6 +903,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			$(".splitTest").bind("click", function() {
 				var dynamicId = $(this).attr("dynamicId");
 				if ($(this).is(":checked")) {
+					self.makeRepoTypeSelected(dynamicId);
 					$("#addRepo_" + dynamicId).find(".testA").attr("data-toggle", "tab").attr("href", "#test"+dynamicId);
 					commonVariables.navListener.showTestTab($("#dotphresco"+dynamicId), $("#source"+dynamicId), $("#test"+dynamicId), $("#splitDotPhresco_"+dynamicId), $("#splitTest_"+dynamicId));
 				} else {
@@ -944,9 +945,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			$(".dotPhrescoA, .testA").unbind("click");
 			$(".dotPhrescoA, .testA").bind("click", function() {
 				var dynamicId = $(this).attr("dynamicId");
-				var selectedType = $("#type_" + dynamicId).val();
-				$("#phrescotype_" + dynamicId).val(selectedType);
-				$("#testtype_" + dynamicId).val(selectedType);
+				self.makeRepoTypeSelected(dynamicId);
 			});
 			
 			$(".updateDotPhresco").unbind("click");
@@ -1061,6 +1060,12 @@ define(["projectlist/listener/projectListListener"], function() {
 				userNameObj.attr('readonly','readonly');
 				pwdObj.attr('readonly','readonly');
 			}
+		},
+		
+		makeRepoTypeSelected : function(dynamicId) {
+			var selectedType = $("#type_" + dynamicId).val();
+			$("#phrescotype_" + dynamicId).val(selectedType);
+			$("#testtype_" + dynamicId).val(selectedType);
 		}
 	});
 

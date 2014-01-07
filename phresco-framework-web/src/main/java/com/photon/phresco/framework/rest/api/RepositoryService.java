@@ -1409,7 +1409,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		String line = "";
 		StringBuilder builder = new StringBuilder();
 		while ((line = checkoutReader.readLine()) != null) {
-			System.out.println(line);
 			if (line.startsWith("[ERROR]")) {
 				builder.append(line);
 			}
