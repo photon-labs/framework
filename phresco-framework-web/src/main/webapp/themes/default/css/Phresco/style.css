@@ -5736,7 +5736,15 @@ textarea[name="regex"] {
 .browse_table tr td input[type="text"]{
 	width:53px !important;
 }
-
-
+	
+.emailMessage {
+	float: left;
+    margin-left: 12px;
+    margin-top: 12px;
+	color: #298A08;
+	text-align: center;
+	font-size:13px;
+	font-weight:bold;
+}
 
 /***************************** STYLES FOR THE TABLE SORTING ENDS *************************************/

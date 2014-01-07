@@ -93,6 +93,10 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				},
 				
 				complete : function(response, e ,xhr){
+					if (commonVariables.callLadda) {
+						Ladda.stopAll();
+					}
+					
 					if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading){
 						commonVariables.hideloading = false;
 						commonVariables.loadingScreen.removeLoading();
@@ -301,7 +305,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 			if(response.responseCode !== undefined) {
 				$('.errpopup, .modal-backdrop').remove();	
 				if(response.status !== 0 && $(".errpopup").size() < 1 && $(".errpopup").css('display') !== 'display') {
-					$(commonVariables.basePlaceholder).append('<div class="modal fade errpopup" tabindex="-1" style="display: none;"><div class="modal-body temp"></div><div class="modal-footer"><div><a href="javascript:void(0)" title="" id="copytoclip" class="flt_left padding_img" href="javascript:void(0)"><img class="padding_img" src="themes/default/images/Phresco/buildreport_icon.png" width="15" height="18" border="0" alt=""></a><div class="errorpopuploading" id="copyloadicon" style="display:none;">&nbsp</div></div><button type="button" data-dismiss="modal" class="btn btn_style">Close</button></div></div>');
+					$(commonVariables.basePlaceholder).append('<div class="modal fade errpopup" tabindex="-1" style="display: none;"><div class="modal-body temp"></div><div class="modal-footer"><div><a href="javascript:void(0)" title="" id="copytoclip" class="flt_left padding_img" href="javascript:void(0)"><img class="padding_img" src="themes/default/images/Phresco/buildreport_icon.png" width="15" height="18" border="0" alt=""></a><div class="errorpopuploading" id="copyloadicon" style="display:none;">&nbsp</div></div><div class="emailMessage"></div><button type="button" id="sendReport" class="btn btn_style btn_style_spin ladda-button" data-style="expand-left"><span class="ladda-label">Send</button><button type="button" data-dismiss="modal" class="btn btn_style">Close</button></div></div>');
 					if(response.service_exception !== null && response.service_exception !== undefined) { 
 						$(".modal-body").append(response.service_exception);
 					}else if(response.exception !== null && response.exception !== undefined) {
@@ -328,8 +332,43 @@ define(["framework/base", "api/localStorageAPI"], function(){
 						});
 					},700);	
 					$(".popuploading").hide();
+					self.sendReport();
 				}
 			}	
+		},
+		
+		sendReport : function() {
+			var self=this;
+			$("#sendReport").click(function() {
+				jsonData = $(".modal-body").text();
+				var header =  {
+					contentType: "application/json",
+					requestMethod: "POST",
+					dataType: "json",
+					webserviceurl: commonVariables.webserviceurl+"util/sendErrorReport?emailId=phresco-support@photoninfotech.net",
+				}
+				header.requestPostBody = jsonData;
+				if (commonVariables.callLadda) {
+					var laddaBtnObj = Ladda.create(document.querySelector("#sendReport"));
+					laddaBtnObj.start();
+				}
+				self.ajaxRequest(header,
+					function(response) {
+						$(".emailMessage").html("Report Send to Mail Successfully");
+						setTimeout(function(){
+							$(".emailMessage").html("");
+							$("#sendReport").attr("data-dismiss", "modal");
+							$(".modal").hide();
+							$(".modal-backdrop").css("z-index", "0");
+							$(".modal-backdrop, .modal-backdrop.fade.in").css("opacity", "0");
+						},1500);	
+					},
+						
+					function(textStatus) {
+									
+					}
+				);
+			});
 		},
 		
 		urlExists : function(url, callbackfunction, errorHandler){
