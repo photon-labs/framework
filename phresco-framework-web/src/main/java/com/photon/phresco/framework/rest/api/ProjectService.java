@@ -158,7 +158,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			@QueryParam(REST_QUERY_PROJECTID) String projectId) {
 		ResponseInfo<List<ApplicationInfo>> responseData = new ResponseInfo<List<ApplicationInfo>>();
 		try {
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = com.photon.phresco.framework.impl.util.FrameworkUtil.getAppInfos(customerId, projectId);
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				status = RESPONSE_STATUS_SUCCESS;
 				successCode = PHR200002;

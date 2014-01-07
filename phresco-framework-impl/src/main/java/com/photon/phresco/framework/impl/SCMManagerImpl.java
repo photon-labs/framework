@@ -148,10 +148,10 @@ import com.photon.phresco.framework.model.RepoInfo;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.Utility;
-import com.phresco.pom.model.Build;
-import com.phresco.pom.model.Model.Profiles;
-import com.phresco.pom.model.Profile;
+import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.model.Plugin;
 import com.phresco.pom.util.PomProcessor;
+
 
 
 public class SCMManagerImpl implements SCMManager, FrameworkConstants {
@@ -1138,7 +1138,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 		String appDirName = appInfo.getAppDirName();
 		String tempBasePath = Utility.getPhrescoTemp() + appDirName;
-		
+
 		File tempPhrescoFile = new File(tempBasePath + Constants.SUFFIX_PHRESCO);
 		File tempTestFile = new File(tempBasePath + Constants.SUFFIX_TEST);
 		File tempSrcFile = new File(tempBasePath);
@@ -1146,25 +1146,26 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			String phrescoDirName = appDirName + Constants.SUFFIX_PHRESCO;
 			String srcDirName = appDirName;
 			String testDirName = appDirName + Constants.SUFFIX_TEST;
-			
+
 			RepoDetail srcRepoDetail = repoInfo.getSrcRepoDetail();
 			String repoType = srcRepoDetail.getType();
 			String srcRepoUrl = srcRepoDetail.getRepoUrl();
 			StringBuilder appendedSrcUrl = new StringBuilder(srcRepoUrl);
 			if (SVN.equalsIgnoreCase(repoType)) {
-				if (!srcRepoUrl.endsWith(TRUNK) && !srcRepoUrl.endsWith(TRUNK + FORWARD_SLASH)) {
-					if (!srcRepoUrl.endsWith(FORWARD_SLASH)) {
-						appendedSrcUrl.append(FORWARD_SLASH);
-					}
-					appendedSrcUrl.append(TRUNK);
-				}
-				if (!appendedSrcUrl.toString().endsWith(FORWARD_SLASH)) {
+				if (!srcRepoUrl.endsWith(FORWARD_SLASH)) {
 					appendedSrcUrl.append(FORWARD_SLASH);
 				}
 				appendedSrcUrl.append(srcDirName);
+				appendedSrcUrl.append(FORWARD_SLASH);
+				appendedSrcUrl.append(TRUNK);
 			}
-			
+
 			File dir = new File(Utility.getProjectHome() + appDirName);
+			String pomFileName = appInfo.getPomFile();
+			if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
+				pomFileName = appInfo.getPhrescoPomFile();
+			}
+			PomProcessor appPomProcessor = new PomProcessor(new File(dir, pomFileName));
 			boolean hasSplit = false; 
 			if (repoInfo.isSplitPhresco() || repoInfo.isSplitTest()) {
 				hasSplit = true;
@@ -1172,50 +1173,50 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if (hasSplit) {
 				RepoDetail phrescoRepoDetail = repoInfo.getPhrescoRepoDetail();
 				RepoDetail testRepoDetail = repoInfo.getTestRepoDetail();
-				
+
 				String phrescoRepoUrl = "";
 				StringBuilder appendedPhrUrl = new StringBuilder();
 				if (phrescoRepoDetail != null) {
 					phrescoRepoUrl = phrescoRepoDetail.getRepoUrl();
 					appendedPhrUrl.append(phrescoRepoUrl);
-					if (SVN.equalsIgnoreCase(testRepoDetail.getType()) && !phrescoRepoUrl.endsWith(TRUNK) && !phrescoRepoUrl.endsWith(TRUNK + FORWARD_SLASH)) {
+					if (SVN.equalsIgnoreCase(testRepoDetail.getType())) {
 						if (!phrescoRepoUrl.endsWith(FORWARD_SLASH)) {
 							appendedPhrUrl.append(FORWARD_SLASH);
 						}
+						appendedPhrUrl.append(phrescoDirName);
+						appendedPhrUrl.append(FORWARD_SLASH);
 						appendedPhrUrl.append(TRUNK);
 					}
-					if (!appendedPhrUrl.toString().endsWith(FORWARD_SLASH)) {
-						appendedPhrUrl.append(FORWARD_SLASH);
-					}
-					appendedPhrUrl.append(phrescoDirName);
 				}
-				
+
 				String testRepoUrl = "";
 				StringBuilder appendedTestUrl = new StringBuilder();
 				if (testRepoDetail != null) {
 					testRepoUrl = testRepoDetail.getRepoUrl();
 					appendedTestUrl.append(testRepoUrl);
-					if (SVN.equalsIgnoreCase(testRepoDetail.getType()) && !testRepoUrl.endsWith(TRUNK) && !testRepoUrl.endsWith(TRUNK + FORWARD_SLASH)) {
+					if (SVN.equalsIgnoreCase(testRepoDetail.getType())) {
 						if (!testRepoUrl.endsWith(FORWARD_SLASH)) {
 							appendedTestUrl.append(FORWARD_SLASH);
 						}
+						appendedTestUrl.append(testDirName);
+						appendedTestUrl.append(FORWARD_SLASH);
 						appendedTestUrl.append(TRUNK);
 					}
-					if (!appendedTestUrl.toString().endsWith(FORWARD_SLASH)) {
-						appendedTestUrl.append(FORWARD_SLASH);
-					}
-					appendedTestUrl.append(testDirName);
 				}
+
 				if (repoInfo.isSplitPhresco()) {
 					splitDotPhrescoContents(appInfo, tempPhrescoFile, appendedPhrUrl.toString(), appendedSrcUrl.toString(), appendedTestUrl.toString());
+					updatePom(tempPhrescoFile, appendedPhrUrl.toString(), repoType, PHR_POM_XML, appPomProcessor, PHRESCO);
 					addToRepo(phrescoRepoDetail, appInfo, dir, phrescoDirName, tempPhrescoFile, hasSplit);
 				}
 				if (repoInfo.isSplitTest()) {
 					splitTestContents(appInfo, tempTestFile);
+					updatePom(tempTestFile, appendedTestUrl.toString(), repoType, POM_FILE, appPomProcessor, Constants.POM);
 					addToRepo(testRepoDetail, appInfo, dir, testDirName, tempTestFile, hasSplit);
 				}
 				if (hasSplit) {
 					splitSrcContents(appInfo, tempSrcFile, repoInfo, appendedPhrUrl.toString(), appendedSrcUrl.toString(), appendedTestUrl.toString());
+					updatePom(tempSrcFile, appendedSrcUrl.toString(), repoType, appInfo.getPomFile(),appPomProcessor, "");
 					addToRepo(srcRepoDetail, appInfo, dir, srcDirName, tempSrcFile, hasSplit);
 				}
 				FileUtil.delete(dir);
@@ -1229,13 +1230,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					FileUtils.copyDirectoryToDirectory(tempTestFile, dir);
 				}
 			} else {
-				String pomFileName = appInfo.getPomFile();
-				if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
-					pomFileName = appInfo.getPhrescoPomFile();
-				}
-				PomProcessor pomProcessor = new PomProcessor(new File(dir, pomFileName));
-				pomProcessor.setProperty(Constants.POM_PROP_KEY_SRC_REPO_URL, appendedSrcUrl.toString());
-				pomProcessor.save();
+				appPomProcessor.setProperty(Constants.POM_PROP_KEY_SRC_REPO_URL, appendedSrcUrl.toString());
+				String scmUrl = SCM + COLON + repoType + COLON + appendedSrcUrl.toString();
+				appPomProcessor.setSCM(appendedSrcUrl.toString(), scmUrl, scmUrl, "");
+				appPomProcessor.save();
 				addToRepo(srcRepoDetail, appInfo, dir, appDirName, dir, hasSplit);
 			}
 		} catch (Exception e) {
@@ -1248,6 +1246,41 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			FileUtil.delete(new File(Utility.getPhrescoTemp(), CHECKOUT_TEMP));
 		}
 		return true;
+	}
+	
+	private void updatePom(File file, String url, String repoType, String pomFileName, PomProcessor appPomProcessor, String packaging) throws PhrescoException {
+		try {
+			File pomFile = new File(file, pomFileName);
+			String scmUrl = SCM + COLON + repoType + COLON + url;
+			PomProcessor splitPomProcessor = null;
+			if (!pomFile.exists()) {
+				splitPomProcessor = new PomProcessor(pomFile);
+				String name = appPomProcessor.getName();
+				String groupId = appPomProcessor.getGroupId();
+				String artifactId = appPomProcessor.getArtifactId();
+				String version = appPomProcessor.getVersion();
+				
+				splitPomProcessor.setName(name);
+				splitPomProcessor.setGroupId(groupId);
+				splitPomProcessor.setArtifactId(artifactId);
+				splitPomProcessor.setVersion(version);
+				splitPomProcessor.setPackaging(packaging);
+			} else {
+				splitPomProcessor = new PomProcessor(pomFile);
+			}
+			splitPomProcessor.setSCM(url, scmUrl, scmUrl, "");
+			Plugin phrMvnPlugin = appPomProcessor.getPlugin(COM_PHOTON_PHRESCO_PLUGINS, PHRESCO_MAVEN_PLUGIN);
+			if (phrMvnPlugin != null) {
+				splitPomProcessor.addPlugin(phrMvnPlugin.getGroupId(), phrMvnPlugin.getArtifactId(), phrMvnPlugin.getVersion());
+			}
+			Plugin mvnReleasePlugin = appPomProcessor.getPlugin(ORG_APACHE_MAVEN_PLUGINS, MAVEN_RELEASE_PLUGIN);
+			if (mvnReleasePlugin != null) {
+				splitPomProcessor.addPlugin(mvnReleasePlugin.getGroupId(), mvnReleasePlugin.getArtifactId(), mvnReleasePlugin.getVersion());
+			}
+			splitPomProcessor.save();
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
 	}
 	
 	private void splitDotPhrescoContents(ApplicationInfo appInfo, File tempPhrescoFile, String phrescoRepoUrl, String srcRepoUrl, String testRepoUrl) throws PhrescoException {
@@ -1455,16 +1488,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if (SVN.equals(repoType)) {
 				String repoUrl = repodetail.getRepoUrl();
 				StringBuilder appendedUrl = new StringBuilder(repoUrl);
-				if (!repoUrl.endsWith(TRUNK) && !repoUrl.endsWith(TRUNK + FORWARD_SLASH)) {
-					if (!repoUrl.endsWith(FORWARD_SLASH)) {
-						appendedUrl.append(FORWARD_SLASH);
-					}
-					appendedUrl.append(TRUNK + FORWARD_SLASH);
-				}
-				if (!appendedUrl.toString().endsWith(FORWARD_SLASH)) {
+				if (!repoUrl.endsWith(FORWARD_SLASH)) {
 					appendedUrl.append(FORWARD_SLASH);
 				}
 				appendedUrl.append(dirName);
+				appendedUrl.append(FORWARD_SLASH);
+				appendedUrl.append(TRUNK);
 				repodetail.setRepoUrl(appendedUrl.toString());
 				importDirectoryContentToSubversion(repodetail, srcDir.getPath());
 				// checkout to get .svn folder

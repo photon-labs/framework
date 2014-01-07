@@ -18,6 +18,7 @@
 package com.photon.phresco.framework.rest.api;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -55,6 +56,7 @@ import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.CIManager;
+import com.photon.phresco.framework.impl.util.FrameworkUtil;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.util.Constants;
@@ -81,7 +83,8 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			List<CIJobTemplate> jobTemplates = new ArrayList<CIJobTemplate>();
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			FrameworkUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			jobTemplates = ciManager.getJobTemplatesByProjId(projectId, appInfos);
 			ResponseInfo<List<CIJobTemplate>> finalOutput = responseDataEvaluation(responseData, null,
 					jobTemplates, RESPONSE_STATUS_SUCCESS, PHR800013);
@@ -115,7 +118,7 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			List<CIJobTemplate> jobTemplates = null;
 			if (StringUtils.isNotEmpty(name)) {
-				List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+				List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 				jobTemplates = ciManager.getJobTemplatesByProjId(projectId, appInfos);
 			}
 			if (CollectionUtils.isNotEmpty(jobTemplates)) {
@@ -158,7 +161,7 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			List<CIJobTemplate> jobTemplates = null;
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			jobTemplates = ciManager.getJobTemplatesByProjId(projectId, appInfos);
 			if (CollectionUtils.isNotEmpty(jobTemplates)) {
 				for (CIJobTemplate jobTemplate : jobTemplates) {
@@ -227,7 +230,7 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 			
 			for (CIJobTemplate template : templates) {
 				List<CIJobTemplate> jobTemplates = Arrays.asList(template);
-				List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+				List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 				ciManager.createJobTemplates(jobTemplates, false, appInfos);
 			}
 			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, ciJobTemplate, RESPONSE_STATUS_SUCCESS, PHR800016);
@@ -253,7 +256,7 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 		ResponseInfo<CIJobTemplate> responseData = new ResponseInfo<CIJobTemplate>();
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projId);
 			
 			List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByProjId(projId, appInfos);
 			boolean validate = validate(ciJobTemplate.getName(), jobTemplates, projId, appInfos, "update", ciJobTemplate, null, oldName);
@@ -289,7 +292,7 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 		try {
 			CIJobTemplate ciJobTemplate = null;
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projId);
 			List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByProjId(projId, appInfos);
 			boolean validate = validate(name, jobTemplates, projId, appInfos, "delete", null, null, "");
 			if(validate) {
@@ -321,7 +324,7 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByProjId(projectId, appInfos);
 			boolean validate = validate(name, jobTemplates, projectId, appInfos, "appNameValidate", null, appName, "");
 			String msg = appName + "#SEP#" + validate;
@@ -429,7 +432,7 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 				ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(splitPath);
 				getJobTemplateByAppDir(envName, jobTemplateMap, ciManager, applicationInfo, null);
 			} else {
-				List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+				List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 				for (ApplicationInfo appInfo : appInfos) {
 					if(CollectionUtils.isNotEmpty(appInfo.getModules())) {
 						List<ModuleInfo> modules = appInfo.getModules();

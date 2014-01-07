@@ -165,6 +165,7 @@ public interface FrameworkConstants {
     String XML = "xml";
     String JSON = "json";
     String POM_XML = "pom.xml";
+    String PHR_POM_XML = "phresco-pom.xml";
     String STATIC_ANALYSIS_REPORT = "static-analysis-report";
     String INDEX_HTML = "index.html";
 	String WAR = "war";
@@ -2149,4 +2150,14 @@ public interface FrameworkConstants {
 	    String CSHARP_PROFILE = "c#";
 	    String DASHBORAD_INDEX = "/dashboard/index/";
 	    
+	    String COM_PHOTON_PHRESCO_PLUGINS = "com.photon.phresco.plugins";
+	    String PHRESCO_MAVEN_PLUGIN = "phresco-maven-plugin";
+	    String ORG_APACHE_MAVEN_PLUGINS = "org.apache.maven.plugins";
+	    String MAVEN_RELEASE_PLUGIN = "maven-release-plugin";
+		String DOT_GIT 		   = ".git";	
+	    String DOT_SVN         = "svn";
+	    String BIT_KEEPER     = "bk";
+	    String SSH            = "ssh";
+	    String GERRIT         = "gerrit";
+
 }

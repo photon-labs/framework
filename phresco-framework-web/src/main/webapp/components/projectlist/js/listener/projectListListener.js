@@ -378,6 +378,7 @@ define([], function() {
 				self.projectListActionForScm(self.getActionHeader(actionBody, action), '', function(response){
 					if (response.exception === null) {
 						$("#addRepo_"+dynid).hide();
+						self.addZindex();
 					}
 					commonVariables.hideloading = false;
 				});
@@ -452,6 +453,7 @@ define([], function() {
 				self.projectListActionForScm(self.getActionHeader(commitdata, action), $('#commitLoading_'+dynid), function(response){
 					if (response.exception === null) {
 						$("#commit"+dynid).hide();
+						self.addZindex();
 					}
 					commonVariables.hideloading = false;
 				});
@@ -831,6 +833,7 @@ define([], function() {
 					self.hideBtnLoading("button[name='updatebtn'][id='"+dynid+"']");
 					if (response.exception === null) {
 						$("#svn_update"+dynid).hide();
+						self.addZindex();
 					}
 					commonVariables.hideloading = false;
 				});
@@ -1121,6 +1124,11 @@ define([], function() {
 			if (repoType === "svn" || repoType === "bitkeeper") {
 				$(".commitGitdata"+dynamicId).hide();
 			}
+		},
+		
+		addZindex : function () {
+			$('.content_title').css('z-index', '6');
+			$('.header_section').css('z-index', '7');
 		}
 	});
 
