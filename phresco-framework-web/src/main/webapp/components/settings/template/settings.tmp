@@ -24,7 +24,14 @@
 											<td><input type="text" name="jenkinsUrl" temp="jenkins"></td>
 											<td><input type="text" name="juserName" temp="jenkins"></td>
 											<td><input type="password" name="jpassword" temp="jenkins"></td>
-											<td><input type="button" name="setup" value="Setup" class="btn btn_style">&nbsp;&nbsp;<input type="button" name="switch" value="Start" class="btn btn_style"></td>
+										  	<td>
+												<a value="setupagain" class="tooltiptop" id="setupagain" name="setupagain" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Setup"><input type="button" name="presetup" value="Setup" class="btn btn_style">&nbsp&nbsp<input type="button" name="switch" value="Start" class="btn btn_style"></a>
+												<div id="yesnopopup_setup" name="yesnopopup_setup" class="dyn_popup"> Overwrite old installation?
+												<div>
+												    <input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style" name="setup">
+												    <input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close">
+												</div>
+                      						</td>
 										</tr>
 								  </tbody>
 							   </table>

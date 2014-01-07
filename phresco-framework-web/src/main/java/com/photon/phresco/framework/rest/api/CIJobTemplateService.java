@@ -18,7 +18,6 @@
 package com.photon.phresco.framework.rest.api;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,32 +37,30 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.eclipse.core.runtime.jobs.Job;
-import org.apache.commons.lang.StringUtils;
-import org.apache.http.client.ClientProtocolException;
 
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.CIJob;
+import com.photon.phresco.commons.model.CIJobTemplate;
 import com.photon.phresco.commons.model.ContinuousDelivery;
 import com.photon.phresco.commons.model.ModuleInfo;
 import com.photon.phresco.commons.model.ProjectDelivery;
-import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.CIManager;
-import com.photon.phresco.commons.model.CIJobTemplate;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
@@ -417,13 +414,19 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 			@QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule) {
 		ResponseInfo<CIJobTemplate> responseData = new ResponseInfo<CIJobTemplate>();
 		Map<JSONObject, List<CIJobTemplate>> jobTemplateMap = new HashMap<JSONObject, List<CIJobTemplate>>();
+		String module = "";
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			if(StringUtils.isNotEmpty(appDir)) {
 				if(StringUtils.isNotEmpty(rootModule)) {
-					appDir = rootModule + "/" + appDir;
+					module = appDir;
+					appDir = rootModule;
 				}
-				ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDir);
+				String splitPath = Utility.splitPathConstruction(appDir);
+				if (StringUtils.isNotEmpty(rootModule)) {
+					splitPath = splitPath + File.separator + module;
+				}
+				ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(splitPath);
 				getJobTemplateByAppDir(envName, jobTemplateMap, ciManager, applicationInfo, null);
 			} else {
 				List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
@@ -451,26 +454,30 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 		} catch (JSONException e) {
 			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810028);
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+		} catch (PhrescoPomException e) {
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810028);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		}
 	}
 	
 	private void getJobTemplateByAppDir(String envName,
 			Map<JSONObject, List<CIJobTemplate>> jobTemplateMap,
 			CIManager ciManager, ApplicationInfo applicationInfo, String moduleName)
-			throws ConfigurationException, PhrescoException, JSONException {
+			throws ConfigurationException, PhrescoException, JSONException, PhrescoPomException {
 		List<Environment> environments = getEnvironments(applicationInfo, moduleName);
 		for (Environment environment : environments) {
 			if (envName.equals(environment.getName())) {
 				String appDirName = applicationInfo.getAppDirName();
 				if(StringUtils.isNotEmpty(applicationInfo.getRootModule())) {
-					appDirName = applicationInfo.getRootModule() + "/" + appDirName;
+					moduleName = appDirName;
+					appDirName = applicationInfo.getRootModule();
 				}
 				List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByAppId(appDirName, applicationInfo.getName(), moduleName);
 				if (CollectionUtils.isNotEmpty(jobTemplates)) {
 					JSONObject jsonObject = new JSONObject();
 					jsonObject.put("appName", applicationInfo.getName());
-					jsonObject.put("appDirName", applicationInfo.getAppDirName());
-					if(StringUtils.isNotEmpty(moduleName)) {
+					jsonObject.put("appDirName", appDirName);
+					if(CollectionUtils.isNotEmpty(applicationInfo.getModules())) {
 						jsonObject.put("moduleName", moduleName);
 					}
 					jobTemplateMap.put(jsonObject, jobTemplates);
@@ -486,15 +493,17 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 	 * @return the environments
 	 * @throws ConfigurationException the configuration exception
 	 */
-	private List<Environment> getEnvironments(ApplicationInfo appInfo, String moduleName) throws ConfigurationException {
+	private List<Environment> getEnvironments(ApplicationInfo appInfo, String moduleName) throws ConfigurationException, PhrescoException, PhrescoPomException {
 		List<Environment> environments = new ArrayList<Environment>();
 		
 		if(StringUtils.isNotEmpty(appInfo.getRootModule())) {
-			String configFile = FrameworkServiceUtil.getConfigFileDir(appInfo.getRootModule(), appInfo.getAppDirName());
+			String splitPath = Utility.splitPathConstruction(appInfo.getRootModule());
+			String configFile = FrameworkServiceUtil.getConfigFileDir(splitPath, appInfo.getAppDirName());
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
 			environments = configManager.getEnvironmentsAlone();
 		} else {
-			String configFile = FrameworkServiceUtil.getConfigFileDir(appInfo.getAppDirName(), moduleName);
+			String splitPath = Utility.splitPathConstruction(appInfo.getAppDirName());
+			String configFile = FrameworkServiceUtil.getConfigFileDir(splitPath, moduleName);
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
 			environments = configManager.getEnvironmentsAlone();
 		}

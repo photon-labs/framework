@@ -483,6 +483,7 @@ public interface FrameworkConstants {
 	String LOAD_TEST = "loadTest";
 	String PERFORMANCE_TEST_CI = "performanceTest";
 	String COMPONENT_TEST_CI = "componentTest";
+	String RELEASE_CI = "release";
 	String REQ_FUNCTEST_SELENIUM_TOOL = "functionalTestSeleniumTool";
 	String SELENIUM_GRID = "grid";
 	String SELENIUM_WEBDRIVER = "webdriver";

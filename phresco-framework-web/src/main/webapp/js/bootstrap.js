@@ -177,6 +177,7 @@ var commonVariables = {
 	performanceTestGoal : "performance-test",
 	loadTestGoal : "load-test",
 	pdfReportGoal : "pdf-report",
+	releaseGoal : "release",
 	projectCode : "",
 
 	startHubGoal : "start-hub",

@@ -961,7 +961,20 @@ define([], function() {
 			var repoTypeElemCred = $("#repoType tbody tr[id='cred']");
 			var jobNameTrElem = $("#jobName tbody tr td");
 			var repoTypeTitleElem = $("#repoType thead tr th");
+//			var releaseType = $("#release");
 
+			/*if (templateJsonData.type === "release") {
+				$("#release").html('<thead><tr><th>Release Version</th><th>Developmet Version</th><th>Tag Name</th></tr></thead>'+
+									'<tbody><tr><td><input name="releaseVersion" type="text" placeholder="Release Version"></td><td><input name="developmentVersion" type="text" placeholder="Development Version"></td><td><input name="tagName" type="text" placeholder="Tag Name"></td></tr></tbody>');
+				
+//				 fill values here
+//				$("input[name=releaseVersion]").val("");
+//				$("input[name=developmentVersion]").val("");
+//				$("input[name=tagName]").val("");
+			} else {
+				$("#release").html('');
+			}*/
+			
 			// Repo types			
 			if (templateJsonData.enableRepo && templateJsonData.repoTypes === "svn") {
 				// For svn
@@ -1167,6 +1180,8 @@ define([], function() {
 				commonVariables.goal = commonVariables.loadTestGoal;
 			} else if ("pdfReport" === operation) {
 				commonVariables.goal = commonVariables.pdfReportGoal;
+			} else if ("release" === operation) {
+				commonVariables.goal = commonVariables.releaseGoal;
 			}
 
 			commonVariables.phase = commonVariables.ciPhase + commonVariables.goal; // ci phase
@@ -1591,8 +1606,7 @@ define([], function() {
 			var emptyFound = false;
 
 			//repo url validation
-			if (!self.isBlank(templateJsonData.repoTypes) && (templateJsonData.repoTypes === "svn" || templateJsonData.repoTypes === "git")) {
-
+			if (!self.isBlank(templateJsonData.repoTypes) && (templateJsonData.repoTypes === "svn" || templateJsonData.repoTypes === "git" || templateJsonData.repoTypes === "tfs")) {
 				var repos = $("#repoType :input").not("#repoType input[type=hidden]");
 				repos.each(function() {
 					if (self.isBlank(this.value)) {
@@ -2239,6 +2253,7 @@ define([], function() {
 			self.lastChild();
 			var id = $(obj.item).find('a').attr('id');
 			var prevLis = $('#sortable2').find('a[id='+id+']').closest('li').prevAll();
+			var sort1Moved = $('#sortable1').find('a[id='+id+']').closest('li').find('a').attr('id');
 			var appName = $('#sortable2').find('a[id='+id+']').attr('appDirName');
 			var templateJson = $(obj.item).find('a').data("templateJson");
 			var sortable2Len = $('#sortable2 > li').length;
@@ -2248,7 +2263,16 @@ define([], function() {
 			var templateJsonData = $(anchorElem).data("templateJson");
 			
 			var currentAppName = $(obj.item).find('a').attr('appDirName');
-			if (sortable2Len > 1 && prevLis.length === 0 && !templateJson.enableRepo) {
+			var flag = true;
+			
+			if (prevLis.length === 0) {
+				flag = false;
+			} 
+			
+			if (sort1Moved !== null && sort1Moved !== undefined && sort1Moved !== '') {
+				flag = true;
+			} 
+			if (sortable2Len > 1 && !flag && !templateJson.enableRepo) {
 				var currentObj = $(obj.item);
 				 self.previousLiObj.after($(obj.item));
 				 $(".msgdisplay").removeClass("success").addClass("error");
@@ -2258,7 +2282,7 @@ define([], function() {
 					setTimeout(function() {
 						$(".error").hide();
 					},2500);
-			} else if(prevLis.length !== 0 && !templateJsonData.enableRepo) {
+			} else if(prevLis.length !== 0 && !templateJsonData.enableRepo && !flag) {
 				 self.nextLiObj.before($(obj.item));
 				 $(".msgdisplay").removeClass("success").addClass("error");
 					$(".error").text("DownStream Job of "+ templateJson.name + " job Doesn't have the Repo!");

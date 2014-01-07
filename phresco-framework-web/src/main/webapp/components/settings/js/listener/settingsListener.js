@@ -77,7 +77,10 @@ define([], function() {
 			} else if (action === "stop") {
 				header.requestMethod = "POST";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.mvnCiStop;
-			} else if (action === "save") {
+			} else if (action === "presetup") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/presetup";
+			}else if (action === "save") {
 				header.requestMethod = "POST";
 				var eUser = $('input[name=username][temp=email]').val();
 				var ePass = $('input[name=password][temp=email]').val();
@@ -166,7 +169,7 @@ define([], function() {
 				jobTemplatesObject.ciListener.jenkinsStatus(function(response) {
 					if (response.data === "200") {
 						$('input[name=switch]').attr('value', "Stop");
-						$('input[name=setup]').attr('disabled', "disabled");
+						$('input[name=presetup]').attr('disabled', "disabled");
 					} else if (response.data === "503") {
 						$('input[name=switch]').attr('value', "Starting...");
 						$('input[name=start]').attr('disabled', "disabled");
@@ -186,7 +189,19 @@ define([], function() {
 			}
 		},
 		
+		presetup : function(obj) {
+			var self = this;
+			self.getHeaderResponse(self.getRequestHeader('', 'presetup'), function(response) {
+				if (response.data === false) {
+					self.setup();
+				} else {
+					self.openccci(obj, "yesnopopup_setup","setup", true);
+				}
+			});
+		},
+		
 		setup : function() {
+			$(".dyn_popup").hide();
 			var self = this;
 			var queryString = '';
 						
@@ -198,7 +213,7 @@ define([], function() {
 					self.mavenServiceListener.mvnCiSetup(queryString, '#testConsole', function(response) {
 						self.closeConsole();
 						if (response !== undefined && response.status === "COMPLETED") {
-							$('input[name=setup]').attr('disabled', "disabled");	
+							$('input[name=presetup]').attr('disabled', "disabled");	
 						}					
 						$('.progress_loading').hide();
 					});
@@ -207,7 +222,7 @@ define([], function() {
 				self.mavenServiceListener.mvnCiSetup(queryString, '#testConsole', function(response) {
 					self.closeConsole();
 					if (response !== undefined && response.status === "COMPLETED") {
-						$('input[name=setup]').attr('disabled', "disabled");	
+						$('input[name=presetup]').attr('disabled', "disabled");	
 					}					
 					$('.progress_loading').hide();
 				});

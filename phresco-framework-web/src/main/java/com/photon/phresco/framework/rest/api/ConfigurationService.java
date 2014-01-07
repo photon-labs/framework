@@ -112,6 +112,7 @@ import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
@@ -1015,18 +1016,21 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Path("/listEnvironmentsByProjectId")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response listEnvironmentsByProjectId(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_PROJECTID) String projectId) {
+			@QueryParam(REST_QUERY_PROJECTID) String projectId) throws PhrescoException, PhrescoPomException {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
 			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
 			Set<String> environmentSet = new HashSet<String>();
 			List<Environment> environments = new ArrayList<Environment>();
 			for (ApplicationInfo appInfo : appInfos) {
+				
+				String appDirPath = Utility.getPhrescoHome() + File.separator + appInfo.getAppDirName();
 				List<ModuleInfo> modules = appInfo.getModules();
 				if(CollectionUtils.isNotEmpty(modules)) {
 					for (ModuleInfo module : modules) {
+						String splitPath = Utility.splitPathConstruction(appInfo.getAppDirName());
 						String code = module.getCode();
-						environments = getEnvironments(appInfo.getAppDirName() + File.separator + code);
+						environments = getEnvironments(splitPath + File.separator + code);
 						for (Environment environment : environments) {
 							environmentSet.add(environment.getName());
 						}
@@ -1036,7 +1040,8 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 //						environmentSet.add(environment.getName());
 //					}
 				} else {
-					environments = getEnvironments(appInfo.getAppDirName());
+					String splitPath = Utility.splitPathConstruction(appInfo.getAppDirName());
+					environments = getEnvironments(splitPath);
 					for (Environment environment : environments) {
 						environmentSet.add(environment.getName());
 					}

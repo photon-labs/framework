@@ -525,7 +525,8 @@ public interface ResponseCodes {
 	String PHR810043 = "PHR810043"; // returned TestFlight configuration Failed
 	String PHR810044 = "PHR810044"; // returned TFS configuration successfully
 	String PHR810045 = "PHR810045"; // returned TFS configuration Failed
-	
+	String PHR810046 = "PHR810046"; // Setup details retrieved successfully
+	String PHR810047 = "PHR810047"; // Setup details retrieval Failed
 	
 	/*
 	 * Upgrade Service
