@@ -1179,7 +1179,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				if (phrescoRepoDetail != null) {
 					phrescoRepoUrl = phrescoRepoDetail.getRepoUrl();
 					appendedPhrUrl.append(phrescoRepoUrl);
-					if (SVN.equalsIgnoreCase(testRepoDetail.getType())) {
+					if (SVN.equalsIgnoreCase(phrescoRepoDetail.getType())) {
 						if (!phrescoRepoUrl.endsWith(FORWARD_SLASH)) {
 							appendedPhrUrl.append(FORWARD_SLASH);
 						}
@@ -1225,9 +1225,17 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					FileUtils.copyDirectoryToDirectory(copySrcDir, new File(Utility.getProjectHome()));
 				}
 				if (repoType.equals(GIT)) {
-					FileUtils.copyDirectoryToDirectory(tempPhrescoFile, dir);
-					FileUtils.copyDirectoryToDirectory(tempSrcFile, dir);
-					FileUtils.copyDirectoryToDirectory(tempTestFile, dir);
+					if (tempPhrescoFile.exists()) {
+						FileUtils.copyDirectoryToDirectory(tempPhrescoFile, dir);
+					}
+					
+					if (tempSrcFile.exists()) {
+						FileUtils.copyDirectoryToDirectory(tempSrcFile, dir);
+					}
+					
+					if (tempTestFile.exists()) {
+						FileUtils.copyDirectoryToDirectory(tempTestFile, dir);
+					}
 				}
 			} else {
 				appPomProcessor.setProperty(Constants.POM_PROP_KEY_SRC_REPO_URL, appendedSrcUrl.toString());
