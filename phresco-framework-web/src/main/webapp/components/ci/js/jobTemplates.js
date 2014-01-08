@@ -231,7 +231,8 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 					var obj = $('select[name=appIds]');
 					if (!self.isBlank(appInfos.data)) {
 						$.each(appInfos.data, function(key, value) {
-							if (self.isBlank(value.modules)) {
+							var mods = value.modules;
+							if (mods === undefined || mods === null || mods.length === 0) {
 								var opt = document.createElement("option");
 								opt.setAttribute('class',value.name);
 								opt.value = value.name;
