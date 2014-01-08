@@ -53,8 +53,8 @@ public class GitRepositoryImpl implements RepositoryManager, FrameworkConstants 
 		String url = null;
 		try {
 			String path = Utility.getProjectHome() + File.separator + appDirName;
-			ProjectInfo projectInfo = Utility.getProjectInfo(path, "");
-			File sourceFolderLocation = Utility.getSourceFolderLocation(projectInfo, path, "");
+			String dotFolderLocation = Utility.getDotPhrescoFolderPath(path, "");
+			File sourceFolderLocation = new File(dotFolderLocation).getParentFile();
 			if (!sourceFolderLocation.exists()) {
 				return null;
 			}
