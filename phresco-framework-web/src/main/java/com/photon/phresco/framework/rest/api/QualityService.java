@@ -25,6 +25,7 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -76,6 +77,7 @@ import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.FunctionalFrameworkInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.exception.PhrescoException;
@@ -426,6 +428,25 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			}
 			Map<String, Object> map = new HashMap<String, Object>();
 			String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(rootModulePath,subModuleName);
+			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+			FunctionalFrameworkInfo functionalFrameworkInfo = projectInfo.getAppInfos().get(0).getFunctionalFrameworkInfo();
+			if (functionalFrameworkInfo != null && StringUtils.isNotEmpty(functionalFrameworkInfo.getIframeUrl())) {
+				int responseCode = 400;
+				boolean connected = true;
+				try {
+					java.net.URL url = new java.net.URL(functionalFrameworkInfo.getIframeUrl());
+					HttpURLConnection connection = (HttpURLConnection) url.openConnection(); 
+					responseCode = connection.getResponseCode();
+				} catch (Exception e) {
+					connected = false;
+				}
+				if (connected && responseCode == 200) {
+					map.put(FUNCTIONAL_IFRAME_URL_ALIVE, true);
+					map.put(FUNCTIONAL_IFRAME_URL, functionalFrameworkInfo.getIframeUrl());
+				} else {
+					map.put(FUNCTIONAL_IFRAME_URL_ALIVE, false);
+				}
+			}
 			map.put(FUNCTIONAL_FRAMEWORK, functionalTestFramework);
 			if (SELENIUM_GRID.equalsIgnoreCase(functionalTestFramework)) {
 				HubConfiguration hubConfig = getHubConfiguration(rootModulePath,subModuleName);
