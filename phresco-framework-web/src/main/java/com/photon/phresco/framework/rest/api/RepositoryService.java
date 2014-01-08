@@ -1216,10 +1216,8 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			String rootModulePath = Utility.getProjectHome() + appDirName;
-			ProjectInfo rootprojectInfo = Utility.getProjectInfo(rootModulePath, "");
-			File sourceFolderLocation = Utility.getSourceFolderLocation(rootprojectInfo, rootModulePath, "");
+			File pomFile = Utility.getPomFileLocation(rootModulePath, "");
 			StringBuilder builder = new StringBuilder(Constants.MVN_COMMAND);
-			builder.append(Constants.MVN_COMMAND);
 			builder.append(Constants.SPACE);
 			builder.append(ActionType.RELEASE.getActionType());
 			builder.append("-Dusername=" + username);
@@ -1237,10 +1235,14 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			builder.append("-DbranchName=" + branchName);
 			builder.append(Constants.SPACE);
 			builder.append("-DappDirName=" + appDirName);
+			builder.append(Constants.SPACE);
+			builder.append("-f");
+			builder.append(Constants.SPACE);
+			builder.append(pomFile.getName());
 
 			Commandline cl = new Commandline(builder.toString());
-			if (StringUtils.isNotEmpty(sourceFolderLocation.getPath())) {
-				cl.setWorkingDirectory(sourceFolderLocation.getPath());
+			if (StringUtils.isNotEmpty(pomFile.getParent())) {
+				cl.setWorkingDirectory(pomFile.getParent());
 			}
 			Process process = cl.execute();
 			inputStream = process.getInputStream();
