@@ -70,6 +70,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileExistsException;
@@ -136,6 +137,7 @@ import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.LockUtil;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.ModuleInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.User;
@@ -1403,10 +1405,15 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			@QueryParam("message") String message, @QueryParam("developmentVersion") String developmentVersion,
 			@QueryParam("releaseVersion") String releaseVersion, @QueryParam("tag") String tag,
 			@QueryParam("branchName") String branchName, @QueryParam("deploy") String deploy,
-			@QueryParam("environmentName") String environmentName) {
+			@QueryParam("environmentName") String environmentName, @QueryParam(REST_QUERY_USERID) String userId) {
 		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
 		ActionResponse response = new ActionResponse();
 		try {
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			ProjectInfo projectInfo = Utility.getProjectInfo(Utility.getProjectHome().concat(appDirName), "");
+			String customerId = projectInfo.getCustomerIds().get(0);
+			Customer customer = serviceManager.getCustomer(customerId);
+			com.photon.phresco.commons.model.RepoInfo repoInfo = customer.getRepoInfo();
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			String rootModulePath = Utility.getProjectHome() + appDirName;
 			File pomFile = Utility.getPomFileLocation(rootModulePath, "");
@@ -1430,10 +1437,13 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			builder.append(Constants.SPACE);
 			builder.append("-DappDirName=" + appDirName);
 			builder.append(Constants.SPACE);
+			builder.append("-DrepoUserName=" + repoInfo.getRepoUserName());
+			builder.append(Constants.SPACE);
+			builder.append("-DrepoPassword=" + repoInfo.getRepoPassword());
+			builder.append(Constants.SPACE);
 			builder.append("-f");
 			builder.append(Constants.SPACE);
 			builder.append(pomFile.getName());
-			
 			UUID uniqueKey = UUID.randomUUID();
 			String unique_key = uniqueKey.toString();
 			
@@ -1686,7 +1696,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				if (StringUtils.isNotEmpty(version)) {
 					artifact = new DefaultArtifact(processor.getGroupId(), processor.getArtifactId(), "", processor.getPackage(), version);
 				} else {
-					artifact = new DefaultArtifact(processor.getGroupId(), processor.getArtifactId(), "", "", "");
+					artifact = new DefaultArtifact(processor.getGroupId(), processor.getArtifactId(), "", processor.getPackage(), "");
 				}
 			}
 		} catch (PhrescoPomException e) {
@@ -2646,7 +2656,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			appendItem.appendChild(release);
 
 			RepositorySystem system = newRepositorySystem();
-			Artifact artifact = new DefaultArtifact(artifacts.getGroupId() + ":" + artifacts.getArtifactId()+ ":" + "[,)");
+			Artifact artifact = new DefaultArtifact(artifacts.getGroupId() + ":" + artifacts.getArtifactId()+ ":" + artifacts.getExtension() + ":" + "[,)");
 			for (String url : urls) {
 				UUID randomUUID = UUID.randomUUID();
 				randomIds.add(randomUUID);

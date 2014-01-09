@@ -1247,6 +1247,15 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				String scmUrl = SCM + COLON + repoType + COLON + appendedSrcUrl.toString();
 				appPomProcessor.setSCM(appendedSrcUrl.toString(), scmUrl, scmUrl, "");
 				appPomProcessor.save();
+				if(StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
+					File pom = new File(dir, appInfo.getPomFile());
+					if(pom.exists()) {
+						PomProcessor processor = new PomProcessor(pom);
+						processor.setSCM(appendedSrcUrl.toString(), scmUrl, scmUrl, "");
+						processor.save();
+					}
+					
+				}
 				addToRepo(srcRepoDetail, appInfo, dir, appDirName, dir, hasSplit);
 			}
 		} catch (Exception e) {
