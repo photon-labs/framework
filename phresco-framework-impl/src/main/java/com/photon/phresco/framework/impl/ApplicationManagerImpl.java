@@ -232,10 +232,12 @@ public class ApplicationManagerImpl implements ApplicationManager {
 				}
 			}
 				// String pomFileName = Utility.getPhrescoPomFile(applicationInfo);
+			if(!Constants.POM_NAME.equals(pomFileName)) {
 				builder.append(Constants.SPACE);
 				builder.append("-f");
 				builder.append(Constants.SPACE);
 				builder.append(pomFileName);
+			}
 			}
 		return builder;
 

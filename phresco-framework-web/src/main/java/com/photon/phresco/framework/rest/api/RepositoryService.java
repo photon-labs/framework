@@ -911,7 +911,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				StringBuilder builder = new StringBuilder();
 				builder.append(Constants.MVN_COMMAND)
 				.append(Constants.STR_BLANK_SPACE)
-				.append(Constants.SCM_RELEASE).append(Constants.STR_COLON).append(Constants.SCM_BRANCH)
+				.append("org.apache.maven.plugins:maven-release-plugin:2.4").append(Constants.STR_COLON).append(Constants.SCM_BRANCH)
 				.append(Constants.STR_BLANK_SPACE)
 				.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_BRANCH_NAME)
 				.append(Constants.STR_EQUALS).append(branchName)
@@ -1052,7 +1052,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				StringBuilder builder = new StringBuilder();
 				builder.append(Constants.MVN_COMMAND)
 				.append(Constants.STR_BLANK_SPACE)
-				.append(Constants.SCM_RELEASE).append(Constants.STR_COLON).append(Constants.SCM_PREPARE)
+				.append("org.apache.maven.plugins:maven-release-plugin:2.4").append(Constants.STR_COLON).append(Constants.SCM_PREPARE)
 				.append(Constants.STR_BLANK_SPACE)
 				.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_USERNAME)
 				.append(Constants.STR_EQUALS).append(username)

@@ -375,6 +375,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		try {
 			response = serviceManager.createProject(projectInfo);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new PhrescoException(e);
 		}
 
@@ -394,14 +395,17 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						for (ModuleInfo module : appInfo.getModules()) {
 							File moduleDir = new File(Utility.getProjectHome() + module.getRootModule() + File.separator + module.getCode());
 							String pluginInfoFile = moduleDir.getPath() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  APPLICATION_HANDLER_INFO_FILE;
-							ApplicationInfo subModuleAppInfo = ProjectUtils.getApplicationInfo(moduleDir);
+							ProjectInfo newProjecInfo = ProjectUtils.getApplicationInfo(moduleDir);
+							ApplicationInfo subModuleAppInfo = newProjecInfo.getAppInfos().get(0);
 							updateJobTemplates(moduleDir, module);
-							postProjectCreation(projectInfo, serviceManager, projectUtils, repoInfo, subModuleAppInfo, pluginInfoFile, moduleDir);
+							postProjectCreation(newProjecInfo, serviceManager, projectUtils, repoInfo, subModuleAppInfo, pluginInfoFile, moduleDir);
 						}
 					} else {
 						String pluginInfoFile = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  APPLICATION_HANDLER_INFO_FILE;
 						File path = new File(Utility.getProjectHome() + appInfo.getAppDirName());
-						postProjectCreation(projectInfo, serviceManager, projectUtils, repoInfo, appInfo, pluginInfoFile, path);
+						ProjectInfo newProjecInfo = ProjectUtils.getApplicationInfo(path);
+						
+						postProjectCreation(newProjecInfo, serviceManager, projectUtils, repoInfo, appInfo, pluginInfoFile, path);
 					}
 				}
 			} catch (FileNotFoundException e) {
@@ -508,13 +512,15 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				
 				if (isCallEclipsePlugin(appInfo, "")) {
 					ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-					List<String> buildArgCmds = new ArrayList<String>();
-					String pomFileName = Utility.getPomFileName(appInfo);
-					if(!POM_NAME.equals(pomFileName)) {
-						buildArgCmds.add(HYPHEN_F);
-						buildArgCmds.add(pomFileName);
-					}
-					applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir.getPath());
+//					List<String> buildArgCmds = new ArrayList<String>();
+//					String pomFileName = Utility.getPhrescoPomFile(appInfo);
+//					System.out.println("pomfile name for eclipse pliging ::" + pomFileName);
+//					if(!POM_NAME.equals(pomFileName)) {
+//						System.out.println("dddadads" + pomFileName);
+//						buildArgCmds.add(HYPHEN_F);
+//						buildArgCmds.add(pomFileName);
+//					}
+					applicationManager.performAction(projectInfo, ActionType.ECLIPSE, null, baseDir.getPath());
 				}
 				createConfigurationXml(serviceManager, appInfo.getRootModule(), appInfo.getAppDirName(), "");
 			}	
@@ -603,12 +609,12 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					File pomFilePath = Utility.getPomFileLocation(rootModulePath, subModuleName);
 					if (isCallEclipsePlugin(appInfo ,pomFilePath.getPath())) {
 						ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-						List<String> buildArgCmds = new ArrayList<String>();
-						if(!POM_NAME.equals(pomFilePath.getName())) {
-							buildArgCmds.add(HYPHEN_F);
-							buildArgCmds.add(pomFilePath.getName());
-						}
-						applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, pomFilePath.getParent());
+//						List<String> buildArgCmds = new ArrayList<String>();
+//						if(!POM_NAME.equals(pomFilePath.getName())) {
+//							buildArgCmds.add(HYPHEN_F);
+//							buildArgCmds.add(pomFilePath.getName());
+//						}
+						applicationManager.performAction(projectInfo, ActionType.ECLIPSE, null , pomFilePath.getParent());
                     }
 				} finally {
 					if(backUpProjectInfoFile!= null && backUpProjectInfoFile.exists()) {
@@ -676,12 +682,12 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				if (isCallEclipsePlugin(appInfo, pom.getPath())) {
 					ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 //					File pomFilePath = new File(pom);
-					List<String> buildArgCmds = new ArrayList<String>();
-					if(!POM_NAME.equals(pom.getName())) {
-						buildArgCmds.add(HYPHEN_F);
-						buildArgCmds.add(pom.getName());
-					}
-					applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds,pom.getParent());
+//					List<String> buildArgCmds = new ArrayList<String>();
+//					if(!POM_NAME.equals(pom.getName())) {
+//						buildArgCmds.add(HYPHEN_F);
+//						buildArgCmds.add(pom.getName());
+//					}
+					applicationManager.performAction(projectInfo, ActionType.ECLIPSE, null,pom.getParent());
 				}
 				createConfigurationXml(serviceManager, rootModulePath, appDirName, dotPhrescoFolderPath);
 			} else if (response.getStatus() == 401) {

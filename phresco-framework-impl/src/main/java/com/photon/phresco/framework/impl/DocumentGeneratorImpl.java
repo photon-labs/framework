@@ -101,7 +101,9 @@ public class DocumentGeneratorImpl implements DocumentGenerator {
             if(CollectionUtils.isNotEmpty(artifacts)) {
             	for (ArtifactGroup artifactGroup : artifacts) {
             		ArtifactElement artifactDescription = serviceManager.getArtifactDescription(artifactGroup.getId());
+            		if(artifactDescription != null) {
             		artifactGroup.setDescription(artifactDescription.getDescription());
+            		}
 				}
             	DocumentUtil.addPages(artifacts, pdfCopy);
             }

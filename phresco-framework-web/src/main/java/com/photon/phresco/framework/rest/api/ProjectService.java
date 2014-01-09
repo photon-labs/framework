@@ -1304,7 +1304,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			ApplicationInfo rootAppInfo = FrameworkServiceUtil.getApplicationInfo(rootModule);
 			if (rootAppInfo != null && CollectionUtils.isNotEmpty(rootAppInfo.getModules())) {
 				File currentModule = new File(Utility.getProjectHome() + rootModule + File.separator + moduleName);
-				ApplicationInfo currentModuleAppInfo = ProjectUtils.getApplicationInfo(currentModule);
+				ApplicationInfo currentModuleAppInfo = ProjectUtils.getApplicationInfo(currentModule).getAppInfos().get(0);
 				String currentModulePomName = Utility.getPomFileName(currentModuleAppInfo);
 				File currentModulePom = new File(currentModule.getPath() + File.separator + currentModulePomName);
 				if (currentModulePom.exists()) {
@@ -1314,7 +1314,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					for (ModuleInfo module : rootAppInfo.getModules()) {
 						if (!moduleName.equals(module.getCode())) {
 							File otherModuleDir = new File(Utility.getProjectHome() + rootModule + File.separator + module.getCode());
-							ApplicationInfo otherModuleAppInfo = ProjectUtils.getApplicationInfo(otherModuleDir);
+							ApplicationInfo otherModuleAppInfo = ProjectUtils.getApplicationInfo(otherModuleDir).getAppInfos().get(0);
 							String pomFileName = Utility.getPomFileName(otherModuleAppInfo);
 							File pom = new File (otherModuleDir.getPath() + File.separator + pomFileName);
 							if (pom.exists()) {
