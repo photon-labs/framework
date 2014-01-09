@@ -4,7 +4,7 @@
     <artifactId>phresco-framework-root</artifactId>
     <packaging>pom</packaging>
     <name>Phresco Framework</name>
-    <version>3.2.0.8004-SNAPSHOT</version>
+    <version>3.2.0.8005-SNAPSHOT</version>
     <description>phresco-framework-root</description>
     <url>http://www.phresco.org</url>
     <scm>
