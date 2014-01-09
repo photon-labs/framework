@@ -338,6 +338,7 @@ public interface FrameworkConstants {
     String SCM_BRANCHES_NAME = "scm/branches//name";
     String SCM_USER_REMOTE_CONFIGS_URL = "scm/userRemoteConfigs//url";
     String SCM_LOCATIONS_REMOTE = "scm/locations//remote";
+    String SCM_LOCATIONS = "scm/locations";
     String DD_MM_YYYY_HH_MM_SS = "dd/MM/yyyy hh:mm:ss";
 	String HUDSON_TASKS_BUILD_TRIGGER_NODE = "hudson.tasks.BuildTrigger";
 	String TFS_URL = "scm/serverUrl";

@@ -26,6 +26,7 @@
 											<option value="performanceTest" data-i18n="ci.performancetest"></option>
 											<option value="loadTest" data-i18n="ci.loadtest"></option>
 											<option value="pdfReport" data-i18n="ci.pdfreport"></option>
+											<option value="release" data-i18n="ci.release"></option>
                                       </select>
                                   </td>
                                 </tr>

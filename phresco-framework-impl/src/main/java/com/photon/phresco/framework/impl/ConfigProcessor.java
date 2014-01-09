@@ -41,7 +41,6 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 import org.jdom.xpath.XPath;
 
-import com.photon.phresco.commons.CIPasswordScrambler;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.CIJob;
 import com.photon.phresco.exception.PhrescoException;
@@ -82,6 +81,55 @@ public class ConfigProcessor implements FrameworkConstants {
         	S_LOGGER.debug("changeNodeValue() NodeValue ="+ nodeValue);
 		}
         scmNode.setText(nodeValue);
+    }
+    
+    
+    
+    public void addAdditionalRepos(String nodePath, CIJob job) throws JDOMException, PhrescoException {
+    	
+    	S_LOGGER.debug("Entering Method ConfigProcessor.createTriggers()");
+    	XPath xpath = XPath.newInstance(nodePath);
+        xpath.addNamespace(root_.getNamespace());
+        Element locations = (Element) xpath.selectSingleNode(root_);
+        locations.removeContent();
+        
+        String local = ".";
+       if (!POM_XML.equalsIgnoreCase(job.getPomLocation())) {
+    	   if (StringUtils.isNotEmpty(job.getPhrescoUrl())) {
+           	local = getTail(job.getPhrescoUrl());
+           	locations.addContent(createSvnRepoElement(job.getPhrescoUrl(), local)); 
+           }
+       } 
+        
+        local = ".";
+        if (StringUtils.isNotEmpty(job.getTestUrl()) || StringUtils.isNotEmpty(job.getPhrescoUrl())) {
+        	local = getTail(job.getUrl());
+        }
+        locations.addContent(createSvnRepoElement(job.getUrl(), local));
+        
+        if (POM_XML.equalsIgnoreCase(job.getPomLocation())) {
+     	   if (StringUtils.isNotEmpty(job.getPhrescoUrl())) {
+            	local = getTail(job.getPhrescoUrl());
+            	locations.addContent(createSvnRepoElement(job.getPhrescoUrl(), local)); 
+            }
+        } 
+        
+        if (StringUtils.isNotEmpty(job.getTestUrl())) {
+        	local = getTail(job.getTestUrl());
+        	locations.addContent(createSvnRepoElement(job.getTestUrl(), local)); 
+        }
+    }
+    
+    private String getTail(String repo) throws PhrescoException {
+        String[] parts = repo.split(FORWARD_SLASH);
+        return parts[parts.length - 2];
+    }
+    
+    private org.jdom.Element createSvnRepoElement(String Url, String local) {
+    	org.jdom.Element element = new Element("hudson.scm.SubversionSCM_-ModuleLocation");
+		element.addContent(createElement("remote", Url));
+		element.addContent(createElement("local", local));
+		return element;
     }
     
     public void createTriggers(String nodePath, List<String> triggers, String cronExpression) throws JDOMException {

@@ -30,7 +30,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
@@ -81,6 +80,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.plexus.util.FileUtils;
 import org.jdom.JDOMException;
 import org.json.JSONObject;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -105,7 +105,6 @@ import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.impl.util.FrameworkUtil;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
-import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.trilead.ssh2.crypto.Base64;
 
@@ -240,6 +239,12 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				StringBuilder ciPath = new StringBuilder(jenkinsUrl);
 				ciPath.append(SCM_SUBVERSION_SCM_POST_CREDENTIAL);
 				setSVNCredentials(ciPath.toString(), job.getUrl(), job.getUsername(), job.getPassword());
+				if (StringUtils.isNotEmpty(job.getPhrescoUrl())) {
+					setSVNCredentials(ciPath.toString(), job.getPhrescoUrl(), job.getPhrescoUsername(), job.getPhrescoPassword());
+				}
+				if (StringUtils.isNotEmpty(job.getTestUrl())) {
+					setSVNCredentials(ciPath.toString(), job.getTestUrl(), job.getTestUsername(), job.getTestPassword());
+				}
 			}
 			return new CIJobStatus(result, message);
 		} catch (JDOMException e) {
@@ -820,7 +825,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		//SVN url customization
 		if (SVN.equals(job.getRepoType())) {
 			S_LOGGER.debug("This is svn type project!!!!!");
-			processor.changeNodeValue(SCM_LOCATIONS_REMOTE, job.getUrl());
+			processor.addAdditionalRepos(SCM_LOCATIONS, job);
 		//GIT url customization
 		} else if (GIT.equals(job.getRepoType())) {
 			S_LOGGER.debug("This is git type project!!!!!");
@@ -937,52 +942,18 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			//shell#SEP#cmd, mvn#SEP#clean install
 			for (String preBuildStepCommand : preBuildStepCommands) {
 				String pomLocation = job.getPomLocation();
-				if (StringUtils.isNotEmpty(constructSubPath(job.getAppDirName()))) {
-					pomLocation = constructSubPath(job.getAppDirName());
+				boolean flag = false;
+				if (StringUtils.isNotEmpty(job.getUrl())) {
+					flag = true;
+				}
+				if (StringUtils.isNotEmpty(Utility.constructSubPath(job.getAppDirName(), flag))) {
+					pomLocation = Utility.constructSubPath(job.getAppDirName(), flag);
 				}
 				
 				processor.enablePreBuildStep(pomLocation, preBuildStepCommand); 
 			}
 		}
 
-	}
-	
-	private String constructSubPath(String appDirName) throws FileNotFoundException {
-		File rootDir = new File(Utility.getProjectHome() + appDirName);
-		File dotPhresco = new File(rootDir, ".phresco");
-		ApplicationInfo applicationInfo;
-		if (dotPhresco.exists() && dotPhresco.isDirectory()) {
-			applicationInfo = returnAppInfo(rootDir);
-			if (StringUtils.isNotEmpty(applicationInfo.getPhrescoPomFile())) {
-				return applicationInfo.getPhrescoPomFile();
-			}
-			return applicationInfo.getPomFile();
-		} 
-		dotPhresco = new File(rootDir, appDirName+"-phresco");
-		
-		if (dotPhresco.exists() && dotPhresco.isDirectory()) {
-			applicationInfo = returnAppInfo(dotPhresco);
-			if (StringUtils.isNotEmpty(applicationInfo.getPhrescoPomFile())) {
-				return appDirName+"-phresco" + File.separator + applicationInfo.getPhrescoPomFile();
-			}
-			return appDirName + File.separator + applicationInfo.getPomFile();
-		}
-		dotPhresco = new File(rootDir, appDirName);
-		if (dotPhresco.exists() && dotPhresco.isDirectory()) {
-			applicationInfo = returnAppInfo(dotPhresco);
-			return appDirName + File.separator + applicationInfo.getPomFile();
-		}
-		
-		return "pom.xml";
-	}
-	
-	private ApplicationInfo returnAppInfo(File dotPhresco) throws FileNotFoundException {
-		dotPhresco = new File(dotPhresco, ".phresco/project.info");
-		System.out.println("dotPhresco Path ====> "+dotPhresco);
-		Gson gson = new Gson();
-		BufferedReader reader = new BufferedReader(new FileReader(dotPhresco));
-		ProjectInfo projectInfo = gson.fromJson(reader, ProjectInfo.class);
-		return projectInfo.getAppInfos().get(0);
 	}
 	
 	private CIJobStatus deleteCI(CIJob job, String builds) throws PhrescoException {

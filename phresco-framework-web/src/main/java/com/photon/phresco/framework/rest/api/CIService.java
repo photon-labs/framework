@@ -18,11 +18,11 @@
 package com.photon.phresco.framework.rest.api;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
@@ -1491,6 +1491,8 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			throw new PhrescoException(e);
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
+		} catch (FileNotFoundException e) {
+			throw new PhrescoException(e);
 		}
 	}
 	
@@ -1524,7 +1526,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		}
 	}
 	
-	public CIJob setPreBuildCmds(CIJob job, ApplicationInfo appInfo, String appDir, String id, String name, String userId, String customerId, HttpServletRequest request) throws PhrescoException {
+	public CIJob setPreBuildCmds(CIJob job, ApplicationInfo appInfo, String appDir, String id, String name, String userId, String customerId, HttpServletRequest request) throws PhrescoException, FileNotFoundException {
 		try {
 			List<String> preBuildStepCmds = new ArrayList<String>();
 
@@ -1532,7 +1534,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 
 			String mvncmd = "";
 
-			String pomFileName = Utility.getPhrescoPomFile(appInfo);
+//			String pomFileName = Utility.getPhrescoPomFile(appInfo);
+			boolean flag = false;
+			if (StringUtils.isNotEmpty(job.getUrl())) {
+				flag = true;
+			}
+			String pomFileName = Utility.constructSubPath(appInfo.getAppDirName(), flag);
 			job.setPomLocation(pomFileName);
 			
 			// jenkins configurations
@@ -1560,15 +1567,28 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				splitPath = splitPath + File.separator +job.getModule();
 			} 
 			
+			File pomFileLocation = Utility.getPomFileLocation(Utility.getProjectHome() + File.separator + job.getAppDirName(), "");
+			PomProcessor pom = new PomProcessor(pomFileLocation);
+			String splitDir = pom.getProperty(POM_PROP_KEY_SPLIT_PHRESCO_DIR);
+			String srcDir = pom.getProperty(POM_PROP_KEY_SPLIT_SRC_DIR);
+			
 			if (BUILD.equalsIgnoreCase(operation)) {
 				// enable archiving
 				job.setEnableArtifactArchiver(true);
 				// if the enable build release option is choosed in UI, the file pattenr value will be used
 				List<String> modules = FrameworkServiceUtil.getProjectModules(job.getAppDirName());
+				String releasePattern = "";
+				if (!POM_NAME.equals(pomFileName) && StringUtils.isNotEmpty(splitDir)) {
+					releasePattern = splitDir;
+				} else if (POM_NAME.equals(pomFileName) && StringUtils.isNotEmpty(srcDir)){
+					releasePattern = srcDir;
+				}
+				
 				if (StringUtils.isNotEmpty(job.getModule())) {
-					job.setCollabNetFileReleasePattern(job.getModule()+"/do_not_checkin/build/*.zip");
+					releasePattern = job.getModule() + File.separator + releasePattern;
+					job.setCollabNetFileReleasePattern(releasePattern+"/do_not_checkin/build/*.zip");
 				} else if (CollectionUtils.isEmpty(modules)) {
-					job.setCollabNetFileReleasePattern(CI_BUILD_EXT);
+					job.setCollabNetFileReleasePattern(releasePattern + File.separator + CI_BUILD_EXT);
 				} else {
 					job.setEnableArtifactArchiver(false);
 				}
@@ -1609,12 +1629,18 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				String attachPattern = "do_not_checkin/archives/" + attacheMentPattern + "/*.pdf";
 				job.setAttachmentsPattern(attachPattern); //do_not_checkin/archives/cumulativeReports/*.pdf
 				// if the enable build release option is choosed in UI, the file pattenr value will be used
-				
+				String releasePattern = "";
+				if (!POM_NAME.equals(pomFileName) && StringUtils.isNotEmpty(splitDir)) {
+					releasePattern = splitDir;
+				} else 	if (POM_NAME.equals(pom) && StringUtils.isNotEmpty(srcDir)){
+					releasePattern = srcDir;
+				}
 				List<String> modules = FrameworkServiceUtil.getProjectModules(job.getAppDirName());
 				if (StringUtils.isNotEmpty(job.getModule())) {
-					job.setCollabNetFileReleasePattern(job.getModule()+ "/" + attachPattern);
+					releasePattern = job.getModule()+ File.separator + releasePattern;
+					job.setCollabNetFileReleasePattern(releasePattern + File.separator + attachPattern);
 				} else {
-					job.setCollabNetFileReleasePattern(attachPattern);
+					job.setCollabNetFileReleasePattern(releasePattern + File.separator + attachPattern);
 				}
 
 				// here we can set necessary values in request and we can change object value as well...
@@ -1724,12 +1750,24 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				ActionType actionType = ActionType.COMPONENT_TEST;
 				mvncmd =  actionType.getActionType().toString();
 				operationName = Constants.PHASE_COMPONENT_TEST;
+			} else if (PHASE_RELEASE.equals(operation)) {
+				path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, PHASE_RELEASE, splitPath);
+				File phrescoPluginInfoFilePath = new File(path);
+				if (phrescoPluginInfoFilePath.exists()) {
+					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
+					//To get maven build arguments
+					parameters = FrameworkServiceUtil.getMojoParameters(mojo, PHASE_RELEASE);
+				}
+				ActionType actionType = ActionType.RELEASE;
+				mvncmd =  actionType.getActionType().toString();
+				mvncmd = mvncmd + HYPHEN_DEV_VERSION + job.getDevelopmentVersion() + HYPHEN_REL_VERSION +job.getReleaseVersion()+ HYPHEN_TAG +job.getTagName()+ HYPHEN_USERNAME + job.getReleaseUsername() + HYPHEN_PASSWORD + job.getReleasePassword() + HYPHEN_MESSAGE + job.getReleaseMessage() + HYPHEN_JOBNAME + job.getJobName();
+				operationName = PHASE_RELEASE;
 			} 
 			
-			prebuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + operationName +
+			prebuildCmd = CI_PRE_BUILD_STEP + HYPHEN_GOAL + Constants.PHASE_CI + HYPHEN_PHASE + operationName +
 			CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
 			if(!POM_NAME.equals(pomFileName)) {
-				prebuildCmd = prebuildCmd + " -f " + pomFileName; 
+				prebuildCmd = prebuildCmd + HYPHEN_F_SPACE + pomFileName; 
 			}
 			// To handle multi module project
 			prebuildCmd = prebuildCmd + FrameworkConstants.SPACE + HYPHEN_N; 

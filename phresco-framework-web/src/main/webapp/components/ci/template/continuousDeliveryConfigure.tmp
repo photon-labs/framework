@@ -63,15 +63,65 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr id="url">
-									<td>
-										<input name="svnUrl" type="text" data-i18n="[placeholder]ci.placeholder.svnurl">
-									</td>
-								</tr>
-								<tr id="cred">
-									<td><input name="username" type="text" data-i18n="[placeholder]login.placeholder.username"></td>
-									<td><input name="password" type="password" data-i18n="[placeholder]login.placeholder.password"></td>
-								</tr>
+								<td>
+									
+									<div class="bs-docs-example repository_tabdiv">						
+										<ul class="nav nav-tabs" id="myTab">
+											<li class="active"><a data-toggle="tab" href="#sourceTab">Source</a></li>
+											<li><input type="checkbox" id="urlDotPhresco" class="urlDotPhresco"><a class="repo_tab dotPhrescoA">.Phresco</a></li>
+											<li><input type="checkbox" id="urlTest" class="urlTest"><a class="repo_tab testA">Test</a></li>
+										</ul>
+									</div>
+									<div class="tab-content" id="myTabContent">
+										<div id="sourceTab" class="tab-pane fade active in">
+								 				<table width="90%" border="0" cellspacing="0" cellpadding="0">
+													<tbody>
+														<tr id="url">
+															<td>
+																<input name="url" type="text" data-i18n="[placeholder]ci.placeholder.svnurl">
+															</td>
+														</tr>
+														<tr id="cred">
+															<td><input name="username" type="text" data-i18n="[placeholder]login.placeholder.username"></td>
+															<td><input name="password" type="password" data-i18n="[placeholder]login.placeholder.password"></td>
+														</tr>
+												</tbody>
+											</table>
+										</div>
+										
+										<div id="dotphrescoTab" class="tab-pane fade">
+					 						<table width="90%" border="0" cellspacing="0" cellpadding="0">
+												<tbody>
+													<tr id="phrescoUrl">
+														<td>
+															<input name="phrescoUrl" type="text" data-i18n="[placeholder]ci.placeholder.svnurl">
+														</td>
+													</tr>
+													<tr id="phrescoCred">									
+														<td><input name="phrescoUsername" type="text" data-i18n="[placeholder]login.placeholder.username"></td>
+														<td><input name="phrescoPassword" type="password" data-i18n="[placeholder]login.placeholder.password"></td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+										
+										<div id="testTab" class="tab-pane fade">
+							 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+												<tbody>
+													<tr id="testUrl">
+														<td>
+															<input name="testUrl" type="text" data-i18n="[placeholder]ci.placeholder.svnurl">
+														</td>
+													</tr>
+													<tr id="testCred">
+														<td><input name="testUsername" type="text" data-i18n="[placeholder]login.placeholder.username"></td>
+														<td><input name="testPassword" type="password" data-i18n="[placeholder]login.placeholder.password"></td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>	
+								</td>
 							</tbody>
 						</table>
 						
@@ -135,14 +185,17 @@
 							</thead>
 							<tbody>
 								<tr>
-									<!--<td><input name="senderEmailId" type="text" placeholder="Email"></td>
-									<td><input name="senderEmailPassword" type="password" data-i18n="[placeholder]login.placeholder.password"></td>-->
 									<td><input name="successEmailIds" type="text" data-i18n="[placeholder]ci.placeholder.whensuccess"></td>
 									<td><input name="failureEmailIds" type="text" data-i18n="[placeholder]ci.placeholder.whenfailure"></td>
 								</tr>
 							</tbody>
 						</table>
 						<!-- Basic Settings ends here -->
+						
+						<!-- Release specification starts -->
+						<table id="release" class="table table-striped table_border table-bordered mail_settings border_div" cellpadding="0" cellspacing="0" border="0">
+						</table>
+						<!-- Release specification starts -->
 	
 						<!-- Clone and Downstream specification starts -->
 						<div id="downstreamConfig">
