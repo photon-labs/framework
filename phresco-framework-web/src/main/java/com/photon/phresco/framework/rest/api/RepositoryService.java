@@ -838,10 +838,12 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				WebResource webResource = client.resource(artifactPath + DESCRIBE_INFO);
 				ClientResponse clientResponse = webResource.get(ClientResponse.class);
 				String info = (String)clientResponse.getEntity(String.class);
-				ArtifactInfoResourceResponse artifactInfo = new Gson().fromJson(info, ArtifactInfoResourceResponse.class);
-				infos = artifactInfo.getData();
-				infoMap.put(ARTIFACT_INFO, infos);
-				infoMap.put(MAVEN_INFO, artifact);
+				if (!info.startsWith(HTML_ELEMENT)) {
+					ArtifactInfoResourceResponse artifactInfo = new Gson().fromJson(info, ArtifactInfoResourceResponse.class);
+					infos = artifactInfo.getData();
+					infoMap.put(ARTIFACT_INFO, infos);
+					infoMap.put(MAVEN_INFO, artifact);
+				}
 			}
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, infoMap, status, successCode);
 			response = Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")

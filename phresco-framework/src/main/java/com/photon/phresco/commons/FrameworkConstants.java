@@ -2164,5 +2164,6 @@ public interface FrameworkConstants {
 	    String PASS_PHARASE = "PBKDF2WithHmacSHA1kjkljfklsdgl";
 	    String DESAL         = "DESede";
 	    String MODEL_VERSION = "4.0.0";
+	    String HTML_ELEMENT = "<html>";
 
 }
