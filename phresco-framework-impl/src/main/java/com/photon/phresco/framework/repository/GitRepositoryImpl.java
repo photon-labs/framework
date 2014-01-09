@@ -42,7 +42,7 @@ public class GitRepositoryImpl implements RepositoryManager, FrameworkConstants 
 				documents.add(documentValue);
 			}
 		} catch (PhrescoException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		}
 		return documents;
 	}
