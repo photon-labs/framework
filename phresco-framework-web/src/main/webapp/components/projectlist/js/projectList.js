@@ -712,7 +712,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			
 			$("input[name='deleteConfirm']").unbind('click');
 			$("input[name='deleteConfirm']").click(function(e) {
-				self.projectslistListener.delprojectname = $(this).attr('deleteAppname'), deleteObj = {};
+				self.projectslistListener.delprojectname = $(this).parent().parent().attr("currentprjname"), deleteObj = {};
 				var deletearray = [], deleteproject, imgname1, imgname2, deletemulti, flag_multi = 0;
 				deleteproject = $(this).parent().parent().attr('currentPrjName');
 				deletemulti = $(this).parent().parent().attr('currentmodulename');
