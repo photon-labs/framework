@@ -2491,9 +2491,12 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 				float totalBlocked = 0;
 				float notExecuted = 0;
 				float totalTestCases = 0;
+				for (int i = 0; i <=23; i++) {
+					rowIterator.next();
+				}
 				do {
 					next = rowIterator.next();
-					if (StringUtils.isNotEmpty(getValue(next.getCell(0))) && !getValue(next.getCell(0)).equalsIgnoreCase("S.NO")) {
+					if (StringUtils.isNotEmpty(getValue(next.getCell(1))) && !getValue(next.getCell(0)).equalsIgnoreCase("S.NO")) {
 						String value = getValue(next.getCell(11));
 						if (StringUtils.isNotEmpty(value)) {
 							if (value.equalsIgnoreCase("success")) {
@@ -2598,9 +2601,13 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 					float totalBlocked = 0;
 					float notExecuted = 0;
 					float totalTestCases = 0;
+					for (int i = 0; i <=23; i++) {
+						rowIterator.next();
+					}
+					 
 					do {
 						next = rowIterator.next();
-						if (StringUtils.isNotEmpty(getValue(next.getCell(0))) && !getValue(next.getCell(0)).equalsIgnoreCase("S.NO")) {
+						if (StringUtils.isNotEmpty(getValue(next.getCell(1))) && !getValue(next.getCell(0)).equalsIgnoreCase("S.NO")) {
 							String value = getValue(next.getCell(11));
 							if (StringUtils.isNotEmpty(value)) {
 								if (value.equalsIgnoreCase("success")) {
