@@ -30,65 +30,63 @@ import com.photon.phresco.framework.impl.util.FrameworkUtil;
 import com.photon.phresco.util.Utility;
 
 public class GitRepositoryImpl implements RepositoryManager, FrameworkConstants {
-	public List<String> getSource(String customerId, String projectId, String username, String password, String srcRepoUrl) throws PhrescoException {
+	public Document getSource(String appDirName, String username, String password, String srcRepoUrl) throws PhrescoException {
 		List<String> documents = new ArrayList<String>();
 		Document document = null;
 		try {
-			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
-			for (ApplicationInfo applicationInfo : appInfos) {
-				String appDirName = applicationInfo.getAppDirName();
-				document = getGitSourceRepo(appDirName);
-				String documentValue = FrameworkUtil.convertDocumentToString(document);
-				documents.add(documentValue);
-			}
+			document = getGitSourceRepo(appDirName);
 		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
-		}
-		return documents;
+		throw new PhrescoException(e);
 	}
-	
+	return document;
+}
 	
 	private Document getGitSourceRepo(String appDirName) throws PhrescoException {
 		Document document = null;
 		String url = null;
 		try {
-			String path = Utility.getProjectHome() + File.separator + appDirName;
-			String dotFolderLocation = Utility.getDotPhrescoFolderPath(path, "");
-			File sourceFolderLocation = new File(dotFolderLocation).getParentFile();
-			if (!sourceFolderLocation.exists()) {
-				return null;
-			}
-			Git git = Git.open(new File(sourceFolderLocation.getPath()));
-			List<String> branchList = new ArrayList<String>();
-			List<String> tagLists = new ArrayList<String>();
-
-			List<Ref> remoteCall = git.branchList().setListMode(ListMode.REMOTE).call();
-			for (Ref ref : remoteCall) {
-				branchList.add(ref.getName());
-			}
-
-			ListTagCommand tagList = git.tagList();
-			Map<String, Ref> tags = tagList.getRepository().getTags();
-			Set<Entry<String,Ref>> entrySet = tags.entrySet();
-			for (Entry<String, Ref> entry : entrySet) {
-				tagLists.add(entry.getKey());
-			}
-
-			StoredConfig config = git.getRepository().getConfig();
-			Set<String> subsections = config.getSubsections(REMOTE);
-			for (String string : subsections) {
-				String[] urlList = config.getStringList(REMOTE, string, URL);
-				for (String urlPath : urlList) {
-					url = urlPath;
+			String gitPaths = Utility.getProjectHome() + File.separator + appDirName + File.separator +  ".git";
+			String dotPhrescogitPaths = Utility.getProjectHome() + File.separator + appDirName + File.separator + appDirName + "-phresco" + File.separator +  ".git";
+			File gitPath = new File(gitPaths);
+			File dotPhrescogitPath = new File(dotPhrescogitPaths);
+			String path = Utility.getProjectHome() + File.separator + appDirName ;
+			if (gitPaths != null && gitPath.exists() || dotPhrescogitPaths != null && dotPhrescogitPath.exists()) {
+				String dotFolderLocation = Utility.getDotPhrescoFolderPath(path, "");
+				File sourceFolderLocation = new File(dotFolderLocation).getParentFile();
+				if (!sourceFolderLocation.exists()) {
+					return null;
 				}
+				Git git = Git.open(new File(sourceFolderLocation.getPath()));
+				List<String> branchList = new ArrayList<String>();
+				List<String> tagLists = new ArrayList<String>();
+
+				List<Ref> remoteCall = git.branchList().setListMode(ListMode.REMOTE).call();
+				for (Ref ref : remoteCall) {
+					branchList.add(ref.getName());
+				}
+
+				ListTagCommand tagList = git.tagList();
+				Map<String, Ref> tags = tagList.getRepository().getTags();
+				Set<Entry<String,Ref>> entrySet = tags.entrySet();
+				for (Entry<String, Ref> entry : entrySet) {
+					tagLists.add(entry.getKey());
+				}
+
+				StoredConfig config = git.getRepository().getConfig();
+				Set<String> subsections = config.getSubsections(REMOTE);
+				for (String string : subsections) {
+					String[] urlList = config.getStringList(REMOTE, string, URL);
+					for (String urlPath : urlList) {
+						url = urlPath;
+					}
+				}
+				document = constructGitTree(branchList, tagLists, url, appDirName);
 			}
-			document = constructGitTree(branchList, tagLists, url, appDirName);
 		} catch (IOException e) {
 			throw new PhrescoException(e);
 		} catch (GitAPIException e) {
 			throw new PhrescoException(e);
 		}
-
 		return document;
 	}
 	

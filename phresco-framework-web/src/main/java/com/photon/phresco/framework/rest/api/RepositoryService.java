@@ -725,6 +725,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
 		Response response = null;
 		String srcRepoUrl = "";
+		Document document = null;
 		List<String> documents = new ArrayList<String>();
 		try {
 			List<ApplicationInfo> appInfos = com.photon.phresco.framework.impl.util.FrameworkUtil.getAppInfos(customerId, projectId);
@@ -747,17 +748,22 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 							String encryptedPassword = credential.get(REQ_PASSWORD);
 							password = com.photon.phresco.framework.impl.util.FrameworkUtil.getdecryptedPassword(encryptedPassword);
 							try {
-								documents = repositoryManager.getSource(customerId, projectId, username, password, srcRepoUrl);
+								document = repositoryManager.getSource(appDirName, username, password, srcRepoUrl);
+								String docs = com.photon.phresco.framework.impl.util.FrameworkUtil.convertDocumentToString(document);
+								documents.add(docs);
 							} catch (PhrescoException e) {
+								e.printStackTrace();
 								List<String> errormessages = new ArrayList<String>();
 								String message = e.getMessage();
-								message = message.substring(message.indexOf(HTTPS));
-								errormessages.add(message);
-								status = RESPONSE_STATUS_FAILURE;
-								errorCode = PHRSR10007;
-								Exception exception = new Exception(AUTHENTICATION_FAILED);
-								ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, exception, errormessages, status, errorCode);
-								return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+								if (StringUtils.isNotEmpty(message)) {
+									message = message.substring(message.indexOf(HTTPS));
+									errormessages.add(message);
+									status = RESPONSE_STATUS_FAILURE;
+									errorCode = PHRSR10007;
+									Exception exception = new Exception(AUTHENTICATION_FAILED);
+									ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, exception, errormessages, status, errorCode);
+									return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+								}
 							}
 						}
 					}

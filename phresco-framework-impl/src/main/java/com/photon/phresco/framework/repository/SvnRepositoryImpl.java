@@ -36,24 +36,25 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.RepositoryManager;
 import com.photon.phresco.framework.impl.util.FrameworkUtil;
+import com.phresco.pom.util.PomProcessor;
+import com.photon.phresco.util.Utility;
+import java.io.File;
+import org.apache.commons.lang.StringUtils;
+import com.phresco.pom.exception.PhrescoPomException;
 
 public class SvnRepositoryImpl implements RepositoryManager, FrameworkConstants {
 
-	public List<String> getSource(String customerId, String projectId, String username, String password, String srcRepoUrl) throws PhrescoException {
+	public  Document getSource(String appDirName, String username, String password, String srcRepoUrl) throws PhrescoException {
 		List<String> documents = new ArrayList<String>();
+		String repoUrl = "";
 		Document document = null;
 		try {
-			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
-			for (ApplicationInfo applicationInfo : appInfos) {
-				String appDirName = applicationInfo.getAppDirName();
-				document = getSvnSourceRepo(username,password, srcRepoUrl, appDirName);
-				String documentValue = FrameworkUtil.convertDocumentToString(document);
-				documents.add(documentValue);
-			}
-		} catch (PhrescoException e) {
+			document = getSvnSourceRepo(username, password, srcRepoUrl, appDirName);
+		} 
+		catch (PhrescoException e) {
 			throw new PhrescoException(e);
-		}
-		return documents;
+		} 
+		return document;
 	}
 	
 	public Document getSvnSourceRepo(String username, String password, String url, String appDirName) throws PhrescoException {
@@ -123,6 +124,7 @@ public class SvnRepositoryImpl implements RepositoryManager, FrameworkConstants 
 			trunkItem.setAttribute(NAME, TRUNK);
 			trunkItem.setAttribute(NATURE, TRUNK);
 			trunkItem.setAttribute(URL, url);
+			trunkItem.setAttribute(REQ_APP_DIR_NAME, appDirName);
 			urlItem.appendChild(trunkItem);
 	
 
@@ -177,7 +179,7 @@ public class SvnRepositoryImpl implements RepositoryManager, FrameworkConstants 
 				}
 			}
 		} catch (SVNException e) {
-			throw new PhrescoException(e);
+			throw new PhrescoException("url", url);
 		}
 		return paths;
 	}
