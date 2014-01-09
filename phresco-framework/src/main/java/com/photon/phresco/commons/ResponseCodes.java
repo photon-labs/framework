@@ -632,4 +632,10 @@ public interface ResponseCodes {
 	String PHRSR10005 = "PHRSR10005"; //Failed to create tag
 	String PHRSR00003 = "PHRSR00003"; //Tag created succesfully
 	String PHRSR10006 = "PHRSR10006"; //Delete temp failure
+	
+	/**
+	 * Authentincation Failures
+	 */
+	
+	String PHRSR10007 = "PHRSR10007"; //Authentication Failure
 }

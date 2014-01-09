@@ -31,6 +31,8 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -42,6 +44,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -64,6 +69,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -305,15 +311,20 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	}
 
 	private Response commitProject(RepoDetail repoDetail, ApplicationInfo applicationInfo, 
-			String displayName, String unique_key, File workingDir) {
+			String displayName, String unique_key, File workingDir) throws PhrescoException {
 		Response response = null;
-		String type = repoDetail.getType();
-		if (type.equals(SVN)) {
-			response = commitSVNProject(repoDetail, applicationInfo, unique_key, displayName);
-		} else if (type.equals(GIT)) {
-			response = commitGitProject(applicationInfo, repoDetail, type, unique_key, displayName, workingDir);
-		} else if (type.equals(BITKEEPER)) {
-			response = commitBitKeeperProject(applicationInfo, repoDetail, type, unique_key, displayName, workingDir);
+		try {
+			String type = repoDetail.getType();
+			com.photon.phresco.framework.impl.util.FrameworkUtil.saveCredential(repoDetail, null);
+			if (type.equals(SVN)) {
+				response = commitSVNProject(repoDetail, applicationInfo, unique_key, displayName);
+			} else if (type.equals(GIT)) {
+				response = commitGitProject(applicationInfo, repoDetail, type, unique_key, displayName, workingDir);
+			} else if (type.equals(BITKEEPER)) {
+				response = commitBitKeeperProject(applicationInfo, repoDetail, type, unique_key, displayName, workingDir);
+			}
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
 		}
 		return response;
 	}
@@ -701,13 +712,14 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @return
 	 * @throws PhrescoException
 	 */
-	
+
 	@GET
 	@Path("/browseSourceRepo")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSourceRepo(@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(USERNAME) String username, @QueryParam(REQ_PASSWORD) String password) throws PhrescoException {
 		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
 		Response response = null;
+		String srcRepoUrl = "";
 		List<String> documents = new ArrayList<String>();
 		try {
 			List<ApplicationInfo> appInfos = com.photon.phresco.framework.impl.util.FrameworkUtil.getAppInfos(customerId, projectId);
@@ -715,11 +727,35 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				String appDirName = applicationInfo.getAppDirName();
 				File pomFileLocation = Utility.getPomFileLocation(Utility.getProjectHome() + appDirName, "");
 				PomProcessor pomProcessor = new PomProcessor(pomFileLocation);
-				String srcRepoUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
+				srcRepoUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_PHRESCO_REPO_URL);
+				if (StringUtils.isEmpty(srcRepoUrl)) {
+					srcRepoUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
+				}
 				if (StringUtils.isNotEmpty(srcRepoUrl)) {
 					String repoType = getRepoType(srcRepoUrl);
 					RepositoryManager repositoryManager = RepositoryFactory.getRepository(repoType);
-					documents = repositoryManager.getSource(customerId, projectId, username, password, srcRepoUrl);
+					File credentialPath = new File(Utility.getPhrescoTemp() + File.separator + CREADENTIAL_JSON);
+					if (credentialPath.exists()) {
+						Map<String, String> credential = com.photon.phresco.framework.impl.util.FrameworkUtil.getCredential(srcRepoUrl);
+						if (MapUtils.isNotEmpty(credential)) {
+							username = credential.get(REQ_USER_NAME);
+							String encryptedPassword = credential.get(REQ_PASSWORD);
+							password = com.photon.phresco.framework.impl.util.FrameworkUtil.getdecryptedPassword(encryptedPassword);
+							try {
+								documents = repositoryManager.getSource(customerId, projectId, username, password, srcRepoUrl);
+							} catch (PhrescoException e) {
+								List<String> errormessages = new ArrayList<String>();
+								String message = e.getMessage();
+								message = message.substring(message.indexOf(HTTPS));
+								errormessages.add(message);
+								status = RESPONSE_STATUS_FAILURE;
+								errorCode = PHRSR10007;
+								Exception exception = new Exception(AUTHENTICATION_FAILED);
+								ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, exception, errormessages, status, errorCode);
+								return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+							}
+						}
+					}
 				}
 			}
 		} catch (PhrescoPomException e) {
@@ -732,7 +768,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		successCode = PHRSR00001;
 		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, documents, status, successCode);
 		response = Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-		
+
 		return response;
 	}
 

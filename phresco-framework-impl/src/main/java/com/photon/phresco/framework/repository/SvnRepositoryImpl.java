@@ -39,7 +39,7 @@ import com.photon.phresco.framework.impl.util.FrameworkUtil;
 
 public class SvnRepositoryImpl implements RepositoryManager, FrameworkConstants {
 
-	public List<String> getSource(String customerId, String projectId, String username, String password, String srcRepoUrl) {
+	public List<String> getSource(String customerId, String projectId, String username, String password, String srcRepoUrl) throws PhrescoException {
 		List<String> documents = new ArrayList<String>();
 		Document document = null;
 		try {
@@ -51,7 +51,7 @@ public class SvnRepositoryImpl implements RepositoryManager, FrameworkConstants 
 				documents.add(documentValue);
 			}
 		} catch (PhrescoException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		}
 		return documents;
 	}
@@ -121,18 +121,10 @@ public class SvnRepositoryImpl implements RepositoryManager, FrameworkConstants 
 			Element trunkItem = doc.createElement(ITEM);
 			trunkItem.setAttribute(TYPE, FOLDER);
 			trunkItem.setAttribute(NAME, TRUNK);
+			trunkItem.setAttribute(NATURE, TRUNK);
 			trunkItem.setAttribute(URL, url);
 			urlItem.appendChild(trunkItem);
-
-			List<String> trunkList = list.get(TRUNK);
-			for (String trunk: trunkList) {
-				Element trunkItems = doc.createElement(ITEM);
-				trunkItems.setAttribute(NAME, trunk);
-				trunkItems.setAttribute(URL, url);
-				trunkItems.setAttribute(REQ_APP_DIR_NAME, appDirName);
-				trunkItems.setAttribute(NATURE, TRUNK);
-				trunkItem.appendChild(trunkItems);
-			}
+	
 
 			List<String> branchList = list.get(BRANCHES);
 			for (String branch: branchList) {

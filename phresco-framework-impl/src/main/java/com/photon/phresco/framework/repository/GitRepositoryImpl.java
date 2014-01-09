@@ -30,7 +30,7 @@ import com.photon.phresco.framework.impl.util.FrameworkUtil;
 import com.photon.phresco.util.Utility;
 
 public class GitRepositoryImpl implements RepositoryManager, FrameworkConstants {
-	public List<String> getSource(String customerId, String projectId, String username, String password, String srcRepoUrl) {
+	public List<String> getSource(String customerId, String projectId, String username, String password, String srcRepoUrl) throws PhrescoException {
 		List<String> documents = new ArrayList<String>();
 		Document document = null;
 		try {

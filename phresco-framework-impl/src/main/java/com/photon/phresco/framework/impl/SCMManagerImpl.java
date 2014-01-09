@@ -32,12 +32,15 @@ import java.net.SocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -47,6 +50,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -142,6 +146,7 @@ import com.photon.phresco.commons.model.ModuleInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.SCMManager;
+import com.photon.phresco.framework.impl.util.FrameworkUtil;
 import com.photon.phresco.framework.model.RepoDetail;
 import com.photon.phresco.framework.model.RepoFileInfo;
 import com.photon.phresco.framework.model.RepoInfo;
@@ -176,6 +181,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		
 		if(applicaionInfo != null) {
 			RepoDetail srcRepoDetail = repoInfo.getSrcRepoDetail();
+			com.photon.phresco.framework.impl.util.FrameworkUtil.saveCredential(srcRepoDetail, null);
 			if (SVN.equals(srcRepoDetail.getType())) {
 				checkoutSVN(applicaionInfo, repoInfo, 
 						displayName, uniqueKey);
@@ -331,6 +337,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.updateproject()");
 		}
+		com.photon.phresco.framework.impl.util.FrameworkUtil.saveCredential(repodetail, null);
 		if (SVN.equals(repodetail.getType())) {
 			if(debugEnabled){
 				S_LOGGER.debug("SVN type");
@@ -1159,6 +1166,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				appendedSrcUrl.append(FORWARD_SLASH);
 				appendedSrcUrl.append(TRUNK);
 			}
+			FrameworkUtil.saveCredential(srcRepoDetail, appendedSrcUrl);
 
 			File dir = new File(Utility.getProjectHome() + appDirName);
 			String pomFileName = appInfo.getPomFile();
@@ -1187,6 +1195,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						appendedPhrUrl.append(FORWARD_SLASH);
 						appendedPhrUrl.append(TRUNK);
 					}
+					FrameworkUtil.saveCredential(phrescoRepoDetail, appendedPhrUrl);
 				}
 
 				String testRepoUrl = "";
@@ -1202,6 +1211,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						appendedTestUrl.append(FORWARD_SLASH);
 						appendedTestUrl.append(TRUNK);
 					}
+					FrameworkUtil.saveCredential(testRepoDetail, appendedTestUrl);
 				}
 
 				if (repoInfo.isSplitPhresco()) {

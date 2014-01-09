@@ -699,6 +699,7 @@ public interface FrameworkConstants {
 
     String CONFIG_XML = "config.xml";
     String CREDENTIAL_XML = "credential.xml";
+    String CREADENTIAL_JSON = "credential.json";
     String MAIL = "mail";
     String CI_JDK_HOME_XML = "config.xml";
     String CI_SECRET_KEY_FILE = "secret.key";
@@ -2159,5 +2160,8 @@ public interface FrameworkConstants {
 	    String BIT_KEEPER     = "bk";
 	    String SSH            = "ssh";
 	    String GERRIT         = "gerrit";
+	    String AUTHENTICATION_FAILED = "Authentication Failed";
+	    String PASS_PHARASE = "PBKDF2WithHmacSHA1kjkljfklsdgl";
+	    String DESAL         = "DESede";
 
 }
