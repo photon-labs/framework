@@ -77,6 +77,7 @@ define(["testResult/listener/testResultListener"], function() {
 				commonVariables.runType = 'component';
 			} else if (currentTab === 'functionalTest') {
 				commonVariables.runType = 'Functional';
+
 			} 
 			//To get the testsuites
 			self.testResultListener.getTestsuites(function(response) {
@@ -85,6 +86,15 @@ define(["testResult/listener/testResultListener"], function() {
 					data.testSuites = response.data.testSuites;
 				} else {
 					data.testSuites = response.data;
+					var checkval= $("#iframeExistsCheck").val();
+					if(checkval === 'true'){
+						$("#testResult").hide();
+						$("#tabularView").hide();
+						$("#iframeContent").show();
+					}else{
+						$("#iframeContent").hide();
+						$("#testResult").show();						
+					}
 				}
 				data.message = response.message;
 				commonVariables.testSuites = response.data;

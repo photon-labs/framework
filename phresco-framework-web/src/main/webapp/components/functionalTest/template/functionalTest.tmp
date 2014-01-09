@@ -51,7 +51,7 @@
 					<!--Pdf report popup ends here -->
 				</div>
 			</div>
-			<span id="tabularView" class="table" style="cursor: pointer;">
+			<span id="tabularView" class="table hideContent" style="cursor: pointer;">
             	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/Phresco/table_active.png" width="213" height="29" border="0" alt="" usemap="#tabularViewMap"></a>
             	 <map name="tabularViewMap">
                       <area class="table1" shape="rect" coords="3,1,104,29">
@@ -103,7 +103,22 @@
             	<input type="button" value="Test" data-i18n="[value]test.label.test" id="functionalTestBtn" {{#enableDisable functionalFramework hubStatus}}{{/enableDisable}} class="btn btn_style">
         	{{else}}
         		<input type="button" value="Test" data-i18n="[value]test.label.test" class="btn btn_style" disabled>
-        	{{/if}}        	
+        	{{/if}}  
+
+        	<span id="Report" class="table" style="cursor: pointer;">
+            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/Phresco/table_active.png" width="213" height="29" border="0" alt="" usemap="#reportViewMap"></a>
+            	 <map name="reportViewMap">
+                      <area class="report1" shape="rect" coords="3,1,104,29">
+                      <area class="execute1" shape="rect" coords="106,3,215,29">
+                 </map>
+            </span>
+           	<span id="Execute" class="newclas table hideContent" style="cursor: pointer;">
+            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/Phresco/graph_active.png" width="213" height="29" border="0" alt="" usemap="#executeViewMap"></a>
+                    <map name="executeViewMap">
+                      <area class="report2" shape="rect" coords="3,1,104,29">
+                      <area class="execute2" shape="rect" coords="106,3,215,29">
+                    </map>
+            </span>      	
         		                
 			<div id="functionalTest_popup" class="dyn_popup hideContent dynamic_cont" style="width: 310px;">
 				<form id="functionalTestForm" style="margin: 0 0 0 0;">
@@ -121,7 +136,20 @@
 	</div>
 </section>
 
-<div class="mainContent" id="testResult"></div>
+<input type="hidden" id="iframeExistsCheck" value="{{#iframeExistsCheck iframeUrlAlive}}{{/iframeExistsCheck}}"/>
+
+	<div class="mainContent" id="testResult"></div>
+	{{#if iframeUrlAlive}}
+	<div class="mainContent hideContent" id="iframeContent">
+		<section class="features_content_main code_content testSuiteTable" id="iframeSection" >
+			<form target="tawIframe" id="formid" action="{{#customIframeUrl iframeAction}}{{/customIframeUrl}}" method="post">
+			</form>
+			<iframe id='iframe' name="tawIframe" class='iframe testclass' style="overflow-x: hidden; height: 96%;" src=""></iframe>
+		</section>
+	</div>
+	{{else}}
+		<div class="error">Given Url not alive</div>
+	{{/if}}
 <section class="content_end" style="display:none;">
 	<div class="msgdisplay"></div>
 </section>
