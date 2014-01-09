@@ -37,6 +37,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -93,6 +94,8 @@ import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.lib.Config;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.StoredConfig;
+import org.joda.time.DateTime;
+import org.joda.time.Weeks;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -1031,6 +1034,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				ProjectInfo projectInfo = Utility.getProjectInfo(branchAppDirPath, "");
 				ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 				applicationInfo.setAppDirName(branchAppDir);
+				applicationInfo.setName(branchAppDir);
 				applicationInfo.setVersion(version);
 				File branchDotPhrDir = new File(Utility.getDotPhrescoFolderPath(branchAppDirPath, ""), Constants.PROJECT_INFO_FILE);
 				ProjectUtils.updateProjectInfo(projectInfo, branchDotPhrDir);
@@ -1231,7 +1235,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
     @Produces(MediaType.APPLICATION_JSON)
     public Response getVersion(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_USER_NAME) String username, @QueryParam(REST_QUERY_PASSWORD) String password, 
             @QueryParam(REST_QUERY_CURRENT_BRANCH_NAME) String currentBranch) {
-        ResponseInfo<String> responseData = new ResponseInfo<String>();
+        ResponseInfo<Map<String, String>> responseData = new ResponseInfo<Map<String, String>>();
         String version = "";
         Map<String, String> versionMap = new HashMap<String, String>();
         String phrescoTemp = Utility.getPhrescoTemp();
@@ -1241,11 +1245,14 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
         try {
             File pomFile = Utility.getPomFileLocation(appDirPath, "");
             PomProcessor pomProcessor = new PomProcessor(pomFile);
+            String previousBranchVersion = pomProcessor.getProperty(Constants.POM_PROP_KEY_PREV_BUILD_NO);
             String connectionUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_PHRESCO_REPO_URL);
+            if (StringUtils.isEmpty(connectionUrl) || !PHR_POM_XML.equals(pomFile.getName())) {
+            	connectionUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
+            }
             String repoType = getRepoType(connectionUrl);
             ProjectInfo projectInfo = Utility.getProjectInfo(appDirPath, "");
             ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
-            
             if (Constants.SCM_GIT.equals(repoType)) {
                 gitPomCheckout(connectionUrl, currentBranch, phrescoTemp, uuid, pomFile);
             } else if (Constants.SCM_SVN.equals(repoType)) {
@@ -1255,6 +1262,12 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
             if (file.exists()) {
                 PomProcessor processor = new PomProcessor(file);
                 version = processor.getVersion();
+                String[] split = version.split("-");
+                String tagVerion = split[0];
+                versionMap.put(Constants.CURRENT_VERSION, version);
+                versionMap.put(Constants.TAG_VERSION, tagVerion);
+                String devVersion = getDevVersion(projectInfo, previousBranchVersion, tagVerion);
+                versionMap.put(Constants.DEV_VERSION, devVersion);
             }
         } catch (PhrescoPomException e) {
             status = RESPONSE_STATUS_ERROR;
@@ -1292,8 +1305,49 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
         }
         status = RESPONSE_STATUS_SUCCESS;
         successCode = PHRSR00003;
-        ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, version, status, successCode);
+        ResponseInfo<Map<String, String>> finalOutput = responseDataEvaluation(responseData, null, versionMap, status, successCode);
         return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+    }
+	
+	private String getDevVersion(ProjectInfo projectInfo, String previousBranchVersion, String version) {
+        ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+        String buildType = projectInfo.getVersionInfo().getBuildType();
+        int weekStart = projectInfo.getVersionInfo().getWeekStart();
+        Date creationDate = appInfo.getCreationDate();
+        int week = getWeek(creationDate);
+        int initialVersion = weekStart * 1000;
+        if ("iteration".equals(buildType)) {
+            if (week > 0) {
+                initialVersion = 1000 * week + initialVersion;
+            }
+        } else if ("sprint".equals(buildType)) {
+            initialVersion = weekStart * 1000;
+            int reminder = week % 2;
+            week = week / 2;
+            if (week > 0) {
+                initialVersion = 1000 * week + initialVersion;
+            }
+            initialVersion = initialVersion + reminder;
+        }
+        if (StringUtils.isNotEmpty(previousBranchVersion)) {
+            if (previousBranchVersion.startsWith(String.valueOf(initialVersion).substring(0, 2))) {
+                int previousBranchVersionNo = Integer.parseInt(previousBranchVersion) % 10;
+                initialVersion = initialVersion + previousBranchVersionNo;
+            }
+        }
+        initialVersion = initialVersion + 1;
+        
+        String devVersion = version + "." + initialVersion + "-SNAPSHOT";
+        
+        return devVersion;
+    }
+    
+    private int getWeek(Date creationdate) {
+        Date date = new Date();
+        DateTime currentDateTime = new DateTime(date);
+        DateTime createDateTime = new DateTime(creationdate);
+        Weeks weeks = Weeks.weeksBetween(createDateTime, currentDateTime);
+        return weeks.getWeeks();
     }
     
     private void gitPomCheckout(String connectionUrl, String currentBranch,
@@ -1359,6 +1413,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			StringBuilder builder = new StringBuilder(Constants.MVN_COMMAND);
 			builder.append(Constants.SPACE);
 			builder.append(ActionType.RELEASE.getActionType());
+			builder.append(Constants.SPACE);
 			builder.append("-Dusername=" + username);
 			builder.append(Constants.SPACE);
 			builder.append("-Dpassword=" + password);

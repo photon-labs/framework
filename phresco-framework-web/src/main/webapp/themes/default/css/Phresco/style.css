@@ -5477,7 +5477,6 @@ textarea[name="regex"] {
 
 .tree_view ul li span.badge i {
 	height:13px !important;
-	line-height:20px !important;
 	margin-top:0 !important;
 	padding-right:4px !important;
 }
@@ -5507,7 +5506,7 @@ textarea[name="regex"] {
     border-left: 1px solid #999;
     bottom: 50px;
     height: 100%;
-    top: -1px;
+    top: -5px;
     width: 1px;
     -webkit-transition: "border-color 0.1s ease 0.1s";
     -moz-transition: "border-color 0.1s ease 0.1s";
@@ -5516,7 +5515,7 @@ textarea[name="regex"] {
 .tree li::after {
     border-top: 1px solid #999;
     height: 20px;
-    top: 19px;
+    top: 15px;
     width: 17px;
     -webkit-transition: "border-color 0.1s ease 0.1s";
     -moz-transition: "border-color 0.1s ease 0.1s";
@@ -5528,7 +5527,7 @@ textarea[name="regex"] {
     border: 1px solid #999;
     border-radius: 5px;
     display: inline-block;
-    padding: 7px 5px;	
+    padding: 2px 5px !important;	
 	margin:1px 0px;
     text-decoration: none;
     -webkit-transition: color .2s ease .1s, background-color .2s ease .1s, border-color .3s ease .2s;

@@ -158,9 +158,13 @@ define([], function() {
 									requestBody.appDirName = appDirName;
 									requestBody.currentbranchname = selectedBranch;
 									self.repository(self.getActionHeader(requestBody, "getVersion"), function(response) {
-										$("#branchFromVersion").val(response.data);
-										$("#tagFromVersion").val(response.data);
-										$("#releaseVersion").val(response.data);
+										var responseData = response.data
+										$("#branchFromVersion").val(responseData.currentVersion);
+										$("#tagFromVersion").val(responseData.currentVersion);
+										$("#tagName").val(responseData.tagVersion);
+										$("#releaseVersion").val(responseData.tagVersion);
+										$("#releaseTagName").val(responseData.tagVersion);
+										$("#devVersion").val(responseData.devVersion);
 										$(".file_view").show();
 										$('.unit_close').show();
 										setTimeout(function() {
@@ -224,14 +228,14 @@ define([], function() {
 					self.getList($(value).children(),function(callback) {
 						strCollection = callback;
 					});
-					strItems += '<li role=treeItem class=parent_li>' + '<span class="badge badge-success" title="Collapse this branch">'+
-								'<i class="icon-plus-sign"></i>' + '<a version="'+ strRoot +'">' + strRoot + '</a></span>' + strCollection +'</li>';
+					strItems += '<li role=treeItem class=parent_li>' + '<span class="badge badge-success"'+
+								'<i class="icon-plus-sign"></i>' + '<a version="'+ strRoot +'" title="'+ strRoot +'">' + strRoot + '</a></span>' + strCollection +'</li>';
 				} else {
 					var moduleName = $(value).attr('moduleName');
 					var appDirName = $(value).attr('appDirName');
 					var nature = $(value).attr('nature');
 					var url = $(value).attr('url');
-					strItems += '<li role=treeItem class="parent_li">' + '<span class="badge badge-warning" title="Expand this branch">'+ '<i></i><a ';
+					strItems += '<li role=treeItem class="parent_li">' + '<span class="badge badge-warning">'+ '<i></i><a title="'+ $(value).attr('name') +'" ';
 					if (moduleName !== undefined) {
 						strItems += 'moduleName="'+moduleName+'"';
 					}
@@ -356,15 +360,19 @@ define([], function() {
 				var branchName = $("input[name=selectedBranchName]").val();
 				var appDirName = $('input[name=selectedAppDirName]').val();
 				
+				var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+				if(userInfo !== "") { 
+					userId = userInfo.id; 
+				}
+				
 				var queryString = 'appDirName='+appDirName+'&username='+username+'&password='+password+'&message='+comment+
-									'&developmentVersion='+developmentVersion+'&releaseVersion='+releaseVersion+'&tag='+tag+'&branchName='+branchName;
-				commonVariables.consoleError = true;
+									'&developmentVersion='+developmentVersion+'&releaseVersion='+releaseVersion+'&tag='+tag+'&branchName='+branchName+'&userId='+userId;
+				commonVariables.consoleError = false;
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal) {
 					retVal.mvnRelease(queryString, '#testConsole', function(response) {
-						commonVariables.consoleError = false;
 						commonVariables.hideloading = false;
 						$('.progress_loading').hide();
-						if (!$(".unit_close").is(":visible")) {
+						if (!commonVariables.consoleError) {
 							commonVariables.navListener.onMytabEvent(commonVariables.sourceRepo);
 						}
 					});

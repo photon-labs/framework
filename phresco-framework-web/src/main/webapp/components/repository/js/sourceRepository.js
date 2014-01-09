@@ -95,9 +95,6 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 			
 			$("input[name=rep_release]").unbind("click");
 			$("input[name=rep_release]").bind("click", function() {
-				if (commonVariables.callLadda) {
-					Ladda.stopAll();
-				}
 				self.opencc(this, $(this).attr('name'));
 			});
 			
@@ -131,11 +128,6 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 			
 			$("#release").unbind('click');
 			$("#release").bind("click", function() {
-				$("#releaseTagName").val('');
-				$("#releaseUsername").val('');
-				$("#releasePassword").val('');
-				$("#devVersion").val('');
-				$("#releaseComment").val('');
 				self.releaseEvent.dispatch();
 			});
 			
