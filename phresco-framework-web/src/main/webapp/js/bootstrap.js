@@ -211,6 +211,7 @@ var commonVariables = {
 	mvnCiStart : "app/ciStart",
 	mvnCiStop : "app/ciStop",
 	mvnValidateTheme : "app/validateTheme",
+	mvnRelease : "repository/release",
 	
 	/******** mvn Context end****/
 	

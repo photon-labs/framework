@@ -17,7 +17,6 @@
  */
 package com.photon.phresco.framework.rest.api;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -36,7 +35,6 @@ import org.apache.log4j.Logger;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.LockUtil;
 import com.photon.phresco.commons.ResponseCodes;
-import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.model.MinifyInfo;

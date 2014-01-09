@@ -11,6 +11,7 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 		createBranchEvent : null,
 		createTagEvent : null,
 		releaseEvent : null,
+		onShowHideConsoleEvent : null,
 
 		/***
 		 * Called in initialization time of this class 
@@ -40,6 +41,11 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 				self.releaseEvent = new signals.Signal();
 			}
 			self.releaseEvent.add(repositoryListener.release, repositoryListener);
+			
+			if (self.onShowHideConsoleEvent === null) {
+				self.onShowHideConsoleEvent = new signals.Signal();
+			}
+			self.onShowHideConsoleEvent.add(repositoryListener.showHideConsole, repositoryListener);
 		},
 		
 		/***
@@ -65,6 +71,8 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 					});
 				}
 			});
+			
+			self.resizeConsoleWindow();
 		},
 
 		/***
@@ -123,10 +131,21 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 			
 			$("#release").unbind('click');
 			$("#release").bind("click", function() {
+				$("#releaseTagName").val('');
+				$("#releaseUsername").val('');
+				$("#releasePassword").val('');
+				$("#devVersion").val('');
+				$("#releaseComment").val('');
 				self.releaseEvent.dispatch();
 			});
 			
+			$('#consoleImg').unbind("click");
+			$('#consoleImg').click(function() {
+				self.onShowHideConsoleEvent.dispatch();
+			});
+			
 			self.customScroll($(".file_view"));
+			self.customScroll($(".consolescrolldiv"));
 		},
 		
 		openVersionPopup : function() {

@@ -2163,5 +2163,6 @@ public interface FrameworkConstants {
 	    String AUTHENTICATION_FAILED = "Authentication Failed";
 	    String PASS_PHARASE = "PBKDF2WithHmacSHA1kjkljfklsdgl";
 	    String DESAL         = "DESede";
+	    String MODEL_VERSION = "4.0.0";
 
 }

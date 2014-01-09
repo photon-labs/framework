@@ -1283,18 +1283,11 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				splitPomProcessor.setArtifactId(artifactId);
 				splitPomProcessor.setVersion(version);
 				splitPomProcessor.setPackaging(packaging);
+				splitPomProcessor.getModel().setModelVersion(MODEL_VERSION);
 			} else {
 				splitPomProcessor = new PomProcessor(pomFile);
 			}
 			splitPomProcessor.setSCM(url, scmUrl, scmUrl, "");
-			Plugin phrMvnPlugin = appPomProcessor.getPlugin(COM_PHOTON_PHRESCO_PLUGINS, PHRESCO_MAVEN_PLUGIN);
-			if (phrMvnPlugin != null) {
-				splitPomProcessor.addPlugin(phrMvnPlugin.getGroupId(), phrMvnPlugin.getArtifactId(), phrMvnPlugin.getVersion());
-			}
-			Plugin mvnReleasePlugin = appPomProcessor.getPlugin(ORG_APACHE_MAVEN_PLUGINS, MAVEN_RELEASE_PLUGIN);
-			if (mvnReleasePlugin != null) {
-				splitPomProcessor.addPlugin(mvnReleasePlugin.getGroupId(), mvnReleasePlugin.getArtifactId(), mvnReleasePlugin.getVersion());
-			}
 			splitPomProcessor.save();
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);

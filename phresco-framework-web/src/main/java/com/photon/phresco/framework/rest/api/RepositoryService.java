@@ -27,6 +27,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PushbackInputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -147,11 +148,15 @@ import com.photon.phresco.framework.impl.SCMManagerImpl;
 import com.photon.phresco.framework.model.RepoDetail;
 import com.photon.phresco.framework.model.RepoFileInfo;
 import com.photon.phresco.framework.model.RepoInfo;
+import com.photon.phresco.framework.rest.api.util.ActionResponse;
+import com.photon.phresco.framework.rest.api.util.ActionServiceConstant;
+import com.photon.phresco.framework.rest.api.util.BufferMap;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.service.client.impl.ServiceManagerImpl;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.MavenArtifactResolver;
+import com.photon.phresco.util.ProjectUtils;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
@@ -921,15 +926,18 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			String dotPhrescoRepoUrl = processor.getProperty(Constants.POM_PROP_KEY_PHRESCO_REPO_URL);
 			String srcRepoUrl = processor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
 			String testRepoUrl = processor.getProperty(Constants.POM_PROP_KEY_TEST_REPO_URL);
+			boolean hasSplit = false;
 			if (StringUtils.isNotEmpty(dotPhrescoRepoUrl)) {
+				hasSplit = true;
 				repoUrls.add(dotPhrescoRepoUrl);
 			} 
 			if (StringUtils.isNotEmpty(srcRepoUrl)) {
 				repoUrls.add(srcRepoUrl);
 			} 
 			if (StringUtils.isNotEmpty(testRepoUrl)) {
+				hasSplit = true;
 				repoUrls.add(testRepoUrl);
-			} 
+			}
 			for (String repoUrl : repoUrls) {
 				String uuid = UUID.randomUUID().toString();
 				String workingDir = phrescoTemp + uuid;
@@ -943,11 +951,12 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 					return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 							.build();
 				}
+				
 				// Construct command for branch
 				StringBuilder builder = new StringBuilder();
 				builder.append(Constants.MVN_COMMAND)
 				.append(Constants.STR_BLANK_SPACE)
-				.append("org.apache.maven.plugins:maven-release-plugin:2.4").append(Constants.STR_COLON).append(Constants.SCM_BRANCH)
+				.append(Constants.RELEASE_PLUGIN).append(Constants.STR_COLON).append(Constants.SCM_BRANCH)
 				.append(Constants.STR_BLANK_SPACE)
 				.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_BRANCH_NAME)
 				.append(Constants.STR_EQUALS).append(branchName)
@@ -978,7 +987,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				StringBuilder error = new StringBuilder();
 				String line = "";
 				while ((line = branchReader.readLine()) != null) {
-					System.out.println(line);
 					if (line.startsWith("[ERROR]")) {
 						error.append(line);
 					}
@@ -993,11 +1001,42 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 							.build();
 				}
 				// copy into workspace
-				/*if (downloadOption) {
-					ProjectInfo projectInfo = Utility.getProjectInfo(workingDir, "");
-					ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
-					FileUtils.copyDirectory(new File(phrescoTemp + uuid), new File(Utility.getProjectHome() + appDirName));
-				}*/
+				if (downloadOption) {
+					String destDir =  appDirName + HYPHEN + branchName;
+					if (hasSplit) {
+						if (StringUtils.isNotEmpty(srcRepoUrl) && srcRepoUrl.equals(repoUrl)) {
+							destDir = destDir + File.separator + destDir;
+						}
+						if (StringUtils.isNotEmpty(dotPhrescoRepoUrl) && dotPhrescoRepoUrl.equals(repoUrl)) {
+							destDir = destDir + File.separator + destDir + Constants.SUFFIX_PHRESCO;
+						}
+						if (StringUtils.isNotEmpty(testRepoUrl) && testRepoUrl.equals(repoUrl)) {
+							destDir = destDir + File.separator + destDir + Constants.SUFFIX_TEST;
+						}
+					}
+					checkout(repoUrl, branchName, Utility.getProjectHome(), destDir, false, username, password);
+				}
+			}
+			if (downloadOption) {
+				String branchAppDir = appDirName + HYPHEN + branchName;
+				String branchAppDirPath = Utility.getProjectHome() + branchAppDir;
+				ProjectInfo projectInfo = Utility.getProjectInfo(branchAppDirPath, "");
+				ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+				applicationInfo.setAppDirName(branchAppDir);
+				applicationInfo.setVersion(version);
+				File branchDotPhrDir = new File(Utility.getDotPhrescoFolderPath(branchAppDirPath, ""), Constants.PROJECT_INFO_FILE);
+				ProjectUtils.updateProjectInfo(projectInfo, branchDotPhrDir);
+				
+				File pomFileLocation = Utility.getPomFileLocation(branchAppDirPath, "");
+				PomProcessor pomProcessor = new PomProcessor(pomFileLocation);
+				if (StringUtils.isNotEmpty(pomProcessor.getProperty(Constants.POM_PROP_KEY_SPLIT_PHRESCO_DIR))) {
+					pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_PHRESCO_DIR, branchAppDir + Constants.SUFFIX_PHRESCO);
+				}
+				if (StringUtils.isNotEmpty(pomProcessor.getProperty(Constants.POM_PROP_KEY_SPLIT_TEST_DIR))) {
+					pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_TEST_DIR, branchAppDir + Constants.SUFFIX_TEST);
+				}
+				pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_SRC_DIR, branchAppDir);
+				pomProcessor.save();
 			}
 		} catch (IOException e) {
 			status = RESPONSE_STATUS_ERROR;
@@ -1088,7 +1127,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				StringBuilder builder = new StringBuilder();
 				builder.append(Constants.MVN_COMMAND)
 				.append(Constants.STR_BLANK_SPACE)
-				.append("org.apache.maven.plugins:maven-release-plugin:2.4").append(Constants.STR_COLON).append(Constants.SCM_PREPARE)
+				.append(Constants.RELEASE_PLUGIN).append(Constants.STR_COLON).append(Constants.SCM_PREPARE)
 				.append(Constants.STR_BLANK_SPACE)
 				.append(Constants.SCM_HYPHEN_D).append(Constants.SCM_USERNAME)
 				.append(Constants.STR_EQUALS).append(username)
@@ -1121,7 +1160,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				String line = "";
 				StringBuilder error = new StringBuilder();
 				while ((line = branchReader.readLine()) != null) {
-					System.out.println(line);
 					if (line.startsWith("[ERROR]")) {
 						error.append(line);
 					}
@@ -1181,104 +1219,119 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	}
 	
 	@GET
-	@Path("/version")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getVersion(@QueryParam(REST_QUERY_URL) String connectionUrl, @QueryParam(REST_QUERY_USER_NAME) String username, @QueryParam(REST_QUERY_PASSWORD) String password, 
-			@QueryParam(REST_QUERY_CURRENT_BRANCH_NAME) String currentBranch) {
-		ResponseInfo<String> responseData = new ResponseInfo<String>();
-		String version = "";
-		String phrescoTemp = Utility.getPhrescoTemp();
-		String uuid = UUID.randomUUID().toString();
-		String workingDir = phrescoTemp + uuid;
-		String repoType = getRepoType(connectionUrl);
-		try {
-			if (Constants.SCM_GIT.equals(repoType)) {
-				gitPomCheckout(connectionUrl, currentBranch, phrescoTemp, uuid);
-			} else if (Constants.SCM_SVN.equals(repoType)) {
-				svnPomCheckout(connectionUrl, phrescoTemp, uuid);
-			}
-			PomProcessor processor = new PomProcessor(new File(workingDir + File.separatorChar + Constants.POM_NAME));
-			version = processor.getVersion();
-		} catch (PhrescoPomException e) {
-			status = RESPONSE_STATUS_ERROR;
-			errorCode = PHRSR10005;
-			ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, e,
-					null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
-					.build();
-		} catch (IOException e) {
-			status = RESPONSE_STATUS_ERROR;
-			errorCode = PHRSR10005;
-			ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, e,
-					null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
-					.build();
-		}
-		finally {
-			try {
-				FileUtils.deleteDirectory(new File(workingDir));
-			} catch (IOException e) {
-				status = RESPONSE_STATUS_ERROR;
-				errorCode = PHRSR10005;
-				ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, e,
-						null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
-						.build();
-			}
-		}
-		status = RESPONSE_STATUS_SUCCESS;
-		successCode = PHRSR00003;
-		ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, version, status, successCode);
-		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
-	}
+    @Path("/version")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getVersion(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_USER_NAME) String username, @QueryParam(REST_QUERY_PASSWORD) String password, 
+            @QueryParam(REST_QUERY_CURRENT_BRANCH_NAME) String currentBranch) {
+        ResponseInfo<String> responseData = new ResponseInfo<String>();
+        String version = "";
+        Map<String, String> versionMap = new HashMap<String, String>();
+        String phrescoTemp = Utility.getPhrescoTemp();
+        String uuid = UUID.randomUUID().toString();
+        String workingDir = phrescoTemp + uuid;
+        String appDirPath = Utility.getProjectHome() + appDirName;
+        try {
+            File pomFile = Utility.getPomFileLocation(appDirPath, "");
+            PomProcessor pomProcessor = new PomProcessor(pomFile);
+            String connectionUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_PHRESCO_REPO_URL);
+            String repoType = getRepoType(connectionUrl);
+            ProjectInfo projectInfo = Utility.getProjectInfo(appDirPath, "");
+            ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+            
+            if (Constants.SCM_GIT.equals(repoType)) {
+                gitPomCheckout(connectionUrl, currentBranch, phrescoTemp, uuid, pomFile);
+            } else if (Constants.SCM_SVN.equals(repoType)) {
+                svnPomCheckout(connectionUrl, phrescoTemp, uuid, pomFile);
+            }
+            File file = new File(workingDir, pomFile.getName());
+            if (file.exists()) {
+                PomProcessor processor = new PomProcessor(file);
+                version = processor.getVersion();
+            }
+        } catch (PhrescoPomException e) {
+            status = RESPONSE_STATUS_ERROR;
+            errorCode = PHRSR10005;
+            ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, e,
+                    null, status, errorCode);
+            return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+                    .build();
+        } catch (IOException e) {
+            status = RESPONSE_STATUS_ERROR;
+            errorCode = PHRSR10005;
+            ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, e,
+                    null, status, errorCode);
+            return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+                    .build();
+        } catch (PhrescoException e) {
+            status = RESPONSE_STATUS_ERROR;
+            errorCode = PHRSR10005;
+            ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, e,
+                    null, status, errorCode);
+            return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+                    .build();
+        }
+        finally {
+            try {
+                FileUtils.deleteDirectory(new File(workingDir));
+            } catch (IOException e) {
+                status = RESPONSE_STATUS_ERROR;
+                errorCode = PHRSR10005;
+                ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, e,
+                        null, status, errorCode);
+                return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+                        .build();
+            }
+        }
+        status = RESPONSE_STATUS_SUCCESS;
+        successCode = PHRSR00003;
+        ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, version, status, successCode);
+        return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+    }
+    
+    private void gitPomCheckout(String connectionUrl, String currentBranch,
+            String phrescoTemp, String uuid, File pomFile) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(Constants.SCM_GIT).append(Constants.STR_BLANK_SPACE)
+        .append(Constants.SCM_GIT_CLONE).append(Constants.STR_BLANK_SPACE)
+        .append(Constants.SCM_HYPHEN_N).append(Constants.STR_BLANK_SPACE)
+        .append(Constants.HYPHEN_DEPTH_ONE).append(Constants.STR_BLANK_SPACE)
+        .append(connectionUrl).append(Constants.STR_BLANK_SPACE)
+        .append(Constants.HYPHEN_B).append(Constants.STR_BLANK_SPACE)
+        .append(currentBranch).append(Constants.STR_BLANK_SPACE)
+        .append(uuid);
+        BufferedReader executeCommand = Utility.executeCommand(sb.toString(), phrescoTemp);
+        while (executeCommand.readLine() != null) {
+        }
+        sb = new StringBuilder()
+        .append(Constants.SCM_GIT).append(Constants.STR_BLANK_SPACE)
+        .append(Constants.SCM_CHECKOUT).append(Constants.STR_BLANK_SPACE)
+        .append(currentBranch).append(Constants.STR_BLANK_SPACE)
+        .append(pomFile.getName());
+        executeCommand = Utility.executeCommand(sb.toString(), phrescoTemp + uuid);
+        while (executeCommand.readLine() != null) {
+        }
+    }
 
-	private void gitPomCheckout(String connectionUrl, String currentBranch,
-			String phrescoTemp, String uuid) throws IOException {
-		StringBuilder sb = new StringBuilder();
-		sb.append(Constants.SCM_GIT).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.SCM_GIT_CLONE).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.SCM_HYPHEN_N).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.HYPHEN_DEPTH_ONE).append(Constants.STR_BLANK_SPACE)
-		.append(connectionUrl).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.HYPHEN_B).append(Constants.STR_BLANK_SPACE)
-		.append(currentBranch).append(Constants.STR_BLANK_SPACE)
-		.append(uuid).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.DOUBLE_AMPERSAND).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.CHANGE_DIRECTORY).append(Constants.STR_BLANK_SPACE)
-		.append(uuid).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.DOUBLE_AMPERSAND).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.SCM_GIT).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.SCM_CHECKOUT).append(Constants.STR_BLANK_SPACE)
-		.append(currentBranch).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.POM_NAME).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.DOUBLE_AMPERSAND).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.CHANGE_DIRECTORY).append(Constants.DOUBLE_DOT);
-		BufferedReader executeCommand = Utility.executeCommand(sb.toString(), phrescoTemp);
-		while (executeCommand.readLine() != null) {
-		}
-	}
-	
-	private void svnPomCheckout(String connectionUrl, String phrescoTemp, String uuid) throws IOException {
-		StringBuilder sb = new StringBuilder();
-		sb.append(Constants.SCM_SVN).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.SCM_CHECKOUT).append(Constants.STR_BLANK_SPACE)
-		.append(connectionUrl).append(Constants.STR_BLANK_SPACE)
-		.append(uuid).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.HYPHEN_DEPTH).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.EMPTY).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.DOUBLE_AMPERSAND).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.CHANGE_DIRECTORY).append(Constants.STR_BLANK_SPACE)
-		.append(uuid).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.DOUBLE_AMPERSAND).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.SCM_SVN).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.SVN_UPDATE).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.POM_NAME).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.DOUBLE_AMPERSAND).append(Constants.STR_BLANK_SPACE)
-		.append(Constants.CHANGE_DIRECTORY).append(Constants.DOUBLE_DOT);
-		BufferedReader executeCommand = Utility.executeCommand(sb.toString(), phrescoTemp);
-		while (executeCommand.readLine() != null) {
-		}
-	}
+    private void svnPomCheckout(String connectionUrl, String phrescoTemp, String uuid, File pomFile) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(Constants.SCM_SVN).append(Constants.STR_BLANK_SPACE)
+        .append(Constants.SCM_CHECKOUT).append(Constants.STR_BLANK_SPACE)
+        .append(connectionUrl).append(Constants.STR_BLANK_SPACE)
+        .append(uuid).append(Constants.STR_BLANK_SPACE)
+        .append(Constants.HYPHEN_DEPTH).append(Constants.STR_BLANK_SPACE)
+        .append(Constants.EMPTY);
+        BufferedReader executeCommand = Utility.executeCommand(sb.toString(), phrescoTemp);
+        while (executeCommand.readLine() != null) {
+        }
+
+        sb = new StringBuilder()
+        .append(Constants.SCM_SVN).append(Constants.STR_BLANK_SPACE)
+        .append(Constants.SVN_UPDATE).append(Constants.STR_BLANK_SPACE)
+        .append(pomFile.getName());
+        executeCommand = Utility.executeCommand(sb.toString(), phrescoTemp + uuid);
+        while (executeCommand.readLine() != null) {
+        }
+    }
 	
 	@POST
 	@Path("/release")
@@ -1289,11 +1342,8 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			@QueryParam("releaseVersion") String releaseVersion, @QueryParam("tag") String tag,
 			@QueryParam("branchName") String branchName, @QueryParam("deploy") String deploy,
 			@QueryParam("environmentName") String environmentName) {
-		InputStream inputStream = null;
-		InputStreamReader isr = null;
-		BufferedReader reader = null;
-		String line = null;
 		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
+		ActionResponse response = new ActionResponse();
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			String rootModulePath = Utility.getProjectHome() + appDirName;
@@ -1320,46 +1370,27 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			builder.append("-f");
 			builder.append(Constants.SPACE);
 			builder.append(pomFile.getName());
-
-			Commandline cl = new Commandline(builder.toString());
-			if (StringUtils.isNotEmpty(pomFile.getParent())) {
-				cl.setWorkingDirectory(pomFile.getParent());
-			}
-			Process process = cl.execute();
-			inputStream = process.getInputStream();
-			isr = new InputStreamReader(inputStream);
-			reader = new BufferedReader(isr);
 			
-			while ((line = reader.readLine()) != null) {
-				if (line.startsWith("[ERROR]")) {
-					ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "",
-							RESPONSE_STATUS_SUCCESS, PHR610043);
-					return Response.status(Response.Status.OK).entity(finalOutput).header(
-							"Access-Control-Allow-Origin", "*").build();
-				}
+			UUID uniqueKey = UUID.randomUUID();
+			String unique_key = uniqueKey.toString();
+			
+			String workingDirectory = "";
+			if (StringUtils.isNotEmpty(pomFile.getParent())) {
+				workingDirectory = pomFile.getParent();
 			}
-			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "", RESPONSE_STATUS_SUCCESS,
-					PHR600028);
-			return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			BufferedInputStream executeMavenCommand = executeMavenCommand(builder, workingDirectory);
+			if (executeMavenCommand != null) {
+				response = generateResponse(executeMavenCommand, unique_key);
+			}
+			if (response.getStatus() != RESPONSE_STATUS_FAILURE) {
+				response.setResponseCode(PHRSR10008);
+			}
+			return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR,
 					PHR610044);
 			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
-		} catch (IOException e) {
-			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR,
-					PHR610045);
-			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
-		} catch (CommandLineException e) {
-			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR,
-					PHR610046);
-			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
-		} finally {
-			Utility.closeStream(inputStream);
-			Utility.closeStream(isr);
-			Utility.closeReader(reader);
 		}
-
 	}
 	
 	private StringBuilder checkout(String connectionUrl, String currentBranch,
@@ -2705,4 +2736,40 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		return svnurl;
 	}
 
+	private ActionResponse generateResponse(BufferedInputStream server_logs, String unique_key) {
+		BufferMap.addBufferReader(unique_key, server_logs);
+		ActionResponse response = new ActionResponse();
+		response.setStatus(ActionServiceConstant.STARTED);
+		response.setLog(ActionServiceConstant.STARTED);
+		response.setService_exception("");
+		response.setUniquekey(unique_key);
+
+		return response;
+	}
+	
+	private BufferedInputStream executeMavenCommand(StringBuilder command, String workingDirectory) throws PhrescoException {
+		Commandline cl = new Commandline(command.toString());
+        if (StringUtils.isNotEmpty(workingDirectory)) {
+            cl.setWorkingDirectory(workingDirectory);
+        } 
+        try {
+            Process process = cl.execute();
+            return new BufferedInputStream(new MyWrapper(process.getInputStream()));
+        } catch (CommandLineException e) {
+            throw new PhrescoException(e);
+        }
+    }
+	
+	static class MyWrapper extends PushbackInputStream {
+	    MyWrapper(InputStream in) {
+	        super(in);
+	    }
+	
+	    @Override
+	    public int available() throws IOException {
+	        int b = super.read();
+	        super.unread(b);
+	        return super.available();
+	    }
+	}
 }

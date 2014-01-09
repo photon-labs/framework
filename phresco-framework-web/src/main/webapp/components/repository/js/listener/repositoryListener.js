@@ -79,13 +79,7 @@ define([], function() {
 			}
 			if (action === "getVersion") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + 'repository/version?url='+requestBody.url+'&currentbranchname='+requestBody.currentbranchname;
-			}
-			if (action === "release") {
-				header.requestMethod = "POST";
-				header.webserviceurl = commonVariables.webserviceurl + 'repository/release?appDirName='+requestBody.appDirName+'&username='+requestBody.username+'&password='+requestBody.password +
-										'&message='+requestBody.comment+'&developmentVersion='+requestBody.developmentVersion+'&releaseVersion='+requestBody.releaseVersion+'&tag='+requestBody.tag+'&environmentName='+requestBody.environmentName +
-										'&branchName='+requestBody.branchName+'&deploy='+requestBody.deploy;
+				header.webserviceurl = commonVariables.webserviceurl + 'repository/version?appDirName='+requestBody.appDirName+'&currentbranchname='+requestBody.currentbranchname;
 			}
 			
 			return header;
@@ -152,21 +146,23 @@ define([], function() {
 							}
 							if (currentTab === "sourceRepo") {
 								var nature = $(this).find('a').attr("nature");
-								if (nature === "branches") {
+								if (nature === "branches" || nature === "trunk") {
 									$('input[name=selectedAppDirName]').val(appDirName);
 									var baseRepoUrl = $(this).find('a').attr("url");
 									$("input[name=baseRepoUrl]").val(baseRepoUrl);
 									var selectedBranch = $(this).find('a').text();
 									$('#fileListHead').text(selectedBranch);
 									$("input[name=selectedBranchName]").val(selectedBranch);
+									var appDirName = $(this).find('a').attr("appdirname");
 									var requestBody = {};
-									requestBody.url = baseRepoUrl;
+									requestBody.appDirName = appDirName;
 									requestBody.currentbranchname = selectedBranch;
 									self.repository(self.getActionHeader(requestBody, "getVersion"), function(response) {
 										$("#branchFromVersion").val(response.data);
 										$("#tagFromVersion").val(response.data);
 										$("#releaseVersion").val(response.data);
 										$(".file_view").show();
+										$('.unit_close').show();
 										setTimeout(function() {
 											$(this).css("background", "#e3e3e3 !important");
 										}, 1000);
@@ -235,7 +231,7 @@ define([], function() {
 					var appDirName = $(value).attr('appDirName');
 					var nature = $(value).attr('nature');
 					var url = $(value).attr('url');
-					strItems += '<li role=treeItem class="parent_li hideContent">' + '<span class="badge badge-warning" title="Expand this branch">'+ '<i></i><a ';
+					strItems += '<li role=treeItem class="parent_li">' + '<span class="badge badge-warning" title="Expand this branch">'+ '<i></i><a ';
 					if (moduleName !== undefined) {
 						strItems += 'moduleName="'+moduleName+'"';
 					}
@@ -271,6 +267,7 @@ define([], function() {
 				requestBody.currentbranchname = $("#branchFromName").val();
 				requestBody.branchname = $("#newBranchName").val();
 				requestBody.downloadoption = $("#downloadBrToWorkspace").is(":checked");
+				commonVariables.consoleError = false;
 				self.repository(self.getActionHeader(requestBody, "createBranch"), function(response) {
 					commonVariables.hideloading = false;
 					commonVariables.navListener.onMytabEvent(commonVariables.sourceRepo);
@@ -347,22 +344,30 @@ define([], function() {
 		release : function() {
 			var self = this;
 			if (!self.validateReleaseData()) {
+				$('#rep_release').hide();
 				commonVariables.hideloading = true;
-				self.showBtnLoading("#release");
-				var requestBody = {};
-				requestBody.releaseVersion = $("#releaseVersion").val();
-				requestBody.developmentVersion = $("#devVersion").val();
-				requestBody.tag = $("#releaseTagName").val();
-				requestBody.username = $("#releaseUsername").val();
-				requestBody.password = $("#releasePassword").val();
-				requestBody.comment = $("#releaseComment").val();
-				requestBody.environmentName = $("#releaseEnv").val();
-				requestBody.deploy = $("#releaseDeploy").is(":checked");
-				requestBody.branchName = $("input[name=selectedBranchName]").val();
-				requestBody.appDirName = $('input[name=selectedAppDirName]').val();
-				self.repository(self.getActionHeader(requestBody, "release"), function(response) {
-					commonVariables.hideloading = false;
-					commonVariables.navListener.onMytabEvent(commonVariables.sourceRepo);
+				self.showHideConsole();
+				var releaseVersion = $("#releaseVersion").val();
+				var developmentVersion = $("#devVersion").val();
+				var tag = $("#releaseTagName").val();
+				var username = $("#releaseUsername").val();
+				var password = $("#releasePassword").val();
+				var comment = $("#releaseComment").val();
+				var branchName = $("input[name=selectedBranchName]").val();
+				var appDirName = $('input[name=selectedAppDirName]').val();
+				
+				var queryString = 'appDirName='+appDirName+'&username='+username+'&password='+password+'&message='+comment+
+									'&developmentVersion='+developmentVersion+'&releaseVersion='+releaseVersion+'&tag='+tag+'&branchName='+branchName;
+				commonVariables.consoleError = true;
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal) {
+					retVal.mvnRelease(queryString, '#testConsole', function(response) {
+						commonVariables.consoleError = false;
+						commonVariables.hideloading = false;
+						$('.progress_loading').hide();
+						if (!$(".unit_close").is(":visible")) {
+							commonVariables.navListener.onMytabEvent(commonVariables.sourceRepo);
+						}
+					});
 				});
 			}
 		},
@@ -396,6 +401,32 @@ define([], function() {
 			}
 			return false;
 		},
+		
+		showHideConsole : function() {
+			var self = this;
+			var check = $('#consoleImg').attr('data-flag');
+			if (check === "true") {
+				self.openConsoleDiv();
+			} else {
+				self.closeConsole();
+				$('.progress_loading').hide();
+			}
+		},
+		
+		openConsoleDiv : function() {
+			$('.testSuiteTable').append('<div class="mask"></div>');
+			$('.mask').fadeIn("slow");
+			$('.unit_close').css("z-index", 1001);
+			$('.unit_progress').css("z-index", 1001);
+			$('.unit_close').css("height", 0);
+			var value = $('.unit_info').width();
+			var value1 = $('.unit_progress').width();
+			$('.unit_info').animate({left: -value},500);
+			$('.unit_progress').animate({right: '10px'},500);
+			$('.unit_close').animate({right: value1+10},500);
+			$('.unit_info table').removeClass("big").addClass("small");
+			$('#consoleImg').attr('data-flag','false');
+		}
 	});
 
 	return Clazz.com.components.repository.js.listener.RepositoryListener;

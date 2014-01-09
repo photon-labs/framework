@@ -623,6 +623,9 @@ public interface ResponseCodes {
 	String PHRU000001 = "PHRU000001"; // Build uploaded to TestFlight server successfully
 	String PHRU010001 = "PHRU010001"; // Build uploading failed
 	
+	/**
+	 * Repository service
+	 */
 	String PHRSR00001 = "PHRSR00001"; //Source repo branches and tags listed successfully
 	String PHRSR10001 = "PHRSR10001"; //Failed to list source repo branches and tags
 	String PHRSR00002 = "PHRSR00002"; //Branch created successfully
@@ -632,6 +635,8 @@ public interface ResponseCodes {
 	String PHRSR10005 = "PHRSR10005"; //Failed to create tag
 	String PHRSR00003 = "PHRSR00003"; //Tag created succesfully
 	String PHRSR10006 = "PHRSR10006"; //Delete temp failure
+	String PHRSR00007 = "PHRSR00007"; //Release started successfully
+	String PHRSR10008 = "PHRSR10008"; //Release startup failed
 	
 	/**
 	 * Authentincation Failures

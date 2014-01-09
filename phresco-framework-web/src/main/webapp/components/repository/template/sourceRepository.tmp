@@ -1,307 +1,305 @@
 <div class="optiontitle">
 	<div class="unit_text">Source Repo</div>
 </div>
-<section class="features_content_main">
-	<div id="messagedisp" class="alert alert-block hideContent" style="text-align: center; margin: auto 0;">This project is not an working copy</div>
-    <div class="tree_view tree"></div>
-	<div class="file_view hideContent">
-		<div class="files_list">
-			<span id="fileListHead" style="vertical-align: text-top;">Files</span>
-			<input type="hidden" name="baseRepoUrl" value=""/>
-			<input type="hidden" name="selectedBranchName" value=""/>
-			<input type="hidden" name="selectedAppDirName" value=""/>
-			<div class="flt_right">
-				<input type="submit" name="rep_release" data-i18n="[value]repository.build.release" class="btn btn_style release_btn">
-				<div id="rep_release" class="dyn_popup hideContent">
-					<table>
-						<tr>
-							<td><span>Release Version</span><sup>*</sup></td>
-							<td><span>Tag Name</span><sup>*</sup></td>
-						</tr>
-						<tr>
-							<td><input type="text" id="releaseVersion" style="margin-right:10px;"></td>
-							<td><input type="text" id="releaseTagName"></td>
-						</tr>
-						<tr>
-							<td><span>User Name</span><sup>*</sup></td>
-							<td><span>Password</span><sup>*</sup></td>
-						</tr>
-						<tr>
-							<td><input type="text" id="releaseUsername" style="margin-right:10px"></td>
-							<td><input type="password" id="releasePassword"></td>
-						</tr>
-						<tr>
-							<td><span>Development Version</span><sup>*</sup></td>
-							<td><span>Comment</span></td>
-						</tr>
-						<tr>
-							<td style="vertical-align: top;"><input type="text" id="devVersion" style="margin-right:10px;"></td>
-							<td><textarea id="releaseComment"></textarea></td>
-						</tr>
-						<tr>
-							<td><input type="checkbox" id="releaseDeploy">Deploy</td>
-							<td>Enviornment</td>
-						</tr>
-						<tr>
-							<td></td>
-							<td>
-								<select id="releaseEnv"><option>Select</option></select>
-							</td>
-						</tr>
-					</table>
-					<div class="flt_right">
-						<button class="btn btn_style btn_style_spin ladda-button" data-style="expand-left" id="release"><span class="ladda-label">Execute</span></button>
-						<input type="button" value="Close" class="btn btn_style dyn_popup_close">
-					</div>
-				</div>
-				<input type="submit" name="rep_create" data-i18n="[value]repository.build.create" class="btn btn_style createrepo_btn">
-				<div id="rep_create" class="dyn_popup popup_bg hideContent">
-					<div class="bs-docs-example repository_tabdiv">
-						<ul class="nav nav-tabs" id="myTab">
-							<li class="active"><a data-toggle="tab" href="#branch">Branch</a></li>
-							<li><a data-toggle="tab" href="#tags">Tags</a></li>
-						</ul>
-					</div>
-					<div class="tab-content" id="myTabContent" style="border-radius: 5px 0px 5px -2px;">
-						<div id="branch" class="tab-pane fade active in">
-							<table>
-								<tr>
-									<td><span>From Branch/Trunck</span></td>
-									<td><span>Version</span></td>
-								</tr>
-								<tr>
-									<td><input type="text" id="branchFromName" style="margin-right:10px" readonly></td>
-									<td><input type="text" id="branchFromVersion" readonly></td>
-								</tr>
-								<tr>
-									<td><span>Branch To</span><sup>*</sup></td>
-									<td><span>Version</span><sup>*</sup></td>
-								</tr>
-								<tr>
-									<td><input type="text" id="newBranchName"></td>
-									<td>
-										<input class="ver_popup" id="createBranchVersion" type="text" readonly style="cursor:pointer;"><img class="dropdown_icon" src="themes/default/images/Phresco/dropdown_icon.png">
-										<div id="version_popup" class="dyn_popup hideContent">
-											<form id="versionForm">
-												<table>
-										            <tr>
-										               	<td>Major</td>
-														<td>Minor</td>
-										                <td>Fixed</td>
-										            </tr>
-										            <tr>
-										            	<td>
-										                    <select id="majorVersion">
-																<option value="1">1</option>
-																<option value="2">2</option>
-																<option value="3">3</option>
-																<option value="4">4</option>
-																<option value="5">5</option>
-																<option value="6">6</option>
-																<option value="7">7</option>
-																<option value="8">8</option>
-																<option value="9">9</option>
-																<option value="10">10</option>
-																<option value="11">11</option>
-																<option value="12">12</option>
-																<option value="13">13</option>
-																<option value="14">14</option>
-																<option value="15">15</option>
-																<option value="16">16</option>
-																<option value="17">17</option>
-																<option value="18">18</option>
-																<option value="19">19</option>
-																<option value="20">20</option>
-										                    </select>
-										                </td>
-										                <td>
-										                	<select id="minorVersion">
-										                		<option value="0">0</option>
-										                       	<option value="1">1</option>
-																<option value="2">2</option>
-																<option value="3">3</option>
-																<option value="4">4</option>
-																<option value="5">5</option>
-																<option value="6">6</option>
-																<option value="7">7</option>
-																<option value="8">8</option>
-																<option value="9">9</option>
-																<option value="10">10</option>
-																<option value="11">11</option>
-																<option value="12">12</option>
-																<option value="13">13</option>
-																<option value="14">14</option>
-																<option value="15">15</option>
-																<option value="16">16</option>
-																<option value="17">17</option>
-																<option value="18">18</option>
-																<option value="19">19</option>
-																<option value="20">20</option>
-										                    </select>
-										                </td>
-										                <td>
-										                	<select id="fixedVersion">
-										                		<option value="0">0</option>
-										                       	<option value="1">1</option>
-																<option value="2">2</option>
-																<option value="3">3</option>
-																<option value="4">4</option>
-																<option value="5">5</option>
-																<option value="6">6</option>
-																<option value="7">7</option>
-																<option value="8">8</option>
-																<option value="9">9</option>
-																<option value="10">10</option>
-																<option value="11">11</option>
-																<option value="12">12</option>
-																<option value="13">13</option>
-																<option value="14">14</option>
-																<option value="15">15</option>
-																<option value="16">16</option>
-																<option value="17">17</option>
-																<option value="18">18</option>
-																<option value="19">19</option>
-																<option value="20">20</option>
-										                    </select>
-										                </td>
-										            </tr>
-													<tr>
-														<td>Build Type</td>
-													</tr>
-													<tr>
-														<td colspan="3">
-										                    <select class="type_build" id="iterationType">
-										                       	<option value="iteration">Iteration</option>
-										                       	<option value="sprint">Sprint</option>
-										                       	<option value="date">Date</option>
-										                    </select>
-										                </td>
-													</tr>
-													<tr>
-														<td>Week Start</td>
-													</tr>
-													<tr>
-														<td colspan="3">
-										                    <select class="type_build" id="weekStart">
-										                       	<option value="1">1</option>
-																<option value="2">2</option>
-																<option value="3">3</option>
-																<option value="4">4</option>
-																<option value="5">5</option>
-																<option value="6">6</option>
-																<option value="7">7</option>
-																<option value="8">8</option>
-																<option value="9">9</option>
-																<option value="10">10</option>
-																<option value="11">11</option>
-																<option value="12">12</option>
-																<option value="13">13</option>
-																<option value="14">14</option>
-																<option value="15">15</option>
-																<option value="16">16</option>
-																<option value="17">17</option>
-																<option value="18">18</option>
-																<option value="19">19</option>
-																<option value="20">20</option>
-										                    </select>
-										                </td>
-													</tr>
-										        </table>
-									        </form>
-									        <div align="right">
-									        	<div class="flt_left">
-										        	Ex : 1.0.0-SNAPSHOT
-										        </div>
-										        <div class="flt_right">
-										        	<input type="button" class="btn btn_style" value="OK" id="submitVersion">
-										        </div>
-									        </div>     
-									    </div>
-									</td>
-								</tr>
-								<tr>
-									<td><span>User Name</span><sup>*</sup></td>
-									<td><span>Password</span><sup>*</sup></td>
-								</tr>
-								<tr>
-									<td><input type="text" id="branchUsername" style="margin-right:10px"></td>
-									<td><input type="password" id="branchPassword"></td>
-								</tr>
-								<tr>
-									<td colspan="2"><textarea id="branchComment"></textarea></td>
-								</tr>
-								<tr>
-									<td><input type="checkbox" id="downloadBrToWorkspace">Download to Workspace</td>
-									<td class="flt_right">
-										<button class="btn btn_style btn_style_spin ladda-button" data-style="expand-left" id="createBranch"><span class="ladda-label">Create</span></button>
-										<input type="button" value="Close" class="btn btn_style dyn_popup_close">
-									</td>
-								</tr>
-							</table>
+<section class="features_content_main code_content testSuiteTable">
+	<div class="qual_unit_main unit_info" id="testSuites">
+		<div id="messagedisp" class="alert alert-block hideContent" style="text-align: center; margin: auto 0;">This project is not an working copy</div>
+	    <div class="tree_view tree"></div>
+		<div class="file_view hideContent">
+			<div class="files_list">
+				<span id="fileListHead" style="vertical-align: text-top;">Files</span>
+				<input type="hidden" name="baseRepoUrl" value=""/>
+				<input type="hidden" name="selectedBranchName" value=""/>
+				<input type="hidden" name="selectedAppDirName" value=""/>
+				<div class="flt_right">
+					<input type="submit" name="rep_release" data-i18n="[value]repository.build.release" class="btn btn_style release_btn">
+					<div id="rep_release" class="dyn_popup hideContent">
+						<table>
+							<tr>
+								<td><span>Release Version</span><sup>*</sup></td>
+								<td><span>Tag Name</span><sup>*</sup></td>
+							</tr>
+							<tr>
+								<td><input type="text" id="releaseVersion" style="margin-right:10px;"></td>
+								<td><input type="text" id="releaseTagName"></td>
+							</tr>
+							<tr>
+								<td><span>User Name</span><sup>*</sup></td>
+								<td><span>Password</span><sup>*</sup></td>
+							</tr>
+							<tr>
+								<td><input type="text" id="releaseUsername" style="margin-right:10px"></td>
+								<td><input type="password" id="releasePassword"></td>
+							</tr>
+							<tr>
+								<td><span>Development Version</span><sup>*</sup></td>
+								<td><span>Comment</span></td>
+							</tr>
+							<tr>
+								<td style="vertical-align: top;"><input type="text" id="devVersion" style="margin-right:10px;"></td>
+								<td><textarea id="releaseComment"></textarea></td>
+							</tr>
+						</table>
+						<div class="flt_right">
+							<button class="btn btn_style" id="release"><span class="ladda-label">Execute</span></button>
+							<input type="button" value="Close" class="btn btn_style dyn_popup_close">
 						</div>
-						<div id="tags" class="tab-pane fade ">
-							<table>
-								<tr>
-									<td><span>From Branch/Trunck</span></td>
-									<td><span>Version</span></td>
-								</tr>
-								<tr>
-									<td><input type="text" id="tagFromName" style="margin-right:10px" readonly></td>
-									<td><input type="text" id="tagFromVersion" readonly></td>
-								</tr>
-								<tr>
-									<td><span>Tags To</span><sup>*</sup></td>
-								</tr>
-								<tr>
-									<td><input type="text" id="tagName"></td>
-								</tr>
-								<tr>
-									<td><span>User Name</span><sup>*</sup></td>
-									<td><span>Password</span><sup>*</sup></td>
-								</tr>
-								<tr>
-									<td><input type="text" id="tagUsername" style="margin-right:10px"></td>
-									<td><input type="password" id="tagPassword"></td>
-								</tr>
-								<tr>
-									<td colspan="2"><textarea id="tagComment"></textarea></td>
-								</tr>
-								<tr>
-									<td><input type="checkbox" id="downloadTagToWorkspace">Download to Workspace</td>
-									<td class="flt_right">
-										<button class="btn btn_style btn_style_spin ladda-button" data-style="expand-left" id="createTag"><span class="ladda-label">Create</span></button>
-										<input type="button" value="Close" class="btn btn_style dyn_popup_close">
-									</td>
-								</tr>
-							</table>
+					</div>
+					<input type="submit" name="rep_create" data-i18n="[value]repository.build.create" class="btn btn_style createrepo_btn">
+					<div id="rep_create" class="dyn_popup popup_bg hideContent">
+						<div class="bs-docs-example repository_tabdiv">
+							<ul class="nav nav-tabs" id="myTab">
+								<li class="active"><a data-toggle="tab" href="#branch">Branch</a></li>
+								<li><a data-toggle="tab" href="#tags">Tags</a></li>
+							</ul>
+						</div>
+						<div class="tab-content" id="myTabContent" style="border-radius: 5px 0px 5px -2px;">
+							<div id="branch" class="tab-pane fade active in">
+								<table>
+									<tr>
+										<td><span>From Branch/Trunck</span></td>
+										<td><span>Version</span></td>
+									</tr>
+									<tr>
+										<td><input type="text" id="branchFromName" style="margin-right:10px" readonly></td>
+										<td><input type="text" id="branchFromVersion" readonly></td>
+									</tr>
+									<tr>
+										<td><span>Branch To</span><sup>*</sup></td>
+										<td><span>Version</span><sup>*</sup></td>
+									</tr>
+									<tr>
+										<td><input type="text" id="newBranchName"></td>
+										<td>
+											<input class="ver_popup" id="createBranchVersion" type="text" readonly style="cursor:pointer;"><img class="dropdown_icon" src="themes/default/images/Phresco/dropdown_icon.png">
+											<div id="version_popup" class="dyn_popup hideContent">
+												<form id="versionForm">
+													<table>
+											            <tr>
+											               	<td>Major</td>
+															<td>Minor</td>
+											                <td>Fixed</td>
+											            </tr>
+											            <tr>
+											            	<td>
+											                    <select id="majorVersion">
+																	<option value="1">1</option>
+																	<option value="2">2</option>
+																	<option value="3">3</option>
+																	<option value="4">4</option>
+																	<option value="5">5</option>
+																	<option value="6">6</option>
+																	<option value="7">7</option>
+																	<option value="8">8</option>
+																	<option value="9">9</option>
+																	<option value="10">10</option>
+																	<option value="11">11</option>
+																	<option value="12">12</option>
+																	<option value="13">13</option>
+																	<option value="14">14</option>
+																	<option value="15">15</option>
+																	<option value="16">16</option>
+																	<option value="17">17</option>
+																	<option value="18">18</option>
+																	<option value="19">19</option>
+																	<option value="20">20</option>
+											                    </select>
+											                </td>
+											                <td>
+											                	<select id="minorVersion">
+											                		<option value="0">0</option>
+											                       	<option value="1">1</option>
+																	<option value="2">2</option>
+																	<option value="3">3</option>
+																	<option value="4">4</option>
+																	<option value="5">5</option>
+																	<option value="6">6</option>
+																	<option value="7">7</option>
+																	<option value="8">8</option>
+																	<option value="9">9</option>
+																	<option value="10">10</option>
+																	<option value="11">11</option>
+																	<option value="12">12</option>
+																	<option value="13">13</option>
+																	<option value="14">14</option>
+																	<option value="15">15</option>
+																	<option value="16">16</option>
+																	<option value="17">17</option>
+																	<option value="18">18</option>
+																	<option value="19">19</option>
+																	<option value="20">20</option>
+											                    </select>
+											                </td>
+											                <td>
+											                	<select id="fixedVersion">
+											                		<option value="0">0</option>
+											                       	<option value="1">1</option>
+																	<option value="2">2</option>
+																	<option value="3">3</option>
+																	<option value="4">4</option>
+																	<option value="5">5</option>
+																	<option value="6">6</option>
+																	<option value="7">7</option>
+																	<option value="8">8</option>
+																	<option value="9">9</option>
+																	<option value="10">10</option>
+																	<option value="11">11</option>
+																	<option value="12">12</option>
+																	<option value="13">13</option>
+																	<option value="14">14</option>
+																	<option value="15">15</option>
+																	<option value="16">16</option>
+																	<option value="17">17</option>
+																	<option value="18">18</option>
+																	<option value="19">19</option>
+																	<option value="20">20</option>
+											                    </select>
+											                </td>
+											            </tr>
+														<tr>
+															<td>Build Type</td>
+														</tr>
+														<tr>
+															<td colspan="3">
+											                    <select class="type_build" id="iterationType">
+											                       	<option value="iteration">Iteration</option>
+											                       	<option value="sprint">Sprint</option>
+											                       	<option value="date">Date</option>
+											                    </select>
+											                </td>
+														</tr>
+														<tr>
+															<td>Week Start</td>
+														</tr>
+														<tr>
+															<td colspan="3">
+											                    <select class="type_build" id="weekStart">
+											                       	<option value="1">1</option>
+																	<option value="2">2</option>
+																	<option value="3">3</option>
+																	<option value="4">4</option>
+																	<option value="5">5</option>
+																	<option value="6">6</option>
+																	<option value="7">7</option>
+																	<option value="8">8</option>
+																	<option value="9">9</option>
+																	<option value="10">10</option>
+																	<option value="11">11</option>
+																	<option value="12">12</option>
+																	<option value="13">13</option>
+																	<option value="14">14</option>
+																	<option value="15">15</option>
+																	<option value="16">16</option>
+																	<option value="17">17</option>
+																	<option value="18">18</option>
+																	<option value="19">19</option>
+																	<option value="20">20</option>
+											                    </select>
+											                </td>
+														</tr>
+											        </table>
+										        </form>
+										        <div align="right">
+										        	<div class="flt_left">
+											        	Ex : 1.0.0-SNAPSHOT
+											        </div>
+											        <div class="flt_right">
+											        	<input type="button" class="btn btn_style" value="OK" id="submitVersion">
+											        </div>
+										        </div>     
+										    </div>
+										</td>
+									</tr>
+									<tr>
+										<td><span>User Name</span><sup>*</sup></td>
+										<td><span>Password</span><sup>*</sup></td>
+									</tr>
+									<tr>
+										<td><input type="text" id="branchUsername" style="margin-right:10px"></td>
+										<td><input type="password" id="branchPassword"></td>
+									</tr>
+									<tr>
+										<td colspan="2"><textarea id="branchComment"></textarea></td>
+									</tr>
+									<tr>
+										<td><input type="checkbox" id="downloadBrToWorkspace">Download to Workspace</td>
+										<td class="flt_right">
+											<button class="btn btn_style btn_style_spin ladda-button" data-style="expand-left" id="createBranch"><span class="ladda-label">Create</span></button>
+											<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+										</td>
+									</tr>
+								</table>
+							</div>
+							<div id="tags" class="tab-pane fade ">
+								<table>
+									<tr>
+										<td><span>From Branch/Trunck</span></td>
+										<td><span>Version</span></td>
+									</tr>
+									<tr>
+										<td><input type="text" id="tagFromName" style="margin-right:10px" readonly></td>
+										<td><input type="text" id="tagFromVersion" readonly></td>
+									</tr>
+									<tr>
+										<td><span>Tags To</span><sup>*</sup></td>
+									</tr>
+									<tr>
+										<td><input type="text" id="tagName"></td>
+									</tr>
+									<tr>
+										<td><span>User Name</span><sup>*</sup></td>
+										<td><span>Password</span><sup>*</sup></td>
+									</tr>
+									<tr>
+										<td><input type="text" id="tagUsername" style="margin-right:10px"></td>
+										<td><input type="password" id="tagPassword"></td>
+									</tr>
+									<tr>
+										<td colspan="2"><textarea id="tagComment"></textarea></td>
+									</tr>
+									<tr>
+										<td class="flt_right" colspan="2">
+											<button class="btn btn_style btn_style_spin ladda-button" data-style="expand-left" id="createTag"><span class="ladda-label">Create</span></button>
+											<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+										</td>
+									</tr>
+								</table>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<!--<table class="filerepo_list" cellpadding="0" cellspacing="0" border="0" width="100%">
-			<tr>
-				<td><img src="themes/default/images/Phresco/folder.png"></td>
-				<td>agra</td>
-				<td><img src="themes/default/images/Phresco/delete_row.png"></td>
-			</tr>
-			<tr>
-				<td><img src="themes/default/images/Phresco/folder.png"></td>
-				<td>agra</td>
-				<td><img src="themes/default/images/Phresco/delete_row.png"></td>
-			</tr>
-			<tr>
-				<td><img src="themes/default/images/Phresco/folder.png"></td>
-				<td>agra</td>
-				<td><img src="themes/default/images/Phresco/delete_row.png"></td>
-			</tr>
-			<tr>
-				<td><img src="themes/default/images/Phresco/folder.png"></td>
-				<td>agra</td>
-				<td><img src="themes/default/images/Phresco/delete_row.png"></td>
-			</tr>
-		</table>-->
 	</div>
+	
+	<!-- Progress div starts here-->
+    <div class="unit_close hideContent">
+    	<a href="javascript:void(0)" data-flag="true" id="consoleImg">
+			<img src="themes/default/images/Phresco/console_img.png" width="33" height="92" border="0" alt="">
+			<div class="progress_loading" style="display:none;"><img src="themes/default/images/Phresco/progress_load.gif" border="0"></div>
+		</a>
+	</div>
+    <div class="unit_progress">
+        <table id="unit_progress" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
+            <thead>
+                <tr>
+					<td>
+						<div class="flt_right">
+							<a href="javascript:void(0)" id="buildCopyLog">
+								<img src="themes/default/images/Phresco/buildreport_icon.png" width="15" height="18" border="0" alt="">
+							</a>
+						</div>
+						<div class="flt_left"><span data-i18n="build.label.progress"></span></div>
+					</td>
+				</tr>
+			</thead>
+        </table>
+		<div class="consolescrolldiv" autoscroll="true">
+			<div id="testConsole" class="console_pad console_font">
+			</div>
+		</div>
+    </div>
+    <!-- Progress div ends here -->
 </section>
 <section class="content_end hideContent">
 	<div class="msgdisplay error"></div>
