@@ -21,7 +21,7 @@
                         	<tbody>
                             	<tr>
 	                                <td>
-                                    	<label>Old Password</label>
+                                    	<label>Old Password<sup>*</sup></label>
                                     </td>
                                     <td>
                                         <input type="password" id="old_password">
@@ -29,7 +29,7 @@
                     			</tr>
                                 <tr>
 	                               <td>
-                                    	<label>New Password</label>
+                                    	<label>New Password<sup>*</sup></label>
                                     </td>
                                     <td>
                                         <input type="password" id="new_password">
@@ -37,7 +37,7 @@
                     			</tr>
                                 <tr>
 	                                 <td>
-                                    	<label>Reenter New Password</label>
+                                    	<label>Reenter New Password<sup>*</sup></label>
                                     </td>
                                     <td>
                                         <input type="password" id="new_password_reenter">

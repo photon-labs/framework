@@ -498,7 +498,12 @@ define([], function() {
 			var self = this;
 			var dynamicId = data.dynamicId;
 			self.openccpl(obj, $(obj).attr('name'), '');
+			
 			$('#commitLoading_'+dynamicId).show();
+			//fix the scroll
+			$('.fixedscroll').css("height", "250px");
+			$('.fixedscroll').css("overflow-y", "auto");
+			//end of the scroll
 			commonVariables.hideloading = true;
 	      	self.projectListActionForScm(self.getActionHeader(data, "getCommitableFiles"), $('#commitLoading_'+dynamicId), function(response) {
 				var halfheight= window.innerHeight/2;
@@ -598,6 +603,10 @@ define([], function() {
 			var self = this;
 			var dynamicId = data.dynamicId;
 			self.openccpl(obj, $(obj).attr('name'), '');
+			//fix the scroll
+			$('.fixedscroll').css("height", "250px");
+			$('.fixedscroll').css("overflow-y", "auto");
+			//end of the scroll
 			$('#updateLoading_'+dynamicId).show();
 			commonVariables.hideloading = true;
 	      	self.projectListActionForScm(self.getActionHeader(data, "getUpdatableFiles"), $('#updateLoading_'+dynamicId), function(response) {
@@ -763,6 +772,10 @@ define([], function() {
 			$("a[namedel=delete]").click(function() {
 				var temp = $(this).attr('name');
 				self.openccpl(this, $(this).attr('name'));
+				//fix the scroll
+				$('.fixedscroll').css("height", "250px");
+				$('.fixedscroll').css("overflow-y", "auto");
+				//end of the scroll
 				$('#'+temp).show();
 				var deletedata = {}, actionBody = {}, action;
 				deletedata.fileName = $(this).attr("fileName");

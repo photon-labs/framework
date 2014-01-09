@@ -1579,6 +1579,7 @@ define([], function() {
 			$("tr.mobLayer").hide();
 			var position = 1;
 			$.each(getData, function(index, value) {
+				commonVariables.api.localVal.setJson(value.appDirName, value);
 				if (value.techInfo.appTypeId === "1dbcf61c-e7b7-4267-8431-822c4580f9cf") {
 					$("#appLayaer").show();
 					$("tr.applnLayer").show();
@@ -1902,12 +1903,13 @@ define([], function() {
 							var trNameAttr = $(value).attr('name');
 							var canAddAppInfo = false;
 							if ($(value).css('display') !== "none" && trNameAttr !== undefined) {
-								var appInfo = {};
 								var techInfo = {};
 								tech = $(value).children("td.technology").children("select.appln_technology");
 								appInfoId = $(value).children("td.technology").children("select.appln_technology").attr('appInfoId');
 								techName = $(tech).find(":selected").text();
 								code = $(value).children("td.applnappcode").children("input.appln-appcode").val();
+								var appInfoFromSession = commonVariables.api.localVal.getJson(code);
+								var appInfo = (appInfoFromSession !== null) ? appInfoFromSession : {};
 								if(appInfoId !== undefined && appInfoId !== null) {
 									appInfo.id = appInfoId;
 								}
@@ -2002,6 +2004,7 @@ define([], function() {
 									}
 									count++;
 								}
+								commonVariables.api.localVal.setJson(code, null);
 							}
 						});	
 					} 
@@ -2012,11 +2015,12 @@ define([], function() {
 							var trNameAttr = $(value).attr('name');
 							var canAddAppInfo = false;
 							if($(value).css('display') !== "none" && trNameAttr !== undefined) {
-								var appInfo = {};
 								var techInfo = {};
 								tech = $(value).children("td.widget").children("select.web_widget");
 								techName = $(tech).find(":selected").text();
 								code = $(value).children("td.webappcode").children("input.web-appcode").val();
+								var appInfoFromSession = commonVariables.api.localVal.getJson(code);
+								var appInfo = (appInfoFromSession !== null) ? appInfoFromSession : {};
 								appInfoId = $(value).children("td.web").children("select.weblayer").attr('appInfoId');
 								if(appInfoId !== undefined && appInfoId !== null){
 									appInfo.id = appInfoId;
@@ -2111,6 +2115,7 @@ define([], function() {
 									}	
 									count++;
 								}
+								commonVariables.api.localVal.setJson(code, null);
 							}	
 						});	
 					}  
@@ -2127,6 +2132,8 @@ define([], function() {
 								tech = $(value).children("td.types").children("select.mobile_types");
 								techName = $(tech).find(":selected").text();
 								code = $(value).children("td.mobileappcode").children("input.mobile-appcode").val();
+								var appInfoFromSession = commonVariables.api.localVal.getJson(code);
+								var appInfo = (appInfoFromSession !== null) ? appInfoFromSession : {};
 								appInfoId = $(value).children("td.mobile").children("select.mobile_layer").attr('appInfoId');
 								if(appInfoId !== undefined && appInfoId !== null){
 									appInfo.id = appInfoId;
@@ -2225,6 +2232,7 @@ define([], function() {
 									}
 									count++;
 								}
+								commonVariables.api.localVal.setJson(code, null);
 							}
 						});
 					}
