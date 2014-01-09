@@ -2670,7 +2670,7 @@ form[name="deployForm"] {
 }
 
 .env_border ul li .envlistname {
-	padding-left: 70px;
+	padding-left: 6px;
 }
 
 .env_border ul li:last-child {

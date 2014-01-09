@@ -20,22 +20,17 @@
 								<table class="table table-striped table_border border_div table-bordered add_env" cellpadding="0" cellspacing="0" border="0">
 									<thead>
 										<tr>
-											<th data-i18n="configuration.label.default"></th>
+											
 											<th data-i18n="configuration.label.environment"></th>
 										</tr>
 									</thead>
 									<tbody>
 										<tr>
-											<td colspan="2">
-												<ul class="connected list" id="content_Env" name="envList">
+											<td >
+												<ul class="list" id="content_Env" name="envList">
 													{{#configurationList}}
 														{{#if name}}
 															<li name="{{name}}">
-																{{#if defaultEnv}}
-																<div><input type="radio" name="optionsRadiosfd" checked></div>
-																{{else}}
-																<div><input type="radio" name="optionsRadiosfd"></div>
-																{{/if}}
 																<div name="envListName" class="envlistname">{{name}}</div>
 																<input type="hidden" name="envListDesc" value="{{desc}}">
 															</li>
