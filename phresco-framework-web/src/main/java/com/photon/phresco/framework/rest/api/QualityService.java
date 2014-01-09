@@ -111,8 +111,8 @@ import com.sun.jersey.api.client.ClientResponse.Status;
 @Path("/quality")
 public class QualityService extends RestBase implements ServiceConstants, FrameworkConstants, ResponseCodes {
 	/** The test suite map. */
-	private static Map<String, Map<String, NodeList>> testSuiteMap = Collections
-			.synchronizedMap(new HashMap<String, Map<String, NodeList>>(8));
+	private static Map<String, Map<String, List<NodeList>>> testSuiteMap = Collections
+			.synchronizedMap(new HashMap<String, Map<String, List<NodeList>>>(8));
 	
 	/** The set failure test cases. */
 	private int setFailureTestCases;
@@ -215,7 +215,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			@QueryParam(REST_QUERY_MODULE_NAME) String moduleName, @QueryParam(REST_QUERY_PROJECT_CODE) String projectCode) throws PhrescoException {
 		ResponseInfo<List<TestSuite>> responseData = new ResponseInfo<List<TestSuite>>();
 		try {
-			
 			if (StringUtils.isNotEmpty(projectCode)) {
 				appDirName = projectCode + INTEGRATION_TEST;
 			}
@@ -227,7 +226,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			} else {
 				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
-			
 			// TO kill the Process
 			String rootModule = appDirName;
 			if (StringUtils.isNotEmpty(moduleName)) {
@@ -269,7 +267,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 */
 	private List<TestSuite> testSuites(String appDirName, String moduleName, String testType, String module, String techReport, String testSuitePath, String testCasePath, String testSuite, String rootModulePath,String subModule) throws PhrescoException {
 		setTestSuite(testSuite);
-		List<TestSuite> suites = new ArrayList<TestSuite>();
+		List<TestSuite> allSuites = new ArrayList<TestSuite>();
 		try {
 			String mapKey = constructMapKey(appDirName, moduleName);
 			String testSuitesMapKey = mapKey + testType + module + techReport;
@@ -279,16 +277,24 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 				return null;
 			}
 			getTestSuiteNames(appDirName, testType, moduleName, techReport, testResultPath, testSuitePath);
-			Map<String, NodeList> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
+			Map<String, List<NodeList>> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
 			if (MapUtils.isEmpty(testResultNameMap)) {
 				return null;
 			}
 			
-			// get all nodelist of testType of a project
-			Collection<NodeList> allTestResultNodeLists = testResultNameMap.values();
-			for (NodeList allTestResultNodeList : allTestResultNodeLists) {
+			List<NodeList> allTestNodes = new ArrayList<NodeList> ();
+			Set<String> keys = testResultNameMap.keySet();
+			for (String key : keys) {
+				List<NodeList> nodes = testResultNameMap.get(key);
+				for (NodeList node : nodes) {
+					allTestNodes.add(node);
+				}
+			}
+			int indexOf = 0;
+			for (NodeList allTestResultNodeList : allTestNodes) {
 				if (allTestResultNodeList.getLength() > 0) {
 					List<TestSuite> allTestSuites = getTestSuite(allTestResultNodeList);
+				
 					if (CollectionUtils.isNotEmpty(allTestSuites)) {
 						for (TestSuite tstSuite : allTestSuites) {
 							// testsuite values are set before calling
@@ -297,15 +303,39 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 							float tests = 0;
 							float failures = 0;
 							float errors = 0;
-							setNodeLength(Math.round(tstSuite.getTests()));
-							setSetFailureTestCases(Math.round(tstSuite.getFailures()));
-							setErrorTestCases(Math.round(tstSuite.getErrors()));
-							
-							tests = Float.parseFloat(String.valueOf(getNodeLength()));
-							failures = Float.parseFloat(String.valueOf(getSetFailureTestCases()));
-							errors = Float.parseFloat(String.valueOf(getErrorTestCases()));
 							float success = 0;
-
+							
+							boolean entryAvailable = false;
+							TestSuite suite = new TestSuite();
+							
+							//To check for previous existance
+							if (CollectionUtils.isNotEmpty(allSuites)) {
+								int i = 0;
+								for (TestSuite allSuite : allSuites) {
+									if (allSuite.getName().equals(tstSuite.getName())) {
+										suite = allSuite;
+										entryAvailable = true;
+										indexOf = i;
+										break;
+									}
+									i++;
+								}
+							}
+							
+							if (entryAvailable) {
+								tests = Math.round(suite.getTotal()) + Math.round(tstSuite.getTests());
+								failures = Math.round(suite.getFailures()) +  Math.round(tstSuite.getFailures());
+								errors = Math.round(suite.getErrors()) + Math.round(tstSuite.getErrors());
+							} else {
+								setNodeLength(Math.round(tstSuite.getTests()));
+								setSetFailureTestCases(Math.round(tstSuite.getFailures()));
+								setErrorTestCases(Math.round(tstSuite.getErrors()));
+								
+								tests = Float.parseFloat(String.valueOf(getNodeLength()));
+								failures = Float.parseFloat(String.valueOf(getSetFailureTestCases()));
+								errors = Float.parseFloat(String.valueOf(getErrorTestCases()));
+							}	
+							
 							if (failures != 0 && errors == 0) {
 								if (failures > tests) {
 									success = failures - tests;
@@ -328,16 +358,20 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 							} else {
 								success = tests;
 							}
-
-							TestSuite suite = new TestSuite();
 							suite.setName(tstSuite.getName());
 							suite.setSuccess(success);
 							suite.setErrors(errors);
-							suite.setFailures(tstSuite.getFailures());
+							suite.setFailures(failures);
 							suite.setTime(tstSuite.getTime());
-							suite.setTotal(tstSuite.getTests());
+							suite.setTotal(tests);
 							suite.setTestCases(tstSuite.getTestCases());
-							suites.add(suite);
+							
+							if (entryAvailable) {
+								allSuites.remove(indexOf);
+								allSuites.add(indexOf, suite);
+							} else {
+								allSuites.add(suite);
+							}
 						}
 					}
 				}
@@ -345,7 +379,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
 		}
-		return suites;
+		return allSuites;
 	}
 
 	private String constructMapKey(String appDirName, String moduleName) {
@@ -381,10 +415,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 				appDirName = projectCode + INTEGRATION_TEST;
 			}
 			String rootModule = appDirName;
-//			if (StringUtils.isNotEmpty(moduleName)) {
-//				appDirName = appDirName + File.separator + moduleName;
-//			}
-			
 			String rootModulePath = "";
 			String subModuleName = "";
 			if (StringUtils.isNotEmpty(moduleName)) {
@@ -636,18 +666,14 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		ResponseInfo<List<TestCase>> responseData = new ResponseInfo<List<TestCase>>();
 		try {
 			String mapKey = constructMapKey(appDirName, moduleName);
-//			String appDirWithModule = appDirName;
-//			if (StringUtils.isNotEmpty(moduleName)) {
-//				appDirWithModule = appDirName + File.separator + moduleName;
-//			}
 			String testSuitesMapKey = mapKey + testType + module + techReport;
 			if (MapUtils.isEmpty(testSuiteMap)) {
 				String testResultPath = getTestResultPath(appDirName, rootModulePath, subModule, testType, techReport);
 				getTestSuiteNames(appDirName, testType, moduleName, techReport, testResultPath, testSuitePath);
 			}
-			Map<String, NodeList> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
-			NodeList testSuites = testResultNameMap.get(testSuite);
-			if (ALL.equals(testSuite)) {
+			Map<String, List<NodeList>> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
+			List<NodeList> testSuitesList = testResultNameMap.get(testSuite);
+			/*if (ALL.equals(testSuite)) {
 				Map<String, String> testSuitesResultMap = new HashMap<String, String>();
 				float totalTestSuites = 0;
 				float successTestSuites = 0;
@@ -656,14 +682,14 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 				// get all nodelist of testType of a project
 				Collection<NodeList> allTestResultNodeLists = testResultNameMap.values();
 				for (NodeList allTestResultNodeList : allTestResultNodeLists) {
-					if (allTestResultNodeList.getLength() > 0) {
+				if (allTestResultNodeList.getLength() > 0) {
 						List<TestSuite> allTestSuites = getTestSuite(allTestResultNodeList);
 						if (CollectionUtils.isNotEmpty(allTestSuites)) {
 							for (TestSuite tstSuite : allTestSuites) {
 								// testsuite values are set before calling
 								// getTestCases value
 								setTestSuite(tstSuite.getName());
-								getTestCases(rootModulePath, subModule, allTestResultNodeList, testSuitePath, testCasePath, testType);
+//								getTestCases(rootModulePath, subModule, allTestResultNodeList, testSuitePath, testCasePath, testType);
 								float tests = 0;
 								float failures = 0;
 								float errors = 0;
@@ -712,28 +738,27 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 						result, RESPONSE_STATUS_SUCCESS, PHRQ000002);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
 						.build();
-			} else {
-				if (testSuites.getLength() > 0) {
-					List<TestCase> testCases;
-					testCases = getTestCases(rootModulePath, subModule, testSuites, testSuitePath, testCasePath, testType);
-					if (CollectionUtils.isEmpty(testCases)) {
-						ResponseInfo<List<TestCase>> finalOutput = responseDataEvaluation(responseData, null,
-								testCases, RESPONSE_STATUS_SUCCESS, PHRQ000004);
-						return Response.status(Status.OK).entity(finalOutput)
-								.header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
-					} else {
-						boolean isClassEmpty = false;
-						// to check whether class attribute is there or not
-						for (TestCase testCase : testCases) {
-							if (testCase.getTestClass() == null) {
-								isClassEmpty = true;
-							}
+			} else*/ 
+			if (testSuitesList.size() > 0) {
+				List<TestCase> testCases;
+				testCases = getTestCases(rootModulePath, subModule, testSuitesList, testSuitePath, testCasePath, testType);
+				if (CollectionUtils.isEmpty(testCases)) {
+					ResponseInfo<List<TestCase>> finalOutput = responseDataEvaluation(responseData, null,
+							testCases, RESPONSE_STATUS_SUCCESS, PHRQ000004);
+					return Response.status(Status.OK).entity(finalOutput)
+							.header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
+				} else {
+					boolean isClassEmpty = false;
+					// to check whether class attribute is there or not
+					for (TestCase testCase : testCases) {
+						if (testCase.getTestClass() == null) {
+							isClassEmpty = true;
 						}
-						ResponseInfo<List<TestCase>> finalOutput = responseDataEvaluation(responseData, null,
-								testCases, RESPONSE_STATUS_SUCCESS, PHRQ000002);
-						return Response.status(Status.OK).entity(finalOutput)
-								.header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 					}
+					ResponseInfo<List<TestCase>> finalOutput = responseDataEvaluation(responseData, null,
+							testCases, RESPONSE_STATUS_SUCCESS, PHRQ000002);
+					return Response.status(Status.OK).entity(finalOutput)
+							.header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 				}
 			}
 		} catch (PhrescoException e) {
@@ -786,124 +811,128 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 * @return the test cases
 	 * @throws PhrescoException the phresco exception
 	 */
-	private List<TestCase> getTestCases(String rootModulePath, String subModule, NodeList testSuites, String testSuitePath, String testCasePath, String testType) throws PhrescoException {
+	private List<TestCase> getTestCases(String rootModulePath, String subModule, List<NodeList> testSuites, String testSuitePath, String testCasePath, String testType) throws PhrescoException {
 		InputStream fileInputStream = null;
 		StringBuilder screenShotDir = new StringBuilder();
 		try {
-			StringBuilder sb = new StringBuilder(); 
-			sb.append(testSuitePath);
-			sb.append(NAME_FILTER_PREFIX);
-			sb.append(getTestSuite());
-			sb.append(NAME_FILTER_SUFIX);
-			sb.append(testCasePath);
-
-			XPath xpath = XPathFactory.newInstance().newXPath();
-			NodeList nodeList = (NodeList) xpath.evaluate(sb.toString(), testSuites.item(0).getParentNode(),
-					XPathConstants.NODESET);
-			// For tehnologies like php and drupal duoe to plugin change xml
-			// testcase path modified
-			if (nodeList.getLength() == 0) {
-				StringBuilder sbMulti = new StringBuilder();
-				sbMulti.append(testSuitePath);
-				sbMulti.append(NAME_FILTER_PREFIX);
-				sbMulti.append(getTestSuite());
-				sbMulti.append(NAME_FILTER_SUFIX);
-				sbMulti.append(XPATH_TESTSUTE_TESTCASE);
-				nodeList = (NodeList) xpath.evaluate(sbMulti.toString(), testSuites.item(0).getParentNode(),
-						XPathConstants.NODESET);
-			}
-
-			// For technology sharepoint
-			if (nodeList.getLength() == 0) {
-				StringBuilder sbMulti = new StringBuilder(); 
-				sbMulti.append(XPATH_MULTIPLE_TESTSUITE);
-				sbMulti.append(NAME_FILTER_PREFIX);
-				sbMulti.append(getTestSuite());
-				sbMulti.append(NAME_FILTER_SUFIX);
-				sbMulti.append(testCasePath);
-				nodeList = (NodeList) xpath.evaluate(sbMulti.toString(), testSuites.item(0).getParentNode(),
-						XPathConstants.NODESET);
-			}
-
 			List<TestCase> testCases = new ArrayList<TestCase>();
-			if(testType.equals(FUNCTIONAL)) {
-			 screenShotDir = screenShotDir(rootModulePath, subModule);
-			}
-			int failureTestCases = 0;
-			int errorTestCases = 0;
-			for (int i = 0; i < nodeList.getLength(); i++) {
-				Node node = nodeList.item(i);
-				NodeList childNodes = node.getChildNodes();
-				NamedNodeMap nameNodeMap = node.getAttributes();
-				TestCase testCase = new TestCase();
-				for (int k = 0; k < nameNodeMap.getLength(); k++) {
-					Node attribute = nameNodeMap.item(k);
-					String attributeName = attribute.getNodeName();
-					String attributeValue = attribute.getNodeValue();
-					if (ATTR_NAME.equals(attributeName)) {
-						testCase.setName(attributeValue);
-					} else if (ATTR_CLASS.equals(attributeName) || ATTR_CLASSNAME.equals(attributeName)) {
-						testCase.setTestClass(attributeValue);
-					} else if (ATTR_FILE.equals(attributeName)) {
-						testCase.setFile(attributeValue);
-					} else if (ATTR_LINE.equals(attributeName)) {
-						testCase.setLine(Float.parseFloat(attributeValue));
-					} else if (ATTR_ASSERTIONS.equals(attributeName)) {
-						testCase.setAssertions(Float.parseFloat(attributeValue));
-					} else if (ATTR_TIME.equals(attributeName)) {
-						testCase.setTime(attributeValue);
-					}
+			for (NodeList testSuite : testSuites) {
+				StringBuilder sb = new StringBuilder(); 
+				sb.append(testSuitePath);
+				sb.append(NAME_FILTER_PREFIX);
+				sb.append(getTestSuite());
+				sb.append(NAME_FILTER_SUFIX);
+				sb.append(testCasePath);
+	
+				XPath xpath = XPathFactory.newInstance().newXPath();
+				NodeList nodeList = (NodeList) xpath.evaluate(sb.toString(), testSuite.item(0).getParentNode(),
+						XPathConstants.NODESET);
+				// For tehnologies like php and drupal duoe to plugin change xml
+				// testcase path modified
+				if (nodeList.getLength() == 0) {
+					StringBuilder sbMulti = new StringBuilder();
+					sbMulti.append(testSuitePath);
+					sbMulti.append(NAME_FILTER_PREFIX);
+					sbMulti.append(getTestSuite());
+					sbMulti.append(NAME_FILTER_SUFIX);
+					sbMulti.append(XPATH_TESTSUTE_TESTCASE);
+					nodeList = (NodeList) xpath.evaluate(sbMulti.toString(), testSuite.item(0).getParentNode(),
+							XPathConstants.NODESET);
 				}
-
-				if (childNodes != null && childNodes.getLength() > 0) {
-					for (int j = 0; j < childNodes.getLength(); j++) {
-						Node childNode = childNodes.item(j);
-						if (ELEMENT_FAILURE.equals(childNode.getNodeName())) {
-							failureTestCases++;
-							TestCaseFailure failure = getFailure(childNode);
-							if (failure != null) {
-								File file = new File(screenShotDir.toString() + testCase.getName()
-										+ FrameworkConstants.DOT + IMG_PNG_TYPE);
-								if (file.exists()) {
-									failure.setHasFailureImg(true);
-									fileInputStream = new FileInputStream(file);
-									if (fileInputStream != null) {
-										byte[] imgByte = null;
-										imgByte = IOUtils.toByteArray(fileInputStream);
-										byte[] encodedImage = Base64.encodeBase64(imgByte);
-										failure.setScreenshotPath(new String(encodedImage));
-									}
-								}
-								testCase.setTestCaseFailure(failure);
-							}
-						}
-
-						if (ELEMENT_ERROR.equals(childNode.getNodeName())) {
-							errorTestCases++;
-							TestCaseError error = getError(childNode);
-							if (error != null) {
-								File file = new File(screenShotDir.toString() + testCase.getName()
-										+ FrameworkConstants.DOT + IMG_PNG_TYPE);
-								if (file.exists()) {
-									error.setHasErrorImg(true);
-									fileInputStream = new FileInputStream(file);
-									if (fileInputStream != null) {
-										byte[] imgByte = null;
-										imgByte = IOUtils.toByteArray(fileInputStream);
-										byte[] encodedImage = Base64.encodeBase64(imgByte);
-										error.setScreenshotPath(new String(encodedImage));
-									}
-								}
-								testCase.setTestCaseError(error);
-							}
+	
+				// For technology sharepoint
+				if (nodeList.getLength() == 0) {
+					StringBuilder sbMulti = new StringBuilder(); 
+					sbMulti.append(XPATH_MULTIPLE_TESTSUITE);
+					sbMulti.append(NAME_FILTER_PREFIX);
+					sbMulti.append(getTestSuite());
+					sbMulti.append(NAME_FILTER_SUFIX);
+					sbMulti.append(testCasePath);
+					nodeList = (NodeList) xpath.evaluate(sbMulti.toString(), testSuite.item(0).getParentNode(),
+							XPathConstants.NODESET);
+				}
+	
+				
+				if(testType.equals(FUNCTIONAL)) {
+				 screenShotDir = screenShotDir(rootModulePath, subModule);
+				}
+				int failureTestCases = 0;
+				int errorTestCases = 0;
+				for (int i = 0; i < nodeList.getLength(); i++) {
+					Node node = nodeList.item(i);
+					NodeList childNodes = node.getChildNodes();
+					NamedNodeMap nameNodeMap = node.getAttributes();
+					TestCase testCase = new TestCase();
+					for (int k = 0; k < nameNodeMap.getLength(); k++) {
+						Node attribute = nameNodeMap.item(k);
+						String attributeName = attribute.getNodeName();
+						String attributeValue = attribute.getNodeValue();
+						if (ATTR_NAME.equals(attributeName)) {
+							testCase.setName(attributeValue);
+						} else if (ATTR_CLASS.equals(attributeName) || ATTR_CLASSNAME.equals(attributeName)) {
+							testCase.setTestClass(attributeValue);
+						} else if (ATTR_FILE.equals(attributeName)) {
+							testCase.setFile(attributeValue);
+						} else if (ATTR_LINE.equals(attributeName)) {
+							testCase.setLine(Float.parseFloat(attributeValue));
+						} else if (ATTR_ASSERTIONS.equals(attributeName)) {
+							testCase.setAssertions(Float.parseFloat(attributeValue));
+						} else if (ATTR_TIME.equals(attributeName)) {
+							testCase.setTime(attributeValue);
 						}
 					}
+	
+					if (childNodes != null && childNodes.getLength() > 0) {
+						for (int j = 0; j < childNodes.getLength(); j++) {
+							Node childNode = childNodes.item(j);
+							if (ELEMENT_FAILURE.equals(childNode.getNodeName())) {
+								failureTestCases++;
+								TestCaseFailure failure = getFailure(childNode);
+								if (failure != null) {
+									File file = new File(screenShotDir.toString() + testCase.getName()
+											+ FrameworkConstants.DOT + IMG_PNG_TYPE);
+									if (file.exists()) {
+										failure.setHasFailureImg(true);
+										fileInputStream = new FileInputStream(file);
+										if (fileInputStream != null) {
+											byte[] imgByte = null;
+											imgByte = IOUtils.toByteArray(fileInputStream);
+											byte[] encodedImage = Base64.encodeBase64(imgByte);
+											failure.setScreenshotPath(new String(encodedImage));
+										}
+									}
+									testCase.setTestCaseFailure(failure);
+								}
+							}
+	
+							if (ELEMENT_ERROR.equals(childNode.getNodeName())) {
+								errorTestCases++;
+								TestCaseError error = getError(childNode);
+								if (error != null) {
+									File file = new File(screenShotDir.toString() + testCase.getName()
+											+ FrameworkConstants.DOT + IMG_PNG_TYPE);
+									if (file.exists()) {
+										error.setHasErrorImg(true);
+										fileInputStream = new FileInputStream(file);
+										if (fileInputStream != null) {
+											byte[] imgByte = null;
+											imgByte = IOUtils.toByteArray(fileInputStream);
+											byte[] encodedImage = Base64.encodeBase64(imgByte);
+											error.setScreenshotPath(new String(encodedImage));
+										}
+									}
+									testCase.setTestCaseError(error);
+								}
+							}
+						}
+					}
+					testCases.add(testCase);
 				}
-				testCases.add(testCase);
+				setSetFailureTestCases(failureTestCases);
+				setErrorTestCases(errorTestCases);
+				setNodeLength(nodeList.getLength());
+				//
 			}
-			setSetFailureTestCases(failureTestCases);
-			setErrorTestCases(errorTestCases);
-			setNodeLength(nodeList.getLength());
 			return testCases;
 		} catch (PhrescoException e) {
 			throw e;
@@ -1174,7 +1203,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			String testResultPath, String testSuitePath) throws PhrescoException {
 		String mapKey = constructMapKey(appDirName, moduleName);
 		String testSuitesMapKey = mapKey + testType + moduleName + techReport;
-		Map<String, NodeList> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
+		Map<String, List<NodeList>> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
 		List<String> resultTestSuiteNames = null;
 		//if (MapUtils.isEmpty(testResultNameMap)) {
 			File[] resultFiles = getTestResultFiles(testResultPath);
@@ -1296,20 +1325,25 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 */
 	private void updateCache(String appDirName, String testType, String moduleName, String techReport,
 			File[] resultFiles, String testSuitePath) throws PhrescoException {
-		Map<String, NodeList> mapTestSuites = new HashMap<String, NodeList>(10);
+		Map<String, List<NodeList>> multiNodeMap = new HashMap<String, List<NodeList>>(10);
 		for (File resultFile : resultFiles) {
 			Document doc = getDocument(resultFile);
 			NodeList testSuiteNodeList = evaluateTestSuite(doc, testSuitePath);
 			if (testSuiteNodeList.getLength() > 0) {
 				List<TestSuite> allTestSuites = getTestSuite(testSuiteNodeList);
 				for (TestSuite tstSuite : allTestSuites) {
-					mapTestSuites.put(tstSuite.getName(), testSuiteNodeList);
+					List<NodeList> list = new ArrayList<NodeList> ();
+					if (multiNodeMap.containsKey(tstSuite.getName())) {
+						list = multiNodeMap.get(tstSuite.getName());
+					}
+					list.add(testSuiteNodeList);
+					multiNodeMap.put(tstSuite.getName(), list);
 				}
 			}
 		}
 		String mapKey = constructMapKey(appDirName, moduleName);
 		String testSuitesKey = mapKey + testType + moduleName + techReport;
-		testSuiteMap.put(testSuitesKey, mapTestSuites);
+		testSuiteMap.put(testSuitesKey, multiNodeMap);
 	}
 
 	/**
