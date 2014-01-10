@@ -5602,6 +5602,15 @@ textarea[name="regex"] {
 	margin: 0 5px 3px 0;
 }
 
+#rep_release table tr td {
+	padding:5px;
+}
+
+#rep_create table tr td {
+	padding:5px;
+}
+
+
 .repository_tabdiv ul li a{
 	background:background: #f4f4f4; /* Old browsers */
 	background: -moz-linear-gradient(top,  #f4f4f4 0%, #e3e3e3 100%); /* FF3.6+ */

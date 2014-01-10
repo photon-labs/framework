@@ -769,7 +769,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
 					} else if($(target).hasClass('add_repo')) {
 						d = ($(window).width() - (clicked.offset().left + clicked.outerWidth())) +2;
-						var BottomHeight = clicked.offset().top + clicked.height() - 416 ;
+						var BottomHeight = clicked.offset().top + clicked.height() - 460 ;
 						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});	
 						$(target).toggle();
 						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');

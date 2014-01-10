@@ -761,18 +761,17 @@ define(["projectlist/listener/projectListListener"], function() {
 				currentRow =  self.delobj.parent().next();
 				while(currentRow !== null && currentRow.length > 0) {
 				   classname = currentRow.attr("class");
-				   console.info(currentRow);
-				   console.info(currentRow.attr('ismultimodule'));
 				   if(currentRow.attr('ismultimodule') === 'true') {
 						multimod = currentRow.attr('modulename');
 						multiflag = 1;
 						currentRow = currentRow.next('tr');
-						projectnameArray = [];
-						projectnameArray.push(classname);
+						if($.inArray(classname.toString(), projectnameArray) === -1)
+							projectnameArray.push(classname);
 						multiArray.push(multimod);
 				   } else if(classname !== "proj_title" && classname !== "") {
 				        currentRow = currentRow.next('tr');
-				        projectnameArray.push(classname);
+						if($.inArray(classname.toString(), projectnameArray) === -1)
+							projectnameArray.push(classname);
 				   }else {currentRow = null;}
 				}
 				self.flagged=1;
