@@ -638,7 +638,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
 		List<String> urls = new ArrayList<String>();
 		List<String> documents = new ArrayList<String>();
-		Document document = null;
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager != null) {
@@ -697,7 +696,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 							urls.add(snapshotRepoURL);
 						}
 						
-						document = constructDomSource(artifact, applicationInfo.getAppDirName(), urls, "", doc, applicationItem);
+						Document document = constructDomSource(artifact, applicationInfo.getAppDirName(), urls, "", doc, applicationItem);
 						documents.add(com.photon.phresco.framework.impl.util.FrameworkUtil.convertDocumentToString(document));
 					}
 				}
@@ -1000,6 +999,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				StringBuilder error = new StringBuilder();
 				String line = "";
 				while ((line = branchReader.readLine()) != null) {
+					System.out.println(line);
 					if (line.startsWith("[ERROR]")) {
 						error.append(line);
 					}
@@ -1049,7 +1049,9 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				if (StringUtils.isNotEmpty(pomProcessor.getProperty(Constants.POM_PROP_KEY_SPLIT_TEST_DIR))) {
 					pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_TEST_DIR, branchAppDir + Constants.SUFFIX_TEST);
 				}
-				pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_SRC_DIR, branchAppDir);
+				if (StringUtils.isNotEmpty(pomProcessor.getProperty(Constants.POM_PROP_KEY_SPLIT_SRC_DIR))) {
+					pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_SRC_DIR, branchAppDir);
+				}
 				pomProcessor.save();
 			}
 		} catch (IOException e) {
@@ -1174,6 +1176,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				String line = "";
 				StringBuilder error = new StringBuilder();
 				while ((line = branchReader.readLine()) != null) {
+					System.out.println(line);
 					if (line.startsWith("[ERROR]")) {
 						error.append(line);
 					}
@@ -1384,8 +1387,11 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
         .append(uuid).append(Constants.STR_BLANK_SPACE)
         .append(Constants.HYPHEN_DEPTH).append(Constants.STR_BLANK_SPACE)
         .append(Constants.EMPTY);
+        File file = new File(phrescoTemp , uuid);
+        file.mkdirs();
         BufferedReader executeCommand = Utility.executeCommand(sb.toString(), phrescoTemp);
         while (executeCommand.readLine() != null) {
+        	System.out.println(executeCommand.readLine());
         }
 
         sb = new StringBuilder()
@@ -1394,6 +1400,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
         .append(pomFile.getName());
         executeCommand = Utility.executeCommand(sb.toString(), phrescoTemp + uuid);
         while (executeCommand.readLine() != null) {
+        	System.out.println(executeCommand.readLine());
         }
     }
 	
@@ -1507,6 +1514,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		String line = "";
 		StringBuilder builder = new StringBuilder();
 		while ((line = checkoutReader.readLine()) != null) {
+			System.out.println(line);
 			if (line.startsWith("[ERROR]")) {
 				builder.append(line);
 			}
@@ -2673,6 +2681,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				constructArtifactItem(versions, artifact, repo, doc, appDirName, moduleName);
 				clearCache(randomUUID);
 			}
+			urls.clear();
 		} catch (DOMException e) {
 			throw new PhrescoException(e);
 		} catch (VersionRangeResolutionException e) {
