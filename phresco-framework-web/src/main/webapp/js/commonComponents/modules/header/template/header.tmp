@@ -37,7 +37,7 @@
                     			</tr>
                                 <tr>
 	                                 <td>
-                                    	<label>Reenter New Password<sup>*</sup></label>
+                                    	<label>Re-enter New Password<sup>*</sup></label>
                                     </td>
                                     <td>
                                         <input type="password" id="new_password_reenter">
