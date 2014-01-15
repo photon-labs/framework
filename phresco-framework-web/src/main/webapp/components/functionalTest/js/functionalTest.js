@@ -106,6 +106,10 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 					return "true";	
 				}
 			});
+			
+			Handlebars.registerHelper('displayProperty', function(iframeKey) {
+				return (iframeKey !== undefined) ?  'display:block;' : 'display:none;';
+			});
 		},
 		
 		/***
@@ -249,25 +253,31 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 
 			});
 
-			
-
-
 			//Shows the report view of the test result
 			$(".report1").unbind("click");
 			$(".report1").click(function() {
-				$("#iframeContent").hide();
-				$("#testSuiteTable, #testResult, #tabularView").show();
-				self.tableScrollbar();
-				self.customScroll($(".consolescrolldiv"));
+				commonVariables.navListener.getMyObj(commonVariables.testsuiteResult, function(retVal){
+					commonVariables.reportView = true;
+					self.testsuiteResult = retVal;
+					Clazz.navigationController.jQueryContainer = '#testResult';
+					Clazz.navigationController.push(self.testsuiteResult, false);
+				});
 			});
 			
 			//Shows the execute view of the test result
-			$(".execute1").unbind("click");
-			$(".execute1").click(function() {
-				$("#testSuiteTable, #graphView, #tabularView").hide();
-				$("#iframeContent").show();
-
+			$(".execute2").unbind("click");
+			$(".execute2").click(function() {
+				$("#testSuiteTable, #testResult, #graphView, #graphicalView, #tabularView, #reportView").hide();
+				if ($('#iframeContent').size() === 1) {
+					$('#iframeContent').show();
+				} else  {
+					$('.urlInactive').show();
+				}
+				$("#executeView").show();
 			});
+			
+			self.tableScrollbar();
+			self.customScroll($(".consolescrolldiv"));
 		}
 	});
 

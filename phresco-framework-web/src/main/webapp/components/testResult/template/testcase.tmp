@@ -1,4 +1,4 @@
-<section class="features_content_main code_content testSuiteTable z_index_ci">
+<section class="features_content_main code_content testSuiteTable z_index_ci case_table">
 	<!-- Testcases div starts here -->
 	<div class="qual_unit_main unit_info" id="testcases">
 		<div class="fixed-table-container">

@@ -105,18 +105,18 @@
         		<input type="button" value="Test" data-i18n="[value]test.label.test" class="btn btn_style" disabled>
         	{{/if}}  
 
-        	<span id="Report" class="table" style="cursor: pointer;">
-            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/Phresco/table_active.png" width="213" height="29" border="0" alt="" usemap="#reportViewMap"></a>
+        	<span id="executeView" class="report" style="cursor: pointer; {{#displayProperty iframeUrlAlive}}{{/displayProperty}}">
+            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/Phresco/report_active.png" width="213" height="29" border="0" alt="" usemap="#reportViewMap"></a>
             	 <map name="reportViewMap">
-                      <area class="report1" shape="rect" coords="3,1,104,29">
-                      <area class="execute1" shape="rect" coords="106,3,215,29">
+                      <area class="execute1" shape="rect" coords="3,1,104,29">
+                      <area class="report1" shape="rect" coords="106,3,215,29">
                  </map>
             </span>
-           	<span id="Execute" class="newclas table hideContent" style="cursor: pointer;">
-            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/Phresco/graph_active.png" width="213" height="29" border="0" alt="" usemap="#executeViewMap"></a>
+           	<span id="reportView" class="execute table hideContent" style="cursor: pointer;">
+            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/Phresco/execute_active.png" width="213" height="29" border="0" alt="" usemap="#executeViewMap"></a>
                     <map name="executeViewMap">
-                      <area class="report2" shape="rect" coords="3,1,104,29">
-                      <area class="execute2" shape="rect" coords="106,3,215,29">
+                      <area class="execute2" shape="rect" coords="3,1,104,29">
+                      <area class="report2" shape="rect" coords="106,3,215,29">
                     </map>
             </span>      	
         		                
@@ -148,7 +148,7 @@
 		</section>
 	</div>
 	{{else}}
-		<div class="error">Given Url not alive</div>
+		<div id="messagedisp" class="alert alert-block urlInactive" style="text-align: center; margin: auto 0;">URL is not alive</div>
 	{{/if}}
 <section class="content_end" style="display:none;">
 	<div class="msgdisplay"></div>
