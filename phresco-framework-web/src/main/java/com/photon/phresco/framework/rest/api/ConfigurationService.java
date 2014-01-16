@@ -441,7 +441,6 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			rootModulePath = Utility.getProjectHome() + appDirName;
 		}
 		
-		
 		ResponseInfo<List<SettingsTemplate>> responseData = new ResponseInfo<List<SettingsTemplate>>();
 		Map<String, Object> templateMap = new HashMap<String, Object>();
 		try {
@@ -471,13 +470,14 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				if (CollectionUtils.isNotEmpty(appDirNameList)) {
 					Map<String, List<String>> nameMap = new HashMap<String, List<String>>();
 					for (String appdirName: appDirNameList) {
-						getDownloadInfo(serviceManager, appdirName, userId, type, nameMap, rootModulePath, subModuleName);
+						String rootpath = Utility.getProjectHome() + appdirName ;
+						getDownloadInfo(serviceManager, userId, type, nameMap, rootpath, "");
 					}
 					templateMap.put("downloadInfo", nameMap);
 				}
 			} else {
 				Map<String, List<String>> nameMap = new HashMap<String, List<String>>();
-				getDownloadInfo(serviceManager, appDirName, userId, type, nameMap,rootModulePath, subModuleName);
+				getDownloadInfo(serviceManager,userId, type, nameMap,rootModulePath, subModuleName);
 				templateMap.put("downloadInfo", nameMap);
 			}
 			if (settingsTemplate != null) {
@@ -1035,7 +1035,6 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 							environmentSet.add(environment.getName());
 						}
 					}
-//					System.out.println("environments====>>>>>"+environments);
 //					for (Environment environment : environments) {
 //						environmentSet.add(environment.getName());
 //					}
@@ -2161,7 +2160,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	 * @return the download info
 	 * @throws PhrescoException the phresco exception
 	 */
-	private void getDownloadInfo(ServiceManager serviceManager, String appDirName, String userId,
+	private void getDownloadInfo(ServiceManager serviceManager, String userId,
 			String type, Map<String, List<String>> nameMap, String rootModulePath, String subModuleName) throws PhrescoException {
 		
 		ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);

@@ -395,7 +395,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						for (ModuleInfo module : appInfo.getModules()) {
 							File moduleDir = new File(Utility.getProjectHome() + module.getRootModule() + File.separator + module.getCode());
 							String pluginInfoFile = moduleDir.getPath() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  APPLICATION_HANDLER_INFO_FILE;
-							ProjectInfo newProjecInfo = ProjectUtils.getApplicationInfo(moduleDir);
+							ProjectInfo newProjecInfo = ProjectUtils.getProjectInfoFile(moduleDir);
 							ApplicationInfo subModuleAppInfo = newProjecInfo.getAppInfos().get(0);
 							updateJobTemplates(moduleDir, module);
 							postProjectCreation(newProjecInfo, serviceManager, projectUtils, repoInfo, subModuleAppInfo, pluginInfoFile, moduleDir);
@@ -403,7 +403,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					} else {
 						String pluginInfoFile = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  APPLICATION_HANDLER_INFO_FILE;
 						File path = new File(Utility.getProjectHome() + appInfo.getAppDirName());
-						ProjectInfo newProjecInfo = ProjectUtils.getApplicationInfo(path);
+						ProjectInfo newProjecInfo = ProjectUtils.getProjectInfoFile(path);
 						
 						postProjectCreation(newProjecInfo, serviceManager, projectUtils, repoInfo, appInfo, pluginInfoFile, path);
 					}

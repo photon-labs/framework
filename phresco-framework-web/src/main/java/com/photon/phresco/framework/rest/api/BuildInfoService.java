@@ -311,12 +311,20 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 			}
 			
 			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModuleName);
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, subModuleName);
 			File configurationInfo = new File(dotPhrescoFolderPath+ File.separator + PHRESCO_ENV_CONFIG_FILE_NAME);
 			File runAgainsSourceInfo = new File(dotPhrescoFolderPath+ File.separator + RUNAGNSRC_INFO_FILE);
+			File logFile = new File(pomFileLocation.getParent() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + LOG_DIR + File.separator + RUN_AGS_LOG_FILE);
 			if (!runAgainsSourceInfo.exists()) {
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, connectionAlive, RESPONSE_STATUS_SUCCESS, PHR710005);
 			return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
+			boolean checkForFailureInLog = checkForFailureInLog(logFile);
+			if (checkForFailureInLog) {
+				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, connectionAlive, RESPONSE_STATUS_SUCCESS, PHR710005);
+				return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+				}
+			
 				readers = new FileReader(runAgainsSourceInfo);
 				JSONObject jsonobject = new JSONObject();
 				JSONParser parser = new JSONParser();
@@ -514,6 +522,28 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 			isAlive = false;
 		}
 		return isAlive;
+	}
+	
+	private boolean checkForFailureInLog(File errorLog) throws PhrescoException {
+		BufferedReader reader = null;
+		String line = null;
+		boolean errorParam = false ;
+		try {
+			reader = new BufferedReader(new FileReader(errorLog));
+			while ((line = reader.readLine()) != null) {
+				if (line.contains("[INFO] BUILD FAILURE") || line.contains("[ERROR]") || line.contains("Error")) {
+					errorParam = true;
+				}
+			}
+			return errorParam;
+		} catch (FileNotFoundException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		} finally {
+			Utility.closeReader(reader);
+		}
+		
 	}
 }
 
