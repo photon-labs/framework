@@ -673,6 +673,27 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 
 					String projectInfoPath = Utility.getProjectInfoPath(rootPath, moduleName);
 					ProjectUtils.updateProjectInfo(projectInfo, new File(projectInfoPath));
+					ProjectInfo rootProjectInfo = Utility.getProjectInfo(rootPath, null);
+					boolean multiModule = rootProjectInfo.isMultiModule();
+					if(multiModule) {
+						List<ApplicationInfo> appInfos = rootProjectInfo.getAppInfos();
+						for (ApplicationInfo applicationInfo : appInfos) {
+							if(CollectionUtils.isNotEmpty(applicationInfo.getModules())) {
+								List<ModuleInfo> modules = applicationInfo.getModules();
+								ApplicationInfo subApplicationInfo = projectInfo.getAppInfos().get(0);
+								String id = projectInfo.getAppInfos().get(0).getId();
+								for (ModuleInfo moduleInfo : modules) {
+									if(moduleInfo.getId().equals(id)) {
+										moduleInfo.setCode(subApplicationInfo.getCode());
+										moduleInfo.setName(subApplicationInfo.getName());
+										moduleInfo.setDescription(subApplicationInfo.getDescription());
+									}
+								}
+							}
+						}
+						String projectInfoRootPath = Utility.getProjectInfoPath(rootPath, null);
+						ProjectUtils.updateProjectInfo(rootProjectInfo, new File(projectInfoRootPath));
+					}
 					File pom = Utility.getPomFileLocation(rootPath, moduleName);
 					writeSplitProperties(pom.getPath(), rootPath);
 					ProjectUtils pu = new ProjectUtils();

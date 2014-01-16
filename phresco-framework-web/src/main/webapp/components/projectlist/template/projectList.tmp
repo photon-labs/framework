@@ -726,7 +726,7 @@
 					  {{#each modules}}
                           <tr class="{{../appDirName}}" rootModule="{{../appDirName}}" techid="{{techInfo.id}}" isMultiModule="true" moduleName="{{code}}">
                               <td style="padding-left: 5%;"><a name="editApplication" appid="{{id}}" from="multimodule" appDirName="{{../appDirName}}" href="javascript:;">{{code}}</a></td>
-                              <td>&nbsp;</td>
+                              <td>{{description}}</td>
                               <td>{{techInfo.name}}</td>
                               <td colspan="2" class="list_img">
                                   <a name="pdf_report_{{id}}" temp="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="{{id}}" appdata-placement="bottom" data-t="tooltip" href="javascript:void(0)" data-original-title="PDF Report">
