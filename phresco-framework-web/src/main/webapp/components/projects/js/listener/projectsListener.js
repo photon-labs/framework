@@ -925,7 +925,7 @@ define([], function() {
 							var valueCount = $(value).attr('count');
 							var appcodeVal = $(value).val();
 							if(currentCount !== valueCount && currentVal === appcodeVal){
-								$(appCodeTextObj).val("");
+								//$(appCodeTextObj).val("");
 								$(appCodeTextObj).focus();
 								$(appCodeTextObj).addClass('errormessage');
 								$(appCodeTextObj).attr('placeholder', 'Appcode Already Exists');
@@ -938,6 +938,24 @@ define([], function() {
 					$(this).removeClass("errormessage");
 					$(this).removeAttr("placeholder");
 				});
+			});
+			
+			$("input.appCodeText").focusout(function() {
+				var currentCountt = $(this).attr('count');
+				var currentVall =  $(this).val();
+				var appCodeTextObjj = $(this);
+				var totalLength = $(this).val().length;
+				$(".appCodeText").each(function(index, value){
+						var keyAttr = $(value).parents('tr[name=appvalidation]').attr('key');
+						if(keyAttr === 'displayed'){
+							var valueCount = $(value).attr('count');
+							var appcodeVal = $(value).val();
+							if(currentCountt !== valueCount && currentVall === appcodeVal){
+								$(appCodeTextObjj).val("");								
+								return false;
+							}
+						}
+					});
 			});
 			
 			/***

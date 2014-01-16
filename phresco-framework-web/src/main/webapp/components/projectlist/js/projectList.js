@@ -362,6 +362,9 @@ define(["projectlist/listener/projectListListener"], function() {
 					$('.addToRepoPhrescocredential').attr("checked", false);
 					$('.addToRepoTestCredential').attr("checked", false);
 					
+					if($("#repourl_"+dynamicId).hasClass('errormessage'))
+						$("#repourl_"+dynamicId).removeClass('errormessage');
+					
 					$('#uname_'+dynamicId).attr('readonly','readonly').removeClass('errormessage').removeAttr('placeholder');
 					$('#pwd_'+dynamicId).attr('readonly','readonly').removeClass('errormessage').removeAttr('placeholder');
 					$('#phrescouname_'+dynamicId).attr('readonly','readonly').removeClass('errormessage').removeAttr('placeholder');

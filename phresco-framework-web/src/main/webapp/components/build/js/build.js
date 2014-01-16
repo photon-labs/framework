@@ -819,6 +819,7 @@ define(["build/listener/buildListener"], function() {
 				self.onValidationEvent.dispatch('package', queryStr, function(response){
 					if (!response.errorFound && response.status !== "error" && response.status !== "failure"){
 						$("form[name=buildForm]").hide();
+						$("#build_genbuild").hide();
 						$('#build_alert_div').show();
 						self.clearLogContent();
 						self.onMavenServiceEvent.dispatch('mvnBuild', queryStr, '', '', function(response){
