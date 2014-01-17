@@ -522,6 +522,7 @@ html, body {
 	margin-top:132px;
 	border-top: 1px solid #d2d2d2;
 	z-index:-2;
+	background: #F9F9F9;
 }
 
 .content_main table {
@@ -5760,3 +5761,7 @@ textarea[name="regex"] {
 	width:300px !important;
 }
 
+.execute_report {
+	float: right;
+	margin-left: 4px !important;		
+}
