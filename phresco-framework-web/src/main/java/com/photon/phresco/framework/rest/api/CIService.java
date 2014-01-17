@@ -1539,7 +1539,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if (StringUtils.isNotEmpty(job.getUrl())) {
 				flag = true;
 			}
-			String pomFileName = Utility.constructSubPath(appInfo.getAppDirName(), flag);
+			String pomFileName = Utility.constructSubPath(appInfo.getAppDirName(), flag, job.getRepoType());
 			job.setPomLocation(pomFileName);
 			
 			// jenkins configurations

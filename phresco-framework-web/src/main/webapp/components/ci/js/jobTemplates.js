@@ -12,7 +12,6 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 		listEvent : null,
 		updateEvent : null,
 		editEvent : null,
-		openEvent : null,
 		deleteEvent : null,
 		ciRequestBody : {},
 		templateData : {},
@@ -55,10 +54,6 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 				self.listEvent = new signals.Signal();
 			}
 
-			if (self.openEvent === null) {
-				self.openEvent = new signals.Signal();
-			}
-
 			if (self.editEvent === null) {
 				self.editEvent = new signals.Signal();
 			}
@@ -95,7 +90,6 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 			}
 
 			// Trigger registered events
-			self.openEvent.add(ciListener.openJobTemplate, ciListener);
 			self.addEvent.add(ciListener.addJobTemplate, ciListener);
 			self.listEvent.add(ciListener.listJobTemplate, ciListener);
 			self.updateEvent.add(ciListener.updateJobTemplate, ciListener);
@@ -187,40 +181,6 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 			$form.find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');
 		},
 		
-		getHeaderResponse : function (header, callback) {
-			var self = this;
-			try {
-				commonVariables.api.ajaxRequestDashboard(header, function(response) {
-					if (response !== null && (response.status !== "error" || response.status !== "failure")) {
-							callback(response);
-					} else {
-							$(".content_end").show();
-							$(".msgdisplay").removeClass("success").addClass("error");
-							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-							self.renderlocales(commonVariables.contentPlaceholder);	
-							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-							setTimeout(function() {
-								$(".content_end").hide();
-							},2500);
-						}
-					},
-
-					function(textStatus) {						
-					$(".content_end").show();
-					$(".msgdisplay").removeClass("success").addClass("error");
-					$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-					self.renderlocales(commonVariables.contentPlaceholder);		
-					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-					setTimeout(function() {
-						$(".content_end").hide();
-					},2500);
-					}
-				);
-			} catch(exception) {
-				callback({ "status" : "service exception"});
-			}
-		},
-
 		constructApplicationsHtml : function(jobTemplateName, action, callback) {
 				var self = this;
 				var modules;

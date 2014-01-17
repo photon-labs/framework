@@ -251,6 +251,8 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			throw new PhrescoException(e);
 		} catch (IOException e) {
 			throw new PhrescoException(e);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
 		} finally {
 			if (cli != null) {
 				logout(cli);
@@ -821,16 +823,15 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         }
     }
 
-	private void customizeNodes(ConfigProcessor processor, CIJob job) throws JDOMException,PhrescoException, FileNotFoundException {
+	private void customizeNodes(ConfigProcessor processor, CIJob job) throws JDOMException,PhrescoException, FileNotFoundException, PhrescoPomException {
 		//SVN url customization
 		if (SVN.equals(job.getRepoType())) {
 			S_LOGGER.debug("This is svn type project!!!!!");
-			processor.addAdditionalRepos(SCM_LOCATIONS, job);
+			processor.addSvnRepos(job);
 		//GIT url customization
 		} else if (GIT.equals(job.getRepoType())) {
 			S_LOGGER.debug("This is git type project!!!!!");
-			processor.changeNodeValue(SCM_USER_REMOTE_CONFIGS_URL, job.getUrl());
-			processor.changeNodeValue(SCM_BRANCHES_NAME, job.getBranch());
+			processor.addGitRepos(job);
 		//TFS url customization
 		} else if (TFS.equals(job.getRepoType())) {
 			S_LOGGER.debug("This is tfs type project!!!!!");
@@ -946,8 +947,8 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				if (StringUtils.isNotEmpty(job.getUrl())) {
 					flag = true;
 				}
-				if (StringUtils.isNotEmpty(Utility.constructSubPath(job.getAppDirName(), flag))) {
-					pomLocation = Utility.constructSubPath(job.getAppDirName(), flag);
+				if (StringUtils.isNotEmpty(Utility.constructSubPath(job.getAppDirName(), flag, job.getRepoType()))) {
+					pomLocation = Utility.constructSubPath(job.getAppDirName(), flag, job.getRepoType());
 				}
 				
 				processor.enablePreBuildStep(pomLocation, preBuildStepCommand); 

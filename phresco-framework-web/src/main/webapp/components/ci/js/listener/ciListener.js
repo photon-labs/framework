@@ -643,11 +643,6 @@ define([], function() {
 			}
 		},
 
-		openJobTemplate : function () {
-			var self = this;
-			var jobTemplate = self.constructJobTemplate();
-		},
-
 		updateJobTemplate : function (callback) {
 			var self = this;
 			var jobTemplate = self.constructJobTemplate();
@@ -1000,8 +995,6 @@ define([], function() {
 				$(repoTypeTest).html('<tr id="testUrl"><td colspan="3"><input type="text" placeholder="Test TFS Url" name="testUrl"></td></tr><tr id="testCred"><td><input type="text" placeholder="Test Username" name="testUsername"></td><td><input type="text" placeholder="Test ProjectPath" name="testProjectPath"></td><td><input type="password" placeholder="Test Password" name="testPassword"></td></tr>');
 			} else if (templateJsonData.enableRepo && templateJsonData.repoTypes === "git") {
 //				// For GIT
-				$('#urlDotPhresco').parent().hide();
-				$('#urlTest').parent().hide();
 				$(repoTypeSrc).html('<tr id="url"><td colspan="3"><input type="text" placeholder="GIT Url" name="url"><input name="repoType" type="hidden" value="'+ templateJsonData.repoTypes +'"></td></tr><tr id="cred"><td><input type="text" placeholder="Username" name="username"></td><td><input type="text" placeholder="Branch" name="branch"></td><td><input type="password" placeholder="Password" name="password"></td></tr>');
 				$(repoTypePhresco).html('<tr id="phrescoUrl"><td colspan="3"><input type="text" placeholder="DotPhresco GIT Url" name="phrescoUrl"></td></tr><tr id="phrescoCred"><td><input type="text" placeholder="DotPhresco Username" name="phrescoUsername"></td><td><input type="text" placeholder="DotPhresco Branch" name="phrescobranch"></td><td><input type="password" placeholder="DotPhresco Password" name="phrescoPassword"></td></tr>');
 				$(repoTypeTest).html('<tr id="testUrl"><td colspan="3"><input type="text" placeholder="Test GIT Url" name="testUrl"></td></tr><tr id="testCred"><td><input type="text" placeholder="Test Username" name="testUsername"></td><td><input type="text" placeholder="Test Branch" name="testbranch"></td><td><input type="password" placeholder="Test Password" name="testPassword"></td></tr>');
@@ -1112,7 +1105,7 @@ define([], function() {
 		                    '<thead><tr><th colspan="3">TestFlight Upload Settings</th></tr></thead>'+
 		                    '<tbody>'+
 		                    '<tr>'+  
-	                    	'<tr><td id="ipDiv">TokenPair Name<br><select id="tokenPairName" name="tokenPairName" class="selectpicker" placeholder="Ip"></td></tr>'+
+	                    	'<tr><td id="tokenDiv">TokenPair Name<br><select id="tokenPairName" name="tokenPairName" class="selectpicker" placeholder="Ip"></td></tr>'+
 	                       	'<input name="enableTestFlight" type="hidden" value="true">'+
 	                        '<tr><td><input name="buildNotes" type="text" placeholder="Build Notes"></td></tr>'+
 	                        '</tbody>'+
@@ -1129,8 +1122,8 @@ define([], function() {
 									option.innerHTML = names[i];
 									select.appendChild(option);
 								}
-								$('#ipDiv').html('');
-								$('#ipDiv').html(select);
+								$('#tokenDiv').html('');
+								$('#tokenDiv').html(select);
 							}
 							
 						});						
@@ -1632,7 +1625,7 @@ define([], function() {
 						$("input[name="+this.name+"]").addClass("errormessage");
 						$("input[name="+this.name+"]").bind('keypress', function() {
 							$("input[name="+this.name+"]").removeClass("errormessage");
-						});		
+						});	
 						emptyFound = true;	
 						commonVariables.navListener.showSrcTab($("#dotphrescoTab"), $("#sourceTab"), $("#testTab"), $("#urlDotPhresco"), $("#urlTest"));
 					}
@@ -1697,7 +1690,7 @@ define([], function() {
 					$("input[name="+this.name+"]").bind('keypress', function() {
 						$("input[name="+this.name+"]").removeClass("errormessage");
 					});		
-					emptyFound = true;			
+					emptyFound = true;	
 				}
 			});
 
@@ -1708,7 +1701,7 @@ define([], function() {
 				$("input[name=jobName]").bind('keypress', function() {
 					$(this).removeClass("errormessage");
 				});		
-				emptyFound = true;			
+				emptyFound = true;
 			}
 			
 			var selectedJobLiObj = $("#sortable2 li[temp=ci]");
@@ -1728,7 +1721,7 @@ define([], function() {
 						$("input[name=jobName]").bind('keypress', function() {
 							$(this).removeClass("errormessage");
 						});		
-						emptyFound = true;		
+						emptyFound = true;
 					}
 				}
 			});
@@ -1757,14 +1750,12 @@ define([], function() {
 					emptyFound = true;
 				}
 			}
-			
 			//scheduler validation
 			if (!templateJsonData.enableSheduler) {
 				$('[name=scheduleExpression]').attr('disabled', true);
 			} 
 
 			//mail settings validation
-
 			// validation ends
 			if (!emptyFound) {
 				var triggers = [];
