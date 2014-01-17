@@ -1583,6 +1583,8 @@ public interface FrameworkConstants {
    /* Android Key store file */
    String SIGNING_TYPES="keystore";
    
+   String PROJECT_BASEDIR = "${project.basedir}";
+   
    /* Unit test report directory */
    String UNIT_TEST_QUNIT_REPORT_DIR = "/do_not_checkin/target/surefire-reports/qunit";
    String UNIT_TEST_JASMINE_REPORT_DIR = "/do_not_checkin/target/jasmine";
