@@ -239,7 +239,7 @@ public class ConfigProcessor implements FrameworkConstants {
     private org.jdom.Element createSvnRepoElement(String Url, String local) {
     	org.jdom.Element element = new Element(HUDSON_SCM_SUBVERSION_SCM_MODULE_LOCATION);
 		element.addContent(createElement(REMOTE, Url));
-		element.addContent(createElement(LOCAL, local));
+		element.addContent(createElement(LOCAL2, local));
 		return element;
     }
     

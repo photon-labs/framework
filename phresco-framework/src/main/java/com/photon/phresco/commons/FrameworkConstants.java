@@ -455,7 +455,7 @@ public interface FrameworkConstants {
     String HUDSON_TRIGGER_TIMER = "hudson.triggers.TimerTrigger";
     String HUDSON_TRIGGER_SCMTRIGGER = "hudson.triggers.SCMTrigger";
     String SPEC = "spec";
-    String LOCAL = "local";
+    String LOCAL2 = "local";
     String HUDSON_PLUGINS_GIT_EXTENSIONS_IMPL_RELATIVE_TARGET_DIRECTORY = "hudson.plugins.git.extensions.impl.RelativeTargetDirectory";
     String RELATIVE_TARGET_DIR = "relativeTargetDir";
     String HUDSON_SCM_SUBVERSION_SCM_MODULE_LOCATION = "hudson.scm.SubversionSCM_-ModuleLocation";
