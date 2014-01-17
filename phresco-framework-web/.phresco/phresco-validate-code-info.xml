@@ -93,11 +93,11 @@
                     <description></description>
                     <key>skipTests</key>
                     <multiple>false</multiple>
-                    <value>false</value>
+                    <value>true</value>
                     <sort>false</sort>
                     <show>true</show>
                 </parameter>
-				<parameter>
+                <parameter>
                     <pluginParameter>framework</pluginParameter>
                     <mavenCommands>
                         <mavenCommand>
@@ -126,9 +126,9 @@
                         <value key="showDebug">Show Debug</value>
                     </possibleValues>
                     <multiple>false</multiple>
-					<sort>false</sort>
-					<show>true</show>
-                    <value></value>
+                    <value>showErrors</value>
+                    <sort>false</sort>
+                    <show>true</show>
                 </parameter>
             </parameters>
         </configuration>
