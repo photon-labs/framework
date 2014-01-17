@@ -34,7 +34,7 @@
 				                	<td class="manual hideContent">{{notExecuted}}</td>
 				                	<td class="manual hideContent">{{testCoverage}}</td>
 				                	<td class="manual hideContent">
-				                		<a class="tooltiptop" name="deleteTestSuite_{{#uniqueName name}}{{/uniqueName}}" href="javascript:void(0)" data-toggle="tooltip" data-placement="top" namedel="delete" data-original-title="Delete TestSuite" title="">
+				                		<a class="tooltiptop" name="deleteTestSuite_{{#uniqueName name}}{{/uniqueName}}" href="javascript:void(0)" data-toggle="tooltip" data-placement="bottom" namedel="delete" data-original-title="Delete TestSuite" title="">
 				                			<img src="themes/default/images/Phresco/delete_row.png" width="14" height="18" border="0" alt="0">
 				                		</a>
 				                		<div style="display:none;" testSuiteName="{{name}}" id="deleteTestSuite_{{#uniqueName name}}{{/uniqueName}}" class="delete_msg tohide">
