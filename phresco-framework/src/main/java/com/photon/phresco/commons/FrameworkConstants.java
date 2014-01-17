@@ -165,6 +165,7 @@ public interface FrameworkConstants {
     String XML = "xml";
     String JSON = "json";
     String POM_XML = "pom.xml";
+    String PHR_POM_XML = "phresco-pom.xml";
     String STATIC_ANALYSIS_REPORT = "static-analysis-report";
     String INDEX_HTML = "index.html";
 	String WAR = "war";
@@ -337,6 +338,7 @@ public interface FrameworkConstants {
     String SCM_BRANCHES_NAME = "scm/branches//name";
     String SCM_USER_REMOTE_CONFIGS_URL = "scm/userRemoteConfigs//url";
     String SCM_LOCATIONS_REMOTE = "scm/locations//remote";
+    String SCM_LOCATIONS = "scm/locations";
     String DD_MM_YYYY_HH_MM_SS = "dd/MM/yyyy hh:mm:ss";
 	String HUDSON_TASKS_BUILD_TRIGGER_NODE = "hudson.tasks.BuildTrigger";
 	String TFS_URL = "scm/serverUrl";
@@ -483,6 +485,7 @@ public interface FrameworkConstants {
 	String LOAD_TEST = "loadTest";
 	String PERFORMANCE_TEST_CI = "performanceTest";
 	String COMPONENT_TEST_CI = "componentTest";
+	String RELEASE_CI = "release";
 	String REQ_FUNCTEST_SELENIUM_TOOL = "functionalTestSeleniumTool";
 	String SELENIUM_GRID = "grid";
 	String SELENIUM_WEBDRIVER = "webdriver";
@@ -697,6 +700,7 @@ public interface FrameworkConstants {
 
     String CONFIG_XML = "config.xml";
     String CREDENTIAL_XML = "credential.xml";
+    String CREADENTIAL_JSON = "credential.json";
     String MAIL = "mail";
     String CI_JDK_HOME_XML = "config.xml";
     String CI_SECRET_KEY_FILE = "secret.key";
@@ -2123,4 +2127,44 @@ public interface FrameworkConstants {
 	    String DESCRIBE_INFO    = "?describe=info";
 	    String ARTIFACT_INFO    = "artifactInfo";
 	    String MAVEN_INFO       = "mavenInfo";
+	    
+	    /**
+	     *  Send error report mail constants
+	     */
+	   
+	    String MAIL_ID  	 = "phresco.do.not.reply@gmail.com";
+	    String MAIL_PASSWORD = "phresco123";
+	    String MAIL_SUBJECT  = "Phresco framework error report";
+
+	    /**
+	     * delete sonar project constants
+	     * 
+	     */
+	    
+	    String SONAR_USERNAME = "admin";
+	    String SONAR_PASSWORD = "admin";
+	    String SONAR_API_URL  = "/api/projects/";
+	    String SONAR_COLON	  = ":";
+	    String JAVA_PROFILE   = "java";
+	    String JS_PROFILE  	  = "js";
+	    String WEB_PROFILE    = "web";
+	    String HTML_PROFILE   = "html";
+	    String CSHARP_PROFILE = "c#";
+	    String DASHBORAD_INDEX = "/dashboard/index/";
+	    
+	    String COM_PHOTON_PHRESCO_PLUGINS = "com.photon.phresco.plugins";
+	    String PHRESCO_MAVEN_PLUGIN = "phresco-maven-plugin";
+	    String ORG_APACHE_MAVEN_PLUGINS = "org.apache.maven.plugins";
+	    String MAVEN_RELEASE_PLUGIN = "maven-release-plugin";
+		String DOT_GIT 		   = ".git";	
+	    String DOT_SVN         = "svn";
+	    String BIT_KEEPER     = "bk";
+	    String SSH            = "ssh";
+	    String GERRIT         = "gerrit";
+	    String AUTHENTICATION_FAILED = "Authentication Failed";
+	    String PASS_PHARASE = "PBKDF2WithHmacSHA1kjkljfklsdgl";
+	    String DESAL         = "DESede";
+	    String MODEL_VERSION = "4.0.0";
+	    String HTML_ELEMENT = "<html>";
+
 }

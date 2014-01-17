@@ -25,6 +25,7 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.model.GlobalSettings;
 import com.photon.phresco.framework.model.RepoDetail;
 import com.photon.phresco.framework.model.TestFlight;
+import com.phresco.pom.exception.PhrescoPomException;
 
 public class CIServiceTest extends RestBaseTest {
 
@@ -44,7 +45,7 @@ public class CIServiceTest extends RestBaseTest {
 	}
 	
 	@Test
-	public void createJobTest() throws PhrescoException {
+	public void createJobTest() throws PhrescoException, PhrescoPomException {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setServletPath("/rest/api");
 		request.setContextPath("/framework");

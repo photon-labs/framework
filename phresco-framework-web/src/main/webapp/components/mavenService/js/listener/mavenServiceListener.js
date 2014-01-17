@@ -150,6 +150,11 @@ define([], function() {
 			var self = this, header = self.getRequestHeader("GET", "", commonVariables.mvnValidateTheme, paramData);
 			self.mvnService(header, divId, callback);
 		},
+		
+		mvnRelease : function(paramData, divId, callback){
+			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnRelease, paramData);
+			self.mvnService(header, divId, callback);
+		},
 
 		mvnService : function(header, divId, callback){
 			try{
@@ -338,12 +343,15 @@ define([], function() {
 			} else if(projectInfo !== null) {
 				appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
 			}
+			if (!self.isBlank(appDirName)) {
+				paramData = paramData + "&appDirName=" + appDirName;
+			}
 			var header = {
 				contentType: "application/json",
 				requestMethod: type,
 				dataType: "json",
 				requestPostBody: body,
-				webserviceurl: commonVariables.webserviceurl + urlContext + "?appDirName=" + appDirName + "&" + paramData
+				webserviceurl: commonVariables.webserviceurl + urlContext + "?" + paramData
 			};
 
 			return header;

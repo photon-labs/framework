@@ -24,12 +24,12 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
@@ -104,6 +104,7 @@ import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.impl.util.FrameworkUtil;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.trilead.ssh2.crypto.Base64;
 
@@ -238,6 +239,12 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				StringBuilder ciPath = new StringBuilder(jenkinsUrl);
 				ciPath.append(SCM_SUBVERSION_SCM_POST_CREDENTIAL);
 				setSVNCredentials(ciPath.toString(), job.getUrl(), job.getUsername(), job.getPassword());
+				if (StringUtils.isNotEmpty(job.getPhrescoUrl())) {
+					setSVNCredentials(ciPath.toString(), job.getPhrescoUrl(), job.getPhrescoUsername(), job.getPhrescoPassword());
+				}
+				if (StringUtils.isNotEmpty(job.getTestUrl())) {
+					setSVNCredentials(ciPath.toString(), job.getTestUrl(), job.getTestUsername(), job.getTestPassword());
+				}
 			}
 			return new CIJobStatus(result, message);
 		} catch (JDOMException e) {
@@ -814,11 +821,11 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         }
     }
 
-	private void customizeNodes(ConfigProcessor processor, CIJob job) throws JDOMException,PhrescoException {
+	private void customizeNodes(ConfigProcessor processor, CIJob job) throws JDOMException,PhrescoException, FileNotFoundException {
 		//SVN url customization
 		if (SVN.equals(job.getRepoType())) {
 			S_LOGGER.debug("This is svn type project!!!!!");
-			processor.changeNodeValue(SCM_LOCATIONS_REMOTE, job.getUrl());
+			processor.addAdditionalRepos(SCM_LOCATIONS, job);
 		//GIT url customization
 		} else if (GIT.equals(job.getRepoType())) {
 			S_LOGGER.debug("This is git type project!!!!!");
@@ -934,12 +941,21 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			List<String> preBuildStepCommands = job.getPrebuildStepCommands(); 
 			//shell#SEP#cmd, mvn#SEP#clean install
 			for (String preBuildStepCommand : preBuildStepCommands) {
-				processor.enablePreBuildStep(job.getPomLocation(), preBuildStepCommand); 
+				String pomLocation = job.getPomLocation();
+				boolean flag = false;
+				if (StringUtils.isNotEmpty(job.getUrl())) {
+					flag = true;
+				}
+				if (StringUtils.isNotEmpty(Utility.constructSubPath(job.getAppDirName(), flag))) {
+					pomLocation = Utility.constructSubPath(job.getAppDirName(), flag);
+				}
+				
+				processor.enablePreBuildStep(pomLocation, preBuildStepCommand); 
 			}
 		}
 
 	}
-
+	
 	private CIJobStatus deleteCI(CIJob job, String builds) throws PhrescoException {
 		S_LOGGER.debug("Entering Method CIManagerImpl.deleteCI(CIJob job, String builds)");
 		S_LOGGER.debug("Job name " + job.getJobName());
@@ -1481,9 +1497,10 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 	}
 
-	private String getJobTemplatePath(String appDirName, String moduleName) {
-		StringBuilder builder = new StringBuilder(Utility.getProjectHome());		
-		builder.append(appDirName);
+	private String getJobTemplatePath(String appDirName, String moduleName) throws PhrescoException, PhrescoPomException {
+		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+		String splitPath = Utility.splitPathConstruction(appDirName);
+		builder.append(splitPath);
 		if(StringUtils.isNotEmpty(moduleName)) {
 			builder.append(File.separator);
 			builder.append(moduleName);
@@ -1494,10 +1511,17 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		return builder.toString();
 	}
 
-	private File getJobTemplateFile(String appDirName, String moduleName) {
+	private File getJobTemplateFile(String appDirName, String moduleName) throws PhrescoException {
 		File jobTemplateFile = null;
-		String jobTemplatePath = getJobTemplatePath(appDirName, moduleName);
-		jobTemplateFile = new File(jobTemplatePath);
+		String jobTemplatePath;
+		try {
+			jobTemplatePath = getJobTemplatePath(appDirName, moduleName);
+			jobTemplateFile = new File(jobTemplatePath);
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
 		return jobTemplateFile;
 	}
 

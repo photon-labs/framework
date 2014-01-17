@@ -23,6 +23,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -40,6 +45,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -47,6 +53,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
+import org.sonar.wsclient.Host;
+import org.sonar.wsclient.Sonar;
+import org.sonar.wsclient.connectors.HttpClient4Connector;
+import org.sonar.wsclient.services.DeleteQuery;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -88,6 +98,7 @@ import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Dependency;
 import com.phresco.pom.model.Model.Modules;
+import com.phresco.pom.model.Profile;
 import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
@@ -147,7 +158,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			@QueryParam(REST_QUERY_PROJECTID) String projectId) {
 		ResponseInfo<List<ApplicationInfo>> responseData = new ResponseInfo<List<ApplicationInfo>>();
 		try {
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = com.photon.phresco.framework.impl.util.FrameworkUtil.getAppInfos(customerId, projectId);
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				status = RESPONSE_STATUS_SUCCESS;
 				successCode = PHR200002;
@@ -999,7 +1010,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	@Path(REST_API_PROJECT_DELETE)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteproject(DeleteProjectInfo deleteProjectInfo) {
+	public Response deleteproject(DeleteProjectInfo deleteProjectInfo , @Context HttpServletRequest request) {
 		BufferedReader reader = null;
 		ResponseInfo responseData = new ResponseInfo();
 		String rootModulePath = "";
@@ -1039,6 +1050,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					}
 //					String applicationHome = FrameworkServiceUtil.getApplicationHome(appDirName);
 					Utility.killProcess(getpomFileLocation.getParent(), REQ_EQLIPSE); // need to handle for build version
+					deleteProjectFromSonar(getpomFileLocation, request);
 				}
 			}
 			
@@ -1073,7 +1085,96 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					"*").build();
 		}
 	}
-	
+
+	private void deleteProjectFromSonar(File pomFile, HttpServletRequest request)  throws PhrescoException {
+		try {
+			if (pomFile.exists() && request != null) {
+				FrameworkUtil frameworkUtil = new FrameworkUtil(request);
+				String sonarHomeURL = frameworkUtil.getSonarHomeURL() + "/";
+				if (!sonarHomeURL.endsWith(SONAR)) {
+					sonarHomeURL = sonarHomeURL +  SONAR;
+				}
+
+				Sonar sonar = new Sonar(new HttpClient4Connector(new Host(sonarHomeURL, SONAR_USERNAME , SONAR_PASSWORD)));
+
+				PomProcessor pomProcessor = new PomProcessor(pomFile);
+				String groupId = pomProcessor.getGroupId();
+				String artifactId = pomProcessor.getArtifactId();
+
+				List<String> validateAgainst = new ArrayList<String>();
+				Profile javaProfile = pomProcessor.getProfile(JAVA_PROFILE);
+				if (javaProfile != null) {
+					validateAgainst.add(JAVA_PROFILE);
+				}
+				Profile jsProfile = pomProcessor.getProfile(JS_PROFILE);
+				if (jsProfile != null) {
+					validateAgainst.add(JS_PROFILE);
+				}
+
+				Profile webProfile = pomProcessor.getProfile(WEB_PROFILE);
+				if (webProfile != null) {
+					validateAgainst.add(WEB_PROFILE);
+				}
+
+				Profile htmlProfile = pomProcessor.getProfile(HTML_PROFILE);
+				if (htmlProfile != null) {
+					validateAgainst.add(HTML_PROFILE);
+				}
+
+				if (CollectionUtils.isEmpty(validateAgainst)) {
+					validateAgainst.add(JAVA_PROFILE);
+				}
+
+				for (String string : validateAgainst) {
+					final String projectKey = groupId + SONAR_COLON + artifactId + SONAR_COLON + string;
+					boolean urlExists = checkUrlExists(sonarHomeURL + DASHBORAD_INDEX + projectKey);
+					if (urlExists) {
+						DeleteQuery query = new DeleteQuery() {
+							@Override
+							public String getUrl() {
+								return SONAR_API_URL + projectKey;
+							}
+						};
+						sonar.delete(query);
+					}
+				}
+			}
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+
+	}
+
+	private boolean checkUrlExists(String sonarPath) {
+		boolean urlExists = false;
+		try {
+			HttpURLConnection httpURLConnection = null;
+			try {
+				java.net.URL url = new java.net.URL(sonarPath);
+				URLConnection urlConnection = url.openConnection();
+				HttpURLConnection.setFollowRedirects(false);  
+				httpURLConnection = (HttpURLConnection) urlConnection;  
+				httpURLConnection.setRequestMethod(HEAD_REVISION);  
+				if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {  
+					urlExists = true;	
+				} else {  
+					urlExists = false;  
+				}  
+			} catch (MalformedURLException e) {
+				urlExists = false;  
+			} catch (ProtocolException e) {
+				urlExists = false;  
+			} catch (IOException e) {
+				urlExists = false;  
+			} 
+		} catch (Exception e) {
+			urlExists = false;  
+		}
+		return urlExists;
+	}
+
 	private void removeAllEntriesOfModuleToBeDeleted(List<String> dependents, String moduleNameToDelete, String rootModulePath) throws PhrescoException {
 		try {
 			//To delete entries in root project
@@ -1203,7 +1304,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			ApplicationInfo rootAppInfo = FrameworkServiceUtil.getApplicationInfo(rootModule);
 			if (rootAppInfo != null && CollectionUtils.isNotEmpty(rootAppInfo.getModules())) {
 				File currentModule = new File(Utility.getProjectHome() + rootModule + File.separator + moduleName);
-				ApplicationInfo currentModuleAppInfo = ProjectUtils.getApplicationInfo(currentModule);
+				ApplicationInfo currentModuleAppInfo = ProjectUtils.getProjectInfoFile(currentModule).getAppInfos().get(0);
 				String currentModulePomName = Utility.getPomFileName(currentModuleAppInfo);
 				File currentModulePom = new File(currentModule.getPath() + File.separator + currentModulePomName);
 				if (currentModulePom.exists()) {
@@ -1213,7 +1314,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					for (ModuleInfo module : rootAppInfo.getModules()) {
 						if (!moduleName.equals(module.getCode())) {
 							File otherModuleDir = new File(Utility.getProjectHome() + rootModule + File.separator + module.getCode());
-							ApplicationInfo otherModuleAppInfo = ProjectUtils.getApplicationInfo(otherModuleDir);
+							ApplicationInfo otherModuleAppInfo = ProjectUtils.getProjectInfoFile(otherModuleDir).getAppInfos().get(0);
 							String pomFileName = Utility.getPomFileName(otherModuleAppInfo);
 							File pom = new File (otherModuleDir.getPath() + File.separator + pomFileName);
 							if (pom.exists()) {

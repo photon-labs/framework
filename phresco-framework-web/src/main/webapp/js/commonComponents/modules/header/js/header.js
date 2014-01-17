@@ -64,6 +64,11 @@ define(["header/listener/headerListener"] , function(template) {
 					self.headerListener.changeCustomerTitle(response.data.theme);
 				}
 			});
+			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+			
+			if (userInfo.authType == "LOCAL") {
+				$("#changepassword").show();
+			}
 		},
 		
 		/***
@@ -133,6 +138,9 @@ define(["header/listener/headerListener"] , function(template) {
 			
 			$("#changepassword").click(function() {
 				self.openccdashboardsettings(this,'change_password');
+				$("#old_password").val('');
+				$("#new_password").val('');
+				$("#new_password_reenter").val('');
 				
 			});
 			

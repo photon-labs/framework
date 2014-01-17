@@ -482,7 +482,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	}
 	
 	@Test
-	public void listEnvironmentsByProjectId() {
+	public void listEnvironmentsByProjectId() throws PhrescoException, PhrescoPomException {
 		Response response = configurationService.listEnvironmentsByProjectId(customerId, projectId);
 		Assert.assertEquals(200, response.getStatus());
 	}

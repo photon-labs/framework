@@ -27,7 +27,7 @@ public class ProjectDeleteServiceTest {
 		DeleteProjectInfo deleteProjectInfo = new DeleteProjectInfo();
 		deleteProjectInfo.setAppDirNames(projectToDel);
 		deleteProjectInfo.setActionType("project");
-		Response deleteproject = projectservice.deleteproject(deleteProjectInfo);
+		Response deleteproject = projectservice.deleteproject(deleteProjectInfo, null);
 		assertEquals(200 , deleteproject.getStatus());
 	}
 }

@@ -113,7 +113,11 @@ define(["lib/fileuploader-2.4"], function() {
 				data.testSuiteName = testSuiteVal;
 				self.manualRequestBody = data;
 				self.getManualTestReport(self.getActionHeader(self.manualRequestBody, "addTestSuite"), function(response) {
-					commonVariables.navListener.onMytabEvent("manualTest");
+					commonVariables.api.showError(response.responseCode ,"success", true, false, true);
+					setTimeout(function() {
+						commonVariables.navListener.onMytabEvent("manualTest");
+					},1200);
+					
 				});
 			}
 		},
@@ -169,11 +173,16 @@ define(["lib/fileuploader-2.4"], function() {
 					if (!self.isBlank(response) && response.data) {	
 						$("#show_manualTestCase_popup").toggle();
 						self.getManualTestReport(self.getActionHeader(self.manualRequestBody, "addTestcase"), function(response) {
-							commonVariables.navListener.getMyObj(commonVariables.testcaseResult, function(retVal) {
-								self.testcaseResult = retVal;
-								Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
-								Clazz.navigationController.push(self.testcaseResult, false);
-							});
+							commonVariables.api.showError(response.responseCode ,"success", true, false, true);
+							setTimeout(function() {
+								commonVariables.navListener.getMyObj(commonVariables.testcaseResult, function(retVal) {
+									self.testcaseResult = retVal;
+									Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
+									Clazz.navigationController.push(self.testcaseResult, false);
+								});
+							},1200);
+							
+							
 						});
 					} else {
 						$("input[name='testCaseId']").focus();

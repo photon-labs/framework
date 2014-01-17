@@ -375,6 +375,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		try {
 			response = serviceManager.createProject(projectInfo);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new PhrescoException(e);
 		}
 
@@ -394,14 +395,17 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						for (ModuleInfo module : appInfo.getModules()) {
 							File moduleDir = new File(Utility.getProjectHome() + module.getRootModule() + File.separator + module.getCode());
 							String pluginInfoFile = moduleDir.getPath() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  APPLICATION_HANDLER_INFO_FILE;
-							ApplicationInfo subModuleAppInfo = ProjectUtils.getApplicationInfo(moduleDir);
+							ProjectInfo newProjecInfo = ProjectUtils.getProjectInfoFile(moduleDir);
+							ApplicationInfo subModuleAppInfo = newProjecInfo.getAppInfos().get(0);
 							updateJobTemplates(moduleDir, module);
-							postProjectCreation(projectInfo, serviceManager, projectUtils, repoInfo, subModuleAppInfo, pluginInfoFile, moduleDir);
+							postProjectCreation(newProjecInfo, serviceManager, projectUtils, repoInfo, subModuleAppInfo, pluginInfoFile, moduleDir);
 						}
 					} else {
 						String pluginInfoFile = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  APPLICATION_HANDLER_INFO_FILE;
 						File path = new File(Utility.getProjectHome() + appInfo.getAppDirName());
-						postProjectCreation(projectInfo, serviceManager, projectUtils, repoInfo, appInfo, pluginInfoFile, path);
+						ProjectInfo newProjecInfo = ProjectUtils.getProjectInfoFile(path);
+						
+						postProjectCreation(newProjecInfo, serviceManager, projectUtils, repoInfo, appInfo, pluginInfoFile, path);
 					}
 				}
 			} catch (FileNotFoundException e) {
@@ -497,25 +501,26 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
 					ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(applicationHandler.getClazz());
 					applicationProcessor.postCreate(appInfo);
+					
+					String selectedFeatures = applicationHandler.getSelectedFeatures();
+					Gson gson = new Gson();
+					Type jsonType = new TypeToken<Collection<ArtifactGroup>>(){}.getType();
+					List<ArtifactGroup> artifactGroups = gson.fromJson(selectedFeatures, jsonType);
+					
+					documentGenerator.generate(appInfo, baseDir, artifactGroups, serviceManager);
 				}
-				
-				String selectedFeatures = applicationHandler.getSelectedFeatures();
-				Gson gson = new Gson();
-				Type jsonType = new TypeToken<Collection<ArtifactGroup>>(){}.getType();
-				List<ArtifactGroup> artifactGroups = gson.fromJson(selectedFeatures, jsonType);
-				
-				documentGenerator.generate(appInfo, baseDir, artifactGroups, serviceManager);
-	
 				
 				if (isCallEclipsePlugin(appInfo, "")) {
 					ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-					List<String> buildArgCmds = new ArrayList<String>();
-					String pomFileName = Utility.getPomFileName(appInfo);
-					if(!POM_NAME.equals(pomFileName)) {
-						buildArgCmds.add(HYPHEN_F);
-						buildArgCmds.add(pomFileName);
-					}
-					applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir.getPath());
+//					List<String> buildArgCmds = new ArrayList<String>();
+//					String pomFileName = Utility.getPhrescoPomFile(appInfo);
+//					System.out.println("pomfile name for eclipse pliging ::" + pomFileName);
+//					if(!POM_NAME.equals(pomFileName)) {
+//						System.out.println("dddadads" + pomFileName);
+//						buildArgCmds.add(HYPHEN_F);
+//						buildArgCmds.add(pomFileName);
+//					}
+					applicationManager.performAction(projectInfo, ActionType.ECLIPSE, null, baseDir.getPath());
 				}
 				createConfigurationXml(serviceManager, appInfo.getRootModule(), appInfo.getAppDirName(), "");
 			}	
@@ -601,16 +606,15 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						File projectInfoPath = new File(rootProjectInfo);
 						ProjectUtils.updateProjectInfo(projectInfo, projectInfoPath);
 					}
-					
-					if (isCallEclipsePlugin(appInfo , "")) {
-						File pomFilePath = Utility.getPomFileLocation(rootModulePath, subModuleName);
+					File pomFilePath = Utility.getPomFileLocation(rootModulePath, subModuleName);
+					if (isCallEclipsePlugin(appInfo ,pomFilePath.getPath())) {
 						ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-						List<String> buildArgCmds = new ArrayList<String>();
-						if(!POM_NAME.equals(pomFilePath.getName())) {
-							buildArgCmds.add(HYPHEN_F);
-							buildArgCmds.add(pomFilePath.getName());
-						}
-						applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, pomFilePath.getParent());
+//						List<String> buildArgCmds = new ArrayList<String>();
+//						if(!POM_NAME.equals(pomFilePath.getName())) {
+//							buildArgCmds.add(HYPHEN_F);
+//							buildArgCmds.add(pomFilePath.getName());
+//						}
+						applicationManager.performAction(projectInfo, ActionType.ECLIPSE, null , pomFilePath.getParent());
                     }
 				} finally {
 					if(backUpProjectInfoFile!= null && backUpProjectInfoFile.exists()) {
@@ -653,8 +657,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				updateDependenciesInSubModulePom(projectInfo.getAppInfos().get(0), rootModule, oldAppDirName,rootModulePath);
 				
 				backUpProjectInfoFile(rootModulePath, subModuleName);
-				renameAppFolderName(projectInfo, rootModulePath, subModuleName, oldAppDirName);
-				
+				renameAppFolderName(projectInfo, rootModulePath, subModuleName);
 				updateProjectPom(projectInfo, rootPath, moduleName);
 				updateCiInfoFile(projectInfo, appDirWithModule, rootPath, moduleName);
 				ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
@@ -670,6 +673,27 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 
 					String projectInfoPath = Utility.getProjectInfoPath(rootPath, moduleName);
 					ProjectUtils.updateProjectInfo(projectInfo, new File(projectInfoPath));
+					ProjectInfo rootProjectInfo = Utility.getProjectInfo(rootPath, null);
+					boolean multiModule = rootProjectInfo.isMultiModule();
+					if(multiModule) {
+						List<ApplicationInfo> appInfos = rootProjectInfo.getAppInfos();
+						for (ApplicationInfo applicationInfo : appInfos) {
+							if(CollectionUtils.isNotEmpty(applicationInfo.getModules())) {
+								List<ModuleInfo> modules = applicationInfo.getModules();
+								ApplicationInfo subApplicationInfo = projectInfo.getAppInfos().get(0);
+								String id = projectInfo.getAppInfos().get(0).getId();
+								for (ModuleInfo moduleInfo : modules) {
+									if(moduleInfo.getId().equals(id)) {
+										moduleInfo.setCode(subApplicationInfo.getCode());
+										moduleInfo.setName(subApplicationInfo.getName());
+										moduleInfo.setDescription(subApplicationInfo.getDescription());
+									}
+								}
+							}
+						}
+						String projectInfoRootPath = Utility.getProjectInfoPath(rootPath, null);
+						ProjectUtils.updateProjectInfo(rootProjectInfo, new File(projectInfoRootPath));
+					}
 					File pom = Utility.getPomFileLocation(rootPath, moduleName);
 					writeSplitProperties(pom.getPath(), rootPath);
 					ProjectUtils pu = new ProjectUtils();
@@ -679,12 +703,12 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				if (isCallEclipsePlugin(appInfo, pom.getPath())) {
 					ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 //					File pomFilePath = new File(pom);
-					List<String> buildArgCmds = new ArrayList<String>();
-					if(!POM_NAME.equals(pom.getName())) {
-						buildArgCmds.add(HYPHEN_F);
-						buildArgCmds.add(pom.getName());
-					}
-					applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds,pom.getParent());
+//					List<String> buildArgCmds = new ArrayList<String>();
+//					if(!POM_NAME.equals(pom.getName())) {
+//						buildArgCmds.add(HYPHEN_F);
+//						buildArgCmds.add(pom.getName());
+//					}
+					applicationManager.performAction(projectInfo, ActionType.ECLIPSE, null,pom.getParent());
 				}
 				createConfigurationXml(serviceManager, rootModulePath, appDirName, dotPhrescoFolderPath);
 			} else if (response.getStatus() == 401) {
@@ -753,73 +777,85 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			throw new PhrescoException(e);
 		}
 	}
-	private void renameAppFolderName(ProjectInfo projectinfo, String rootPath, String moduleName , String oldAppDirName) throws PhrescoException {
+
+	private void renameAppFolderName(ProjectInfo projectinfo, String rootPath, String moduleName)
+			throws PhrescoException {
 		File src = null;
 		File dest = null;
 		try {
 			File pomFile = Utility.getPomFileLocation(rootPath, moduleName);
-			String appDirName = projectinfo.getAppInfos().get(0).getAppDirName();
-			
+			ProjectInfo rootProjectInfo = Utility.getProjectInfo(rootPath, "");
+			ApplicationInfo rootappInfo = rootProjectInfo.getAppInfos().get(0);
+			ApplicationInfo applicationInfo = projectinfo.getAppInfos().get(0);
+			String appDirName = applicationInfo.getAppDirName();
+
 			PomProcessor pomPro = new PomProcessor(pomFile);
 			String srcProp = pomPro.getProperty(POM_PROP_KEY_SPLIT_SRC_DIR);
 			String testProp = pomPro.getProperty(POM_PROP_KEY_SPLIT_TEST_DIR);
 			String dotProp = pomPro.getProperty(POM_PROP_KEY_SPLIT_PHRESCO_DIR);
-			if(projectinfo.isMultiModule() && StringUtils.isNotEmpty(srcProp)) {
+
+			if (CollectionUtils.isNotEmpty(rootappInfo.getModules()) && StringUtils.isNotEmpty(srcProp)) {
 				src = new File(rootPath + File.separator + srcProp + File.separator + moduleName);
-			 dest = new File(rootPath + File.separator + srcProp + File.separator + appDirName);
-			 if(src.exists()) {
-				 src.renameTo(dest);
-			 }
-			 
-			 src = new File(rootPath + File.separator + testProp + File.separator + moduleName);
-			 dest = new File(rootPath + File.separator + testProp + File.separator + appDirName);
-			 if(src.exists()) {
-				 src.renameTo(dest);
-			 }
-			 
-			 src = new File(rootPath + File.separator + dotProp + File.separator + moduleName);
-			 dest = new File(rootPath + File.separator + dotProp + File.separator + appDirName);
-			 if(src.exists()) {
-				 src.renameTo(dest);
-			 }
-			 
-			} else if(projectinfo.isMultiModule() && StringUtils.isEmpty(srcProp)) {
+				dest = new File(rootPath + File.separator + srcProp + File.separator + appDirName);
+				if (src.exists()) {
+					src.renameTo(dest);
+				}
+			}
+
+			if (CollectionUtils.isNotEmpty(rootappInfo.getModules()) && StringUtils.isNotEmpty(testProp)) {
+				src = new File(rootPath + File.separator + testProp + File.separator + moduleName);
+				dest = new File(rootPath + File.separator + testProp + File.separator + appDirName);
+				if (src.exists()) {
+					src.renameTo(dest);
+				}
+			}
+			if (CollectionUtils.isNotEmpty(rootappInfo.getModules()) && StringUtils.isNotEmpty(dotProp)) {
+				src = new File(rootPath + File.separator + dotProp + File.separator + moduleName);
+				dest = new File(rootPath + File.separator + dotProp + File.separator + appDirName);
+				if (src.exists()) {
+					src.renameTo(dest);
+				}
+			}
+
+			if (CollectionUtils.isNotEmpty(rootappInfo.getModules()) && StringUtils.isEmpty(srcProp)
+					&& StringUtils.isEmpty(testProp) && StringUtils.isEmpty(dotProp)) {
 				src = new File(rootPath + File.separator + moduleName);
-				 dest = new File(rootPath + File.separator + appDirName);
-				 if(src.exists()) {
-					 src.renameTo(dest);
-				 }
-			} else if (StringUtils.isNotEmpty(srcProp)) {
-				src = new File(rootPath + File.separator + srcProp);
 				dest = new File(rootPath + File.separator + appDirName);
-				 if(src.exists()) {
-					 src.renameTo(dest);
-				 }
-				 
-				 src = new File(rootPath + File.separator + testProp);
-					dest = new File(rootPath + File.separator + appDirName + SUFFIX_TEST);
-					 if(src.exists()) {
-						 src.renameTo(dest);
-					 }
-					 
-					 src = new File(rootPath + File.separator + dotProp);
-						dest = new File(rootPath + File.separator + appDirName + SUFFIX_PHRESCO);
-						 if(src.exists()) {
-							 src.renameTo(dest);
-						 }
-						
-						 src = new File(rootPath);
-							dest = new File(Utility.getProjectHome() + appDirName);
-							 if(src.exists()) {
-								 src.renameTo(dest);
-							 }
-			} else {
+				if (src.exists()) {
+					src.renameTo(dest);
+				}
+			}
+
+			if (CollectionUtils.isEmpty(rootappInfo.getModules()) && StringUtils.isNotEmpty(srcProp)) {
+				src = new File(rootPath + File.separator + srcProp + File.separator + moduleName);
+				dest = new File(rootPath + File.separator + appDirName);
+				if (src.exists()) {
+					src.renameTo(dest);
+				}
+			}
+
+			if (CollectionUtils.isEmpty(rootappInfo.getModules()) && StringUtils.isNotEmpty(testProp)) {
+				src = new File(rootPath + File.separator + testProp + File.separator + moduleName);
+				dest = new File(rootPath + File.separator + appDirName + SUFFIX_TEST);
+				if (src.exists()) {
+					src.renameTo(dest);
+				}
+			}
+			if (CollectionUtils.isEmpty(rootappInfo.getModules()) && StringUtils.isNotEmpty(dotProp)) {
+				src = new File(rootPath + File.separator + dotProp + File.separator + moduleName);
+				dest = new File(rootPath + File.separator + appDirName + SUFFIX_PHRESCO);
+				if (src.exists()) {
+					src.renameTo(dest);
+				}
+			}
+			if (CollectionUtils.isEmpty(rootappInfo.getModules())) {
 				src = new File(rootPath);
 				dest = new File(Utility.getProjectHome() + appDirName);
-				 if(src.exists()) {
-					 src.renameTo(dest);
-				 }
+				if (src.exists()) {
+					src.renameTo(dest);
+				}
 			}
+
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
 		} catch (PhrescoPomException e) {
@@ -963,41 +999,56 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					} else {
 						rootModulePath = Utility.getProjectHome() + appDirName;
 					}
-					String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModule);
+//					String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModule);
 					File pomFile = Utility.getPomFileLocation(rootModulePath, subModule);
-					ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModule);
+					ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
+					ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 					PomProcessor pomPro = new PomProcessor(pomFile);
 					String src = pomPro.getProperty(POM_PROP_KEY_SPLIT_TEST_DIR);
 					String test = pomPro.getProperty(POM_PROP_KEY_SPLIT_SRC_DIR);
-					if (projectInfo.isMultiModule() && StringUtils.isNotEmpty(test)) {
+					String dotProp = pomPro.getProperty(POM_PROP_KEY_SPLIT_PHRESCO_DIR);
+					
+					if (CollectionUtils.isNotEmpty(applicationInfo.getModules()) && StringUtils.isNotEmpty(test)) {
 						application = new File(rootModulePath + File.separator + test + File.separator + subModule);
 						deletionSuccess = deleteFile(deletionSuccess, application);
 
 					}
-					if (projectInfo.isMultiModule() && StringUtils.isNotEmpty(src)) {
+					if (CollectionUtils.isNotEmpty(applicationInfo.getModules()) && StringUtils.isNotEmpty(src)) {
 						application = new File(rootModulePath + File.separator + src + File.separator + subModule);
 						deletionSuccess = deleteFile(deletionSuccess, application);
 
 					}
-					if (projectInfo.isMultiModule() && StringUtils.isEmpty(src)) {
+					
+					if (CollectionUtils.isNotEmpty(applicationInfo.getModules()) && StringUtils.isNotEmpty(dotProp)) {
+						application = new File(rootModulePath + File.separator + dotProp + File.separator + subModule);
+						deletionSuccess = deleteFile(deletionSuccess, application);
+
+					}
+					if (CollectionUtils.isNotEmpty(applicationInfo.getModules()) && StringUtils.isEmpty(src) && StringUtils.isEmpty(test) && StringUtils.isEmpty(dotProp)) {
 						application = new File(rootModulePath + File.separator + subModule);
 						deletionSuccess = deleteFile(deletionSuccess, application);
 					}
-					if (!projectInfo.isMultiModule() && StringUtils.isNotEmpty(test)) {
-						application = new File(rootModulePath + File.separator + test);
-						deletionSuccess = deleteFile(deletionSuccess, application);
-					}
 					
-					if (!projectInfo.isMultiModule() && StringUtils.isNotEmpty(src)) {
-						application = new File(rootModulePath + File.separator + src);
-						deletionSuccess = deleteFile(deletionSuccess, application);
-					}  
+//					if (CollectionUtils.isEmpty(applicationInfo.getModules()) && StringUtils.isNotEmpty(test)) {
+//						application = new File(rootModulePath + File.separator + test);
+//						deletionSuccess = deleteFile(deletionSuccess, application);
+//					}
+//					
+//					if (CollectionUtils.isEmpty(applicationInfo.getModules()) && StringUtils.isNotEmpty(src)) {
+//						application = new File(rootModulePath + File.separator + src);
+//						deletionSuccess = deleteFile(deletionSuccess, application);
+//					}  
+//					
+//					if (CollectionUtils.isEmpty(applicationInfo.getModules()) && StringUtils.isNotEmpty(dotProp)) {
+//						application = new File(rootModulePath + File.separator + dotProp);
+//						deletionSuccess = deleteFile(deletionSuccess, application);
+//					} 
 					
-					File dotFolder = new File(dotPhrescoFolderPath);
-					application = new File(dotFolder.getParent());
-					deletionSuccess = deleteFile(deletionSuccess, application);
+//					File dotFolder = new File(dotPhrescoFolderPath);
+//					application = new File(dotFolder.getParent());
+//					deletionSuccess = deleteFile(deletionSuccess, application);
 					
-					if(StringUtils.isEmpty(src) && StringUtils.isEmpty(test) && StringUtils.isEmpty(subModule) ) {
+					if(CollectionUtils.isEmpty(applicationInfo.getModules())) {
 						application = new File(rootModulePath);
 						deletionSuccess = deleteFile(deletionSuccess, application);
 					}

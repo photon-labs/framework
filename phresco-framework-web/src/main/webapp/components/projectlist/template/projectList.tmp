@@ -11,7 +11,7 @@
                   <th><div class="th-inner" data-i18n="projectlist.label.technology"></div></th>
                   <th><div class="th-inner" data-i18n="projectlist.label.report"></div></th>
                   <th><div class="th-inner" data-i18n="projectlist.label.repository"></div></th>
-                  <th><div class="th-inner" data-i18n="commonlabel.label.delete"></div></th>                  
+                  <th><div class="th-inner" data-i18n="commonlabel.label.action"></div></th>                  
                   <th><div class="th-inner">&nbsp;</div></th>
                 </tr>
               </thead>
@@ -137,7 +137,7 @@
 							<li><input type="checkbox" id="splitTest_{{id}}" class="splitTest" dynamicId="{{id}}"><a class="repo_tab testA" dynamicId="{{id}}">Test</a></li>
 						</ul>
 					</div>
-					<div class="tab-content" id="myTabContent">
+					<div class="tab-content fixedscroll" id="myTabContent">
 					  <div id="source{{id}}" class="tab-pane fade active in">
 						  <table width="100%" border="0" cellspacing="0" cellpadding="0">
 							<tbody>
@@ -153,7 +153,7 @@
 											<option value="git" data-i18n="projectlist.label.git"></option>
 										</select>
 									</td>
-									<td><input type="text" name="repoUrl" placeholder="Repo Url" id="repourl_{{id}}"></td>
+									<td><input type="text" name="repoUrl" placeholder="Repo Url" id="repourl_{{id}}" class="repourltext" ></td>
 								</tr>
 								<tr>
 									<td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="repocredential_{{id}}" repoDynid="{{id}}" class="addToRepocredential"></td>
@@ -199,7 +199,7 @@
 											<option value="git" data-i18n="projectlist.label.git"></option>
 										</select>
 									</td>
-									<td><input type="text" name="repoUrl" placeholder="Repo Url" id="phrescorepourl_{{id}}"></td>
+									<td><input type="text" name="repoUrl" placeholder="Repo Url" id="phrescorepourl_{{id}}" class="repourltext"></td>
 								</tr>
 								<tr>
 									<td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="repocredential_{{id}}" repoDynid="{{id}}" class="addToRepoPhrescocredential"></td>
@@ -245,7 +245,7 @@
 											<option value="git" data-i18n="projectlist.label.git"></option>
 										</select>
 									</td>
-									<td><input type="text" name="repoUrl" placeholder="Repo Url" id="testrepourl_{{id}}"></td>
+									<td><input type="text" name="repoUrl" placeholder="Repo Url" id="testrepourl_{{id}}" class="repourltext"></td>
 								</tr>
 								<tr>
 									<td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="repocredential_{{id}}" repoDynid="{{id}}" class="addToRepoTestCredential"></td>
@@ -291,7 +291,7 @@
 								<li><input type="checkbox" id="commitTest_{{id}}" class="commitTest" dynamicId="{{id}}" disabled><a class="repo_tab commitTestA" dynamicId="{{id}}">Test</a></li>
 							</ul>
 						</div>
-						<div class="tab-content hideContent" id="myTabContent">
+						<div class="tab-content hideContent fixedscroll" id="myTabContent" >
 					  		<div id="commitSource{{id}}" class="tab-pane fade active in">
 								<table width="100%" class="hideContent srcCommitableFiles">
 									<thead>
@@ -491,7 +491,7 @@
 								<li><input type="checkbox" id="updateTest_{{id}}" class="updateTest" dynamicId="{{id}}" disabled><a class="repo_tab updateTestA" dynamicId="{{id}}">Test</a></li>
 							</ul>
 						</div>
-						<div class="tab-content hideContent" id="myTabContent">
+						<div class="tab-content hideContent fixedscroll" id="myTabContent">
 					  		<div id="updateSource{{id}}" class="tab-pane fade active in">
 						  		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 									<tbody>
@@ -726,7 +726,7 @@
 					  {{#each modules}}
                           <tr class="{{../appDirName}}" rootModule="{{../appDirName}}" techid="{{techInfo.id}}" isMultiModule="true" moduleName="{{code}}">
                               <td style="padding-left: 5%;"><a name="editApplication" appid="{{id}}" from="multimodule" appDirName="{{../appDirName}}" href="javascript:;">{{code}}</a></td>
-                              <td>&nbsp;</td>
+                              <td>{{description}}</td>
                               <td>{{techInfo.name}}</td>
                               <td colspan="2" class="list_img">
                                   <a name="pdf_report_{{id}}" temp="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="{{id}}" appdata-placement="bottom" data-t="tooltip" href="javascript:void(0)" data-original-title="PDF Report">

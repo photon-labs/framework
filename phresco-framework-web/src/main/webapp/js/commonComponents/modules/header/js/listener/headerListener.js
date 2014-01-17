@@ -162,7 +162,7 @@ define(["header/api/headerAPI"], function() {
 			var copyRightLabel = theme.copyRightLabel;
 			var pageTitle = theme.customerTitle;
 			if (theme == null || theme == undefined || theme == '' || self.isBlank(copyRightLabel)) {
-				copyRightLabel = "2013.Photon Infotech Pvt Ltd. | <a href='http://www.photon.in' target='_blank'>www.photon.in</a>";
+				copyRightLabel = "2014.Photon Infotech Pvt Ltd. | <a href='http://www.photon.in' target='_blank'>www.photon.in</a>";
 			}
 			if (theme == null || theme == undefined || theme == '' || self.isBlank(pageTitle)) {
 				pageTitle = "Phresco";

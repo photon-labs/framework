@@ -1783,6 +1783,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 				reader = startServer(true, workingDir, rootModulePath, projectInfo);
 			}
 		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
 
 		}catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of MavenFunctions.runAgainstSource()" + FrameworkUtil.getStackTraceAsString(e));
@@ -2867,20 +2868,25 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		BufferedInputStream reader = null;
 		Parameter parameter = null;
 		MojoProcessor mojo = null;
+		boolean flagForParam = false;
 		try {
 			// TODO: delete the server.log and create empty server.log file
 			deleteLogFile(workingDir);
 			if (isRunAgainst) {
-				mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_RUNGAINST_SRC_START, rooModulePath, getModule())));
+				mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_RUNGAINST_SRC_START,
+						rooModulePath, getModule())));
 				parameter = mojo.getParameter(PHASE_RUNGAINST_SRC_START, "executeSql");
-				String execValue = parameter.getValue();
-				if (execValue.equals("true")) {
-					parameter.setValue("false");
-					mojo.save();
+				if (parameter != null) {
+					String execValue = parameter.getValue();
+					if (execValue.equals("true")) {
+						flagForParam = true;
+						parameter.setValue("false");
+						mojo.save();
+					}
 				}
 			}
-			// TODO: delete the server.log and create empty server.log file
-			deleteLogFile(workingDir);
+//			// TODO: delete the server.log and create empty server.log file
+//			deleteLogFile(workingDir);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 //			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(directory);
 //			String workingDirectory = Utility.getWorkingDirectoryPath(getAppDirName());
@@ -2889,6 +2895,10 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			appendMultiModuleCommand(getModule(), buildArgCmds);
 			reader = applicationManager.performAction(projectInfo, ActionType.RUNAGAINSTSOURCE, buildArgCmds, workingDir);
 
+			if(flagForParam) {
+				parameter.setValue("true");
+				mojo.save();
+			}
 		} catch (PhrescoException e) {
 			if (isDebugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.startServer()" + FrameworkUtil.getStackTraceAsString(e));

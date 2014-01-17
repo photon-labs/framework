@@ -63,6 +63,8 @@ public interface ResponseCodes {
 	String PHR12C10002 = "PHR12C10002"; // Failed to return downloads
 	String PHR13C00001 = "PHR13C00001"; // check for remote machine success
 	String PHR13C10001 = "PHR13C10001"; // check for remote machine failed
+	String PHR14C00001 = "PHR14C00001"; // Report sent
+	String PHR14C10001 = "PHR14C10001"; // Report sending failed
 	
 	
 	/*
@@ -295,6 +297,11 @@ public interface ResponseCodes {
 	String PHR600027 = "PHR600027"; // upload File removed successfully
 	String PHR610041 = "PHR610041"; // unable to remove the uploaded file
 	String PHR610042 = "PHR610042"; // Duplicate configurations
+	String PHR610043 = "PHR610043"; // release failed
+	String PHR610044 = "PHR610044"; // release failed
+	String PHR610045 = "PHR610045"; // release failed
+	String PHR610046 = "PHR610046"; // release failed
+	String PHR600028 = "PHR600028"; // release success
 	
 	/*
 	 * Build Page
@@ -519,7 +526,8 @@ public interface ResponseCodes {
 	String PHR810043 = "PHR810043"; // returned TestFlight configuration Failed
 	String PHR810044 = "PHR810044"; // returned TFS configuration successfully
 	String PHR810045 = "PHR810045"; // returned TFS configuration Failed
-	
+	String PHR810046 = "PHR810046"; // Setup details retrieved successfully
+	String PHR810047 = "PHR810047"; // Setup details retrieval Failed
 	
 	/*
 	 * Upgrade Service
@@ -615,6 +623,9 @@ public interface ResponseCodes {
 	String PHRU000001 = "PHRU000001"; // Build uploaded to TestFlight server successfully
 	String PHRU010001 = "PHRU010001"; // Build uploading failed
 	
+	/**
+	 * Repository service
+	 */
 	String PHRSR00001 = "PHRSR00001"; //Source repo branches and tags listed successfully
 	String PHRSR10001 = "PHRSR10001"; //Failed to list source repo branches and tags
 	String PHRSR00002 = "PHRSR00002"; //Branch created successfully
@@ -624,4 +635,12 @@ public interface ResponseCodes {
 	String PHRSR10005 = "PHRSR10005"; //Failed to create tag
 	String PHRSR00003 = "PHRSR00003"; //Tag created succesfully
 	String PHRSR10006 = "PHRSR10006"; //Delete temp failure
+	String PHRSR00007 = "PHRSR00007"; //Release started successfully
+	String PHRSR10008 = "PHRSR10008"; //Release startup failed
+	
+	/**
+	 * Authentincation Failures
+	 */
+	
+	String PHRSR10007 = "PHRSR10007"; //Authentication Failure
 }

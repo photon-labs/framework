@@ -1181,7 +1181,7 @@ define(["croneExpression/croneExpression"], function() {
 		
 		addEnvEvent : function(envName, envDesc) {
 			var self = this;
-			$("ul[name=envList]").append('<li draggable="true" name="'+envName+'"><div><input type="radio" name="optionsRadiosfd"></div><div  class="envlistname" name="envListName">'+envName+'</div><input type="hidden" name="envListDesc" value="'+envDesc+'"></li>');
+			$("ul[name=envList]").append('<li draggable="true" name="'+envName+'"><div  class="envlistname" name="envListName">'+envName+'</div><input type="hidden" name="envListDesc" value="'+envDesc+'"></li>');
 			$('.connected').sortable({
 				connectWith: '.connected'
 			});

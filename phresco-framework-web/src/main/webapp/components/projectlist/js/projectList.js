@@ -191,27 +191,41 @@ define(["projectlist/listener/projectListListener"], function() {
 			});
 		},
 		
-		deleteProjectfn : function(deletObj, imgname1, imgname2, deleteproject){
+		deleteProjectfn : function(deletObj, imgname1, imgname2, deleteproject, flag_multi){
 			var self = this;
 			self.getAction(deletObj,"delete",function(response) {
 				//commonVariables.loadingScreen.removeLoading();
-				self.deleterow(imgname1, imgname2, deleteproject);
+				self.deleterow(imgname1, imgname2, deleteproject, flag_multi);
 			});
 		},
 		
-		deleterow : function(imgname1, imgname2, deleteproject){
+		deleterow : function(imgname1, imgname2, deleteproject, flag_multi){
 			var self = this;
-			if(imgname1 === 'delete'|| imgname2 === 'delete') {	
-				$(commonVariables.contentPlaceholder).find("tr[class="+deleteproject+"]").remove();
-			} else if (imgname1 === 'module_delete') {
-				deleteproject.remove();
+			if(flag_multi !== 1){
+				if(imgname1 === 'delete'|| imgname2 === 'delete') {	
+					$(commonVariables.contentPlaceholder).find("tr[class="+deleteproject+"]").remove();
+				} else if (imgname1 === 'module_delete') {
+					deleteproject.remove();
+				} else {
+					$(commonVariables.contentPlaceholder).find("tr[class="+deleteproject+"]").prev('tr').remove();
+					$(commonVariables.contentPlaceholder).find("tr[class="+deleteproject+"]").remove();
+				}
+				if(!($(commonVariables.contentPlaceholder).find('tr.proj_title').length)){
+					self.flagged=0;	
+				}
 			} else {
-				$(commonVariables.contentPlaceholder).find("tr[class="+deleteproject+"]").prev('tr').remove();
-				$(commonVariables.contentPlaceholder).find("tr[class="+deleteproject+"]").remove();
-			}
-			if(!($(commonVariables.contentPlaceholder).find('tr.proj_title').length)){
-				self.flagged=0;	
-			}
+				if(imgname1 === 'delete'|| imgname2 === 'delete') {	
+					$(commonVariables.contentPlaceholder).find("tr[modulename="+deleteproject+"]").remove();
+				} else if (imgname1 === 'module_delete') {
+					deleteproject.remove();
+				} else {
+					$(commonVariables.contentPlaceholder).find("tr[modulename="+deleteproject+"]").prev('tr').remove();
+					$(commonVariables.contentPlaceholder).find("tr[modulename="+deleteproject+"]").remove();
+				}
+				if(!($(commonVariables.contentPlaceholder).find('tr.proj_title').length)){
+					self.flagged=0;	
+				}
+			}			
 		},
 		
 		/***
@@ -347,6 +361,9 @@ define(["projectlist/listener/projectListListener"], function() {
 					$('.addToRepocredential').attr("checked", false);
 					$('.addToRepoPhrescocredential').attr("checked", false);
 					$('.addToRepoTestCredential').attr("checked", false);
+					
+					if($("#repourl_"+dynamicId).hasClass('errormessage'))
+						$("#repourl_"+dynamicId).removeClass('errormessage');
 					
 					$('#uname_'+dynamicId).attr('readonly','readonly').removeClass('errormessage').removeAttr('placeholder');
 					$('#pwd_'+dynamicId).attr('readonly','readonly').removeClass('errormessage').removeAttr('placeholder');
@@ -530,7 +547,7 @@ define(["projectlist/listener/projectListListener"], function() {
 							$('.footer_section').css('z-index', '0');
 						} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
 							commonVariables.api.showError(self.getLockErrorMsg(response, lockAction), 'error', true, true);
-						}	
+						}
 					});			
 				} else if ($(this).hasClass('del_submodule')){
 					var openccName = $(this).attr('name'), rootModule = $(this).closest('tr').attr('rootModule');
@@ -581,7 +598,6 @@ define(["projectlist/listener/projectListListener"], function() {
 				$('.search').unbind("click");
 				$('.search').bind("click", function() {
 					self.projectslistListener.flag1 = 1;
-					//var idval = $(this).parent().parent().parent().parent().next('div').next().children('input').attr('id');
 					var idval = $(this).attr('dynId');
 					if(!(self.projectslistListener.validateAddToRepoData(idval))) {
 						$('.searchdropdown').empty();
@@ -699,12 +715,20 @@ define(["projectlist/listener/projectListListener"], function() {
 			
 			$("input[name='deleteConfirm']").unbind('click');
 			$("input[name='deleteConfirm']").click(function(e) {
-				self.projectslistListener.delprojectname = $(this).attr('deleteAppname'), deleteObj = {};
-				var deletearray = [], deleteproject, imgname1, imgname2;
+				self.projectslistListener.delprojectname = $(this).parent().parent().attr("currentprjname"), deleteObj = {};
+				var deletearray = [], deleteproject, imgname1, imgname2, deletemulti, flag_multi = 0;
 				deleteproject = $(this).parent().parent().attr('currentPrjName');
-				deletearray.push(deleteproject);
-				imgname1 = $("tr[class="+deleteproject+"]").next('tr').children('td:eq(5)').children('a').children('img').attr('name');
-				imgname2 = $("tr[class="+deleteproject+"]").prev('tr').children('td:eq(5)').children('a').children('img').attr('name');
+				deletemulti = $(this).parent().parent().attr('currentmodulename');
+				if(deletemulti !== undefined) {
+					deletearray.push(deletemulti);
+					imgname1 = $("tr[multimodule="+deletemulti+"]").next('tr').children('td:eq(5)').children('a').children('img').attr('name');
+					imgname2 = $("tr[multimodule="+deletemulti+"]").prev('tr').children('td:eq(5)').children('a').children('img').attr('name');
+					flag_multi = 1;
+				} else { 
+					deletearray.push(deleteproject);
+					imgname1 = $("tr[class="+deleteproject+"]").next('tr').children('td:eq(5)').children('a').children('img').attr('name');
+					imgname2 = $("tr[class="+deleteproject+"]").prev('tr').children('td:eq(5)').children('a').children('img').attr('name');
+				}	
 				self.flagged=1;
 				//commonVariables.loadingScreen.showLoading();		
 				deleteObj.actionType = "application";		
@@ -718,9 +742,9 @@ define(["projectlist/listener/projectListListener"], function() {
 					deleteObj.dependents = $(this).attr('dependents').split(',');
 					self.projectslistListener.delprojectname = $(this).attr("moduleName");
 					deleteproject = $(this).closest("tr");
-					self.deleteProjectfn(deleteObj, "module_delete", "", deleteproject);
+					self.deleteProjectfn(deleteObj, "module_delete", "", deleteproject, flag_multi);
 				} else {
-					self.deleteProjectfn(deleteObj, imgname1, imgname2, deleteproject);
+					self.deleteProjectfn(deleteObj, imgname1, imgname2, deleteproject, flag_multi);
 				}
 
 				
@@ -733,16 +757,24 @@ define(["projectlist/listener/projectListListener"], function() {
 			$("input[name='holeDelete']").unbind('click');
 			$("input[name='holeDelete']").click(function(e) {
 				self.projectslistListener.delprojectname = $(this).attr('deleteAppname');
-				var deleteObj = {}, projectnameArray = [], cls, temp, temp1, temp2, classname, curr, currentRow, deleteappname;
+				var deleteObj = {}, projectnameArray = [], multiArray = [],  cls, temp, temp1, temp2, classname, curr, currentRow, deleteappname, multimod, multiflag = 0;
 				deleteappname = $(this).attr('deleteappname');
 				temp = self.delobj.parent('tr');
 				curr =  self.delobj.parent().next('tr');
 				currentRow =  self.delobj.parent().next();
 				while(currentRow !== null && currentRow.length > 0) {
 				   classname = currentRow.attr("class");
-				   if(classname !== "proj_title" && classname !== "") {
+				   if(currentRow.attr('ismultimodule') === 'true') {
+						multimod = currentRow.attr('modulename');
+						multiflag = 1;
+						currentRow = currentRow.next('tr');
+						if($.inArray(classname.toString(), projectnameArray) === -1)
+							projectnameArray.push(classname);
+						multiArray.push(multimod);
+				   } else if(classname !== "proj_title" && classname !== "") {
 				        currentRow = currentRow.next('tr');
-				        projectnameArray.push(classname);
+						if($.inArray(classname.toString(), projectnameArray) === -1)
+							projectnameArray.push(classname);
 				   }else {currentRow = null;}
 				}
 				self.flagged=1;
@@ -858,6 +890,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			$(".splitDotPhresco").bind("click", function() {
 				var dynamicId = $(this).attr("dynamicId");
 				if ($(this).is(":checked")) {
+					self.makeRepoTypeSelected(dynamicId);
 					$("#addRepo_" + dynamicId).find(".dotPhrescoA").attr("data-toggle", "tab").attr("href", "#dotphresco"+dynamicId);
 					commonVariables.navListener.showDotPhrescoTab($("#dotphresco"+dynamicId), $("#source"+dynamicId), $("#test"+dynamicId), $("#splitDotPhresco_"+dynamicId), $("#splitTest_"+dynamicId));
 				} else {
@@ -872,6 +905,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			$(".splitTest").bind("click", function() {
 				var dynamicId = $(this).attr("dynamicId");
 				if ($(this).is(":checked")) {
+					self.makeRepoTypeSelected(dynamicId);
 					$("#addRepo_" + dynamicId).find(".testA").attr("data-toggle", "tab").attr("href", "#test"+dynamicId);
 					commonVariables.navListener.showTestTab($("#dotphresco"+dynamicId), $("#source"+dynamicId), $("#test"+dynamicId), $("#splitDotPhresco_"+dynamicId), $("#splitTest_"+dynamicId));
 				} else {
@@ -913,9 +947,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			$(".dotPhrescoA, .testA").unbind("click");
 			$(".dotPhrescoA, .testA").bind("click", function() {
 				var dynamicId = $(this).attr("dynamicId");
-				var selectedType = $("#type_" + dynamicId).val();
-				$("#phrescotype_" + dynamicId).val(selectedType);
-				$("#testtype_" + dynamicId).val(selectedType);
+				self.makeRepoTypeSelected(dynamicId);
 			});
 			
 			$(".updateDotPhresco").unbind("click");
@@ -1030,6 +1062,12 @@ define(["projectlist/listener/projectListListener"], function() {
 				userNameObj.attr('readonly','readonly');
 				pwdObj.attr('readonly','readonly');
 			}
+		},
+		
+		makeRepoTypeSelected : function(dynamicId) {
+			var selectedType = $("#type_" + dynamicId).val();
+			$("#phrescotype_" + dynamicId).val(selectedType);
+			$("#testtype_" + dynamicId).val(selectedType);
 		}
 	});
 

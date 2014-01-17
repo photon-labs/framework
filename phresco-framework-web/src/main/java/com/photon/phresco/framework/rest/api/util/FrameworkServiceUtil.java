@@ -187,7 +187,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo(appDirName);
 			StringBuilder builder  = new StringBuilder();
-			String pomFileName = Utility.getPomFileName(applicationInfo);
+			String pomFileName = Utility.getPhrescoPomFile(applicationInfo);
 			builder.append(Utility.getProjectHome())
 			.append(appDirName)
 			.append(File.separatorChar)
@@ -225,8 +225,8 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	 */
 	public static List<String> getProjectModules(String appDirName) throws PhrescoException {
     	try {
-            PomProcessor processor = getSourcePomProcessor(appDirName);
-    		Modules pomModule = processor.getPomModule();
+    		PomProcessor pomProcessor = Utility.getPomProcessor(Utility.getProjectHome() + appDirName, "");
+    		Modules pomModule = pomProcessor.getPomModule();
     		if (pomModule != null) {
     			return pomModule.getModule();
     		}
@@ -445,20 +445,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	public static String getFunctionalTestFramework(String rootModulePath, String subModule) throws PhrescoException, PhrescoPomException {
 		return  Utility.getPomProcessor(rootModulePath, subModule).getProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
 	}
-	
-	public static List<ApplicationInfo> getAppInfos(String customerId, String projectId) throws PhrescoException {
-		try {
-			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-			ProjectInfo projectInfo = projectManager.getProject(projectId, customerId);
-			if(projectInfo != null) {
-				return projectInfo.getAppInfos();
-			}
-		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
-		}	
-		return new ArrayList<ApplicationInfo>();
-	}
-	
+
 	public static String getConfigFileDir(String appDirName, String moduleName) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(Utility.getProjectHome());
@@ -685,16 +672,10 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 		ConfigManager configManager = null;
 		ActionResponse actionresponse = new ActionResponse();
 		try {
-			System.out.println("rootModulePath ::" + rootModulePath);
-			System.out.println("subModule ::" + subModule);
 			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModule);
-			System.out.println("dotPhrescoFolderPath ::" + dotPhrescoFolderPath);
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModule);
-			System.out.println("projectInfo ::" + projectInfo.getProjectCode());
 			File configFile = new File(dotPhrescoFolderPath + File.separator + Constants.CONFIGURATION_INFO_FILE);
 			File settingsFile = new File(Utility.getProjectHome()+ File.separator + projectInfo.getProjectCode() + Constants.SETTINGS_XML);
-			System.out.println("configFile ::" + configFile);
-			System.out.println("settingsFile ::" + settingsFile);
 			if (StringUtils.isNotEmpty(environmentName)) {
 				List<String> selectedEnvs = csvToList(environmentName);
 				List<String> selectedConfigTypeList = getSelectedConfigTypeList(projectInfo.getAppInfos().get(0));

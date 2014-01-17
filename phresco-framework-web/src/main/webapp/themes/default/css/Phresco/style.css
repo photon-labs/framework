@@ -2670,7 +2670,7 @@ form[name="deployForm"] {
 }
 
 .env_border ul li .envlistname {
-	padding-left: 70px;
+	padding-left: 6px;
 }
 
 .env_border ul li:last-child {
@@ -5477,7 +5477,6 @@ textarea[name="regex"] {
 
 .tree_view ul li span.badge i {
 	height:13px !important;
-	line-height:20px !important;
 	margin-top:0 !important;
 	padding-right:4px !important;
 }
@@ -5507,7 +5506,7 @@ textarea[name="regex"] {
     border-left: 1px solid #999;
     bottom: 50px;
     height: 100%;
-    top: -1px;
+    top: -5px;
     width: 1px;
     -webkit-transition: "border-color 0.1s ease 0.1s";
     -moz-transition: "border-color 0.1s ease 0.1s";
@@ -5516,7 +5515,7 @@ textarea[name="regex"] {
 .tree li::after {
     border-top: 1px solid #999;
     height: 20px;
-    top: 19px;
+    top: 15px;
     width: 17px;
     -webkit-transition: "border-color 0.1s ease 0.1s";
     -moz-transition: "border-color 0.1s ease 0.1s";
@@ -5528,7 +5527,7 @@ textarea[name="regex"] {
     border: 1px solid #999;
     border-radius: 5px;
     display: inline-block;
-    padding: 7px 5px;	
+    padding: 2px 5px !important;	
 	margin:1px 0px;
     text-decoration: none;
     -webkit-transition: color .2s ease .1s, background-color .2s ease .1s, border-color .3s ease .2s;
@@ -5592,16 +5591,25 @@ textarea[name="regex"] {
 }
 
 #rep_release select, #rep_create select {
-	width:178px;
+	width:100%;
 }
 
-#rep_create textarea {
-	width: 96%;
+#rep_create textarea, #rep_release textarea {
+	width: 100%;
 }
 
 #rep_release table tr td input[type="checkbox"], #rep_create table tr td input[type="checkbox"]{
 	margin: 0 5px 3px 0;
 }
+
+#rep_release table tr td {
+	padding:5px;
+}
+
+#rep_create table tr td {
+	padding:5px;
+}
+
 
 .repository_tabdiv ul li a{
 	background:background: #f4f4f4; /* Old browsers */
@@ -5736,7 +5744,19 @@ textarea[name="regex"] {
 .browse_table tr td input[type="text"]{
 	width:53px !important;
 }
-
-
+	
+.emailMessage {
+	float: left;
+    margin-left: 12px;
+    margin-top: 12px;
+	color: #298A08;
+	text-align: center;
+	font-size:13px;
+	font-weight:bold;
+}
 
 /***************************** STYLES FOR THE TABLE SORTING ENDS *************************************/
+.repourltext {
+	width:300px !important;
+}
+

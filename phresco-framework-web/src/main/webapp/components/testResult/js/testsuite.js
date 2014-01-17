@@ -77,6 +77,7 @@ define(["testResult/listener/testResultListener"], function() {
 				commonVariables.runType = 'component';
 			} else if (currentTab === 'functionalTest') {
 				commonVariables.runType = 'Functional';
+
 			} 
 			//To get the testsuites
 			self.testResultListener.getTestsuites(function(response) {
@@ -85,6 +86,14 @@ define(["testResult/listener/testResultListener"], function() {
 					data.testSuites = response.data.testSuites;
 				} else {
 					data.testSuites = response.data;
+					var checkval= $("#iframeExistsCheck").val();
+					if(checkval === 'true'){
+						$("#testResult, #tabularView").hide();
+						$("#iframeContent").show();
+					}else if (checkval === 'false') {
+						$("#iframeContent").hide();
+						$("#testResult").show();						
+					}
 				}
 				data.message = response.message;
 				commonVariables.testSuites = response.data;
@@ -143,8 +152,24 @@ define(["testResult/listener/testResultListener"], function() {
 					commonVariables.consoleError = false;
 				}
 			}, 100);	
+
+			commonVariables.reportView ? self.showReportView() : '';
 		},
 		
+		showReportView : function() {
+			$("#testSuites, #testcases, #graphView, #iframeContent, .urlInactive, #executeView").hide();
+			if ($('.suite_table').size() === 1) {
+				//Test suite table report is alive
+				$('#testSuites').show();
+			} else if ($('.case_table').size() === 1) {
+				//Test case table report is alive
+				$('#testcases').show();
+			} 
+			$("#testResult, #tabularView, #reportView").show();
+			$(".th-inner").css('top',$('#testSuites').offset().top);
+			commonVariables.reportView = false;
+		},
+
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *

@@ -457,19 +457,21 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				var minuValue = 16;
 				if (paramVal === 'jobTemplates') {
 					minuValue = 5;
-				} 
+				} else if (paramVal === 'setup') {
+					minuValue = 35;
+				}
 				if (clicked.offset().top < halfheight && clicked.offset().left < halfwidth) {
 					$(target).css({"left":clicked.offset().left ,"margin-top":10,"right": "auto"});
 					$(target).toggle();
 					$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
 				} else if (clicked.offset().top < halfheight && clicked.offset().left > halfwidth){
 					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth()) - minuValue);
-					var dynamicValue = 10;
-					if (paramVal === 'jobTemplates') {
-						dynamicValue = -121
-					}
+					var dynamicValue = 5;
+					if (paramVal === 'jobTemplates' || paramVal === 'setup') {
+						dynamicValue = -121;
+					} 
 					var BottomHeight = clicked.offset().top + clicked.height() +  dynamicValue;
-					if (paramVal !== 'jobTemplates') {
+					if (paramVal !== 'jobTemplates' && paramVal !== 'setup') {
 						BottomHeight = clicked.position().top + clicked.height() +  dynamicValue;
 					}
 					$(target).css({"right":d,"left": "auto","top": BottomHeight});
@@ -767,7 +769,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
 					} else if($(target).hasClass('add_repo')) {
 						d = ($(window).width() - (clicked.offset().left + clicked.outerWidth())) +2;
-						var BottomHeight = clicked.offset().top + clicked.height() - 416 ;
+						var BottomHeight = clicked.offset().top + clicked.height() - 460 ;
 						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});	
 						$(target).toggle();
 						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');

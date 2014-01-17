@@ -18,11 +18,11 @@
 package com.photon.phresco.framework.rest.api;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
@@ -120,19 +120,31 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		ResponseInfo<List<CIBuild>> responseData = new ResponseInfo<List<CIBuild>>();
 		List<CIBuild> builds = null;
 		CIJob job = null;
+		String module = "";
+		String splitPath = "";
 		try {
 			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
+				
 				if(StringUtils.isNotEmpty(rootModule)) {
-					appDir = rootModule + "/" + appDir;
+					module = appDir;
+					appDir = rootModule;
+				} 
+				splitPath = Utility.splitPathConstruction(appDir);
+				if(StringUtils.isNotEmpty(rootModule)) {
+					splitPath = splitPath + File.separator + module;
 				}
-				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
 				projectId = projectInfo.getId();
 			}
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
+				globalInfo = Utility.splitPathConstruction(globalInfo);
+			}
+			if (StringUtils.isNotEmpty(appDir)) {
+				appDir = splitPath;
 			}
 			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 			List<CIJob> ciJobs = Utility.getJobs(continuousName, projectId, ciJobInfo);
@@ -146,6 +158,10 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		} catch (PhrescoException e) {
+			ResponseInfo<List<CIBuild>> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810001);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+					.build();
+		} catch (PhrescoPomException e) {
 			ResponseInfo<List<CIBuild>> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810001);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
@@ -167,19 +183,24 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	public Response createJob(@Context HttpServletRequest request, ContinuousDelivery continuousDelivery, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, 
 			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule)
-	throws PhrescoException {
+	throws PhrescoException, PhrescoPomException {
 		ResponseInfo<ContinuousDelivery> responseData = new ResponseInfo<ContinuousDelivery>();
 		ResponseInfo<ContinuousDelivery> finalOutput;
+		String module = "";
 		try {
 			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
 				if(StringUtils.isNotEmpty(rootModule)) {
-					appDir = rootModule + "/" + appDir;
+					module = appDir;
+					appDir = rootModule;
+				} 
+				String splitPath = Utility.splitPathConstruction(appDir);
+				if(StringUtils.isNotEmpty(rootModule)) {
+					splitPath = splitPath + File.separator + module;
 				}
-				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
 				projectId = projectInfo.getId();
 			}
 			List<CIJob> jobs = continuousDelivery.getJobs();
-			//boolean validate = jobNameValidation(jobs);
 			boolean coreCreateJob = coreCreateJob(continuousDelivery, projectId, appDir, userId, customerId, request);
 			if (coreCreateJob) {
 				finalOutput = responseDataEvaluation(responseData, null, continuousDelivery, RESPONSE_STATUS_SUCCESS, PHR800002);
@@ -188,6 +209,10 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			}
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810003);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			.build();
+		} catch (PhrescoPomException e) {
 			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810003);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
@@ -266,12 +291,19 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	throws PhrescoException {
 		ResponseInfo<ContinuousDelivery> responseData = new ResponseInfo<ContinuousDelivery>();
 		ResponseInfo<ContinuousDelivery> finalOutput;
+		String module = "";
+		String splitPath = "";
 		try {
 			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
 				if(StringUtils.isNotEmpty(rootModule)) {
-					appDir = rootModule + "/" + appDir;
+					module = appDir;
+					appDir = rootModule;
+				} 
+				splitPath = Utility.splitPathConstruction(appDir);
+				if(StringUtils.isNotEmpty(rootModule)) {
+					splitPath = splitPath + File.separator + module;
 				}
-				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
 				projectId = projectInfo.getId();
 			}
 			String trimmedName = continuousName.trim();
@@ -281,10 +313,14 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			List<CIJob> ciJobs = new ArrayList<CIJob>(); 
 			List<CIJob> jobs = new ArrayList<CIJob>();
 
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
+				globalInfo = Utility.splitPathConstruction(globalInfo);
+			}
+			if (StringUtils.isNotEmpty(appDir)) {
+				appDir = splitPath;
 			}
 			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 			ContinuousDelivery specificContinuousDelivery = Utility.getContinuousDelivery(projectId, trimmedName, ciJobInfo);
@@ -308,6 +344,10 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				ciJobs.add(cijob);
 			}
 			continuousDelivery.setJobs(ciJobs);
+			if (appDir.contains("\\")) {
+				String[] split = appDir.split("\\\\");
+				appDir = split[0];
+			}
 			boolean coreCreateJob = coreCreateJob(continuousDelivery, projectId, appDir, userId, customerId, request);
 
 			if (coreCreateJob) {
@@ -320,6 +360,9 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			}
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810003);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+		} catch (PhrescoPomException e) {
 			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810003);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		}
@@ -351,22 +394,33 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		ResponseInfo<CIJobStatus> responseData = new ResponseInfo<CIJobStatus>();
 		boolean updateJob = false;
 		CIJobStatus status = null;
+		String module = "";
+		String splitPath = "";
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
 				if(StringUtils.isNotEmpty(rootModule)) {
-					appDir = rootModule + "/" + appDir;
+					module = appDir;
+					appDir = rootModule;
+				} 
+				splitPath = Utility.splitPathConstruction(appDir);
+				if(StringUtils.isNotEmpty(rootModule)) {
+					splitPath = splitPath + File.separator + module;
 				}
-				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
 				projectId = projectInfo.getId();
 			}
 			List<CIJob> tempCiJobs = new ArrayList<CIJob>(); 
 			List<CIJob> tempJobs = new ArrayList<CIJob>();
 			List<CIJob> newJobs = continuousDelivery.getJobs();
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
+				globalInfo = Utility.splitPathConstruction(globalInfo);
+			}
+			if (StringUtils.isNotEmpty(appDir)) {
+				appDir = splitPath;
 			}
 			List<CIJob> oldJobs = ciManager.getOldJobs(projectId, thisName, appDir, globalInfo, READ);
 			tempCiJobs.addAll(oldJobs);
@@ -382,7 +436,11 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 						if(!equals || (!ciName.equalsIgnoreCase(oldname))) {
 							exists = true;
 							if(StringUtils.isNotEmpty(ciJob.getAppDirName())) {
-								applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDir);
+								splitPath = Utility.splitPathConstruction(ciJob.getAppDirName());
+								if(StringUtils.isNotEmpty(ciJob.getModule())) {
+									splitPath = splitPath + File.separator + ciJob.getModule();
+								}
+								applicationInfo = FrameworkServiceUtil.getApplicationInfo(splitPath);
 							}
 							CIJob job = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId, customerId, request);
 							updateJob = ciManager.updateJob(job);
@@ -398,7 +456,11 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				if (!exists) {
 					ApplicationInfo applicationInfo = new ApplicationInfo();
 					if(StringUtils.isNotEmpty(ciJob.getAppDirName())) {
-						applicationInfo = FrameworkServiceUtil.getApplicationInfo(ciJob.getAppDirName());
+						splitPath = Utility.splitPathConstruction(ciJob.getAppDirName());
+						if(StringUtils.isNotEmpty(ciJob.getModule())) {
+							splitPath = splitPath + File.separator + ciJob.getModule();
+						}
+						applicationInfo = FrameworkServiceUtil.getApplicationInfo(splitPath);
 					}
 					CIJob jobWithCmds = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId, customerId, request);
 					boolean validateJob = validateJob(jobWithCmds.getJobName());
@@ -442,6 +504,10 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			}
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810005);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			.build();
+		} catch (PhrescoPomException e) {
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810005);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
@@ -489,36 +555,52 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			@QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule)
 	throws PhrescoException {
 		ResponseInfo<ContinuousDelivery> responseData = new ResponseInfo<ContinuousDelivery>();
+		ResponseInfo<ContinuousDelivery> finalOutput;
 		ContinuousDelivery matchingContinuous = null;
 		boolean exist = false;
-		if(projectId == null || projectId.equals("null") || projectId.equals("")) {
-			if(StringUtils.isNotEmpty(rootModule)) {
-				appDir = rootModule + "/" + appDir;
+		String module = "";
+		String splitPath = "";
+		try {
+			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
+				if(StringUtils.isNotEmpty(rootModule)) {
+					module = appDir;
+					appDir = rootModule;
+				} 
+				splitPath = Utility.splitPathConstruction(appDir);
+				if(StringUtils.isNotEmpty(rootModule)) {
+					splitPath = splitPath + File.separator + module;
+				}
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
+				projectId = projectInfo.getId();
 			}
-			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
-			projectId = projectInfo.getId();
-		}
-		CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-		
-		List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
-		String globalInfo = "";
-		if (CollectionUtils.isNotEmpty(appInfos)) {
-			globalInfo = appInfos.get(0).getAppDirName();
-		}
-		List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
-		ContinuousDelivery continuousDelivery = Utility.getContinuousDelivery(projectId, continuousName.trim(), ciJobInfo);
-		if (continuousDelivery.getName().equalsIgnoreCase(continuousName)) {
-			matchingContinuous = continuousDelivery;
-			exist = true;
-		}
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
+			String globalInfo = "";
+			if (CollectionUtils.isNotEmpty(appInfos)) {
+				globalInfo = appInfos.get(0).getAppDirName();
+				globalInfo = Utility.splitPathConstruction(globalInfo);
+			}
+			if (StringUtils.isNotEmpty(appDir)) {
+				appDir = splitPath;
+			}
+			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
+			ContinuousDelivery continuousDelivery = Utility.getContinuousDelivery(projectId, continuousName.trim(), ciJobInfo);
+			if (continuousDelivery.getName().equalsIgnoreCase(continuousName)) {
+				matchingContinuous = continuousDelivery;
+				exist = true;
+			}
 
-		ResponseInfo<ContinuousDelivery> finalOutput;
-		if(exist) {
-			finalOutput= responseDataEvaluation(responseData, null, matchingContinuous, RESPONSE_STATUS_SUCCESS, PHR800004);
-		} else {
+			if(exist) {
+				finalOutput= responseDataEvaluation(responseData, null, matchingContinuous, RESPONSE_STATUS_SUCCESS, PHR800004);
+			} else {
+				finalOutput = responseDataEvaluation(responseData, null, matchingContinuous, RESPONSE_STATUS_FAILURE, PHR810006);
+			}
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+		} catch (PhrescoPomException e) {
 			finalOutput = responseDataEvaluation(responseData, null, matchingContinuous, RESPONSE_STATUS_FAILURE, PHR810006);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		}
-		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 	}
 	
 	/**
@@ -534,20 +616,31 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	public Response getContinuousDeliveryJob(@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule, @QueryParam(REST_QUERY_CUSTOMERID) String customerId)
 	throws PhrescoException {
 		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
+		String module = "";
+		String splitPath = "";
 		try {
 			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
 				if(StringUtils.isNotEmpty(rootModule)) {
-					appDir = rootModule + "/" + appDir;
+					module = appDir;
+					appDir = rootModule;
+				} 
+				splitPath = Utility.splitPathConstruction(appDir);
+				if(StringUtils.isNotEmpty(rootModule)) {
+					splitPath = splitPath + File.separator + module;
 				}
-				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
 				projectId = projectInfo.getId();
 			}
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			ProjectDelivery projectContinuousDelivery = new ProjectDelivery();
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
+				globalInfo = Utility.splitPathConstruction(globalInfo);
+			}
+			if (StringUtils.isNotEmpty(appDir)) {
+				appDir = splitPath;
 			}
 			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 			if(CollectionUtils.isNotEmpty(ciJobInfo)) {
@@ -609,6 +702,10 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810007);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
+		} catch (PhrescoPomException e) {
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810007);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			.build();
 		}
 	}
 
@@ -627,20 +724,31 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	public Response delete(@QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir) throws PhrescoException {
 		ResponseInfo<CIJobStatus> responseData = new ResponseInfo<CIJobStatus>();
+		String module = "";
+		String splitPath = "";
 		try {
 			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
 				if(StringUtils.isNotEmpty(rootModule)) {
-					appDir = rootModule + "/" + appDir;
+					module = appDir;
+					appDir = rootModule;
+				} 
+				splitPath = Utility.splitPathConstruction(appDir);
+				if(StringUtils.isNotEmpty(rootModule)) {
+					splitPath = splitPath + File.separator + module;
 				}
-				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
 				projectId = projectInfo.getId();
 			}
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
+				globalInfo = Utility.splitPathConstruction(globalInfo);
+			}
+			if (StringUtils.isNotEmpty(appDir)) {
+				appDir = splitPath;
 			}
 			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 			CIJobStatus ciJobStatus = null;
@@ -654,6 +762,10 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		} catch (PhrescoException e) {
+			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810009);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			.build();
+		} catch (PhrescoPomException e) {
 			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810009);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
@@ -679,21 +791,32 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	throws PhrescoException {
 		ResponseInfo<CIJobStatus> responseData = new ResponseInfo<CIJobStatus>();
 		ResponseInfo<CIJobStatus> finalOutput ;
+		String module = "";
+		String splitPath = "";
 		try {
 			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
 				if(StringUtils.isNotEmpty(rootModule)) {
-					appDir = rootModule + "/" + appDir;
+					module = appDir;
+					appDir = rootModule;
+				} 
+				splitPath = Utility.splitPathConstruction(appDir);
+				if(StringUtils.isNotEmpty(rootModule)) {
+					splitPath = splitPath + File.separator + module;
 				}
-				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
 				projectId = projectInfo.getId();
 			}
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			CIJobStatus deleteBuilds = null;
 			
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
+				globalInfo = Utility.splitPathConstruction(globalInfo);
+			}	
+			if (StringUtils.isNotEmpty(appDir)) {
+				appDir = splitPath;
 			}
 			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 			CIJob specificJob = ciManager.getJob(jobName, projectId, ciJobInfo, continuousName);
@@ -707,6 +830,10 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		} catch (PhrescoException e) {
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810011);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			.build();
+		} catch (PhrescoPomException e) {
 			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810011);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
@@ -729,22 +856,35 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			@QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule, 
 			@QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName, @QueryParam(REST_QUERY_CUSTOMERID) String customerId) throws PhrescoException {
 		ResponseInfo<CIJobStatus> responseData = new ResponseInfo<CIJobStatus>();
+		String module = "";
+		String splitPath = "";
 		try {
+			//appLevel
 			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
 				if(StringUtils.isNotEmpty(rootModule)) {
-					appDir = rootModule + "/" + appDir;
+					module = appDir;
+					appDir = rootModule;
+				} 
+				splitPath = Utility.splitPathConstruction(appDir);
+				if(StringUtils.isNotEmpty(rootModule)) {
+					splitPath = splitPath + File.separator + module;
 				}
-				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
 				projectId = projectInfo.getId();
 			}
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			CIJobStatus buildJobs = null;
 			ResponseInfo<CIJobStatus> finalOutput; 
 			
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
+			//proj Level
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
+				globalInfo = Utility.splitPathConstruction(globalInfo);
+			}
+			if (StringUtils.isNotEmpty(appDir)) {
+				appDir = splitPath;
 			}
 			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 			CIJob specificJob = ciManager.getJob(name, projectId, ciJobInfo, continuousName);
@@ -758,6 +898,10 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		} catch (PhrescoException e) {
+			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810013);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			.build();
+		} catch (PhrescoPomException e) {
 			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810013);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
@@ -1027,15 +1171,26 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			throws PhrescoException {
 		ResponseInfo responseData = new ResponseInfo();
 		ResponseInfo finalOutput = null;
+		String module = "";
+		String splitPath = "";
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
+				globalInfo = Utility.splitPathConstruction(globalInfo);
 			}
 			if(StringUtils.isNotEmpty(rootModule)) {
-				appDir = rootModule +"/" + appDir;
+				module = appDir;
+				appDir = rootModule;
+			} 
+			splitPath = Utility.splitPathConstruction(appDir);
+			if(StringUtils.isNotEmpty(rootModule)) {
+				splitPath = splitPath + File.separator + module;
+			}
+			if (StringUtils.isNotEmpty(appDir)) {
+				appDir = splitPath;
 			}
 			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 			CIJob job = ciManager.getJob(downloadJobName, projectId, ciJobInfo, continuousName);
@@ -1051,6 +1206,33 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		}
+	}
+	
+	/**
+	 * @return
+	 * @throws PhrescoException
+	 */
+	@GET
+	@Path("/presetup")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response preSetup() throws PhrescoException {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		ResponseInfo<String> finalOutput;
+		boolean exists = false;
+		String status = PHR810047;
+		try {
+			File warFile = new File(Utility.getJenkinsHome() + File.separator + TARGET_DIR + File.separator + "ci.war");
+			if (warFile.exists()) {
+				exists = true;
+				status = PHR810046;
+			} 
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		finalOutput = responseDataEvaluation(responseData, null, exists, RESPONSE_STATUS_SUCCESS, status);
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+		.build();
 	}
 	
 	
@@ -1102,21 +1284,32 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			@QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule, @QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		ResponseInfo<Boolean> finalOutput = null;
+		String splitPath = "";
 		try {
+			String module = "";
 			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
 				if(StringUtils.isNotEmpty(rootModule)) {
-					appDir = rootModule + "/" + appDir;
+					module = appDir;
+					appDir = rootModule;
+				} 
+				splitPath = Utility.splitPathConstruction(appDir);
+				if(StringUtils.isNotEmpty(rootModule)) {
+					splitPath = splitPath + File.separator + module;
 				}
-				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
 				projectId = projectInfo.getId();
 			}
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			CIJob job = null;
 			
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
+				globalInfo = Utility.splitPathConstruction(globalInfo);
+			}
+			if (StringUtils.isNotEmpty(appDir)) {
+				appDir = splitPath;
 			}
 			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 			List<CIJob> ciJobs = Utility.getJobs(continuousName, projectId, ciJobInfo);
@@ -1132,6 +1325,10 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810018);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
+		} catch (PhrescoPomException e) {
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810018);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			.build();
 		}
 	}
 	
@@ -1144,21 +1341,32 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			@QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule, @QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		ResponseInfo<Boolean> finalOutput = null;
+		String module = "";
+		String splitPath = "";
 		try {
 			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
 				if(StringUtils.isNotEmpty(rootModule)) {
-					appDir = rootModule + "/" + appDir;
+					module = appDir;
+					appDir = rootModule;
+				} 
+				splitPath = Utility.splitPathConstruction(appDir);
+				if(StringUtils.isNotEmpty(rootModule)) {
+					splitPath = splitPath + File.separator + module;
 				}
-				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
 				projectId = projectInfo.getId();
 			}
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			CIJob job = null;
 			
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			String globalInfo = "";
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				globalInfo = appInfos.get(0).getAppDirName();
+				globalInfo = Utility.splitPathConstruction(globalInfo);
+			}
+			if (StringUtils.isNotEmpty(appDir)) {
+				appDir = splitPath;
 			}
 			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 			List<CIJob> ciJobs = Utility.getJobs(continuousName, projectId, ciJobInfo);
@@ -1174,6 +1382,10 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810036);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
+		} catch (PhrescoPomException e) {
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810036);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			.build();
 		}
 	}
 	
@@ -1186,15 +1398,28 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		ResponseInfo<Boolean> finalOutput = null;
 		boolean nameExist = false;
+		String module = "";
+		String splitPath = "";
 		try {
-		List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+		List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 		String globalInfo = "";
 		if (CollectionUtils.isNotEmpty(appInfos)) {
 			globalInfo = appInfos.get(0).getAppDirName();
+			globalInfo = Utility.splitPathConstruction(globalInfo);
 		}
 		CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 		if(StringUtils.isNotEmpty(rootModule)) {
-			appDir = rootModule + "/" + appDir;
+			module = appDir;
+			appDir = rootModule;
+		} 
+		if (StringUtils.isNotEmpty(appDir)) {
+		splitPath = Utility.splitPathConstruction(appDir);
+		}
+		if(StringUtils.isNotEmpty(rootModule)) {
+			splitPath = splitPath + File.separator + module;
+		}
+		if (StringUtils.isNotEmpty(appDir)) {
+			appDir = splitPath;
 		}
 		List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 		ProjectDelivery projectDelivery = Utility.getProjectDelivery(projectId, ciJobInfo);
@@ -1212,6 +1437,10 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810042);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
+		} catch(PhrescoPomException e) {
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810042);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			.build();
 		}
 	}
 	
@@ -1219,6 +1448,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	private boolean coreCreateJob(ContinuousDelivery continuousDelivery, String  projectId, String appDir, String userId, String customerId, HttpServletRequest request) throws PhrescoException {
 		CIManagerImpl ciManager = null;
 		boolean createJsonJobs = false;
+		String splitPath = "";
 		try {
 			ciManager = new CIManagerImpl();
 			ApplicationInfo applicationInfo = null;
@@ -1226,7 +1456,18 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			List<CIJob> jobs = continuousDelivery.getJobs();
 			for(CIJob job : jobs) {	
 				if(StringUtils.isNotEmpty(job.getAppDirName())) {
-					applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDir);
+					if(StringUtils.isEmpty(appDir)) {
+						//proj
+						splitPath = Utility.splitPathConstruction(job.getAppDirName());
+					} else {
+						//app
+						//change this
+						splitPath = Utility.splitPathConstruction(appDir);
+					}
+					if (StringUtils.isNotEmpty(job.getModule())) {
+						splitPath = splitPath + File.separator + job.getModule();
+					}
+					applicationInfo = FrameworkServiceUtil.getApplicationInfo(splitPath);
 				}
 				CIJob jobWithCmds = setPreBuildCmds(job,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId, customerId, request);
 				boolean createJob = ciManager.createJob(job);
@@ -1235,6 +1476,9 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				}
 			}
 			if (CollectionUtils.isNotEmpty(ciJobs)) {
+				if(StringUtils.isNotEmpty(appDir)) {
+					appDir = splitPath;
+				}
 				createJsonJobs = ciManager.createJsonJobs(continuousDelivery, ciJobs, projectId, appDir, "", WRITE);
 				if (createJsonJobs && StringUtils.isEmpty(appDir)) {
 					copyGlobalInfoFile(customerId, projectId);
@@ -1243,6 +1487,11 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			
 			return createJsonJobs;
 		} catch (PhrescoException e) {
+			e.printStackTrace();
+			throw new PhrescoException(e);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		} catch (FileNotFoundException e) {
 			throw new PhrescoException(e);
 		}
 	}
@@ -1251,16 +1500,17 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		try {
 			String srcDir = Utility.getProjectHome() + CI_JOB_INFO_NAME;
 			List<String> appDirs =  new ArrayList<String>();
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				for (ApplicationInfo appInfo : appInfos) {
+					String dirName = Utility.splitPathConstruction(appInfo.getAppDirName());
 					if(CollectionUtils.isNotEmpty(appInfo.getModules())) {
 						List<ModuleInfo> modules = appInfo.getModules();
 						for (ModuleInfo moduleInfo : modules) {
-							appDirs.add(appInfo.getAppDirName()+"/" + moduleInfo.getCode());
+							appDirs.add(dirName + File.separator + moduleInfo.getCode());
 						}
 					}
-					appDirs.add(appInfo.getAppDirName());	
+					appDirs.add(dirName);	
 				}
 			}
 			for (String dirName : appDirs) {
@@ -1271,10 +1521,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			throw new PhrescoException(e);
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
 		}
 	}
 	
-	public CIJob setPreBuildCmds(CIJob job, ApplicationInfo appInfo, String appDir, String id, String name, String userId, String customerId, HttpServletRequest request) throws PhrescoException {
+	public CIJob setPreBuildCmds(CIJob job, ApplicationInfo appInfo, String appDir, String id, String name, String userId, String customerId, HttpServletRequest request) throws PhrescoException, FileNotFoundException {
 		try {
 			List<String> preBuildStepCmds = new ArrayList<String>();
 
@@ -1282,7 +1534,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 
 			String mvncmd = "";
 
-			String pomFileName = Utility.getPhrescoPomFile(appInfo);
+//			String pomFileName = Utility.getPhrescoPomFile(appInfo);
+			boolean flag = false;
+			if (StringUtils.isNotEmpty(job.getUrl())) {
+				flag = true;
+			}
+			String pomFileName = Utility.constructSubPath(appInfo.getAppDirName(), flag);
 			job.setPomLocation(pomFileName);
 			
 			// jenkins configurations
@@ -1304,24 +1561,38 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			}
 			String prebuildCmd = "";
 			String operationName = "";
+			String path = "";
+			String splitPath = Utility.splitPathConstruction(job.getAppDirName());
+			if(StringUtils.isNotEmpty(job.getModule())) {
+				splitPath = splitPath + File.separator +job.getModule();
+			} 
+			
+			File pomFileLocation = Utility.getPomFileLocation(Utility.getProjectHome() + File.separator + job.getAppDirName(), "");
+			PomProcessor pom = new PomProcessor(pomFileLocation);
+			String splitDir = pom.getProperty(POM_PROP_KEY_SPLIT_PHRESCO_DIR);
+			String srcDir = pom.getProperty(POM_PROP_KEY_SPLIT_SRC_DIR);
+			
 			if (BUILD.equalsIgnoreCase(operation)) {
 				// enable archiving
 				job.setEnableArtifactArchiver(true);
 				// if the enable build release option is choosed in UI, the file pattenr value will be used
-				List<String> modules = FrameworkServiceUtil.getProjectModules(appDir);
+				List<String> modules = FrameworkServiceUtil.getProjectModules(job.getAppDirName());
+				String releasePattern = "";
+				if (!POM_NAME.equals(pomFileName) && StringUtils.isNotEmpty(splitDir)) {
+					releasePattern = splitDir;
+				} else if (POM_NAME.equals(pomFileName) && StringUtils.isNotEmpty(srcDir)){
+					releasePattern = srcDir;
+				}
+				
 				if (StringUtils.isNotEmpty(job.getModule())) {
-					job.setCollabNetFileReleasePattern(job.getModule()+"/do_not_checkin/build/*.zip");
+					releasePattern = job.getModule() + File.separator + releasePattern;
+					job.setCollabNetFileReleasePattern(releasePattern+"/do_not_checkin/build/*.zip");
 				} else if (CollectionUtils.isEmpty(modules)) {
-					job.setCollabNetFileReleasePattern(CI_BUILD_EXT);
+					job.setCollabNetFileReleasePattern(releasePattern + File.separator + CI_BUILD_EXT);
 				} else {
 					job.setEnableArtifactArchiver(false);
 				}
-				String path;
-				if(StringUtils.isNotEmpty(job.getModule())) {
-					path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_PACKAGE, job.getAppDirName()+"/"+job.getModule());
-				} else {
-					path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_PACKAGE, job.getAppDirName());
-				}
+				path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_PACKAGE, splitPath);
 				File phrescoPluginInfoFilePath = new File(path);
 				if(phrescoPluginInfoFilePath.exists()) {
 					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
@@ -1332,12 +1603,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				mvncmd =  actionType.getActionType().toString();
 				operationName = Constants.PHASE_PACKAGE;
 			} else if (DEPLOY.equals(operation)) {
-				String path;
-				if(StringUtils.isNotEmpty(job.getModule())) {
-					path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_DEPLOY, job.getAppDirName()+"/"+job.getModule());
-				} else {
-					path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_DEPLOY, job.getAppDirName());
-				}
+				path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_DEPLOY, splitPath);
 				File phrescoPluginInfoFilePath = new File(path);
 				if (phrescoPluginInfoFilePath.exists()) {
 					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
@@ -1363,12 +1629,18 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				String attachPattern = "do_not_checkin/archives/" + attacheMentPattern + "/*.pdf";
 				job.setAttachmentsPattern(attachPattern); //do_not_checkin/archives/cumulativeReports/*.pdf
 				// if the enable build release option is choosed in UI, the file pattenr value will be used
-				
-				List<String> modules = FrameworkServiceUtil.getProjectModules(appDir);
+				String releasePattern = "";
+				if (!POM_NAME.equals(pomFileName) && StringUtils.isNotEmpty(splitDir)) {
+					releasePattern = splitDir;
+				} else 	if (POM_NAME.equals(pom) && StringUtils.isNotEmpty(srcDir)){
+					releasePattern = srcDir;
+				}
+				List<String> modules = FrameworkServiceUtil.getProjectModules(job.getAppDirName());
 				if (StringUtils.isNotEmpty(job.getModule())) {
-					job.setCollabNetFileReleasePattern(job.getModule()+ "/" + attachPattern);
+					releasePattern = job.getModule()+ File.separator + releasePattern;
+					job.setCollabNetFileReleasePattern(releasePattern + File.separator + attachPattern);
 				} else {
-					job.setCollabNetFileReleasePattern(attachPattern);
+					job.setCollabNetFileReleasePattern(releasePattern + File.separator + attachPattern);
 				}
 
 				// here we can set necessary values in request and we can change object value as well...
@@ -1389,12 +1661,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 //								sonarUrl = usingSonarUrl;
 				//				logo = logoImageString;
 				//				theme = themeColorJson;
-				String path;
-				if(StringUtils.isNotEmpty(job.getModule())) {
-					path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_PDF_REPORT, job.getAppDirName()+"/"+job.getModule());
-				} else {
-					path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_PDF_REPORT, job.getAppDirName());
-				}
+				path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_PDF_REPORT, splitPath);
 				File phrescoPluginInfoFilePath = new File(path);
 				if (phrescoPluginInfoFilePath.exists()) {
 					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
@@ -1405,12 +1672,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				mvncmd =  actionType.getActionType().toString();
 				operationName = Constants.PHASE_PDF_REPORT;
 			} else if (CODE_VALIDATION.equals(operation)) {
-				String path;
-				if(StringUtils.isNotEmpty(job.getModule())) {
-					path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_VALIDATE_CODE, job.getAppDirName()+"/"+job.getModule());
-				} else {
-					path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_VALIDATE_CODE, job.getAppDirName());
-				}
+				path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_VALIDATE_CODE, splitPath);
 				File phrescoPluginInfoFilePath = new File(path);
 				if (phrescoPluginInfoFilePath.exists()) {
 					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
@@ -1421,12 +1683,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				mvncmd =  actionType.getActionType().toString();
 				operationName = Constants.PHASE_VALIDATE_CODE;
 			} else if (UNIT_TEST.equals(operation)) {
-				String path;
-				if(StringUtils.isNotEmpty(job.getModule())) {
-					path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_UNIT_TEST, job.getAppDirName()+"/"+job.getModule());
-				} else {
-					path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_UNIT_TEST, job.getAppDirName());
-				}
+				path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_UNIT_TEST, splitPath);
 				File phrescoPluginInfoFilePath = new File(path);
 				if (phrescoPluginInfoFilePath.exists()) {
 					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
@@ -1446,12 +1703,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 					}
 				}
 			} else if (FUNCTIONAL_TEST.equals(operation)) {
-				String path;
-				if(StringUtils.isNotEmpty(job.getModule())) {
-					path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_FUNCTIONAL_TEST, job.getAppDirName()+"/"+job.getModule());
-				} else {
-					path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_FUNCTIONAL_TEST, job.getAppDirName());
-				}
+				path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_FUNCTIONAL_TEST, splitPath);
 				File phrescoPluginInfoFilePath = new File(path);
 				if (phrescoPluginInfoFilePath.exists()) {
 					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
@@ -1466,12 +1718,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				mvncmd =  actionType.getActionType().toString();
 				operationName = Constants.PHASE_FUNCTIONAL_TEST;
 			} else if (LOAD_TEST.equals(operation)) {
-				String path;
-				if(StringUtils.isNotEmpty(job.getModule())) {
-					path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_LOAD_TEST, job.getAppDirName()+"/"+job.getModule());
-				} else {
-					path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_LOAD_TEST, job.getAppDirName());
-				}
+				path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_LOAD_TEST, splitPath);
 				File phrescoPluginInfoFilePath = new File(path);
 				if (phrescoPluginInfoFilePath.exists()) {
 					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
@@ -1482,12 +1729,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				mvncmd =  actionType.getActionType().toString();
 				operationName = Constants.PHASE_LOAD_TEST;
 			} else if (PERFORMANCE_TEST_CI.equals(operation)) {
-				String path;
-				if(StringUtils.isNotEmpty(job.getModule())) {
-					path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_PERFORMANCE_TEST, job.getAppDirName()+"/"+job.getModule());
-				} else {
-					path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_PERFORMANCE_TEST, job.getAppDirName());
-				}
+				path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_PERFORMANCE_TEST, splitPath);
 				File phrescoPluginInfoFilePath = new File(path);
 				if (phrescoPluginInfoFilePath.exists()) {
 					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
@@ -1498,12 +1740,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				mvncmd =  actionType.getActionType().toString();
 				operationName = Constants.PHASE_PERFORMANCE_TEST;
 			} else if (COMPONENT_TEST_CI.equals(operation)) {
-				String path;
-				if(StringUtils.isNotEmpty(job.getModule())) {
-					path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_COMPONENT_TEST, job.getAppDirName()+"/"+job.getModule());
-				} else {
-					path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_COMPONENT_TEST, job.getAppDirName());
-				}
+				path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_COMPONENT_TEST, splitPath);
 				File phrescoPluginInfoFilePath = new File(path);
 				if (phrescoPluginInfoFilePath.exists()) {
 					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
@@ -1513,11 +1750,24 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				ActionType actionType = ActionType.COMPONENT_TEST;
 				mvncmd =  actionType.getActionType().toString();
 				operationName = Constants.PHASE_COMPONENT_TEST;
-			}
-			prebuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + operationName +
+			} else if (PHASE_RELEASE.equals(operation)) {
+				path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, PHASE_RELEASE, splitPath);
+				File phrescoPluginInfoFilePath = new File(path);
+				if (phrescoPluginInfoFilePath.exists()) {
+					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
+					//To get maven build arguments
+					parameters = FrameworkServiceUtil.getMojoParameters(mojo, PHASE_RELEASE);
+				}
+				ActionType actionType = ActionType.RELEASE;
+				mvncmd =  actionType.getActionType().toString();
+				mvncmd = mvncmd + HYPHEN_DEV_VERSION + job.getDevelopmentVersion() + HYPHEN_REL_VERSION +job.getReleaseVersion()+ HYPHEN_TAG +job.getTagName()+ HYPHEN_USERNAME + job.getReleaseUsername() + HYPHEN_PASSWORD + job.getReleasePassword() + HYPHEN_MESSAGE + job.getReleaseMessage() + HYPHEN_JOBNAME + job.getJobName();
+				operationName = PHASE_RELEASE;
+			} 
+			
+			prebuildCmd = CI_PRE_BUILD_STEP + HYPHEN_GOAL + Constants.PHASE_CI + HYPHEN_PHASE + operationName +
 			CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
 			if(!POM_NAME.equals(pomFileName)) {
-				prebuildCmd = prebuildCmd + " -f " + pomFileName; 
+				prebuildCmd = prebuildCmd + HYPHEN_F_SPACE + pomFileName; 
 			}
 			// To handle multi module project
 			prebuildCmd = prebuildCmd + FrameworkConstants.SPACE + HYPHEN_N; 

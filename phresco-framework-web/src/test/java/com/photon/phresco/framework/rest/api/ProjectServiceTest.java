@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
@@ -165,7 +167,8 @@ public class ProjectServiceTest extends LoginServiceTest {
 		DeleteProjectInfo deleteProjectInfo = new DeleteProjectInfo();
 		deleteProjectInfo.setAppDirNames(getCollections(appDirName));
 		deleteProjectInfo.setActionType("project");
-		Response response = service.deleteproject(deleteProjectInfo);
+		HttpServletRequest request = null;
+		Response response = service.deleteproject(deleteProjectInfo, request);
 		assertEquals(200, response.getStatus());
 	}
 

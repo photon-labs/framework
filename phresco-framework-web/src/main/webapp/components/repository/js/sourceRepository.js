@@ -10,6 +10,8 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 		repositoryListener : null,
 		createBranchEvent : null,
 		createTagEvent : null,
+		releaseEvent : null,
+		onShowHideConsoleEvent : null,
 
 		/***
 		 * Called in initialization time of this class 
@@ -34,6 +36,16 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 				self.createTagEvent = new signals.Signal();
 			}
 			self.createTagEvent.add(repositoryListener.createTag, repositoryListener);
+			
+			if (self.releaseEvent === null) {
+				self.releaseEvent = new signals.Signal();
+			}
+			self.releaseEvent.add(repositoryListener.release, repositoryListener);
+			
+			if (self.onShowHideConsoleEvent === null) {
+				self.onShowHideConsoleEvent = new signals.Signal();
+			}
+			self.onShowHideConsoleEvent.add(repositoryListener.showHideConsole, repositoryListener);
 		},
 		
 		/***
@@ -59,6 +71,8 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 					});
 				}
 			});
+			
+			self.resizeConsoleWindow();
 		},
 
 		/***
@@ -81,9 +95,6 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 			
 			$("input[name=rep_release]").unbind("click");
 			$("input[name=rep_release]").bind("click", function() {
-				if (commonVariables.callLadda) {
-					Ladda.stopAll();
-				}
 				self.opencc(this, $(this).attr('name'));
 			});
 			
@@ -94,7 +105,7 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 			
 			$("#submitVersion").unbind('click');
 			$("#submitVersion").bind("click", function() {
-				$("#version_popup").toggle();
+				$("#version_popup").hide();
 				var majorVersion = $("#majorVersion").val();
 				var minorVersion = $("#minorVersion").val();
 				var fixedVersion = $("#fixedVersion").val();
@@ -115,7 +126,18 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 				self.createTagEvent.dispatch();
 			});
 			
+			$("#release").unbind('click');
+			$("#release").bind("click", function() {
+				self.releaseEvent.dispatch();
+			});
+			
+			$('#consoleImg').unbind("click");
+			$('#consoleImg').click(function() {
+				self.onShowHideConsoleEvent.dispatch();
+			});
+			
 			self.customScroll($(".file_view"));
+			self.customScroll($(".consolescrolldiv"));
 		},
 		
 		openVersionPopup : function() {
@@ -126,7 +148,7 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 			var twowidth = window.innerWidth/1.5;
 		
 			if (clicked.offset().left < twowidth) {
-				target.toggle();
+				target.show();
 				var a = target.height()/2;
 				var b = clicked.height()/2;
 				var t=clicked.offset().top + (b+12) - (a+12) ;
@@ -137,7 +159,7 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 				});
 				target.addClass('speakstyleleft').removeClass('speakstyleright');
 			} else {
-				target.toggle();
+				target.show();
 				var t=clicked.offset().top - target.height()/2;
 				var l=clicked.offset().left - (target.width()+ 15);
 				target.offset({

@@ -193,20 +193,163 @@ define(["header/header"], function(Header) {
 				setTimeout(function() {
 					start();
 					equal($(".header_left ul li a[id=admin]").hasClass("nav_active"), true, "Admin click event tested");
-					// self.runLoggoutTest();
+					//self.runLoggoutTest();
+					self.changePasswordTest();
 				}, 100);
 			});
 		},
 
-	runLoggoutTest : function() {
+		runLoggoutTest : function() {
 			var self = this;
 			asyncTest("Loggout test", function() {
 				$('#logout').click();
 				setTimeout(function() {
 					start();
-					equal(1, 1, "Loggout tested");
+					equal(1, 1, "Loggout tested");					
 				}, 500);
 			});
+		},
+		
+		changePasswordTest : function() {
+			var self = this;
+			asyncTest("Change Password test", function() {
+				$("#changepassword").click();
+				setTimeout(function() {
+					start();
+					equal($("#change_password").css('display'), "block", "Change Password tested successfully.");
+					self.changePasswordConfirmTest();
+				}, 1500);
+			});	
+		},
+		
+
+		changePasswordConfirmTest : function() {
+			var self = this;
+			asyncTest("Change Password Confirm test", function() {
+				$.mockjax({
+				  url: commonVariables.webserviceurl+ "login/changePassword",
+				  type: "POST",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR100009","data":true,"status":"success"});
+				  }
+				});
+				$("#confirm_change_password").click();
+				setTimeout(function() {
+					start();
+					equal($(".content_end").css('display'), "block", "Change Confirm Password tested successfully.");
+					self.changePasswordConfirm1Test();
+				}, 1500);
+			});	
+		},
+		
+		changePasswordConfirm1Test : function() {
+			var self = this;
+			asyncTest("Change Password Confirm test1", function() {
+				$.mockjax({
+				  url: commonVariables.webserviceurl+ "login/changePassword",
+				  type: "POST",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR100009","data":true,"status":"success"});
+				  }
+				});
+				$('#old_password').val('test');
+				$('#new_password').val('');
+				$('#new_password_reenter').val('');
+				$("#confirm_change_password").click();
+				setTimeout(function() {
+					start();
+					equal($(".content_end").css('display'), "block", "Change Confirm Password 1 tested successfully.");
+					self.changePasswordConfirm2Test();
+				}, 1500);
+			});	
+			
+		},
+		
+		changePasswordConfirm2Test : function() {
+			var self = this;
+			asyncTest("Change Password Confirm test2", function() {
+				$.mockjax({
+				  url: commonVariables.webserviceurl+ "login/changePassword",
+				  type: "POST",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR100009","data":true,"status":"success"});
+				  }
+				});
+				$('#old_password').val('test');
+				$('#new_password').val('test');
+				$('#new_password_reenter').val('');
+				$("#confirm_change_password").click();
+				setTimeout(function() {
+					start();
+					equal($(".content_end").css('display'), "block", "Change Confirm Password 2  tested successfully.");
+					self.changePasswordConfirm3Test();
+				}, 1500);
+			});	
+			
+		},
+		changePasswordConfirm3Test : function() {
+			var self = this;
+			asyncTest("Change Password Confirm test3", function() {
+				$.mockjax({
+				  url: commonVariables.webserviceurl+ "login/changePassword",
+				  type: "POST",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR100009","data":true,"status":"success"});
+				  }
+				});
+				$('#old_password').val('test');
+				$('#new_password').val('test1');
+				$('#new_password_reenter').val('test');
+				$("#confirm_change_password").click();
+				setTimeout(function() {
+					start();
+					equal($(".content_end").css('display'), "block", "Change Confirm Password 3  tested successfully.");
+					self.changePasswordConfirm4Test();
+				}, 1500);
+			});	
+			
+		},
+		
+		changePasswordConfirm4Test : function() {
+			var self = this;
+			asyncTest("Change Password Confirm test4", function() {
+				$.mockjax({
+				  url: commonVariables.webserviceurl+ "login/changePassword",
+				  type: "POST",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR100009","data":true,"status":"success"});
+				  }
+				});
+				$('#old_password').val('test');
+				$('#new_password').val('test');
+				$('#new_password_reenter').val('test');
+				$("#confirm_change_password").click();
+				setTimeout(function() {
+					start();
+					equal($(".content_end").css('display'), "block", "Change Confirm Password 4  tested successfully.");
+					//self.changePasswordConfirm1Test();
+				}, 1500);
+			});	
+			
 		}
+		
+		
+		
+		
 		};
 	});

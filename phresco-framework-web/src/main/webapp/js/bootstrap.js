@@ -83,6 +83,7 @@ var commonVariables = {
 	load : "load",
 	loadTest : "loadTest",
 	testsuiteResult : "testsuiteResult",
+	iframeResult : "iframeResult",
 	testcaseResult	: "testcaseResult",
 //	testResult : "testResult",
 	manual : "manual",
@@ -113,6 +114,7 @@ var commonVariables = {
 	megabyte : "MB",
 	kilobyte : "KB",
 	runType  : "",
+	reportView : false,
 	
 	mavenService : "mavenService",
 	mavenServiceContext : "mavenService",
@@ -177,6 +179,7 @@ var commonVariables = {
 	performanceTestGoal : "performance-test",
 	loadTestGoal : "load-test",
 	pdfReportGoal : "pdf-report",
+	releaseGoal : "release",
 	projectCode : "",
 
 	startHubGoal : "start-hub",
@@ -210,6 +213,7 @@ var commonVariables = {
 	mvnCiStart : "app/ciStart",
 	mvnCiStop : "app/ciStop",
 	mvnValidateTheme : "app/validateTheme",
+	mvnRelease : "repository/release",
 	
 	/******** mvn Context end****/
 	

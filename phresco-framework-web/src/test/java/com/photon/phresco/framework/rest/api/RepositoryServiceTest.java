@@ -67,7 +67,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	public void  commitProjectToRepo() {
 		RepoDetail repodetail = new RepoDetail();
 		repodetail.setUserName("santhosh_ja");
-		repodetail.setPassword("farewellJ123");
+		repodetail.setPassword("itkillsme!23");
 		repodetail.setType("svn");
 		repodetail.setCommitMessage("[artf710705]testcommit");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/" + appDirName);
@@ -84,7 +84,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		RepoInfo repoInfo = new RepoInfo();
 		RepoDetail repodetail = new RepoDetail();
 		repodetail.setUserName("santhosh_ja");
-		repodetail.setPassword("farewellJ123");
+		repodetail.setPassword("itkillsme!23");
 		repodetail.setRevision("head");
 		repodetail.setType("svn");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/" + appDirName);
@@ -98,7 +98,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		RepoInfo repoInfo = new RepoInfo();
 		RepoDetail repodetail = new RepoDetail();
 		repodetail.setUserName("santhosh_ja");
-		repodetail.setPassword("farewellJ123");
+		repodetail.setPassword("itkillsme!23");
 		repodetail.setRevision("head");
 		repodetail.setType("svn");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0/239/");
@@ -116,7 +116,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	public void  fetchLogMessages() throws PhrescoException {
 		RepoDetail repodetail = new RepoDetail();
 		repodetail.setUserName("santhosh_ja");
-		repodetail.setPassword("farewellJ123");
+		repodetail.setPassword("itkillsme!23");
 		repodetail.setRevision("head");
 		repodetail.setType("svn");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
@@ -246,7 +246,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		srcRepoDetail.setType("svn");
 		srcRepoDetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
 		srcRepoDetail.setUserName("santhosh_ja");
-		srcRepoDetail.setPassword("farewellJ123");
+		srcRepoDetail.setPassword("itkillsme!23");
 		srcRepoDetail.setCommitMessage("[artf778042] Add test");
 		srcRepoDetail.setPassPhrase("");
 		repoInfo.setSrcRepoDetail(srcRepoDetail);

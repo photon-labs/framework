@@ -220,6 +220,32 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 	  			}
 			});
 	  		
+	  		$(".urlDotPhresco").unbind("click");
+			$(".urlDotPhresco").bind("click", function() {
+				if ($(this).is(":checked")) {
+					$('#repoType').find(".dotPhrescoA").attr("data-toggle", "tab").attr("href", "#dotphrescoTab");
+					commonVariables.navListener.showDotPhrescoTab($("#dotphrescoTab"), $("#sourceTab"), $("#testTab"), $("#urlDotPhresco"), $("#urlTest"));
+				} else {
+					$('#repoType').find(".dotPhrescoA").removeAttr("data-toggle").removeAttr("href");
+					if ($(this).parent().hasClass("active")) {
+						commonVariables.navListener.showSrcTab($("#dotphrescoTab"), $("#sourceTab"), $("#testTab"), $("#urlDotPhresco"), $("#urlTest"));
+					}
+				}
+			});
+			
+			$(".urlTest").unbind("click");
+			$(".urlTest").bind("click", function() {
+				if ($(this).is(":checked")) {
+					$("#repoType").find(".testA").attr("data-toggle", "tab").attr("href", "#testTab");
+					commonVariables.navListener.showTestTab($("#dotphrescoTab"), $("#sourceTab"), $("#testTab"), $("#urlDotPhresco"), $("#urlTest"));
+				} else {
+					$("#repoType").find(".testA").removeAttr("data-toggle").removeAttr("href");
+					if ($(this).parent().hasClass("active")) {
+						commonVariables.navListener.showSrcTab($("#dotphrescoTab"), $("#sourceTab"), $("#testTab"), $("#urlDotPhresco"), $("#urlTest"));
+					}
+				}
+			});
+	  		
 	  		
 			$(function() {
 				// sortable1 functionality

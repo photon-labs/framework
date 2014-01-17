@@ -10,7 +10,7 @@ define([], function() {
 		repository : function(header, callback) {
 			var self = this;
 			try {
-				commonVariables.api.ajaxRequest(header,
+				commonVariables.api.ajaxRequestForScm(header,
 					function(response) {
 						if (commonVariables.callLadda) {
 							Ladda.stopAll();
@@ -69,17 +69,17 @@ define([], function() {
 			}
 			if (action === "createBranch") {
 				header.requestMethod = "POST";
-				header.webserviceurl = commonVariables.webserviceurl + 'repository/createBranch?url='+requestBody.url+'&version='+requestBody.version+'&username='+requestBody.username+'&password='+requestBody.password + 
+				header.webserviceurl = commonVariables.webserviceurl + 'repository/createBranch?appDirName='+requestBody.appDirName+'&version='+requestBody.version+'&username='+requestBody.username+'&password='+requestBody.password + 
 										'&comment='+requestBody.comment+'&currentbranchname='+requestBody.currentbranchname+'&branchname='+requestBody.branchname+'&downloadoption='+requestBody.downloadoption;
 			}
 			if (action === "createTag") {
 				header.requestMethod = "POST";
-				header.webserviceurl = commonVariables.webserviceurl + 'repository/createTag?url='+requestBody.url+'&username='+requestBody.username+'&password='+requestBody.password+'&version='+requestBody.version +
+				header.webserviceurl = commonVariables.webserviceurl + 'repository/createTag?appDirName='+requestBody.appDirName+'&username='+requestBody.username+'&password='+requestBody.password+'&version='+requestBody.version +
 										'&comment='+requestBody.comment+'&currentbranchname='+requestBody.currentbranchname+'&tagname='+requestBody.tagname+'&downloadoption='+requestBody.downloadoption;
 			}
 			if (action === "getVersion") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + 'repository/version?url='+requestBody.url+'&currentbranchname='+requestBody.currentbranchname;
+				header.webserviceurl = commonVariables.webserviceurl + 'repository/version?appDirName='+requestBody.appDirName+'&currentbranchname='+requestBody.currentbranchname;
 			}
 			
 			return header;
@@ -135,8 +135,8 @@ define([], function() {
 						$(".badge-warning").unbind("click");
 						$(".badge-warning").bind("click", function() {
 							var currentTab = commonVariables.navListener.currentTab;
+							var appDirName = $(this).find('a').attr('appdirname');
 							if (currentTab === "buildRepo") {
-								var appDirName = $(this).find('a').attr('appdirname');
 								var nature = $(this).find('a').attr('nature');
 								var moduleName = $(this).find('a').attr('modulename');
 								var version = $(this).parent().parent().prev().find('a').text();
@@ -146,19 +146,27 @@ define([], function() {
 							}
 							if (currentTab === "sourceRepo") {
 								var nature = $(this).find('a').attr("nature");
-								if (nature === "branches") {
+								if (nature === "branches" || nature === "trunk") {
+									$('input[name=selectedAppDirName]').val(appDirName);
 									var baseRepoUrl = $(this).find('a').attr("url");
 									$("input[name=baseRepoUrl]").val(baseRepoUrl);
 									var selectedBranch = $(this).find('a').text();
 									$('#fileListHead').text(selectedBranch);
 									$("input[name=selectedBranchName]").val(selectedBranch);
+									var appDirName = $(this).find('a').attr("appdirname");
 									var requestBody = {};
-									requestBody.url = baseRepoUrl;
+									requestBody.appDirName = appDirName;
 									requestBody.currentbranchname = selectedBranch;
 									self.repository(self.getActionHeader(requestBody, "getVersion"), function(response) {
-										$("#branchFromVersion").val(response.data);
-										$("#tagFromVersion").val(response.data);
+										var responseData = response.data
+										$("#branchFromVersion").val(responseData.currentVersion);
+										$("#tagFromVersion").val(responseData.currentVersion);
+										$("#tagName").val(responseData.tagVersion);
+										$("#releaseVersion").val(responseData.tagVersion);
+										$("#releaseTagName").val(responseData.tagVersion);
+										$("#devVersion").val(responseData.devVersion);
 										$(".file_view").show();
+										$('.unit_close').show();
 										setTimeout(function() {
 											$(this).css("background", "#e3e3e3 !important");
 										}, 1000);
@@ -220,14 +228,14 @@ define([], function() {
 					self.getList($(value).children(),function(callback) {
 						strCollection = callback;
 					});
-					strItems += '<li role=treeItem class=parent_li>' + '<span class="badge badge-success" title="Collapse this branch">'+
-								'<i class="icon-plus-sign"></i>' + '<a version="'+ strRoot +'">' + strRoot + '</a></span>' + strCollection +'</li>';
+					strItems += '<li role=treeItem class=parent_li>' + '<span class="badge badge-success"'+
+								'<i class="icon-plus-sign"></i>' + '<a version="'+ strRoot +'" title="'+ strRoot +'">' + strRoot + '</a></span>' + strCollection +'</li>';
 				} else {
 					var moduleName = $(value).attr('moduleName');
 					var appDirName = $(value).attr('appDirName');
 					var nature = $(value).attr('nature');
 					var url = $(value).attr('url');
-					strItems += '<li role=treeItem class="parent_li hideContent">' + '<span class="badge badge-warning" title="Expand this branch">'+ '<i></i><a ';
+					strItems += '<li role=treeItem class="parent_li">' + '<span class="badge badge-warning">'+ '<i></i><a title="'+ $(value).attr('name') +'" ';
 					if (moduleName !== undefined) {
 						strItems += 'moduleName="'+moduleName+'"';
 					}
@@ -255,7 +263,7 @@ define([], function() {
 				commonVariables.hideloading = true;
 				self.showBtnLoading("#createBranch");
 				var requestBody = {};
-				requestBody.url = $("input[name=baseRepoUrl]").val();
+				requestBody.appDirName = $('input[name=selectedAppDirName]').val();
 				requestBody.version = $("#createBranchVersion").val();
 				requestBody.username = $("#branchUsername").val();
 				requestBody.password = $("#branchPassword").val();
@@ -263,6 +271,7 @@ define([], function() {
 				requestBody.currentbranchname = $("#branchFromName").val();
 				requestBody.branchname = $("#newBranchName").val();
 				requestBody.downloadoption = $("#downloadBrToWorkspace").is(":checked");
+				commonVariables.consoleError = false;
 				self.repository(self.getActionHeader(requestBody, "createBranch"), function(response) {
 					commonVariables.hideloading = false;
 					commonVariables.navListener.onMytabEvent(commonVariables.sourceRepo);
@@ -301,7 +310,7 @@ define([], function() {
 				commonVariables.hideloading = true;
 				self.showBtnLoading("#createTag");
 				var requestBody = {};
-				requestBody.url = $("input[name=baseRepoUrl]").val();
+				requestBody.appDirName = $('input[name=selectedAppDirName]').val();
 				requestBody.username = $("#tagUsername").val();
 				requestBody.password = $("#tagPassword").val();
 				requestBody.comment = $("#tagComment").val();
@@ -334,6 +343,97 @@ define([], function() {
 				return true;
 			}
 			return false;
+		},
+		
+		release : function() {
+			var self = this;
+			if (!self.validateReleaseData()) {
+				$('#rep_release').hide();
+				commonVariables.hideloading = true;
+				self.showHideConsole();
+				var releaseVersion = $("#releaseVersion").val();
+				var developmentVersion = $("#devVersion").val();
+				var tag = $("#releaseTagName").val();
+				var username = $("#releaseUsername").val();
+				var password = $("#releasePassword").val();
+				var comment = $("#releaseComment").val();
+				var branchName = $("input[name=selectedBranchName]").val();
+				var appDirName = $('input[name=selectedAppDirName]').val();
+				
+				var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+				if(userInfo !== "") { 
+					userId = userInfo.id; 
+				}
+				
+				var queryString = 'appDirName='+appDirName+'&username='+username+'&password='+password+'&message='+comment+
+									'&developmentVersion='+developmentVersion+'&releaseVersion='+releaseVersion+'&tag='+tag+'&branchName='+branchName+'&userId='+userId;
+				commonVariables.consoleError = false;
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal) {
+					retVal.mvnRelease(queryString, '#testConsole', function(response) {
+						commonVariables.hideloading = false;
+						$('.progress_loading').hide();
+						if (!commonVariables.consoleError) {
+							commonVariables.navListener.onMytabEvent(commonVariables.sourceRepo);
+						}
+					});
+				});
+			}
+		},
+		
+		validateReleaseData : function() {
+			var self = this;
+			var releaseVersion = $("#releaseVersion").val();
+			var tagName = $("#releaseTagName").val();
+			var username = $("#releaseUsername").val();
+			var password = $("#releasePassword").val();
+			var devVersion = $("#devVersion").val();
+			if (self.isBlank(releaseVersion)) {
+				commonVariables.navListener.validateTextBox( $("#releaseVersion"), 'Enter Release Version');
+				return true;
+			}
+			if (self.isBlank(tagName)) {
+				commonVariables.navListener.validateTextBox( $("#releaseTagName"), 'Enter Tag name');
+				return true;
+			}
+			if (self.isBlank(username)) {
+				commonVariables.navListener.validateTextBox( $("#releaseUsername"), 'Enter Username');
+				return true;
+			}
+			if (self.isBlank(password)) {
+				commonVariables.navListener.validateTextBox( $("#releasePassword"), 'Enter Password');
+				return true;
+			}
+			if (self.isBlank(devVersion)) {
+				commonVariables.navListener.validateTextBox( $("#devVersion"), 'Enter Development Version');
+				return true;
+			}
+			return false;
+		},
+		
+		showHideConsole : function() {
+			var self = this;
+			var check = $('#consoleImg').attr('data-flag');
+			if (check === "true") {
+				self.openConsoleDiv();
+			} else {
+				self.closeConsole();
+				$('.progress_loading').hide();
+			}
+		},
+		
+		openConsoleDiv : function() {
+			$('.testSuiteTable').append('<div class="mask"></div>');
+			$('.mask').fadeIn("slow");
+			$('.unit_close').css("z-index", 1001);
+			$('.unit_progress').css("z-index", 1001);
+			$('.unit_close').css("height", 0);
+			var value = $('.unit_info').width();
+			var value1 = $('.unit_progress').width();
+			$('.unit_info').animate({left: -value},500);
+			$('.unit_progress').animate({right: '10px'},500);
+			$('.unit_close').animate({right: value1+10},500);
+			$('.unit_info table').removeClass("big").addClass("small");
+			$('#consoleImg').attr('data-flag','false');
 		}
 	});
 

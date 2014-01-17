@@ -9,12 +9,15 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 		name : commonVariables.functionalTest,
 		functionalTestListener : null,
 		testsuiteResult : null,
+		iframeResult : null,
 		testResultListener : null,
 		onDynamicPageEvent : null,
 		onPerformActionEvent : null,
 		onStopHubEvent : null,
 		onStopNodeEvent : null,
 		validation : null,
+		iframeAction : null,
+		iframeUrlAlive : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -90,6 +93,23 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 					return 'value="Start Node" id="startNode"';
 				}
 			});
+
+			Handlebars.registerHelper('customIframeUrl', function(url) {
+				return url;
+			});
+
+
+			Handlebars.registerHelper('iframeExistsCheck', function(key) {
+				if (key === undefined) {
+					return "false";
+				} else {
+					return "true";	
+				}
+			});
+			
+			Handlebars.registerHelper('displayProperty', function(iframeKey) {
+				return (iframeKey !== undefined) ?  'display:block;' : 'display:none;';
+			});
 		},
 		
 		/***
@@ -113,6 +133,8 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 				Clazz.navigationController.jQueryContainer = '#testResult';
 				Clazz.navigationController.push(self.testsuiteResult, false);
 			});
+		
+			$("#formid").submit();
 		},
 		
 		preRender: function(whereToRender, renderFunction) {
@@ -123,6 +145,8 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 				functionalTestOptions.functionalFramework = responseData.functionalFramework;
 				functionalTestOptions.hubStatus = responseData.hubStatus;
 				functionalTestOptions.nodeStatus = responseData.nodeStatus;
+				functionalTestOptions.iframeUrlAlive = responseData.iframeUrlAlive;
+				functionalTestOptions.iframeAction = responseData.iframeUrl;
 				var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 				functionalTestOptions.userPermissions = userPermissions;
 				renderFunction(functionalTestOptions, whereToRender);
@@ -138,7 +162,6 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			$(".tooltiptop").tooltip();
 
 			self.testResultListener.resizeTestResultDiv();
-			
 			$("#functionalTestBtn").unbind("click");
 			$("#functionalTestBtn").click(function() {
 				var openccObj = this;
@@ -223,6 +246,38 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			$("#executeStartNode").click(function() {
 				self.onPerformActionEvent.dispatch("startNode");
 			});
+
+			$("#iframe").unbind("click");
+			$("#iframe").click(function() {
+				$("iframeContent").show();
+
+			});
+
+			//Shows the report view of the test result
+			$(".report1").unbind("click");
+			$(".report1").click(function() {
+				commonVariables.navListener.getMyObj(commonVariables.testsuiteResult, function(retVal){
+					commonVariables.reportView = true;
+					self.testsuiteResult = retVal;
+					Clazz.navigationController.jQueryContainer = '#testResult';
+					Clazz.navigationController.push(self.testsuiteResult, false);
+				});
+			});
+			
+			//Shows the execute view of the test result
+			$(".execute2").unbind("click");
+			$(".execute2").click(function() {
+				$("#testSuiteTable, #testResult, #graphView, #graphicalView, #tabularView, #reportView").hide();
+				if ($('#iframeContent').size() === 1) {
+					$('#iframeContent').show();
+				} else  {
+					$('.urlInactive').show();
+				}
+				$("#executeView").show();
+			});
+			
+			self.tableScrollbar();
+			self.customScroll($(".consolescrolldiv"));
 		}
 	});
 

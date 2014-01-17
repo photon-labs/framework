@@ -11,6 +11,7 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 		start : null,
 		stop : null,
 		setup : null,
+		presetup : null,
 		save : null,
 		settingsListener: null,
 		onShowHideConsoleEvent : null,
@@ -59,6 +60,11 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 			if (self.onShowHideConsoleEvent === null) {
 				self.onShowHideConsoleEvent = new signals.Signal();
 			}
+			
+			if (self.presetup === null) {
+				self.presetup = new signals.Signal();
+			}
+			
 
 			// Trigger registered events
 			self.getSettings.add(settingsListener.getSettings, settingsListener);
@@ -68,6 +74,7 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 			self.setup.add(settingsListener.setup, settingsListener);
 			self.save.add(settingsListener.save, settingsListener);
 			self.onShowHideConsoleEvent.add(settingsListener.showHideConsole, settingsListener);
+			self.presetup.add(settingsListener.presetup, settingsListener);
 		},
 
 		/***
@@ -106,10 +113,15 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 			var self = this;
    			$(".dyn_popup").hide();
    			
-   			$('input[name=setup]').click(function() {
-   				self.setup.dispatch();
+   			$('input[name=presetup]').click(function() {
+   				self.presetup.dispatch(this);
    				$("#unit_popup").toggle();
 			});
+   			
+   			$('input[name=setup]').click(function() {
+				self.setup.dispatch();
+				$("#unit_popup").toggle();
+		});
    			
    			$("input[name=switch]").click(function() {		
    				if ($(this).attr('value') === 'Start') {
@@ -117,7 +129,7 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
    					self.start.dispatch();
    				} else if ($(this).attr('value') === 'Stop') {
 					$('input[name=switch]').attr('value', "Start");
-					$('input[name=setup]').attr('disabled', false);
+					$('input[name=presetup]').attr('disabled', false);
 					self.stop.dispatch();
 				}
    				$("#unit_popup").toggle();

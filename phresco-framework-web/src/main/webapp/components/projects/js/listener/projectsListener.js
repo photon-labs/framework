@@ -713,7 +713,7 @@ define([], function() {
 								"<td name='technology' class='technology'><select name='technology' class='selectpicker' title='Select Technology'><option value='' data-i18n='project.create.label.seltech'>Select Technology</option>" + techOptions + "</select></td>"+
 								"<td name='version' class='version'><select name='version' class='selectpicker' title='Select Version'><option value='Select Version'>Select Version</option></select></td>"+
 								"<td><select class='selectpicker appdependencySelect' title='Select Dependency' data-selected-text-format='count>2' multiple><option value=''>Select Dependency</option>"+depndOptions+"</select></td>"+
-								"<td><div class='icon_center'><img style='cursor:pointer;' position='"+position+"' layer='"+layer+"' src='themes/default/images/Phresco/plus_icon.png' border='0' alt='' class='addDependency' data-params='"+ JSON.stringify(subModules) +"'> <img style='cursor:pointer;' src='themes/default/images/Phresco/minus_icon.png' border='0' alt='' class='removeDependency'></div></td></tr>";
+								"<td><div class='icon_center'><img style='cursor:pointer;' position='"+position+"' layer='"+layer+"' src='themes/default/images/Phresco/plus_icon.png' border='0' alt='' class='addDependency' data-params='"+ JSON.stringify(subModules) +"'> <img style='cursor:pointer;' src='themes/default/images/Phresco/minus_icon.png' border='0' alt='' class='removeDependency'></div></td><td>&nbsp;</td></tr>";
 			renderElement.after(multiModule);
 			self.multiselect();
 			self.dependencyEvent();
@@ -925,7 +925,7 @@ define([], function() {
 							var valueCount = $(value).attr('count');
 							var appcodeVal = $(value).val();
 							if(currentCount !== valueCount && currentVal === appcodeVal){
-								$(appCodeTextObj).val("");
+								//$(appCodeTextObj).val("");
 								$(appCodeTextObj).focus();
 								$(appCodeTextObj).addClass('errormessage');
 								$(appCodeTextObj).attr('placeholder', 'Appcode Already Exists');
@@ -938,6 +938,24 @@ define([], function() {
 					$(this).removeClass("errormessage");
 					$(this).removeAttr("placeholder");
 				});
+			});
+			
+			$("input.appCodeText").focusout(function() {
+				var currentCountt = $(this).attr('count');
+				var currentVall =  $(this).val();
+				var appCodeTextObjj = $(this);
+				var totalLength = $(this).val().length;
+				$(".appCodeText").each(function(index, value){
+						var keyAttr = $(value).parents('tr[name=appvalidation]').attr('key');
+						if(keyAttr === 'displayed'){
+							var valueCount = $(value).attr('count');
+							var appcodeVal = $(value).val();
+							if(currentCountt !== valueCount && currentVall === appcodeVal){
+								$(appCodeTextObjj).val("");								
+								return false;
+							}
+						}
+					});
 			});
 			
 			/***
@@ -1579,6 +1597,7 @@ define([], function() {
 			$("tr.mobLayer").hide();
 			var position = 1;
 			$.each(getData, function(index, value) {
+				commonVariables.api.localVal.setJson(value.appDirName, value);
 				if (value.techInfo.appTypeId === "1dbcf61c-e7b7-4267-8431-822c4580f9cf") {
 					$("#appLayaer").show();
 					$("tr.applnLayer").show();
@@ -1643,7 +1662,7 @@ define([], function() {
 												"<td name='technology' class='technology'><select name='technology' class='selectpicker' disabled><option value='"+module.techInfo.id+"'>"+module.techInfo.name+"</option>" + techOptions + "</select></td>"+
 												"<td name='version' class='version'><select name='version' class='selectpicker' disabled><option value='"+module.techInfo.version+"'>"+module.techInfo.version+"</option></select></td>"+
 												"<td><select class='selectpicker appdependencySelect' title='Select Dependency' "+selectedDepndtModsAttr+" data-selected-text-format='count>2' multiple>"+dependOptions+"</select></td>"+
-												"<td><div class='icon_center'><img style='cursor:pointer;' position='"+position+"' layer='"+layer+"' src='themes/default/images/Phresco/plus_icon.png' border='0' alt='' class='"+imgClass+"' data-params='"+ JSON.stringify(subModules) +"'></div></td></tr>";
+												"<td><div class='icon_center'><img style='cursor:pointer;' position='"+position+"' layer='"+layer+"' src='themes/default/images/Phresco/plus_icon.png' border='0' alt='' class='"+imgClass+"' data-params='"+ JSON.stringify(subModules) +"'></div></td><td>&nbsp;</td></tr>";
 							});
 							$("tbody.applnLayer").append(appendData);
 							self.multiselect();
@@ -1722,7 +1741,7 @@ define([], function() {
 												"<td name='technology' class='technology'><select name='technology' class='selectpicker' disabled><option value='"+module.techInfo.id+"'>"+module.techInfo.name+"</option>" + techOptions + "</select></td>"+
 												"<td name='version' class='version'><select name='version' class='selectpicker' disabled><option value='"+module.techInfo.version+"'>"+module.techInfo.version+"</option></select></td>"+
 												"<td><select class='selectpicker appdependencySelect' title='Select Dependency' "+selectedDepndtModsAttr+" data-selected-text-format='count>2' multiple>"+dependOptions+"</select></td>"+
-												"<td><div class='icon_center'><img style='cursor:pointer;' position='"+position+"' layer='"+layer+"' src='themes/default/images/Phresco/plus_icon.png' border='0' alt='' class='"+imgClass+"' data-params='"+ JSON.stringify(subModules) +"'></div></td></tr>";
+												"<td><div class='icon_center'><img style='cursor:pointer;' position='"+position+"' layer='"+layer+"' src='themes/default/images/Phresco/plus_icon.png' border='0' alt='' class='"+imgClass+"' data-params='"+ JSON.stringify(subModules) +"'></div></td><td>&nbsp;</td></tr>";
 							});
 							$("tbody.WebLayer").append(appendData);
 							self.multiselect();
@@ -1799,7 +1818,7 @@ define([], function() {
 												"<td name='technology' class='technology'><select name='technology' class='selectpicker' disabled><option value='"+module.techInfo.id+"'>"+module.techInfo.name+"</option>" + techOptions + "</select></td>"+
 												"<td name='version' class='version'><select name='version' class='selectpicker' disabled><option value='"+module.techInfo.version+"'>"+module.techInfo.version+"</option></select></td>"+
 												"<td><select class='selectpicker appdependencySelect' title='Select Dependency' "+selectedDepndtModsAttr+" data-selected-text-format='count>2' multiple>"+dependOptions+"</select></td>"+
-												"<td><div class='icon_center'><img style='cursor:pointer;' position='"+position+"' layer='"+layer+"' src='themes/default/images/Phresco/plus_icon.png' border='0' alt='' class='"+imgClass+"' data-params='"+ JSON.stringify(subModules) +"'></div></td></tr>";
+												"<td><div class='icon_center'><img style='cursor:pointer;' position='"+position+"' layer='"+layer+"' src='themes/default/images/Phresco/plus_icon.png' border='0' alt='' class='"+imgClass+"' data-params='"+ JSON.stringify(subModules) +"'></div></td><td>&nbsp;</td></tr>";
 							});
 							$("tbody.MobLayer").append(appendData);
 							self.multiselect();
@@ -1902,12 +1921,13 @@ define([], function() {
 							var trNameAttr = $(value).attr('name');
 							var canAddAppInfo = false;
 							if ($(value).css('display') !== "none" && trNameAttr !== undefined) {
-								var appInfo = {};
 								var techInfo = {};
 								tech = $(value).children("td.technology").children("select.appln_technology");
 								appInfoId = $(value).children("td.technology").children("select.appln_technology").attr('appInfoId');
 								techName = $(tech).find(":selected").text();
 								code = $(value).children("td.applnappcode").children("input.appln-appcode").val();
+								var appInfoFromSession = commonVariables.api.localVal.getJson(code);
+								var appInfo = (appInfoFromSession !== null) ? appInfoFromSession : {};
 								if(appInfoId !== undefined && appInfoId !== null) {
 									appInfo.id = appInfoId;
 								}
@@ -2002,6 +2022,7 @@ define([], function() {
 									}
 									count++;
 								}
+								commonVariables.api.localVal.setJson(code, null);
 							}
 						});	
 					} 
@@ -2012,11 +2033,12 @@ define([], function() {
 							var trNameAttr = $(value).attr('name');
 							var canAddAppInfo = false;
 							if($(value).css('display') !== "none" && trNameAttr !== undefined) {
-								var appInfo = {};
 								var techInfo = {};
 								tech = $(value).children("td.widget").children("select.web_widget");
 								techName = $(tech).find(":selected").text();
 								code = $(value).children("td.webappcode").children("input.web-appcode").val();
+								var appInfoFromSession = commonVariables.api.localVal.getJson(code);
+								var appInfo = (appInfoFromSession !== null) ? appInfoFromSession : {};
 								appInfoId = $(value).children("td.web").children("select.weblayer").attr('appInfoId');
 								if(appInfoId !== undefined && appInfoId !== null){
 									appInfo.id = appInfoId;
@@ -2111,6 +2133,7 @@ define([], function() {
 									}	
 									count++;
 								}
+								commonVariables.api.localVal.setJson(code, null);
 							}	
 						});	
 					}  
@@ -2127,6 +2150,8 @@ define([], function() {
 								tech = $(value).children("td.types").children("select.mobile_types");
 								techName = $(tech).find(":selected").text();
 								code = $(value).children("td.mobileappcode").children("input.mobile-appcode").val();
+								var appInfoFromSession = commonVariables.api.localVal.getJson(code);
+								var appInfo = (appInfoFromSession !== null) ? appInfoFromSession : {};
 								appInfoId = $(value).children("td.mobile").children("select.mobile_layer").attr('appInfoId');
 								if(appInfoId !== undefined && appInfoId !== null){
 									appInfo.id = appInfoId;
@@ -2225,6 +2250,7 @@ define([], function() {
 									}
 									count++;
 								}
+								commonVariables.api.localVal.setJson(code, null);
 							}
 						});
 					}

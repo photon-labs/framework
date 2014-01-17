@@ -23,8 +23,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,6 +40,11 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -105,6 +112,7 @@ import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
@@ -433,7 +441,6 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			rootModulePath = Utility.getProjectHome() + appDirName;
 		}
 		
-		
 		ResponseInfo<List<SettingsTemplate>> responseData = new ResponseInfo<List<SettingsTemplate>>();
 		Map<String, Object> templateMap = new HashMap<String, Object>();
 		try {
@@ -463,13 +470,14 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				if (CollectionUtils.isNotEmpty(appDirNameList)) {
 					Map<String, List<String>> nameMap = new HashMap<String, List<String>>();
 					for (String appdirName: appDirNameList) {
-						getDownloadInfo(serviceManager, appdirName, userId, type, nameMap, rootModulePath, subModuleName);
+						String rootpath = Utility.getProjectHome() + appdirName ;
+						getDownloadInfo(serviceManager, userId, type, nameMap, rootpath, "");
 					}
 					templateMap.put("downloadInfo", nameMap);
 				}
 			} else {
 				Map<String, List<String>> nameMap = new HashMap<String, List<String>>();
-				getDownloadInfo(serviceManager, appDirName, userId, type, nameMap,rootModulePath, subModuleName);
+				getDownloadInfo(serviceManager,userId, type, nameMap,rootModulePath, subModuleName);
 				templateMap.put("downloadInfo", nameMap);
 			}
 			if (settingsTemplate != null) {
@@ -1008,28 +1016,31 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Path("/listEnvironmentsByProjectId")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response listEnvironmentsByProjectId(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_PROJECTID) String projectId) {
+			@QueryParam(REST_QUERY_PROJECTID) String projectId) throws PhrescoException, PhrescoPomException {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			List<ApplicationInfo> appInfos = com.photon.phresco.framework.impl.util.FrameworkUtil.getAppInfos(customerId, projectId);
 			Set<String> environmentSet = new HashSet<String>();
 			List<Environment> environments = new ArrayList<Environment>();
 			for (ApplicationInfo appInfo : appInfos) {
+				
+				String appDirPath = Utility.getPhrescoHome() + File.separator + appInfo.getAppDirName();
 				List<ModuleInfo> modules = appInfo.getModules();
 				if(CollectionUtils.isNotEmpty(modules)) {
 					for (ModuleInfo module : modules) {
+						String splitPath = Utility.splitPathConstruction(appInfo.getAppDirName());
 						String code = module.getCode();
-						environments = getEnvironments(appInfo.getAppDirName() + File.separator + code);
+						environments = getEnvironments(splitPath + File.separator + code);
 						for (Environment environment : environments) {
 							environmentSet.add(environment.getName());
 						}
 					}
-//					System.out.println("environments====>>>>>"+environments);
 //					for (Environment environment : environments) {
 //						environmentSet.add(environment.getName());
 //					}
 				} else {
-					environments = getEnvironments(appInfo.getAppDirName());
+					String splitPath = Utility.splitPathConstruction(appInfo.getAppDirName());
+					environments = getEnvironments(splitPath);
 					for (Environment environment : environments) {
 						environmentSet.add(environment.getName());
 					}
@@ -2106,7 +2117,32 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		try {
 			URL url = new URL(protocol, host, port, "");
 			URLConnection connection = url.openConnection();
-			connection.connect();
+			if(protocol.equalsIgnoreCase("http")) {
+				HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
+				httpConnection.connect();
+			} else {
+				TrustManager[] trustAllCerts = new TrustManager[] { 
+					    new X509TrustManager() {     
+					        public java.security.cert.X509Certificate[] getAcceptedIssuers() { 
+					            return null;
+					        } 
+					        public void checkClientTrusted( 
+					            java.security.cert.X509Certificate[] certs, String authType) {
+					            } 
+					        public void checkServerTrusted( 
+					            java.security.cert.X509Certificate[] certs, String authType) {
+					        }
+					    } 
+					}; 
+				
+				SSLContext sc = SSLContext.getInstance(SSL); 
+			    sc.init(null, trustAllCerts, new java.security.SecureRandom()); 
+			    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+			    HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
+				https.connect();
+				   
+			}
+			
 		} catch (Exception e) {
 			isAlive = false;
 		}
@@ -2124,7 +2160,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	 * @return the download info
 	 * @throws PhrescoException the phresco exception
 	 */
-	private void getDownloadInfo(ServiceManager serviceManager, String appDirName, String userId,
+	private void getDownloadInfo(ServiceManager serviceManager, String userId,
 			String type, Map<String, List<String>> nameMap, String rootModulePath, String subModuleName) throws PhrescoException {
 		
 		ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);

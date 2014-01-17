@@ -22,7 +22,7 @@
 		"PHR110006" : "Parsing failed for file 'user.json'",
 		"PHR110007" : "User doesn't have valid permissions",
 		"PHR110008" : "Invalid user",
-		"PHR110009" : "User not local",
+		"PHR110009" : "Wrong password",
 		"PHR110010" : "User not local",
 		"PHR210001" : " Failed to list projects",
 		"PHR210003" : "Unauthorized user",
@@ -219,6 +219,8 @@
 		"PHR810042" : "CI-Pipeline name already exists",
 		"PHR810044" : "TFS Configuration Retrieved successfully",
 		"PHR810045" : "TFS Configuration Retrieval failed",
+		"PHR810046" : "Setup details retrieved successfully",
+		"PHR810047" : "Setup details retrieval failed",
 		"PHR10LC0001" : "Code validation in progress. ",
 		"PHR10LB0001" : "Build in progress. ",
 		"PHR10LR0001" : "Run against source in progress. ",
@@ -280,6 +282,8 @@
 		"PHR800017" : "Job templates updated successfully",
 		"PHR800022" : "Email and Confluence configuration saved successfully",
 		"PHRQ400004" : "Test suite added successfully",
+		"PHRQ400008" : "TestSuite deleted successfully",
+		"PHRQ400009" : "TestCase deleted successfully",
 		"PHRQ400005" : "Test case added successfully",
 		"PHRQ400006" : "Test case updated successfully",
 		"PHR12C00001" : "No Downloads available",
@@ -337,7 +341,11 @@
 			"branchto" : "Branch To",
 			"tagto" : "Tags To",
 			"username" : "User Name",
-			"password" : "Password"
+			"password" : "Password",
+			"devversion" : "Development Version",
+			"comment" : "Comment",
+			"releaseversion" : "Release Version",
+			"tagname" : "Tag Name"
 		}
 	},
 	"codequality" : {
@@ -573,7 +581,8 @@
              "tableview"      : "Table View",
              "graphview"      : "Graph View",
 			 "module"  	      : "Module",
-			 "dashboard"  	  : "Dashboard"	
+			 "dashboard"  	  : "Dashboard",
+			 "action"		  : "Action"
 		},
 		"errormessage" : {
 			"serviceerror" : "Service Error"
@@ -664,6 +673,8 @@
 			"testing" : "Testing",
 			"webservice" : "Webservice",
 			"funcframework" : "Functional Framework",
+			"funcframeworkIframeUrl" : "TAW Url",
+			"url" : "TAW url",
 			"phpunit" : "PHPunit",
 			"junit" : "Junit",
 			"testng" : "TestNG",
@@ -762,6 +773,10 @@
 		"emailconf" : "Email Configuration",
 		"teamfs" : "Team Foundation Server",
 		"features" : "Features",
+		"release" : "Release",
+		"relVer" : "Release Version",
+		"devVer" : "Development Version",
+		"tagName" : "Tag Name",
 		"placeholder" : {
 			"jobname" : "Job Name",
 			"svnurl" : "SVN Url",
@@ -862,7 +877,7 @@
 	
 	"footer" : {
 		"label" : {
-			"copyrights" : "2013.Photon Interactive Pvt Ltd. | www.photon.in"
+			"copyrights" : "2014.Photon Interactive Pvt Ltd. | www.photon.in"
 		}
 	}
 }

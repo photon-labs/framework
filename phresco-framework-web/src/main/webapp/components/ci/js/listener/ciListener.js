@@ -957,36 +957,59 @@ define([], function() {
 			var templateJsonData = $(thisObj).data("templateJson");
 			var jobJsonData = $(thisObj).data("jobJson");			
 			// elements
-			var repoTypeElemUrl = $("#repoType tbody tr[id='url']");
-			var repoTypeElemCred = $("#repoType tbody tr[id='cred']");
+			var repoTypeSrc = $("#repoType tbody div[id=sourceTab] table tbody");
+			var repoTypePhresco = $("#repoType tbody div[id=dotphrescoTab] table tbody");
+			var repoTypeTest = $("#repoType tbody div[id=testTab] table tbody");
 			var jobNameTrElem = $("#jobName tbody tr td");
 			var repoTypeTitleElem = $("#repoType thead tr th");
+			var releaseType = $("#release");
 
+			$("#release").html('');
+			if (templateJsonData.type === "release") {
+				$("#release").html('<thead><tr><th colspan="3">Release Parameters</th></tr></thead>'+
+									'<tbody><tr><td><input name="releaseVersion" type="text" placeholder="Release Version"></td><td><input name="developmentVersion" type="text" placeholder="Development Version"></td><td><input name="tagName" type="text" placeholder="Tag Name"></td></tr>'
+						+'<tr><td><input name="releaseUsername" type="text" placeholder="Username"></td><td><input name="releasePassword" type="password" placeholder="Password"></td><td><input name="releaseMessage" type="text" placeholder="Message"></td></tr></tbody>');
+			} 
+			
+			$('#repoType').hide();
+			if (templateJsonData.enableRepo) {
+				$('#repoType').show();
+				$('#urlDotPhresco').parent().show();
+				$('#urlDotPhresco').attr('disabled', false);
+				$('#urlDotPhresco').prop('checked', false);
+				
+				$('#urlTest').parent().show();
+				$('#urlTest').attr('disabled', false);
+				$('#urlTest').prop('checked', false);
+				
+				commonVariables.navListener.showSrcTab($("#dotphrescoTab"), $("#sourceTab"), $("#testTab"), $("#urlDotPhresco"), $("#urlTest"));
+			}
+			
 			// Repo types			
 			if (templateJsonData.enableRepo && templateJsonData.repoTypes === "svn") {
-				// For svn
-				$(repoTypeElemUrl).html('<td colspan="2"><input type="text" placeholder="SVN Url" name="url"><input name="repoType" type="hidden" value="'+ templateJsonData.repoTypes +'"></td>');
-				
-				$(repoTypeElemCred).html('<td><input type="text" placeholder="Username" name="username"></td>'+
-                        '<td><input type="password" placeholder="Password" name="password"></td>');
+//				// For svn
+				$(repoTypeSrc).html('<tr id="url"><td colspan="2"><input name="url" type="text" placeholder="SVN Url"><input name="repoType" type="hidden" value="'+templateJsonData.repoTypes +'"></td></tr><tr id="cred"><td><input name="username" type="text" placeholder="Username"></td><td><input name="password" type="password" placeholder="Password"></td></tr>');
+				$(repoTypePhresco).html('<tr id="phrescoUrl"><td colspan="2"><input name="phrescoUrl" type="text" placeholder="DotPhresco SVN Url"></td></tr><tr id="phrescoCred"><td><input name="phrescoUsername" type="text" placeholder="DotPhresco Username"></td><td><input name="phrescoPassword" type="password" placeholder="DotPhresco Password"></td></tr>');
+				$(repoTypeTest).html('<tr id="testUrl"><td colspan="2"><input name="testUrl" type="text" placeholder="Test SVN Url"></td></tr><tr id="testCred"><td><input name="testUsername" type="text" placeholder="Test Username"></td><td><input name="testPassword" type="password" placeholder="Test Password"></td></tr>');
 			} else if (templateJsonData.enableRepo && templateJsonData.repoTypes === "tfs") {
-				// For TFS
-				$(repoTypeElemUrl).html('<td colspan="3"><input type="text" placeholder="TFS Url" name="url"><input name="repoType" type="hidden" value="'+ templateJsonData.repoTypes +'"></td>');
-				
-				$(repoTypeElemCred).html('<td><input type="text" placeholder="Username" name="username"></td>'+
-						'<td><input type="text" placeholder="ProjectPath" name="projectPath"></td>'+
-                        '<td><input type="password" placeholder="Password" name="password"></td>');
+//				// For TFS
+				$('#urlDotPhresco').parent().hide();
+				$('#urlTest').parent().hide();
+				$(repoTypeSrc).html('<tr id="url"><td colspan="3"><input type="text" placeholder="TFS Url" name="url"><input name="repoType" type="hidden" value="'+templateJsonData.repoTypes +'"></td></tr><tr id="cred"><td><input type="text" placeholder="Username" name="username"></td><td><input type="text" placeholder="projectPath" name="projectPath"></td><td><input type="password" placeholder="Password" name="password"></td></tr>');
+				$(repoTypePhresco).html('<tr id="phrescoUrl"><td colspan="3"><input type="text" placeholder="DotPhresco TFS Url" name="phrescoUrl"></td></tr><tr id="phrescoCred"><td><input type="text" placeholder="DotPhresco Username" name="phrescoUsername"></td><td><input type="text" placeholder="DotPhresco ProjectPath" name="phrescoProjectPath"></td><td><input type="password" placeholder="DotPhresco Password" name="phrescoPassword"></td></tr>');
+				$(repoTypeTest).html('<tr id="testUrl"><td colspan="3"><input type="text" placeholder="Test TFS Url" name="testUrl"></td></tr><tr id="testCred"><td><input type="text" placeholder="Test Username" name="testUsername"></td><td><input type="text" placeholder="Test ProjectPath" name="testProjectPath"></td><td><input type="password" placeholder="Test Password" name="testPassword"></td></tr>');
 			} else if (templateJsonData.enableRepo && templateJsonData.repoTypes === "git") {
-				// For GIT
-				$(repoTypeElemUrl).html('<td colspan="3"><input type="text" placeholder="GIT Url" name="url"><input name="repoType" type="hidden" value="'+ templateJsonData.repoTypes +'"></td>');
-				
-				$(repoTypeElemCred).html('<td><input type="text" placeholder="Username" name="username"></td>'+
-                      '<td><input type="text" placeholder="Branch" name="branch"></td>'+
-                      '<td><input type="password" placeholder="Password" name="password"></td>');
+//				// For GIT
+				$('#urlDotPhresco').parent().hide();
+				$('#urlTest').parent().hide();
+				$(repoTypeSrc).html('<tr id="url"><td colspan="3"><input type="text" placeholder="GIT Url" name="url"><input name="repoType" type="hidden" value="'+ templateJsonData.repoTypes +'"></td></tr><tr id="cred"><td><input type="text" placeholder="Username" name="username"></td><td><input type="text" placeholder="Branch" name="branch"></td><td><input type="password" placeholder="Password" name="password"></td></tr>');
+				$(repoTypePhresco).html('<tr id="phrescoUrl"><td colspan="3"><input type="text" placeholder="DotPhresco GIT Url" name="phrescoUrl"></td></tr><tr id="phrescoCred"><td><input type="text" placeholder="DotPhresco Username" name="phrescoUsername"></td><td><input type="text" placeholder="DotPhresco Branch" name="phrescobranch"></td><td><input type="password" placeholder="DotPhresco Password" name="phrescoPassword"></td></tr>');
+				$(repoTypeTest).html('<tr id="testUrl"><td colspan="3"><input type="text" placeholder="Test GIT Url" name="testUrl"></td></tr><tr id="testCred"><td><input type="text" placeholder="Test Username" name="testUsername"></td><td><input type="text" placeholder="Test Branch" name="testbranch"></td><td><input type="password" placeholder="Test Password" name="testPassword"></td></tr>');
 			} else {				
 				//For clonned workspace
-				$(repoTypeElemUrl).html('<input name="repoType" type="hidden" value="clonedWorkspace">');
-				$(repoTypeElemCred).html('');
+				$(repoTypeSrc).html('<input name="repoType" type="hidden" value="clonedWorkspace">');
+				$(repoTypePhresco).html('');
+				$(repoTypePhresco).html('');
 				//set label value
 				$(repoTypeTitleElem).html("Clonned workspace");
 			}
@@ -1167,6 +1190,8 @@ define([], function() {
 				commonVariables.goal = commonVariables.loadTestGoal;
 			} else if ("pdfReport" === operation) {
 				commonVariables.goal = commonVariables.pdfReportGoal;
+			} else if ("release" === operation) {
+				commonVariables.goal = commonVariables.releaseGoal;
 			}
 
 			commonVariables.phase = commonVariables.ciPhase + commonVariables.goal; // ci phase
@@ -1192,6 +1217,14 @@ define([], function() {
 					$("#environmentName").val(EnvName);
 					$("#environmentName").selectpicker('refresh');
 					if (!self.isBlank(jobJsonData)) {
+						if (!self.isBlank(jobJsonData.phrescoUrl)) {
+							$('#urlDotPhresco').prop('checked', true);
+						}
+						
+						if (!self.isBlank(jobJsonData.testUrl)) {
+							$('#urlTest').prop('checked', true);
+						}
+						
 						$('input[name=jobName]').val(jobJsonData.jobName);
 						self.restoreFormValues($("#jonConfiguration"), jobJsonData);
 						if (!self.isBlank(jobJsonData.confluenceSite)) {
@@ -1214,7 +1247,7 @@ define([], function() {
 					if (templateJsonData.enableRepo && templateJsonData.repoTypes === "svn" || templateJsonData.enableRepo && templateJsonData.repoTypes === "git" || templateJsonData.enableRepo && templateJsonData.repoTypes === "tfs") {
 						$("input[name=repoType]").val(templateJsonData.repoTypes);
 					} else {
-						$(repoTypeElemUrl).html('<input name="repoType" type="hidden" value="clonedWorkspace">');
+						$(repoTypeSrc).html('<input name="repoType" type="hidden" value="clonedWorkspace">');
 					}
 					
 					if(templateJsonData.enableUploadSettings) {
@@ -1591,19 +1624,49 @@ define([], function() {
 			var emptyFound = false;
 
 			//repo url validation
-			if (!self.isBlank(templateJsonData.repoTypes) && (templateJsonData.repoTypes === "svn" || templateJsonData.repoTypes === "git")) {
-
-				var repos = $("#repoType :input").not("#repoType input[type=hidden]");
-				repos.each(function() {
+			if (!self.isBlank(templateJsonData.repoTypes) && (templateJsonData.repoTypes === "svn" || templateJsonData.repoTypes === "git" || templateJsonData.repoTypes === "tfs")) {
+				var src = $("#sourceTab :input").not("#sourceTab input[type=hidden]");
+				src.each(function() {
 					if (self.isBlank(this.value)) {
 						this.placeholder = "Enter "+ this.name;
 						$("input[name="+this.name+"]").addClass("errormessage");
 						$("input[name="+this.name+"]").bind('keypress', function() {
 							$("input[name="+this.name+"]").removeClass("errormessage");
 						});		
-						emptyFound = true;			
+						emptyFound = true;	
+						commonVariables.navListener.showSrcTab($("#dotphrescoTab"), $("#sourceTab"), $("#testTab"), $("#urlDotPhresco"), $("#urlTest"));
 					}
 				});
+				
+				if ($("#urlDotPhresco").is(':checked')) {
+					var dotPhresco = $("#dotphrescoTab :input").not("#dotphrescoTab input[type=hidden]");
+					dotPhresco.each(function() {
+						if (self.isBlank(this.value)) {
+							this.placeholder = "Enter "+ this.name;
+							$("input[name="+this.name+"]").addClass("errormessage");
+							$("input[name="+this.name+"]").bind('keypress', function() {
+								$("input[name="+this.name+"]").removeClass("errormessage");
+							});		
+							emptyFound = true;	
+							commonVariables.navListener.showDotPhrescoTab($("#dotphrescoTab"), $("#sourceTab"), $("#testTab"), $("#urlDotPhresco"), $("#urlTest"));
+						}
+					});
+				}
+			
+				if ($("#urlTest").is(':checked')) {
+					var test = $("#testTab :input").not("#testTab input[type=hidden]");
+					test.each(function() {
+						if (self.isBlank(this.value)) {
+							this.placeholder = "Enter "+ this.name;
+							$("input[name="+this.name+"]").addClass("errormessage");
+							$("input[name="+this.name+"]").bind('keypress', function() {
+								$("input[name="+this.name+"]").removeClass("errormessage");
+							});		
+							emptyFound = true;	
+							commonVariables.navListener.showTestTab($("#dotphrescoTab"), $("#sourceTab"), $("#testTab"), $("#urlDotPhresco"), $("#urlTest"));
+						}
+					});
+				}
 			}
 
 			var confluence = $("#confluenceUploadSettings input, #confluenceUploadSettings select").not("#confluenceUploadSettings input[type=checkbox], input[name=confluenceOther]");
@@ -1720,6 +1783,18 @@ define([], function() {
 				$("select[name=weeks]").attr('disabled', true);
 				$("select[name=months]").attr('disabled', true);
 				$("input[name=triggers]").attr('disabled', true);
+				
+				if (!$("#urlDotPhresco").is(":checked")) {
+					$("#phrescoUrl").attr('disabled', true);
+					$("#phrescoUsername").attr('disabled', true);
+					$("#phrescoPassword").attr('disabled', true);
+				}
+				
+				if (!$("#urlTest").is(":checked")) {
+					$("#testUrl").attr('disabled', true);
+					$("#testUsername").attr('disabled', true);
+					$("#testPassword").attr('disabled', true);
+				}
  
 				// append the configureJob json (jobJson) in  job template name id
 				var jobConfiguration = $('#jonConfiguration :input[name!=targetFolder][name!=selectedFileOrFolder]').serializeObject();
@@ -2239,6 +2314,7 @@ define([], function() {
 			self.lastChild();
 			var id = $(obj.item).find('a').attr('id');
 			var prevLis = $('#sortable2').find('a[id='+id+']').closest('li').prevAll();
+			var sort1Moved = $('#sortable1').find('a[id='+id+']').closest('li').find('a').attr('id');
 			var appName = $('#sortable2').find('a[id='+id+']').attr('appDirName');
 			var templateJson = $(obj.item).find('a').data("templateJson");
 			var sortable2Len = $('#sortable2 > li').length;
@@ -2248,7 +2324,16 @@ define([], function() {
 			var templateJsonData = $(anchorElem).data("templateJson");
 			
 			var currentAppName = $(obj.item).find('a').attr('appDirName');
-			if (sortable2Len > 1 && prevLis.length === 0 && !templateJson.enableRepo) {
+			var flag = true;
+			
+			if (prevLis.length === 0) {
+				flag = false;
+			} 
+			
+			if (sort1Moved !== null && sort1Moved !== undefined && sort1Moved !== '') {
+				flag = true;
+			} 
+			if (sortable2Len > 1 && !flag && !templateJson.enableRepo) {
 				var currentObj = $(obj.item);
 				 self.previousLiObj.after($(obj.item));
 				 $(".msgdisplay").removeClass("success").addClass("error");
@@ -2258,7 +2343,7 @@ define([], function() {
 					setTimeout(function() {
 						$(".error").hide();
 					},2500);
-			} else if(prevLis.length !== 0 && !templateJsonData.enableRepo) {
+			} else if(prevLis.length !== 0 && !templateJsonData.enableRepo && !flag) {
 				 self.nextLiObj.before($(obj.item));
 				 $(".msgdisplay").removeClass("success").addClass("error");
 					$(".error").text("DownStream Job of "+ templateJson.name + " job Doesn't have the Repo!");

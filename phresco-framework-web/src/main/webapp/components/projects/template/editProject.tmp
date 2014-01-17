@@ -41,7 +41,11 @@
                     <td>
                     	<input type="text" value="{{groupId}}" name="groupId" id="groupId" maxlength="30" 
                     		data-i18n="[placeholder]project.create.label.groupid" title="30 Characters only"/></td>
-					<td><input type="checkbox" name="integrationTest" value="">Integration Test</td>
+					<td>{{#if integrationTest}}
+							<input type="checkbox" name="integrationTest" value="" checked>Integration Test</td>
+						{{else}}
+							<input type="checkbox" name="integrationTest" value="">Integration Test</td>
+						{{/if}}
 					<td></td>
 				</tr>
 				<tr>

@@ -21,7 +21,7 @@
                         	<tbody>
                             	<tr>
 	                                <td>
-                                    	<label>Old Password</label>
+                                    	<label>Old Password<sup>*</sup></label>
                                     </td>
                                     <td>
                                         <input type="password" id="old_password">
@@ -29,7 +29,7 @@
                     			</tr>
                                 <tr>
 	                               <td>
-                                    	<label>New Password</label>
+                                    	<label>New Password<sup>*</sup></label>
                                     </td>
                                     <td>
                                         <input type="password" id="new_password">
@@ -37,7 +37,7 @@
                     			</tr>
                                 <tr>
 	                                 <td>
-                                    	<label>Reenter New Password</label>
+                                    	<label>Re-enter New Password<sup>*</sup></label>
                                     </td>
                                     <td>
                                         <input type="password" id="new_password_reenter">
@@ -54,7 +54,7 @@
 	<div class="header_right flt_right">
 		<div class="user_login">
 			<div class="user_icon">&nbsp;</div><span id="displayname">{{displayName}}</span>&nbsp;&nbsp; | &nbsp;&nbsp; 
-			<a id="changepassword" href="javascript:void(0)"><span >Change Password</span></a>&nbsp;&nbsp; | &nbsp;&nbsp;
+			<a class="hideContent" id="changepassword" href="javascript:void(0)"><span >Change Password&nbsp;&nbsp; | &nbsp;&nbsp;</span></a>
 			<a id="logout" href="javascript:;"><span data-i18n="header.userinfo.logout"></span><div class="logout_icon">&nbsp;</div></a>
 		</div>
 		<div class="navbar navbar-static">
