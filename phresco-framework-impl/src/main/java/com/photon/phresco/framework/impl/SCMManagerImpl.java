@@ -1220,8 +1220,23 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					addToRepo(testRepoDetail, appInfo, dir, testDirName, tempTestFile, hasSplit);
 				}
 				if (hasSplit) {
+					File pomDest = null;
 					splitSrcContents(appInfo, tempSrcFile, repoInfo, appendedPhrUrl.toString(), appendedSrcUrl.toString(), appendedTestUrl.toString());
-					updatePom(tempSrcFile, appendedSrcUrl.toString(), repoType, appInfo.getPomFile(),appPomProcessor, "");
+					if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
+						 pomDest = new File(tempSrcFile, appInfo.getPhrescoPomFile());
+						 if(pomDest.exists()) {
+							 updatePom(tempSrcFile, appendedSrcUrl.toString(), repoType, pomDest.getName(),appPomProcessor, "");
+						 }
+					} 
+					
+					if (StringUtils.isNotEmpty(appInfo.getPomFile())) {
+						pomDest = new File(tempSrcFile, appInfo.getPomFile());
+						if (pomDest.exists()) {
+							updatePom(tempSrcFile, appendedSrcUrl.toString(), repoType, appInfo.getPomFile(), appPomProcessor, "");
+						}
+					}
+					
+//					updatePom(tempSrcFile, appendedSrcUrl.toString(), repoType, appInfo.getPomFile(),appPomProcessor, "");
 					addToRepo(srcRepoDetail, appInfo, dir, srcDirName, tempSrcFile, hasSplit);
 				}
 				FileUtil.delete(dir);
@@ -1373,6 +1388,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	
 	private void splitSrcContents(ApplicationInfo appInfo, File tempSrcFile, RepoInfo repoInfo, String phrescoRepoUrl, String srcRepoUrl, String testRepoUrl) throws PhrescoException {
 		try {
+			File pomDest = null;
 			String appDirName = appInfo.getAppDirName();
 			String appHome = Utility.getProjectHome() + appDirName + File.separator;
 			List<ModuleInfo> modules = appInfo.getModules();
@@ -1384,11 +1400,22 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					String moduleAppInfoPath = appHome + module.getCode() + File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator + PROJECT_INFO;
 					ApplicationInfo moduleAppInfo = getApplicationInfo(moduleAppInfoPath);
 					
-					if (StringUtils.isEmpty(moduleAppInfo.getPhrescoPomFile())) {
-						File pomDest = new File(srcDest, moduleAppInfo.getPomFile());
-						updatePomProperties(appInfo, moduleAppInfo.getAppDirName(), pomDest, phrescoRepoUrl, srcRepoUrl, testRepoUrl);
+					if (StringUtils.isNotEmpty(moduleAppInfo.getPhrescoPomFile())) {
+						pomDest = new File(srcDest, moduleAppInfo.getPhrescoPomFile());
+						System.out.println("pomDest 1111 " + pomDest);
+						if(pomDest.exists()) {
+							updatePomProperties(appInfo, moduleAppInfo.getAppDirName(), pomDest, phrescoRepoUrl, srcRepoUrl,
+									testRepoUrl);
+						}
+					} else {
+						pomDest = new File(srcDest, moduleAppInfo.getPomFile());
+						System.out.println("pomDest 2222 " + pomDest);
+						updatePomProperties(appInfo, moduleAppInfo.getAppDirName(), pomDest, phrescoRepoUrl, srcRepoUrl,
+								testRepoUrl);
 					}
-					
+//					updatePomProperties(appInfo, moduleAppInfo.getAppDirName(), pomDest, phrescoRepoUrl, srcRepoUrl,
+//							testRepoUrl);
+
 					if (repoInfo.isSplitPhresco()) {
 						FileUtils.deleteDirectory(new File(srcDest, Constants.DOT_PHRESCO_FOLDER));
 						if (StringUtils.isNotEmpty(moduleAppInfo.getPhrescoPomFile())) {
@@ -1412,12 +1439,19 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				tempSrcFile.mkdirs();
 				File srcDir = new File(Utility.getProjectHome() + appDirName);
 				FileUtils.copyDirectory(srcDir, tempSrcFile, false);
-				
-				if (StringUtils.isEmpty(appInfo.getPhrescoPomFile())) {
-					File pomDest = new File(tempSrcFile, appInfo.getPomFile());
+				if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
+					pomDest = new File(tempSrcFile, appInfo.getPhrescoPomFile());
+					System.out.println("pomDest  loo 1111 " + pomDest);
+					if(pomDest.exists()) {
+						updatePomProperties(appInfo, "", pomDest, phrescoRepoUrl, srcRepoUrl, testRepoUrl);
+					}
+				} else {
+					pomDest = new File(tempSrcFile, appInfo.getPomFile());
+					System.out.println("pomDest loo 2222 " + pomDest);
 					updatePomProperties(appInfo, "", pomDest, phrescoRepoUrl, srcRepoUrl, testRepoUrl);
 				}
-				
+//				updatePomProperties(appInfo, "", pomDest, phrescoRepoUrl, srcRepoUrl, testRepoUrl);
+
 				if (repoInfo.isSplitPhresco()) {
 					FileUtils.deleteDirectory(new File(tempSrcFile, Constants.DOT_PHRESCO_FOLDER));
 					if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
