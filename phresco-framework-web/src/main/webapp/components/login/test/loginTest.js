@@ -51,12 +51,40 @@ define(["login/login"], function(Login) {
 				setTimeout(function() {
 					start();
 					ok($('#passwordDiv').hasClass("loginuser_error"), 'Password div error class added test');
-					self.runServiceTest();
+					self.forgotPasswordTest();
 				}, 1000);
 			});
 		},
 		
+		forgotPasswordTest : function(){
+			var self = this;
+			asyncTest("Forgot Password Test", function() {
+				console.info($("#confirm_forgot_password"));
+				$('#userid').val('sample');
+				
+				var login = $.mockjax({
+				  url: commonVariables.webserviceurl + "login/forgotPassword?userId=sample&custId=photon",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR100008","data":true,"status":"success"});
+				  }
+				
+				});
+			
+				
+				$('#confirm_forgot_password').click();
+				setTimeout(function() {
+					start();
+					equal($("#forgot_password").css('display'), "none", "Forgot Password  Tested");
+					self.runServiceTest();
+				}, 4000);
+			});
+		},
 		runServiceTest : function(){
+			var self = this;
 			asyncTest("Login Service Test", function() {
 				
 				$('input#username').val('admin');
@@ -90,10 +118,11 @@ define(["login/login"], function(Login) {
 					equal($(commonVariables.headerPlaceholder).find("font:first").text(), "Photon", "Login Service Tested");
 					equal($("#footer").attr('id'), "footer", "Footer Rendering Tested");
 					require(["navigationTest"], function(navigationTest){
-						navigationTest.runTests();
-					});
+					navigationTest.runTests(); }); 				
 				}, 4000);
 			});
 		}
+		
+		
 	};
 });

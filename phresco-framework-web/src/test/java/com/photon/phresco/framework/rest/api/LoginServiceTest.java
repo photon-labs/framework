@@ -119,7 +119,7 @@ public class LoginServiceTest extends RestBaseTest {
 	@Test
 	public void forgotPasswordTest() throws PhrescoException {
 		LoginService service = new LoginService();
-		Response response = service.forgotPassword("dummy");
+		Response response = service.forgotPassword("dummy","photon");
 		Credentials credentials = new Credentials("dummy", "dummy");
 		Response response1 = service.authenticate(credentials);
 		ResponseInfo<User> responseInfo1 = (ResponseInfo<User>) response1.getEntity();
@@ -130,7 +130,7 @@ public class LoginServiceTest extends RestBaseTest {
 	@Test
 	public void forgotPasswordFailureTest() throws PhrescoException {
 		LoginService service = new LoginService();
-		Response response = service.forgotPassword("dummy11");
+		Response response = service.forgotPassword("dummy11","photon");
 		Credentials credentials = new Credentials("dummy", "dummy");
 		Response response1 = service.authenticate(credentials);
 		ResponseInfo<User> responseInfo1 = (ResponseInfo<User>) response1.getEntity();
@@ -141,7 +141,7 @@ public class LoginServiceTest extends RestBaseTest {
 	@Test
 	public void forgotPasswordFailure1Test() throws PhrescoException {
 		LoginService service = new LoginService();
-		Response response = service.forgotPassword("dummy1");
+		Response response = service.forgotPassword("dummy1","photon");
 		Credentials credentials = new Credentials("dummy", "dummy");
 		Response response1 = service.authenticate(credentials);
 		ResponseInfo<User> responseInfo1 = (ResponseInfo<User>) response1.getEntity();

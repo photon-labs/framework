@@ -31,6 +31,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -236,34 +237,33 @@ public class LoginService extends RestBase implements FrameworkConstants, Respon
 		
 		}
 	
-	@POST
+	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/forgotPassword")
-	public Response forgotPassword(String userId) throws PhrescoException {
-		
+	public Response forgotPassword(@QueryParam("userId") String userId, @QueryParam("custId") String custId) throws PhrescoException {
 		Boolean result = null;
 		ResponseInfo<User> responseData = new ResponseInfo<User>();
 		try {
 			FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
-			
+
 			Client client = ClientHelper.createClient();
-	        WebResource resource = client.resource(configuration.getServerPath() + "/" + REST_LOGIN_PATH + "/" +"forgotPassword");
-	        Builder builder = resource.accept(MediaType.APPLICATION_JSON);        
-	        ClientResponse response = null;
-	        response = builder.type(MediaType.APPLICATION_JSON).post(ClientResponse.class, userId);
-	        result = response.getEntity(Boolean.class);
-		if (!result) {
-			status = RESPONSE_STATUS_FAILURE;
-			errorCode = PHR110010;
-			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, null, null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOuptut).header(
-					"Access-Control-Allow-Origin", "*").build();
-		} 
-		status = RESPONSE_STATUS_SUCCESS;
-		successCode = PHR100008;
-		ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, null, result, status, successCode);
-		return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			WebResource resource = client.resource(configuration.getServerPath() + "/" + REST_LOGIN_PATH + "/" +"forgotPassword").queryParam("userId", userId).queryParam("custId", custId);
+			Builder builder = resource.accept(MediaType.APPLICATION_JSON);        
+			ClientResponse response = null;
+			response = builder.type(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+			result = response.getEntity(Boolean.class);
+			if (!result) {
+				status = RESPONSE_STATUS_FAILURE;
+				errorCode = PHR110010;
+				ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, null, null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOuptut).header(
+						"Access-Control-Allow-Origin", "*").build();
+			} 
+			status = RESPONSE_STATUS_SUCCESS;
+			successCode = PHR100008;
+			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, null, result, status, successCode);
+			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR110008;
@@ -271,8 +271,8 @@ public class LoginService extends RestBase implements FrameworkConstants, Respon
 			return Response.status(Status.OK).entity(finalOuptut).header(
 					"Access-Control-Allow-Origin", "*").build();
 		}
-		
-		}
+
+	}
 
 
 	/**

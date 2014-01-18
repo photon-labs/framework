@@ -639,7 +639,7 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 	public Response sendErrorReport(String errorReport, @QueryParam("emailId") String emailId) throws PhrescoException {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
-			Utility.sendTemplateEmail(emailId, MAIL_ID, MAIL_SUBJECT, errorReport, MAIL_ID, MAIL_PASSWORD);
+			Utility.sendTemplateEmail(emailId, MAIL_ID, MAIL_SUBJECT, errorReport, MAIL_ID, MAIL_PASSWORD, null);
 			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, null,
 					RESPONSE_STATUS_SUCCESS, PHR14C00001);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();

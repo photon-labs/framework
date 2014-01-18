@@ -166,10 +166,21 @@ define([], function() {
 			};
 			
 			if(action === "forgotpassword") {
-				header.requestMethod = "POST";
+				header.requestMethod = "GET";
 				var userid = $("#userid").val();
-				header.requestPostBody = userid;
-				header.webserviceurl = commonVariables.webserviceurl+ "login/forgotPassword";
+				var pathname = window.location.pathname;
+				var arr = pathname.split('/');
+				var lastindex = arr.length-1;
+				var custid;
+				if (arr[lastindex] == ""){
+				custid = "photon";
+				}
+				else{
+				custid = arr[lastindex];	
+				}
+				header.requestPostBody = {};
+				//header.requestPostBody = userid;
+				header.webserviceurl = commonVariables.webserviceurl+ "login/forgotPassword?userId="+userid+"&custId="+custid;
 			}
 
 			return header;
