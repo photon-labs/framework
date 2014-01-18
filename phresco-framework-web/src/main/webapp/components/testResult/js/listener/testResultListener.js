@@ -514,19 +514,6 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			});
 		},
 		
-		deleteTestCase : function(testCaseName, currentTestsuiteName) {
-			var self = this;
-			var requestBody = {};
-			requestBody.testCaseName = testCaseName;
-			requestBody.testsuitename = currentTestsuiteName;
-			self.performAction(self.getActionHeader(requestBody, "deleteTestCase"), function(response) {
-				if(response.data) {
-					$("tr[testCaseId='"+testCaseName+"']").remove();
-					commonVariables.api.showError(response.responseCode ,"success", true, false, true);
-				} 
-			});
-		},
-		
 		getTestsuites : function(callback) {
 			var self = this;
 			self.performAction(self.getActionHeader(self.requestBody, "getTestSuite"), function(response) {

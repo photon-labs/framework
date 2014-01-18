@@ -10,7 +10,7 @@ define(["testResult/listener/testResultListener"], function() {
 		testResultListener : null,
 		requestBody : {},
 		onShowHideConsoleEvent : null,
-		deleteTestCaseEvent : null,
+		//deleteTestCaseEvent : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -28,10 +28,10 @@ define(["testResult/listener/testResultListener"], function() {
 			}
 			self.onShowHideConsoleEvent.add(self.testResultListener.showHideConsole, self.testResultListener);
 			
-			if (self.deleteTestCaseEvent === null) {
-				self.deleteTestCaseEvent = new signals.Signal();
-			}
-			self.deleteTestCaseEvent.add(self.testResultListener.deleteTestCase, self.testResultListener);
+//			if (self.deleteTestCaseEvent === null) {
+//				self.deleteTestCaseEvent = new signals.Signal();
+//			}
+			//self.deleteTestCaseEvent.add(self.testResultListener.deleteTestCase, self.testResultListener);
 			
 			self.registerEvents();
 		},
@@ -85,7 +85,12 @@ define(["testResult/listener/testResultListener"], function() {
 			var self = this;
 			commonVariables.from = "all";
 			var requestBody = {};
+			var data = {};
 			requestBody.testSuite = commonVariables.testSuiteName;
+			self.testResultListener.getTestsuites(function(response) {
+				data.testSuites = response.data.testSuites;
+				commonVariables.testSuites = response.data;
+			});
 			self.testResultListener.performAction(self.testResultListener.getActionHeader(requestBody, "getTestReport"), function(response) {
 				var data = {};
 				data.testcases = response.data;
@@ -274,7 +279,34 @@ define(["testResult/listener/testResultListener"], function() {
 					var testCaseName = $(this).closest("div").parent("div").attr("testCaseName");
 					$('input[name="delTestCase"]').closest("div");
 					var currentTestsuiteName = commonVariables.testSuiteName;
-					self.deleteTestCaseEvent.dispatch(testCaseName, currentTestsuiteName);
+				//	self.deleteTestCaseEvent.dispatch(testCaseName, currentTestsuiteName);
+					var requestBody = {};
+					requestBody.testCaseName = testCaseName;
+					requestBody.testsuitename = currentTestsuiteName;
+					self.testResultListener.performAction(self.testResultListener.getActionHeader(requestBody, "deleteTestCase"), function(response) {
+						if(response.data) {
+							$("tr[testCaseId='"+testCaseName+"']").remove();
+							commonVariables.api.showError(response.responseCode ,"success", true, false, true);
+							commonVariables.navListener.getMyObj(commonVariables.testcaseResult, function(retVal) {
+								self.testcaseResult = retVal;
+								Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
+								Clazz.navigationController.push(self.testcaseResult, false);
+								
+								var currentTab = commonVariables.navListener.currentTab;
+								self.testResultListener.getTestsuites(function(response) {
+									var data = {};
+									if ("manualTest" === currentTab) {
+										data.testSuites = response.data.testSuites;
+									} 
+									data.message = response.message;
+									commonVariables.testSuites = response.data;
+									
+								});
+								
+							});
+						} 
+					});
+					
 				});	
 			});
 			

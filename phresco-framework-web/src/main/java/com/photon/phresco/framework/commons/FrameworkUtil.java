@@ -1084,15 +1084,16 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 		 	   					totalBlocked = totalBlocked + 1;
 		 	   				} 
 		 	   			}
-			 	   		if(tstCase.getStatus().equalsIgnoreCase("success")) {
-	 	   					totalPass = totalPass - 1;
-	 	   				} else if (tstCase.getStatus().equalsIgnoreCase("failure")) {
-	 	   					totalFail = totalFail - 1;
-	 	   				} else if (tstCase.getStatus().equalsIgnoreCase("notApplicable")) {
-	 	   					totalNotApplicable = totalNotApplicable - 1;
-	 	   				} else if (tstCase.getStatus().equalsIgnoreCase("blocked")) {
-	 	   					totalBlocked = totalBlocked - 1;
-	 	   				} 
+		 	   			
+//			 	   		if(tstCase.getStatus().equalsIgnoreCase("success")) {
+//	 	   					totalPass = totalPass - 1;
+//	 	   				} else if (tstCase.getStatus().equalsIgnoreCase("failure")) {
+//	 	   					totalFail = totalFail - 1;
+//	 	   				} else if (tstCase.getStatus().equalsIgnoreCase("notApplicable")) {
+//	 	   					totalNotApplicable = totalNotApplicable - 1;
+//	 	   				} else if (tstCase.getStatus().equalsIgnoreCase("blocked")) {
+//	 	   					totalBlocked = totalBlocked - 1;
+//	 	   				} 
 			 	   		
 	 	   				HSSFSheet mySheet1 = myWorkBook.getSheetAt(0);
 	 	   				rowIterator = mySheet1.rowIterator();
@@ -2491,7 +2492,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 				float totalBlocked = 0;
 				float notExecuted = 0;
 				float totalTestCases = 0;
-				for (int i = 0; i <=23; i++) {
+				for (int i = 0; i <=22; i++) {
 					rowIterator.next();
 				}
 				do {
@@ -2601,7 +2602,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 					float totalBlocked = 0;
 					float notExecuted = 0;
 					float totalTestCases = 0;
-					for (int i = 0; i <=23; i++) {
+					for (int i = 0; i <=22; i++) {
 						rowIterator.next();
 					}
 					 

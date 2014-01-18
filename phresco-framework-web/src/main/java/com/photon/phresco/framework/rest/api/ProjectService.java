@@ -292,6 +292,13 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 				projectinfo.setAppInfos(newlyAddedApps);
 				projectinfo.setNoOfApps(newlyAddedApps.size());
 				projectInfo = PhrescoFrameworkFactory.getProjectManager().create(projectinfo, serviceManager);
+			} else {
+				for (ApplicationInfo applicationInfo : availableProjectInfo.getAppInfos()) {
+					String appDirPath = Utility.getProjectInfoPath(Utility.getProjectHome() + applicationInfo.getAppDirName(), null);
+					ProjectInfo projectInfoFile = Utility.getProjectInfo(Utility.getProjectHome() + applicationInfo.getAppDirName() , null);
+					projectInfoFile.setDescription(projectinfo.getDescription());
+					ProjectUtils.updateProjectInfo(projectInfoFile, new File(appDirPath));
+				}
 			}
 			if(projectinfo.isMultiModule()) {
 				projectinfo = createProjectInfo(availableProjectInfo, projectinfo);

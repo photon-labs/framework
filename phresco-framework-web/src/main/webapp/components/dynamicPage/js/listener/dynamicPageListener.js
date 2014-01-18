@@ -834,7 +834,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         //To update watcher map
         changeEveDependancyListener : function(selectedOption, currentParamKey) {
             var self = this;
-            commonVariables.api.ajaxRequest(self.getRequestHeader(self.projectRequestBody, currentParamKey, selectedOption, "updateWatcher"), function(response) {
+            commonVariables.api.ajaxForDynamicParam(self.getRequestHeader(self.projectRequestBody, currentParamKey, selectedOption, "updateWatcher"),"", function(response) {
 				if(response === undefined || response === null || response.status === "error" || response.status === "failure"){
 					//responce value failed
 					$(".content_end").show();
@@ -853,7 +853,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         updateDependancy : function(dependency) {
             var self = this;
             self.showDynamicPopupLoading();
-            commonVariables.api.ajaxRequest(self.getRequestHeader(self.projectRequestBody, dependency, "", "dependency"), function(response) {
+           commonVariables.api.ajaxForDynamicParam(self.getRequestHeader(self.projectRequestBody, dependency, "", "dependency"),"", function(response) {
 				 if(response === undefined || response === null || response.status === "error" || response.status === "failure"){
 					//responce value failed
 					$(".content_end").show();
