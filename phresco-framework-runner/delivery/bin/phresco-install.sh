@@ -47,11 +47,13 @@ case "$1" in
 				cd $PHRESCO_HOME/bin
 				echo "Enter ServerProperties file name";
                 read property
+                echo "Enter ProjectProperties file name";
+                read projectproperty
                 read -p "Do you wish Interactive mode? (y/n) " RESP
                 if [ "$RESP" = "y" ]; then
-                mvn phresco:create -Dservice.properties=$property.properties -Dinteractive=true -f pom-create.xml -e
+                mvn phresco:create -Dservice.properties=$property.properties -Dproject.properties=$projectproperty.properties -Dinteractive=true -f pom-create.xml -e
                 else
-                mvn phresco:create -Dservice.properties=$property.properties -Dinteractive=false -f pom-create.xml -e
+                mvn phresco:create -Dservice.properties=$property.properties -Dproject.properties=$projectproperty.properties -Dinteractive=false -f pom-create.xml -e
                 fi
                 ;;
       	build)
