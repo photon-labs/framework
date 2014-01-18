@@ -1377,14 +1377,37 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					requestBody.actionType = commonVariables.runType;
 					commonVariables.api.ajaxRequest(self.getRequestHeader(requestBody, '', "killProcess"), function(response) {
 						if (response !== null) {
+							$('input[name=kill]').attr('disabled', true);
 							setTimeout( function() {
-								$("#logContent ").html('Process Terminated!');
-								$(".console_pad").html('Process Terminated!');
-							}, 5000);
+								var logC = $("#logContent ").html();
+								if (!self.isBlank(logC)) {
+									if (logC.indexOf('Process Terminated...') < 0) {
+										logC += "<b style = 'color:red'>Process Terminated...<b>";
+										$("#logContent ").html(logC);
+									}
+								}
+								
+								var conP = $(".console_pad").html();
+								if (!self.isBlank(conP)) {
+									if (conP.indexOf('Process Terminated...') < 0) {
+										conP += "<b style = 'color:red'>Process Terminated...<b>";
+										$(".console_pad").html(conP);
+									}
+								}
+								
+								var tesC = $("#testConsole").html();
+								if (!self.isBlank(tesC)) {
+									if (tesC.indexOf('Process Terminated...') < 0) {
+										tesC += "<b style = 'color:red'>Process Terminated...<b>";
+										$("#testConsole").html(tesC);
+									}
+								}
+							}, 3500);
 						}
 					});
 				});
 			}
+			
 		}
 	);
 

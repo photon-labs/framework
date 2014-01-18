@@ -78,7 +78,7 @@
                 <tr>
 					<td>
 						<div class="flt_right">
-							<input type="button" name="kill" class="btn btn_style kill_btn" value="Kill Process" data-i18n="[value]build.label.killprocess">
+							<input type="button" name="kill" disabled="disabled" class="btn btn_style kill_btn" value="Kill Process" data-i18n="[value]build.label.killprocess">
 							<a href="javascript:void(0)" id="buildCopyLog">
 								<img src="themes/default/images/Phresco/buildreport_icon.png" width="15" height="18" border="0" alt="">
 							</a>

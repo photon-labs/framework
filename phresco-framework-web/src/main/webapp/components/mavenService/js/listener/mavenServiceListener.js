@@ -11,6 +11,7 @@ define([], function() {
 		 * @config: configurations for this listener
 		 */
 		initialize : function(config) {
+			commonVariables.mvnFlag = 0;
 		},
 
 		mvnBuild : function(paramData, divId, bodyContent, callback){
@@ -228,7 +229,7 @@ define([], function() {
 			}
 		},
 		
-		mvnlogService : function(key, divId, callback){
+		mvnlogService : function(key, divId, callback) {
 			try{
 				var self = this, header = self.getRequestHeader("GET", "", commonVariables.mvnlogService, 'uniquekey=' + key);
 				$('.progress_loading').css('display','block');
@@ -236,6 +237,16 @@ define([], function() {
 				commonVariables.api.ajaxRequest(header, 
 					function(response){
 						if(response !==  undefined && response !== null){
+							var resLog = response.log;
+							if (resLog.indexOf("Scanning for projects...") !== -1) {
+								commonVariables.mvnFlag = commonVariables.mvnFlag + 1;
+							}
+							
+							if (commonVariables.mvnFlag === 2) {
+								$('input[name=kill]').attr('disabled', false);
+								commonVariables.mvnFlag = 0;
+							}
+							
 							if(response.log !== undefined && response.log !== null){
 								var logMsg = response.log;
 								var nl = /\n|\r|\r\n/g;
