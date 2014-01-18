@@ -198,7 +198,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 
 					if ((response !== undefined && response !== null && response.status !== "error") || self.bCheck) {
 						self.successResponse = response;
-					} else if (response.exception.message === "import.project.already") {
+					} else if (response.exception && response.exception.message === "import.project.already") {
 						callbackFunction(response);
 					} else {self.errorpopupshow(response);}
 				},

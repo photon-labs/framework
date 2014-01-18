@@ -599,69 +599,129 @@ define(["projectlist/listener/projectListListener"], function() {
 				$('.search').bind("click", function() {
 					self.projectslistListener.flag1 = 1;
 					var idval = $(this).attr('dynId');
-					if(!(self.projectslistListener.validateAddToRepoData(idval))) {
-						$('.searchdropdown').empty();
-						counter = 0;
-						var actionBody = {};
-						actionBody.repoUrl = $("#repourl_"+dynamicId).val();
-						actionBody.userName = $("#uname_"+dynamicId).val();
-						actionBody.password = $("#pwd_"+dynamicId).val();
-						commonVariables.hideloading = true;
-						self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
-						self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {
-							 $.each(response.data, function(index, value) {
-								$('.searchdropdown').append('<option value='+value+'>'+value+'</option>');
+					var repoType = $(this).attr('typeOfRepo');
+					if(repoType === 'add') {
+						if(!(self.projectslistListener.validateAddToRepoData(idval))) {
+							$('.searchdropdown').empty();
+							counter = 0;
+							var actionBody = {};
+							actionBody.repoUrl = $("#repourl_"+dynamicId).val();
+							actionBody.userName = $("#uname_"+dynamicId).val();
+							actionBody.password = $("#pwd_"+dynamicId).val();
+							commonVariables.hideloading = true;
+							self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
+							self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {
+								 $.each(response.data, function(index, value) {
+									$('.searchdropdown').append('<option value='+value+'>'+value+'</option>');
+								});
+								commonVariables.hideloading = false;
+								self.projectslistListener.hidePopupLoad();
 							});
-							commonVariables.hideloading = false;
-							self.projectslistListener.hidePopupLoad();
-						});
-						$('.searchdropdown').show();
+							$('.searchdropdown').show();
+						}
+					} else if(repoType === 'commit') {
+						$('.searchdropdown').empty();
+							counter = 0;
+							var actionBody = {};
+							actionBody.repoUrl = $("#commitRepourl"+dynamicId).val();
+							actionBody.userName = $("#commitUserName"+dynamicId).val();
+							actionBody.password = $("#commitPassword"+dynamicId).val();
+							commonVariables.hideloading = true;
+							self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
+							self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {
+								 $.each(response.data, function(index, value) {
+									$('.searchdropdown').append('<option value='+value+'>'+value+'</option>');
+								});
+								commonVariables.hideloading = false;
+								self.projectslistListener.hidePopupLoad();
+							});
+							$('.searchdropdown').show();
 					}
 				});	
 				
 				$('.phrescosearch').unbind("click");
 				$('.phrescosearch').bind("click", function() {
 					var idval = $(this).attr('dynId');
-					if(!(self.projectslistListener.validatedotPhrescoAndTest(idval, 'phrescorepourl' , 'phrescouname', 'phrescopwd'))) {
-						$('.dotphrescosearchdropdown').empty();
-						dotphresco = 0;
-						var actionBody = {};
-						actionBody.repoUrl = $("#phrescorepourl_"+dynamicId).val();
-						actionBody.userName = $("#phrescouname_"+dynamicId).val();
-						actionBody.password = $("#phrescopwd_"+dynamicId).val();
-						commonVariables.hideloading = true;
-						self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
-						self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {
-							 $.each(response.data, function(index, value) {
-								$('.dotphrescosearchdropdown').append('<option value='+value+'>'+value+'</option>');
+					var typeOfRepo = $(this).attr('typeOfRepo');
+					if(typeOfRepo === "add") {
+						if(!(self.projectslistListener.validatedotPhrescoAndTest(idval, 'phrescorepourl' , 'phrescouname', 'phrescopwd'))) {
+							$('.dotphrescosearchdropdown').empty();
+							dotphresco = 0;
+							var actionBody = {};
+							actionBody.repoUrl = $("#phrescorepourl_"+dynamicId).val();
+							actionBody.userName = $("#phrescouname_"+dynamicId).val();
+							actionBody.password = $("#phrescopwd_"+dynamicId).val();
+							commonVariables.hideloading = true;
+							self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
+							self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {
+								 $.each(response.data, function(index, value) {
+									$('.dotphrescosearchdropdown').append('<option value='+value+'>'+value+'</option>');
+								});
+								commonVariables.hideloading = false;
+								self.projectslistListener.hidePopupLoad();
 							});
-							commonVariables.hideloading = false;
-							self.projectslistListener.hidePopupLoad();
-						});
-						$('.dotphrescosearchdropdown').show();
+							$('.dotphrescosearchdropdown').show();
+						}
+					} else if(typeOfRepo === "commit") {
+							$('.dotphrescosearchdropdown').empty();
+							dotphresco = 0;
+							var actionBody = {};
+							actionBody.repoUrl = $("#phrCommitRepourl"+dynamicId).val();
+							actionBody.userName = $("#phrCommitUserName"+dynamicId).val();
+							actionBody.password = $("#phrCommitPassword"+dynamicId).val();
+							commonVariables.hideloading = true;
+							self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
+							self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {
+								 $.each(response.data, function(index, value) {
+									$('.dotphrescosearchdropdown').append('<option value='+value+'>'+value+'</option>');
+								});
+								commonVariables.hideloading = false;
+								self.projectslistListener.hidePopupLoad();
+							});
+							$('.dotphrescosearchdropdown').show();
 					}
 				});
 				
 				$('.testsearch').unbind("click");
 				$('.testsearch').bind("click", function() {
 					var idval = $(this).attr('dynId');
-					if(!(self.projectslistListener.validatedotPhrescoAndTest(idval, 'testrepourl' , 'testuname', 'testpwd'))) {
-						$('.testsearchdropdown').empty();
-						testsearch = 0;
-						var actionBody = {};
-						actionBody.repoUrl = $("#testrepourl_"+dynamicId).val();
-						actionBody.userName = $("#testuname_"+dynamicId).val();
-						actionBody.password = $("#testpwd_"+dynamicId).val();
-						commonVariables.hideloading = true;
-						self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
-						self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {
-							 $.each(response.data, function(index, value) {
-								$('.testsearchdropdown').append('<option value='+value+'>'+value+'</option>');
+					var typeOfRepo = $(this).attr('typeOfRepo');					
+					if(typeOfRepo === 'add') {	
+						if(!(self.projectslistListener.validatedotPhrescoAndTest(idval, 'testrepourl' , 'testuname', 'testpwd'))) {
+							$('.testsearchdropdown').empty();
+							testsearch = 0;
+							var actionBody = {};
+							actionBody.repoUrl = $("#testrepourl_"+dynamicId).val();
+							actionBody.userName = $("#testuname_"+dynamicId).val();
+							actionBody.password = $("#testpwd_"+dynamicId).val();
+							commonVariables.hideloading = true;
+							self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
+							self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {
+								 $.each(response.data, function(index, value) {
+									$('.testsearchdropdown').append('<option value='+value+'>'+value+'</option>');
+								});
+								commonVariables.hideloading = false;
+								self.projectslistListener.hidePopupLoad();
 							});
-							commonVariables.hideloading = false;
-							self.projectslistListener.hidePopupLoad();
-						});
-						$('.testsearchdropdown').show();
+							$('.testsearchdropdown').show();
+						}
+					} else if(typeOfRepo === 'commit') {
+						$('.testsearchdropdown').empty();
+							testsearch = 0;
+							var actionBody = {};
+							actionBody.repoUrl = $("#testCommitRepourl"+dynamicId).val();
+							actionBody.userName = $("#testCommitUserName"+dynamicId).val();
+							actionBody.password = $("#testCommitPassword"+dynamicId).val();
+							commonVariables.hideloading = true;
+							self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
+							self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {
+								 $.each(response.data, function(index, value) {
+									$('.testsearchdropdown').append('<option value='+value+'>'+value+'</option>');
+								});
+								commonVariables.hideloading = false;
+								self.projectslistListener.hidePopupLoad();
+							});
+							$('.testsearchdropdown').show();
 					}
 				});
 				
@@ -672,7 +732,10 @@ define(["projectlist/listener/projectListListener"], function() {
 					if(counter == 2) {
 						$('.searchdropdown').hide();
 						var temp = $(this).find(':selected').text();
-						$("#repomessage_"+dynamicId).val(temp);
+						if($(this).attr('typeOfRepo') === 'add')
+							$("#repomessage_"+dynamicId).val(temp);
+						else if($(this).attr('typeofRepo') === 'commit')
+							$("#commitMessage_"+dynamicId).val(temp);
 						counter = 0;
 					}	
 				});	
@@ -687,7 +750,10 @@ define(["projectlist/listener/projectListListener"], function() {
 					if(dotphresco == 2) {
 						$('.dotphrescosearchdropdown').hide();
 						var temp = $(this).find(':selected').text();
-						$("#phrescorepomessage_"+dynamicId).val(temp);
+						if($(this).attr('typeOfRepo') === 'add')
+							$("#phrescorepomessage_"+dynamicId).val(temp);
+						else if($(this).attr('typeofRepo') === 'commit')
+							$("#phrCommitMessage_"+dynamicId).val(temp);
 						dotphresco = 0;
 					}	
 				});	
@@ -702,7 +768,10 @@ define(["projectlist/listener/projectListListener"], function() {
 					if(testsearch == 2) {
 						$('.testsearchdropdown').hide();
 						var temp = $(this).find(':selected').text();
-						$("#testrepomessage_"+dynamicId).val(temp);
+						if($(this).attr('typeOfRepo') === 'add')
+							$("#testrepomessage_"+dynamicId).val(temp);
+						else if($(this).attr('typeofRepo') === 'commit')
+							$("#testCommitMessage_"+dynamicId).val(temp);
 						testsearch = 0;
 					}	
 				});	

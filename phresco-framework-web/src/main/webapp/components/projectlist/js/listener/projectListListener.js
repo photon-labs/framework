@@ -510,11 +510,11 @@ define([], function() {
 				var halfwidth= window.innerWidth/2;
 				if ($(obj).offset().top > halfheight && $(obj).offset().left > halfwidth){
 					var temp = $(obj).attr('name');
-					if(response.responseCode === 'PHR200021') {
-						var temp2 = $(obj).offset().top - 520;
+					if(response.data.srcRepoDetail) {
+						var temp2 = $(obj).offset().top - 460 ;
 						$("#"+temp).css('top',temp2);
 					} else {
-						var temp2 = $(obj).offset().top - 224;
+						var temp2 = $(obj).offset().top - 225;
 						$("#"+temp).css('top',temp2);
 					}	
 				}

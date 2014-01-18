@@ -175,11 +175,11 @@
 								</tr>
 								<tr>
 									<td colspan="2">
-										<textarea class="popuptextarea" name="commitMsg" data-i18n="[placeholder]projectlist.label.message" id="repomessage_{{id}}""></textarea><img class="search"  dynId="{{id}}" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
+										<textarea class="popuptextarea" name="commitMsg" data-i18n="[placeholder]projectlist.label.message" id="repomessage_{{id}}""></textarea><img class="search" typeOfRepo="add"  dynId="{{id}}" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
 									</td>
 								</tr>
 								<tr>
-									<td><select class="searchdropdown"></select></td>
+									<td><select typeOfRepo="add" class="searchdropdown"></select></td>
 								</tr>
 							</tbody>
 						 </table>
@@ -221,11 +221,11 @@
 								</tr>
 								<tr>
 									<td colspan="2">
-										<textarea class="popuptextarea" name="commitMsg" data-i18n="[placeholder]projectlist.label.message" id="phrescorepomessage_{{id}}"></textarea><img class="phrescosearch"  dynId="{{id}}" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
+										<textarea class="popuptextarea" name="commitMsg" data-i18n="[placeholder]projectlist.label.message" id="phrescorepomessage_{{id}}"></textarea><img class="phrescosearch" typeOfRepo="add"  dynId="{{id}}" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
 									</td>
 								</tr>
 								<tr>
-									<td><select class="dotphrescosearchdropdown"></select></td>
+									<td><select typeOfRepo="add" class="dotphrescosearchdropdown"></select></td>
 								</tr>
 							</tbody>
 						 </table>
@@ -267,11 +267,11 @@
 								</tr>
 								<tr>
 									<td colspan="2">
-										<textarea class="popuptextarea" name="testcommitMsg" data-i18n="[placeholder]projectlist.label.message" id="testrepomessage_{{id}}"></textarea><img class="testsearch"  dynId="{{id}}" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
+										<textarea class="popuptextarea" name="testcommitMsg" data-i18n="[placeholder]projectlist.label.message" id="testrepomessage_{{id}}"></textarea><img class="testsearch" typeOfRepo="add"  dynId="{{id}}" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
 									</td>
 								</tr>
 								<tr>
-									<td><select class="testsearchdropdown"></select></td>
+									<td><select typeOfRepo="add" class="testsearchdropdown"></select></td>
 								</tr>
 							</tbody>
 						 </table>
@@ -344,9 +344,12 @@
 										</tr>
 	                                	<tr>
 	                                        <td colspan="2">
-	                                            <textarea class="popuptextarea" data-i18n="[placeholder]projectlist.label.message" id="commitMessage_{{id}}" name="commitMsg"></textarea>
+	                                            <textarea class="popuptextarea" data-i18n="[placeholder]projectlist.label.message" id="commitMessage_{{id}}" name="commitMsg"></textarea><img class="search" typeOfRepo="commit"  dynId="{{id}}" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
 	                                        </td>
 	                                    </tr>
+										<tr>
+											<td><select typeOfRepo="commit" class="searchdropdown"></select></td>
+										</tr>
 	                            	</tbody>
 							 	</table>
 						 	</div>
@@ -402,9 +405,12 @@
 										</tr>
 	                                	<tr>
 	                                        <td colspan="2">
-	                                            <textarea class="popuptextarea" data-i18n="[placeholder]projectlist.label.message" id="phrCommitMessage_{{id}}" name="phrCommitMsg"></textarea>
+	                                            <textarea class="popuptextarea" data-i18n="[placeholder]projectlist.label.message" id="phrCommitMessage_{{id}}" name="phrCommitMsg"></textarea><img class="phrescosearch" typeOfRepo="commit" dynId="{{id}}" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
 	                                        </td>
 	                                    </tr>
+										<tr>
+											<td><select typeOfRepo="commit" class="dotphrescosearchdropdown"></select></td>
+										</tr>
 	                            	</tbody>
 							 	</table>
 							 </div>
@@ -460,9 +466,12 @@
 										</tr>
 	                                	<tr>
 	                                        <td colspan="2">
-	                                            <textarea class="popuptextarea" data-i18n="[placeholder]projectlist.label.message" id="testCommitMessage_{{id}}" name="testCommitMsg"></textarea>
+	                                            <textarea class="popuptextarea" data-i18n="[placeholder]projectlist.label.message" id="testCommitMessage_{{id}}" name="testCommitMsg"></textarea><img class="testsearch" typeOfRepo="commit"  dynId="{{id}}" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
 	                                        </td>
 	                                    </tr>
+										<tr>
+											<td><select typeOfRepo="commit" class="testsearchdropdown"></select></td>
+										</tr>
 	                            	</tbody>
 							 	</table>
 							</div>
