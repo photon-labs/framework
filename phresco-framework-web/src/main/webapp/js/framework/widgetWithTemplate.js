@@ -1134,11 +1134,13 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			checkAllEvent: function (parentObj, childObj, buttonObj) {
 				$(parentObj).bind('click', function(){
 					if ($(parentObj).is(':checked')) {
-						$(childObj).prop("checked", true);
+						//$(childObj).prop("checked", true);
+						$(parentObj).parents('table.srcCommitableFiles').find('input[type="checkbox"]').prop("checked",true);
 						buttonObj.prop("disabled", false);
 						buttonObj.addClass("btn_style");
 					} else {
-						$(childObj).prop("checked", false);
+						//$(childObj).prop("checked", false);
+						$(parentObj).parents('table.srcCommitableFiles').find('input[type="checkbox"]').prop("checked",false);
 						buttonObj.prop("disabled", true);
 						buttonObj.removeClass("btn_style");
 					}

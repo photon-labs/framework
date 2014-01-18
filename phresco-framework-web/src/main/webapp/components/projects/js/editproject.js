@@ -169,12 +169,13 @@ define(["projects/listener/projectsListener"], function() {
 			self.projectsListener.editSeriveTechnolyEvent(self.getData);
 			self.projectsListener.enablebuttonEdit($("#editPrjprojectname").attr("preBuilt"));
 			var selectedPilot = $("select[name='prebuiltapps']").find(':selected').text();
-			var selectedPilotData = commonVariables.api.localVal.getSession(selectedPilot);
+			var selectedPilotData = commonVariables.api.localVal.getJson(selectedPilot);
 			if(selectedPilotData === "null" || selectedPilotData === null || selectedPilotData === "" || selectedPilotData === undefined){
 				self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, '', "pilotlist"), function(response) {
 					if (response !== null && (response.status !== "error" || response.status !== "failure")){
 						$.each(response.data, function(index, value){
-							commonVariables.api.localVal.setJson(value.name, value);
+							var temp = value.name.replace(/\s+/g, "");
+							commonVariables.api.localVal.setJson(temp, value);	
 						});
 					} else {
 						$(".msgdisplay").removeClass("success").addClass("error");

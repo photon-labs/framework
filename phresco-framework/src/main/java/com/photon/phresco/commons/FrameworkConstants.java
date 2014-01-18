@@ -215,6 +215,7 @@ public interface FrameworkConstants {
     String TIMER_TRIGGER = "TimerTrigger";
     String CLASS = "class";
     String SCM = "scm";
+    String SCM_SCMS = "scm/scms";
 	String ZIP_FILE = "zip";
     String SVN = "svn";
     String TRUNK = "trunk";
@@ -454,6 +455,26 @@ public interface FrameworkConstants {
     String HUDSON_TRIGGER_TIMER = "hudson.triggers.TimerTrigger";
     String HUDSON_TRIGGER_SCMTRIGGER = "hudson.triggers.SCMTrigger";
     String SPEC = "spec";
+    String LOCAL2 = "local";
+    String HUDSON_PLUGINS_GIT_EXTENSIONS_IMPL_RELATIVE_TARGET_DIRECTORY = "hudson.plugins.git.extensions.impl.RelativeTargetDirectory";
+    String RELATIVE_TARGET_DIR = "relativeTargetDir";
+    String HUDSON_SCM_SUBVERSION_SCM_MODULE_LOCATION = "hudson.scm.SubversionSCM_-ModuleLocation";
+    String EXTENSIONS = "extensions";
+    String SUBMODULE_CFG = "submoduleCfg";
+    String DO_GENERATE_SUBMODULE_CONFIGURATIONS = "doGenerateSubmoduleConfigurations";
+    String HUDSON_PLUGINS_GIT_BRANCH_SPEC = "hudson.plugins.git.BranchSpec";
+    String HUDSON_PLUGINS_GIT_USER_REMOTE_CONFIG = "hudson.plugins.git.UserRemoteConfig";
+    String USER_REMOTE_CONFIGS = "userRemoteConfigs";
+    String CONFIG_VERSION = "configVersion";
+    String HUDSON_PLUGINS_GIT_GIT_SCM = "hudson.plugins.git.GitSCM";
+    String TEST_FLAG = "test";
+    String PHRESCO_FLAG = "phresco";
+    String SRC_FLAG = "src";
+    String SCMS = "scms";
+    String ORG_JENKINSCI_PLUGINS_MULTIPLESCMS_MULTI_SCM = "org.jenkinsci.plugins.multiplescms.MultiSCM";
+    String PHRESCO_SPLIT_PHRESCO_DIR = "phresco.split.phresco.dir";
+    String PHRESCO_SPLIT_SRC_DIR = "phresco.split.src.dir";
+    String PHRESCO_SPLIT_TEST_DIR = "phresco.split.test.dir";
     String SITES_CONFLUENCESITE_URL = "//sites/com.myyearbook.hudson.plugins.confluence.ConfluenceSite/url";
     String TESTFLIGHT_TOKENPAIR = "//tokenPairs/testflight.TokenPair/tokenPairName";
     String CONFLUENCECONFIGURATION = "confluenceConfigurations";
@@ -1582,6 +1603,8 @@ public interface FrameworkConstants {
    
    /* Android Key store file */
    String SIGNING_TYPES="keystore";
+   
+   String PROJECT_BASEDIR = "${project.basedir}";
    
    /* Unit test report directory */
    String UNIT_TEST_QUNIT_REPORT_DIR = "/do_not_checkin/target/surefire-reports/qunit";

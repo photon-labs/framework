@@ -20,6 +20,7 @@ package com.photon.phresco.framework.impl;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -44,6 +45,9 @@ import org.jdom.xpath.XPath;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.CIJob;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.util.PomProcessor;
 import com.trilead.ssh2.crypto.Base64;
 
 public class ConfigProcessor implements FrameworkConstants {
@@ -83,52 +87,159 @@ public class ConfigProcessor implements FrameworkConstants {
         scmNode.setText(nodeValue);
     }
     
-    
-    
-    public void addAdditionalRepos(String nodePath, CIJob job) throws JDOMException, PhrescoException {
-    	
-    	S_LOGGER.debug("Entering Method ConfigProcessor.createTriggers()");
-    	XPath xpath = XPath.newInstance(nodePath);
-        xpath.addNamespace(root_.getNamespace());
-        Element locations = (Element) xpath.selectSingleNode(root_);
-        locations.removeContent();
-        
-        String local = ".";
-       if (!POM_XML.equalsIgnoreCase(job.getPomLocation())) {
-    	   if (StringUtils.isNotEmpty(job.getPhrescoUrl())) {
-           	local = getTail(job.getPhrescoUrl());
-           	locations.addContent(createSvnRepoElement(job.getPhrescoUrl(), local)); 
-           }
-       } 
-        
-        local = ".";
-        if (StringUtils.isNotEmpty(job.getTestUrl()) || StringUtils.isNotEmpty(job.getPhrescoUrl())) {
-        	local = getTail(job.getUrl());
-        }
-        locations.addContent(createSvnRepoElement(job.getUrl(), local));
-        
-        if (POM_XML.equalsIgnoreCase(job.getPomLocation())) {
-     	   if (StringUtils.isNotEmpty(job.getPhrescoUrl())) {
-            	local = getTail(job.getPhrescoUrl());
-            	locations.addContent(createSvnRepoElement(job.getPhrescoUrl(), local)); 
-            }
-        } 
-        
-        if (StringUtils.isNotEmpty(job.getTestUrl())) {
-        	local = getTail(job.getTestUrl());
-        	locations.addContent(createSvnRepoElement(job.getTestUrl(), local)); 
-        }
+    private String getSplitTags(String appDirName, String dir) throws FileNotFoundException, PhrescoException, PhrescoPomException {
+	
+    	File pomFileLocation = Utility.getPomFileLocation(Utility.getProjectHome() + File.separator + appDirName, "");
+		PomProcessor pom = new PomProcessor(pomFileLocation);
+		
+		String splitDir = pom.getProperty(PHRESCO_SPLIT_PHRESCO_DIR);
+		String srcDir = pom.getProperty(PHRESCO_SPLIT_SRC_DIR);
+		String testDir = pom.getProperty(PHRESCO_SPLIT_TEST_DIR);
+		
+		if (dir.equals(PHRESCO_FLAG) && StringUtils.isNotEmpty(splitDir)) {
+			return splitDir;
+		}
+		
+		if (dir.equals(SRC_FLAG) && StringUtils.isNotEmpty(srcDir)) {
+			return srcDir;
+		}
+		
+		if (dir.equals(TEST_FLAG) && StringUtils.isNotEmpty(testDir)) {
+			return testDir;
+		}
+		
+    	return appDirName;
     }
     
-    private String getTail(String repo) throws PhrescoException {
-        String[] parts = repo.split(FORWARD_SLASH);
-        return parts[parts.length - 2];
+    
+    public void addSvnRepos(CIJob job) throws JDOMException, PhrescoException, FileNotFoundException, PhrescoPomException {
+
+    	S_LOGGER.debug("Entering Method ConfigProcessor.createTriggers()");
+    	XPath xpath = XPath.newInstance(SCM_LOCATIONS);
+    	xpath.addNamespace(root_.getNamespace());
+    	Element locations = (Element) xpath.selectSingleNode(root_);
+    	locations.removeContent();
+
+    	String local = ".";
+    	if (!POM_XML.equalsIgnoreCase(job.getPomLocation())) {
+    		if (StringUtils.isNotEmpty(job.getPhrescoUrl())) {
+    			local = getSplitTags(job.getAppDirName(), PHRESCO_FLAG);
+    			locations.addContent(createSvnRepoElement(job.getPhrescoUrl(), local)); 
+    		}
+    	} 
+
+    	local = ".";
+    	if (StringUtils.isNotEmpty(job.getTestUrl()) || StringUtils.isNotEmpty(job.getPhrescoUrl())) {
+    		local = getSplitTags(job.getAppDirName(), SRC_FLAG);
+    	}
+    	locations.addContent(createSvnRepoElement(job.getUrl(), local));
+
+    	if (POM_XML.equalsIgnoreCase(job.getPomLocation())) {
+    		if (StringUtils.isNotEmpty(job.getPhrescoUrl())) {
+    			local = getSplitTags(job.getAppDirName(), PHRESCO_FLAG);
+    			locations.addContent(createSvnRepoElement(job.getPhrescoUrl(), local)); 
+    		}
+    	} 
+
+    	if (StringUtils.isNotEmpty(job.getTestUrl())) {
+    		local = getSplitTags(job.getAppDirName(), TEST_FLAG);
+    		locations.addContent(createSvnRepoElement(job.getTestUrl(), local)); 
+    	}
+    }
+    
+    public void addGitRepos(CIJob job) throws JDOMException, PhrescoException {
+    	try {
+    		XPath xpath = XPath.newInstance(SCM);
+            xpath.addNamespace(root_.getNamespace());
+            Element scm = (Element) xpath.selectSingleNode(root_);
+            scm.removeAttribute(CI_CLASS);
+			scm.setAttribute(CI_CLASS, ORG_JENKINSCI_PLUGINS_MULTIPLESCMS_MULTI_SCM);
+            
+			scm.removeContent();
+            
+            org.jdom.Element scms = new Element(SCMS);
+			
+			String subMod = "";
+	    	if (!POM_XML.equalsIgnoreCase(job.getPomLocation())) {
+	    		if (StringUtils.isNotEmpty(job.getPhrescoUrl())) {
+	    			subMod = getSplitTags(job.getAppDirName(), PHRESCO_FLAG);
+	    			scms.addContent(constructScms(job.getPhrescoUrl(), job.getPhrescobranch(), subMod)); 
+	    		}
+	    	} 
+
+	    	subMod = "";
+	    	if (StringUtils.isNotEmpty(job.getTestUrl()) || StringUtils.isNotEmpty(job.getPhrescoUrl())) {
+	    		subMod = getSplitTags(job.getAppDirName(), SRC_FLAG);
+	    	}
+	    	scms.addContent(constructScms(job.getUrl(), job.getBranch(), subMod));
+
+	    	if (POM_XML.equalsIgnoreCase(job.getPomLocation())) {
+	    		if (StringUtils.isNotEmpty(job.getPhrescoUrl())) {
+	    			subMod = getSplitTags(job.getAppDirName(), PHRESCO_FLAG);
+	    			scms.addContent(constructScms(job.getPhrescoUrl(), job.getPhrescobranch(), subMod)); 
+	    		}
+	    	} 
+
+	    	if (StringUtils.isNotEmpty(job.getTestUrl())) {
+	    		subMod = getSplitTags(job.getAppDirName(), TEST_FLAG);
+	    		scms.addContent(constructScms(job.getTestUrl(), job.getTestbranch(), subMod)); 
+	    	}
+	    	
+	    	scm.addContent(scms);
+    	} catch (Exception e) {
+    		if (DebugEnabled) {
+        		S_LOGGER.debug("Entering catch block of ConfigProcessor.enableCoberturaReleasePlugin() "+e.getLocalizedMessage());
+        	}
+    		e.printStackTrace();
+			throw new PhrescoException(e);
+		}
+    }
+    
+    private Element constructScms(String url, String branch, String subModule) throws PhrescoException {
+		
+		//1
+		org.jdom.Element gitGitSCM = new Element(HUDSON_PLUGINS_GIT_GIT_SCM);
+		
+		gitGitSCM.addContent(createElement(CONFIG_VERSION, "2"));
+		
+		org.jdom.Element userRemoteConfigs = new Element(USER_REMOTE_CONFIGS);
+		
+		org.jdom.Element gitUserRemoteConfig = new Element(HUDSON_PLUGINS_GIT_USER_REMOTE_CONFIG);
+		gitUserRemoteConfig.addContent(createElement(URL, url));
+		userRemoteConfigs.addContent(gitUserRemoteConfig);
+		gitGitSCM.addContent(userRemoteConfigs);
+		
+		//2
+		org.jdom.Element branches = new Element(BRANCHES);
+		
+		org.jdom.Element gitBranchSpec = new Element(HUDSON_PLUGINS_GIT_BRANCH_SPEC);
+		gitBranchSpec.addContent(createElement(NAME, branch));
+		branches.addContent(gitBranchSpec);
+		gitGitSCM.addContent(branches);
+		
+		//3
+		gitGitSCM.addContent(createElement(DO_GENERATE_SUBMODULE_CONFIGURATIONS, "false"));
+		
+		//4
+		org.jdom.Element submoduleCfg = new Element(SUBMODULE_CFG);
+		submoduleCfg.setAttribute(CI_CLASS, "list");
+		gitGitSCM.addContent(submoduleCfg);
+		
+		//5
+		org.jdom.Element extensions = new Element(EXTENSIONS);
+		
+		org.jdom.Element RelativeTargetDirectory = new Element(HUDSON_PLUGINS_GIT_EXTENSIONS_IMPL_RELATIVE_TARGET_DIRECTORY);
+		RelativeTargetDirectory.addContent(createElement(RELATIVE_TARGET_DIR, subModule));
+		extensions.addContent(RelativeTargetDirectory);
+		gitGitSCM.addContent(extensions);
+		
+		return gitGitSCM;
     }
     
     private org.jdom.Element createSvnRepoElement(String Url, String local) {
-    	org.jdom.Element element = new Element("hudson.scm.SubversionSCM_-ModuleLocation");
-		element.addContent(createElement("remote", Url));
-		element.addContent(createElement("local", local));
+    	org.jdom.Element element = new Element(HUDSON_SCM_SUBVERSION_SCM_MODULE_LOCATION);
+		element.addContent(createElement(REMOTE, Url));
+		element.addContent(createElement(LOCAL2, local));
 		return element;
     }
     

@@ -2000,6 +2000,7 @@ define([], function() {
 									appInfo.techInfo = techInfo;
 									if(preBuilt){
 										var selectedPilot = $("select[name='prebuiltapps']").find(':selected').text();
+										selectedPilot = selectedPilot.replace(/\s+/g, "");
 										var selectedPilotData = commonVariables.api.localVal.getJson(selectedPilot);
 										$.each(selectedPilotData.appInfos, function(index, appInfo){
 											if(appInfo.techInfo.appTypeId === "1dbcf61c-e7b7-4267-8431-822c4580f9cf" && appInfo.techInfo.id === techInfo.id){
@@ -2112,6 +2113,7 @@ define([], function() {
 									appInfo.techInfo = techInfo;
 									if(preBuilt){
 										var selectedPilot = $("select[name='prebuiltapps']").find(':selected').text();
+										selectedPilot = selectedPilot.replace(/\s+/g, "");
 										var selectedPilotData = commonVariables.api.localVal.getJson(selectedPilot);
 										$.each(selectedPilotData.appInfos, function(index, appInfo){
 											if(appInfo.techInfo.appTypeId === "e1af3f5b-7333-487d-98fa-46305b9dd6ee" && appInfo.techInfo.id === techInfo.id){

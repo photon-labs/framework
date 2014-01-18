@@ -110,6 +110,7 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  */
 @Path("/quality")
 public class QualityService extends RestBase implements ServiceConstants, FrameworkConstants, ResponseCodes {
+
 	/** The test suite map. */
 	private static Map<String, Map<String, List<NodeList>>> testSuiteMap = Collections
 			.synchronizedMap(new HashMap<String, Map<String, List<NodeList>>>(8));
@@ -955,14 +956,20 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		StringBuilder screenShotDir = new StringBuilder();
 		ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModule);
 		File testFolderLocation = Utility.getTestFolderLocation(projectInfo, rootModulePath, subModule);
-		screenShotDir.append(testFolderLocation.toString());
-		screenShotDir.append(File.separator);
 		String sceenShotDir = getSceenShotDir(rootModulePath, subModule);
 		if (StringUtils.isEmpty(sceenShotDir)) {
-			screenShotDir.append(getFunctionalTestReportDir(rootModulePath, subModule));
+			String functionalTestReportDir = getFunctionalTestReportDir(rootModulePath, subModule);
+			if (functionalTestReportDir.contains(PROJECT_BASEDIR)) {
+				functionalTestReportDir =  functionalTestReportDir.replace(PROJECT_BASEDIR, testFolderLocation.toString());
+				screenShotDir.append(functionalTestReportDir);
+			} else {
+				screenShotDir.append(testFolderLocation.toString());
+			}
 			screenShotDir.append(File.separator);
 			screenShotDir.append(SCREENSHOT_DIR);
 		} else {
+			screenShotDir.append(testFolderLocation.toString());
+			screenShotDir.append(File.separator);
 			screenShotDir.append(sceenShotDir);
 		}
 		screenShotDir.append(File.separator);
@@ -1142,8 +1149,11 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		try {
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModule);
 			File testFolderLocation = Utility.getTestFolderLocation(projectInfo, rootModulePath, subModule);
-			sb.append(testFolderLocation.toString());
-			sb.append(getFunctionalTestReportDir(rootModulePath, subModule));
+			String functionalTestReportDir = getFunctionalTestReportDir(rootModulePath, subModule);
+			if (functionalTestReportDir.contains(PROJECT_BASEDIR)) {
+				functionalTestReportDir = functionalTestReportDir.replace(PROJECT_BASEDIR, testFolderLocation.getPath());
+			}
+			sb.append(functionalTestReportDir);
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
 		}
@@ -1498,8 +1508,9 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 */
 	private String getFunctionalTestReportDir(String rootModulePath,String subModule) throws PhrescoException {
 		try {
-			return Utility.getPomProcessor(rootModulePath, subModule).getProperty(
+			String property = Utility.getPomProcessor(rootModulePath, subModule).getPropertyValue(
 					Constants.POM_PROP_KEY_FUNCTEST_RPT_DIR);
+			return property;
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		}
