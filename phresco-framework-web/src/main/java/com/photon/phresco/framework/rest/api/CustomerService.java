@@ -96,7 +96,7 @@ public class CustomerService extends RestBase implements ServiceConstants, Frame
 	}
 	
 	@GET
-	@Path ("REST_API_LOGIN_ICON")
+	@Path (REST_API_LOGIN_ICON)
 	@Produces (MediaType.APPLICATION_JSON)
 	public Response loginIcon(@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
 		ResponseInfo<JSONObject> responseData = new ResponseInfo<JSONObject>();
