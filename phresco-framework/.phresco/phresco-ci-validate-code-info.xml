@@ -16,23 +16,47 @@
       <configuration>
       <parameters>
         <parameter>
-            <name>
-               <value lang="en">Validate Against</value>
-            </name>
-            <type>List</type>
-            <required>false</required>
-            <editable>true</editable>
-            <description></description>
-            <key>sonar</key>
-            <possibleValues>
-                <value key="src" dependency="skipTests">Source</value>
-                <value key="functional">Functional Test</value>
-            </possibleValues>
-            <multiple>false</multiple>
-            <sort>false</sort>
-            <show>true</show>
-          <value></value>
-        </parameter>
+                    <name>
+                        <value lang="en">Validate Against</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>sonar</key>
+                    <possibleValues>
+                        <value key="src" dependency="src,skipTests">Source</value>
+                        <value key="functional">Functional Test</value>
+                    </possibleValues>
+                    <multiple>false</multiple>
+                    <value>src</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+				<parameter>
+					<pluginParameter>plugin</pluginParameter>
+						<name>
+							<value lang="en">Technology</value>
+						</name>
+						<mavenCommands>
+							<mavenCommand>
+								<key>java</key>
+								<value>-Pjava</value>
+							</mavenCommand>
+						</mavenCommands>
+					  <type>List</type>
+					  <required>false</required>
+					  <editable>true</editable>
+					  <description></description>
+					  <key>src</key>
+						<possibleValues>
+							<value key="java" dependency="skipTests">java</value>
+						</possibleValues>
+						<multiple>false</multiple>
+						<sort>false</sort>
+						<show>false</show>
+					  <value></value>
+				</parameter>
         <parameter>
             <pluginParameter>plugin</pluginParameter>
             <mavenCommands>

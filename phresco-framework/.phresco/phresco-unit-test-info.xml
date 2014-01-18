@@ -52,7 +52,7 @@
                     <sort>false</sort>
                     <show>true</show>
                 </parameter>
-				 <parameter>
+                <parameter>
                     <name>
                         <value lang="en">Show Settings</value>
                     </name>
@@ -67,7 +67,7 @@
                     <show>false</show>
                     <dependency>environmentName</dependency>
                 </parameter>
-				  <parameter>
+                <parameter>
                     <name>
                         <value lang="en">Environment</value>
                     </name>
@@ -76,10 +76,10 @@
                         <class>com.photon.phresco.impl.EnvironmentsParameterImpl</class>
                         <dependencies>
                             <dependency>
-								<groupId>com.photon.phresco.commons</groupId>
-								<artifactId>phresco-commons</artifactId>
-								<type>jar</type>
-								<version>3.2.0.2000</version>
+<groupId>com.photon.phresco.commons</groupId>
+<artifactId>phresco-commons</artifactId>
+<type>jar</type>
+<version>3.2.0.2000</version>
                             </dependency>
                         </dependencies>
                     </dynamicParameter>

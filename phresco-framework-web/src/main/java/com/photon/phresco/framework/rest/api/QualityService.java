@@ -1339,7 +1339,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		for (File resultFile : resultFiles) {
 			Document doc = getDocument(resultFile);
 			NodeList testSuiteNodeList = evaluateTestSuite(doc, testSuitePath);
-			if (testSuiteNodeList.getLength() > 0) {
+			if (testSuiteNodeList != null && testSuiteNodeList.getLength() > 0) {
 				List<TestSuite> allTestSuites = getTestSuite(testSuiteNodeList);
 				for (TestSuite tstSuite : allTestSuites) {
 					List<NodeList> list = new ArrayList<NodeList> ();
@@ -1404,8 +1404,10 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		XPathExpression xPathExpression;
 		NodeList testSuiteNode = null;
 		try {
-			xPathExpression = xpath.compile(testSuitePath);
-			testSuiteNode = (NodeList) xPathExpression.evaluate(doc, XPathConstants.NODESET);
+			if (StringUtils.isNotEmpty(testSuitePath)) {
+				xPathExpression = xpath.compile(testSuitePath);
+				testSuiteNode = (NodeList) xPathExpression.evaluate(doc, XPathConstants.NODESET);
+			}
 		} catch (XPathExpressionException e) {
 			throw new PhrescoException(e);
 		}

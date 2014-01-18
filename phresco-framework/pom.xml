@@ -29,6 +29,10 @@
         <phresco.functionalTest.testcase.path>/testcase</phresco.functionalTest.testcase.path>
         <phresco.functionalTest.testsuite.xpath>/testsuite</phresco.functionalTest.testsuite.xpath>
         <phresco.functionalTest.adapt.config>/test/functional/src/test/java/phresco/testcases/phresco-env-config.xml</phresco.functionalTest.adapt.config>
+		<phresco.unitTest>java</phresco.unitTest>
+		<phresco.unitTest.java.report.dir>/do_not_checkin/reports/unitReports</phresco.unitTest.java.report.dir>
+		<phresco.unitTest.java.testsuite.xpath>/testsuite</phresco.unitTest.java.testsuite.xpath>
+		<phresco.unitTest.java.testcase.path>/testcase</phresco.unitTest.java.testcase.path>
     </properties>
 
     <dependencies>
