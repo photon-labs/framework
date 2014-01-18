@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+<phresco>
+               <!-- Create Project -->               
+			   <windowsMetroArchetypeName>WindowsMetroArchetypeProject</windowsMetroArchetypeName>
+			   <windowsMetroArchetypeDesc>This is WindowsMetro Project</windowsMetroArchetypeDesc>			  
+		       <windowsMetroArchetypeAppCode>WindowsMetroArchetype</windowsMetroArchetypeAppCode>		      
+		       <mobileValue>Windows</mobileValue>
+		       <mobileType>Windows Metro</mobileType>
+		       
+		       <!-- Edit App Page -->
+		        <windowsMetroArchetypeEditDesc>This is WindowsMetro Application</windowsMetroArchetypeEditDesc>
+		       
+		       <!-- Edit App -->		       
+		        <windowsMetroArchetypeEditAppLink>//a[contains(text(),'WindowsMetroArchetype')]</windowsMetroArchetypeEditAppLink>
+		       
+		       <!-- Edit Project -->		       
+		       <editProject>//img[@name='editproject']</editProject>
+		       
+		       <!-- Generate Build -->
+               <buildName>WindowsMetroBuild</buildName>
+               
+                 <!--Pdf Report  -->
+		       <windowsMetroArchetypePdfReportIcon>//tr[@class='WindowsMetroArchetype']/td[4]/a/img</windowsMetroArchetypePdfReportIcon>
+		       <windowsMetroArchetypeOverAllReportName>WindowsMetro Archetype App OverAll Testing Report</windowsMetroArchetypeOverAllReportName>
+		       <windowsMetroArchetypeDetailReportName>WindowsMetro Archetype App Detailed Testing Report</windowsMetroArchetypeDetailReportName>
+		       
+</phresco>             
+</environment>

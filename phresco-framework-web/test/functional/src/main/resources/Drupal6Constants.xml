@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+	<phresco>
+		<!-- Create Project -->
+		<drupal6ArchetypeName>Drupal6ArchetypeProject</drupal6ArchetypeName>
+		<drupal6ArchetypeDesc>This is Drupal6 Archetype Project</drupal6ArchetypeDesc>
+		<drupal6ArchetypeAppCode>Drupal6Archetype</drupal6ArchetypeAppCode>
+		<technologyValue>Drupal6</technologyValue>
+		<versionValue>6.3</versionValue>
+		<startDate>//td[text()='19']</startDate>
+		<endDate></endDate>
+		
+		<!-- Edit Application -->
+		<drupal6ArchetypeEditApp>//a[contains(text(),'Drupal6Archetype')]</drupal6ArchetypeEditApp>
+
+		<!-- Edit Project -->
+		<editProject>//img[@name='editproject']</editProject>
+
+		<!-- Edit Application Desc -->
+		<appEditDesc>This is Drupal6 Application</appEditDesc>
+		
+		<!-- Configuration Server -->
+		<configServer>Server</configServer>
+		<configServerDesc>This is Server Configuration</configServerDesc>
+		<configServerProtocol>http</configServerProtocol>
+		<configServerHost>172.16.27.151</configServerHost>
+		<configServerPort>80</configServerPort>
+		<configServerUName>admin</configServerUName>
+		<configServerPwd>admin</configServerPwd>
+		<configServerCertificate>cerficate</configServerCertificate>
+		<configServerDeployDir>C:\wamp\www</configServerDeployDir>
+		<configServerContext>drupal6archetype</configServerContext>
+		
+		<!-- Configuration Db -->
+		<configDb>Database</configDb>
+		<configDbDesc>This is Database Configuration</configDbDesc>
+		<configDbHost>172.16.27.151</configDbHost>
+		<configDbPort>3306</configDbPort>
+		<configDbUsername>root</configDbUsername>
+		<configDbPwd>admin</configDbPwd>
+		<configDbName>drupal6archetype</configDbName>
+
+		<!-- Generate Build -->
+		<buildName>Drupal6Build</buildName>
+		
+		<!--Pdf Report -->
+		<drupal6ArchetypePdfReportIcon>//tr[@class='Drupal6Archetype']/td[4]/a/img</drupal6ArchetypePdfReportIcon>
+		<drupal6ArchetypeOverAllReportName>Drupal6 Archetype OverAll Testing Report</drupal6ArchetypeOverAllReportName>
+		<drupal6ArchetypeDetailReportName>Drupal6 Archetype Detailed Testing Report</drupal6ArchetypeDetailReportName>
+		
+	</phresco>
+</environment>

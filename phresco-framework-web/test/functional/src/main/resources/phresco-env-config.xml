@@ -1,0 +1,19 @@
+<environment>
+
+	<Browser>chrome</Browser>
+	<Resolution>1280x960</Resolution>
+
+	<Server desc="" name="server">
+		<context>phresco</context>
+		<admin_username />
+		<deploy_dir>C:/</deploy_dir>
+		<additional_context />
+		<port>2468</port>
+		<admin_password />
+		<version>7.0.x</version>
+		<type>Apache Tomcat</type>
+		<remoteDeployment>false</remoteDeployment>
+		<host>172.16.27.151</host>
+		<protocol>http</protocol>
+	</Server>
+</environment>
