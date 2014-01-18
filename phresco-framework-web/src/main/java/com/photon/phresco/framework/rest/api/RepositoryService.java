@@ -19,21 +19,17 @@ package com.photon.phresco.framework.rest.api;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PushbackInputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -42,13 +38,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.UUID;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -70,7 +61,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileExistsException;
@@ -87,14 +77,10 @@ import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
-import org.eclipse.jgit.api.ListBranchCommand.ListMode;
-import org.eclipse.jgit.api.ListTagCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.lib.Config;
-import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.lib.StoredConfig;
 import org.joda.time.DateTime;
 import org.joda.time.Weeks;
 import org.json.simple.JSONObject;
@@ -958,8 +944,8 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				if (checkout.length() > 0) {
 					status = RESPONSE_STATUS_ERROR;
 					errorCode = PHRSR10002;
-					ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, null,
-							checkout, status, errorCode);
+					ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, new PhrescoException(checkout.toString()),
+							null, status, errorCode);
 					return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 							.build();
 				}
@@ -1008,8 +994,8 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 					status = RESPONSE_STATUS_ERROR;
 					errorCode = PHRSR10003;
 					
-					ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
-							"Error", status, errorCode);
+					ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, new PhrescoException("Error"),
+							null, status, errorCode);
 					return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 							.build();
 				}
@@ -1134,8 +1120,8 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				if (checkout.length() > 0) {
 					status = RESPONSE_STATUS_ERROR;
 					errorCode = PHRSR10002;
-					ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, null,
-							checkout, status, errorCode);
+					ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, new PhrescoException(checkout.toString()),
+							null, status, errorCode);
 					return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 							.build();
 				}
@@ -1184,8 +1170,8 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				if (error.length() > 0) {
 					status = RESPONSE_STATUS_ERROR;
 					errorCode = PHRSR10005;
-					ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, null,
-							error, status, errorCode);
+					ResponseInfo<StringBuilder> finalOutput = responseDataEvaluation(responseData, new PhrescoException(error.toString()),
+							null, status, errorCode);
 					return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 							.build();
 				}
