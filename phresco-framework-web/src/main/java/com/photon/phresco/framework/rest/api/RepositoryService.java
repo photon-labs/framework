@@ -717,6 +717,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		String srcRepoUrl = "";
 		Document document = null;
 		List<String> documents = new ArrayList<String>();
+		List<String> errormessages = new ArrayList<String>();
 		try {
 			List<ApplicationInfo> appInfos = com.photon.phresco.framework.impl.util.FrameworkUtil.getAppInfos(customerId, projectId);
 			for (ApplicationInfo applicationInfo : appInfos) {
@@ -742,8 +743,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 								String docs = com.photon.phresco.framework.impl.util.FrameworkUtil.convertDocumentToString(document);
 								documents.add(docs);
 							} catch (PhrescoException e) {
-								e.printStackTrace();
-								List<String> errormessages = new ArrayList<String>();
 								String message = e.getMessage();
 								if (StringUtils.isNotEmpty(message)) {
 									message = message.substring(message.indexOf(HTTPS));
@@ -755,7 +754,21 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 									return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 								}
 							}
+						} else {
+							errormessages.add(srcRepoUrl);
+							status = RESPONSE_STATUS_FAILURE;
+							errorCode = PHRSR10007;
+							Exception exception = new Exception(AUTHENTICATION_FAILED);
+							ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, exception, errormessages, status, errorCode);
+							return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 						}
+					} else {
+						errormessages.add(srcRepoUrl);
+						status = RESPONSE_STATUS_FAILURE;
+						errorCode = PHRSR10007;
+						Exception exception = new Exception(AUTHENTICATION_FAILED);
+						ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, exception, errormessages, status, errorCode);
+						return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 					}
 				}
 			}
@@ -769,9 +782,32 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		successCode = PHRSR00001;
 		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, documents, status, successCode);
 		response = Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-
 		return response;
 	}
+	
+	@POST
+	@Path("/saveCredentails")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response saveCredential(@QueryParam(REST_QUERY_URL) String url, @QueryParam(REST_QUERY_USER_NAME) String username, @QueryParam(REST_QUERY_PASSWORD) String password) throws PhrescoException {
+		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
+		Response response = null;
+		List<String> documents = new ArrayList<String>();
+		try {
+			String encryptedPassword = com.photon.phresco.framework.impl.util.FrameworkUtil.getEncryptedPassword(password);
+			com.photon.phresco.framework.impl.util.FrameworkUtil.saveCredential(url, username, encryptedPassword);
+		} catch (PhrescoException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHRSR10009;
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+		}
+		status = RESPONSE_STATUS_SUCCESS;
+		successCode = PHRSR00009;
+		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, documents, status, successCode);
+		response = Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		return response;
+	}
+	
 
 	/**
 	 * To get the artifact information
