@@ -15,7 +15,7 @@ define([], function() {
 						if (commonVariables.callLadda) {
 							Ladda.stopAll();
 						}
-						if (response !== null && response.status !== "error" && response.status !== "failure") {
+						if (response !== null && response.status !== "error") {
 							callback(response);
 						} else {
 							commonVariables.api.showError(response.responseCode ,"error", true);
@@ -51,7 +51,11 @@ define([], function() {
 			}
 			if (action === "browseSourceRepo") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + 'repository/browseSourceRepo?userId='+userId+'&customerId='+customerId+'&projectId='+projectId+'&userName=admin&password=manage';
+				header.webserviceurl = commonVariables.webserviceurl + 'repository/browseSourceRepo?userId='+userId+'&customerId='+customerId+'&projectId='+projectId;
+			}
+			if (action === "saveCredentials") {
+				header.requestMethod = "POST";
+				header.webserviceurl = commonVariables.webserviceurl + 'repository/saveCredentails?url='+requestBody.url+'&username='+requestBody.username+'&password='+requestBody.password;
 			}
 			if (action === "artifactInfo") {
 				header.requestMethod = "GET";
@@ -79,7 +83,7 @@ define([], function() {
 			}
 			if (action === "getVersion") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + 'repository/version?appDirName='+requestBody.appDirName+'&currentbranchname='+requestBody.currentbranchname;
+				header.webserviceurl = commonVariables.webserviceurl + 'repository/version?appDirName='+requestBody.appDirName+'&currentBranch='+requestBody.currentBranch;
 			}
 			
 			return header;
@@ -156,7 +160,7 @@ define([], function() {
 									var appDirName = $(this).find('a').attr("appdirname");
 									var requestBody = {};
 									requestBody.appDirName = appDirName;
-									requestBody.currentbranchname = selectedBranch;
+									requestBody.currentBranch = selectedBranch;
 									self.repository(self.getActionHeader(requestBody, "getVersion"), function(response) {
 										var responseData = response.data
 										$("#branchFromVersion").val(responseData.currentVersion);
@@ -261,20 +265,31 @@ define([], function() {
 			var self = this;
 			if (!self.validateCreateBranch()) {
 				commonVariables.hideloading = true;
-				self.showBtnLoading("#createBranch");
-				var requestBody = {};
-				requestBody.appDirName = $('input[name=selectedAppDirName]').val();
-				requestBody.version = $("#createBranchVersion").val();
-				requestBody.username = $("#branchUsername").val();
-				requestBody.password = $("#branchPassword").val();
-				requestBody.comment = $("#branchComment").val();
-				requestBody.currentbranchname = $("#branchFromName").val();
-				requestBody.branchname = $("#newBranchName").val();
-				requestBody.downloadoption = $("#downloadBrToWorkspace").is(":checked");
+				self.showHideConsole();
+				var appDirName = $('input[name=selectedAppDirName]').val();
+				var releaseVersion = $("#createBranchVersion").val();
+				var comment = $("#branchComment").val();
+				var currentbranch = $("#branchFromName").val();
+				var branchname = $("#newBranchName").val();
+				var downloadoption = $("#downloadBrToWorkspace").is(":checked");
+				
+				var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+				var userId = "";
+				if (userInfo !== "") {
+					userId = userInfo.id; 
+				}
+				
+				var queryString = 'appDirName='+appDirName+'&comment='+comment+'&branchName='+branchname+'&currentBranch='+currentbranch+
+									'&releaseVersion='+releaseVersion+'&downloadOption='+downloadoption;
 				commonVariables.consoleError = false;
-				self.repository(self.getActionHeader(requestBody, "createBranch"), function(response) {
-					commonVariables.hideloading = false;
-					commonVariables.navListener.onMytabEvent(commonVariables.sourceRepo);
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal) {
+					retVal.mvnCreateBranch(queryString, '#testConsole', function(response) {
+						commonVariables.hideloading = false;
+						$('.progress_loading').hide();
+						if (!commonVariables.consoleError) {
+							commonVariables.navListener.onMytabEvent(commonVariables.sourceRepo);
+						}
+					});
 				});
 			}
 		},
@@ -293,34 +308,38 @@ define([], function() {
 				commonVariables.navListener.validateTextBox( $("#createBranchVersion"), 'Enter version');
 				return true;
 			}
-			if (self.isBlank(username)) {
-				commonVariables.navListener.validateTextBox( $("#branchUsername"), 'Enter Username');
-				return true;
-			}
-			if (self.isBlank(password)) {
-				commonVariables.navListener.validateTextBox( $("#branchPassword"), 'Enter Password');
-				return true;
-			}
 			return false;
 		},
 		
 		createTag : function() {
 			var self = this;
 			if (!self.validateCreateTag()) {
+				self.showHideConsole();
 				commonVariables.hideloading = true;
-				self.showBtnLoading("#createTag");
-				var requestBody = {};
-				requestBody.appDirName = $('input[name=selectedAppDirName]').val();
-				requestBody.username = $("#tagUsername").val();
-				requestBody.password = $("#tagPassword").val();
-				requestBody.comment = $("#tagComment").val();
-				requestBody.currentbranchname = $("#tagFromName").val();
-				requestBody.version = $("#tagFromVersion").val();
-				requestBody.tagname = $("#tagName").val();
-				requestBody.downloadoption = $("#downloadTagToWorkspace").is(":checked");
-				self.repository(self.getActionHeader(requestBody, "createTag"), function(response) {
-					commonVariables.hideloading = false;
-					commonVariables.navListener.onMytabEvent(commonVariables.sourceRepo);
+				var appDirName = $('input[name=selectedAppDirName]').val();
+				var comment = $("#tagComment").val();
+				var currentBranch = $("#tagFromName").val();
+				var releaseVersion = $("#tagFromVersion").val();
+				var tag = $("#tagName").val();
+				var downloadoption = $("#downloadTagToWorkspace").is(":checked");
+				
+				var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+				var userId = "";
+				if (userInfo !== "") {
+					userId = userInfo.id; 
+				}
+				
+				var queryString = 'appDirName='+appDirName+'&comment='+comment+'&currentBranch='+currentBranch+'&releaseVersion='+releaseVersion+
+									'&tag='+tag;
+				commonVariables.consoleError = false;
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal) {
+					retVal.mvnTag(queryString, '#testConsole', function(response) {
+						commonVariables.hideloading = false;
+						$('.progress_loading').hide();
+						if (!commonVariables.consoleError) {
+							commonVariables.navListener.onMytabEvent(commonVariables.sourceRepo);
+						}
+					});
 				});
 			}
 		},
@@ -332,14 +351,6 @@ define([], function() {
 			var password = $("#tagPassword").val();
 			if (self.isBlank(tagName)) {
 				commonVariables.navListener.validateTextBox( $("#tagName"), 'Enter Tag name');
-				return true;
-			}
-			if (self.isBlank(username)) {
-				commonVariables.navListener.validateTextBox( $("#tagUsername"), 'Enter Username');
-				return true;
-			}
-			if (self.isBlank(password)) {
-				commonVariables.navListener.validateTextBox( $("#tagPassword"), 'Enter Password');
 				return true;
 			}
 			return false;
@@ -354,18 +365,17 @@ define([], function() {
 				var releaseVersion = $("#releaseVersion").val();
 				var developmentVersion = $("#devVersion").val();
 				var tag = $("#releaseTagName").val();
-				var username = $("#releaseUsername").val();
-				var password = $("#releasePassword").val();
 				var comment = $("#releaseComment").val();
 				var branchName = $("input[name=selectedBranchName]").val();
 				var appDirName = $('input[name=selectedAppDirName]').val();
 				
 				var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
-				if(userInfo !== "") { 
+				var userId = "";
+				if (userInfo !== "") { 
 					userId = userInfo.id; 
 				}
 				
-				var queryString = 'appDirName='+appDirName+'&username='+username+'&password='+password+'&message='+comment+
+				var queryString = 'appDirName='+appDirName+'&message='+comment+
 									'&developmentVersion='+developmentVersion+'&releaseVersion='+releaseVersion+'&tag='+tag+'&branchName='+branchName+'&userId='+userId;
 				commonVariables.consoleError = false;
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal) {
@@ -393,14 +403,6 @@ define([], function() {
 			}
 			if (self.isBlank(tagName)) {
 				commonVariables.navListener.validateTextBox( $("#releaseTagName"), 'Enter Tag name');
-				return true;
-			}
-			if (self.isBlank(username)) {
-				commonVariables.navListener.validateTextBox( $("#releaseUsername"), 'Enter Username');
-				return true;
-			}
-			if (self.isBlank(password)) {
-				commonVariables.navListener.validateTextBox( $("#releasePassword"), 'Enter Password');
 				return true;
 			}
 			if (self.isBlank(devVersion)) {
@@ -434,7 +436,36 @@ define([], function() {
 			$('.unit_close').animate({right: value1+10},500);
 			$('.unit_info table').removeClass("big").addClass("small");
 			$('#consoleImg').attr('data-flag','false');
-		}
+		},
+		
+		saveCredentials : function() {
+			var self = this;
+			if (!self.validateSaveCredentials()) {
+				var requestBody = {};
+				requestBody.url = $("#repoUrl").val();
+				requestBody.username = $("#repoUsername").val();
+				requestBody.password = $("#repoPassword").val();
+				self.repository(self.getActionHeader(requestBody, "saveCredentials"), function(response) {
+					$("#repoCredentials").modal("hide");
+					commonVariables.navListener.onMytabEvent(commonVariables.sourceRepo);
+				});
+			}
+		},
+		
+		validateSaveCredentials : function() {
+			var self = this;
+			var username = $("#repoUsername").val();
+			var password = $("#repoPassword").val();
+			if (self.isBlank(username)) {
+				commonVariables.navListener.validateTextBox($("#repoUsername"), 'Enter Username');
+				return true;
+			}
+			if (self.isBlank(password)) {
+				commonVariables.navListener.validateTextBox($("#repoPassword"), 'Enter Password');
+				return true;
+			}
+			return false;
+		},
 	});
 
 	return Clazz.com.components.repository.js.listener.RepositoryListener;

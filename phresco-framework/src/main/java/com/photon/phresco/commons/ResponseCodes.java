@@ -637,10 +637,8 @@ public interface ResponseCodes {
 	String PHRSR10006 = "PHRSR10006"; //Delete temp failure
 	String PHRSR00007 = "PHRSR00007"; //Release started successfully
 	String PHRSR10008 = "PHRSR10008"; //Release startup failed
-	
-	/**
-	 * Authentincation Failures
-	 */
-	
 	String PHRSR10007 = "PHRSR10007"; //Authentication Failure
+	String PHRSR10009 = "PHRSR10009"; //Credential save failed
+	String PHRSR00009 = "PHRSR00009"; //Credential save successfully
+	
 }

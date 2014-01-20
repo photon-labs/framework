@@ -56,19 +56,26 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 		 */
 		postRender : function(element) {	
 			var self = this;
-			var self = this;
 			var requestBody = {};
 			self.repositoryListener.repository(self.repositoryListener.getActionHeader(requestBody, "browseSourceRepo"), function(response) {
-				var responseData = response.data;
-				if (responseData !== undefined && responseData !== null && responseData.length > 0) {
-					$.each(responseData, function(index, value) {
-						self.repositoryListener.constructTree(value);
-						if (responseData.length === index + 1) {
-							setTimeout(function() {
-								self.customScroll($(".tree_view"));
-							}, 700);
-						}
-					});
+				if (response.responseCode === "PHRSR10007") {
+					var repoUrl = response.data[0];
+					$('.modal-backdrop, #repoCredentials').remove();
+					$(commonVariables.basePlaceholder).append('<div id="repoCredentials" class="modal fade errpopup hideContent" tabindex="-1"><div class="modal-body temp"><table><tr><td colspan="2"><span>URL : </span>'+repoUrl+'</td></tr><tr><td><span>User Name</span><sup>*</sup></td><td><span>Password</span><sup>*</sup></td></tr><tr><td><input type="text" id="repoUsername" style="margin-right:10px"></td><td><input type="password" id="repoPassword"></td></tr></table></div><div class="modal-footer"><input type="button" id="submitCredentials" class="btn btn_style" value="Ok"><input type="button" data-dismiss="modal" value="Cancel" class="btn btn_style" id="closeCredPopup"></div><input type="hidden" id="repoUrl" value="'+repoUrl+'"/></div>');
+					$("#repoCredentials").modal("show");
+					self.submitCredentials();
+				} else {
+					var responseData = response.data;
+					if (responseData !== undefined && responseData !== null && responseData.length > 0) {
+						$.each(responseData, function(index, value) {
+							self.repositoryListener.constructTree(value);
+							if (responseData.length === index + 1) {
+								setTimeout(function() {
+									self.customScroll($(".tree_view"));
+								}, 700);
+							}
+						});
+					}
 				}
 			});
 			
@@ -146,6 +153,19 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 			
 			self.customScroll($(".file_view"));
 			self.customScroll($(".consolescrolldiv"));
+		},
+		
+		submitCredentials : function() {
+			var self = this;
+			$('#submitCredentials').unbind("click");
+			$('#submitCredentials').bind("click", function() {
+				self.repositoryListener.saveCredentials();
+			});
+			
+			$('#closeCredPopup').unbind("click");
+			$('#closeCredPopup').bind("click", function() {
+				commonVariables.navListener.onMytabEvent(commonVariables.sourceRepo);
+			});
 		},
 		
 		openVersionPopup : function() {

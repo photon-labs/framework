@@ -156,6 +156,16 @@ define([], function() {
 			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnRelease, paramData);
 			self.mvnService(header, divId, callback);
 		},
+		
+		mvnCreateBranch : function(paramData, divId, callback){
+			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnCreateBranch, paramData);
+			self.mvnService(header, divId, callback);
+		},
+		
+		mvnTag : function(paramData, divId, callback){
+			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnTag, paramData);
+			self.mvnService(header, divId, callback);
+		},
 
 		mvnService : function(header, divId, callback){
 			try{
