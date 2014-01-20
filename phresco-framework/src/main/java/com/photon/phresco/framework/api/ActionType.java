@@ -26,7 +26,7 @@ public enum ActionType {
 	START_HUB("phresco:start-hub"), STOP_HUB("phresco:stop-hub"), START_NODE("phresco:start-node"), STOP_NODE("phresco:stop-node"), PDF_REPORT("phresco:pdf-report"),
 	MINIFY("yuicompressor:compress"), IPA_DOWNLOAD("xcode:ipaBuilder"), THEME_VALIDATOR("phresco:theme-validator"), CONTENT_VALIDATOR("phresco:content-validator"),
 	THEME_CONVERTOR("phresco:theme-convertor"), CONTENT_CONVERTOR("phresco:content-convertor"), PROCESS_BUILD("phresco:process-build"), ECLIPSE("phresco:eclipse"),
-	LIQUIBASE("phresco:liquibase"), RELEASE("phresco:release");
+	LIQUIBASE("phresco:liquibase"), RELEASE("phresco:release"), CREATE_BRANCH("phresco:createBranch"), TAG("phresco:tag");
 	
 	private String actionType;
 
