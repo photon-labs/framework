@@ -4816,6 +4816,12 @@ a.selected { background:#dcdcdc; }
 .jstree-default .jstree-unchecked a .jstree-checkbox { _background-position:-2px -19px; }
 /* IE6 END */
 
+.tree_view ul li ul li ul li span a { background:#CCC !important; padding:1px 5px !important; border-radius:5px; border:1px solid #ccc; }
+
+.tree_view ul li ul li ul li span { padding:0px !important; }
+
+.tree_view ul li ul li ul li span i { display:none; }
+
 
 /**************************** STYLES FOR TREEVIEW ENDS ******************************************/
 
