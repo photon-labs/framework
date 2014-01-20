@@ -1273,21 +1273,33 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	@Path("/release")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response release(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam("username") String username, @QueryParam("password") String password,
 			@QueryParam("message") String message, @QueryParam("developmentVersion") String developmentVersion,
 			@QueryParam("releaseVersion") String releaseVersion, @QueryParam("tag") String tag,
-			@QueryParam("branchName") String branchName, @QueryParam("deploy") String deploy,
-			@QueryParam("environmentName") String environmentName, @QueryParam(REST_QUERY_USERID) String userId) {
+			@QueryParam("branchName") String branchName, @QueryParam(REST_QUERY_USERID) String userId) {
 		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
 		ActionResponse response = new ActionResponse();
+		String projHome = "";
+		String username = "";
+		String password = "";
 		try {
+			projHome = Utility.getProjectHome().concat(appDirName);
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
-			ProjectInfo projectInfo = Utility.getProjectInfo(Utility.getProjectHome().concat(appDirName), "");
+			ProjectInfo projectInfo = Utility.getProjectInfo(projHome, "");
 			String customerId = projectInfo.getCustomerIds().get(0);
 			Customer customer = serviceManager.getCustomer(customerId);
 			com.photon.phresco.commons.model.RepoInfo repoInfo = customer.getRepoInfo();
-			String rootModulePath = Utility.getProjectHome() + appDirName;
-			File pomFile = Utility.getPomFileLocation(rootModulePath, "");
+			File pomFile = Utility.getPomFileLocation(projHome, "");
+			PomProcessor pomProc = new PomProcessor(pomFile);
+			String sourceRepoUrl = pomProc.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
+			if(StringUtils.isNotEmpty(sourceRepoUrl)) {
+				File credentialPath = new File(Utility.getPhrescoTemp() + File.separator + CREADENTIAL_JSON);
+				if (credentialPath.exists()) {
+					Map<String, String> credential = com.photon.phresco.framework.impl.util.FrameworkUtil.getCredential(sourceRepoUrl);
+					username = credential.get(REQ_USER_NAME);
+					String encryptedPassword = credential.get(REQ_PASSWORD);
+					password = com.photon.phresco.framework.impl.util.FrameworkUtil.getdecryptedPassword(encryptedPassword);
+				}	
+			}
 			StringBuilder builder = new StringBuilder(Constants.MVN_COMMAND);
 			builder.append(Constants.SPACE);
 			builder.append(ActionType.RELEASE.getActionType());
@@ -1333,6 +1345,10 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		} catch (PhrescoException e) {
 			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR,
 					PHR610044);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoPomException e) {
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR,
+					PHR610045);
 			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
