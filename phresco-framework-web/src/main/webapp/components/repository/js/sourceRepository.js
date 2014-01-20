@@ -93,6 +93,14 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 				self.opencc(this, $(this).attr('name'));
 			});
 			
+			$("#releaseVersion,#devVersion").bind('input propertychange', function() {
+				var str = $(this).val();
+				str = self.specialCharValidation(str);
+				str = str.replace(/[^a-zA-Z 0-9\-\_]+/g, '');
+				str = str.replace(/\s+/g, '');
+				$(this).val(str);
+			});
+			
 			$("input[name=rep_release]").unbind("click");
 			$("input[name=rep_release]").bind("click", function() {
 				self.opencc(this, $(this).attr('name'));

@@ -51,7 +51,7 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
         		return Response.status(Status.OK).header("Access-Control-Allow-Origin", "*").entity(resourceStream).build();
         	}
         	
-        	return Response.status(Status.OK).entity(resourceStream).header("Content-Disposition", "attachment; filename=helios_manul_test_template." + fileType).build();
+        	return Response.status(Status.OK).entity(resourceStream).header("Content-Disposition", "attachment; filename=phresco_manual_test_template." + fileType).build();
         } catch (Exception e) {
         	ResponseInfo finalOutput = responseDataEvaluation(info, e,
 					null, RESPONSE_STATUS_ERROR, PHRQ410001);
