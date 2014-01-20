@@ -79,7 +79,7 @@
                          <tr>
                         	<td data-i18n="commonlabel.label.pdfreportname"></td>
                             <td>
-                               <input type="text" data-i18n="[placeholder]projectlist.label.pdfreportname" name="pdfName" class="pdfName">
+                               <input type="text" data-i18n="[placeholder]projectlist.label.pdfreportname" maxlength="30" title="30 Characters only" name="pdfName" class="pdfName">
                             </td>
                         </tr>
                     </tbody>
