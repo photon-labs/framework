@@ -4965,6 +4965,10 @@ select[name="reportDataType"], input[name="pdfName"] {
 	margin-top: 0px;
 	font-size: 12px;
 }
+
+.manual_close_button {
+	line-height:15px;
+	}
 	
 .iframe {
     border: medium none;
