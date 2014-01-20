@@ -244,6 +244,12 @@ define(["projectlist/listener/projectListListener"], function() {
 				self.openAddToRepoHelp($(this), dynamicId);
 			});
 			
+			$(document).keyup(function(e) {
+				  if (e.keyCode == 27) { 
+					 self.addZindex(); 
+				  }   
+			});
+			
 			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			var password = commonVariables.api.localVal.getSession('password');
 			
@@ -1131,6 +1137,11 @@ define(["projectlist/listener/projectListListener"], function() {
 				userNameObj.attr('readonly','readonly');
 				pwdObj.attr('readonly','readonly');
 			}
+		},
+		
+		addZindex : function () {
+			$('.content_title').css('z-index', '6');
+			$('.header_section').css('z-index', '7');
 		},
 		
 		makeRepoTypeSelected : function(dynamicId) {

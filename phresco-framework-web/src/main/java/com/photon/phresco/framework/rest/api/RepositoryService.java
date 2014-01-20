@@ -337,13 +337,62 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response fetchPopUpValues(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
 			@QueryParam(REST_QUERY_ACTION) String action, @QueryParam(REST_QUERY_USERID) String userId) {
-		Response response = null;
-		if (action.equals(COMMIT)) {
-			response = repoExistCheckForCommit(appDirName, action, userId);
-		} else if (action.equals(FrameworkConstants.UPDATE)) {
-			response = repoExistCheckForUpdate(appDirName, action, userId);
+		ResponseInfo<RepoInfo> responseData = new ResponseInfo<RepoInfo>();
+		try {
+			ProjectInfo projectInfo = Utility.getProjectInfo(Utility.getProjectHome() + appDirName, "");
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+			File pomFile = Utility.getPomFileLocation(Utility.getProjectHome() + appDirName, "");
+			PomProcessor processor = new PomProcessor(pomFile);
+			String srcRepoURL = processor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
+			String dotPhresoRepoURL = processor.getProperty(Constants.POM_PROP_KEY_PHRESCO_REPO_URL);
+			String testRepoURL = processor.getProperty(Constants.POM_PROP_KEY_TEST_REPO_URL);
+
+			StringBuilder rootDir = new StringBuilder(Utility.getProjectHome()).append(appDirName);
+
+			RepoInfo repoInfo = new RepoInfo();
+			File srcDir = new File(rootDir.toString(), appDirName);
+			if (!srcDir.exists()) {
+				srcDir = new File(rootDir.toString());
+			}
+			
+			if (srcDir.exists() && StringUtils.isNotEmpty(srcRepoURL)) {
+				RepoDetail srcRepoDetail = createRepoDetail(srcRepoURL, userId, action, srcDir);
+				repoInfo.setSrcRepoDetail(srcRepoDetail);
+			}
+
+			File phrescoDir = new File(rootDir.toString(), appDirName + Constants.SUFFIX_PHRESCO);
+			if (StringUtils.isNotEmpty(dotPhresoRepoURL) && phrescoDir.exists()) {
+				RepoDetail phrescoRepoDetail = createRepoDetail(dotPhresoRepoURL, userId, action, phrescoDir);
+				repoInfo.setPhrescoRepoDetail(phrescoRepoDetail);
+				repoInfo.setSplitPhresco(true);
+			}
+
+			String splitTestDirName = processor.getProperty(Constants.POM_PROP_KEY_SPLIT_TEST_DIR);
+			File testDir = new File(rootDir.toString(), splitTestDirName);
+			if (testDir.exists() && StringUtils.isNotEmpty(testRepoURL)) {
+				RepoDetail testRepoDetail = createRepoDetail(testRepoURL, userId, action, testDir);
+				repoInfo.setTestRepoDetail(testRepoDetail);
+				repoInfo.setSplitTest(true);
+			}
+
+			status = RESPONSE_STATUS_SUCCESS;
+			successCode = PHR200021;
+			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, null,
+					repoInfo, status, successCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			status = RESPONSE_STATUS_FAILURE;
+			errorCode = PHR210036;
+			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
+		} catch (PhrescoPomException e) {
+			status = RESPONSE_STATUS_FAILURE;
+			errorCode = PHR210036;
+			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
 		}
-		return response;
 	}
 
 	/**
@@ -1088,7 +1137,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
                 versionMap.put(Constants.CURRENT_VERSION, version);
                 versionMap.put(Constants.TAG_VERSION, tagVerion);
                 String devVersion = getDevVersion(projectInfo, previousBranchVersion, tagVerion);
-                versionMap.put(Constants.DEV_VERSION, devVersion);
+                versionMap.put(Constants.DEV_VERSION, version);
             }
         } catch (PhrescoPomException e) {
             status = RESPONSE_STATUS_ERROR;
@@ -2078,72 +2127,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		return repoType;
 	}
 
-	/**
-	 * Repo exist check for commit.
-	 *
-	 * @param appDirName the app dir name
-	 * @param action the action
-	 * @param userId the user id
-	 * @return the response
-	 */
-	private Response repoExistCheckForCommit(String appDirName, String action, String userId) {
-		ResponseInfo<RepoInfo> responseData = new ResponseInfo<RepoInfo>();
-		try {
-			ProjectInfo projectInfo = Utility.getProjectInfo(Utility.getProjectHome() + appDirName, "");
-			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
-			File pomFile = Utility.getPomFileLocation(Utility.getProjectHome() + appDirName, "");
-			PomProcessor processor = new PomProcessor(pomFile);
-			String srcRepoURL = processor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
-			String dotPhresoRepoURL = processor.getProperty(Constants.POM_PROP_KEY_PHRESCO_REPO_URL);
-			String testRepoURL = processor.getProperty(Constants.POM_PROP_KEY_TEST_REPO_URL);
-
-			StringBuilder rootDir = new StringBuilder(Utility.getProjectHome()).append(appDirName);
-
-			RepoInfo repoInfo = new RepoInfo();
-			File srcDir = new File(rootDir.toString(), appDirName);
-			if (!srcDir.exists()) {
-				srcDir = new File(rootDir.toString());
-			}
-			if (srcDir.exists() && StringUtils.isNotEmpty(srcRepoURL)) {
-				RepoDetail srcRepoDetail = createRepoDetail(srcRepoURL, userId, action, srcDir);
-				repoInfo.setSrcRepoDetail(srcRepoDetail);
-			}
-
-			File phrescoDir = new File(rootDir.toString(), appDirName + Constants.SUFFIX_PHRESCO);
-			if (StringUtils.isNotEmpty(dotPhresoRepoURL) && phrescoDir.exists()) {
-				RepoDetail phrescoRepoDetail = createRepoDetail(dotPhresoRepoURL, userId, action, phrescoDir);
-				repoInfo.setPhrescoRepoDetail(phrescoRepoDetail);
-				repoInfo.setSplitPhresco(true);
-			}
-
-			String splitTestDirName = processor.getProperty(Constants.POM_PROP_KEY_SPLIT_TEST_DIR);
-			File testDir = new File(rootDir.toString(), splitTestDirName);
-			if (testDir.exists() && StringUtils.isNotEmpty(testRepoURL)) {
-				RepoDetail testRepoDetail = createRepoDetail(testRepoURL, userId, action, testDir);
-				repoInfo.setTestRepoDetail(testRepoDetail);
-				repoInfo.setSplitTest(true);
-			}
-
-			status = RESPONSE_STATUS_SUCCESS;
-			successCode = PHR200021;
-			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, null,
-					repoInfo, status, successCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-		} catch (PhrescoException e) {
-			status = RESPONSE_STATUS_FAILURE;
-			errorCode = PHR210036;
-			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} catch (PhrescoPomException e) {
-			status = RESPONSE_STATUS_FAILURE;
-			errorCode = PHR210036;
-			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		}
-	}
-
 	private RepoDetail createRepoDetail(String repoUrl, String userId, String action, File workingDir) throws PhrescoException {
 		RepoDetail repodetail = new RepoDetail();
 		boolean setRepoExistForCommit = false;
@@ -2166,63 +2149,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			throw new PhrescoException(e);
 		}
 		return repodetail;
-	}
-
-	/**
-	 * Repo exist check for update.
-	 *
-	 * @param appDirName the app dir name
-	 * @param action the action
-	 * @param userId the user id
-	 * @return the response
-	 */
-	private Response repoExistCheckForUpdate(String appDirName, String action, String userId) {
-		ResponseInfo<RepoInfo> responseData = new ResponseInfo<RepoInfo>();
-		try {
-			ProjectInfo projectInfo = Utility.getProjectInfo(Utility.getProjectHome() + appDirName, "");
-			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
-			File pomFile = getPomFromWrokDir(appInfo);
-			PomProcessor processor = new PomProcessor(pomFile);
-			String srcRepoURL = processor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
-			String dotPhresoRepoURL = processor.getProperty(Constants.POM_PROP_KEY_PHRESCO_REPO_URL);
-			String testRepoURL = processor.getProperty(Constants.POM_PROP_KEY_TEST_REPO_URL);
-
-			RepoInfo repoInfo = new RepoInfo();
-			RepoDetail sourceRepoDetail = new RepoDetail();
-			if (StringUtils.isNotEmpty(srcRepoURL)) {
-				fillRepoDetail(sourceRepoDetail, srcRepoURL, userId, true);
-				repoInfo.setSrcRepoDetail(sourceRepoDetail);
-			}
-			RepoDetail dotPhrescoRepoDetail = new RepoDetail();
-			if (StringUtils.isNotEmpty(dotPhresoRepoURL)) {
-				fillRepoDetail(dotPhrescoRepoDetail, dotPhresoRepoURL, userId, true);
-				repoInfo.setPhrescoRepoDetail(dotPhrescoRepoDetail);
-				repoInfo.setSplitPhresco(true);
-			}
-			RepoDetail testRepoDetail = new RepoDetail();
-			if (StringUtils.isNotEmpty(testRepoURL)) {
-				fillRepoDetail(testRepoDetail, testRepoURL, userId, true);
-				repoInfo.setTestRepoDetail(testRepoDetail);
-				repoInfo.setSplitTest(true);
-			}
-
-			status = RESPONSE_STATUS_SUCCESS;
-			successCode = PHR200022;
-			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, null, repoInfo, status, successCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-		} catch (PhrescoException e) {
-			status = RESPONSE_STATUS_FAILURE;
-			errorCode = PHR210036;
-			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} catch (PhrescoPomException e) {
-			status = RESPONSE_STATUS_FAILURE;
-			errorCode = PHR210036;
-			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		}
 	}
 
 	private void fillRepoDetail(RepoDetail repoDetail, String url, String userId, boolean exist) {
