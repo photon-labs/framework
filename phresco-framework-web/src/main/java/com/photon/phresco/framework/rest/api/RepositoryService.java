@@ -942,7 +942,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				.append(Constants.STR_EQUALS).append(downloadOption)
 				.append(Constants.STR_BLANK_SPACE)
 				.append(Constants.HYPHEN_F).append(Constants.STR_BLANK_SPACE).append(pomFile.getName());
-				System.out.println("framework command for create branch=========> " + builder.toString());
 				String workingDirectory = pomFile.getParent();
 				Utility.executeStreamconsumer(builder.toString(), workingDirectory, "", "");
 		} catch (PhrescoException e) {
@@ -992,7 +991,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			.append(Constants.STR_EQUALS).append(tag)
 			.append(Constants.STR_BLANK_SPACE)
 			.append(Constants.HYPHEN_F).append(Constants.STR_BLANK_SPACE).append(pomFile.getName());
-			System.out.println("framework command for tag=========> " + builder.toString());
 			String workingDirectory = pomFile.getParent();
 			Utility.executeStreamconsumer(builder.toString(), workingDirectory, "", "");
 		} catch (PhrescoException e) {
