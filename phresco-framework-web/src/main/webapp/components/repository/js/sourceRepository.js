@@ -75,6 +75,9 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 								}, 700);
 							}
 						});
+					} else {
+						$(".tree_view").hide();
+						$("#messagedisp").show()
 					}
 				}
 			});
@@ -91,9 +94,6 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 			
 			$("input[name=rep_create]").unbind("click");
 			$("input[name=rep_create]").bind("click", function() {
-				if (commonVariables.callLadda) {
-					Ladda.stopAll();
-				}
 				var selectedBranch = $("input[name=selectedBranchName]").val();
 				$("#branchFromName").val(selectedBranch);
 				$("#tagFromName").val(selectedBranch);
@@ -103,7 +103,7 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 			$("#releaseVersion,#devVersion").bind('input propertychange', function() {
 				var str = $(this).val();
 				str = self.specialCharValidation(str);
-				str = str.replace(/[^a-zA-Z 0-9\-\_]+/g, '');
+				str = str.replace(/[^a-zA-Z 0-9\.\-\_]+/g, '');
 				str = str.replace(/\s+/g, '');
 				$(this).val(str);
 			});

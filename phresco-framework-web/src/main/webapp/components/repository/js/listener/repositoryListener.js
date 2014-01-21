@@ -10,11 +10,8 @@ define([], function() {
 		repository : function(header, callback) {
 			var self = this;
 			try {
-				commonVariables.api.ajaxRequestForScm(header,
+				commonVariables.api.ajaxRequest(header,
 					function(response) {
-						if (commonVariables.callLadda) {
-							Ladda.stopAll();
-						}
 						if (response !== null && response.status !== "error") {
 							callback(response);
 						} else {
@@ -70,16 +67,6 @@ define([], function() {
 				if (!self.isBlank(requestBody.moduleName)) {
 					header.webserviceurl = header.webserviceurl + "&moduleName="+requestBody.moduleName
 				}
-			}
-			if (action === "createBranch") {
-				header.requestMethod = "POST";
-				header.webserviceurl = commonVariables.webserviceurl + 'repository/createBranch?appDirName='+requestBody.appDirName+'&version='+requestBody.version+'&username='+requestBody.username+'&password='+requestBody.password + 
-										'&comment='+requestBody.comment+'&currentbranchname='+requestBody.currentbranchname+'&branchname='+requestBody.branchname+'&downloadoption='+requestBody.downloadoption;
-			}
-			if (action === "createTag") {
-				header.requestMethod = "POST";
-				header.webserviceurl = commonVariables.webserviceurl + 'repository/createTag?appDirName='+requestBody.appDirName+'&username='+requestBody.username+'&password='+requestBody.password+'&version='+requestBody.version +
-										'&comment='+requestBody.comment+'&currentbranchname='+requestBody.currentbranchname+'&tagname='+requestBody.tagname+'&downloadoption='+requestBody.downloadoption;
 			}
 			if (action === "getVersion") {
 				header.requestMethod = "GET";
@@ -169,6 +156,7 @@ define([], function() {
 										$("#releaseVersion").val(responseData.tagVersion);
 										$("#releaseTagName").val(responseData.tagVersion);
 										$("#devVersion").val(responseData.devVersion);
+										$("#createBranchVersion").val(responseData.devVersion);
 										$(".file_view").show();
 										$('.unit_close').show();
 										setTimeout(function() {
@@ -232,14 +220,20 @@ define([], function() {
 					self.getList($(value).children(),function(callback) {
 						strCollection = callback;
 					});
-					strItems += '<li role=treeItem class=parent_li>' + '<span class="badge badge-success"'+
-								'<i class="icon-plus-sign"></i>' + '<a version="'+ strRoot +'" title="'+ strRoot +'">' + strRoot + '</a></span>' + strCollection +'</li>';
+					var url = $(value).attr('url');
+					strItems += '<li role="treeItem" class="parent_li">' + '<span class="badge badge-success">'+
+								'<i class="icon-plus-sign"></i>' + '<a version="'+ strRoot +'" title="'+ url +'">' + strRoot + '</a></span>' + strCollection +'</li>';
 				} else {
+					var name = $(value).attr('name');
 					var moduleName = $(value).attr('moduleName');
 					var appDirName = $(value).attr('appDirName');
 					var nature = $(value).attr('nature');
 					var url = $(value).attr('url');
-					strItems += '<li role=treeItem class="parent_li">' + '<span class="badge badge-warning">'+ '<i></i><a title="'+ $(value).attr('name') +'" ';
+					var hideClass = "hideContent";
+					if (name === "trunk" || name === "tags" || name === "branches" || name === "SNAPSHOT" || name === "RELEASE") {
+						hideClass = "";
+					}
+					strItems += '<li role="treeItem" class="parent_li '+hideClass+'">' + '<span class="badge badge-warning">'+ '<i></i><a title="'+ name +'" ';
 					if (moduleName !== undefined) {
 						strItems += 'moduleName="'+moduleName+'"';
 					}
@@ -253,7 +247,7 @@ define([], function() {
 						strItems += 'url="'+url+'"';
 					}
 					
-					strItems += '>' + $(value).attr('name') + '</a></span></li>';
+					strItems += '>' + name + '</a></span></li>';
 				}
 			});
 			
@@ -300,12 +294,19 @@ define([], function() {
 			var version = $("#createBranchVersion").val();
 			var username = $("#branchUsername").val();
 			var password = $("#branchPassword").val();
+			var branchFromVersion = $("#branchFromVersion").val();
 			if (self.isBlank(branchName)) {
-				commonVariables.navListener.validateTextBox( $("#newBranchName"), 'Enter branch name');
+				commonVariables.navListener.validateTextBox($("#newBranchName"), 'Enter branch name');
 				return true;
 			}
 			if (self.isBlank(version)) {
-				commonVariables.navListener.validateTextBox( $("#createBranchVersion"), 'Enter version');
+				commonVariables.navListener.validateTextBox($("#createBranchVersion"), 'Enter version');
+				return true;
+			}
+			
+			if (version === branchFromVersion) {
+				$("#createBranchVersion").val('');
+				commonVariables.navListener.validateTextBox($("#createBranchVersion"), 'Duplicate branch Version');
 				return true;
 			}
 			return false;
@@ -350,7 +351,7 @@ define([], function() {
 			var username = $("#tagUsername").val();
 			var password = $("#tagPassword").val();
 			if (self.isBlank(tagName)) {
-				commonVariables.navListener.validateTextBox( $("#tagName"), 'Enter Tag name');
+				commonVariables.navListener.validateTextBox($("#tagName"), 'Enter Tag name');
 				return true;
 			}
 			return false;
@@ -398,15 +399,15 @@ define([], function() {
 			var password = $("#releasePassword").val();
 			var devVersion = $("#devVersion").val();
 			if (self.isBlank(releaseVersion)) {
-				commonVariables.navListener.validateTextBox( $("#releaseVersion"), 'Enter Release Version');
+				commonVariables.navListener.validateTextBox($("#releaseVersion"), 'Enter Release Version');
 				return true;
 			}
 			if (self.isBlank(tagName)) {
-				commonVariables.navListener.validateTextBox( $("#releaseTagName"), 'Enter Tag name');
+				commonVariables.navListener.validateTextBox($("#releaseTagName"), 'Enter Tag name');
 				return true;
 			}
 			if (self.isBlank(devVersion)) {
-				commonVariables.navListener.validateTextBox( $("#devVersion"), 'Enter Development Version');
+				commonVariables.navListener.validateTextBox($("#devVersion"), 'Enter Development Version');
 				return true;
 			}
 			return false;

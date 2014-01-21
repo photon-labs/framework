@@ -1535,6 +1535,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	}
 	
 	private void addToRepo(RepoDetail repodetail, ApplicationInfo appInfo, File dir, String dirName, File srcDir, boolean hasSplit) throws PhrescoException {
+		String phrescoTemp = Utility.getPhrescoTemp();
+		String uuid = UUID.randomUUID().toString();
+		File tempUuidFile = new File(phrescoTemp, uuid);
 		try {
 			String repoType = repodetail.getType();
 			if (SVN.equals(repoType)) {
@@ -1544,17 +1547,30 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					appendedUrl.append(FORWARD_SLASH);
 				}
 				appendedUrl.append(dirName);
-				appendedUrl.append(FORWARD_SLASH);
-				appendedUrl.append(TRUNK);
-				repodetail.setRepoUrl(appendedUrl.toString());
+				StringBuilder trunkUrl = new StringBuilder(appendedUrl.toString());
+				trunkUrl.append(FORWARD_SLASH);
+				trunkUrl.append(TRUNK);
+				repodetail.setRepoUrl(trunkUrl.toString());
 				importDirectoryContentToSubversion(repodetail, srcDir.getPath());
 				// checkout to get .svn folder
 				checkoutImportedApp(repodetail, appInfo, dirName, hasSplit);
+				//Add tags/branches folder to the svn
+				repodetail.setRepoUrl(appendedUrl.toString());
+				tempUuidFile.mkdir();
+				File tempTagsFile = new File(tempUuidFile, TAGS);
+				tempTagsFile.mkdir();
+				File tempBranchesFile = new File(tempUuidFile, BRANCHES);
+				tempBranchesFile.mkdir();
+				importDirectoryContentToSubversion(repodetail, tempUuidFile.getPath());
 			} else if (GIT.equals(repoType)) {
 				importToGITRepo(repodetail, appInfo, srcDir);
 			}
 		} catch (Exception e) {
 			throw new PhrescoException(e);
+		} finally {
+			if (tempUuidFile.exists()) {
+				FileUtil.delete(tempUuidFile);
+			}
 		}
 	}
 	
