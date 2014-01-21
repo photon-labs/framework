@@ -23,7 +23,7 @@
             <username>root</username>
         </Database>
     </environment>
-    <environment appliesTo="" default="false" desc="Production Environment is used for Development purpose only" name="Production">
+    <environment appliesTo="" default="false" desc="Staging Environment" name="Staging">
         <Server desc="Server Configuration for Javawebservice Eshop application" name="Server Configuration">
             <context>phresco-framework-web</context>
             <admin_username/>
@@ -47,7 +47,7 @@
             <username>root</username>
         </Database>
     </environment>
-    <environment appliesTo="" default="false" desc="Production Environment is used for Development purpose only" name="Production">
+    <environment appliesTo="" default="false" desc="Development Environment" name="Development">
         <Server desc="Server Configuration for Javawebservice Eshop application" name="Server Configuration">
             <context>phresco-framework-web</context>
             <admin_username/>
