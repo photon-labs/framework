@@ -1308,7 +1308,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			builder.append(Constants.SPACE);
 			builder.append("-Dpassword=" + password);
 			builder.append(Constants.SPACE);
-			builder.append("-Dmessage=" + message);
+			builder.append("-Dmessage=" + "\"" + message + "\"");
 			builder.append(Constants.SPACE);
 			builder.append("-DdevelopmentVersion=" + developmentVersion);
 			builder.append(Constants.SPACE);
