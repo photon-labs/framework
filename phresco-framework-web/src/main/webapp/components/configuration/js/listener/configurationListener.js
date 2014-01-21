@@ -1289,7 +1289,9 @@ define(["croneExpression/croneExpression"], function() {
 						$(this).find("." + type + "Configuration").each(function() {
 							var proValue = $(this).attr("name");
 							if(proValue !== undefined) {
-								properties[proValue] = $(this).val().replace(/%20/g, " ");
+								if($(this).val()) {
+									properties[proValue] = $(this).val().replace(/%20/g, " ");
+								}
 							}
 						});
 						
@@ -1351,10 +1353,11 @@ define(["croneExpression/croneExpression"], function() {
 		},
 
 		validation : function() {
-			var self = this, bCheck = true;
+			var self = this, bCheck = true, counter_select_server = 0, counter_select_db = 0;
 			$.each($(".row_bg"), function(index, value) {
 				bCheck = false;
 				var type = $(this).attr("type");
+				var conftype = $(this).attr("configtype");			
 				if (type !== "otherConfig") {
 					$("." + type).each(function() {
 						$(this).find("." + type + "Configuration").each(function() {
@@ -1390,6 +1393,23 @@ define(["croneExpression/croneExpression"], function() {
 									bCheck = true;
 								}
 								return bCheck;
+							}
+							if(conftype === 'Server') {
+								if($(this).hasClass('selectpicker')) {
+									counter_select_server++;
+									if(counter_select_server === 2) {
+										if($(this).val() === null)
+										commonVariables.api.showError("chooseserver" ,"success", true, false, true);	
+									}
+								}
+							} else if(conftype === 'Database') {
+								if($(this).hasClass('selectpicker')) {
+									counter_select_db++;
+									if(counter_select_db === 1) {
+										if($(this).val() === null)
+										commonVariables.api.showError("choosedb" ,"success", true, false, true);
+									}
+								}
 							}
 
 							var val = $(this).attr("name");
