@@ -234,6 +234,9 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			}
 			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, subModuleName);
 			Utility.killProcess(pomFileLocation.getParent(), testType);
+			if(StringUtils.isNotEmpty(techReport)) {
+				techReport = techReport.toLowerCase();
+			}
 			String testSuitePath = getTestSuitePath(appDirName, rootModulePath, subModuleName, testType, techReport);
 			String testCasePath = getTestCasePath(appDirName, rootModulePath, subModuleName, testType, techReport);
 			List<TestSuite> testSuites = testSuites(rootModule, moduleName, testType, moduleName, techReport,
@@ -423,6 +426,9 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 				subModuleName = moduleName;
 			} else {
 				rootModulePath = Utility.getProjectHome() + appDirName;
+			}
+			if(StringUtils.isNotEmpty(techReport)) {
+				techReport = techReport.toLowerCase();
 			}
 			testSuitePath = getTestSuitePath(appDirName,rootModulePath, subModuleName, testType, techReport);
 			testCasePath = getTestCasePath(appDirName,rootModulePath, subModuleName, testType, techReport);

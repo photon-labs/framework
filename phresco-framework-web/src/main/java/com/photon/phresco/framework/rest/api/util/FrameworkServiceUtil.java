@@ -1376,7 +1376,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 						} else {
 							List<String> unitTestTechs = Arrays.asList(unitTechReports.split(","));
 							for (String unitTestTech : unitTestTechs) {
-								unitTechReports = pomProcessor.getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR_START + unitTestTech + POM_PROP_KEY_UNITTEST_RPT_DIR_END);
+								unitTechReports = pomProcessor.getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR_START + unitTestTech.toLowerCase() + POM_PROP_KEY_UNITTEST_RPT_DIR_END);
 //								unitTechReports = frameworkUtil.getUnitTestReportDir(appDirName, unitTestTech);
 								if (StringUtils.isNotEmpty(unitTechReports)) {
 									file = new File(testDir.getParent() + File.separator + unitTechReports);
