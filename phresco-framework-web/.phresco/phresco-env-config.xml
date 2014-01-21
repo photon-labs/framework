@@ -23,4 +23,52 @@
             <username>root</username>
         </Database>
     </environment>
+    <environment appliesTo="" default="false" desc="Production Environment is used for Development purpose only" name="Production">
+        <Server desc="Server Configuration for Javawebservice Eshop application" name="Server Configuration">
+            <context>phresco-framework-web</context>
+            <admin_username/>
+            <deploy_dir>D:/softwares/apache-tomcat-7.0.37-windows-x86/apache-tomcat-7.0.37/webapps/</deploy_dir>
+            <additional_context/>
+            <port>2020</port>
+            <admin_password/>
+            <version>7.0.x</version>
+            <type>Apache Tomcat</type>
+            <remoteDeployment>false</remoteDeployment>
+            <protocol>http</protocol>
+            <host>localhost</host>
+        </Server>
+        <Database desc="Database Configuration for Javawebservice Eshop application" name="Database Configuration">
+            <version>5.5.1</version>
+            <port>3306</port>
+            <password/>
+            <type>MYSQL</type>
+            <host>localhost</host>
+            <dbname>jwsdb</dbname>
+            <username>root</username>
+        </Database>
+    </environment>
+    <environment appliesTo="" default="false" desc="Production Environment is used for Development purpose only" name="Production">
+        <Server desc="Server Configuration for Javawebservice Eshop application" name="Server Configuration">
+            <context>phresco-framework-web</context>
+            <admin_username/>
+            <deploy_dir>D:/softwares/apache-tomcat-7.0.37-windows-x86/apache-tomcat-7.0.37/webapps/</deploy_dir>
+            <additional_context/>
+            <port>2020</port>
+            <admin_password/>
+            <version>7.0.x</version>
+            <type>Apache Tomcat</type>
+            <remoteDeployment>false</remoteDeployment>
+            <protocol>http</protocol>
+            <host>localhost</host>
+        </Server>
+        <Database desc="Database Configuration for Javawebservice Eshop application" name="Database Configuration">
+            <version>5.5.1</version>
+            <port>3306</port>
+            <password/>
+            <type>MYSQL</type>
+            <host>localhost</host>
+            <dbname>jwsdb</dbname>
+            <username>root</username>
+        </Database>
+    </environment>
  </environments>
