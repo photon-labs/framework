@@ -156,7 +156,7 @@ define(["configuration/listener/configurationListener"], function() {
 					});
 					
 					if (found === false) {
-						self.addEnvEvent.dispatch(name, envDesc);
+						self.addEnvEvent.dispatch(name, envDesc, "config");
 						$("input[name='envName']").attr('placeholder','Environment Name');
 						$("input[name='envDesc']").attr('placeholder','Environment Description');
 					} else {
