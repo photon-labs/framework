@@ -40,6 +40,9 @@
 							<th width="5%" class="manual hideContent">
 								<div class="th-inner">Edit</div>
 							</th>
+							<th width="5%" class="manual hideContent">
+								<div class="th-inner">Delete</div>
+							</th>
 							<th width="5%" class="log">
 								<div class="th-inner" data-i18n="testcase.log"></div>
 							</th>
@@ -148,7 +151,7 @@
 									<!-- edit testcase popup ends -->
 								</td>
 								<td class="manual hideContent">
-				                		<a class="tooltiptop" name="deleteTestCase_{{#uniqueTestCaseId testCaseId}}{{/uniqueTestCaseId}}" href="javascript:void(0)" data-toggle="tooltip" data-placement="top" namedel="deleteTestCase" data-original-title="Delete TestCase" title="">
+				                		<a class="tooltiptop" name="deleteTestCase_{{#uniqueTestCaseId testCaseId}}{{/uniqueTestCaseId}}" href="javascript:void(0)" data-toggle="tooltip" data-placement="bottom" namedel="deleteTestCase" data-original-title="Delete TestCase" title="">
 				                			<img src="themes/default/images/Phresco/delete_row.png" width="14" height="18" border="0" alt="0">
 				                		</a>
 				                		<div style="display:none;" testCaseName="{{testCaseId}}" id="deleteTestCase_{{#uniqueTestCaseId testCaseId}}{{/uniqueTestCaseId}}" class="delete_msg tohide">

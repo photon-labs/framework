@@ -18,6 +18,7 @@
 				              	<th width="10%" class="manual hideContent"><div class="th-inner" data-i18n="testresult.label.blocked"></div></th>
 				              	<th width="10%" class="manual hideContent"><div class="th-inner" data-i18n="testresult.label.notExecuted"></div></th>
 				              	<th width="10%" class="manual hideContent"><div class="th-inner" data-i18n="testresult.label.testCoverage"></div></th>
+				              	<th width="10%" class="manual hideContent"><div class="th-inner" data-i18n="commonlabel.label.delete"></div></th>
 			            	</tr>
 			          	</thead>
 			          	<tbody>

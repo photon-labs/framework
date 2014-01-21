@@ -13,6 +13,14 @@
 			<version>1.442</version>
 			<type>war</type>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.jenkins-ci.plugins</groupId>
+			<artifactId>multiple-scms</artifactId>
+			<version>0.3</version>
+			<type>hpi</type>
+		</dependency>
+
 
 		<dependency>
 			  <groupId>git.plugin</groupId>

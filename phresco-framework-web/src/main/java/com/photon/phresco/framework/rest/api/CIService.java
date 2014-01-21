@@ -1763,8 +1763,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				com.photon.phresco.commons.model.RepoInfo repoInfo = customer.getRepoInfo();
 				ActionType actionType = ActionType.RELEASE;
 				mvncmd =  actionType.getActionType().toString();
-				mvncmd = mvncmd + HYPHEN_DEV_VERSION + job.getDevelopmentVersion() + HYPHEN_REL_VERSION +job.getReleaseVersion()+ HYPHEN_TAG +job.getTagName()+ HYPHEN_USERNAME + job.getReleaseUsername() + HYPHEN_PASSWORD + job.getReleasePassword() + HYPHEN_MESSAGE + job.getReleaseMessage()
-				+ HYPHEN_JOBNAME + job.getJobName() + HYPHEN_APPDIR_NAME + job.getAppDirName() + HYPHEN_REPO_USERNAME + repoInfo.getRepoUserName() + HYPHEN_REPO_PWD + repoInfo.getRepoPassword();
+				mvncmd = mvncmd + File.separator + HYPHEN_DEV_VERSION + job.getDevelopmentVersion() + File.separator + HYPHEN_REL_VERSION + 
+						job.getReleaseVersion() + File.separator + HYPHEN_TAG + job.getTagName() + File.separator + HYPHEN_USERNAME +
+						job.getReleaseUsername() + File.separator + HYPHEN_PASSWORD + job.getReleasePassword() + File.separator +
+						HYPHEN_MESSAGE + "\"" + job.getReleaseMessage() + "\"" + File.separator + HYPHEN_JOBNAME + job.getJobName()
+						+ File.separator + HYPHEN_APPDIR_NAME + job.getAppDirName() + File.separator + HYPHEN_REPO_USERNAME + 
+						repoInfo.getRepoUserName() + File.separator + HYPHEN_REPO_PWD + repoInfo.getRepoPassword();
 				operationName = PHASE_RELEASE;
 			} 
 			

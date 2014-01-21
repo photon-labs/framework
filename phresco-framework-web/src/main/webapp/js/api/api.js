@@ -139,7 +139,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 					if(response === undefined || response === null){
 						self.showError("PHR000000", 'error', false);
 					}else if((response.status === "error" || response.status === "failure")){
-						self.showError(response.responseCode, 'error', false);
+						self.showError(response.responseCode, 'success', false);
 					}
 					if ((response !== undefined && response !== null && response.status !== "error")) {
 						self.successResponse = response;
