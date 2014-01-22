@@ -287,7 +287,11 @@ define(["croneExpression/croneExpression"], function() {
 					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/connectionAliveCheck?url="+configRequestBody.protocol+","+configRequestBody.host+","+configRequestBody.port;
 				} else if (action === "certificate") {
 					header.requestMethod = "GET";
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/returnCertificate?host="+configRequestBody.host+"&port="+configRequestBody.port+"&appDirName="+appDirName;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/returnCertificate?host="+configRequestBody.host+"&port="+configRequestBody.port+"&appDirName=''";
+				} else if (action === "addCertificate") {
+						header.requestMethod = "POST";
+						header.requestPostBody = JSON.stringify(configRequestBody);
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/addCertificate";
 				} else if (action === "fileBrowse") {
 					header.requestMethod = "GET";
 					header.dataType = "xml";
@@ -521,7 +525,7 @@ define(["croneExpression/croneExpression"], function() {
 							inputCtrl = inputCtrl.concat(options1);
 							inputCtrl = inputCtrl.concat("</select></td>"); 
 						} else if (key === 'certificate') { 
-							inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.name+key+self.count+'" type="text" placeholder=""/><a href="javascript:void(0)" name="remote_deploy"><img src="themes/default/images/Phresco/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="remote_deploy" class="dyn_popup" style="display:none"><div id="certificateValue"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div>';
+							inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.name+key+self.count+'" type="text" placeholder="" readonly/><a href="javascript:void(0)" name="remote_deploy"><img src="themes/default/images/Phresco/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="remote_deploy" class="dyn_popup" style="display:none"><div id="certificateValue"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div>';
 						} else {
 							inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" configKey ="configKey'+configTemplate.name+key+'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.name+key+self.count+'" type="text" placeholder=""/>';
 						}
@@ -823,6 +827,9 @@ define(["croneExpression/croneExpression"], function() {
 				val.port = $("input[configKey=configKeyServerport]").val();
 				self.configRequestBody = val;
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "certificate", ''), function(response) {
+					if(response.data == null){
+						$('input[name=certificate]').val('');
+					} 
 					$("#certificateValue").css("height", "250px");
 					$("#certificateValue").html('');
 					if(response.data !== null) {
@@ -891,7 +898,8 @@ define(["croneExpression/croneExpression"], function() {
 		},
 		
 		saveCertificate : function(value) {
-			var self=this;
+			var self=this, appDirName;
+			$("input[name=selectFilePath]").unbind('click');
 			$("input[name=selectFilePath]").click(function() {
 				var cerficate = value;
 				$("input[name=certificate]").val(cerficate);
@@ -901,13 +909,20 @@ define(["croneExpression/croneExpression"], function() {
 					var projectInfo = commonVariables.api.localVal.getProjectInfo();
 					appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
 				}
+				var projectCode = commonVariables.api.localVal.getSession('projectCode');
 				var certificateJson = {};
+				
+				if (appDirName !== null  && appDirName !== undefined) {
+					certificateJson.appDirName = appDirName;
+					certificateJson.fromPage = 'configuration';
+				} else {
+					certificateJson.projectCode = projectCode;
+					certificateJson.fromPage = 'settings';
+				}
 				certificateJson.customerId = customerId;
 				certificateJson.host = $("input[configKey=configKeyServerhost]").val();
 				certificateJson.port = $("input[configKey=configKeyServerport]").val();
-				certificateJson.appDirName = appDirName;
 				certificateJson.certificateName = value;
-				certificateJson.fromPage = 'configuration';
 				certificateJson.environmentName = $('input[name=EnvName]').val();
 				certificateJson.configName = $(this).parent().parent().parent().parent().attr('name');
 				certificateJson.propValue = value;
@@ -917,6 +932,11 @@ define(["croneExpression/croneExpression"], function() {
 					commonVariables.api.showError(response.responseCode ,"success", true, false, true);
 					$("#remote_deploy").hide();
 					self.closeTreePopup();
+					if(response.data != null){
+						$('input[name=certificate]').val(response.data);
+					} else {
+						$('input[name=certificate]').val('');
+					}
 				});
 			});
 		},

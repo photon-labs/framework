@@ -1165,6 +1165,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			String fromPage = addCertificateInfo.getFromPage();
 			String appDirName = addCertificateInfo.getAppDirName();
 			String moduleName = addCertificateInfo.getModuleName();
+			String projectCode = addCertificateInfo.getProjectCode(); 
 			
 			if (StringUtils.isNotEmpty(moduleName)) {
 				rootModulePath = Utility.getProjectHome() + appDirName;
@@ -1178,7 +1179,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				if (fromPage.equals(CONFIGURATION)) {
 					certificatePath = configCertificateSave(propValue, file, appDirName, addCertificateInfo, rootModulePath, subModuleName);
 				} else if (fromPage.equals(SETTINGS)) {
-					certificatePath = settingsCertificateSave(file, appDirName, addCertificateInfo);
+					certificatePath = settingsCertificateSave(file, projectCode, addCertificateInfo);
 				}
 				ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
 						certificatePath, RESPONSE_STATUS_SUCCESS, PHR600010);
@@ -1797,10 +1798,10 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		}
 	}
 
-	private String settingsCertificateSave(File file, String appDirName,
+	private String settingsCertificateSave(File file, String projectCode,
 			AddCertificateInfo addCertificateInfo) throws PhrescoException {
 		String certifactPath = "";
-			StringBuilder sb = new StringBuilder(CERTIFICATES).append(File.separator).append(
+			StringBuilder sb = new StringBuilder(CERTIFICATES).append(File.separator).append(projectCode).append(HYPHEN).append(
 					addCertificateInfo.getEnvironmentName()).append(HYPHEN).append(addCertificateInfo.getConfigName())
 					.append(FrameworkConstants.DOT).append(FILE_TYPE_CRT);
 			certifactPath = sb.toString();
@@ -1809,24 +1810,28 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				FrameworkUtil.copyFile(file, dstFile);
 			} else {
 				saveCertificateFile(certifactPath, addCertificateInfo.getHost(), Integer
-						.parseInt(addCertificateInfo.getPort()), addCertificateInfo.getCertificateName(), appDirName , "", "");
+						.parseInt(addCertificateInfo.getPort()), addCertificateInfo.getCertificateName(), "" , "", "");
 			}
 		return certifactPath;
 	}
 
 	private String configCertificateSave(String value, File file, String appDirName,
 			AddCertificateInfo addCertificateInfo, String rootModulePath, String subModule) throws PhrescoException {
-			if (file.exists()) {
-				String path = Utility.getProjectHome().replace("\\", "/");
-				value = value.replace(path + appDirName + "/", "");
-			} else {
-				StringBuilder sb = new StringBuilder(CERTIFICATES).append(File.separator).append(addCertificateInfo.getEnvironmentName()).append(HYPHEN).append(
-								addCertificateInfo.getConfigName()).append(FrameworkConstants.DOT)
-						.append(FILE_TYPE_CRT);
-				value = sb.toString();
-				saveCertificateFile(value, addCertificateInfo.getHost(), Integer
-						.parseInt(addCertificateInfo.getPort()), addCertificateInfo.getCertificateName(), "", rootModulePath, subModule);
-			}
+		if (!file.exists()) {
+			StringBuilder sb = new StringBuilder(CERTIFICATES)
+			.append(File.separator)
+			.append(addCertificateInfo.getEnvironmentName())
+			.append(HYPHEN)
+			.append(addCertificateInfo.getConfigName())
+			.append(FrameworkConstants.DOT)
+			.append(FILE_TYPE_CRT);
+			saveCertificateFile(sb.toString(), addCertificateInfo.getHost(), Integer
+					.parseInt(addCertificateInfo.getPort()), addCertificateInfo.getCertificateName(), "", rootModulePath, subModule);
+			value = FOLDER_DOT_PHRESCO.concat(File.separator).concat(sb.toString());
+		}
+		value = value.replace("\\", "/");
+		String path = Utility.getProjectHome().replace("\\", "/");
+		value = value.replace(path + appDirName + "/", "");
 		return value;
 	}
 
@@ -1841,7 +1846,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 						File file = new File(dotPhrescoFolderPath + "/" + certificatePath);
 						FrameworkServiceUtil.addCertificate(certificate, file);
 					} else {
-					File file = new File(Utility.getProjectHome() + appDirName + "/" + certificatePath);
+					File file = new File(Utility.getProjectHome() + certificatePath);
 					FrameworkServiceUtil.addCertificate(certificate, file);
 					}
 				}
