@@ -95,7 +95,7 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			});
 
 			Handlebars.registerHelper('customIframeUrl', function(url) {
-				return url;
+				return url + '&from=phresco';
 			});
 
 
