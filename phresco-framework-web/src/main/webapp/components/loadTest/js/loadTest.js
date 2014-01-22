@@ -386,6 +386,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			
 			$("#loadRun").click(function() {
 				//To disable template contents
+				$('input[name=kill]').attr('disabled', true);
 				$('.templates').find('input ,select,textarea').prop('disabled', true);
 				self.validation.dispatch("load-test", $('#loadForm :input[name!=parameterValue]').serialize(), self.dynamicpage);
 			});

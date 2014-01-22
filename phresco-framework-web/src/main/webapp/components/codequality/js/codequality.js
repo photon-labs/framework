@@ -133,6 +133,8 @@ define(["codequality/listener/codequalityListener"], function() {
 			});
 			
 			$("#validate").click(function() {
+				commonVariables.runType = "codeValidate";
+				$('input[name=kill]').attr('disabled', true);
 				var against = $("#sonar").val();
 				self.checkForLock("code-"+against, '', '', function(response){
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {

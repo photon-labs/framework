@@ -127,6 +127,8 @@ define(["integrationTest/listener/integrationTestListener", "testResult/listener
 			//To run the Integration test
 			$("#runIntegrationTest").unbind("click");
 			$("#runIntegrationTest").click(function() {
+				commonVariables.runType = 'integration';
+				$('input[name=kill]').attr('disabled', true);
 				self.onRunIntegrationTestEvent.dispatch(function() {
 					commonVariables.logContent = $('#testConsole').html();
 					$('#testResult').empty();
