@@ -5775,3 +5775,13 @@ textarea[name="regex"] {
 	float: right;
 	margin-left: 4px !important;		
 }
+
+.cust_sel ul li a { 
+	display:block; 
+}
+
+.cust_sel ul li a:hover {
+	background-color: #ff844a;
+	color: #ffffff !important;
+	text-decoration:none;
+}

@@ -193,13 +193,15 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 				$(".dyn_popup").hide();
 	  		});
 	  		$(".first_list").find("span").hide();
-
-	  		$("input[name=continuousDeliveryName]").on("keypress keyup paste", function(e) {
-				this.value = this.value.replace(/[^-_a-zA-Z0-9]/g, '');
+			
+			$("input[name=continuousDeliveryName]").unbind('input');
+	  		$("input[name=continuousDeliveryName]").bind('input propertychange', function(e) {
+				this.value = this.value.replace(/[^a-zA-Z 0-9\-\_]+/g, '');
 			});
 	  		
-	  		$("input[name=jobName]").on("keypress keyup paste", function(e) {
-				this.value = this.value.replace(/[^-_a-zA-Z0-9 ]/g, '');
+			$("input[name=jobName]").unbind('input');
+	  		$("input[name=jobName]").bind('input propertychange', function(e) {
+				this.value = this.value.replace(/[^a-zA-Z 0-9\-\_]+/g, '');
 			});
 	  		
 	  		$( "#jobConfigure" ).delegate( "#Publish", "click", function() {

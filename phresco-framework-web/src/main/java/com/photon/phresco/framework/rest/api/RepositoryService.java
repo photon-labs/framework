@@ -31,11 +31,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -81,8 +78,6 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.lib.Config;
-import org.joda.time.DateTime;
-import org.joda.time.Weeks;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -100,17 +95,11 @@ import org.sonatype.aether.version.Version;
 import org.sonatype.nexus.rest.model.ArtifactInfoResource;
 import org.sonatype.nexus.rest.model.ArtifactInfoResourceResponse;
 import org.tmatesoft.svn.core.SVNAuthenticationException;
-import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
-import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNURL;
-import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
 import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
 import org.tmatesoft.svn.core.internal.wc.DefaultSVNOptions;
-import org.tmatesoft.svn.core.io.SVNRepository;
-import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
-import org.tmatesoft.svn.core.wc.SVNWCUtil;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -128,10 +117,8 @@ import com.photon.phresco.commons.model.ModuleInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.RepositoryFactory;
 import com.photon.phresco.framework.api.ActionType;
-import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.RepositoryManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.impl.ClientHelper;
@@ -147,7 +134,6 @@ import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.service.client.impl.ServiceManagerImpl;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.MavenArtifactResolver;
-import com.photon.phresco.util.ProjectUtils;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
@@ -1116,13 +1102,11 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
         try {
             File pomFile = Utility.getPomFileLocation(appDirPath, "");
             PomProcessor pomProcessor = new PomProcessor(pomFile);
-            String previousBranchVersion = pomProcessor.getProperty(Constants.POM_PROP_KEY_PREV_BUILD_NO);
             String connectionUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_PHRESCO_REPO_URL);
             if (StringUtils.isEmpty(connectionUrl) || !PHR_POM_XML.equals(pomFile.getName())) {
             	connectionUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
             }
             String repoType = getRepoType(connectionUrl);
-            ProjectInfo projectInfo = Utility.getProjectInfo(appDirPath, "");
             if (Constants.SCM_GIT.equals(repoType)) {
                 gitPomCheckout(connectionUrl, currentBranch, phrescoTemp, uuid, pomFile);
             } else if (Constants.SCM_SVN.equals(repoType)) {
@@ -1136,8 +1120,9 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
                 String tagVerion = split[0];
                 versionMap.put(Constants.CURRENT_VERSION, version);
                 versionMap.put(Constants.TAG_VERSION, tagVerion);
-                String devVersion = getDevVersion(projectInfo, previousBranchVersion, tagVerion);
-                versionMap.put(Constants.DEV_VERSION, version);
+                String[] splitVersion = tagVerion.split("\\.");
+                String devVersion = splitVersion[0] + FrameworkConstants.DOT + (Integer.parseInt(splitVersion[1]) + 1) + FrameworkConstants.DOT + splitVersion[2] + HYPHEN + SNAPSHOT;
+                versionMap.put(Constants.DEV_VERSION, devVersion);
             }
         } catch (PhrescoPomException e) {
             status = RESPONSE_STATUS_ERROR;
@@ -1179,47 +1164,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
         return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
     }
 	
-	private String getDevVersion(ProjectInfo projectInfo, String previousBranchVersion, String version) {
-        ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
-        String buildType = projectInfo.getVersionInfo().getBuildType();
-        int weekStart = projectInfo.getVersionInfo().getWeekStart();
-        Date creationDate = appInfo.getCreationDate();
-        int week = getWeek(creationDate);
-        int initialVersion = weekStart * 1000;
-        if ("iteration".equals(buildType)) {
-            if (week > 0) {
-                initialVersion = 1000 * week + initialVersion;
-            }
-        } else if ("sprint".equals(buildType)) {
-            initialVersion = weekStart * 1000;
-            int reminder = week % 2;
-            week = week / 2;
-            if (week > 0) {
-                initialVersion = 1000 * week + initialVersion;
-            }
-            initialVersion = initialVersion + reminder;
-        }
-        if (StringUtils.isNotEmpty(previousBranchVersion)) {
-            if (previousBranchVersion.startsWith(String.valueOf(initialVersion).substring(0, 2))) {
-                int previousBranchVersionNo = Integer.parseInt(previousBranchVersion) % 10;
-                initialVersion = initialVersion + previousBranchVersionNo;
-            }
-        }
-        initialVersion = initialVersion + 1;
-        
-        String devVersion = version + "." + initialVersion + "-SNAPSHOT";
-        
-        return devVersion;
-    }
-    
-    private int getWeek(Date creationdate) {
-        Date date = new Date();
-        DateTime currentDateTime = new DateTime(date);
-        DateTime createDateTime = new DateTime(creationdate);
-        Weeks weeks = Weeks.weeksBetween(createDateTime, currentDateTime);
-        return weeks.getWeeks();
-    }
-    
     private void gitPomCheckout(String connectionUrl, String currentBranch,
             String phrescoTemp, String uuid, File pomFile) throws IOException {
         StringBuilder sb = new StringBuilder();

@@ -29,7 +29,7 @@
 				<tr>
                     <td><span data-i18n="project.create.label.version"></span><sup>*</sup></td>
                     <td>
-                    	<input type="text" name="projectversion" id="projectversion" readonly="readonly" style="cursor: pointer;" major="1" minor="0" fixed="0" iterationType="iteration" weekStart="1" value="1.0.0-SNAPSHOT"/>
+                    	<input type="text" name="projectversion" id="projectversion" style="cursor: pointer;" major="1" minor="0" fixed="0" iterationType="iteration" weekStart="1" value="1.0.0-SNAPSHOT"/>
                     	<img class="dropdown_icon" src="themes/default/images/Phresco/dropdown_icon.png" id="versionImg">
                 	</td>
 					<td><span data-i18n="project.create.label.groupid"></span></td>

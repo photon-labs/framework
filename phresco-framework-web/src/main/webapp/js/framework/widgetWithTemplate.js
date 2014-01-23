@@ -1402,7 +1402,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 										$("#testConsole").html(tesC);
 									}
 								}
-							}, 3500);
+							}, 5000);
 						}
 					});
 				});

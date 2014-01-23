@@ -22,16 +22,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.photon.phresco.commons.FrameworkConstants;
-import com.photon.phresco.commons.model.ApplicationInfo;
-import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.RepositoryManager;
-import com.photon.phresco.framework.impl.util.FrameworkUtil;
 import com.photon.phresco.util.Utility;
 
 public class GitRepositoryImpl implements RepositoryManager, FrameworkConstants {
 	public Document getSource(String appDirName, String username, String password, String srcRepoUrl) throws PhrescoException {
-		List<String> documents = new ArrayList<String>();
 		Document document = null;
 		try {
 			document = getGitSourceRepo(appDirName);
@@ -107,7 +103,8 @@ public class GitRepositoryImpl implements RepositoryManager, FrameworkConstants 
 
 			Element urlItem = doc.createElement(ITEM);
 			urlItem.setAttribute(TYPE, FOLDER);
-			urlItem.setAttribute(NAME, url);
+			urlItem.setAttribute(NAME, appDirName);
+			urlItem.setAttribute(URL, url);
 
 			rootItem.appendChild(urlItem);
 

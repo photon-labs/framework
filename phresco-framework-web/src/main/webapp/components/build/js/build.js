@@ -292,7 +292,6 @@ define(["build/listener/buildListener"], function() {
 			$("img[name=deployBuild]").unbind('click');
 			$("img[name=deployBuild]").click(function(){
 				var current = this,  sqlParam = "", queryStr = "", divId = $(this).closest('tr').find('td:eq(0)').text(), whereToRender = $('#deploye_' + divId + ' ul'), deviceDeploy = $(this).attr("deviceDeploy");
-				commonVariables.runType = "deploy";
 				commonVariables.goal = "deploy";
 				commonVariables.phase = "deploy";
 				commonVariables.buildNo = divId;
@@ -341,6 +340,8 @@ define(["build/listener/buildListener"], function() {
 			//build deploy click event
 			$("input[name=deploy]").unbind('click');
 			$("input[name=deploy]").click(function(){
+				commonVariables.runType = "deploy";
+				$('input[name=kill]').attr('disabled', true);
 				var current = this, sqlParam = "", queryStr = "";
 				self.clearLogContent();
 				$('input[name=buildDelete]').hide();
@@ -461,6 +462,7 @@ define(["build/listener/buildListener"], function() {
 			//Minifier click event
 			$("#btnMinifer").unbind("click");
 			$("#btnMinifer").click(function() {
+				$('input[name=kill]').attr('disabled', true);
 				self.checkForLock("minify", '', '', function(response) {
 					if (response.status === "success" && response.responseCode === "PHR10C00002") {
 						var finalArray = [], fileInfo = {}, type = '', compressName = '', files = '', path = '', queryStr = '',validation = false;
@@ -785,6 +787,7 @@ define(["build/listener/buildListener"], function() {
 			$("#buildRun").unbind("click");
 			$("#buildRun").click(function(){
 				commonVariables.runType = "build";
+				$('input[name=kill]').attr('disabled', true);
 				var sqlParam = "";
 				
 				var targetFolders = [];

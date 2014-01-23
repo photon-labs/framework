@@ -95,7 +95,7 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			});
 
 			Handlebars.registerHelper('customIframeUrl', function(url) {
-				return url;
+				return url + '&from=phresco';
 			});
 
 
@@ -223,6 +223,8 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			//To run the Functional test
 			$("#runFunctionalTest").unbind("click");
 			$("#runFunctionalTest").click(function() {
+				commonVariables.runType = 'functional';
+				$('input[name=kill]').attr('disabled', true);
 				self.validation.dispatch("functional-test", "functional-test", $('#functionalTestForm').serialize(), function (status) {
 					if (status) {
 						self.onPerformActionEvent.dispatch("runFunctionalTest", function() {
@@ -238,12 +240,16 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			//To start the Hub
 			$("#executeStartHub").unbind("click");
 			$("#executeStartHub").click(function() {
+				commonVariables.runType = 'startHub';
+				$('input[name=kill]').attr('disabled', true);
 				self.onPerformActionEvent.dispatch("startHub");
 			});
 			
 			//To start the Node
 			$("#executeStartNode").unbind("click");
 			$("#executeStartNode").click(function() {
+				commonVariables.runType = 'startNode';
+				$('input[name=kill]').attr('disabled', true);
 				self.onPerformActionEvent.dispatch("startNode");
 			});
 

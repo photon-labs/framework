@@ -76,7 +76,7 @@ define(["testResult/listener/testResultListener"], function() {
 			} else if (currentTab === 'componentTest') {
 				commonVariables.runType = 'component';
 			} else if (currentTab === 'functionalTest') {
-				commonVariables.runType = 'Functional';
+				commonVariables.runType = 'functional';
 
 			} 
 			//To get the testsuites

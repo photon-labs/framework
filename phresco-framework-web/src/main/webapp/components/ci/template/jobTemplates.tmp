@@ -7,8 +7,8 @@
                         <table class="table" cellpadding="0" cellspacing="0" border="0">
                             <tbody>
                                 <tr>
-                                  <td data-i18n="ci.name"/>
-                                  <td data-i18n="ci.type"/>
+                                  <td><span data-i18n="ci.name"></span><sup>*</sup></td>
+                                  <td><span data-i18n="ci.type"></span></td>
                                 </tr>
                                 <tr>
                                   <td>

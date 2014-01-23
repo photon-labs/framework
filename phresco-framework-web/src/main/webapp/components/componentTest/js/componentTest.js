@@ -137,6 +137,8 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 			//To run the component test
 			$("#runComponentTest").unbind("click");
 			$("#runComponentTest").click(function() {
+				commonVariables.runType = "component";
+				$('input[name=kill]').attr('disabled', true);
 				self.onRunComponentTestEvent.dispatch(function() {
 					commonVariables.logContent = $('#testConsole').html();
 					$('#testResult').empty();

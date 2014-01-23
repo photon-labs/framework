@@ -7,7 +7,7 @@
 	    <div class="tree_view tree"></div>
 		<div class="file_view hideContent">
 			<div class="files_list">
-				<span id="fileListHead" style="vertical-align: text-top;">Files</span>
+				<span id="fileListHead" style="vertical-align: text-top; font-weight: bold;">Files</span>
 				<input type="hidden" name="baseRepoUrl" value=""/>
 				<input type="hidden" name="selectedBranchName" value=""/>
 				<input type="hidden" name="selectedAppDirName" value=""/>
@@ -63,7 +63,7 @@
 									<tr>
 										<td><input type="text" id="newBranchName"></td>
 										<td>
-											<input class="ver_popup" id="createBranchVersion" type="text" readonly style="cursor:pointer;"><img class="dropdown_icon" src="themes/default/images/Phresco/dropdown_icon.png">
+											<input class="ver_popup" id="createBranchVersion" type="text" readonly style="cursor:pointer; background: none;"><img class="dropdown_icon" src="themes/default/images/Phresco/dropdown_icon.png">
 											<div id="version_popup" class="dyn_popup hideContent">
 												<form id="versionForm">
 													<table>
@@ -206,7 +206,7 @@
 										<td colspan="2"><textarea id="branchComment"></textarea></td>
 									</tr>
 									<tr>
-										<td><input type="checkbox" id="downloadBrToWorkspace">Download to Workspace</td>
+										<td><input type="checkbox" id="downloadBrToWorkspace" style="vertical-align: baseline;">Download to Workspace</td>
 										<td class="flt_right">
 											<input type="button" class="btn btn_style" id="createBranch" value="Create">
 											<input type="button" value="Close" class="btn btn_style dyn_popup_close">

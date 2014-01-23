@@ -248,13 +248,8 @@ define([], function() {
 					function(response){
 						if(response !==  undefined && response !== null){
 							var resLog = response.log;
-							if (resLog.indexOf("Scanning for projects...") !== -1) {
-								commonVariables.mvnFlag = commonVariables.mvnFlag + 1;
-							}
-							
-							if (commonVariables.mvnFlag === 2) {
+							if (resLog.indexOf("Writing Process Id...") !== -1) {
 								$('input[name=kill]').attr('disabled', false);
-								commonVariables.mvnFlag = 0;
 							}
 							
 							if(response.log !== undefined && response.log !== null){

@@ -41,6 +41,7 @@ public class AddCertificateInfo implements Serializable {
 	private String configName;
 	private String propValue;
 	private String moduleName;
+	private String projectCode;
 	
 	public AddCertificateInfo() {
 		super();
@@ -121,11 +122,19 @@ public class AddCertificateInfo implements Serializable {
 	public void setModuleName(String moduleName) {
 		this.moduleName = moduleName;
 	}
-
+	
 	public String getModuleName() {
 		return moduleName;
 	}
-	
+
+	public void setProjectCode(String projectCode) {
+		this.projectCode = projectCode;
+	}
+
+	public String getProjectCode() {
+		return projectCode;
+	}
+
 	public String toString() {
 		 return new ToStringBuilder(this,
 	                ToStringStyle.DEFAULT_STYLE)
@@ -140,6 +149,7 @@ public class AddCertificateInfo implements Serializable {
 	                .append("configName", getConfigName())
 	                .append("propValue", getPropValue())
 	                .append("moduleName", getModuleName())
+	                .append("projectCode", getProjectCode())
 	                .toString();
 	}
 }
