@@ -336,7 +336,7 @@
 		},
 		
 		"source" : {
-			"frombranch" : "From Branch/Trunck",
+			"frombranch" : "From Branch/Trunk",
 			"version" : "Version",
 			"branchto" : "Branch To",
 			"tagto" : "Tags To",

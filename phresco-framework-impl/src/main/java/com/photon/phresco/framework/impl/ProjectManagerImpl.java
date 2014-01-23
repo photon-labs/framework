@@ -391,7 +391,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				RepoInfo repoInfo = customer.getRepoInfo();
 				List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
 				for (ApplicationInfo appInfo : appInfos) {
-					if (appInfo.getModules() != null) {
+					if (CollectionUtils.isNotEmpty(appInfo.getModules())) {
 						for (ModuleInfo module : appInfo.getModules()) {
 							File moduleDir = new File(Utility.getProjectHome() + module.getRootModule() + File.separator + module.getCode());
 							String pluginInfoFile = moduleDir.getPath() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  APPLICATION_HANDLER_INFO_FILE;
@@ -404,7 +404,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						String pluginInfoFile = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DOT_PHRESCO_FOLDER +File.separator +  APPLICATION_HANDLER_INFO_FILE;
 						File path = new File(Utility.getProjectHome() + appInfo.getAppDirName());
 						ProjectInfo newProjecInfo = ProjectUtils.getProjectInfoFile(path);
-						
 						postProjectCreation(newProjecInfo, serviceManager, projectUtils, repoInfo, appInfo, pluginInfoFile, path);
 					}
 				}
@@ -514,9 +513,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 //					List<String> buildArgCmds = new ArrayList<String>();
 //					String pomFileName = Utility.getPhrescoPomFile(appInfo);
-//					System.out.println("pomfile name for eclipse pliging ::" + pomFileName);
 //					if(!POM_NAME.equals(pomFileName)) {
-//						System.out.println("dddadads" + pomFileName);
 //						buildArgCmds.add(HYPHEN_F);
 //						buildArgCmds.add(pomFileName);
 //					}
