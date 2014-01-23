@@ -217,9 +217,9 @@
         </plugins>
     </build>
 	  <properties>
-	    <phresco.unitTest.java.report.dir>/do_not_checkin/reports/unitReports</phresco.unitTest.java.report.dir>
-		<phresco.unitTest.java.testsuite.xpath>/testsuite</phresco.unitTest.java.testsuite.xpath>
-		<phresco.unitTest.java.testcase.path>/testcase</phresco.unitTest.java.testcase.path>
-		<phresco.unitTest>java</phresco.unitTest>
-      </properties>
+        <phresco.unitTest.java.report.dir>/do_not_checkin/reports/unitReports</phresco.unitTest.java.report.dir>
+        <phresco.unitTest.java.testsuite.xpath>/testsuite</phresco.unitTest.java.testsuite.xpath>
+        <phresco.unitTest.java.testcase.path>/testcase</phresco.unitTest.java.testcase.path>
+        <phresco.unitTest>java</phresco.unitTest>
+    </properties>
 </project>
