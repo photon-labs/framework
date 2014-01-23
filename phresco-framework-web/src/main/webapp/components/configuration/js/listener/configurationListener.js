@@ -1309,7 +1309,7 @@ define(["croneExpression/croneExpression"], function() {
 						$(this).find("." + type + "Configuration").each(function() {
 							var proValue = $(this).attr("name");
 							if(proValue !== undefined) {
-								if($(this).val()) {
+								if($(this).val() || $(this).val() === '') {
 									properties[proValue] = $(this).val().replace(/%20/g, " ");
 								}
 							}
