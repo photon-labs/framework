@@ -31,7 +31,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -90,6 +89,9 @@ import com.photon.phresco.framework.model.TestCaseError;
 import com.photon.phresco.framework.model.TestCaseFailure;
 import com.photon.phresco.framework.model.TestReportResult;
 import com.photon.phresco.framework.model.TestResult;
+import com.photon.phresco.framework.model.TestStep;
+import com.photon.phresco.framework.model.TestStepError;
+import com.photon.phresco.framework.model.TestStepFailure;
 import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
@@ -414,6 +416,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			throws PhrescoException {
 		String testSuitePath = "";
 		String testCasePath = "";
+		String testStepPath = "";
 		try {
 			if (StringUtils.isNotEmpty(projectCode)) {
 				appDirName = projectCode + INTEGRATION_TEST;
@@ -432,7 +435,8 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			}
 			testSuitePath = getTestSuitePath(appDirName,rootModulePath, subModuleName, testType, techReport);
 			testCasePath = getTestCasePath(appDirName,rootModulePath, subModuleName, testType, techReport);
-			return testReport(rootModule, moduleName, testType, moduleName, techReport, testSuitePath, testCasePath,
+			testStepPath = getTestStepNodeName(appDirName,rootModulePath, subModuleName, testType, techReport);
+			return testReport(rootModule, moduleName, testType, moduleName, techReport, testSuitePath, testCasePath, testStepPath,
 					testSuite, rootModulePath, subModuleName);
 		} catch (Exception e) {
 			throw new PhrescoException(e);
@@ -652,7 +656,30 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		}
 		return testCasePath;
 	}
-
+	
+	/**
+	 * Gets the test case path.
+	 *
+	 * @param appDirName the app dir name
+	 * @param testType the test type
+	 * @param techReport the tech report
+	 * @return the test case path
+	 * @throws PhrescoException the phresco exception
+	 */
+	private String getTestStepNodeName(String appDirName, String rootModulePath, String subModule, String testType, String techReport) throws PhrescoException {
+		String testStepNodeName = "";
+		if (testType.equals(UNIT)) {
+			if (StringUtils.isNotEmpty(techReport)) {
+				testStepNodeName = getUnitTestStepNodeName(rootModulePath, subModule, techReport);
+			} else {
+				testStepNodeName = getUnitTestStepNodeName(rootModulePath, subModule);
+			}
+		} else if (testType.equals(FUNCTIONAL)) {
+			testStepNodeName = getFunctionalTestStepNodeName(rootModulePath, subModule);
+		} 
+		return testStepNodeName;
+	}
+	
 	/**
 	 * Test report.
 	 *
@@ -667,7 +694,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 * @return the response
 	 * @throws PhrescoException the phresco exception
 	 */
-	private Response testReport(String appDirName, String moduleName, String testType, String module, String techReport, String testSuitePath, String testCasePath, String testSuite, String rootModulePath, String subModule) throws PhrescoException {
+	private Response testReport(String appDirName, String moduleName, String testType, String module, String techReport, String testSuitePath, String testCasePath, String testStepPath, String testSuite, String rootModulePath, String subModule) throws PhrescoException {
 		setTestSuite(testSuite);
 		ResponseInfo<TestReportResult> responseDataAll = new ResponseInfo<TestReportResult>();
 		ResponseInfo<List<TestCase>> responseData = new ResponseInfo<List<TestCase>>();
@@ -748,7 +775,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			} else*/ 
 			if (testSuitesList.size() > 0) {
 				List<TestCase> testCases;
-				testCases = getTestCases(rootModulePath, subModule, testSuitesList, testSuitePath, testCasePath, testType);
+				testCases = getTestCases(rootModulePath, subModule, testSuitesList, testSuitePath, testCasePath, testStepPath, testType);
 				if (CollectionUtils.isEmpty(testCases)) {
 					ResponseInfo<List<TestCase>> finalOutput = responseDataEvaluation(responseData, null,
 							testCases, RESPONSE_STATUS_SUCCESS, PHRQ000004);
@@ -818,21 +845,20 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 * @return the test cases
 	 * @throws PhrescoException the phresco exception
 	 */
-	private List<TestCase> getTestCases(String rootModulePath, String subModule, List<NodeList> testSuites, String testSuitePath, String testCasePath, String testType) throws PhrescoException {
+	private List<TestCase> getTestCases(String rootModulePath, String subModule, List<NodeList> testSuites, String testSuitePath, String testCasePath, String testStepPath, String testType) throws PhrescoException {
 		InputStream fileInputStream = null;
 		StringBuilder screenShotDir = new StringBuilder();
 		try {
 			List<TestCase> testCases = new ArrayList<TestCase>();
 			for (NodeList testSuite : testSuites) {
-				StringBuilder sb = new StringBuilder(); 
-				sb.append(testSuitePath);
-				sb.append(NAME_FILTER_PREFIX);
-				sb.append(getTestSuite());
-				sb.append(NAME_FILTER_SUFIX);
-				sb.append(testCasePath);
-	
+				StringBuilder testCaseBuilder = new StringBuilder(); 
+				testCaseBuilder.append(testSuitePath);
+				testCaseBuilder.append(NAME_FILTER_PREFIX);
+				testCaseBuilder.append(getTestSuite());
+				testCaseBuilder.append(NAME_FILTER_SUFIX);
+				testCaseBuilder.append(testCasePath);
 				XPath xpath = XPathFactory.newInstance().newXPath();
-				NodeList nodeList = (NodeList) xpath.evaluate(sb.toString(), testSuite.item(0).getParentNode(),
+				NodeList nodeList = (NodeList) xpath.evaluate(testCaseBuilder.toString(), testSuite.item(0).getParentNode(),
 						XPathConstants.NODESET);
 				// For tehnologies like php and drupal duoe to plugin change xml
 				// testcase path modified
@@ -870,6 +896,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 					NodeList childNodes = node.getChildNodes();
 					NamedNodeMap nameNodeMap = node.getAttributes();
 					TestCase testCase = new TestCase();
+					List<TestStep> testSteps = new ArrayList<TestStep>();
 					for (int k = 0; k < nameNodeMap.getLength(); k++) {
 						Node attribute = nameNodeMap.item(k);
 						String attributeName = attribute.getNodeName();
@@ -931,6 +958,36 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 									testCase.setTestCaseError(error);
 								}
 							}
+							//To Calculate teststep if it present
+							if (StringUtils.isNotEmpty(testStepPath) && testStepPath.equalsIgnoreCase(childNode.getNodeName())) {
+								TestStep testStep = new TestStep();
+								Node testStepNode = childNode;
+								NamedNodeMap testStepAttributes = testStepNode.getAttributes();
+								if (testStepAttributes != null && testStepAttributes.getLength() > 0) {
+									for (int k = 0; k < testStepAttributes.getLength(); k++) {
+										Node attribute = testStepAttributes.item(k);
+										String attributeName = attribute.getNodeName();
+										String attributeValue = attribute.getNodeValue();
+										if (ATTR_NAME.equals(attributeName)) {
+											testStep.setName(attributeValue);
+										} else if (ATTR_ACTION.equals(attributeName)) {
+											testStep.setAction(attributeValue);
+										} else if (ATTR_TIME.equals(attributeName)) {
+											testStep.setTime(attributeValue);
+										}
+									}
+									NodeList testStepChilds = testStepNode.getChildNodes();
+									if (testStepChilds != null && testStepChilds.getLength() > 0) {
+										for (int z = 0; z < testStepChilds.getLength(); z++) {
+											Node testStepChildNode = testStepChilds.item(z);
+											constructTestStepFailure(screenShotDir, testCase, testStep, testStepChildNode);
+											constructTestStepError(screenShotDir, testCase, testStep, testStepChildNode);
+										}
+									}
+									testSteps.add(testStep);
+									testCase.setTestSteps(testSteps);
+								}
+							}	
 						}
 					}
 					testCases.add(testCase);
@@ -946,6 +1003,72 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		} catch (XPathExpressionException e) {
 			throw new PhrescoException(e);
 		} catch (IOException e) {
+			throw new PhrescoException(e);
+		} finally {
+			try {
+				if (fileInputStream != null) {
+					fileInputStream.close();
+				}
+			} catch (IOException e) {
+
+			}
+		}
+	}
+
+	private void constructTestStepError(StringBuilder screenShotDir, TestCase testCase, TestStep testStep, Node testStepChildNode) throws PhrescoException {
+		FileInputStream fileInputStream = null;
+		try {
+			if (ELEMENT_ERROR.equals(testStepChildNode.getNodeName())) {
+				TestStepError testStepError = getTestStepError(testStepChildNode);
+				if (testStepError != null) {
+					File file = new File(screenShotDir.toString().concat(testCase.getName()).concat(FrameworkConstants.DOT + IMG_PNG_TYPE));
+					if (file.exists()) {
+						testStepError.setHasErrorImg(true);
+						fileInputStream = new FileInputStream(file);
+						if (fileInputStream != null) {
+							byte[] imgByte = null;
+							imgByte = IOUtils.toByteArray(fileInputStream);
+							byte[] encodedImage = Base64.encodeBase64(imgByte);
+							testStepError.setScreenshotPath(new String(encodedImage));
+						}
+					}
+					testStep.setTestStepError(testStepError);
+				}
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		} finally {
+			try {
+				if (fileInputStream != null) {
+					fileInputStream.close();
+				}
+			} catch (IOException e) {
+
+			}
+		}
+	}
+
+	private void constructTestStepFailure(StringBuilder screenShotDir, TestCase testCase, TestStep testStep, Node testStepChildNode) throws PhrescoException {
+		FileInputStream fileInputStream = null;
+		try {
+			if (ELEMENT_FAILURE.equals(testStepChildNode.getNodeName())) {
+				TestStepFailure testStepfailure = getTestStepFailure(testStepChildNode);
+				if (testStepfailure != null) {
+					File file = new File(screenShotDir.toString().concat(testCase.getName()).concat(FrameworkConstants.DOT + IMG_PNG_TYPE));
+					if (file.exists()) {
+						testStepfailure.setHasFailureImg(true);
+						fileInputStream = new FileInputStream(file);
+						if (fileInputStream != null) {
+							byte[] imgByte = null;
+							imgByte = IOUtils.toByteArray(fileInputStream);
+							byte[] encodedImage = Base64.encodeBase64(imgByte);
+							testStepfailure.setScreenshotPath(new String(encodedImage));
+						}
+					}
+					testStep.setTestStepFailure(testStepfailure);
+				}
+			}
+		} catch (Exception e) {
 			throw new PhrescoException(e);
 		} finally {
 			try {
@@ -1007,7 +1130,34 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		}
 		return failure;
 	}
+	
 
+	/**
+	 * Gets the test step failure.
+	 *
+	 * @param failureNode the failure node
+	 * @return the failure
+	 */
+	private static TestStepFailure getTestStepFailure(Node failureNode) {
+		TestStepFailure failure = new TestStepFailure();
+		failure.setDescription(failureNode.getTextContent());
+		failure.setFailureType(REQ_TITLE_EXCEPTION);
+		NamedNodeMap nameNodeMap = failureNode.getAttributes();
+
+		if (nameNodeMap != null && nameNodeMap.getLength() > 0) {
+			for (int k = 0; k < nameNodeMap.getLength(); k++) {
+				Node attribute = nameNodeMap.item(k);
+				String attributeName = attribute.getNodeName();
+				String attributeValue = attribute.getNodeValue();
+
+				if (ATTR_TYPE.equals(attributeName)) {
+					failure.setFailureType(attributeValue);
+				}
+			}
+		}
+		return failure;
+	}
+	
 	/**
 	 * Gets the error.
 	 *
@@ -1032,7 +1182,32 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		}
 		return tcError;
 	}
+	
+	/**
+	 * Gets the test step error.
+	 *
+	 * @param errorNode the error node
+	 * @return the error
+	 */
+	private static TestStepError getTestStepError(Node errorNode) {
+		TestStepError tsError = new TestStepError();
+		tsError.setDescription(errorNode.getTextContent());
+		tsError.setErrorType(REQ_TITLE_ERROR);
+		NamedNodeMap nameNodeMap = errorNode.getAttributes();
+		if (nameNodeMap != null && nameNodeMap.getLength() > 0) {
+			for (int k = 0; k < nameNodeMap.getLength(); k++) {
+				Node attribute = nameNodeMap.item(k);
+				String attributeName = attribute.getNodeName();
+				String attributeValue = attribute.getNodeValue();
 
+				if (ATTR_TYPE.equals(attributeName)) {
+					tsError.setErrorType(attributeValue);
+				}
+			}
+		}
+		return tsError;
+	}
+	
 	/**
 	 * Gets the unit report options.
 	 *
@@ -1572,7 +1747,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			throw new PhrescoException(e);
 		}
 	}
-
+	
 	/**
 	 * Gets the unit test case path.
 	 *
@@ -1588,7 +1763,41 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			throw new PhrescoException(e);
 		}
 	}
-
+	
+	/**
+	 * Gets the unit test step node name.
+	 *
+	 * @param appDirName the app dir name
+	 * @param option the option
+	 * @return the unit test case path
+	 * @throws PhrescoException the phresco exception
+	 */
+	private String getUnitTestStepNodeName(String rootModulePath, String subModule, String option) throws PhrescoException {
+		try {
+			return Utility.getPomProcessor(rootModulePath, subModule).getProperty(
+					Constants.POM_PROP_KEY_UNITTEST_TESTCASE_PATH_START + option
+							+ Constants.POM_PROP_KEY_UNITTEST_TESTSTEP_NODE_END);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	/**
+	 * Gets the unit test case path.
+	 *
+	 * @param appDirName the app dir name
+	 * @return the unit test case path
+	 * @throws PhrescoException the phresco exception
+	 */
+	private String getUnitTestStepNodeName(String rootModulePath, String subModule) throws PhrescoException {
+		try {
+			return Utility.getPomProcessor(rootModulePath, subModule).getProperty(
+					Constants.POM_PROP_KEY_UNITTEST_TESTSTEP_NODE);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
 	/**
 	 * Gets the functional test case path.
 	 *
@@ -1600,6 +1809,22 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		try {
 			return Utility.getPomProcessor(rootModulePath, subModule).getProperty(
 					Constants.POM_PROP_KEY_FUNCTEST_TESTCASE_PATH);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	/**
+	 * Gets the functional test step path.
+	 *
+	 * @param appDirName the app dir name
+	 * @return the functional test case path
+	 * @throws PhrescoException the phresco exception
+	 */
+	private String getFunctionalTestStepNodeName(String rootModulePath, String subModule) throws PhrescoException {
+		try {
+			return Utility.getPomProcessor(rootModulePath, subModule).getProperty(
+					Constants.POM_PROP_KEY_FUNCTEST_TESTSTEP_NODE);
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		}

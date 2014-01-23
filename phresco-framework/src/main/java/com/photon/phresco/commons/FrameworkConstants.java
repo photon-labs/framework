@@ -1173,6 +1173,7 @@ public interface FrameworkConstants {
     String ATTR_ERRORS = "errors";
     String ATTR_ASSERTIONS = "assertions";
     String ATTR_CLASS = "class";
+    String ATTR_ACTION = "action";
     String ATTR_CLASSNAME = "classname";
     String ATTR_LINE = "line";
     String ATTR_TYPE = "type";

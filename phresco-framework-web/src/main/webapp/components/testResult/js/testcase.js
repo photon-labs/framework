@@ -74,6 +74,14 @@ define(["testResult/listener/testResultListener"], function() {
 				}
 				return str;
 			});
+
+			Handlebars.registerHelper('showArrowImage', function(testSteps) {
+				var css = "display:none;";
+				if (testSteps !== undefined && testSteps !== null && testSteps.length > 0) {
+					css = "display:inline; cursor:pointer;";
+				}
+				return css;
+			});
 			
 		},
 		
@@ -222,6 +230,14 @@ define(["testResult/listener/testResultListener"], function() {
 				$("#graphicalView").show();
 			});
 			
+			//to toggle test steps
+			$(".arrowLeft").unbind("click");
+			$(".arrowLeft").click(function() {
+				($(this).attr('src') === 'themes/default/images/Phresco/arrow_up_grey.png') ? $(this).attr('src', 'themes/default/images/Phresco/arrow_down_grey.png') 
+					: $(this).attr('src', 'themes/default/images/Phresco/arrow_up_grey.png');
+				$(this).closest('tr').nextUntil($('.testCaseRow')).fadeToggle(400, 'linear');
+			});
+
 			$('a[name=updateManualTestCase_popup]').click(function() {
 				var dynClass = $(this).attr('class');
 				self.openccpl(this, dynClass, '');
@@ -235,12 +251,6 @@ define(["testResult/listener/testResultListener"], function() {
 				var testsuiteName = commonVariables.testSuiteName;
 				$('#testSuiteId').val(testsuiteName);
 			});
-			
-			//To copy the console log content to the clip-board
-			/* $('#copyLog').unbind("click");
-			$('#copyLog').click(function() {
-				commonVariables.navListener.copyToClipboard($('#testConsole'));
-			}); */
 			
 			$("input[name=updateTestCase]").unbind("click");
 			$('input[name=updateTestCase]').click(function() {

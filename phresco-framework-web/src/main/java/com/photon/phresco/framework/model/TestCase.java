@@ -17,6 +17,8 @@
  */
 package com.photon.phresco.framework.model;
 
+import java.util.List;
+
 public class TestCase {
 
 	private String name;
@@ -27,7 +29,7 @@ public class TestCase {
 	private String time;
 	private TestCaseFailure testCaseFailure;
 	private TestCaseError testCaseError;
-
+	private List<TestStep> testSteps;
 	public TestCase() {
 
 	}
@@ -104,6 +106,14 @@ public class TestCase {
 
 	public void setTestCaseError(TestCaseError testCaseError) {
 		this.testCaseError = testCaseError;
+	}
+
+	public void setTestSteps(List<TestStep> testSteps) {
+		this.testSteps = testSteps;
+	}
+
+	public List<TestStep> getTestSteps() {
+		return testSteps;
 	}
 
 }
