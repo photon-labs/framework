@@ -7,9 +7,12 @@
     <version>3.2.0.10005-SNAPSHOT</version>
     <description>phresco-framework-root</description>
     <url>http://www.phresco.org</url>
-    <scm>
+
+     <scm>
         <connection>https://github.com/photon-infotech/framework.git</connection>
-    </scm>
+        <developerConnection>scm:git:https://github.com/photon-infotech/framework.git</developerConnection>
+        <url>scm:git:https://github.com/photon-infotech/framework.git</url>
+  </scm>
     <build>
         <sourceDirectory>${phresco.source.directory}</sourceDirectory>
         <testSourceDirectory>${testSourceDirectory}</testSourceDirectory>
@@ -440,5 +443,6 @@
         <lifecycle-mapping.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.0.0</lifecycle-mapping.version>
         <java-maven-plugin.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.0.0.10002</java-maven-plugin.version>
         <json-simple xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.1</json-simple>
+        <phresco.src.repo.url>https://github.com/photon-infotech/framework.git</phresco.src.repo.url>
     </properties>
 </project>
