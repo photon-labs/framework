@@ -24,7 +24,7 @@
                                     	<label>Old Password<sup>*</sup></label>
                                     </td>
                                     <td>
-                                        <input type="password" id="old_password">
+                                        <input type="password" id="old_password" maxlength="30" title="30 Characters only">
                                     </td>
                     			</tr>
                                 <tr>
@@ -32,7 +32,7 @@
                                     	<label>New Password<sup>*</sup></label>
                                     </td>
                                     <td>
-                                        <input type="password" id="new_password">
+                                        <input type="password" id="new_password" maxlength="30" title="30 Characters only">
                                     </td>
                     			</tr>
                                 <tr>
@@ -40,7 +40,7 @@
                                     	<label>Re-enter New Password<sup>*</sup></label>
                                     </td>
                                     <td>
-                                        <input type="password" id="new_password_reenter">
+                                        <input type="password" id="new_password_reenter" maxlength="30" title="30 Characters only">
                                     </td>
                     			</tr>
                             </tbody>
