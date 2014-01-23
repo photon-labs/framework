@@ -262,7 +262,7 @@ define([], function() {
 			return header;
 		},
 		
-		editApplication : function(value, techid, module) {
+		editApplication : function(value, techid, module, appName) {
 			var self = this, jsonVal = {};
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			jsonVal.techid = techid;
@@ -281,16 +281,16 @@ define([], function() {
 				if(self.editAplnContent === null){
 					commonVariables.navListener.getMyObj(commonVariables.editApplication, function(returnVal){
 						self.editAplnContent = returnVal;
-						self.loadAppInfo(value, techid, module);
+						self.loadAppInfo(value, techid, module, appName);
 					});	
 				} else {
-					self.loadAppInfo(value, techid, module);
+					self.loadAppInfo(value, techid, module, appName);
 				}					
 			});
 			
 		},
 		
-		loadAppInfo : function(value, techid, module, from, hasModules){
+		loadAppInfo : function(value, techid, module, appName, from, hasModules){
 			var self = this;
 			self.editAplnContent.appDirName = value;
 			commonVariables.api.localVal.setSession('appDirName', value);
@@ -322,7 +322,7 @@ define([], function() {
 			} else {
 				Clazz.navigationController.push(self.editAplnContent, commonVariables.animation);
 			}
-			self.isBlank(module) ? $("#aplntitle").html("Edit - "+value) : $("#aplntitle").html("Edit - "+module);
+			self.isBlank(module) ? $("#aplntitle").html("Edit - "+appName) : $("#aplntitle").html("Edit - "+module);
 		},
 		
 		dynamicrenderlocales : function(contentPlaceholder) {

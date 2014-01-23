@@ -313,6 +313,7 @@ define(["projectlist/listener/projectListListener"], function() {
 						commonVariables.appDirName = $(thisObj).closest("tr").attr("class");
 						var value = $(thisObj).closest("tr").attr("class");
 						var techid = $(thisObj).closest("tr").attr("techid");
+						var appName = $(thisObj).text();
 						commonVariables.techId = techid;
 						$("#myTab li#appinfo a").addClass("act");
 						var from = $(thisObj).attr("from");
@@ -320,7 +321,7 @@ define(["projectlist/listener/projectListListener"], function() {
 						commonVariables.editAppFrom = from;
 						commonVariables.editAppHasModules = hasModules;
 						var module = "multimodule" === from ?  $(thisObj).text() : "";
-						self.onProjectsEvent.dispatch(value , techid, module);
+						self.onProjectsEvent.dispatch(value , techid, module, appName);
 	
 						//To show/hide openfolder, copy path icon and copy to clipboard
 						var actionBody = {};
