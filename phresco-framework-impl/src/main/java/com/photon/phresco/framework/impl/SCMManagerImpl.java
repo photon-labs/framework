@@ -1435,6 +1435,26 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						}
 					}
 				}
+				if (!repoInfo.isSplitPhresco()) {
+					File srcDir = new File(appHome, Constants.DOT_PHRESCO_FOLDER);
+					File srcDotPhresco = new File(tempSrcFile, Constants.DOT_PHRESCO_FOLDER);
+					FileUtils.copyDirectory(srcDir, srcDotPhresco, false);
+					if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
+						File phrescoPomFile = new File(appHome, appInfo.getPhrescoPomFile());
+						FileUtils.copyFileToDirectory(phrescoPomFile, tempSrcFile, false);
+					}
+					if (StringUtils.isNotEmpty(appInfo.getPomFile())) {
+						File pomFile = new File(appHome, appInfo.getPomFile());
+						FileUtils.copyFileToDirectory(pomFile, tempSrcFile, false);
+					}
+					
+					String pomFileName = appInfo.getPomFile();
+					if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
+						pomFileName = appInfo.getPhrescoPomFile();
+					}
+					pomDest = new File(tempSrcFile, pomFileName);
+					updatePomProperties(appInfo, "", pomDest, phrescoRepoUrl, srcRepoUrl, testRepoUrl);
+				}
 			} else {
 				tempSrcFile.mkdirs();
 				File srcDir = new File(Utility.getProjectHome() + appDirName);
@@ -1469,6 +1489,15 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					FileUtils.deleteDirectory(new File(tempSrcFile, testDir));
 				}
 			}
+			
+			if (StringUtils.isNotEmpty(appInfo.getPomFile())) {
+				File phrescoPomSrc = new File(appHome + appInfo.getPomFile());
+				FileUtils.copyFileToDirectory(phrescoPomSrc, tempSrcFile);
+				if (StringUtils.isEmpty(appInfo.getPhrescoPomFile()))  {
+					updatePomProperties(appInfo, "", new File(tempSrcFile, appInfo.getPomFile()), phrescoRepoUrl, srcRepoUrl, testRepoUrl);
+				}
+			}
+			
 		} catch (Exception e) {
 			throw new PhrescoException(e);
 		}
