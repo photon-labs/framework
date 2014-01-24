@@ -275,7 +275,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	public Response updateProject(ProjectInfo projectinfo, @QueryParam(REST_QUERY_USERID) String userId) {
 		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
-			ProjectInfo projectInfo = null;
+			ProjectInfo updateProjectInfo = null;
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
 				status = RESPONSE_STATUS_FAILURE;
@@ -291,7 +291,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 				List<ApplicationInfo> newlyAddedApps = findNewlyAddedApps(appInfosFromPage, availableProjectInfo.getAppInfos());
 				projectinfo.setAppInfos(newlyAddedApps);
 				projectinfo.setNoOfApps(newlyAddedApps.size());
-				projectInfo = PhrescoFrameworkFactory.getProjectManager().create(projectinfo, serviceManager);
+				updateProjectInfo = PhrescoFrameworkFactory.getProjectManager().create(projectinfo, serviceManager);
 			} else {
 				for (ApplicationInfo applicationInfo : availableProjectInfo.getAppInfos()) {
 					String appDirPath = Utility.getProjectInfoPath(Utility.getProjectHome() + applicationInfo.getAppDirName(), null);
@@ -300,8 +300,8 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					ProjectUtils.updateProjectInfo(projectInfoFile, new File(appDirPath));
 				}
 			}
-			if(projectinfo.isMultiModule()) {
-				projectinfo = createProjectInfo(availableProjectInfo, projectinfo);
+			if(projectinfo.isMultiModule() && updateProjectInfo != null) {
+				projectinfo = createProjectInfo(availableProjectInfo, updateProjectInfo);
 			}
 			for (ApplicationInfo applicationInfo : projectinfo.getAppInfos()) {
 				if(projectinfo.isMultiModule()) {
@@ -319,7 +319,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200006;
 			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
-					projectInfo, status, successCode);
+					updateProjectInfo, status, successCode);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 		} catch (PhrescoException e) {
 			status = RESPONSE_STATUS_ERROR;
@@ -363,7 +363,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		}
 	}
 
-	private ProjectInfo createProjectInfo(ProjectInfo availableProjectInfo, ProjectInfo updatedProjectInfo) {
+	private ProjectInfo createProjectInfo(ProjectInfo availableProjectInfo, ProjectInfo updatedProjectInfo) throws PhrescoException {
 		List<ApplicationInfo> availableApInfos = availableProjectInfo.getAppInfos();
 		List<ApplicationInfo> updatedAppInfos = updatedProjectInfo.getAppInfos();
 		Map<String, ApplicationInfo> appMap = new HashMap<String, ApplicationInfo>();
@@ -372,7 +372,9 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		}
 		for (ApplicationInfo applicationInfo : updatedAppInfos) {
 			if(!appMap.containsKey(applicationInfo.getAppDirName())) {
-				appMap.put(applicationInfo.getAppDirName(), applicationInfo);
+				File path = new File(Utility.getProjectHome() + applicationInfo.getAppDirName());
+				ProjectInfo newProjecInfo = ProjectUtils.getProjectInfoFile(path);
+				appMap.put(applicationInfo.getAppDirName(), newProjecInfo.getAppInfos().get(0));
 				continue;
 			}
 			ApplicationInfo applicationInfo2 = appMap.get(applicationInfo.getAppDirName());

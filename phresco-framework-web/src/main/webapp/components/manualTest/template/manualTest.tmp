@@ -115,7 +115,7 @@
 						<tbody>
 							<tr>
 								<td style="vertical-align: middle;">Test Scenarios<sup>*</sup> &nbsp;&nbsp;
-								<input type="text" placeholder="TestSuite Name" name="testSuiteName" id="testSuiteId" ></td>
+								<input type="text" placeholder="TestSuite Name" maxlength="30" title="30 Characters only" name="testSuiteName" id="testSuiteId" ></td>
 							</tr>
 						</tbody>
 					</table>
