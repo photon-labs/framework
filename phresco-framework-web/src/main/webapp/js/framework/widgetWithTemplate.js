@@ -592,7 +592,12 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 4;
 						var BottomHeight = clicked.position().top + clicked.height() + scrollHeight + 8 ;
 						$(target).css({"right":d,"left": "auto","margin-top":10,"top": BottomHeight});		
-					}  else {
+					} else if(placeId === 'change_password') {
+						var BottomHeight = clicked.offset().top + clicked.height() - 4 ;
+						var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) + 70;
+						$(target).css({"left":"auto" ,"margin-top":10,"right": d,"top": BottomHeight});	
+						
+					} else {
 						if(flag === 0) {
 							var BottomHeight = clicked.position().top + clicked.height() +4 ;
 							var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 25;

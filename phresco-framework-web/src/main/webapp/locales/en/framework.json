@@ -242,7 +242,9 @@
 		"serveralreadyadded" : "Server configuration already exist for this environment",
 		"emailalready" : "Email configuration already exist for this environment",
 		"prjtexists" : "Project already exists",
-		"PHRD100010" : "Unable to retrieve the search result."
+		"PHRD100010" : "Unable to retrieve the search result.",
+		"configurations" : "Name already exists in Settings",
+		"settings" : "Name already exists in Configuration"
 	},
 	"successCodes" : {
 		"PHR100008" : "Password emailed",
@@ -292,6 +294,7 @@
 		"PHR500005" : "Report not available",
 		"PHR610042"	: "Name already exists in configurations of the project",
 		"PHRD010008" : "No Dashboards Exist."
+		
 	},
 	"navigation" : {
 		"application" : {

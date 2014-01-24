@@ -135,6 +135,25 @@ define(["croneExpression/croneExpression"], function() {
 
 		},
 		
+		getValidationResult : function(header, callback) {
+			var self = this;
+			try {
+				self.showpopupLoad();
+				commonVariables.api.ajaxRequest(header,
+					function(response) {
+						self.hidePopupLoad();
+						callback(response);
+					},
+
+					function(textStatus, xhr, e) {
+						self.hidePopupLoad();
+					}
+				);
+			} catch(exception) {
+				self.hidePopupLoad();
+			}
+		},
+		
 		showpopupLoad : function(){
 			$('.popuploading').show();
 		},
@@ -191,6 +210,8 @@ define(["croneExpression/croneExpression"], function() {
 					self.bcheck = true;
 					header.requestMethod = "DELETE";
 					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/deleteEnv?appDirName="+appDirName+"&envName="+deleteEnv+moduleParam;
+				} else if (action === "addEnvValidate") {
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/validate?appDirName="+appDirName+"&customerId="+customerId+"&environmentName="+deleteEnv+moduleParam;
 				} else if (action === "deleteConfig") {
 					header.requestMethod = "DELETE";
 					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/deleteConfig?appDirName="+appDirName+"&configName="+deleteEnv+moduleParam;
@@ -297,6 +318,8 @@ define(["croneExpression/croneExpression"], function() {
 					header.dataType = "xml";
 					header.contentType = "application/xml",
 					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/fileBrowse";
+				} else if (action === "addEnvValidate") {
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/validate?customerId="+customerId+"&environmentName="+deleteEnv+"&projectId="+projectId+"&projectCode="+projectCode;
 				}
 			}	
 			return header;
@@ -1200,19 +1223,26 @@ define(["croneExpression/croneExpression"], function() {
 		},
 		
 		addEnvEvent : function(envName, envDesc, type) {
-			var self = this;
-			var val = '';
+			var self = this, val = '', res = '';
 			if (type === "config") {
-				val = '<div><input type="radio" name="optionsRadiosfd"></div>'
+				val = '<div><input type="radio" name="optionsRadiosfd"></div>';
+				res = "configurations";
 			} else {
+				res = "settings";
 				val = ''
 			}
-			$("ul[name=envList]").append('<li draggable="true" name="'+envName+'">'+val+'<div  class="envlistname" name="envListName">'+envName+'</div><input type="hidden" name="envListDesc" value="'+envDesc+'"></li>');
-			$('.connected').sortable({
-				connectWith: '.connected'
+			self.getValidationResult(self.getRequestHeader(self.configRequestBody, "addEnvValidate", envName), function(response) {
+				if (response.status === "success") {
+					$("ul[name=envList]").append('<li draggable="true" name="'+envName+'">'+val+'<div  class="envlistname" name="envListName">'+envName+'</div><input type="hidden" name="envListDesc" value="'+envDesc+'"></li>');
+					$('.connected').sortable({
+						connectWith: '.connected'
+					});
+					$("input[name=envName]").val('');
+					$("input[name=envDesc]").val('');
+				} else {
+					commonVariables.api.showError(res ,"error", true, false, true);
+				}
 			});
-			$("input[name=envName]").val('');
-			$("input[name=envDesc]").val('');
 		},
 		
 		saveEnvEvent : function(envWithConfig, callback) {

@@ -140,7 +140,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response addEnvironment(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, 
 			@QueryParam(REST_QUERY_MODULE_NAME) String moduleName, List<Environment> environments,
-			@QueryParam(REST_QUERY_PROJECT_CODE) String projectCode, @QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId) throws PhrescoException {
+			@QueryParam(REST_QUERY_PROJECT_CODE) String projectCode) throws PhrescoException {
 		
 		String rootModulePath = "";
 		String subModuleName = "";
@@ -153,12 +153,12 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		}
 		ResponseInfo<Environment> responseData = new ResponseInfo<Environment>();
 		try {
-			boolean duplicateEnvironment = validateEnvironment(projectId, customerId, environments, appDirName, rootModulePath, subModuleName);	
-			if (duplicateEnvironment) {  
-				ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null,
-						duplicateEnvironment, ERROR_DUPLICATE_NAME_IN_CONFIGURATIONS, PHR610042);
-				return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
-			}
+//			boolean duplicateEnvironment = validateEnvironment(projectId, customerId, environments, appDirName, rootModulePath, subModuleName);	
+//			if (duplicateEnvironment) {
+//				ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null,
+//						duplicateEnvironment, ERROR_DUPLICATE_NAME_IN_CONFIGURATIONS, PHR610042);
+//				return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+//			}
 			
 			String configFileDir = "";
 			if (StringUtils.isNotEmpty(projectCode)) {
@@ -187,6 +187,39 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					"*").build();
 		}
 	}
+	
+	@GET
+	@Path("/validate")
+	@Produces(MediaType.APPLICATION_JSON)
+ 	public Response validateOnEnvironment(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, 
+			@QueryParam(REST_QUERY_MODULE_NAME) String moduleName, @QueryParam("environmentName") String environmentName,
+			@QueryParam(REST_QUERY_PROJECT_CODE) String projectCode, @QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId) throws PhrescoException {
+		
+		String rootModulePath = "";
+		String subModuleName = "";
+
+		if (StringUtils.isNotEmpty(moduleName)) {
+			rootModulePath = Utility.getProjectHome() + appDirName;
+			subModuleName = moduleName;
+		} else {
+			rootModulePath = Utility.getProjectHome() + appDirName;
+		}
+		ResponseInfo<Environment> responseData = new ResponseInfo<Environment>();
+
+		String duplicateEnvironment = validateEnvironment(projectId, customerId, environmentName, appDirName,
+				rootModulePath, subModuleName);
+
+		if (StringUtils.isNotEmpty(duplicateEnvironment)) {
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, duplicateEnvironment,
+					RESPONSE_STATUS_FAILURE, PHR610042);
+			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		}
+
+		 ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, duplicateEnvironment,
+				 RESPONSE_STATUS_SUCCESS, PHR600029);
+		return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+	}
+	
 
 	/**
 	 * List environments.
@@ -2023,47 +2056,45 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
      * @throws ConfigurationException 
      */
 	
-	private boolean validateEnvironment(String projectId, String customerId, List<Environment> enviroments, String appDirName, String rootModulePath, String subModuleName) throws PhrescoException, ConfigurationException {
-		boolean environmentExists = false;
+	private String validateEnvironment(String projectId, String customerId, String environmentName, String appDirName, String rootModulePath, String subModuleName) throws PhrescoException {
+		String environmentExists = "";
+		ProjectInfo projectInfo = null;
+		String projCode = "";
 		try {
 			if (StringUtils.isEmpty(appDirName)) {
 				List<String> appDirNameList = getAppDirNameList(projectId, customerId);
 				if (CollectionUtils.isNotEmpty(appDirNameList)) {
 					for (String appDirectoryName: appDirNameList) {
-						String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(appDirectoryName, "");
+						String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(Utility.getProjectHome() + appDirectoryName, "");
 						File path = new File(dotPhrescoFolderPath + File.separator +  CONFIGURATION_INFO_FILE_NAME);
-						ConfigManagerImpl configImpl = new ConfigManagerImpl(path);
-						List<Environment> configenvs = configImpl.getEnvironments();
-						for (Environment environment : enviroments) {
-							for (Environment env : configenvs) {
-								if(environment.getName().equalsIgnoreCase(env.getName())) {
-									environmentExists = true;
-									throw new PhrescoException(ERROR_DUPLICATE_NAME_IN_CONFIGURATIONS);
-								}
-							}
-						}
+						environmentExists = checkDuplicateEnv(environmentName, path, "Configuration");
 					}
 				}
 			} else {
-				ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+				projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
 				String projectCode = projectInfo.getProjectCode();
 				String globalConfigFileDir = FrameworkServiceUtil.getGlobalConfigFileDir(projectCode);
-				ConfigManagerImpl configImpl = new ConfigManagerImpl(new File(globalConfigFileDir));
-				List<Environment> configenvs = configImpl.getEnvironments();
-				for (Environment environment : enviroments) {
-					for (Environment env : configenvs) {
-						if(environment.getName().equalsIgnoreCase(env.getName())) {
-							environmentExists = true;
-							throw new PhrescoException(ERROR_DUPLICATE_NAME_IN_CONFIGURATIONS);
-						}
-					}
-				}
-				
+				environmentExists = checkDuplicateEnv(environmentName, new File(globalConfigFileDir), "Settings");
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (PhrescoException e) {
+		throw new PhrescoException(e);
+		} catch (ConfigurationException e) {
+			throw new PhrescoException(e);
 		}
 		return environmentExists;
+	}
+
+	private String checkDuplicateEnv(String environmentName, File path, String flag)
+			throws ConfigurationException, PhrescoException {
+		String msg = "";
+		ConfigManagerImpl configImpl = new ConfigManagerImpl(path);
+		List<Environment> configenvs = configImpl.getEnvironments();
+			for (Environment env : configenvs) {
+				if(environmentName.equalsIgnoreCase(env.getName())) {
+					msg = ERROR_DUPLICATE_NAME_IN_CONFIGURATIONS + flag;
+				}
+			}
+		return msg;
 	}
 	
 	

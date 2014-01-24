@@ -65,6 +65,7 @@ define([], function() {
 					var formObj;
 					if (goal === commonVariables.functionalTestGoal) {
 						formObj = $('#functionalTestForm');
+						formObj.css("overflow", "visible");
 					}
 					if (goal === commonVariables.startHubGoal) {
 						formObj = $('#startHubForm');

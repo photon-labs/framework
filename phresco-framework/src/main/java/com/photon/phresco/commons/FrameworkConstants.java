@@ -1453,7 +1453,7 @@ public interface FrameworkConstants {
     String ERROR_DUPLICATE_NAME = "Name already exists";
     String ERROR_DUPLICATE_NAME_IN_SETTINGS = "Name already exists in global settings";
     String ERROR_PRODUCTION_EXISTS_IN_CONFIGURATIONS= "Production is application specific environment";
-    String ERROR_DUPLICATE_NAME_IN_CONFIGURATIONS = "Name already exists in configurations of the {0} project";
+    String ERROR_DUPLICATE_NAME_IN_CONFIGURATIONS = "Name already exists in ";
     String ERROR_SELECT = "Select database and server";
     String ERROR_TEST_SUITE = "Test result is not available for this project";
     String ERROR_PARSE_EXCEPTION = "quality.xml.parse.error";
