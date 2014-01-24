@@ -200,16 +200,16 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		environments.add(env);
 		environments.add(devEnv);
 		environments.add(environment);
-		Response response = configurationService.addEnvironment(appDirName, "", environments,"","","");
+		Response response = configurationService.addEnvironment(appDirName, "", environments,"");
 		ResponseInfo<List<Environment>> environmentList = (ResponseInfo<List<Environment>>) configurationService.getAllEnvironments(appDirName, "", "true", "","").getEntity();
 		List<Environment> data = environmentList.getData();
 		Assert.assertEquals(200, response.getStatus());
 		Assert.assertEquals(3, data.size());
 		
-		Response responseSame = configurationService.addEnvironment(appDirName, "", environments,"","","");
+		Response responseSame = configurationService.addEnvironment(appDirName, "", environments,"");
 		Assert.assertEquals(200, responseSame.getStatus());
 		
-		Response responseFail = configurationService.addEnvironment("", "", environments,"","","");
+		Response responseFail = configurationService.addEnvironment("", "", environments,"");
 		Assert.assertEquals(200, responseFail.getStatus());
 	}
 	
@@ -803,7 +803,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		devEnv.setConfigurations(finalList);
 		environments.add(env);
 		environments.add(devEnv);
-		Response response = configurationService.addEnvironment(appDirName, "", environments, "", "", "");
+		Response response = configurationService.addEnvironment(appDirName, "", environments, "");
 		ResponseInfo<List<Environment>> environmentList = (ResponseInfo<List<Environment>>) configurationService.getAllEnvironments(appDirName, "", "true", "", "").getEntity();
 		Assert.assertEquals(200, response.getStatus());
 	}
