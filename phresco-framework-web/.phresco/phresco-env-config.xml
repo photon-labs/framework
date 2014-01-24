@@ -13,15 +13,15 @@
             <protocol>http</protocol>
             <host>localhost</host>
         </Server>
-        <Database desc="Database Configuration for Javawebservice Eshop application" name="Database Configuration">
-            <version>5.5.1</version>
-            <port>3306</port>
-            <password/>
-            <type>MYSQL</type>
-            <host>localhost</host>
-            <dbname>jwsdb</dbname>
-            <username>root</username>
-        </Database>
+        <WebService desc="" name="Webservice">
+			<protocol>http</protocol>
+			<host>phresco.photoninfotech.com</host>
+			<port>80</port>
+			<username/>
+			<password/>
+			<context>service-2.0</context>
+			<additional_context>/rest/api</additional_context>
+		</WebService>
     </environment>
     <environment appliesTo="" default="false" desc="Staging Environment" name="Staging">
         <Server desc="Server Configuration for Javawebservice Eshop application" name="Server Configuration">
@@ -37,15 +37,15 @@
             <protocol>http</protocol>
             <host>localhost</host>
         </Server>
-        <Database desc="Database Configuration for Javawebservice Eshop application" name="Database Configuration">
-            <version>5.5.1</version>
-            <port>3306</port>
-            <password/>
-            <type>MYSQL</type>
-            <host>localhost</host>
-            <dbname>jwsdb</dbname>
-            <username>root</username>
-        </Database>
+        <WebService desc="" name="Webservice">
+			<protocol>http</protocol>
+			<host>phresco.photoninfotech.com</host>
+			<port>80</port>
+			<username/>
+			<password/>
+			<context>service-2.0</context>
+			<additional_context>/rest/api</additional_context>
+		</WebService>
     </environment>
     <environment appliesTo="" default="false" desc="Development Environment" name="Development">
         <Server desc="Server Configuration for Javawebservice Eshop application" name="Server Configuration">
@@ -61,14 +61,14 @@
             <protocol>http</protocol>
             <host>localhost</host>
         </Server>
-        <Database desc="Database Configuration for Javawebservice Eshop application" name="Database Configuration">
-            <version>5.5.1</version>
-            <port>3306</port>
-            <password/>
-            <type>MYSQL</type>
-            <host>localhost</host>
-            <dbname>jwsdb</dbname>
-            <username>root</username>
-        </Database>
+        <WebService desc="" name="Webservice">
+			<protocol>http</protocol>
+			<host>phresco.photoninfotech.com</host>
+			<port>80</port>
+			<username/>
+			<password/>
+			<context>service-2.0</context>
+			<additional_context>/rest/api</additional_context>
+		</WebService>
     </environment>
  </environments>
