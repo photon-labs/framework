@@ -261,7 +261,7 @@
                 <tr>
 					<td>
 						<div class="flt_right">
-							<a href="javascript:void(0)" id="buildCopyLog">
+							<a href="javascript:void(0)" id="repoCopyLog">
 								<img src="themes/default/images/Phresco/buildreport_icon.png" width="15" height="18" border="0" alt="">
 							</a>
 						</div>
@@ -271,7 +271,7 @@
 			</thead>
         </table>
 		<div class="consolescrolldiv" autoscroll="true">
-			<div id="testConsole" class="console_pad console_font">
+			<div id="repoTextConsole" class="console_pad console_font">
 			</div>
 		</div>
     </div>

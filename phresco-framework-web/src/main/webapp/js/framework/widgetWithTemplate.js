@@ -1358,7 +1358,12 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						return $("#iframePart").text();
 					}
 				});
-				
+				$("#repoCopyLog").zclip({
+					path: "lib/ZeroClipboard.swf",
+					copy: function(){
+						return $("#repoTextConsole").text();
+					}
+				});
 			},
 			
 			showBtnLoading : function(btnElement) {

@@ -277,7 +277,7 @@ define([], function() {
 									'&releaseVersion='+releaseVersion+'&downloadOption='+downloadoption;
 				commonVariables.consoleError = false;
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal) {
-					retVal.mvnCreateBranch(queryString, '#testConsole', function(response) {
+					retVal.mvnCreateBranch(queryString, '#repoTextConsole', function(response) {
 						commonVariables.hideloading = false;
 						$('.progress_loading').hide();
 						if (!commonVariables.consoleError) {
@@ -334,7 +334,7 @@ define([], function() {
 									'&tag='+tag;
 				commonVariables.consoleError = false;
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal) {
-					retVal.mvnTag(queryString, '#testConsole', function(response) {
+					retVal.mvnTag(queryString, '#repoTextConsole', function(response) {
 						commonVariables.hideloading = false;
 						$('.progress_loading').hide();
 						if (!commonVariables.consoleError) {
@@ -380,7 +380,7 @@ define([], function() {
 									'&developmentVersion='+developmentVersion+'&releaseVersion='+releaseVersion+'&tag='+tag+'&branchName='+branchName+'&userId='+userId;
 				commonVariables.consoleError = false;
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal) {
-					retVal.mvnRelease(queryString, '#testConsole', function(response) {
+					retVal.mvnRelease(queryString, '#repoTextConsole', function(response) {
 						commonVariables.hideloading = false;
 						$('.progress_loading').hide();
 						if (!commonVariables.consoleError) {
@@ -425,6 +425,7 @@ define([], function() {
 		},
 		
 		openConsoleDiv : function() {
+			var self=this;
 			$('.testSuiteTable').append('<div class="mask"></div>');
 			$('.mask').fadeIn("slow");
 			$('.unit_close').css("z-index", 1001);
@@ -437,6 +438,7 @@ define([], function() {
 			$('.unit_close').animate({right: value1+10},500);
 			$('.unit_info table').removeClass("big").addClass("small");
 			$('#consoleImg').attr('data-flag','false');
+			self.copyLog();
 		},
 		
 		saveCredentials : function() {
