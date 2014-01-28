@@ -271,7 +271,8 @@ define([], function() {
 									response.log.indexOf("Done: /status") != -1 ||
 									response.log.toLowerCase().match("info: starting coyote http/1.1") ||
 									response.log.toLowerCase().match("server running at https://") ||
-									response.log.toLowerCase().match("server running at http://")) {
+									response.log.toLowerCase().match("server running at http://") ||
+									response.log.toLowerCase().match(".*jboss.*microcontainer.*started in.*")) {
 									//For start node
 									self.setContentEndHeight();
 									callback(response);

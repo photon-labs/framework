@@ -534,6 +534,9 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 				if (line.contains("[INFO] BUILD FAILURE") || line.contains("[ERROR]") || line.contains("Error")) {
 					errorParam = true;
 				}
+				if(line.toLowerCase().matches(".*jboss.*microcontainer.*started in.*")) {
+					errorParam = false;
+				}
 			}
 			return errorParam;
 		} catch (FileNotFoundException e) {
