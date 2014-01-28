@@ -1039,27 +1039,29 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					}
 					String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModule);
 					File getpomFileLocation = Utility.getPomFileLocation(rootModulePath, subModule);
-					StringBuilder sb = new StringBuilder(dotPhrescoFolderPath).append(File.separator).append(
-							RUNAGNSRC_INFO_FILE);
-					File file = new File(sb.toString());
-					if (file.exists()) {
-						Gson gson = new Gson();
-						reader = new BufferedReader(new FileReader(file));
-						ConfigurationInfo configInfo = gson.fromJson(reader, ConfigurationInfo.class);
-						int port = Integer.parseInt(configInfo.getServerPort());
-						boolean connectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, LOCALHOST, port);
-						if (connectionAlive) {
-							status = RESPONSE_STATUS_FAILURE;
-							errorCode = PHR210011;
-							ResponseInfo finalOutput = responseDataEvaluation(responseData, null,
-									null, status, errorCode);
-							return Response.status(Status.OK).entity(finalOutput).header(
-									ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+					if (getpomFileLocation != null) {
+						StringBuilder sb = new StringBuilder(dotPhrescoFolderPath).append(File.separator).append(
+								RUNAGNSRC_INFO_FILE);
+						File file = new File(sb.toString());
+						if (file.exists()) {
+							Gson gson = new Gson();
+							reader = new BufferedReader(new FileReader(file));
+							ConfigurationInfo configInfo = gson.fromJson(reader, ConfigurationInfo.class);
+							int port = Integer.parseInt(configInfo.getServerPort());
+							boolean connectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, LOCALHOST, port);
+							if (connectionAlive) {
+								status = RESPONSE_STATUS_FAILURE;
+								errorCode = PHR210011;
+								ResponseInfo finalOutput = responseDataEvaluation(responseData, null,
+										null, status, errorCode);
+								return Response.status(Status.OK).entity(finalOutput).header(
+										ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+							}
 						}
+	//					String applicationHome = FrameworkServiceUtil.getApplicationHome(appDirName);
+						Utility.killProcess(getpomFileLocation.getParent(), REQ_EQLIPSE); // need to handle for build version
+						deleteProjectFromSonar(getpomFileLocation, request);
 					}
-//					String applicationHome = FrameworkServiceUtil.getApplicationHome(appDirName);
-					Utility.killProcess(getpomFileLocation.getParent(), REQ_EQLIPSE); // need to handle for build version
-					deleteProjectFromSonar(getpomFileLocation, request);
 				}
 			}
 			
@@ -1136,6 +1138,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 
 				for (String string : validateAgainst) {
 					final String projectKey = groupId + SONAR_COLON + artifactId + SONAR_COLON + string;
+					System.out.println("Project Key = " + projectKey);
 					boolean urlExists = checkUrlExists(sonarHomeURL + DASHBORAD_INDEX + projectKey);
 					if (urlExists) {
 						DeleteQuery query = new DeleteQuery() {
