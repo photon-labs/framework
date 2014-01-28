@@ -216,43 +216,51 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 		//for manual
 		createManualPieChart : function(data) {
 			var graphData = {};
-			graphData.total = data.total;
-			graphData.success = data.success;
-			graphData.failures = data.failures;
-			graphData.notApplicable = data.notApplicable;
-			graphData.blocked = data.blocked;
-			graphData.notExecuted = data.notExecuted;
 			
-			var pieData = [];
-			pieData.push('Total (' + graphData.total + ' Tests)');
-			pieData.push('Success (' + graphData.success + ')');
-			pieData.push('Failures (' + graphData.failures + ')');
-			pieData.push('NotApplicable (' + graphData.notApplicable + ')');
-			pieData.push('Blocked (' + graphData.blocked + ' Tests)');
-			pieData.push('NotExecuted (' + graphData.notExecuted + ' Tests)');
-			
-			var pie2 = new RGraph.Pie('pie',[graphData.success, graphData.failures, graphData.notApplicable, graphData.blocked, graphData.notExecuted]); // Create the pie object
-			pie2.Set('chart.gutter.left', 45);
-			pie2.Set('chart.colors', ['#6f6', 'red', '#7474F7', 'orange', 'grey']);
-			pie2.Set('chart.key', ['Success ('+graphData.success+')', 'Failures ('+graphData.failures+')', 'NotApplicable ('+graphData.notApplicable+')', 'Blocked ('+graphData.blocked+')', 'NotExecuted ('+graphData.notExecuted+')','Total Tests ('+graphData.total+')']);
-			pie2.Set('chart.key.background', 'white');
-			pie2.Set('chart.strokestyle', 'white');
-			pie2.Set('chart.linewidth', 3);
-			pie2.Set('chart.title',  commonVariables.testSuiteName + ' Report');
-			pie2.Set('chart.title.size',10);
-			pie2.Set('chart.title.color', '#494949');
-			pie2.Set('chart.exploded', [5,5,0]);
-			pie2.Set('chart.shadow', true);
-			pie2.Set('chart.shadow.offsetx', 0);
-			pie2.Set('chart.shadow.offsety', 0);
-			pie2.Set('chart.shadow.blur', 25);
-			pie2.Set('chart.radius', 100);
-			pie2.Set('chart.background.grid.autofit',true);
-			if (RGraph.isIE8()) {
-		    	pie2.Draw();
+			if(data.total !== 0) {
+				graphData.total = data.total;
+				graphData.success = data.success;
+				graphData.failures = data.failures;
+				graphData.notApplicable = data.notApplicable;
+				graphData.blocked = data.blocked;
+				graphData.notExecuted = data.notExecuted;
+				
+				var pieData = [];
+				pieData.push('Total (' + graphData.total + ' Tests)');
+				pieData.push('Success (' + graphData.success + ')');
+				pieData.push('Failures (' + graphData.failures + ')');
+				pieData.push('NotApplicable (' + graphData.notApplicable + ')');
+				pieData.push('Blocked (' + graphData.blocked + ' Tests)');
+				pieData.push('NotExecuted (' + graphData.notExecuted + ' Tests)');
+				
+				var pie2 = new RGraph.Pie('pie',[graphData.success, graphData.failures, graphData.notApplicable, graphData.blocked, graphData.notExecuted]); // Create the pie object
+				pie2.Set('chart.gutter.left', 45);
+				pie2.Set('chart.colors', ['#6f6', 'red', '#7474F7', 'orange', 'grey']);
+				pie2.Set('chart.key', ['Success ('+graphData.success+')', 'Failures ('+graphData.failures+')', 'NotApplicable ('+graphData.notApplicable+')', 'Blocked ('+graphData.blocked+')', 'NotExecuted ('+graphData.notExecuted+')','Total Tests ('+graphData.total+')']);
+				pie2.Set('chart.key.background', 'white');
+				pie2.Set('chart.strokestyle', 'white');
+				pie2.Set('chart.linewidth', 3);
+				pie2.Set('chart.title',  commonVariables.testSuiteName + ' Report');
+				pie2.Set('chart.title.size',10);
+				pie2.Set('chart.title.color', '#494949');
+				pie2.Set('chart.exploded', [5,5,0]);
+				pie2.Set('chart.shadow', true);
+				pie2.Set('chart.shadow.offsetx', 0);
+				pie2.Set('chart.shadow.offsety', 0);
+				pie2.Set('chart.shadow.blur', 25);
+				pie2.Set('chart.radius', 100);
+				pie2.Set('chart.background.grid.autofit',true);
+				if (RGraph.isIE8()) {
+			    	pie2.Draw();
+				} else {
+			    	RGraph.Effects.Pie.RoundRobin(pie2);
+				}
 			} else {
-		    	RGraph.Effects.Pie.RoundRobin(pie2);
+				$("#graphView").text('No Reports Available');
+				$("#graphView").attr("class","alert alert-block hideContent");
+				$("#graphView").css({"text-align":"center","margin":"auto"});
 			}
+			
 		},
 		
 		showScreenShot : function(imgArray) {
