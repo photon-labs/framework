@@ -777,6 +777,7 @@
 		"teamfs" : "Team Foundation Server",
 		"features" : "Features",
 		"release" : "Release",
+		"nexusdeploy" : "Nexus-Deploy",
 		"relVer" : "Release Version",
 		"devVer" : "Development Version",
 		"tagName" : "Tag Name",

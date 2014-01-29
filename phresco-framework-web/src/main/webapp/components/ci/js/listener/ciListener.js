@@ -957,14 +957,18 @@ define([], function() {
 			var repoTypeTest = $("#repoType tbody div[id=testTab] table tbody");
 			var jobNameTrElem = $("#jobName tbody tr td");
 			var repoTypeTitleElem = $("#repoType thead tr th");
-			var releaseType = $("#release");
 
 			$("#release").html('');
+			$("#nexusDeploy").html('');
 			if (templateJsonData.type === "release") {
 				$("#release").html('<thead><tr><th colspan="3">Release Parameters</th></tr></thead>'+
 									'<tbody><tr><td><input name="releaseVersion" type="text" placeholder="Release Version"></td><td><input name="developmentVersion" type="text" placeholder="Development Version"></td><td><input name="tagName" type="text" placeholder="Tag Name"></td></tr>'
 						+'<tr><td><input name="releaseUsername" type="text" placeholder="Username"></td><td><input name="releasePassword" type="password" placeholder="Password"></td><td><input name="releaseMessage" type="text" placeholder="Message"></td></tr></tbody>');
 			} 
+			if (templateJsonData.type === "nexusDeploy") {
+				$("#nexusDeploy").html('<thead><tr><th colspan="3">Nexus-Deploy Parameters</th></tr></thead>'+
+						'<tbody><tr><td><input name="nexusUsername" type="text" placeholder="Nexus Username"></td><td><input name="nexusPassword" type="text" placeholder="Nexus Password"></td></tr></tbody>');
+			}
 			
 			$('#repoType').hide();
 			if (templateJsonData.enableRepo) {
@@ -1185,6 +1189,8 @@ define([], function() {
 				commonVariables.goal = commonVariables.pdfReportGoal;
 			} else if ("release" === operation) {
 				commonVariables.goal = commonVariables.releaseGoal;
+			} else if ("nexusDeploy" === operation) {
+				commonVariables.goal = commonVariables.nexusDeployGoal;
 			}
 
 			commonVariables.phase = commonVariables.ciPhase + commonVariables.goal; // ci phase

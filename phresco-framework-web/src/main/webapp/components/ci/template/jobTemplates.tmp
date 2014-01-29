@@ -27,6 +27,7 @@
 											<option value="loadTest" data-i18n="ci.loadtest"></option>
 											<option value="pdfReport" data-i18n="ci.pdfreport"></option>
 											<option value="release" data-i18n="ci.release"></option>
+											<option value="nexusDeploy" data-i18n="ci.nexusdeploy"></option>
                                       </select>
                                   </td>
                                 </tr>

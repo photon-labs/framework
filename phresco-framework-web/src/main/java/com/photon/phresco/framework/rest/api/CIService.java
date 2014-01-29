@@ -1580,6 +1580,10 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				String releasePattern = "";
 				if (!POM_NAME.equals(pomFileName) && StringUtils.isNotEmpty(splitDir)) {
 					releasePattern = splitDir;
+				} else if (POM_NAME.equals(pomFileName) && StringUtils.isNotEmpty(splitDir)){
+					releasePattern = srcDir;
+				} else if (!POM_NAME.equals(pomFileName) && StringUtils.isNotEmpty(srcDir)){
+					releasePattern = srcDir;
 				} else if (POM_NAME.equals(pomFileName) && StringUtils.isNotEmpty(srcDir)){
 					releasePattern = srcDir;
 				}
@@ -1751,26 +1755,32 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				mvncmd =  actionType.getActionType().toString();
 				operationName = Constants.PHASE_COMPONENT_TEST;
 			} else if (PHASE_RELEASE.equals(operation)) {
-				path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, PHASE_RELEASE, splitPath);
+				/*path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, PHASE_RELEASE, splitPath);
 				File phrescoPluginInfoFilePath = new File(path);
 				if (phrescoPluginInfoFilePath.exists()) {
 					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
 					//To get maven build arguments
 					parameters = FrameworkServiceUtil.getMojoParameters(mojo, PHASE_RELEASE);
-				}
+				}*/
 				ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 				Customer customer = serviceManager.getCustomer(customerId);
 				com.photon.phresco.commons.model.RepoInfo repoInfo = customer.getRepoInfo();
 				ActionType actionType = ActionType.RELEASE;
 				mvncmd =  actionType.getActionType().toString();
-				mvncmd = mvncmd + File.separator + HYPHEN_DEV_VERSION + job.getDevelopmentVersion() + File.separator + HYPHEN_REL_VERSION + 
-						job.getReleaseVersion() + File.separator + HYPHEN_TAG + job.getTagName() + File.separator + HYPHEN_USERNAME +
-						job.getReleaseUsername() + File.separator + HYPHEN_PASSWORD + job.getReleasePassword() + File.separator +
-						HYPHEN_MESSAGE + "\"" + job.getReleaseMessage() + "\"" + File.separator + HYPHEN_JOBNAME + job.getJobName()
-						+ File.separator + HYPHEN_APPDIR_NAME + job.getAppDirName() + File.separator + HYPHEN_REPO_USERNAME + 
-						repoInfo.getRepoUserName() + File.separator + HYPHEN_REPO_PWD + repoInfo.getRepoPassword();
+				mvncmd = mvncmd + Constants.SPACE + HYPHEN_DEV_VERSION + job.getDevelopmentVersion() + Constants.SPACE + HYPHEN_REL_VERSION + 
+						job.getReleaseVersion() + Constants.SPACE + HYPHEN_TAG + job.getTagName() + Constants.SPACE + HYPHEN_USERNAME +
+						job.getReleaseUsername() + Constants.SPACE + HYPHEN_PASSWORD + job.getReleasePassword() + Constants.SPACE +
+						HYPHEN_MESSAGE + "\"" + job.getReleaseMessage() + "\"" + Constants.SPACE + HYPHEN_JOBNAME + job.getJobName()
+						+ Constants.SPACE + HYPHEN_APPDIR_NAME + job.getAppDirName() + Constants.SPACE + HYPHEN_REPO_USERNAME + 
+						repoInfo.getRepoUserName() + Constants.SPACE + HYPHEN_REPO_PWD + repoInfo.getRepoPassword();
 				operationName = PHASE_RELEASE;
-			} 
+			} else if (PHASE_NEXUS_DEPLOY.equals(operation)) {
+				ActionType actionType = ActionType.NEXUS_DEPLOY;
+				mvncmd =  actionType.getActionType().toString();
+				mvncmd = mvncmd + Constants.SPACE + "-Dusername=" + job.getNexusUsername() + Constants.SPACE + "-Dpassword=" + job.getNexusPassword()+ Constants.SPACE + HYPHEN_JOBNAME + job.getJobName()
+				+ Constants.SPACE + HYPHEN_APPDIR_NAME + job.getAppDirName(); 
+				operationName = PHASE_NEXUS_DEPLOY;
+			}
 			
 			prebuildCmd = CI_PRE_BUILD_STEP + HYPHEN_GOAL + Constants.PHASE_CI + HYPHEN_PHASE + operationName +
 			CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;

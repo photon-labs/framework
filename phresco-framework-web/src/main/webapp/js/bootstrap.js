@@ -180,6 +180,7 @@ var commonVariables = {
 	loadTestGoal : "load-test",
 	pdfReportGoal : "pdf-report",
 	releaseGoal : "release",
+	nexusDeployGoal : "nexusDeploy",
 	projectCode : "",
 
 	startHubGoal : "start-hub",

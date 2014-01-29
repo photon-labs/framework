@@ -92,6 +92,7 @@ import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.service.client.impl.ServiceManagerImpl;
 import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.ProjectUtils;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
@@ -287,22 +288,28 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			}
 			List<ApplicationInfo> appInfosFromPage = projectinfo.getAppInfos();
 			ProjectInfo availableProjectInfo = getProject(projectinfo.getId(), projectinfo.getCustomerIds().get(0));
+			System.out.println("available info .......... " + availableProjectInfo);
 			if(CollectionUtils.isNotEmpty(appInfosFromPage)) {
+				System.out.println("insdie if ................");
 				List<ApplicationInfo> newlyAddedApps = findNewlyAddedApps(appInfosFromPage, availableProjectInfo.getAppInfos());
 				projectinfo.setAppInfos(newlyAddedApps);
 				projectinfo.setNoOfApps(newlyAddedApps.size());
 				updateProjectInfo = PhrescoFrameworkFactory.getProjectManager().create(projectinfo, serviceManager);
 			} else {
+				System.out.println("insdie else ................");
 				for (ApplicationInfo applicationInfo : availableProjectInfo.getAppInfos()) {
 					String appDirPath = Utility.getProjectInfoPath(Utility.getProjectHome() + applicationInfo.getAppDirName(), null);
+					System.out.println("appDor pathh .. " + appDirPath);
 					ProjectInfo projectInfoFile = Utility.getProjectInfo(Utility.getProjectHome() + applicationInfo.getAppDirName() , null);
 					projectInfoFile.setDescription(projectinfo.getDescription());
+					System.out.println("projectinfo file in elseeeeeeeee  .. " + projectInfoFile);
 					ProjectUtils.updateProjectInfo(projectInfoFile, new File(appDirPath));
 				}
 			}
 			if(projectinfo.isMultiModule() && updateProjectInfo != null) {
 				projectinfo = createProjectInfo(availableProjectInfo, updateProjectInfo);
 			}
+			System.out.println("projectinfo .......... " + projectinfo);
 			for (ApplicationInfo applicationInfo : projectinfo.getAppInfos()) {
 				if(projectinfo.isMultiModule()) {
 					updateParentPom(applicationInfo);
@@ -1024,6 +1031,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		ResponseInfo responseData = new ResponseInfo();
 		String rootModulePath = "";
 		String subModule = "";
+		ProjectInfo projectinfo = null;
 		try {
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 			List<String> appDirNames = deleteProjectInfo.getAppDirNames();
@@ -1040,6 +1048,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModule);
 					File getpomFileLocation = Utility.getPomFileLocation(rootModulePath, subModule);
 					if (getpomFileLocation != null) {
+					projectinfo = Utility.getProjectInfo(rootModulePath, subModule);
 						StringBuilder sb = new StringBuilder(dotPhrescoFolderPath).append(File.separator).append(
 								RUNAGNSRC_INFO_FILE);
 						File file = new File(sb.toString());
@@ -1058,10 +1067,17 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 										ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 							}
 						}
-	//					String applicationHome = FrameworkServiceUtil.getApplicationHome(appDirName);
-						Utility.killProcess(getpomFileLocation.getParent(), REQ_EQLIPSE); // need to handle for build version
-						deleteProjectFromSonar(getpomFileLocation, request);
 					}
+					
+					if(projectinfo.isIntegrationTest()) {
+						File integrationFolder = new File(Utility.getProjectHome() + projectinfo.getProjectCode() + "-integrationtest");
+						if (integrationFolder.exists()) {
+							 FileUtil.delete(integrationFolder);
+						}
+					}
+//					String applicationHome = FrameworkServiceUtil.getApplicationHome(appDirName);
+					Utility.killProcess(getpomFileLocation.getParent(), REQ_EQLIPSE); // need to handle for build version
+					deleteProjectFromSonar(getpomFileLocation, request);
 				}
 			}
 			
