@@ -456,6 +456,9 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 								$("#noReport").show();
 								$("#noReport").html("No Report are Available");
 							}
+							commonVariables.api.showError(response.responseCode ,"success", true, false, true);
+						} else if(response.status === "failure") {
+							commonVariables.api.showError(response.responseCode ,"error", true, false, true);
 						}
 					});  
 				});	

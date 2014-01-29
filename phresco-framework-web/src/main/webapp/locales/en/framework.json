@@ -38,7 +38,7 @@
 		"PHR210013" : "Could not open file 'runagainstsource.info'",
 		"PHR210015" : "Unable to download report",
 		"PHR210016" : "Unable to access or read report",
-		"PHR210017" : "Failed to delete report",
+		"PHR210017" : "Failed to delete report,may be file is open state",
 		"PHR210018" : "Could not access application home to delete report",
 		"PHR210019" : "Unable to fetch reports",
 		"PHR210020" : "Atleast one test report should be available or sonar report should be available",

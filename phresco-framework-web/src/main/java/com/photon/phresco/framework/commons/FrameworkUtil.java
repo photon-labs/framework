@@ -54,6 +54,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -62,6 +63,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jopendocument.dom.ODPackage;
@@ -1045,13 +1047,17 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 		    				mySheet.removeRow(next);
 		    				int rowNum = next.getRowNum();
 		    				int newNum = rowNum + 1;
-		    				mySheet.shiftRows(newNum, mySheet.getLastRowNum(),-1);
+		    				HSSFRow row = mySheet.getRow(newNum);
+		    				if(row != null) {
+		    					mySheet.shiftRows(newNum, mySheet.getLastRowNum(),-1);
+		    				}
 		    				hasTrue = true;
 		    				break;
 		    			}
 	        		}
 	        	}
 	        }
+	        
 	        if(hasTrue) {
 	        	 for (int j = 0; j < numberOfSheets; j++) {
 	 	        	HSSFSheet myHSSFSheet = myWorkBook.getSheetAt(j);
@@ -1154,7 +1160,10 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
     		     			mySheet.removeRow(next);
 		    				int rowNum = next.getRowNum();
 		    				int newNum = rowNum + 1;
-		    				mySheet.shiftRows(newNum, mySheet.getLastRowNum(),-1);
+		    				XSSFRow row = mySheet.getRow(newNum);
+		    				if(row != null) {
+		    					mySheet.shiftRows(newNum, mySheet.getLastRowNum(),-1);
+		    				}
 		    				hasTrue = true;
 		    				break;
     		     		}
@@ -1257,9 +1266,6 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 						}
 					}
 					delete = deleteTestCasesFromXLSX(sb.toString(), testSuiteName, testCaseId);
-					if(delete) {
-						
-					}
 				} else if (listXlsFiles.length != 0) {
 					for(File listXlsFile : listXlsFiles) {
 						if (listXlsFile.isFile()) {
@@ -1269,9 +1275,6 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 						}
 					}
 					delete = deleteTestCasesFromXls(sb.toString(), testSuiteName, testCaseId);
-					if(delete) {
-						
-					}
 				} else if (listOdsFiles.length != 0) {
 					for(File listOdsFile : listOdsFiles) {
 						if (listOdsFile.isFile()) {

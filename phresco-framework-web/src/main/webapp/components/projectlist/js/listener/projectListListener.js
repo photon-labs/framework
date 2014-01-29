@@ -788,21 +788,23 @@ define([], function() {
 				deletedata.moduleName = self.isBlank($(this).closest("tr").attr("moduleName")) ? "" : $(this).closest("tr").attr("moduleName");
 				$('input[name="delpdf"]').unbind();
 				$('input[name="delpdf"]').click(function() {
-					$(".generatedRow").each(function() {
-						var pdfFileName = $(this).attr("fileName");
-						if(pdfFileName === deletedata.fileName){
-							$("tr[fileName='"+pdfFileName+"']").remove();
-						}
-					});
-					var size = $(".generatedRow").size();
-					if(size === 0) {
-						$("table[name=pdfHeader_"+dynamicId+"]").hide();
-						$("#noReport_"+dynamicId).removeClass("hideContent");
-						$("#noReport_"+dynamicId).show();
-						$("#noReport_"+dynamicId).html("No Reports are Available");
-					}
+					
 					actionBody = deletedata;  
 					self.projectListAction(self.getActionHeader(actionBody, "deleteReport"), "", function(response){
+						$(".generatedRow").each(function() {
+							var pdfFileName = $(this).attr("fileName");
+							if(pdfFileName === deletedata.fileName){
+								$("tr[fileName='"+pdfFileName+"']").remove();
+							}
+						});
+						
+						var size = $(".generatedRow").size();
+						if(size === 0) {
+							$("table[name=pdfHeader_"+dynamicId+"]").hide();
+							$("#noReport_"+dynamicId).removeClass("hideContent");
+							$("#noReport_"+dynamicId).show();
+							$("#noReport_"+dynamicId).html("No Reports are Available");
+						}
 					});  
 				});	
 			});
