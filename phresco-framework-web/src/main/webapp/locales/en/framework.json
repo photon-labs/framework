@@ -451,8 +451,9 @@
 			"message" : "Message",
 			"othercredential" : "Other Credentials",
 			"pdfreportname" : "Pdf Report Name",
-			"notworkingcopy" : "This Project is not a working copy, add to repository and then try to commit.",
-			"notworkingupdate" : "This Project is not a working copy, add to repository and then try to update."
+			"notworkingcopy" : "This application is not a working copy, add to repository and then try to commit.",
+			"notworkingupdate" : "This application is not a working copy, add to repository and then try to update.",
+			"workingcopy" : "This application is already an working copy."
 		},
 		"btn" : {
 			"addrepo" : "Add To Repo",

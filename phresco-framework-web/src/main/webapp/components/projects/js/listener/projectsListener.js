@@ -231,7 +231,7 @@ define([], function() {
 			
 			if ($("tr[class='applnLayer']").attr('key') === 'displayed') {
 				$('.applnlayercontent').each(function(index, value) {
-					if ($(value).css('display') !== 'none' && $.inArray($(value).attr('name'), frontEndTrNames) !== -1) {
+					if ($(value).css('display') !== 'none' && $(value).attr('name') != undefined) {
 						var applnAppCodeObj = $(value).find('input.appln-appcode');
 						//App code validation
 						if (self.isBlank(applnAppCodeObj.val())) {
@@ -312,7 +312,7 @@ define([], function() {
 			}
 			if ($("tr[class='webLayer']").attr('key') === 'displayed') {
 				$('.weblayercontent').each(function(index, value) {
-					if($(value).css('display') !== 'none' && $.inArray($(value).attr('name'), middleTierTrNames) !== -1){
+					if($(value).css('display') !== 'none' && $(value).attr('name') != undefined){
 						var webAppCodeObj = $(value).find('input.web-appcode');
 						//App code validation
 						if (self.isBlank(webAppCodeObj.val())) {
@@ -397,7 +397,7 @@ define([], function() {
 			
 			if ($("tr[class='mobLayer']").attr('key') === 'displayed') {
 				$('.mobilelayercontent').each(function(index,value) {
-					if($(value).css('display') !== 'none' && $.inArray($(value).attr('name'), cmsTrNames) !== -1) {
+					if($(value).css('display') !== 'none' && $(value).attr('name') != undefined) {
 						var mobAppCodeObj = $(value).find('input.mobile-appcode');
 						//App code validation
 						if (self.isBlank(mobAppCodeObj.val())) {

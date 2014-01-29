@@ -121,7 +121,7 @@
               			{{/if}}
                   
                   <div id="addRepo_{{id}}" class="add_repo dyn_popup" name="addRepo">
-                  	<div class="flt_right">
+                  	<div class="flt_right" id="addToRepoHelpDiv{{id}}">
                   		<img src="themes/default/images/Phresco/question_mark.png" border="0" alt="" style="cursor:pointer;" dynamicId="{{id}}" class="addToRepoHelp">
               		</div>
                   	<div id="addToRepoHelp{{id}}" class="dyn_popup pdf_report">
@@ -130,14 +130,14 @@
 							<input class="btn btn_style dyn_popupcon_close closeAddToRepoHelp" type="button" value="Close" data-i18n="[value]common.btn.close">
 						</div>
 					</div>
-				  	<div class="bs-docs-example repository_tabdiv">						
+				  	<div class="bs-docs-example repository_tabdiv" id="addToRepoTabDiv{{id}}">						
 						<ul class="nav nav-tabs" id="myTab">
 							<li class="active"><a data-toggle="tab" href="#source{{id}}">Source</a></li>
 							<li><input type="checkbox" id="splitDotPhresco_{{id}}" class="splitDotPhresco" dynamicId="{{id}}"><a class="repo_tab dotPhrescoA" dynamicId="{{id}}">.Phresco</a></li>
 							<li><input type="checkbox" id="splitTest_{{id}}" class="splitTest" dynamicId="{{id}}"><a class="repo_tab testA" dynamicId="{{id}}">Test</a></li>
 						</ul>
 					</div>
-					<div class="tab-content fixedscroll" id="myTabContent">
+					<div class="tab-content fixedscroll" id="addToRepoMyTabContent{{id}}">
 					  <div id="source{{id}}" class="tab-pane fade active in">
 						  <table width="100%" border="0" cellspacing="0" cellpadding="0">
 							<tbody>
@@ -281,6 +281,12 @@
 							<input type="button" value="Close" data-i18n="[value]common.btn.close;" class="btn btn_style dyn_popup_close">
 						 </div> 
                   </div>
+					<div class="hideContent addToRepoErr_{{id}} popup_btn" width="100%" border="0" cellspacing="0" cellpadding="0">
+						<p><span data-i18n="projectlist.label.workingcopy"></span></p>
+						<div class="popupCloseBtn">
+							<input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
+						</div>		
+		 			</div>
                   <!--add_repo div ends here --> 
                   
                   <div id="commit{{id}}" class="commit dyn_popup popup_bg commit_table" name="commitpopup">

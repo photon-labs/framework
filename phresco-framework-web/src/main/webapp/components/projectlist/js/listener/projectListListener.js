@@ -258,7 +258,11 @@ define([], function() {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + 'project/dependents?moduleName='+projectRequestBody.subModuleName+'&rootModule='+projectRequestBody.rootModule;
 			}
-
+			if (action === "repoExists") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + 'repository/repoExists?appDirName='+projectRequestBody.appDirName;
+			}
+			
 			return header;
 		},
 		

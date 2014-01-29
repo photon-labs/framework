@@ -204,6 +204,47 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			.build();
 		}
 	}
+	
+	/**
+	 * To check whether the application is already an SCM application
+	 * @param appDirName
+	 * @return
+	 */
+	@GET
+	@Path("/repoExists")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response isSCMApplication(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+		Response response = null;
+		ResponseInfo responseData = new ResponseInfo();
+		try {
+			File pomFileLocation = Utility.getPomFileLocation(Utility.getProjectHome() + appDirName, "");
+			PomProcessor pomProcessor = new PomProcessor(pomFileLocation);
+			String property = pomProcessor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
+			if (StringUtils.isNotEmpty(property)) {
+				status = RESPONSE_STATUS_SUCCESS;
+				successCode = PHR200053;
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, true, status, successCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
+		} catch (PhrescoException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210053;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
+		} catch (PhrescoPomException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210053;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
+		}
+		status = RESPONSE_STATUS_SUCCESS;
+		successCode = PHR200053;
+		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, false, status, successCode);
+		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+	}
 
 	/**
 	 * Adds the project to repository.
@@ -325,8 +366,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			@QueryParam(REST_QUERY_ACTION) String action, @QueryParam(REST_QUERY_USERID) String userId) {
 		ResponseInfo<RepoInfo> responseData = new ResponseInfo<RepoInfo>();
 		try {
-			ProjectInfo projectInfo = Utility.getProjectInfo(Utility.getProjectHome() + appDirName, "");
-			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			File pomFile = Utility.getPomFileLocation(Utility.getProjectHome() + appDirName, "");
 			PomProcessor processor = new PomProcessor(pomFile);
 			String srcRepoURL = processor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
@@ -464,7 +503,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	private Response importSVNApplication(RepoInfo repoInfo, String displayName) {
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		ResponseInfo responseData = new ResponseInfo();
-		String revision = "";
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
 		try {
@@ -862,7 +900,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	@SuppressWarnings({"unchecked","rawtypes"})
 	public Response getArtifactInfo(@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
 			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_NATURE) String nature, @QueryParam(REST_QUERY_VERSION) String version, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
-		List<String> urls = new ArrayList<String>();
 		Map<String, Object> infoMap = new HashMap<String, Object>();
 		ResponseInfo<Map<String, Object>> responseData = new ResponseInfo<Map<String, Object>>();
 		RemoteRepository repo = null;
@@ -945,17 +982,11 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	public Response downloadService(@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
 			@QueryParam(REST_QUERY_USERID) String userId,  @QueryParam(REST_QUERY_NATURE) String nature,  @QueryParam(REST_QUERY_VERSION) String version, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
 		Artifact artifact = null;
-		RemoteRepository repo = null;
 		InputStream inputStream = null;
-		Response response = null;
-		String fileName = "";
 		File artifactFile = null;
 		List<Artifact> artifacts = new ArrayList<Artifact>();
-		ResponseInfo<InputStream> responseData = new ResponseInfo<InputStream>();
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
-			RepositorySystem system = newRepositorySystem();
-			RepositorySystemSession session = newRepositorySystemSession(system, null, Utility.getLocalRepoPath());
 			String url = "";
 			if (serviceManager != null) {
 				com.photon.phresco.commons.model.RepoInfo repos = serviceManager.getCustomer(customerId).getRepoInfo();
@@ -966,7 +997,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				}
 				artifact = readArtifact(appDirName, version, moduleName);
 				artifacts.add(artifact);
-				MavenArtifactResolver artifactResolver = new MavenArtifactResolver();
 				URL artifacturl = MavenArtifactResolver.resolveSingleArtifact(url, "", "", artifacts);
 				artifactFile = new File(artifacturl.toURI());
 				inputStream = new FileInputStream(artifactFile);
@@ -1891,6 +1921,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			}
 		}
 	}
+	
 	/**
 	 * Adds the svn project.
 	 *

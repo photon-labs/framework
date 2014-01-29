@@ -543,6 +543,25 @@ define(["projectlist/listener/projectListListener"], function() {
 					}
 					self.checkForLock(lockAction, applnids, subModuleIds, function(response){
 						if (response.status === "success" && response.responseCode === "PHR10C00002") {
+							if (action === "Add Repo") {
+								$('#addToRepoHelpDiv'+dynamicId).hide();
+								$('#addToRepoTabDiv'+dynamicId).hide();
+								$('#addToRepoMyTabContent'+dynamicId).hide();
+								$('.addToRepoErr_'+dynamicId).hide();
+								var appDirName = $(openccObj).parent().parent().attr("class");
+								var data = {};
+								data.appDirName = appDirName;
+								self.projectslistListener.projectListActionForScm(self.projectslistListener.getActionHeader(data, "repoExists"), "", function(response) {
+									if (response.data) {
+										$('.addToRepoErr_'+dynamicId).show();
+									} else {
+										$('#addToRepoHelpDiv'+dynamicId).show();
+										$('#addToRepoTabDiv'+dynamicId).show();
+										$('#addToRepoMyTabContent'+dynamicId).show();
+									}
+								});
+							}
+							
 							if($(obj_del).hasClass('del_project')) {
 								self.delobj = $(obj_del).parent('td.delimages');
 							}

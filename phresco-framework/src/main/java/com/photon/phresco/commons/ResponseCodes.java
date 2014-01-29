@@ -136,6 +136,8 @@ public interface ResponseCodes {
 	String PHR210028 = "PHR210028"; // failed to update project
 	String PHR210029 = "PHR210029"; // this is not a working copy
 	String PHR210030 = "PHR210030"; // no files to update
+	String PHR200053 = "PHR200053"; // Successfully checked for scm project
+	String PHR210053 = "PHR210053"; // Failed to check for scm project
 	String PHR200019 = "PHR200019"; // project added successfully
 	String PHR210031 = "PHR210031"; // failed to add project
 	String PHR210032 = "PHR210032"; // this git repository does not exist

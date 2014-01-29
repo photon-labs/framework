@@ -209,12 +209,17 @@ define(["projects/listener/projectsListener"], function() {
 			});
 			
 			$(".appln-appcode, .web-appcode, .mobile-appcode").unbind('input');
-			$(".appln-appcode, .web-appcode, .mobile-appcode").bind('input propertychange', function(){
-				var str = $(this).val();
-				str = str.replace(/[^a-zA-Z 0-9\-\_]+/g, '');
-				str = str.replace(/\s+/g, '');
-				$(this).val(str);
-			});
+            $(".appln-appcode, .web-appcode, .mobile-appcode").bind('input propertychange', function(){
+                var temp, temp2, str;
+                temp = $(this).prop('selectionStart');
+                temp2 = $(this).prop('selectionEnd');                 
+                str = $(this).val();
+                str = str.replace(/[^a-zA-Z 0-9\-\_]+/g, '');
+                str = str.replace(/\s+/g, '');
+                $(this).val(str);
+                $(this).prop('selectionStart', temp);
+                $(this).prop('selectionEnd', temp2);
+            });
 			
 			$("input[name='Create']").unbind('click');
 			$("input[name='Create']").bind('click', function(){
