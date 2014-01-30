@@ -33,6 +33,31 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			callback(graphDatas, testSuiteLabels);
 		},
 		
+		getTestStepBarChartGraphData : function(testcases, callback) {
+			var graphDatas = [];
+			var labels = [];
+			$.each(testcases, function(index, testcase) {
+				var graphData = [];
+				var errors = 0, failures = 0, success = 0, hint ='';
+				if (testcase.testSteps !== null) {
+					$.each(testcase.testSteps, function(i, testStep) {
+						(testStep !== null && testStep.testStepError !== null) ? errors++ : (testStep !== null && testStep.testStepFailure !== null) ? failures++: "";
+					});	
+					success = testcase.testSteps.length - (errors + failures);
+					hint ='** ';
+				} else {
+					(testcase.testCaseError !== null) ? errors++ : (testcase.testCaseFailure !== null) ? failures++: success++;
+					hint ='';
+				}
+				graphData.push(Math.round(success));
+				graphData.push(Math.round(failures));
+				graphData.push(Math.round(errors));
+				graphDatas.push(graphData);
+				labels.push(hint + testcase.name);
+			});
+			callback(graphDatas, labels);
+		},
+
 		getPieChartGraphData : function(callback) {
 			var self = this;
 			var testSuites = commonVariables.testSuites;
@@ -85,15 +110,15 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 	      	var successColor = "#6f6";
 	      	var failureColor = "orange";
 	      	var errorColor = "red";
-			
-	        var bar1 = new RGraph.Bar('bar', graphData);
+
+			var bar1 = new RGraph.Bar('bar', graphData);
 			bar1.Set('chart.background.barcolor1', 'transparent');
 			bar1.Set('chart.background.barcolor2', 'transparent');
 			bar1.Set('chart.labels', testSuiteLabels);
-			bar1.Set('chart.key', ['Success', 'Failure', 'Error']);
+			bar1.Set('chart.key', ['Success', 'Failure', 'Error', '** - TestSteps']);
 			bar1.Set('chart.key.position.y', 35);
 			bar1.Set('chart.key.position', 'gutter');
-			bar1.Set('chart.colors', [successColor, failureColor, errorColor]);
+			bar1.Set('chart.colors', [successColor, failureColor, errorColor, 'white']);
 			bar1.Set('chart.shadow', false);
 			bar1.Set('chart.shadow.blur', 0);
 			bar1.Set('chart.shadow.offsetx', 0);

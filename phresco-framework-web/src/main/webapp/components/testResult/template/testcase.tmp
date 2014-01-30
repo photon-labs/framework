@@ -67,7 +67,7 @@
 									{{actualResult}}
 								</td>
 								<td class="defaultHead">
-									<img class="arrowLeft" src="themes/default/images/Phresco/arrow_up_grey.png" border="0" alt="" style="{{#showArrowImage testSteps}}{{/showArrowImage}}">
+									<img class="arrowLeft" src="themes/default/images/Phresco/arrow_up_grey.png" border="0" alt="" style="{{#showArrowImage testSteps testFunctions}}{{/showArrowImage}}" hasTestFunctions="{{#hasTestFunctionsSteps testFunctions}}{{/hasTestFunctionsSteps}}">
 									{{name}}
 								</td>
 								<td class="defaultHead">
@@ -343,7 +343,7 @@
 	<!-- Graphical view div starts here -->
     <div class="qual_unit_main unit_info hideContent" id="graphView">
     	<div class="graph_area">
-        	<canvas id="pie" width="620" height="400">[No canvas support]</canvas>
+    		
         </div>
     </div>
     <!-- Graphical view div ends here -->

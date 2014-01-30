@@ -154,12 +154,28 @@ define(["testResult/listener/testResultListener"], function() {
 						self.testResultListener.createManualPieChart(graphData);
 					});
 				} else {
-					self.testResultListener.getPieChartGraphData(function(graphData) {
-						self.testResultListener.createPieChart(graphData);
-				});
-				if ("functionalTest" === currentTab) {
-					self.showScreenShot();
-				}
+
+					var testStepsAvailable = false;
+					$.each(testcases, function(index, testcase) {
+						if (testcase.testSteps !== undefined && testcase.testSteps !== null && testcase.testSteps.length > 0) {
+							testStepsAvailable = true;
+							return false;
+						}
+					});
+					if (testStepsAvailable) {
+						$('.graph_area').append('<canvas id="bar" width="620" height="400">[No canvas support]</canvas>');
+						self.testResultListener.getTestStepBarChartGraphData(testcases, function(graphDatas, labels) {
+							self.testResultListener.createBarChart(graphDatas, labels);
+						});
+					} else {
+						$('.graph_area').append('<canvas id="pie" width="620" height="400">[No canvas support]</canvas>');
+						self.testResultListener.getPieChartGraphData(function(graphData) {
+							self.testResultListener.createPieChart(graphData);
+						});
+					}
+					if ("functionalTest" === currentTab) {
+						self.showScreenShot();
+					}
 				}
 			} else {
 				$('.unit_view').hide();
@@ -277,7 +293,6 @@ define(["testResult/listener/testResultListener"], function() {
 				var dynClass = $(this).attr('class');
 				self.openccpl(this, dynClass, '');
 				var target = $('#' + dynClass);
-				console.info(target);
 				$('.features_content_main').prepend(target);
 				$('.content_title').css('z-index', '6');
 				$('.header_section').css('z-index', '7');
