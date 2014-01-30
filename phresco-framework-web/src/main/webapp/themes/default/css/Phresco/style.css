@@ -993,6 +993,7 @@ ul.nav li.dropdown:hover > .test_options{
 
 .add_repo select, .commit select {
 	width: 164px;
+	margin-bottom:0;
 }
 
 .commit textarea, .add_repo textarea {
@@ -1197,7 +1198,7 @@ ul.nav li.dropdown:hover > .test_options{
 	margin-left:0px !important;
 }
 
-.add_repo .tab-content, #project_list_import .tab-content, .svn_update .tab-content, .commit .tab-content {
+.add_repo .tab-content, #project_list_import .tab-content, .svn_update .tab-content, .commit .tab-content, .jobConfigure .tab-content {
 	border:1px solid #DDDDDD;
 	border-top:none;
 	border-radius: -2px 5px 5px 5px;
@@ -3434,9 +3435,9 @@ html>body tbody.scrollContent {
     margin-bottom: 0px;
 }
 
-#jobConfigure table td input[type="radio"], #jobConfigure table td input[type="checkbox"] {
+/*#jobConfigure table td input[type="radio"], #jobConfigure table td input[type="checkbox"] {
     margin: -3px 3px 0 !important;
-}
+}*/
 
 .job_configure{
 	width:517px;
@@ -3561,11 +3562,13 @@ html>body tbody.scrollContent {
 	margin-right: 15px;	
 }
 
-.controls label input[type="radio"], .cont_delivery input[type="checkbox"] {
+.controls label input[type="radio"] {
 	margin: -2px 3px 0 0;
 }
 
-
+.cont_delivery input[type="checkbox"], .cont_delivery input[type="radio"] {
+	margin: -2px 3px 0 0 !important;
+}
 
 .z_index_ci {
 	z-index: 0;	
