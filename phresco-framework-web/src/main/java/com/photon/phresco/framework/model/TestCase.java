@@ -30,6 +30,7 @@ public class TestCase {
 	private TestCaseFailure testCaseFailure;
 	private TestCaseError testCaseError;
 	private List<TestStep> testSteps;
+	private List<TestFunction> testFunctions;
 	public TestCase() {
 
 	}
@@ -114,6 +115,14 @@ public class TestCase {
 
 	public List<TestStep> getTestSteps() {
 		return testSteps;
+	}
+
+	public void setTestFunctions(List<TestFunction> testFunctions) {
+		this.testFunctions = testFunctions;
+	}
+
+	public List<TestFunction> getTestFunctions() {
+		return testFunctions;
 	}
 
 }

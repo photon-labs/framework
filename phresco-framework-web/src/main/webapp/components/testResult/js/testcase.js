@@ -75,14 +75,26 @@ define(["testResult/listener/testResultListener"], function() {
 				return str;
 			});
 
-			Handlebars.registerHelper('showArrowImage', function(testSteps) {
+			Handlebars.registerHelper('showArrowImage', function(testSteps, testFunctions) {
 				var css = "display:none;";
+				/*if (testFunctions !== undefined && testFunctions !== null && testFunctions.length > 0) {
+					css = "display:inline; cursor:pointer;";
+				} else*/
+
 				if (testSteps !== undefined && testSteps !== null && testSteps.length > 0) {
 					css = "display:inline; cursor:pointer;";
 				}
 				return css;
 			});
+
 			
+			Handlebars.registerHelper('hasTestFunctionsSteps', function(testFunctionsStep) {
+				var flag = "false";
+				if (testFunctionsStep !== undefined && testFunctionsStep !== null && testFunctionsStep.length > 0) {
+					flag = "true";
+				} 
+				return flag;
+			});
 		},
 		
 		loadPage : function() {
@@ -230,12 +242,35 @@ define(["testResult/listener/testResultListener"], function() {
 				$("#graphicalView").show();
 			});
 			
-			//to toggle test steps
+			//to toggle test steps inside test function
+			$(".testFnArrowLeft").unbind("click");
+			$(".testFnArrowLeft").click(function() {
+				($(this).attr('src') === 'themes/default/images/Phresco/arrow_up_grey.png') ? $(this).attr('src', 'themes/default/images/Phresco/arrow_down_grey.png') 
+					: $(this).attr('src', 'themes/default/images/Phresco/arrow_up_grey.png');
+				var trElements = $(this).closest('tr').nextUntil($('.testFunctions'));
+				$.each(trElements, function(index, trElement) {
+					if ($(trElement).hasClass('functionTestSteps')) {
+						$(trElement).fadeToggle(200, 'linear');
+					} else {
+						return false;
+					}
+				});
+			});
+
+			//to toggle test function/steps
 			$(".arrowLeft").unbind("click");
 			$(".arrowLeft").click(function() {
+				var hasFunctions =$(this).attr('hasTestFunctions'), trElements = $(this).closest('tr').nextUntil($('.testCaseRow'));
 				($(this).attr('src') === 'themes/default/images/Phresco/arrow_up_grey.png') ? $(this).attr('src', 'themes/default/images/Phresco/arrow_down_grey.png') 
 					: $(this).attr('src', 'themes/default/images/Phresco/arrow_up_grey.png');
 				$(this).closest('tr').nextUntil($('.testCaseRow')).fadeToggle(400, 'linear');
+
+				if (hasFunctions === 'true') {
+					$.each(trElements, function(index, trElement) {
+					    ($(trElement).hasClass('functionTestSteps')) ? $(trElement).hide() : "";
+					    ($(trElement).hasClass('testFunctions')) ? $(trElement).find('.testFnArrowLeft').attr('src', 'themes/default/images/Phresco/arrow_up_grey.png') : "";
+					});
+				}
 			});
 
 			$('a[name=updateManualTestCase_popup]').click(function() {
