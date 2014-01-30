@@ -110,6 +110,12 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			Handlebars.registerHelper('displayProperty', function(iframeKey) {
 				return (iframeKey !== undefined) ?  'display:block;' : 'display:none;';
 			});
+
+			Handlebars.registerHelper('iframeCss', function(iframeKey) {
+				var width = "";
+				width = (iframeKey !== undefined) ?  'width:236px;' : '';
+				return width;
+			});
 		},
 		
 		/***

@@ -70,7 +70,7 @@
     	<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/Phresco/openfolder_icon.png" ></a></div>
 		<div class="icon_images copy_path_icon" style="margin-right:2px;"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/Phresco/copypath_icon.png" ></a></div>
             
-        <div class="code_anal">
+        <div class="code_anal" style="{{#iframeCss iframeUrlAlive}}{{/iframeCss}}">
         	<input type="button" {{#hubButton hubStatus}}{{/hubButton}} class="btn btn_style {{#showHide functionalFramework}}{{/showHide}}">
         	<div id="startHub_popup" class="dyn_popup {{#showHide functionalFramework}}{{/showHide}} dynamic_cont" style="display: none; width:310px">
 				<form id="startHubForm" style="margin: 0 0 0 0;">
