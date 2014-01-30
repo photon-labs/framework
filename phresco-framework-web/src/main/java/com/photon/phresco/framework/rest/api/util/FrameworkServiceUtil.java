@@ -1341,17 +1341,16 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 			String unitDir = pomProcessor.getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR);
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
 			File testFolder = Utility.getTestFolderLocation(projectInfo, rootModulePath, subModuleName);
+			List<String> moduleNames = new ArrayList<String>();
 			// unit xml check
 			if (!xmlResultsAvailable) {
-				List<String> moduleNames = new ArrayList<String>();
-				
 				File sourceFolderLocation = Utility.getSourceFolderLocation(projectInfo, rootModulePath, subModuleName);
 				File testDir = Utility.getPomFileLocation( rootModulePath, subModuleName);
 				PomProcessor processor = new PomProcessor(new File(sourceFolderLocation + File.separator + Constants.POM_NAME));
 				Modules pomModules = processor.getPomModule();
 //				List<String> modules = null;
 				// check multimodule or not
-				if (pomModules != null) {
+				if (pomModules != null && StringUtils.isEmpty(subModuleName)) {
 //					modules = FrameworkServiceUtil.getProjectModules(appDirName);
 					for (String module : pomModules.getModule()) {
 						if (StringUtils.isNotEmpty(module)) {
@@ -1363,6 +1362,20 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 						String moduleXmlPath = testFolderLocation.getParent() + File.separator +  unitDir;
 						file = new File(moduleXmlPath);
 						xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
+					} 
+				} else if(StringUtils.isNotEmpty(subModuleName)) {
+					for (String module : pomModules.getModule()) {
+						if (StringUtils.isNotEmpty(module)) {
+							moduleNames.add(module);
+						}
+					}
+					for (String moduleName : moduleNames) {
+						if(moduleName.equals(subModuleName)) {
+							File testFolderLocation = Utility.getPomFileLocation(rootModulePath, moduleName);
+							String moduleXmlPath = testFolderLocation.getParent() + File.separator +  unitDir;
+							file = new File(moduleXmlPath);
+							xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
+						}
 					} 
 				} else {
 					if (StringUtils.isNotEmpty(isIphone)) {
@@ -1391,59 +1404,137 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 
 			// functional xml check
 			if (!xmlResultsAvailable) {
-				String funcDir = pomProcessor.getProperty(POM_PROP_KEY_FUNCTEST_RPT_DIR);
-				file = new File(testFolder + File.separator + funcDir);
-				xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
+				if(moduleNames != null && StringUtils.isEmpty(subModuleName)) {
+					for (String moduleName : moduleNames) {
+						if (!xmlResultsAvailable) {
+							File moduleTestFolder = Utility.getTestFolderLocation(projectInfo, rootModulePath, moduleName);
+							PomProcessor modulePomProcessor = Utility.getPomProcessor(rootModulePath, moduleName);
+							String funcDir = modulePomProcessor.getPropertyValue(POM_PROP_KEY_FUNCTEST_RPT_DIR);
+							if (funcDir.contains(PROJECT_BASEDIR)) {
+								funcDir = funcDir.replace(PROJECT_BASEDIR, moduleTestFolder.toString());
+							}
+							file = new File(funcDir);
+							xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
+						}
+					}
+				} else {
+					String funcDir = pomProcessor.getPropertyValue(POM_PROP_KEY_FUNCTEST_RPT_DIR);
+					if (funcDir.contains(PROJECT_BASEDIR)) {
+						funcDir = funcDir.replace(PROJECT_BASEDIR, testFolder.toString());
+					}
+					file = new File(funcDir);
+					xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
+				}
+				
 			}
 
 			// component xml check
 			if (!xmlResultsAvailable) {
-				String componentDir = pomProcessor.getProperty(POM_PROP_KEY_COMPONENTTEST_RPT_DIR);
-//				String componentDir = frameworkUtil.getComponentTestReportDir(appDirName);
-				if (StringUtils.isNotEmpty(componentDir)) {
-					file = new File(testFolder + File.separator + componentDir);
-					xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
+				if(moduleNames != null && StringUtils.isEmpty(subModuleName)) {
+					for (String moduleName : moduleNames) {
+						if (!xmlResultsAvailable) {
+							File moduleTestFolder = Utility.getTestFolderLocation(projectInfo, rootModulePath, moduleName);
+							PomProcessor modulePomProcessor = Utility.getPomProcessor(rootModulePath, moduleName);
+							String componentDir = modulePomProcessor.getProperty(POM_PROP_KEY_COMPONENTTEST_RPT_DIR);
+	//						String componentDir = frameworkUtil.getComponentTestReportDir(appDirName);
+							if (StringUtils.isNotEmpty(componentDir)) {
+								file = new File(moduleTestFolder + File.separator + componentDir);
+								xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
+							}
+						}
+					}
+				} else {
+					String componentDir = pomProcessor.getProperty(POM_PROP_KEY_COMPONENTTEST_RPT_DIR);
+//					String componentDir = frameworkUtil.getComponentTestReportDir(appDirName);
+					if (StringUtils.isNotEmpty(componentDir)) {
+						file = new File(testFolder + File.separator + componentDir);
+						xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
+					}
 				}
+				
 			}
 
 			// performance xml check
 			if (StringUtils.isEmpty(isIphone)) {
 				if (!xmlResultsAvailable) {
-					QualityService qualityService = new QualityService();
-					String phrescoPluginInfoFilePath = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_PERFORMANCE_TEST, Constants.PHASE_PERFORMANCE_TEST, rootModulePath, subModuleName);
-					MojoProcessor mojo = new MojoProcessor(new File(phrescoPluginInfoFilePath));
-					List<String> testAgainsts = new ArrayList<String>();
-					Parameter testAgainstParameter = mojo.getParameter(Constants.PHASE_PERFORMANCE_TEST, REQ_TEST_AGAINST);
-					if (testAgainstParameter != null && TYPE_LIST.equalsIgnoreCase(testAgainstParameter.getType())) {
-						List<Value> values = testAgainstParameter.getPossibleValues().getValue();
-						for (Value value : values) {
-							testAgainsts.add(value.getKey());
+					if(moduleNames != null && StringUtils.isEmpty(subModuleName)) {
+						for (String moduleName : moduleNames) {
+							if (!xmlResultsAvailable) {
+								QualityService qualityService = new QualityService();
+								String phrescoPluginInfoFilePath = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_PERFORMANCE_TEST, Constants.PHASE_PERFORMANCE_TEST, rootModulePath, moduleName);
+								MojoProcessor mojo = new MojoProcessor(new File(phrescoPluginInfoFilePath));
+								List<String> testAgainsts = new ArrayList<String>();
+								Parameter testAgainstParameter = mojo.getParameter(Constants.PHASE_PERFORMANCE_TEST, REQ_TEST_AGAINST);
+								if (testAgainstParameter != null && TYPE_LIST.equalsIgnoreCase(testAgainstParameter.getType())) {
+									List<Value> values = testAgainstParameter.getPossibleValues().getValue();
+									for (Value value : values) {
+										testAgainsts.add(value.getKey());
+									}
+								}
+								// refactor quality service --------------
+								xmlResultsAvailable = qualityService.testResultAvail(rootModulePath, moduleName, testAgainsts, Constants.PHASE_PERFORMANCE_TEST);
+							}
 						}
+					} else {
+						QualityService qualityService = new QualityService();
+						String phrescoPluginInfoFilePath = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_PERFORMANCE_TEST, Constants.PHASE_PERFORMANCE_TEST, rootModulePath, subModuleName);
+						MojoProcessor mojo = new MojoProcessor(new File(phrescoPluginInfoFilePath));
+						List<String> testAgainsts = new ArrayList<String>();
+						Parameter testAgainstParameter = mojo.getParameter(Constants.PHASE_PERFORMANCE_TEST, REQ_TEST_AGAINST);
+						if (testAgainstParameter != null && TYPE_LIST.equalsIgnoreCase(testAgainstParameter.getType())) {
+							List<Value> values = testAgainstParameter.getPossibleValues().getValue();
+							for (Value value : values) {
+								testAgainsts.add(value.getKey());
+							}
+						}
+						// refactor quality service --------------
+						xmlResultsAvailable = qualityService.testResultAvail(rootModulePath, subModuleName, testAgainsts, Constants.PHASE_PERFORMANCE_TEST);
+					
 					}
-					// refactor quality service --------------
-					xmlResultsAvailable = qualityService.testResultAvail(rootModulePath, subModuleName, testAgainsts, Constants.PHASE_PERFORMANCE_TEST);
 				}
 			}
 
 			// load xml check
 			if (StringUtils.isEmpty(isIphone)) {
 				if (!xmlResultsAvailable) {
-					String phrescoPluginInfoFilePath = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(
-							Constants.PHASE_LOAD_TEST, Constants.PHASE_LOAD_TEST, rootModulePath, subModuleName);
-					if(new File(phrescoPluginInfoFilePath).exists()) {
-					MojoProcessor mojo = new MojoProcessor(new File(phrescoPluginInfoFilePath));
-					Parameter testAgainstParameter = mojo.getParameter(Constants.PHASE_LOAD_TEST, REQ_TEST_AGAINST);
-					List<String> testAgainsts = new ArrayList<String>();
-					if (testAgainstParameter != null && TYPE_LIST.equalsIgnoreCase(testAgainstParameter.getType())) {
-						List<Value> values = testAgainstParameter.getPossibleValues().getValue();
-						for (Value value : values) {
-							testAgainsts.add(value.getKey());
+					if(moduleNames != null && StringUtils.isEmpty(subModuleName)) {
+						for (String moduleName : moduleNames) {
+							if (!xmlResultsAvailable) {
+								String phrescoPluginInfoFilePath = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(
+										Constants.PHASE_LOAD_TEST, Constants.PHASE_LOAD_TEST, rootModulePath, moduleName);
+								if(new File(phrescoPluginInfoFilePath).exists()) {
+									MojoProcessor mojo = new MojoProcessor(new File(phrescoPluginInfoFilePath));
+									Parameter testAgainstParameter = mojo.getParameter(Constants.PHASE_LOAD_TEST, REQ_TEST_AGAINST);
+									List<String> testAgainsts = new ArrayList<String>();
+									if (testAgainstParameter != null && TYPE_LIST.equalsIgnoreCase(testAgainstParameter.getType())) {
+										List<Value> values = testAgainstParameter.getPossibleValues().getValue();
+										for (Value value : values) {
+											testAgainsts.add(value.getKey());
+										}
+									}
+									QualityService qualityService = new QualityService();
+									xmlResultsAvailable = qualityService.testResultAvail(rootModulePath, moduleName, testAgainsts, Constants.PHASE_LOAD_TEST);
+								}
+							}
+						}
+					} else {
+						String phrescoPluginInfoFilePath = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(
+								Constants.PHASE_LOAD_TEST, Constants.PHASE_LOAD_TEST, rootModulePath, subModuleName);
+						if(new File(phrescoPluginInfoFilePath).exists()) {
+							MojoProcessor mojo = new MojoProcessor(new File(phrescoPluginInfoFilePath));
+							Parameter testAgainstParameter = mojo.getParameter(Constants.PHASE_LOAD_TEST, REQ_TEST_AGAINST);
+							List<String> testAgainsts = new ArrayList<String>();
+							if (testAgainstParameter != null && TYPE_LIST.equalsIgnoreCase(testAgainstParameter.getType())) {
+								List<Value> values = testAgainstParameter.getPossibleValues().getValue();
+								for (Value value : values) {
+									testAgainsts.add(value.getKey());
+								}
+							}
+							QualityService qualityService = new QualityService();
+							xmlResultsAvailable = qualityService.testResultAvail(rootModulePath, subModuleName, testAgainsts, Constants.PHASE_LOAD_TEST);
 						}
 					}
-					QualityService qualityService = new QualityService();
-					xmlResultsAvailable = qualityService.testResultAvail(rootModulePath, subModuleName, testAgainsts, Constants.PHASE_LOAD_TEST);
 				}
-			}
 			}
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
