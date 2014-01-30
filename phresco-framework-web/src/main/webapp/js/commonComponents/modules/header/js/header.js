@@ -41,8 +41,10 @@ define(["header/listener/headerListener"] , function(template) {
 			if(self.headerListener.headerAPI.localVal.getSession('loginIcon') !== null &&
 				self.headerListener.headerAPI.localVal.getSession('loginIcon') !== ""){
 				$('#bannerlogo').attr("src", "data:image/png;base64," + self.headerListener.headerAPI.localVal.getSession('loginIcon'));
+				$('#aboutimge').attr("src", "data:image/png;base64," + self.headerListener.headerAPI.localVal.getSession('loginIcon'));
 			} else {
 				$('#bannerlogo').attr("src", "themes/default/images/Phresco/helios_logo.png");
+				$('#aboutimge').attr("src", "themes/default/images/Phresco/helios_logo.png");
 			}
 			if(self.headerListener.headerAPI.localVal.getSession('favicon') !== null){
 				$("#favicon").attr("href", "data:image/png;base64," + commonVariables.api.localVal.getSession('favicon'));

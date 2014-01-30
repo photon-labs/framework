@@ -691,7 +691,14 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				$(target).attr('currentPrjName',currentPrjName);
 				var style;
 				
+				console.info($(ee).parent().attr('class'));
+				if($(ee).parent().hasClass('manual')) {
+					//console.info("1");
+					console.info("TOP Manual");
+				}
+				
 				if (clicked.offset().top < halfheight && clicked.offset().left < halfwidth) {
+				   console.info("1");
 					$(target).css({"left":clicked.offset().left ,"margin-top":10,"right": "auto"});
 					if(placeId === 'firstsettings') {
 						var BottomHeight = clicked.position().top + clicked.height() +4 ;
@@ -704,6 +711,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
 				} else if (clicked.offset().top < halfheight && clicked.offset().left > halfwidth){
 					var d = null;
+					console.info("2");
 					if(act === 'Delete Pdf') {
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 300;
 						$(target).css({"right":d,"left": "auto","top": BottomHeight});						
@@ -753,14 +761,22 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(target).toggle();
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopright').addClass('dyn_popup');
 				} else if (clicked.offset().top > halfheight && clicked.offset().left < halfwidth){
+					console.info("3");
 					var BottomHeight = clicked.position().top - (target.height() + 33 );
 					$(target).css({"left": clicked.offset().left,"top": BottomHeight ,"right": "auto"});
 					$(target).toggle();
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstyletopright').addClass('speakstylebottomleft').addClass('dyn_popup');	
 				} else if (clicked.offset().top > halfheight && clicked.offset().left > halfwidth){
+				console.info("4");
 					var d = null,BottomHeight = null;
 					d = ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 15;
-					if(act === 'Delete Pdf') {
+					if ($(ee).parent().hasClass('manual')) {					
+						var BottomHeight = clicked.offset().top + clicked.height() -410;
+						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});	
+						$(target).toggle();
+						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
+					}  
+					else if(act === 'Delete Pdf') {
 						d = ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 300;
 						BottomHeight = clicked.position().top - 70;
 						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});

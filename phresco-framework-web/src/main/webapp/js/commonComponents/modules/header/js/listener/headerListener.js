@@ -153,6 +153,7 @@ define(["header/api/headerAPI"], function() {
 			
 			self.performAction(self.getActionHeader("getloginIcon", data), function(response) {
 				$('#bannerlogo').attr("src", "data:image/png;base64," + response.data.loginIcon);
+				$('#aboutimge').attr("src", "data:image/png;base64," + response.data.loginIcon);
 			});
 			
 		},
