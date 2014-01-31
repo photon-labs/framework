@@ -12,14 +12,6 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 public class Publication {
 	
 	private String publication;
-	public String getPublication() {
-		return publication;
-	}
-
-	public void setPublication(String publication) {
-		this.publication = publication;
-	}
-
 	private String publicationName;
 	private String publicationKey;
 	private String publicationPath;
@@ -91,6 +83,14 @@ public class Publication {
 
 	public void setParentPublications(List<Map<String, String>> parentPublications) {
 		this.parentPublications = parentPublications;
+	}
+	
+	public String getPublication() {
+		return publication;
+	}
+
+	public void setPublication(String publication) {
+		this.publication = publication;
 	}
 
 	@Override
