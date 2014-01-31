@@ -2196,6 +2196,7 @@ public interface FrameworkConstants {
 	     * 
 	     */
 	    String PARENT_PUBLICATIONS = "parentPublications";
+	    String PARENT_SUB_PUBLICATION = "parentPublication";
 	    String PUBLICATIONS = "publications";
 	    String PUBLICATION = "publication";
 	    String CONFIGURATIONS = "Configuration";

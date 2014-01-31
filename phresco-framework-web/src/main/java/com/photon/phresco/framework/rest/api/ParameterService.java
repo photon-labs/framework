@@ -1116,13 +1116,17 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			List<Map<String,String>> subPublications = config.getParentPublications();
 			if (CollectionUtils.isNotEmpty(subPublications)) {
 				for (Map<String, String> map : subPublications) {
-					Element parentPublication = doc.createElement("parentPublication");
+					Element parentPublication = doc.createElement(PARENT_SUB_PUBLICATION);
 					Set<String> keySet = map.keySet();
 					if (CollectionUtils.isNotEmpty(keySet)) {
 						for (String keys : keySet) {
-							parentPublication.setAttribute("name", keys);
-							parentPublication.setAttribute("priority", map.get(keys));
-							parentPublications.appendChild(parentPublication);
+							if (keys.equalsIgnoreCase(PARENT_NAME)) {
+								parentPublication.setAttribute(PARENT_NAME, map.get(keys));
+								parentPublications.appendChild(parentPublication);
+							} else if (keys.equalsIgnoreCase(PRIORITY)) {
+								parentPublication.setAttribute(PRIORITY, map.get(keys));
+								parentPublications.appendChild(parentPublication);
+							}
 						}
 					}
 				}
