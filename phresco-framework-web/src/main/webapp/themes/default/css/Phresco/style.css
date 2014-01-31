@@ -2889,8 +2889,15 @@ margin-left: 10px;
 	font-size:12px;
 }
 
-.edit_config_tab tr td .bootstrap-select, form[name="deployForm"] .bootstrap-select {
+.edit_config_tab tr td .bootstrap-select, form[name="deployForm"] .bootstrap-select, form[name="deployForm"] input[type="text"] {
 	width:185px !important;
+}
+
+form[name="runAgainstForm"] input[type="text"] {
+    width:143px !important;
+}
+form[name="buildForm"] input[type="text"] {
+    width:143px !important;
 }
 
 
@@ -5793,3 +5800,5 @@ textarea[name="regex"] {
 	color: #ffffff !important;
 	text-decoration:none;
 }
+
+map area { cursor:pointer !important; display:block; }
