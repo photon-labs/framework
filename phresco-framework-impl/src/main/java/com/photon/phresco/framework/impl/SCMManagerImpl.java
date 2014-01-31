@@ -150,6 +150,7 @@ import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.model.Plugin;
 import com.phresco.pom.util.PomProcessor;
 
 
@@ -1211,7 +1212,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 				if (repoInfo.isSplitPhresco()) {
 					splitDotPhrescoContents(appInfo, tempPhrescoFile, appendedPhrUrl.toString(), appendedSrcUrl.toString(), appendedTestUrl.toString());
-					updatePom(tempPhrescoFile, appendedPhrUrl.toString(), repoType, PHR_POM_XML, appPomProcessor, PHRESCO);
+					updatePom(tempPhrescoFile, appendedPhrUrl.toString(), repoType, PHR_POM_XML, appPomProcessor, Constants.PHRESCO);
+					File pomFile = new File(tempPhrescoFile, PHR_POM_XML);
+					updatePom(appPomProcessor, Constants.PHRESCO, pomFile);
 					addToRepo(phrescoRepoDetail, appInfo, dir, phrescoDirName, tempPhrescoFile, hasSplit);
 				}
 				if (repoInfo.isSplitTest()) {
@@ -1291,18 +1294,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			String scmUrl = SCM + COLON + repoType + COLON + url;
 			PomProcessor splitPomProcessor = null;
 			if (!pomFile.exists()) {
-				splitPomProcessor = new PomProcessor(pomFile);
-				String name = appPomProcessor.getName();
-				String groupId = appPomProcessor.getGroupId();
-				String artifactId = appPomProcessor.getArtifactId();
-				String version = appPomProcessor.getVersion();
-				
-				splitPomProcessor.setName(name);
-				splitPomProcessor.setGroupId(groupId);
-				splitPomProcessor.setArtifactId(artifactId);
-				splitPomProcessor.setVersion(version);
-				splitPomProcessor.setPackaging(packaging);
-				splitPomProcessor.getModel().setModelVersion(MODEL_VERSION);
+				splitPomProcessor = updatePom(appPomProcessor, packaging, pomFile);
 			} else {
 				splitPomProcessor = new PomProcessor(pomFile);
 			}
@@ -1311,6 +1303,30 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		}
+	}
+
+	private PomProcessor updatePom(PomProcessor appPomProcessor,
+			String packaging, File pomFile) throws PhrescoPomException {
+		PomProcessor splitPomProcessor = new PomProcessor(pomFile);
+		String name = appPomProcessor.getName();
+		String groupId = appPomProcessor.getGroupId();
+		String artifactId = appPomProcessor.getArtifactId();
+		String version = appPomProcessor.getVersion();
+		Plugin plugin = appPomProcessor.getPlugin(COM_PHOTON_PHRESCO_PLUGINS, PHRESCO_MAVEN_PLUGIN);
+		
+		splitPomProcessor.setName(name);
+		splitPomProcessor.setGroupId(groupId);
+		splitPomProcessor.setArtifactId(artifactId);
+		splitPomProcessor.setVersion(version);
+		splitPomProcessor.setPackaging(packaging);
+		splitPomProcessor.getModel().setModelVersion(MODEL_VERSION);
+		if (Constants.PHRESCO.endsWith(packaging) && plugin != null) {
+			Plugin addedPlugin = splitPomProcessor.addPlugin(plugin.getGroupId(), plugin.getArtifactId(), plugin.getVersion());
+			addedPlugin.setExtensions(true);
+			splitPomProcessor.setProperty("source.pom", "pom.xml");
+		}
+		splitPomProcessor.save();
+		return splitPomProcessor;
 	}
 	
 	private void splitDotPhrescoContents(ApplicationInfo appInfo, File tempPhrescoFile, String phrescoRepoUrl, String srcRepoUrl, String testRepoUrl) throws PhrescoException {
@@ -1341,8 +1357,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
 				File phrescoPomSrc = new File(appHome + appInfo.getPhrescoPomFile());
 				FileUtils.copyFileToDirectory(phrescoPomSrc, tempPhrescoFile);
-				updatePomProperties(appInfo, "", new File(tempPhrescoFile, appInfo.getPhrescoPomFile()), phrescoRepoUrl, srcRepoUrl, testRepoUrl);
 			}
+			updatePomProperties(appInfo, "", new File(tempPhrescoFile, PHR_POM_XML), phrescoRepoUrl, srcRepoUrl, testRepoUrl);
 		} catch (Exception e) {
 			throw new PhrescoException(e);
 		}
