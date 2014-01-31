@@ -644,4 +644,10 @@ public interface ResponseCodes {
 	String PHRSR10009 = "PHRSR10009"; //Credential save failed
 	String PHRSR00009 = "PHRSR00009"; //Credential save successfully
 	
+	/**
+	 * Publication Configuration
+	 */
+	
+	String PHRSR1001 = "PHRSR1001"; // Publication Config saved
+	
 }

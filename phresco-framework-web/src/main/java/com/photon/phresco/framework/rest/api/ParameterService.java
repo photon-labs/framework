@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -46,13 +47,28 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.plexus.util.FileUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.photon.phresco.api.DynamicPageParameter;
@@ -73,6 +89,7 @@ import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.model.CodeValidationReportType;
 import com.photon.phresco.framework.model.DependantParameters;
 import com.photon.phresco.framework.model.PerformanceDetails;
+import com.photon.phresco.framework.model.Publication;
 import com.photon.phresco.framework.param.impl.IosTargetParameterImpl;
 import com.photon.phresco.plugins.model.Mojos;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
@@ -971,6 +988,238 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					ALL_HEADER).build();
 		}
+	}
+	
+	@POST
+	@Path(SAVE_CONFIG)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response saveCofigurations(Publication publication, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module) throws PhrescoException {
+		try {
+			ResponseInfo<String> responseData = new ResponseInfo<String>();
+			boolean fileSaved = saveCofiguration(appDirName, module, publication);
+			if (fileSaved) {
+				responseData = responseDataEvaluation(responseData, null, PUBLICATION_SUCCESS, RESPONSE_STATUS_SUCCESS, PHRSR1001);
+			} else {
+				responseData = responseDataEvaluation(responseData, null, PUBLICATION_FAILURE, RESPONSE_STATUS_SUCCESS, PHRSR1001);
+			}
+			return Response.ok(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+		} catch (Exception e) {
+			return Response.status(Status.EXPECTATION_FAILED).entity(PUBLICATION_FAILURE).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+					ALL_HEADER).build();
+		}
+	}
+	
+	@GET
+	@Path(READ_CONFIG)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response readCofiguration(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) throws PhrescoException {
+		try {
+			ResponseInfo<Publication> responseData = new ResponseInfo<Publication>();
+			File publicationConfigPath = new File (Utility.getProjectHome() + File.separator +  appDirName + File.separator + FOLDER_DOT_PHRESCO + File.separator + PUBLICATION_CONFIG_FILE);
+			if (publicationConfigPath.exists()) {
+				Publication publication = readConfiguration(publicationConfigPath);
+				responseData = responseDataEvaluation(responseData, null, publication, RESPONSE_STATUS_SUCCESS, PHRSR1001);
+				return Response.ok(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+			} else {
+				return Response.status(Status.EXPECTATION_FAILED).entity(FILE_NOT_FOUND).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+						ALL_HEADER).build();
+			}
+		} catch (Exception e) {
+			return Response.status(Status.EXPECTATION_FAILED).entity(FILE_NOT_FOUND).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+					ALL_HEADER).build();
+		}
+	}
+	
+	@GET
+	@Path(GET_PUBLICATIONS)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPublications(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) throws PhrescoException {
+		try {
+			ResponseInfo<String> responseData = new ResponseInfo<String>();
+			
+			JSONObject publicationItem1 = new JSONObject();
+			publicationItem1.put("tcm:0-1-1", "000 - Empty Master");
+
+			JSONObject publicationItem2 = new JSONObject();
+			publicationItem2.put("tcm:0-1-1", "010 - Schema Master");
+
+			JSONArray jsonArray = new JSONArray();
+			jsonArray.add(publicationItem1);
+			jsonArray.add(publicationItem2);
+			String publicationJson =  jsonArray.toJSONString();
+
+			responseData = responseDataEvaluation(responseData, null, publicationJson, RESPONSE_STATUS_SUCCESS, PHRSR1001);
+			return Response.ok(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+
+		} catch (Exception e) {
+			return Response.status(Status.EXPECTATION_FAILED).entity(PUBLICATIONS_NOT_FOUND).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+					ALL_HEADER).build();
+		}
+	}
+	
+	
+	private static boolean saveCofiguration( String appDirName , String module, Publication config) throws PhrescoException {
+		boolean fileSaved = false;
+		try {
+			String rootModulePath = "";
+			String subModuleName = "";
+			if (StringUtils.isNotEmpty(module)) {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = module;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+			}
+			String appDirPath = Utility.getProjectHome() + appDirName;
+			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(appDirPath, subModuleName);
+			
+			
+			String publicationConfigPath =  dotPhrescoFolderPath + File.separator + PUBLICATION_CONFIG_FILE;
+			
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = docFactory.newDocumentBuilder();
+			Document doc = documentBuilder.newDocument();
+
+			Element rootElement = doc.createElement(PUBLICATIONS);
+			doc.appendChild(rootElement);
+
+			Element publication = doc.createElement(PUBLICATION);
+			publication.setAttribute(PUBLICATION_NAME, config.getPublicationName());
+			publication.setAttribute(PUBLICATION_TYPE, config.getPublicationType());
+			rootElement.appendChild(publication);
+
+			Element publicationPath = doc.createElement(PUBLICATION_PATH);
+			publicationPath.setTextContent(config.getPublicationPath());
+			rootElement.appendChild(publicationPath);
+
+			Element publicationUrl = doc.createElement(PUBLICATION_URL);
+			publicationUrl.setTextContent(config.getPublicationUrl());
+			rootElement.appendChild(publicationUrl);
+
+			Element imageUrl = doc.createElement(IMAGE_URL);
+			imageUrl.setTextContent(config.getImageUrl());
+			rootElement.appendChild(imageUrl);
+
+			Element imagePath = doc.createElement(IMAGE_PATH);
+			imagePath.setTextContent(config.getImagePath());
+			rootElement.appendChild(imagePath);
+			
+			Element environment = doc.createElement(ENVIRONMENT);
+			environment.setTextContent(config.getEnvironment());
+			rootElement.appendChild(environment);
+
+			Element publicationKey = doc.createElement(PUBLICATION_KEY);
+			publicationKey.setTextContent(config.getPublicationKey());
+			rootElement.appendChild(publicationKey);
+
+			Element parentPublications = doc.createElement(PARENT_PUBLICATIONS);
+			List<Map<String,String>> subPublications = config.getParentPublications();
+			if (CollectionUtils.isNotEmpty(subPublications)) {
+				for (Map<String, String> map : subPublications) {
+					Element parentPublication = doc.createElement("parentPublication");
+					Set<String> keySet = map.keySet();
+					if (CollectionUtils.isNotEmpty(keySet)) {
+						for (String keys : keySet) {
+							parentPublication.setAttribute("name", keys);
+							parentPublication.setAttribute("priority", map.get(keys));
+							parentPublications.appendChild(parentPublication);
+						}
+					}
+				}
+			}
+			
+			rootElement.appendChild(parentPublications);
+			
+			// write the content into xml file
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, YES);
+			
+			Pattern p = Pattern.compile("%20");          
+            p.matcher(publicationConfigPath);     
+            File path = new File(publicationConfigPath);
+            
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(path.toString());
+
+			transformer.transform(source, result);
+			fileSaved = true;
+
+		} catch (ParserConfigurationException e) {
+			throw new PhrescoException(e);
+		} catch (TransformerConfigurationException e) {
+			throw new PhrescoException(e);
+		} catch (TransformerException e) {
+			throw new PhrescoException(e);
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+		return fileSaved;
+	}
+	
+	private static Publication readConfiguration(File path) throws PhrescoException {
+		Publication config = new  Publication();
+		try {
+			Pattern p = Pattern.compile("%20");          
+			p.matcher(path.getPath());     
+
+			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = builderFactory.newDocumentBuilder();
+			Document doc = docBuilder.parse(path.toString());
+			doc.getDocumentElement().normalize();	
+			List<Map<String, String>> parentList = new ArrayList<Map<String,String>>();
+			Map<String, String> parentMap = new HashMap<String, String>();
+
+			NodeList rootList = doc.getElementsByTagName(PUBLICATIONS);
+			Node rootItem = rootList.item(0);
+			NodeList nodeList = rootItem.getChildNodes();
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				Node node = nodeList.item(i);
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					Element element = (Element) node;
+					if (element != null) {
+						String nodeName = element.getNodeName();
+						if (nodeName.equalsIgnoreCase(PUBLICATION)) {
+							config.setPublicationType(node.getAttributes().getNamedItem(PUBLICATION_TYPE).getNodeValue());
+							config.setPublicationName(node.getAttributes().getNamedItem(PUBLICATION_NAME).getNodeValue());
+						} else if (nodeName.equalsIgnoreCase(PUBLICATION_PATH)) {
+							config.setPublicationPath(node.getTextContent());
+						}else if (nodeName.equalsIgnoreCase(PUBLICATION_URL)) {
+							config.setPublicationUrl(node.getTextContent());
+						}else if (nodeName.equalsIgnoreCase(IMAGE_URL)) {
+							config.setImageUrl(node.getTextContent());
+						}else if (nodeName.equalsIgnoreCase(IMAGE_PATH)) {
+							config.setImagePath(node.getTextContent());
+						}else if (nodeName.equalsIgnoreCase(PUBLICATION_KEY)) {
+							config.setPublicationKey(node.getTextContent());
+						}else if (nodeName.equalsIgnoreCase(ENVIRONMENT)) {
+							config.setEnvironment(node.getTextContent());
+						}else if (nodeName.equalsIgnoreCase(PARENT_PUBLICATIONS)) {
+							NodeList childNodes = node.getChildNodes();
+							if (childNodes != null) {
+								for (int j = 0; j < childNodes.getLength(); j++) {
+									Node childNode = childNodes.item(j);
+									if (childNode.getNodeType() == Node.ELEMENT_NODE) {
+										Element childElement = (Element) node;
+										parentMap.put(PARENT_NAME, childNode.getAttributes().getNamedItem(PARENT_NAME).getNodeValue());
+										parentMap.put(PRIORITY, childNode.getAttributes().getNamedItem(PRIORITY).getNodeValue());
+										parentList.add(parentMap);
+									}
+								}
+							}
+							config.setParentPublications(parentList);
+						}
+					}
+				}
+			}
+		} catch (ParserConfigurationException e) {
+			throw new PhrescoException(e);
+		} catch (SAXException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		}
+		return config;
 	}
 	
 	private ResponseInfo uploadFileForPerformanceLoad(HttpServletRequest request, String appDirName, InputStream inputStream, String testDirectory, String jmxUploadDir, String zipfileName, File testDir) throws PhrescoException {

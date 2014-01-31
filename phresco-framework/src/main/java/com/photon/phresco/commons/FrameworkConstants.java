@@ -2190,5 +2190,32 @@ public interface FrameworkConstants {
 	    String DESAL         = "DESede";
 	    String MODEL_VERSION = "4.0.0";
 	    String HTML_ELEMENT = "<html>";
-
+	    
+	    /**
+	     * Publication configurations
+	     * 
+	     */
+	    String PARENT_PUBLICATIONS = "parentPublications";
+	    String PUBLICATIONS = "publications";
+	    String PUBLICATION = "publication";
+	    String CONFIGURATIONS = "Configuration";
+		String PUBLICATION_NAME = "publicationName";
+		String PUBLICATION_KEY = "publicationKey";
+		String PUBLICATION_PATH = "publicationPath";
+		String PUBLICATION_URL = "publicationUrl";
+		String IMAGE_URL = "imageUrl";
+		String IMAGE_PATH = "imagePath";
+		String ENVIRONMENT = "environment";
+		String PUBLICATION_TYPE = "publicationType";
+		String PUBLICATION_CONFIG_FILE =  "publicationConfig.xml";
+		String PUBLICATION_SUCCESS = "File saved Successfully";
+		String PUBLICATION_FAILURE = "File saved FAILED";
+	    String FILE_NOT_FOUND   = "File Not Found";
+	    String READ_CONFIG = "/readConfig";
+	    String SAVE_CONFIG = "/saveConfig";
+	    String GET_PUBLICATIONS = "/getPublications";
+	    String PUBLICATIONS_NOT_FOUND =  "Publications name  not found";
+	    String PARENT_NAME = "name";
+	    String PRIORITY = "priority";
+	    
 }
