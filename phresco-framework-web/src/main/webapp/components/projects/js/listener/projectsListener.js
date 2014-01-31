@@ -706,7 +706,7 @@ define([], function() {
 			if (availableDepnds !== undefined && availableDepnds.length > 0) {
 				$.each(availableDepnds, function(i, value) {
 					depndOptions += "<option value="+ value +">"+ value +"</option>";
-				})
+				});
 			}
 			var multiModule = "<tr newModule='true' class='multi_module' layer='"+layer+"' position='"+position+"'><td><input type='text' placeholder='Module Name' name='subModuleName' class='moduleName'></td>"+
 								"<td name='techGroup' class='frontEnd hideContent'><select name='techGroup' class='selectpicker' title='Select Group'><option selected disabled value=''>Select Group</option></select></td>"+
@@ -757,11 +757,22 @@ define([], function() {
 				var multiModTrObj = $(this).parent().parent().parent();
 				var position = multiModTrObj.attr("position");
 				var layer = multiModTrObj.attr("layer");
+				var removedModCode = multiModTrObj.find("input[name=subModuleName]").val();
 				multiModTrObj.remove();
 				$('tr.multi_module[position="'+position+'"][layer="'+layer+'"]:last').find(".addDependency").show();
 				if ($('tr.multi_module[position="'+position+'"][layer="'+layer+'"]').length === 0) {
 					$('tr[position="'+position+'"][name="'+layer+'"]').find("input[name=multiModuleBtn]").attr("disabled", false);
 				}
+				$('tr.multi_module[position="'+position+'"][layer="'+layer+'"]').find(".appdependencySelect").each(function() {
+					$(this).find('option').each(function() {
+						var value = $(this).val();
+						if (value === removedModCode) {
+							$(this).remove();
+							return false;
+						}
+					});
+					$(this).selectpicker('refresh');
+				});
 			});
 			
 			$("select[name=technology]").unbind("change");
@@ -823,20 +834,25 @@ define([], function() {
 				var layer = thisObj.parent().parent().attr("layer");
 				var depClass = thisObj.parent().parent().attr("class");
 				var trs = $('tr.'+depClass+'[position="'+position+'"][layer="'+layer+'"]');
-				thisObj.find("option:selected").each(function() {
-					var selectedDepncy = $(this).val();
-					$.each(trs, function() {
-						var modName = $(this).find('input[name=subModuleName]').val();
-						$(this).find(".appdependencySelect option:selected").each(function() {
-							var dependModule = $(this).val();
-							thisObj.parent().parent().find(".appdependencySelect").next().find('button.dropdown-toggle').removeClass("btn-danger");
-							if (!self.isBlank(dependModule) && modName === selectedDepncy && dependModule === currentModName) {
-								thisObj.parent().parent().find(".appdependencySelect").next().find('button.dropdown-toggle').addClass("btn-danger");
-								return false;
+				thisObj.parent().parent().find(".appdependencySelect").next().find('button.dropdown-toggle').removeClass("btn-danger");
+				if (!self.isBlank(currentModName)) {
+					thisObj.find("option:selected").each(function() {
+						var selectedDepncy = $(this).val();
+						$.each(trs, function() {
+							var modName = $(this).find('input[name=subModuleName]').val();
+							if (selectedDepncy === modName) {
+								$(this).find(".appdependencySelect option:selected").each(function() {
+									var dependModule = $(this).val();
+									if (currentModName === dependModule) {
+										thisObj.parent().parent().find(".appdependencySelect").next().find('button.dropdown-toggle').addClass("btn-danger");
+										thisObj.parent().parent().find(".appdependencySelect option[value='"+selectedDepncy+"']").attr('selected', false);
+										return false;
+									}
+								});
 							}
 						});
 					});
-				});
+				}
 				$(this).selectpicker('refresh');
 			});
 		},
@@ -864,6 +880,9 @@ define([], function() {
 				if ($('tr[name=dynamicAppLayer]:visible').length >= 1) {
 					$('tr.applnlayercontent:visible').last().find('a[name="removeApplnLayer"]').show();
 				}
+				var position = $(this).parent().parent().parent().attr("position");
+				var layer = $(this).parent().parent().parent().attr("name");
+				$('tr.multi_module[position="'+position+'"][layer="'+layer+'"]').remove();
 				$(this).parent().parent().parent().remove();
 			});
 			
@@ -877,6 +896,9 @@ define([], function() {
 				if ($('tr[name=dynamicWebLayer]:visible').length >= 1) {
 					$('tr.weblayercontent:visible').last().find('a[name="removeWebLayer"]').show();
 				}
+				var position = $(this).parent().parent().parent().attr("position");
+				var layer = $(this).parent().parent().parent().attr("name");
+				$('tr.multi_module[position="'+position+'"][layer="'+layer+'"]').remove();
 				$(this).parent().parent().parent().remove();
 			});
 
@@ -890,6 +912,9 @@ define([], function() {
 				if ($('tr[name=dynamicMobileLayer]:visible').length >= 1) {
 					$('tr.mobilelayercontent:visible').last().find('a[name="removeMobileLayer"]').show();
 				}
+				var position = $(this).parent().parent().parent().attr("position");
+				var layer = $(this).parent().parent().parent().attr("name");
+				$('tr.multi_module[position="'+position+'"][layer="'+layer+'"]').remove();
 				$(this).parent().parent().parent().remove();
 			});
 		},

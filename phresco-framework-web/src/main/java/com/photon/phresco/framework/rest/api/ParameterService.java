@@ -74,7 +74,6 @@ import com.photon.phresco.framework.model.CodeValidationReportType;
 import com.photon.phresco.framework.model.DependantParameters;
 import com.photon.phresco.framework.model.PerformanceDetails;
 import com.photon.phresco.framework.param.impl.IosTargetParameterImpl;
-import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.plugins.model.Mojos;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
@@ -583,12 +582,13 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 					sb.append(appDirName);
 					ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 					String splitPhrDir = processor.getProperty(Constants.POM_PROP_KEY_SPLIT_PHRESCO_DIR);
+					String splitSrcDir = processor.getProperty(Constants.POM_PROP_KEY_SPLIT_SRC_DIR);
 					if (StringUtils.isNotEmpty(applicationInfo.getPhrescoPomFile()) && StringUtils.isNotEmpty(splitPhrDir)) {
-						sb.append(File.separator);
+						sb.append(FrameworkConstants.FORWARD_SLASH);
 						sb.append(splitPhrDir);
-					} else {
-						sb.append(File.separator);
-						sb.append(appDirName);
+					} else if (StringUtils.isNotEmpty(splitSrcDir)) {
+						sb.append(FrameworkConstants.FORWARD_SLASH);
+						sb.append(splitSrcDir);
 					}
 					sb.append(validateReportUrl);
 					sb.append(validateAgainst);
