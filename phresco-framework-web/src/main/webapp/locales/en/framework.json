@@ -533,7 +533,7 @@
 	"testcase" : {
 		  "name"			: "Name",
 		  "class"			: "Class",
-		  "time"			: "Time",
+		  "time"			: "Time(ms)",
 		  "log"				: "Log",
 		  "screenshot"		: "Screenshot",
 	  	  "features" 		: "Features",

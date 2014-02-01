@@ -40,6 +40,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -129,7 +130,8 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	
 	/** The test suite. */
 	private String testSuite = "";
-
+	
+	
 	/**
 	 * Unit.
 	 *
@@ -875,6 +877,10 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	private List<TestCase> getTestCases(String rootModulePath, String subModule, List<NodeList> testSuites, String testSuitePath, String testCasePath, String testFunctionXpath, String testStepPath, String testType) throws PhrescoException {
 		InputStream fileInputStream = null;
 		StringBuilder screenShotDir = new StringBuilder();
+		ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModule);
+		ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+		String iframeUrl = applicationInfo.getFunctionalFrameworkInfo().getIframeUrl();
+		//TODO: http://172.16.23.45:9090/test/jsecuti?j_ (Line no - 1040 for screen shot)
 		try {
 			List<TestCase> testCases = new ArrayList<TestCase>();
 			for (NodeList testSuite : testSuites) {
@@ -1003,7 +1009,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 											testFunction.setTestClass(attributeValue);
 										}
 									}
-									getTestStepsForFuncion(testCase, testFunction, testStepPath, testFunctionNode.getChildNodes(), screenShotDir);
+//									getTestStepsForFuncion(testCase, testFunction, testStepPath, testFunctionNode.getChildNodes(), screenShotDir);
 									testFunctions.add(testFunction);
 									testCase.setTestFunctions(testFunctions);
 								}
@@ -1031,6 +1037,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 									if (testStepChilds != null && testStepChilds.getLength() > 0) {
 										for (int z = 0; z < testStepChilds.getLength(); z++) {
 											Node testStepChildNode = testStepChilds.item(z);
+											//TODO - Screenshot to be included
 											constructTestStepFailure(screenShotDir, testCase, testStep, testStepChildNode);
 											constructTestStepError(screenShotDir, testCase, testStep, testStepChildNode);
 										}
@@ -1143,6 +1150,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	private void constructTestStepFailure(StringBuilder screenShotDir, TestCase testCase, TestStep testStep, Node testStepChildNode) throws PhrescoException {
 		FileInputStream fileInputStream = null;
 		try {
+			//TODO: get attribute for screen shot from testStepChildNode
 			if (ELEMENT_FAILURE.equals(testStepChildNode.getNodeName())) {
 				TestStepFailure testStepfailure = getTestStepFailure(testStepChildNode);
 				if (testStepfailure != null) {
