@@ -25,11 +25,16 @@
 							</tr>
 							<tr>
 								<td><span>Development Version</span><sup>*</sup></td>
-								<td><span>Comment</span></td>
 							</tr>
 							<tr>
 								<td style="vertical-align: top;"><input type="text" id="devVersion" style="margin-right:10px;"></td>
-								<td><textarea id="releaseComment"></textarea></td>
+								<td><input type="checkbox" id="releaseSkipTests">SkipTests</td>
+							</tr>
+							<tr>
+								<td><span>Comment</span></td>
+							</tr>	
+							<tr>
+								<td colspan="2"><textarea id="releaseComment"></textarea></td>
 							</tr>
 						</table>
 						<div class="flt_right">
@@ -229,6 +234,7 @@
 									</tr>
 									<tr>
 										<td><input type="text" id="tagName"></td>
+										<td><input type="checkbox" id="tagNameSkipTest">SkipTests</td>
 									</tr>
 									<tr>
 										<td colspan="2"><textarea id="tagComment"></textarea></td>

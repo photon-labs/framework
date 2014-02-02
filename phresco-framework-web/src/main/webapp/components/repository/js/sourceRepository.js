@@ -97,6 +97,7 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 				var selectedBranch = $("input[name=selectedBranchName]").val();
 				$("#branchFromName").val(selectedBranch);
 				$("#tagFromName").val(selectedBranch);
+				$("#tagNameSkipTest").prop('checked', false);
 				self.opencc(this, $(this).attr('name'));
 			});
 			
@@ -110,6 +111,7 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 			
 			$("input[name=rep_release]").unbind("click");
 			$("input[name=rep_release]").bind("click", function() {
+				$('#releaseSkipTests').prop('checked', false);
 				self.opencc(this, $(this).attr('name'));
 			});
 			

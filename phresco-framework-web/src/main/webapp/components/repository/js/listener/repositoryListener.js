@@ -323,7 +323,7 @@ define([], function() {
 				var releaseVersion = $("#tagFromVersion").val();
 				var tag = $("#tagName").val();
 				var downloadoption = $("#downloadTagToWorkspace").is(":checked");
-				
+				var skipTests = $("#tagNameSkipTest").is(":checked");
 				var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 				var userId = "";
 				if (userInfo !== "") {
@@ -331,7 +331,7 @@ define([], function() {
 				}
 				
 				var queryString = 'appDirName='+appDirName+'&comment='+comment+'&currentBranch='+currentBranch+'&releaseVersion='+releaseVersion+
-									'&tag='+tag;
+									'&tag='+tag + '&skipTests='+skipTests;
 				commonVariables.consoleError = false;
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal) {
 					retVal.mvnTag(queryString, '#repoTextConsole', function(response) {
@@ -369,7 +369,7 @@ define([], function() {
 				var comment = $("#releaseComment").val();
 				var branchName = $("input[name=selectedBranchName]").val();
 				var appDirName = $('input[name=selectedAppDirName]').val();
-				
+				var skipTests = $('#releaseSkipTests').is(":checked");
 				var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 				var userId = "";
 				if (userInfo !== "") { 
@@ -377,7 +377,7 @@ define([], function() {
 				}
 				
 				var queryString = 'appDirName='+appDirName+'&message='+comment+
-									'&developmentVersion='+developmentVersion+'&releaseVersion='+releaseVersion+'&tag='+tag+'&branchName='+branchName+'&userId='+userId;
+									'&developmentVersion='+developmentVersion+'&releaseVersion='+releaseVersion+'&tag='+tag+'&branchName='+branchName+'&userId='+userId+'&skipTests='+skipTests;
 				commonVariables.consoleError = false;
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal) {
 					retVal.mvnRelease(queryString, '#repoTextConsole', function(response) {

@@ -1067,11 +1067,14 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	@Path("/tag")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createTag(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_COMMENT) String comment, @QueryParam(REST_QUERY_CURRENT_BRANCH) String currentBranch, 
-			@QueryParam(REST_QUERY_TAG) String tag, @QueryParam(REST_QUERY_RELEASE_VERSION) String releaseVersion) {
+			@QueryParam(REST_QUERY_TAG) String tag, @QueryParam(REST_QUERY_RELEASE_VERSION) String releaseVersion, @QueryParam(REST_QUERY_SKIP_TESTS) String skipTests) {
 		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
 		ActionResponse response = new ActionResponse();
 		String appDirPath = Utility.getProjectHome() + appDirName;
 		try {
+			if (releaseVersion.contains("-SNAPSHOT")) {
+				releaseVersion = releaseVersion.replace("-SNAPSHOT", "");
+			}
 			File pomFile = Utility.getPomFileLocation(appDirPath, "");
 			// Construct command for branch
 			StringBuilder builder = new StringBuilder();
@@ -1082,7 +1085,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			.append(Constants.SCM_HYPHEN_D).append(REST_QUERY_APPDIR_NAME)
 			.append(Constants.STR_EQUALS).append(appDirName)
 			.append(Constants.STR_BLANK_SPACE)
-			.append(Constants.SCM_HYPHEN_D)
 			.append(Constants.SCM_HYPHEN_D).append(REST_QUERY_RELEASE_VERSION).append(Constants.STR_EQUALS)
 			.append(releaseVersion)
 			.append(Constants.STR_BLANK_SPACE)
@@ -1094,6 +1096,8 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			.append(Constants.STR_BLANK_SPACE)
 			.append(Constants.SCM_HYPHEN_D).append(REST_QUERY_TAG)
 			.append(Constants.STR_EQUALS).append(tag)
+			.append(Constants.STR_BLANK_SPACE)
+			.append("-DskipTests=" + skipTests)
 			.append(Constants.STR_BLANK_SPACE)
 			.append(Constants.HYPHEN_F).append(Constants.STR_BLANK_SPACE).append(pomFile.getName());
 			String workingDirectory = pomFile.getParent();
@@ -1247,7 +1251,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	public Response release(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
 			@QueryParam("message") String message, @QueryParam("developmentVersion") String developmentVersion,
 			@QueryParam("releaseVersion") String releaseVersion, @QueryParam("tag") String tag,
-			@QueryParam("branchName") String branchName, @QueryParam(REST_QUERY_USERID) String userId) {
+			@QueryParam("branchName") String branchName, @QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_SKIP_TESTS) String skipTests) {
 		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
 		ActionResponse response = new ActionResponse();
 		String projHome = "";
@@ -1295,6 +1299,8 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			builder.append("-DrepoUserName=" + repoInfo.getRepoUserName());
 			builder.append(Constants.SPACE);
 			builder.append("-DrepoPassword=" + repoInfo.getRepoPassword());
+			builder.append(Constants.SPACE);
+			builder.append("-DskipTests=" + skipTests);
 			builder.append(Constants.SPACE);
 			builder.append("-f");
 			builder.append(Constants.SPACE);
