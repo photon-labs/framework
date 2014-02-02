@@ -214,6 +214,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			}
 			if (projectinfo != null) {
 				ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().create(projectinfo, serviceManager);
+				handleDependencies(Utility.getProjectHome(), projectInfo, null);
 				status = RESPONSE_STATUS_SUCCESS;
 				successCode = PHR200004;
 				ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
@@ -276,7 +277,6 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	public Response updateProject(ProjectInfo projectinfo, @QueryParam(REST_QUERY_USERID) String userId) {
 		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
-			ProjectInfo updateProjectInfo = null;
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
 				status = RESPONSE_STATUS_FAILURE;
@@ -288,45 +288,40 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			}
 			List<ApplicationInfo> appInfosFromPage = projectinfo.getAppInfos();
 			ProjectInfo availableProjectInfo = getProject(projectinfo.getId(), projectinfo.getCustomerIds().get(0));
-			System.out.println("available info .......... " + availableProjectInfo);
-			if(CollectionUtils.isNotEmpty(appInfosFromPage)) {
-				System.out.println("insdie if ................");
-				List<ApplicationInfo> newlyAddedApps = findNewlyAddedApps(appInfosFromPage, availableProjectInfo.getAppInfos());
-				projectinfo.setAppInfos(newlyAddedApps);
-				projectinfo.setNoOfApps(newlyAddedApps.size());
-				updateProjectInfo = PhrescoFrameworkFactory.getProjectManager().create(projectinfo, serviceManager);
+			if (CollectionUtils.isNotEmpty(appInfosFromPage)) {
+				projectinfo = PhrescoFrameworkFactory.getProjectManager().create(projectinfo, serviceManager);
+				handleDependencies(Utility.getProjectHome(), projectinfo, availableProjectInfo);
+				if (projectinfo.isMultiModule() && projectinfo != null) {
+					projectinfo = createProjectInfo(availableProjectInfo, projectinfo);
+				} else {
+					projectinfo = getProject(projectinfo.getId(), projectinfo.getCustomerIds().get(0));
+				}
+
+				for (ApplicationInfo applicationInfo : projectinfo.getAppInfos()) {
+					if (CollectionUtils.isNotEmpty(applicationInfo.getModules())) {
+						updateParentPom(applicationInfo);
+					}
+					projectinfo.setAppInfos(Collections.singletonList(applicationInfo));
+					StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(
+							applicationInfo.getAppDirName()).append(File.separator)
+							.append(Constants.DOT_PHRESCO_FOLDER).append(File.separator).append(
+									Constants.PROJECT_INFO_FILE);
+					ProjectUtils.updateProjectInfo(projectinfo, new File(sb.toString()));
+				}
 			} else {
-				System.out.println("insdie else ................");
 				for (ApplicationInfo applicationInfo : availableProjectInfo.getAppInfos()) {
-					String appDirPath = Utility.getProjectInfoPath(Utility.getProjectHome() + applicationInfo.getAppDirName(), null);
-					System.out.println("appDor pathh .. " + appDirPath);
-					ProjectInfo projectInfoFile = Utility.getProjectInfo(Utility.getProjectHome() + applicationInfo.getAppDirName() , null);
+					String appDirPath = Utility.getProjectInfoPath(Utility.getProjectHome()
+							+ applicationInfo.getAppDirName(), null);
+					ProjectInfo projectInfoFile = Utility.getProjectInfo(Utility.getProjectHome()
+							+ applicationInfo.getAppDirName(), null);
 					projectInfoFile.setDescription(projectinfo.getDescription());
-					System.out.println("projectinfo file in elseeeeeeeee  .. " + projectInfoFile);
 					ProjectUtils.updateProjectInfo(projectInfoFile, new File(appDirPath));
 				}
-			}
-			if(projectinfo.isMultiModule() && updateProjectInfo != null) {
-				projectinfo = createProjectInfo(availableProjectInfo, updateProjectInfo);
-			}
-			System.out.println("projectinfo .......... " + projectinfo);
-			for (ApplicationInfo applicationInfo : projectinfo.getAppInfos()) {
-				if(projectinfo.isMultiModule()) {
-					updateParentPom(applicationInfo);
-				}
-				projectinfo.setAppInfos(Collections.singletonList(applicationInfo));
-				StringBuilder sb = new StringBuilder(Utility.getProjectHome())
-				.append(applicationInfo.getAppDirName())
-				.append(File.separator)
-				.append(Constants.DOT_PHRESCO_FOLDER)
-				.append(File.separator)
-				.append(Constants.PROJECT_INFO_FILE);
-				ProjectUtils.updateProjectInfo(projectinfo, new File(sb.toString()));
 			}
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200006;
 			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
-					updateProjectInfo, status, successCode);
+					projectinfo, status, successCode);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 		} catch (PhrescoException e) {
 			status = RESPONSE_STATUS_ERROR;
@@ -1154,7 +1149,6 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 
 				for (String string : validateAgainst) {
 					final String projectKey = groupId + SONAR_COLON + artifactId + SONAR_COLON + string;
-					System.out.println("Project Key = " + projectKey);
 					boolean urlExists = checkUrlExists(sonarHomeURL + DASHBORAD_INDEX + projectKey);
 					if (urlExists) {
 						DeleteQuery query = new DeleteQuery() {
@@ -1588,5 +1582,90 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			}
 		}
 		return response;
+	}
+	
+	private void handleDependencies(String tempFolderPath, ProjectInfo projectInfo, ProjectInfo availableProjectInfo) throws PhrescoException {
+		List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
+		for (ApplicationInfo applicationInfo : appInfos) {
+			List<ModuleInfo> modules = applicationInfo.getModules();
+			if (CollectionUtils.isNotEmpty(modules)) {
+				for (ModuleInfo module : modules) {
+					List<String> dependentModules = module.getDependentModules();
+					if (availableProjectInfo != null) {
+						List<ApplicationInfo> availableAppInfos = availableProjectInfo.getAppInfos();
+						for (ApplicationInfo availableAppInfo : availableAppInfos) {
+							List<ModuleInfo> availableModules = availableAppInfo.getModules();
+							if (availableAppInfo.getAppDirName().equalsIgnoreCase(applicationInfo.getAppDirName()) && CollectionUtils.isNotEmpty(availableModules)) {
+								for (ModuleInfo availableModule : availableModules) {
+									if (availableModule.getCode().equals(module.getCode())) {
+										List<String> availableDependentModules = availableModule.getDependentModules();
+										if (CollectionUtils.isNotEmpty(availableDependentModules)) {
+											for (String availableDependentModule : availableDependentModules) {
+												if (!dependentModules.contains(availableDependentModule)) {
+													removeModuleDependency(availableAppInfo.getAppDirName(), module.getCode(), availableDependentModule);
+												}
+											}
+										}
+									}
+								}
+								break;
+							}
+						}
+					}
+					if (CollectionUtils.isNotEmpty(dependentModules)) {
+						for (String appCode : dependentModules) {
+//							String depApp = getApplicationInfo(appCode, projectInfo.getAppInfos());
+							File depPomFile = new File(tempFolderPath + applicationInfo.getCode() + File.separator + appCode
+									+ File.separator + "pom.xml");
+							String packageType = getPackageOfDependentSubModule(depPomFile);
+							File file = new File(tempFolderPath +  applicationInfo.getCode() + File.separator + module.getCode()
+									+ File.separator + "pom.xml");
+							addDependency(appCode, file, projectInfo.getVersion(), projectInfo.getGroupId(), packageType);
+						}
+					}
+				}
+			}
+//			if (CollectionUtils.isNotEmpty(applicationInfo.getModules())) {
+//				createModuleDependencies(applicationInfo.getModules(), tempFolderPath, projectInfo, applicationInfo
+//						.getCode());
+//			}
+		}
+	}
+	
+	private void removeModuleDependency(String appDirName, String moduleName, String moduleToDelete) throws PhrescoException {
+		try {
+			File depndPomFile = Utility.getPomFileLocation(Utility.getProjectHome() + appDirName, moduleName);
+			PomProcessor depndPomProcessor = new PomProcessor(new File(depndPomFile.getParent(), POM_FILE));
+			File pomFile = Utility.getPomFileLocation(Utility.getProjectHome() + appDirName, moduleName);
+			PomProcessor pomProcessor = new PomProcessor(new File(pomFile.getParent(), POM_FILE));
+			pomProcessor.deleteDependency(depndPomProcessor.getGroupId(), moduleToDelete, "");
+			pomProcessor.save();
+		} catch (PhrescoException e) {
+			throw e;
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	private String getPackageOfDependentSubModule(File depPomFile) throws PhrescoException {
+		try {
+			PomProcessor processor = new PomProcessor(depPomFile);
+			if (StringUtils.isNotEmpty(processor.getPackage())) {
+				return processor.getPackage();
+			}
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+		return "";
+	}
+
+	private void addDependency(String depAppCode, File pomFile, String version, String groupId, String packageType) throws PhrescoException {
+		try {
+			PomProcessor processor = new PomProcessor(pomFile);
+			processor.addDependency(groupId, depAppCode, version, "", packageType , "");
+			processor.save();
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
 	}
 }

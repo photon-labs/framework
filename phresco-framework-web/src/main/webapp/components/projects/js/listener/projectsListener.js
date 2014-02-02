@@ -2023,7 +2023,7 @@ define([], function() {
 								
 								if (appInfo.code !== undefined && appInfo.code !== null) {
 									appInfo.techInfo = techInfo;
-									if(preBuilt){
+									if(preBuilt && action !== 'update'){
 										var selectedPilot = $("select[name='prebuiltapps']").find(':selected').text();
 										if(action === 'update') {
 											selectedPilot = selectedPilot.replace(/\s+/g, "");
@@ -2138,7 +2138,7 @@ define([], function() {
 								
 								if (appInfo.code !== undefined && appInfo.code !== null) {
 									appInfo.techInfo = techInfo;
-									if(preBuilt){
+									if(preBuilt && action !== 'update'){
 										var selectedPilot = $("select[name='prebuiltapps']").find(':selected').text();
 										if(action === 'update') {
 											selectedPilot = selectedPilot.replace(/\s+/g, "");
@@ -2258,7 +2258,7 @@ define([], function() {
 								
 								if (appInfo.code !== undefined && appInfo.code !== null) {
 									appInfo.techInfo = techInfo;
-									if(preBuilt){
+									if(preBuilt && action !== 'update'){
 										var selectedPilot = $("select[name='prebuiltapps']").find(':selected').text();
 										var selectedPilotData = commonVariables.api.localVal.getJson(selectedPilot);
 										$.each(selectedPilotData.appInfos, function(index, appInfo){
@@ -2300,9 +2300,7 @@ define([], function() {
 					self.counter = null;
 					self.projectRequestBody = {};
 					commonVariables.api.localVal.deleteSession("projectId");
-//					self.getEditProject(self.getRequestHeader(self.projectRequestBody, "", "projectlist"), function(response) {
-						self.pageRefresh(response);
-//					});
+					self.pageRefresh(response);
 				});
 			}
 		},
