@@ -20,8 +20,12 @@ package com.photon.phresco.framework.api;
 import java.io.File;
 
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.model.RepoDetail;
 import com.photon.phresco.framework.model.RepoInfo;
+import com.photon.phresco.service.client.api.ServiceManager;
+import com.photon.phresco.service.client.impl.ServiceManagerImpl;
 
 public interface SCMManager {
 
@@ -35,7 +39,7 @@ public interface SCMManager {
 	 * @throws Exception 
 	 
 	 */
-	ApplicationInfo importProject(RepoInfo repodetail, String displayName, String uniqueKey) throws Exception ;
+	ProjectInfo importProject(RepoInfo repodetail, String displayName, String uniqueKey) throws Exception ;
 	
 	/**
 	 * 
@@ -77,8 +81,26 @@ public interface SCMManager {
 	 */
 	public boolean commitToRepo(RepoDetail repodetail, File dir) throws Exception;
 	
-	void importTest(ApplicationInfo applicationInfo, RepoInfo repoInfo) throws Exception;
+	/**
+	 * @param applicationInfo
+	 * @param repoInfo
+	 * @throws Exception
+	 */
+	public void importTest(ApplicationInfo applicationInfo, RepoInfo repoInfo) throws Exception;
 	
-	void importPhresco(ApplicationInfo applicationInfo, RepoInfo repoInfo) throws Exception;
+	/**
+	 * @param applicationInfo
+	 * @param repoInfo
+	 * @throws Exception
+	 */
+	public void importPhresco(ApplicationInfo applicationInfo, RepoInfo repoInfo) throws Exception;
 	
+	/**
+	 * @param repoInfo
+	 * @param appInfo
+	 * @param projInfo
+	 * @param serviceManager
+	 * @throws PhrescoException
+	 */
+	public void updatePoms(RepoInfo repoInfo, ApplicationInfo appInfo, ProjectInfo projInfo, ServiceManager serviceManager) throws PhrescoException;
 }

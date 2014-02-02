@@ -168,10 +168,87 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	@Path("/importApplication")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response importApplication(RepoInfo repoInfo, @QueryParam("displayName") String displayName) throws Exception {
-		Response response = null;
-		response = importSVNApplication(repoInfo, displayName);
-		return response;
+	public Response importApplication(RepoInfo repoInfo, @QueryParam("displayName") String displayName, @QueryParam(REST_QUERY_USERID) String userId) throws Exception {
+		SCMManagerImpl scmi = new SCMManagerImpl();
+		ResponseInfo responseData = new ResponseInfo();
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		try {
+			ProjectInfo projInfo = scmi.importProject(repoInfo, displayName, unique_key);
+			ApplicationInfo srcAppInfo = null;
+			if (projInfo != null) {
+				srcAppInfo = projInfo.getAppInfos().get(0);
+			}
+			if (srcAppInfo != null) {
+				if(repoInfo.isSplitTest()) {
+					scmi.importTest(srcAppInfo, repoInfo);
+				}
+				if(repoInfo.isSplitPhresco()) {
+					scmi.importPhresco(srcAppInfo, repoInfo);
+				}
+				scmi.updateSCMConnection(repoInfo, srcAppInfo);
+				ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+				
+				//SCM tags, pom-properties and distribution tags will be added here
+				scmi.updatePoms(repoInfo, srcAppInfo, projInfo, serviceManager);
+			}
+			
+			status = RESPONSE_STATUS_SUCCESS;
+			successCode = PHR200017;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
+		} catch (SVNAuthenticationException e) {
+			status = RESPONSE_STATUS_FAILURE;
+			errorCode = PHR210023;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
+		} catch (SVNException e) {
+			if (e.getMessage().indexOf(SVN_FAILED) != -1) {
+				status = RESPONSE_STATUS_FAILURE;
+				errorCode = PHR210024;
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
+				"*").build();
+			} else if (e.getMessage().indexOf(SVN_INTERNAL) != -1) {
+				status = RESPONSE_STATUS_FAILURE;
+				errorCode = PHR210025;
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
+				"*").build();
+			} else {
+				status = RESPONSE_STATUS_ERROR;
+				errorCode = PHR210026;
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
+				"*").build();
+			}
+		} catch (FileExistsException e) {
+			status = RESPONSE_STATUS_FAILURE;
+			errorCode = PHR210027;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
+		} catch (PhrescoException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210026;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
+		} catch (Exception e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210026;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
+		} finally {
+			try {
+				LockUtil.removeLock(unique_key);
+			} catch (PhrescoException e) {
+
+			}
+		}
 	}
 
 	/**
@@ -494,85 +571,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	}
 
 	/**
-	 * Import svn application.
-	 *
-	 * @param type the type
-	 * @param repoInfo the repodetail
-	 * @return the response
-	 */
-	private Response importSVNApplication(RepoInfo repoInfo, String displayName) {
-		SCMManagerImpl scmi = new SCMManagerImpl();
-		ResponseInfo responseData = new ResponseInfo();
-		UUID uniqueKey = UUID.randomUUID();
-		String unique_key = uniqueKey.toString();
-		try {
-			ApplicationInfo importProject = scmi.importProject(repoInfo, displayName, unique_key);
-			if(repoInfo.isSplitTest()) {
-				scmi.importTest(importProject, repoInfo);
-			}
-			if(repoInfo.isSplitPhresco()) {
-				scmi.importPhresco(importProject, repoInfo);
-			}
-			scmi.updateSCMConnection(repoInfo, importProject);
-			status = RESPONSE_STATUS_SUCCESS;
-			successCode = PHR200017;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} catch (SVNAuthenticationException e) {
-			status = RESPONSE_STATUS_FAILURE;
-			errorCode = PHR210023;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} catch (SVNException e) {
-			if (e.getMessage().indexOf(SVN_FAILED) != -1) {
-				status = RESPONSE_STATUS_FAILURE;
-				errorCode = PHR210024;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-				"*").build();
-			} else if (e.getMessage().indexOf(SVN_INTERNAL) != -1) {
-				status = RESPONSE_STATUS_FAILURE;
-				errorCode = PHR210025;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-				"*").build();
-			} else {
-				status = RESPONSE_STATUS_ERROR;
-				errorCode = PHR210026;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-				"*").build();
-			}
-		} catch (FileExistsException e) {
-			status = RESPONSE_STATUS_FAILURE;
-			errorCode = PHR210027;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} catch (PhrescoException e) {
-			status = RESPONSE_STATUS_ERROR;
-			errorCode = PHR210026;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} catch (Exception e) {
-			status = RESPONSE_STATUS_ERROR;
-			errorCode = PHR210026;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} finally {
-			try {
-				LockUtil.removeLock(unique_key);
-			} catch (PhrescoException e) {
-
-			}
-		}
-	}
-
-	/**
 	 * Import git application.
 	 *
 	 * @param type the type
@@ -585,7 +583,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
 		try {
-			ApplicationInfo importProject = scmi.importProject(repodetail, displayName, unique_key);
+			ProjectInfo importProject = scmi.importProject(repodetail, displayName, unique_key);
 			if (importProject != null) {
 				status = RESPONSE_STATUS_SUCCESS;
 				successCode = PHR200017;
@@ -638,7 +636,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
 		try {
-			ApplicationInfo importProject = scmi.importProject(repodetail, displayName, unique_key);
+			ProjectInfo importProject = scmi.importProject(repodetail, displayName, unique_key);
 			if (importProject != null) {
 				status = RESPONSE_STATUS_SUCCESS;
 				successCode = PHR200017;
@@ -1494,7 +1492,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
 		try {
-			ApplicationInfo importProject=scmi.importFromPerforce(repodetail, new File(""));
+			ProjectInfo importProject = scmi.importFromPerforce(repodetail, new File(""));
 			if (importProject != null) {
 				status = RESPONSE_STATUS_SUCCESS;
 				successCode = PHR200017;
@@ -1554,7 +1552,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
 		try {
-			ApplicationInfo importProject = scmi.importProject(repodetail, displayName, unique_key);
+			ProjectInfo importProject = scmi.importProject(repodetail, displayName, unique_key);
 			if (importProject != null) {
 				status = RESPONSE_STATUS_SUCCESS;
 				successCode = PHR200017;

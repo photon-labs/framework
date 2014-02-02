@@ -900,7 +900,7 @@ define([], function() {
 				}
 				header.requestMethod = "POST";
 				header.requestPostBody = JSON.stringify(requestBody);
-				header.webserviceurl = commonVariables.webserviceurl + "repository/importApplication?displayName="+displayName;
+				header.webserviceurl = commonVariables.webserviceurl + "repository/importApplication?displayName="+displayName + "&userId=" + userInfo.name;
 			} else if (action === "copyToClipboard") {
 				header.requestMethod = "POST";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.copyToClipboardContext;
