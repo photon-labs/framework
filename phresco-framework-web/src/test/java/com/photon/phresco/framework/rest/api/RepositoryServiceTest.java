@@ -103,12 +103,12 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		repodetail.setType("svn");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0/239/");
 		repoInfo.setSrcRepoDetail(repodetail);
-		Response importApplication = repositoryservice.importApplication(repoInfo, "Admin");
+		Response importApplication = repositoryservice.importApplication(repoInfo, "Admin", "santhosh_ja");
 		Assert.assertEquals(200,importApplication.getStatus());
 		
 		repodetail.setUserName("sample");
 		repoInfo.setSrcRepoDetail(repodetail);
-		Response authenticationException = repositoryservice.importApplication(repoInfo, "Admin");
+		Response authenticationException = repositoryservice.importApplication(repoInfo, "Admin", "santhosh_ja");
 		Assert.assertEquals(200, authenticationException.getStatus());
 	}
 
@@ -195,7 +195,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		repodetail.setType("git");
 		repodetail.setRepoUrl("https://github.com/santhosh-ja/GitAdd.git");
 		repoInfo.setSrcRepoDetail(repodetail);
-		Response importApplication = repositoryservice.importApplication(repoInfo, "Admin");
+		Response importApplication = repositoryservice.importApplication(repoInfo, "Admin", "santhosh_ja");
 		Assert.assertEquals(200,importApplication.getStatus());
 	}
 	
@@ -210,7 +210,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		repoDetail.setServerPath("raj/jsa");
 		repoDetail.setRepoUrl("https://vivekraja.visualstudio.com/DefaultCollection");
 		repoInfo.setSrcRepoDetail(repoDetail);
-		Response importApplication = repositoryservice.importApplication(repoInfo, "Admin");
+		Response importApplication = repositoryservice.importApplication(repoInfo, "Admin", "santhosh_ja");
 		Assert.assertEquals(200,importApplication.getStatus());
 		Assert.assertEquals(true, true);
 	}
