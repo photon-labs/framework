@@ -2219,5 +2219,6 @@ public interface FrameworkConstants {
 	    String PUBLICATIONS_NOT_FOUND =  "Publications name  not found";
 	    String PARENT_NAME = "name";
 	    String PRIORITY = "priority";
+	    String GIT_URL = "https://api.github.com";
 	    
 }
