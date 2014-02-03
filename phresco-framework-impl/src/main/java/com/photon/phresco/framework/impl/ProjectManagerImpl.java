@@ -46,6 +46,9 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wink.json4j.OrderedJSONObject;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -63,6 +66,7 @@ import com.photon.phresco.commons.model.Dashboard;
 import com.photon.phresco.commons.model.DashboardInfo;
 import com.photon.phresco.commons.model.Dashboards;
 import com.photon.phresco.commons.model.DownloadInfo;
+import com.photon.phresco.commons.model.FunctionalFrameworkInfo;
 import com.photon.phresco.commons.model.ModuleInfo;
 import com.photon.phresco.commons.model.ProjectDelivery;
 import com.photon.phresco.commons.model.ProjectInfo;
@@ -90,6 +94,7 @@ import com.photon.phresco.util.ProjectUtils;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Dependency;
+import com.phresco.pom.model.PluginExecution.Configuration;
 import com.phresco.pom.util.PomProcessor;
 import com.splunk.Args;
 import com.splunk.JobResultsArgs;
@@ -656,6 +661,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				backUpProjectInfoFile(rootModulePath, subModuleName);
 				renameAppFolderName(projectInfo, rootModulePath, subModuleName);
 				updateProjectPom(projectInfo, rootPath, moduleName);
+				updateSeleniumJarVersion(projectInfo, rootPath, moduleName);
 				updateCiInfoFile(projectInfo, appDirWithModule, rootPath, moduleName);
 				ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 				
@@ -713,8 +719,66 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			} else {
 				throw new PhrescoException("Project updation failed");
 			}
-			
 		return projectInfo;
+	}
+	
+	private String getSeleniumJarVersion(ApplicationInfo appInfo) {
+		FunctionalFrameworkInfo functionalFrameworkInfo = appInfo.getFunctionalFrameworkInfo();
+		if (functionalFrameworkInfo != null) {
+			return functionalFrameworkInfo.getVersion();
+		}
+		return "";
+	}
+	
+	
+	private void updateSeleniumJarVersion(ProjectInfo projectInfo, String rootPath, String moduleName) throws PhrescoException {
+		try {
+			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+			String seleniumJarVersion = getSeleniumJarVersion(appInfo);
+			if (StringUtils.isNotEmpty(seleniumJarVersion)) {
+				File testFolderLocation = Utility.getTestFolderLocation(projectInfo, rootPath, moduleName);
+				File pomFile = Utility.getPomFileLocation(rootPath, moduleName);
+				PomProcessor pomProcessor = new PomProcessor(pomFile);
+				String funcDir = pomProcessor.getProperty(POM_PROP_KEY_FUNCTEST_DIR);
+				String seleniumType = pomProcessor.getProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
+				if (SELENIUM_GRID.equals(seleniumType)) {
+					File functionalPomFile = new File(testFolderLocation + funcDir + File.separatorChar + POM_XML);
+					PomProcessor processor = new PomProcessor(functionalPomFile);
+					Configuration pluginExecutionConfiguration = processor.getPluginExecutionConfiguration("org.apache.maven.plugins", "maven-dependency-plugin", "copy");
+					if (pluginExecutionConfiguration != null) {
+						List<Element> elements = pluginExecutionConfiguration.getAny();
+						setVersionInArtifactItem(elements, seleniumJarVersion);
+					}
+					processor.addDependency("org.seleniumhq.selenium", "selenium-server-standalone", seleniumJarVersion);
+					processor.save();
+				}
+			}
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	private void setVersionInArtifactItem(List<Element> elements, String version) {
+		for (Element element : elements) {
+			if ("artifactItems".equals(element.getTagName())) {
+				NodeList artifactItem = element.getElementsByTagName("artifactItem");
+				for (int i = 0; i < artifactItem.getLength(); i++) {
+					Node artifactItemNode = artifactItem.item(i);
+					boolean check = false;
+					NodeList childNodes = artifactItemNode.getChildNodes();
+					for (int j = 0; j < childNodes.getLength(); j++) {
+						Node childNode = childNodes.item(j);
+						if ("artifactId".equals(childNode.getNodeName()) && childNode.getTextContent().equalsIgnoreCase("selenium-server-standalone")) {
+							check = true;
+						}
+						if (check && "version".equals(childNode.getNodeName())) {
+							childNode.setTextContent(version);
+							break;
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	private void updateDependenciesInSubModulePom(ApplicationInfo appInfo, String rootModule, String oldAppDirName, String rootModulePath) throws PhrescoException {
