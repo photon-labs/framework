@@ -200,21 +200,35 @@ define(["testResult/listener/testResultListener"], function() {
 				} else if (testcase.testCaseError !== null && testcase.testCaseError.hasErrorImg) {
 					filePath = "data:image/png;base64," + testcase.testCaseFailure.screenshotPath;
 				}
-				$('.'+eventClass).magnificPopup({
-					items: [{
-						src: $('<div class="text_center"><img src="'+filePath+'"><div class="fullscreen_desc">'+eventClass+'</div></div>'), // Dynamically created element
-						type: 'inline'
-					}],
-					gallery: {
-						enabled: true
-					},
-					type: 'image'
-				});
-				
-				/*$('.'+eventClass).click(function(e){
-					$('.mfp-container').fullScreen();
-					e.preventDefault();
-				});*/
+				if (testcase.testSteps != null && testcase.testSteps.length > 0) {
+					$.each(testcase.testSteps, function(index, testStep) {
+						if (testStep.testStepFailure !== null && testStep.testStepFailure.hasFailureImg) {
+							var testStepClass = testStep.name.replace(/\./g, '').replace(/\s/g, '');
+							var screenshotUrl = testStep.testStepFailure.screenshotUrl;
+							$('.'+testStepClass).magnificPopup({
+								items: [{
+									src: $('<div class="text_center"><img src="'+screenshotUrl+'"><div class="fullscreen_desc">'+testStepClass+'</div></div>'), // Dynamically created element
+									type: 'inline'
+								}],
+								gallery: {
+									enabled: true
+								},
+								type: 'image'
+							});
+						}
+					});
+				} else {
+					$('.'+eventClass).magnificPopup({
+						items: [{
+							src: $('<div class="text_center"><img src="'+filePath+'"><div class="fullscreen_desc">'+eventClass+'</div></div>'), // Dynamically created element
+							type: 'inline'
+						}],
+						gallery: {
+							enabled: true
+						},
+						type: 'image'
+					});
+				}
 			}
 		},
 		

@@ -5,7 +5,7 @@ public class TestStepFailure {
 	private String failureType;
 	private String description;
 	private boolean hasFailureImg;
-	private String screenshotPath;
+	private String screenshotUrl;
 	
 	public String getFailureType() {
 		return failureType;
@@ -25,10 +25,10 @@ public class TestStepFailure {
 	public void setHasFailureImg(boolean hasFailureImg) {
 		this.hasFailureImg = hasFailureImg;
 	}
-	public String getScreenshotPath() {
-		return screenshotPath;
+	public void setScreenshotUrl(String screenshotUrl) {
+		this.screenshotUrl = screenshotUrl;
 	}
-	public void setScreenshotPath(String screenshotPath) {
-		this.screenshotPath = screenshotPath;
+	public String getScreenshotUrl() {
+		return screenshotUrl;
 	}
 }

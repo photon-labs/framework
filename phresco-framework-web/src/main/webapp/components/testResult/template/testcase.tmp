@@ -318,12 +318,12 @@
 										</td>
 										<td class="functional hideContent">
 											{{#if testStepFailure.hasFailureImg}}
-												<a href="javascript:void(0)" class="{{name}}">
+												<a href="javascript:void(0)" class="{{removeDot name}}">
 													<img src="themes/default/images/Phresco/screenshot_icon.png" width="19" height="16" border="0" alt="" />
 												</a>
 											{{else}}
 												{{#if testStepError.hasFailureImg}}
-													<a href="javascript:void(0)" class="{{name}}">
+													<a href="javascript:void(0)" class="{{removeDot name}}">
 														<img src="themes/default/images/Phresco/screenshot_icon.png" width="19" height="16" border="0" alt="" />
 													</a>
 												{{/if}}

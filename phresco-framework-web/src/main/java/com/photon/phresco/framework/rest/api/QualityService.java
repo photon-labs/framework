@@ -877,10 +877,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	private List<TestCase> getTestCases(String rootModulePath, String subModule, List<NodeList> testSuites, String testSuitePath, String testCasePath, String testFunctionXpath, String testStepPath, String testType) throws PhrescoException {
 		InputStream fileInputStream = null;
 		StringBuilder screenShotDir = new StringBuilder();
-		ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModule);
-		ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
-		String iframeUrl = applicationInfo.getFunctionalFrameworkInfo().getIframeUrl();
-		//TODO: http://172.16.23.45:9090/test/jsecuti?j_ (Line no - 1040 for screen shot)
 		try {
 			List<TestCase> testCases = new ArrayList<TestCase>();
 			for (NodeList testSuite : testSuites) {
@@ -1038,7 +1034,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 										for (int z = 0; z < testStepChilds.getLength(); z++) {
 											Node testStepChildNode = testStepChilds.item(z);
 											//TODO - Screenshot to be included
-											constructTestStepFailure(screenShotDir, testCase, testStep, testStepChildNode);
+											constructTestStepFailure(testCase, testStep, testStepChildNode);
 											constructTestStepError(screenShotDir, testCase, testStep, testStepChildNode);
 										}
 									}
@@ -1099,7 +1095,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 							if (testStepChilds != null && testStepChilds.getLength() > 0) {
 								for (int r = 0; r < testStepChilds.getLength(); r++) {
 									Node testStepChildNode = testStepChilds.item(r);
-									constructTestStepFailure(screenShotDir, testCase, testStep, testStepChildNode);
+//									constructTestStepFailure(screenShotDir, testCase, testStep, testStepChildNode);
 									constructTestStepError(screenShotDir, testCase, testStep, testStepChildNode);
 								}
 							}
@@ -1147,38 +1143,15 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		}
 	}
 
-	private void constructTestStepFailure(StringBuilder screenShotDir, TestCase testCase, TestStep testStep, Node testStepChildNode) throws PhrescoException {
-		FileInputStream fileInputStream = null;
+	private void constructTestStepFailure(TestCase testCase, TestStep testStep, Node testStepChildNode) throws PhrescoException {
 		try {
-			//TODO: get attribute for screen shot from testStepChildNode
 			if (ELEMENT_FAILURE.equals(testStepChildNode.getNodeName())) {
-				TestStepFailure testStepfailure = getTestStepFailure(testStepChildNode);
-				if (testStepfailure != null) {
-					File file = new File(screenShotDir.toString().concat(testCase.getName()).concat(FrameworkConstants.DOT + IMG_PNG_TYPE));
-					if (file.exists()) {
-						testStepfailure.setHasFailureImg(true);
-						fileInputStream = new FileInputStream(file);
-						if (fileInputStream != null) {
-							byte[] imgByte = null;
-							imgByte = IOUtils.toByteArray(fileInputStream);
-							byte[] encodedImage = Base64.encodeBase64(imgByte);
-							testStepfailure.setScreenshotPath(new String(encodedImage));
-						}
-					}
-					testStep.setTestStepFailure(testStepfailure);
-				}
+				TestStepFailure testStepFailure = getTestStepFailure(testStepChildNode);
+				testStep.setTestStepFailure(testStepFailure);
 			}
 		} catch (Exception e) {
 			throw new PhrescoException(e);
-		} finally {
-			try {
-				if (fileInputStream != null) {
-					fileInputStream.close();
-				}
-			} catch (IOException e) {
-
-			}
-		}
+		} 
 	}
 
 	private StringBuilder screenShotDir(String rootModulePath, String subModule) throws PhrescoException {
@@ -1252,6 +1225,9 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 
 				if (ATTR_TYPE.equals(attributeName)) {
 					failure.setFailureType(attributeValue);
+				} else if (ATTR_SCREENSHOT.equals(attributeName) && StringUtils.isNotEmpty(attributeValue)) {
+					failure.setScreenshotUrl(attributeValue);
+					failure.setHasFailureImg(true);
 				}
 			}
 		}

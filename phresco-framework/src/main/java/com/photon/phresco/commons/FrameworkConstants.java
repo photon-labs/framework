@@ -1177,6 +1177,7 @@ public interface FrameworkConstants {
     String ATTR_CLASSNAME = "classname";
     String ATTR_LINE = "line";
     String ATTR_TYPE = "type";
+    String ATTR_SCREENSHOT = "screenshot";
     String ATTR_RESULT = "result";
     String ATTR_JM_THREAD_NAME = "tn";
     String ATTR_JM_LABEL = "lb";
