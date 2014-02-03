@@ -2,6 +2,11 @@ package com.photon.phresco.framework.repository;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,12 +17,14 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.ListTagCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.StoredConfig;
+import org.eclipse.jgit.util.Base64;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -30,7 +37,12 @@ public class GitRepositoryImpl implements RepositoryManager, FrameworkConstants 
 	public Document getSource(String appDirName, String username, String password, String srcRepoUrl) throws PhrescoException {
 		Document document = null;
 		try {
-			document = getGitSourceRepo(appDirName);
+			boolean authenticated = authentication(username, password);
+			if (authenticated) {
+				document = getGitSourceRepo(appDirName);
+			} else {
+				throw new PhrescoException(srcRepoUrl);
+			}
 		} catch (PhrescoException e) {
 		throw new PhrescoException(e);
 	}
@@ -60,7 +72,7 @@ public class GitRepositoryImpl implements RepositoryManager, FrameworkConstants 
 				for (Ref ref : remoteCall) {
 					branchList.add(ref.getName());
 				}
-
+				
 				ListTagCommand tagList = git.tagList();
 				Map<String, Ref> tags = tagList.getRepository().getTags();
 				Set<Entry<String,Ref>> entrySet = tags.entrySet();
@@ -147,6 +159,46 @@ public class GitRepositoryImpl implements RepositoryManager, FrameworkConstants 
 		}
 	}
 	
-	
+	private static boolean authentication(String username, String password) throws PhrescoException {
+		boolean validUser = false;
+		try {
+			URL url = new URL(GIT_URL);
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod(GET);
+			if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
+				String credentials = BASIC_SPACE + toBase64(username + COLON + password);
+				connection.setRequestProperty( AUTHORIZATION, credentials);
+				if (connection.getResponseCode() == 200) {
+					validUser = true;
+				}else {
+					validUser = false;
+				} 
+			} else {
+				validUser = false;
+			}
+		} catch (MalformedURLException e) {
+			throw new PhrescoException(e);
+		} catch (ProtocolException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		}
+		return validUser;
+	}
+
+	private static final String toBase64(final String content) {
+		byte[] bytes;
+		try {
+			bytes = content.getBytes(UTF_8);
+		} catch (UnsupportedEncodingException e) {
+			bytes = content.getBytes();
+		}
+		return toBase64(bytes);
+	}
+
+	private static final String toBase64(final byte[] content) {
+		return Base64.encodeBytes(content);
+	}
+
 
 }
