@@ -1539,7 +1539,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if (StringUtils.isNotEmpty(job.getUrl())) {
 				flag = true;
 			}
-			String pomFileName = Utility.constructSubPath(appInfo.getAppDirName(), flag, job.getRepoType());
+			String pomFileName = Utility.constructSubPath(job.getAppDirName(), flag, job.getRepoType());
 			job.setPomLocation(pomFileName);
 			
 			// jenkins configurations
@@ -1713,7 +1713,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
 					com.photon.phresco.framework.commons.FrameworkUtil frameworkUtil = com.photon.phresco.framework.commons.FrameworkUtil.getInstance();
 					String seleniumToolType = "";
-					seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
+					seleniumToolType = frameworkUtil.getSeleniumToolType(Utility.getProjectHome() + job.getAppDirName(), job.getModule());
 	
 					//To get maven build arguments
 					parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);

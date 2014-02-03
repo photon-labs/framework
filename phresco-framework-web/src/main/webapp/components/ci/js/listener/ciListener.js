@@ -1768,6 +1768,15 @@ define([], function() {
 				$.each($("input:checkbox[name=triggers]:checked"), function(key, value) {
 					 triggers.push($(this).val());
 				});
+				
+				var testSuites = [];
+				var selObj = $("select[name=testSuites]").val();
+				if (!self.isBlank(selObj)) {
+					$.each(selObj , function(key, value) {
+						testSuites.push(value);
+					});
+				}
+				
 				if(!templateJsonData.enableCriteria) {
 					$("select[name=downStreamCriteria]").attr('disabled', true);
 				} 
@@ -1803,6 +1812,7 @@ define([], function() {
 				jobConfiguration.templateName = templateJsonData.name;
 				jobConfiguration.appDirName=appDirName;
 				jobConfiguration.appName = appName;
+				jobConfiguration.testSuites = testSuites;
 				
 				
 				self.sqlQueryParam($('form[id=jonConfiguration] #executeSql').is(':checked'), $('form[id=jonConfiguration] ul[name=sortable2] li'), function(sqlParam){

@@ -187,10 +187,6 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
         return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_UNITTEST_TESTCASE_PATH_START + option + POM_PROP_KEY_UNITTEST_TESTCASE_PATH_END);
     }
     
-    public String getSeleniumToolType(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appInfo).getProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
-    }
-    
     public String getSeleniumToolType(String rootModulePath, String module) throws PhrescoException, PhrescoPomException {
         return Utility.getPomProcessor(rootModulePath, module).getProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
     }
