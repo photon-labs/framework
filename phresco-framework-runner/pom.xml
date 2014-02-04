@@ -90,4 +90,36 @@
 			</plugin>
         </plugins>
     </build>
+		<profiles>
+		<profile>
+            <id>js</id>
+            <properties>
+                <sonar.branch>js</sonar.branch>
+                <sonar.language>js</sonar.language>
+                <sonar.exclusions>**/test/**,**/lib/**</sonar.exclusions>
+                <phresco.source.directory>src/main/webapp</phresco.source.directory>
+                <testSourceDirectory>src/main/webapp</testSourceDirectory>
+                <js.skipTest>false</js.skipTest>
+            </properties>
+        </profile>
+        <profile>
+            <id>java</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <sonar.branch>java</sonar.branch>
+                <sonar.language>java</sonar.language>
+                <phresco.source.directory>src/main/java</phresco.source.directory>
+                <testSourceDirectory>src/test/java</testSourceDirectory>
+                <js.skipTest>true</js.skipTest>
+            </properties>
+        </profile>
+	</profiles>
+	  <properties>
+        <phresco.unitTest.java.report.dir>/do_not_checkin/reports/unitReports</phresco.unitTest.java.report.dir>
+        <phresco.unitTest.java.testsuite.xpath>/testsuite</phresco.unitTest.java.testsuite.xpath>
+        <phresco.unitTest.java.testcase.path>/testcase</phresco.unitTest.java.testcase.path>
+        <phresco.unitTest>java</phresco.unitTest>
+    </properties>
 </project>

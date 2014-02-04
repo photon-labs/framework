@@ -12,7 +12,7 @@ import com.photon.phresco.framework.impl.ProjectManagerTest;
 import com.photon.phresco.framework.impl.SettingsInfoComparatorTest;
 
 @RunWith(Suite.class)
-@SuiteClasses({ MacosSdkParameterImplTest.class, IosSdkParameterImplTest.class, IosSimSDKVersionsParameterImplTest.class, ConfigurationReaderTest.class, EnvironmentDatabaseImplTest.class, TechnologyVersionImplTest.class, ProjectManagerTest.class, ProjectModuleImplTest.class, WarProjectModuleImplTest.class, IosAndMacosSdkParameterImplTest.class, EnvironmentComparatorTest.class, SettingsInfoComparatorTest.class, ModuleComparatorTest.class,EnvironmentWebservicesImplTest.class, EnvironmentServersImplTest.class, BuildInfoComparatorTest.class})
+@SuiteClasses({ MacosSdkParameterImplTest.class, IosSdkParameterImplTest.class, IosSimSDKVersionsParameterImplTest.class, ConfigurationReaderTest.class, EnvironmentDatabaseImplTest.class, TechnologyVersionImplTest.class, ProjectManagerTest.class, ProjectModuleImplTest.class, WarProjectModuleImplTest.class, IosAndMacosSdkParameterImplTest.class, EnvironmentComparatorTest.class, SettingsInfoComparatorTest.class, ModuleComparatorTest.class,EnvironmentWebservicesImplTest.class, EnvironmentServersImplTest.class, BuildInfoComparatorTest.class, DeleteProjectTest.class})
 
 public class AllTest {
 	// intentionally blank. All tests were added via annotations

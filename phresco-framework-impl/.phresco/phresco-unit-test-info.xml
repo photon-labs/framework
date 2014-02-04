@@ -45,7 +45,6 @@
                     <key>testAgainst</key>
                     <possibleValues>
                         <value key="java">java</value>
-                        <value key="js" dependency="showSettings,environmentName">js</value>
                     </possibleValues>
                     <multiple>false</multiple>
                     <value></value>

@@ -18,9 +18,8 @@
 package com.photon.phresco.framework.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -51,15 +50,12 @@ public class ProjectManagerTest {
 	String customerId = "photon";
 	private static ProjectManager projectManager = null;
 	public static ServiceManager serviceManager = null;
-	public static final Map<String, ServiceManager> CONTEXT_MANAGER_MAP = new HashMap<String, ServiceManager>();
-		
 	
 	@Before
 	public void setUp() throws PhrescoException {
-//		String serviceURL = "http://localhost:3030/service/rest/api";
-		String serviceURL = "http://172.16.18.178:80/service/rest/api";
-		String userName = "admin";
-        String password = "manage";
+		String serviceURL = "http://172.16.17.117:7070/service-3/rest/api";
+		String userName = "phresco";
+        String password = "Phresco@123";
 		projectManager = PhrescoFrameworkFactory.getProjectManager();
 		
 		ServiceContext context = new ServiceContext();
@@ -72,48 +68,6 @@ public class ProjectManagerTest {
 		if (projectManager == null) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
 		}
-	}
-	
-	@Test
-	public void testCreateProject() throws PhrescoException {
-		ProjectInfo projectInfo = getProjectInfo();
-		ProjectInfo create = projectManager.create(projectInfo, serviceManager);
-		Assert.assertEquals("testPhp", create.getAppInfos().get(0).getAppDirName());
-	}
-	
-	public ProjectInfo getProjectInfo() {
-		ProjectInfo projectInfo = new ProjectInfo();
-		projectInfo.setId("test");
-		projectInfo.setVersion("1.0");
-		projectInfo.setProjectCode("testPhp");
-		List<String> customerIds = new ArrayList<String>();
-		customerIds.add(customerId);
-		projectInfo.setCustomerIds(customerIds);
-		List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
-		appInfos.add(getAppInfo());
-		projectInfo.setAppInfos(appInfos);
-		projectInfo.setNoOfApps(appInfos.size());
-		projectInfo.setPreBuilt(false);
-		projectInfo.setMultiModule(false);
-		return projectInfo;
-	}
-
-	protected ApplicationInfo getAppInfo() {
-		ApplicationInfo applicationInfo = new ApplicationInfo();
-		applicationInfo.setId("PHR_Test");
-		applicationInfo.setCode("testPhp");
-		applicationInfo.setName("testPhp");
-		List<String> customerIds = new ArrayList<String>();
-		customerIds.add(customerId);
-		applicationInfo.setCustomerIds(customerIds);
-		TechnologyInfo techInfo = new TechnologyInfo();
-		techInfo.setId("tech-php");
-		techInfo.setName("PHP");
-		techInfo.setVersion("5.4.x");
-		techInfo.setAppTypeId("app-layer");
-		applicationInfo.setTechInfo(techInfo);
-		applicationInfo.setAppDirName("testPhp");
-		return applicationInfo;
 	}
 	
 	@Test
@@ -130,21 +84,21 @@ public class ProjectManagerTest {
 	
 	@Test
 	public void getProjectById() throws PhrescoException {
-		ProjectInfo project = projectManager.getProject("test", customerId);
-		Assert.assertEquals("test", project.getId());
+		ProjectInfo project = projectManager.getProject("PHR_Test", customerId);
+		Assert.assertEquals("PHR_Test", project.getId());
 	}
 	
 	@Test
 	public void getprojectByAppId() throws PhrescoException {
-		ProjectInfo project = projectManager.getProject("test", customerId, "PHR_Test");
+		ProjectInfo project = projectManager.getProject("PHR_Test", customerId, "PHR_Test");
 		Assert.assertEquals("PHR_Test", project.getAppInfos().get(0).getId());
 	}
 	
 //	@Test
 	public void testUpdateWithoutApp() throws PhrescoException {
 		ProjectInfo projectInfo = new ProjectInfo();
-		projectInfo.setId("test");
-		projectInfo.setVersion("1.0");
+		projectInfo.setId("PHR_Test");
+		projectInfo.setVersion("1.0.0-SNAPSHOT");
 		projectInfo.setProjectCode("testPhp");
 		List<String> customerIds = new ArrayList<String>();
 		customerIds.add(customerId);
@@ -155,13 +109,29 @@ public class ProjectManagerTest {
 	
 //	@Test
 	public void testUpdateProject() throws PhrescoException {
-		ProjectInfo projectInfo = getProjectInfo();
-		projectInfo.getAppInfos().get(0).setAppDirName("testPhp");
+		ProjectInfo projectInfo = new ProjectInfo();
+		ApplicationInfo appInfo = new ApplicationInfo();
+		appInfo.setAppDirName("testPhp");
+		appInfo.setName("testPhp");
+		appInfo.setCode("testPhp");
+		appInfo.setId("PHR_Test");
+		TechnologyInfo techInfo = new TechnologyInfo();
+		techInfo.setId("tech-php");
+		techInfo.setName("php-raw");
+		techInfo.setVersion("5.4.x");
+		techInfo.setTechGroupId("PHP");
+		techInfo.setAppTypeId("e1af3f5b-7333-487d-98fa-46305b9dd6ee");
+		appInfo.setTechInfo(techInfo);
+		appInfo.setPilot(false);
+		appInfo.setUsed(false);
+		appInfo.setVersion("5.4.x");
+		appInfo.setPomFile("pom.xml");
+		
 		List<String> selectedModules = new ArrayList<String>();
 		selectedModules.add("d365fb80-6bb1-41e6-a6a6-4f6f1d3b5048");
 		selectedModules.add("fea9872d-bc78-4765-ace2-0e18af45d105");
 		selectedModules.add("aa5b3b7e-6f5c-4826-8e1d-28af66ff8017");
-		projectInfo.getAppInfos().get(0).setSelectedModules(selectedModules);
+		appInfo.setSelectedModules(selectedModules);
 		
 		List<ArtifactGroupInfo> selectedServers = new ArrayList<ArtifactGroupInfo>();
 		ArtifactGroupInfo artifactGrpInfo = new ArtifactGroupInfo();
@@ -172,7 +142,7 @@ public class ProjectManagerTest {
 		artifactGrpInfo.setArtifactInfoIds(artifactInfoIds);
 		selectedServers.add(artifactGrpInfo);
 		
-		projectInfo.getAppInfos().get(0).setSelectedServers(selectedServers);
+		appInfo.setSelectedServers(selectedServers);
 		
 		List<ArtifactGroupInfo> selectedDatabases = new ArrayList<ArtifactGroupInfo>();
 		
@@ -184,26 +154,23 @@ public class ProjectManagerTest {
 		artifactGrpInfo1.setArtifactInfoIds(artifactInfoIds1);
 		selectedDatabases.add(artifactGrpInfo1);
 		
-		projectInfo.getAppInfos().get(0).setSelectedDatabases(selectedDatabases);
+		appInfo.setSelectedDatabases(selectedDatabases);
 		
 		List<String> selectedWebservices = new ArrayList<String>();
 		selectedWebservices.add("restjson");
-		projectInfo.getAppInfos().get(0).setSelectedWebservices(selectedWebservices);
+		appInfo.setSelectedWebservices(selectedWebservices);
 		
+		projectInfo.setAppInfos(Collections.singletonList(appInfo));
+		projectInfo.setId("PHR_Test");
+		projectInfo.setVersion("1.0.0-SNAPSHOT");
+		projectInfo.setProjectCode("testPhp");
+		projectInfo.setName("testPhp");
+		projectInfo.setIntegrationTest(false);
+		projectInfo.setGroupId("com.photon.phresco");
 		projectInfo.setVersion("2.0");
 		projectInfo.setDescription("Sample Discription for php");
+		
 		ProjectInfo project = projectManager.updateApplication(projectInfo, serviceManager, "testPhp", "");
 		Assert.assertEquals("Sample Discription for php", project.getDescription());
 	}
-	
-	@Test
-	public void deleteProject() throws PhrescoException {
-		List<String> appDirNames = new ArrayList<String>();
-		appDirNames.add("testPhp");
-		DeleteProjectInfo deleteProjectInfo = new DeleteProjectInfo();
-		deleteProjectInfo.setAppDirNames(appDirNames);
-		boolean delete = projectManager.delete(deleteProjectInfo);
-//		Assert.assertTrue(delete);
-	}
-	
 }

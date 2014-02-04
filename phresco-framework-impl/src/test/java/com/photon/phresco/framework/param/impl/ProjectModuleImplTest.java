@@ -1,7 +1,7 @@
 package com.photon.phresco.framework.param.impl;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +18,6 @@ import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 
 public class ProjectModuleImplTest {
 
@@ -32,26 +31,24 @@ public class ProjectModuleImplTest {
 		Assert.assertEquals(null, possibleValues);
 	}
 	
+	
 	private static ApplicationInfo getApplicationInfo() {
-		ApplicationInfo info = new ApplicationInfo();
-		info.setAppDirName("TestProject");
-		info.setCode("TestProject");
-		info.setId("TestProject");
-		info.setCustomerIds(Collections.singletonList("photon"));
-		info.setEmailSupported(false);
-		info.setPhoneEnabled(false);
-		info.setTabletEnabled(false);
-		info.setDescription("Simple java web service Project");
-		info.setHelpText("Help");
-		info.setName("TestProject");
+		ApplicationInfo applicationInfo = new ApplicationInfo();
+		applicationInfo.setId("PHR_Test");
+		applicationInfo.setCode("testPhp");
+		applicationInfo.setName("testPhp");
+		List<String> customerIds = new ArrayList<String>();
+		customerIds.add("photon");
+		applicationInfo.setCustomerIds(customerIds);
 		TechnologyInfo techInfo = new TechnologyInfo();
 		techInfo.setId("tech-php");
-		info.setTechInfo(techInfo);
-		info.setPilot(false);
-		info.setUsed(false);
-		info.setDisplayName("TestProject");
-		info.setSelectedJSLibs(Collections.singletonList("99aa3901-a088-4142-8158-000f1e80f1bf"));
-		info.setVersion("1.0");
-		return info;
+		techInfo.setName("php-raw");
+		techInfo.setVersion("5.4.x");
+		techInfo.setTechGroupId("PHP");
+		techInfo.setAppTypeId("e1af3f5b-7333-487d-98fa-46305b9dd6ee");
+		applicationInfo.setTechInfo(techInfo);
+		applicationInfo.setAppDirName("testPhp");
+		applicationInfo.setPomFile("pom.xml");
+		return applicationInfo;
 	}
 }

@@ -2,7 +2,7 @@ package com.photon.phresco.framework.param.impl;
 
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,9 +24,23 @@ import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Para
 
 public class WarProjectModuleImplTest {
 	WarProjectModuleImpl war = null;
+
 	@Before
 	public void setUp() throws Exception {
 		war = new WarProjectModuleImpl();;
+	}
+	
+	
+	
+	@Test
+	public void getValues() throws  ConfigurationException, PhrescoException, IOException, ParserConfigurationException, SAXException {
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("applicationInfo", getAppInfo());
+		paramMap.put("environmentName", "Production");
+		paramMap.put("customerId", "photon");
+		PossibleValues possibleValues = war.getValues(paramMap);
+		List<Value> values = possibleValues.getValue();
+		Assert.assertEquals(0, values.size());
 	}
 
 	@After
@@ -35,39 +49,24 @@ public class WarProjectModuleImplTest {
 			war = null;
 		}
 	}
-	
-	@Test
-	public void getValues() throws  ConfigurationException, PhrescoException, IOException, ParserConfigurationException, SAXException {
-		Map<String, Object> paramMap = new HashMap<String, Object>();
-		paramMap.put("applicationInfo", getApplicationInfo());
-		paramMap.put("environmentName", "Production");
-		paramMap.put("customerId", "photon");
-		PossibleValues possibleValues = war.getValues(paramMap);
-		List<Value> values = possibleValues.getValue();
-		Assert.assertEquals(0, values.size());
-	}
-	
-	private static ApplicationInfo getApplicationInfo() {
-		ApplicationInfo info = new ApplicationInfo();
-//		info.setAppDirName("TestProject");
-		info.setCode("TestProject");
-		info.setId("TestProject");
-		info.setCustomerIds(Collections.singletonList("photon"));
-		info.setEmailSupported(false);
-		info.setPhoneEnabled(false);
-		info.setTabletEnabled(false);
-		info.setDescription("Simple java web service Project");
-		info.setHelpText("Help");
-		info.setName("TestProject");
+
+	private ApplicationInfo getAppInfo() {
+		ApplicationInfo applicationInfo = new ApplicationInfo();
+		applicationInfo.setId("PHR_Test");
+		applicationInfo.setCode("testPhp");
+		applicationInfo.setName("testPhp");
+		List<String> customerIds = new ArrayList<String>();
+		customerIds.add("photon");
+		applicationInfo.setCustomerIds(customerIds);
 		TechnologyInfo techInfo = new TechnologyInfo();
 		techInfo.setId("tech-php");
-		info.setTechInfo(techInfo);
-		info.setPilot(false);
-		info.setUsed(false);
-		info.setDisplayName("TestProject");
-		info.setSelectedJSLibs(Collections.singletonList("99aa3901-a088-4142-8158-000f1e80f1bf"));
-		info.setVersion("1.0");
-		return info;
+		techInfo.setName("php-raw");
+		techInfo.setVersion("5.4.x");
+		techInfo.setTechGroupId("PHP");
+		techInfo.setAppTypeId("e1af3f5b-7333-487d-98fa-46305b9dd6ee");
+		applicationInfo.setTechInfo(techInfo);
+		applicationInfo.setAppDirName("testPhp");
+		return applicationInfo;
 	}
 
 }
