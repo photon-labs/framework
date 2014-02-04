@@ -324,7 +324,7 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 
 		pdfIconBtnClickTest : function() {
 			var self = this;
-			asyncTest("Component Test pdfIcon-Btn Click Test", function() {
+			asyncTest("Functional Test pdfIcon-Btn Click Test", function() {
 				$.mockjax({
 					url: commonVariables.webserviceurl+"pdf/showPopUp?appDirName=test&fromPage=functional",
 				 	type: "GET",
