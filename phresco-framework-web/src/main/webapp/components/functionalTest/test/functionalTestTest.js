@@ -119,7 +119,7 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 			var self = this;
 			asyncTest("Functional Test Run Start Hub Btn Click Test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl+"app/startHub?appDirName=test&username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&port=4444&newSessionWaitTimeout=-1&servlets=&prioritizer=&capabilityMatcher=org.openqa.grid.internal.utils.DefaultCapabilityMatcher&throwOnCapabilityNotPresent=true&nodePolling=5000&cleanUpCycle=5000&timeout=300000&browserTimeout=0&maxSession=5",
+					url: commonVariables.webserviceurl+"app/startHub?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&port=4444&newSessionWaitTimeout=-1&servlets=&prioritizer=&capabilityMatcher=org.openqa.grid.internal.utils.DefaultCapabilityMatcher&throwOnCapabilityNotPresent=true&nodePolling=5000&cleanUpCycle=5000&timeout=300000&browserTimeout=0&maxSession=5&appDirName=test",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",
@@ -154,7 +154,7 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 			var self = this;
 			asyncTest("Functional Test Stop Hub Btn Click Test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl+"app/stopHub?appDirName=test&username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5",
+					url: commonVariables.webserviceurl+"app/stopHub?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&appDirName=test",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",
@@ -217,7 +217,7 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 			asyncTest("Functional Test Run Start Node Btn Click Test", function() {
 				$("input[name=browserMaxInstances]").val("2");
 				$.mockjax({
-					url: commonVariables.webserviceurl+"app/startNode?appDirName=test&username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&hubHost=localhost&hubPort=4444&nodeport=5555&maxSession=5&seleniumProtocol=WebDriver&register=true&registerCycle=5000&proxy=org.openqa.grid.selenium.proxy.DefaultRemoteProxy&browserName=firefox&browserMaxInstances=2",
+					url: commonVariables.webserviceurl+"app/startNode?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&hubHost=localhost&hubPort=4444&nodeport=5555&maxSession=5&seleniumProtocol=WebDriver&register=true&registerCycle=5000&proxy=org.openqa.grid.selenium.proxy.DefaultRemoteProxy&browserName=firefox&browserMaxInstances=2&appDirName=test",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",
@@ -255,7 +255,7 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 			var self = this;
 			asyncTest("Functional Test Stop Node Btn Click Test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl+"app/stopNode?appDirName=test&username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5",
+					url: commonVariables.webserviceurl+"app/stopNode?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&appDirName=test",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",
@@ -324,54 +324,33 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 
 		pdfIconBtnClickTest : function() {
 			var self = this;
-			asyncTest("Functional Test pdfIcon-Btn Click Test", function() {
-
+			asyncTest("Component Test pdfIcon-Btn Click Test", function() {
+				$.mockjax({
+					url: commonVariables.webserviceurl+"pdf/showPopUp?appDirName=test&fromPage=functional",
+				 	type: "GET",
+				  	dataType: "json",
+				  	contentType: "application/json",
+				  	status: 200,
+				  	response : function() {
+				  		this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200015","data":{"value":true,"json":[{"time":"Jul 23 2013 16.28","type":"crisp","fileName":"Raj_crisp.pdf"},{"time":"Jul 23 2013 16.08","type":"crisp","fileName":"tech_overall_crisp.pdf"}]},"status":"success"});
+				  	}
 				});
-				
 				commonVariables.api.localVal.setSession('username', "admin");
 				$(commonVariables.contentPlaceholder).find("#pdfIcon").click();
 				setTimeout(function() {
 					start();
 					equal('1', '1', "PdfIcon-btn click tested");
-					self.openFolderBtnClickTest();
-				}, 4000);
-		},
-
-		openFolderBtnClickTest : function() {
-			var self = this;
-			asyncTest("Functional Test openFolder-Btn Click Test", function() {
-
-				});
-				
-				commonVariables.api.localVal.setSession('username', "admin");
-				$(commonVariables.contentPlaceholder).find("#pdfIcon").click();
-				setTimeout(function() {
-					start();
-					equal('1', '1', "openFolder-btn click tested");
-					self.copyPathBtnClickTest();
-				}, 4000);
-		},
-
-		copyPathBtnClickTest : function() {
-			var self = this;
-			asyncTest("Functional Test copyPath-Btn Click Test", function() {
-
-				});
-				
-				commonVariables.api.localVal.setSession('username', "admin");
-				$(commonVariables.contentPlaceholder).find("#pdfIcon").click();
-				setTimeout(function() {
-					start();
-					equal('1', '1', "copyPath-btn click tested");
+					equal($(commonVariables.contentPlaceholder).find("#pdf_report").css("display") , "block", "Pdf empty list tested");
 					self.runFunctionalTestBtnClickTest();
 				}, 4000);
+			});
 		},
 
 		runFunctionalTestBtnClickTest : function() {
 			var self = this;
 			asyncTest("Functional Test Run Test-Btn Click Test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl+"app/runFunctionalTest?appDirName=test&username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&devices=usb&serialNumber=&displayName=Admin",
+					url: commonVariables.webserviceurl+"app/runFunctionalTest?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&devices=usb&serialNumber=&displayName=Admin&appDirName=test",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",
