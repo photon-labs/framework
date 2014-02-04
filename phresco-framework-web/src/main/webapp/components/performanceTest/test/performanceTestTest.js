@@ -1,4 +1,4 @@
-	define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"], function(PerformanceTest) {
+	define(["performanceTest/performanceTest"], function(PerformanceTest) {
 
 	return {
 		runTests: function (configData) {
@@ -328,7 +328,7 @@
 				  }
 				});
 				$.mockjax({
-				  url: commonVariables.webserviceurl+commonVariables.mvnPerformanceTest+"?appDirName=PF_TEST_PHP&testBasis=parameters&testAgainst=server&customTestAgainst=server&testName=testServer&environmentName=Production&configurations=server&rampUpPeriod=10&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&availableJmx=tests%2Fcustom%2F%23SEP%23Custom.jmx&availableJmx=tests%2Fcustom%2F%23SEP%23LoginTest.jmx&testAction=performance&customerId=photon&appId=7fd5aee1-0042-4e85-91ce-1b9493231019&projectId=b9e456e8-ccb8-458c-a559-f90cd2af48a1&username=rajeshkumar_ra&displayName=Admin",
+				  url: commonVariables.webserviceurl+commonVariables.mvnPerformanceTest+"?testBasis=parameters&testAgainst=server&customTestAgainst=server&testName=testServer&environmentName=Production&configurations=server&rampUpPeriod=10&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&availableJmx=tests%2Fcustom%2F%23SEP%23Custom.jmx&availableJmx=tests%2Fcustom%2F%23SEP%23LoginTest.jmx&testAction=performance&customerId=photon&appId=7fd5aee1-0042-4e85-91ce-1b9493231019&projectId=b9e456e8-ccb8-458c-a559-f90cd2af48a1&username=rajeshkumar_ra&displayName=Admin&appDirName=PF_TEST_PHP",
 				  type: "POST",
 				  dataType: "json",
 				  contentType: "application/json",
