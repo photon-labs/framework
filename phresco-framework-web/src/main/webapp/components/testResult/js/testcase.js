@@ -150,6 +150,7 @@ define(["testResult/listener/testResultListener"], function() {
 			var testcases = commonVariables.testcases;
 			if (testcases !== undefined && testcases !== null) {
 				if ("manualTest" === currentTab) {
+					$('.graph_area').append('<canvas id="pie" width="620" height="400">[No canvas support]</canvas>');
 					self.testResultListener.getManualPieChartGraphData(function(graphData) {
 						self.testResultListener.createManualPieChart(graphData);
 					});
