@@ -102,11 +102,11 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 
 		testcaseGraphicalViewTest : function() {
 			var self = this;
-			asyncTest("Unit Test Testcase Graphical View Test", function() {
+			asyncTest("Component Test Testcase Graphical View Test", function() {
 				$(commonVariables.contentPlaceholder).find('.table1, .table2').click();
 				setTimeout(function() {
 					start();
-					equal($("#testcases").css("display"), "block", "Unit test testcase graphical view tested");
+					equal($("#testcases").css("display"), "block", "Component test testcase graphical view tested");
 					self.testcaseTabularViewTest();
 				}, 3000);
 			});
@@ -114,11 +114,11 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 
 		testcaseTabularViewTest : function() {
 			var self = this;
-			asyncTest("Unit Test Testcase Tabular View Test", function() {
+			asyncTest("Component Test Testcase Tabular View Test", function() {
 				$(commonVariables.contentPlaceholder).find('.graph1, .graph2').click();
 				setTimeout(function() {
 					start();
-					equal($("#graphView").css("display"), "block", "Unit test testcase tabular view tested");
+					equal($("#graphView").css("display"), "block", "Component test testcase tabular view tested");
 					self.showTestcaseConsole();
 				}, 3000);
 			});
@@ -126,12 +126,12 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 
 		showTestcaseConsole : function() {
 			var self = this;
-			asyncTest("Unit Test Testcase Open Console Test", function() {
+			asyncTest("Component Test Testcase Open Console Test", function() {
 				$(commonVariables.contentPlaceholder).find('#consoleImg').click();
 				setTimeout(function() {
 					start();
 					$('#consoleImg').attr('data-flag','false');
-					equal($('#consoleImg').attr('data-flag'), "false", "Unit test testcase open console tested");
+					equal($('#consoleImg').attr('data-flag'), "false", "Component test testcase open console tested");
 					self.runComponentTestWithNoParamTest();
 				}, 3000);
 			});
@@ -162,7 +162,7 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 				});
 
 				self.executeTestMock = $.mockjax({
-					url: commonVariables.webserviceurl+"app/runComponentTest?appDirName=test&username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=component-test&phase=component-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&&displayName=Admin",
+					url: commonVariables.webserviceurl+"app/runComponentTest?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=component-test&phase=component-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&&displayName=Admin&appDirName=test",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",
@@ -216,47 +216,26 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 
 		pdfIconBtnClickTest : function() {
 			var self = this;
-			asyncTest("Unit Test pdfIcon-Btn Click Test", function() {
-
+			asyncTest("Component Test pdfIcon-Btn Click Test", function() {
+				$.mockjax({
+					url: commonVariables.webserviceurl+"pdf/showPopUp?appDirName=test&fromPage=component",
+				 	type: "GET",
+				  	dataType: "json",
+				  	contentType: "application/json",
+				  	status: 200,
+				  	response : function() {
+				  		this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200015","data":{"value":true,"json":[{"time":"Jul 23 2013 16.28","type":"crisp","fileName":"Raj_crisp.pdf"},{"time":"Jul 23 2013 16.08","type":"crisp","fileName":"tech_overall_crisp.pdf"}]},"status":"success"});
+				  	}
 				});
-				
 				commonVariables.api.localVal.setSession('username', "admin");
 				$(commonVariables.contentPlaceholder).find("#pdfIcon").click();
 				setTimeout(function() {
 					start();
 					equal('1', '1', "PdfIcon-btn click tested");
-					self.openFolderBtnClickTest();
-				}, 4000);
-		},
-
-		openFolderBtnClickTest : function() {
-			var self = this;
-			asyncTest("Unit Test openFolder-Btn Click Test", function() {
-
-				});
-				
-				commonVariables.api.localVal.setSession('username', "admin");
-				$(commonVariables.contentPlaceholder).find("#pdfIcon").click();
-				setTimeout(function() {
-					start();
-					equal('1', '1', "openFolder-btn click tested");
-					self.copyPathBtnClickTest();
-				}, 4000);
-		},
-
-		copyPathBtnClickTest : function() {
-			var self = this;
-			asyncTest("Unit Test copyPath-Btn Click Test", function() {
-
-				});
-				
-				commonVariables.api.localVal.setSession('username', "admin");
-				$(commonVariables.contentPlaceholder).find("#pdfIcon").click();
-				setTimeout(function() {
-					start();
-					equal('1', '1', "copyPath-btn click tested");
+					equal($(commonVariables.contentPlaceholder).find("#pdf_report").css("display") , "block", "Pdf empty list tested");
 					self.runComponentTestBtnClickTest();
 				}, 4000);
+			});
 		},
 
 
@@ -264,7 +243,7 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 			var self = this;
 			asyncTest("Component Test Run Test-Btn Click Test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl+"app/runComponentTest?appDirName=test&username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=component-test&phase=component-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&testAgainst=java&environmentName=Production&displayName=Admin",
+					url: commonVariables.webserviceurl+"app/runComponentTest?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=component-test&phase=component-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&testAgainst=java&environmentName=Production&displayName=Admin&appDirName=test",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",
