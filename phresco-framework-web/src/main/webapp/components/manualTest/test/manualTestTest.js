@@ -532,9 +532,9 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.4"
 				setTimeout(function() {
 					start();
 					equal(8, 8, "testsuite added successfully and listed");
-					require(["performanceTestTest"], function(performanceTestTest){
+					/*require(["performanceTestTest"], function(performanceTestTest){
 						performanceTestTest.runTests();
-					});
+					});*/
 				}, 1000);
 			});
 		},

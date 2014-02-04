@@ -446,8 +446,8 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 				setTimeout(function() {
 					start();
 					equal($("#reportView").css('display'), "none", "Execute view click test");
-					require(["manualTestTest"], function(manualTestTest){
-						manualTestTest.runTests();
+					require(["performanceTestTest"], function(performanceTestTest){
+						performanceTestTest.runTests();
 					});
 				}, 4000);	
 			});	
