@@ -216,7 +216,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 				});
 
 				self.executeTestMock = $.mockjax({
-					url: commonVariables.webserviceurl+"app/runUnitTest?appDirName=test&username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=unit-test&phase=unit-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&&displayName=Admin",
+					url: commonVariables.webserviceurl+"app/runUnitTest?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=unit-test&phase=unit-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&&displayName=Admin&appDirName=test",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",
@@ -271,7 +271,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 			asyncTest("Unit Test Run Test-Btn Click Test", function() {
 				$.mockjaxClear(self.executeTestMock);
 				self.executeTestMock = $.mockjax({
-					url: commonVariables.webserviceurl+"app/runUnitTest?appDirName=test&username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=unit-test&phase=unit-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&testAgainst=java&environmentName=Production&displayName=Admin",
+					url: commonVariables.webserviceurl+"app/runUnitTest?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=unit-test&phase=unit-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&testAgainst=java&environmentName=Production&displayName=Admin&appDirName=test",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",
@@ -389,46 +389,25 @@ define(["unitTest/unitTest"], function(UnitTest) {
 		pdfIconBtnClickTest : function() {
 			var self = this;
 			asyncTest("Unit Test pdfIcon-Btn Click Test", function() {
-
+				$.mockjax({
+					url: commonVariables.webserviceurl+"pdf/showPopUp?appDirName=test&fromPage=unit",
+				 	type: "GET",
+				  	dataType: "json",
+				  	contentType: "application/json",
+				  	status: 200,
+				  	response : function() {
+				  		this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200015","data":{"value":true,"json":[{"time":"Jul 23 2013 16.28","type":"crisp","fileName":"Raj_crisp.pdf"},{"time":"Jul 23 2013 16.08","type":"crisp","fileName":"tech_overall_crisp.pdf"}]},"status":"success"});
+				  	}
 				});
-				
 				commonVariables.api.localVal.setSession('username', "admin");
 				$(commonVariables.contentPlaceholder).find("#pdfIcon").click();
 				setTimeout(function() {
 					start();
 					equal('1', '1', "PdfIcon-btn click tested");
-					self.openFolderBtnClickTest();
-				}, 4000);
-		},
-
-		openFolderBtnClickTest : function() {
-			var self = this;
-			asyncTest("Unit Test openFolder-Btn Click Test", function() {
-
-				});
-				
-				commonVariables.api.localVal.setSession('username', "admin");
-				$(commonVariables.contentPlaceholder).find("#pdfIcon").click();
-				setTimeout(function() {
-					start();
-					equal('1', '1', "openFolder-btn click tested");
-					self.copyPathBtnClickTest();
-				}, 4000);
-		},
-
-		copyPathBtnClickTest : function() {
-			var self = this;
-			asyncTest("Unit Test copyPath-Btn Click Test", function() {
-
-				});
-				
-				commonVariables.api.localVal.setSession('username', "admin");
-				$(commonVariables.contentPlaceholder).find("#pdfIcon").click();
-				setTimeout(function() {
-					start();
-					equal('1', '1', "copyPath-btn click tested");
+					equal($(commonVariables.contentPlaceholder).find("#pdf_report").css("display") , "block", "Pdf empty list tested");
 					self.optionsFailureTest();
 				}, 4000);
+			});
 		},
 
 		optionsFailureTest : function() {
