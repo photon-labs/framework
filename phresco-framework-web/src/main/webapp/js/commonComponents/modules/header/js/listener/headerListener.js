@@ -26,6 +26,7 @@ define(["header/api/headerAPI"], function() {
 				Clazz.navigationController.jQueryContainer = commonVariables.basePlaceholder;
 				self.removePlaceholder();
 				self.headerAPI.localVal.setSession('loggedout', 'true');
+				self.headerAPI.localVal.setSession('multiplelogout', 'true');
 				location.hash = '';
 				commonVariables.customerContext = '';
 				location.href = url;

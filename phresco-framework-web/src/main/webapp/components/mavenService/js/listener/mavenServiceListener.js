@@ -287,7 +287,7 @@ define([], function() {
 								setTimeout(function() {
 									self.setContentEndHeight();
 									callback(response);
-								},3000); 
+								},5000); 
 							}else if(response.status.toUpperCase() === 'ERROR'){
 								self.setContentEndHeight();
 								$(divId).append('<font style = "color:red">' + response.service_exception + '</font><br>');

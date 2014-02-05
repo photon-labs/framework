@@ -56,7 +56,7 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 				$('#loginlogo').attr("src", "themes/default/images/Phresco/logo_login.png");
 			}
 			
-			if(commonVariables.api.localVal.getSession('loggedout') === "true"){
+			if(commonVariables.api.localVal.getSession('loggedout') === "true" || commonVariables.api.localVal.getSession('multiplelogout') === "true"){
 				$(".login_error_msg").text('Logged out');
 				$(".login_error_msg").css('color','green');
 			}
