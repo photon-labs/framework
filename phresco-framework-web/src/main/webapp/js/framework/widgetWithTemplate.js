@@ -394,6 +394,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
 					}	
 				} else if (clicked.offset().top < halfheight && clicked.offset().left > halfwidth){
+				    var targetId = target.attr('id');
 					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth()));
 					var mtop = 10;
 					if(adjestVal !== undefined && adjestVal !== null && adjestVal !== "upgrade"){
@@ -401,6 +402,10 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					} else if (adjestVal === "upgrade") {
 						d= 67;
 						mtop = 25;
+					} else if ((targetId ==='rep_create')){
+					   	d = 20;
+					} else if ((targetId ==='rep_release')){
+					    d = 100;
 					}
 						
 					$(target).css({"right":d ,"margin-top":mtop,"left": "auto","top": "auto"});
