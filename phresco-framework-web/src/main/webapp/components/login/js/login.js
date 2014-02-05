@@ -81,6 +81,11 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 			if (themeValue !== null && themeValue !== undefined && themeValue !== '') {
 				commonVariables.customerContext = themeValue.context;
 			}
+			
+			/* Logo center align */
+			var outerHeight = $('.login_panel').height();
+			var logoHeight = $('#loginlogo').height();
+			$('#loginlogo').css('margin-top', (outerHeight - logoHeight)/2 - 5);
 		},
 
 		/***

@@ -69,7 +69,7 @@ header, aside, figure, footer, ul, li {
 .widget-maincontent-div{position: absolute; display: block; left: 0; width: 100%; height: 100%;}
 .btn_style {
 	padding-top:6px;
-	padding-bottom:6px;
+	padding-bottom:5px;
 	background: #ef7b43 !important;
 	color: #ffffff !important;
 	text-shadow: none !important;
@@ -78,6 +78,7 @@ header, aside, figure, footer, ul, li {
 	border-radius: 5px !important;
 	font-family: 'luxi_sansregular' !important;
 	margin-right:3px !important;
+	font-size:13px;
 }
 
 .btn_style_spin {
@@ -86,7 +87,7 @@ header, aside, figure, footer, ul, li {
 }
 
 .btn_style_off {
-	padding: 6px 12px !important;
+	padding: 5px 12px !important;
 	background: #dddddd !important;
 	color: #ffffff !important;
 	text-shadow: none !important;
@@ -95,6 +96,7 @@ header, aside, figure, footer, ul, li {
 	border-radius: 5px !important;
 	font-family: 'luxi_sansregular' !important;
 	margin-right:3px !important;
+	font-size:13px;
 }
 
 sup { color:#FF0000; }
@@ -233,7 +235,7 @@ select:focus, input[type="file"]:focus, input[type="radio"]:focus, input[type="c
 }
 
 .login_left img {
-	margin-top: 92px;
+	margin-top: 98px;
 }
 
 .login_right {
@@ -248,7 +250,13 @@ select:focus, input[type="file"]:focus, input[type="radio"]:focus, input[type="c
 }
 
 .context_txt {
-	font-size:11px; color:#EF7B43; float:left;
+	border-right: 1px solid;
+    color: #EF7B43;
+    float: left;
+    font-size: 10px;
+    margin-top: 5px;
+    padding-right: 5px;
+	margin-right:5px;
 }
 
 .loginhead img {
@@ -331,6 +339,7 @@ select:focus, input[type="file"]:focus, input[type="radio"]:focus, input[type="c
 	font-size: 13px;
 	color: #515151;
 	width: 88px;
+	margin-top:3px;
 }
 
 .loginshadow {
@@ -355,7 +364,8 @@ select:focus, input[type="file"]:focus, input[type="radio"]:focus, input[type="c
 }
 
 #forgotpassword {
- color: #EF7B43;
+ 	color: #EF7B43;
+ 	font-size:10px;
 }
 
 /* *************************************************************************** HACK FOR CROME BROWSER ************************************************************************** */
@@ -550,6 +560,10 @@ html, body {
 	z-index:4;
 }
 
+.footer_section a, .footer_section a:hover {
+	color:#2F9F50;
+	text-decoration:none;
+} 
 
 
 /* ********************************************** CSS related to Customer change Dropdown ************************************************************************************** */
@@ -765,7 +779,7 @@ ul.nav li.dropdown:hover > .test_options{
 .update_btn {
 	background-image:url(../../images/Phresco/update_icon.png)!important ;
 	background-repeat:no-repeat !important;
-	background-position:6px 8px  !important;
+	background-position:6px 6px  !important;
 	padding-left:25px !important;
 	padding-right:8px !important;
 }
@@ -808,7 +822,7 @@ ul.nav li.dropdown:hover > .test_options{
     float: left;
     margin-right: 7px;
     margin-top: 6px;
-    padding: 6px 8px;
+    padding: 5px 8px 6px;
 }
 
 .build_icons{
@@ -1783,7 +1797,7 @@ img[name="close"] {
 	background:#ed7940;
 	float:left;
 	color: #ffffff;
-	line-height: 29px;
+	line-height: 27px;
 	width: 62px;
 	border-top-left-radius: 6px;
 	border-bottom-left-radius: 6px;
@@ -1810,7 +1824,7 @@ img[name="close"] {
 }
 
 .code_func.navbar .nav>li>a, .code_anal.navbar .nav>li>a{
-	padding: 0 10px 0 0;
+	padding: 1px 10px 0 0;
 	text-shadow:none;	
 }
 
@@ -2459,12 +2473,12 @@ img[name="close"] {
 }
 
 .build_genbuild #run_src {
-	margin-top:3px;
 	margin-left:5px;	
 }
 
 .build_genbuild, .build_minifier {
 	display: inline-block;
+	margin-top:3px;
 }
 
 .buildtitle {
@@ -2473,7 +2487,7 @@ img[name="close"] {
 }
 
 .buildtitle .icon_images {
-	margin-top:4px;
+	margin-top:3px;
 }
 
 .buildtitle .alert_div {
@@ -2624,7 +2638,9 @@ img[name="close"] {
 }
 
 .dyn_popup  input[value="Browse"] {
-	margin-left: 10px !important;	
+	font-size:12px;
+	padding:5px;
+	margin: -11px 5px 0 !important;
 }
 
 #build_minifier input[type="checkbox"] {
@@ -3107,7 +3123,7 @@ html>body tbody.scrollContent {
 }
 
 .qual_unit .code_func {
-	padding: 4px 1px 0 8px;
+	padding: 2px 1px 0 8px;
     width: auto; 
 }
 
@@ -3134,7 +3150,7 @@ html>body tbody.scrollContent {
 
 .unit_view span img {
 	margin-right: 7px;
-	margin-top: -2px;
+	margin-top: -4px;
 }
 
 .unit_view span b {
@@ -4038,6 +4054,10 @@ td.browse_td .bootstrap-select.btn-group .dropdown-menu, .dynamic_cont .bootstra
 #resolution{
 	margin:0px;
 	width:148px !important;
+}
+
+#startHub, #startNode {
+	margin-top:-1px;
 }
 
 
@@ -5768,7 +5788,11 @@ textarea[name="regex"] {
 }
 
 .browse_table tr td input[type="text"]{
-	width:53px !important;
+	width:93px !important;
+}
+
+.browse_table tr td img {
+	margin:-8px 4px 0 0;
 }
 	
 .emailMessage {
