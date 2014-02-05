@@ -243,8 +243,8 @@
 		"emailalready" : "Email configuration already exist for this environment",
 		"prjtexists" : "Project already exists",
 		"PHRD100010" : "Unable to retrieve the search result.",
-		"configurations" : "Name already exists in Settings",
-		"settings" : "Name already exists in Configuration"
+		"configurations" : "Environment already exists in Settings",
+		"settings" : "Environment already exists in Configuration"
 	},
 	"successCodes" : {
 		"PHR100008" : "Password emailed",

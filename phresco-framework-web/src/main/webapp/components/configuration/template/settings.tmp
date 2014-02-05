@@ -97,10 +97,10 @@
 											<td><input type="text" class="cloneEnvDesc{{name}} dyn_popup_text" data-i18n="[placeholder]configuration.placeholder.envdescription" name="envrDesc" maxlength="150" title="30 Characters only"></td>
 										</tr>
 										<tr>
-											<td>
+											<!-- <td>
 												<input type="checkbox" class="checkboxStyle" name="cloneName{{name}}" value="Set as Default"><label class="labelfont" data-i18n="configuration.label.setdefault"></label>
-											</td>
-											<td name={{name}}>
+											</td> --!>
+											<td name={{name}} style="float: right; margin-right: -203px;">
 												<input type="button" name="cloneEnvr" class="btn btn_style" value="Clone" data-i18n="[value]configuration.label.clone">	
 												<input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
 											</td>    
