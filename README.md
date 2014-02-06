@@ -282,20 +282,13 @@ Bug tracker
 -----------
 
 Have a bug? Rise an issue here on GitHub!
-https://github.com/phresco/phresco/issues
+https://github.com/photon-infotech/framework/issues
 
-Twitter account
+About Phresco
 ---------------
 
-Keep abreast on announcements and more by following us on
-https://twitter.com/photoninfotech/
-
-Forum
-------
-
-For more detailed discussions visit us at 
-http://forum.phresco.com
-
+About this product
+phresco.github.com
 
 Mailing List
 ------------

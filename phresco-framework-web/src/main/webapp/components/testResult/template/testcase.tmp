@@ -67,7 +67,7 @@
 									{{actualResult}}
 								</td>
 								<td class="defaultHead">
-									<img class="arrowLeft" src="themes/default/images/Phresco/arrow_up_grey.png" border="0" alt="" style="{{#showArrowImage testSteps testFunctions}}{{/showArrowImage}}" hasTestFunctions="{{#hasTestFunctionsSteps testFunctions}}{{/hasTestFunctionsSteps}}">
+									<img class="arrowLeft" src="themes/default/images/Phresco/arrow_up_grey.png" border="0" alt="" style="{{#showArrowImage testSteps}}{{/showArrowImage}}">
 									{{name}}
 								</td>
 								<td class="defaultHead">
@@ -203,78 +203,7 @@
 										{{/if}}
 									{{/if}}	
 								</td>
-								<!--  test fun start -->
-								<!--{{#each testFunctions}}
-									<tr class="testFunctions functionPosition{{@index}} hideContent">
-										<td style="padding-left:3%;" class="defaultHead">
-											<img class="testFnArrowLeft" src="themes/default/images/Phresco/arrow_up_grey.png" border="0" alt="" style="{{#showArrowImage testSteps null}}{{/showArrowImage}}">{{name}}</td>
-										<td class="defaultHead">{{action}}</td>
-										<td class="defaultHead">{{testClass}}</td>
-										<td class="list_img defaultHead">
-										</td>
-										<td class="list_img logTd">
-										</td>
-										<td class="functional hideContent">
-										</td>
-										{{#each testSteps}}
-											<tr class="functionTestSteps hideContent" type="functionTestSteps">
-												<td style="padding-left:6%;" class="defaultHead">{{name}}</td>
-												<td class="defaultHead">{{action}}</td>
-												<td class="defaultHead">{{time}}</td>
-												<td class="list_img defaultHead">
-													{{#if testStepFailure}}
-														<img src="themes/default/images/Phresco/cross_red.png" width="16" height="13" border="0" alt="">
-													{{else}}
-														{{#if testStepError}}
-															<img src="themes/default/images/Phresco/cross_red.png" width="16" height="13" border="0" alt="">
-														{{else}}
-															<img src="themes/default/images/Phresco/tick_green.png" width="16" height="13" border="0" alt="">
-														{{/if}}
-													{{/if}}
-												</td>
-												<td class="list_img logTd">
-													{{#if testStepFailure}}
-														<a href="javascript:void(0)" type="failure" resultName="{{removeDot name}}" class="log">
-															<img src="themes/default/images/Phresco/log_icon.png" width="13" height="13" border="0" alt="">
-														</a>
-														<div id="{{removeDot name}}" style="display: none; width:500px">
-															<div class="teststepLogDiv" style="word-wrap: break-word; max-height: 200px;"><b>{{testStepFailure.failureType}} : </b>{{testStepFailure.description}}</div>
-															<div class="flt_right">
-																<input type="button" value="Close" class="btn btn_style dyn_popup_close">
-															</div>
-														</div>
-													{{else}}
-														{{#if testStepError}}
-															<a href="javascript:void(0)" type="failure" resultName="{{removeDot name}}" class="log">
-																<img src="themes/default/images/Phresco/log_icon.png" width="13" height="13" border="0" alt="">
-															</a>
-															<div id="{{removeDot name}}" style="display: none; width:500px;">
-																<div class="teststepLogDiv" style="word-wrap: break-word; max-height: 200px;"><b>{{testStepError.errorType}} : </b>{{testStepError.description}}</div>
-																<div class="flt_right">
-																	<input type="button" value="Close" class="btn btn_style dyn_popup_close">
-																</div>
-															</div>
-														{{/if}}
-													{{/if}}
-												</td>
-												<td class="functional hideContent">
-													{{#if testStepFailure.hasFailureImg}}
-														<a href="javascript:void(0)" class="{{name}}">
-															<img src="themes/default/images/Phresco/screenshot_icon.png" width="19" height="16" border="0" alt="" />
-														</a>
-													{{else}}
-														{{#if testStepError.hasFailureImg}}
-															<a href="javascript:void(0)" class="{{name}}">
-																<img src="themes/default/images/Phresco/screenshot_icon.png" width="19" height="16" border="0" alt="" />
-															</a>
-														{{/if}}
-													{{/if}}	
-												</td>
-											</tr>
-										{{/each}}
-									</tr>
-								{{/each}} -->
-								<!--  test fun end --->
+								<!-- test step starts -->
 								{{#each testSteps}}
 									<tr class="testSteps hideContent" type="testSteps" testStepId="{{testCaseId}}">
 										<td style="padding-left:3%;" class="defaultHead">{{name}}</td>
@@ -331,6 +260,7 @@
 										</td>
 									</tr>
 								{{/each}}
+								<!-- test step ends -->
 							</tr>
 						{{/each}}
 					</tbody>

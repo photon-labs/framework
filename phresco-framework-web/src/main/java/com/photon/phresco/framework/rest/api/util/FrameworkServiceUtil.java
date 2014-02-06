@@ -961,7 +961,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	   
 	   private static ActionResponse textSingleSelectValidate(Parameter parameter, String lableTxt, HttpServletRequest request, ActionResponse actionResponse) {
 			String paramValue = request.getParameter(parameter.getKey());
-			if (StringUtils.isEmpty(paramValue) && Boolean.parseBoolean(parameter.getRequired())) {
+			if (!REQ_CONFIGURATIONS.equalsIgnoreCase(parameter.getKey()) && StringUtils.isEmpty(paramValue) && Boolean.parseBoolean(parameter.getRequired())) {
 				actionResponse.setErrorFound(true);
 				actionResponse.setConfigErrorMsg(lableTxt + " " + "is missing"); 
 				actionResponse.setParameterKey(parameter.getKey());
@@ -974,7 +974,6 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 		private static ActionResponse editableComboValidate(Parameter parameter, String lableTxt, HttpServletRequest request, ActionResponse actionResponse) {
 			String value = request.getParameter(parameter.getKey());
 			value = value.replaceAll("\\s+", "").toLowerCase();
-			
 			if ((StringUtils.isEmpty(value) || "typeorselectfromthelist".equalsIgnoreCase(value)) && Boolean.parseBoolean(parameter.getRequired())) {
 				actionResponse.setErrorFound(true);
 				actionResponse.setConfigErrorMsg(lableTxt + " " + "is missing");
