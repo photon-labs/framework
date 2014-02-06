@@ -327,6 +327,25 @@ define(["features/listener/featuresListener"], function() {
 			}
 		},
 		
+		cleartextfun : function(obj){
+			var self = this;
+			var temp = $(obj).attr('name');
+			var classval = $("#search").attr("class");
+			$("#"+temp).val('');
+			self.onSearchEvent.dispatch('', temp+'content', classval);
+			if(temp === 'module')
+				$("#norecord1").hide();	
+			else if(temp === 'jsibraries')
+				$("#norecord2").hide();	
+			else if(temp === 'components')
+				$("#norecord3").hide();
+			if(classval === "switch switchOn"){
+				self.searchon();
+			} else {
+				self.searchoff();
+			}
+		},
+		
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -391,23 +410,18 @@ define(["features/listener/featuresListener"], function() {
 				self.onSearchEvent.dispatch(txtSearch, divId, classval);
            	});
 			
+			//click to clear text			
 			$('.cleartext').click(function() {
-				var temp = $(this).attr('name');
-				var classval = $("#search").attr("class");
-				$("#"+temp).val('');
-				self.onSearchEvent.dispatch('', temp+'content', classval);
-				if(temp === 'module')
-					$("#norecord1").hide();	
-				else if(temp === 'jsibraries')
-					$("#norecord2").hide();	
-				else if(temp === 'components')
-					$("#norecord3").hide();
-				if(classval === "switch switchOn"){
-					self.searchon();
-				} else {
-					self.searchoff();
-				}
+				self.cleartextfun(this);
 			});
+			//End click to clear text
+			
+			//keyup to clear text
+			$('.search_text').keyup(function() {
+				self.cleartextfun(this);
+			});
+			//End keyup to clear text
+			
 
            	$('#switchoffbutton').on("click", function(event) {
 				self.searchon();

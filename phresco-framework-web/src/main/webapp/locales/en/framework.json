@@ -244,7 +244,7 @@
 		"prjtexists" : "Project already exists",
 		"PHRD100010" : "Unable to retrieve the search result.",
 		"configurations" : "Environment already exists in Settings",
-		"settings" : "Environment already exists in Configuration"
+		"settings" : "Environmento already exists in Configuration"
 	},
 	"successCodes" : {
 		"PHR100008" : "Password emailed",

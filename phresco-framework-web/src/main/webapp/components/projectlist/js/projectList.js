@@ -642,6 +642,9 @@ define(["projectlist/listener/projectListListener"], function() {
 								});
 								commonVariables.hideloading = false;
 								self.projectslistListener.hidePopupLoad();
+								// Loading latest message by default
+								var repoMsg = $('.searchdropdown').eq(0).find('option:first').text();
+								$("#repomessage_"+dynamicId).val(repoMsg);								
 							});
 							$('.searchdropdown').show();
 						}
@@ -685,6 +688,9 @@ define(["projectlist/listener/projectListListener"], function() {
 								});
 								commonVariables.hideloading = false;
 								self.projectslistListener.hidePopupLoad();
+								// Loading latest message by default
+								var repoMsg = $('.dotphrescosearchdropdown').eq(0).find('option:first').text();
+								$("#phrescorepomessage_"+dynamicId).val(repoMsg);	
 							});
 							$('.dotphrescosearchdropdown').show();
 						}
@@ -728,6 +734,9 @@ define(["projectlist/listener/projectListListener"], function() {
 								});
 								commonVariables.hideloading = false;
 								self.projectslistListener.hidePopupLoad();
+								// Loading latest message by default
+								var repoMsg = $('.testsearchdropdown').eq(0).find('option:first').text();
+								$("#testrepomessage_"+dynamicId).val(repoMsg);
 							});
 							$('.testsearchdropdown').show();
 						}
@@ -751,60 +760,35 @@ define(["projectlist/listener/projectListListener"], function() {
 					}
 				});
 				
-				
-				counter = 0;
-				$('.searchdropdown').click(function() {
-					counter++;
-					if(counter == 2) {
-						$('.searchdropdown').hide();
-						var temp = $(this).find(':selected').text();
-						if($(this).attr('typeOfRepo') === 'add')
-							$("#repomessage_"+dynamicId).val(temp);
-						else if($(this).attr('typeofRepo') === 'commit')
-							$("#commitMessage_"+dynamicId).val(temp);
-						counter = 0;
-					}	
+				$('.searchdropdown').on('change', function() {
+					$('.searchdropdown').hide();
+					var temp = $(this).find(':selected').text();
+					if($(this).attr('typeOfRepo') === 'add')
+						$("#repomessage_"+dynamicId).val(temp);
+					else if($(this).attr('typeofRepo') === 'commit')
+						$("#commitMessage_"+dynamicId).val(temp);
 				});	
-				
-				$('.searchdropdown').focusout(function() {
-					counter = 0;
+
+
+				$('.dotphrescosearchdropdown').on("change", function() {
+					$('.dotphrescosearchdropdown').hide();
+					var temp = $(this).find(':selected').text();
+					if($(this).attr('typeOfRepo') === 'add')
+						$("#phrescorepomessage_"+dynamicId).val(temp);
+					else if($(this).attr('typeofRepo') === 'commit')
+						$("#phrCommitMessage_"+dynamicId).val(temp);
+			
 				});	
-				
-				dotphresco = 0;
-				$('.dotphrescosearchdropdown').click(function() {
-					dotphresco++;
-					if(dotphresco == 2) {
-						$('.dotphrescosearchdropdown').hide();
-						var temp = $(this).find(':selected').text();
-						if($(this).attr('typeOfRepo') === 'add')
-							$("#phrescorepomessage_"+dynamicId).val(temp);
-						else if($(this).attr('typeofRepo') === 'commit')
-							$("#phrCommitMessage_"+dynamicId).val(temp);
-						dotphresco = 0;
-					}	
-				});	
-				
-				$('.dotphrescosearchdropdown').focusout(function() {
-					dotphresco = 0;
-				});
-				
-				testsearch = 0;
+
 				$('.testsearchdropdown').click(function() {
-					testsearch++;
-					if(testsearch == 2) {
-						$('.testsearchdropdown').hide();
-						var temp = $(this).find(':selected').text();
-						if($(this).attr('typeOfRepo') === 'add')
-							$("#testrepomessage_"+dynamicId).val(temp);
-						else if($(this).attr('typeofRepo') === 'commit')
-							$("#testCommitMessage_"+dynamicId).val(temp);
-						testsearch = 0;
-					}	
+					$('.testsearchdropdown').hide();
+					var temp = $(this).find(':selected').text();
+					if($(this).attr('typeOfRepo') === 'add')
+						$("#testrepomessage_"+dynamicId).val(temp);
+					else if($(this).attr('typeofRepo') === 'commit')
+						$("#testCommitMessage_"+dynamicId).val(temp);
+
 				});	
-				
-				$('.testsearchdropdown').focusout(function() {
-					testsearch = 0;
-				});
 				//end of functionality for search log messages
 			});
 			
