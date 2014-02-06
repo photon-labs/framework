@@ -813,10 +813,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	}
 	
 	private File returnPropertyPom(String pomFileName, RepoInfo repoInfo, File propertyPom, File baseDir, String module, ApplicationInfo appInfo) {
-		
-		if (!POM_XML.equals(pomFileName) && !repoInfo.isSplitPhresco() && !repoInfo.isSplitTest()) {
-			propertyPom = baseDir;
-		} else if (!POM_XML.equals(pomFileName) && repoInfo.isSplitPhresco() && repoInfo.isSplitTest()) {
+		propertyPom = baseDir;
+		if (!POM_XML.equals(pomFileName) && repoInfo.isSplitPhresco() && repoInfo.isSplitTest()) {
 			propertyPom = new File(baseDir, appInfo.getAppDirName()+"-phresco");
 		} else if (!POM_XML.equals(pomFileName) && !repoInfo.isSplitPhresco() && repoInfo.isSplitTest()) {
 			propertyPom = new File(baseDir, appInfo.getAppDirName());

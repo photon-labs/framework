@@ -1456,7 +1456,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 			// performance xml check
 			if (StringUtils.isEmpty(isIphone)) {
 				if (!xmlResultsAvailable) {
-					if(moduleNames != null && StringUtils.isEmpty(subModuleName)) {
+					if(moduleNames.size() != 0 && StringUtils.isEmpty(subModuleName)) {
 						for (String moduleName : moduleNames) {
 							if (!xmlResultsAvailable) {
 								QualityService qualityService = new QualityService();
@@ -1496,7 +1496,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 			// load xml check
 			if (StringUtils.isEmpty(isIphone)) {
 				if (!xmlResultsAvailable) {
-					if(moduleNames != null && StringUtils.isEmpty(subModuleName)) {
+					if(moduleNames.size() != 0  && StringUtils.isEmpty(subModuleName)) {
 						for (String moduleName : moduleNames) {
 							if (!xmlResultsAvailable) {
 								String phrescoPluginInfoFilePath = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(

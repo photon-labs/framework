@@ -403,7 +403,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 					content = content.concat('<tr class="generatedRow" fileName="' + pdfReports[i].fileName + '"><td>' + pdfReports[i].time + '</td>');
 					content = content.concat('<td>' + pdfReports[i].type + '</td>');
 					content = content.concat('<td><a class="tooltiptop" fileName="' + pdfReports[i].fileName + '" href="javascript:void(0)"');
-					content = content.concat(' data-toggle="tooltip" data-placement="top" name="downloadPdfReport" data-original-title="Download Pdf" title="">');
+					content = content.concat(' data-toggle="tooltip" data-placement="top" from="'+from+'" name="downloadPdfReport" data-original-title="Download Pdf" title="">');
 					content = content.concat('<img src="themes/default/images/Phresco/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>');
 					content = content.concat('<td class="list_img"><a class="tooltiptop" name="deletepdf_'+idgenerate+i+'" fileName="' + pdfReports[i].fileName + '" href="javascript:void(0)"');
 					content = content.concat(' data-toggle="tooltip" data-placement="top" namedel="delete" data-original-title="Delete Pdf" title="">');
@@ -468,7 +468,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 		
 		downloadPdfReport : function () {
 			var self = this;
-			$('.donloadPdfReport').on("click", function() {
+			$("a[name=downloadPdfReport]").click(function() {
 				var appInfo = commonVariables.api.localVal.getProjectInfo();
 				var fileName = $(this).attr("fileName"), from=$(this).attr("from"), appDirName;
 				
