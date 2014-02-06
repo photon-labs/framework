@@ -224,25 +224,28 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			}
 			String rootModulePath = "";
 			String subModuleName = "";
-			if (StringUtils.isNotEmpty(moduleName)) {
+			if (StringUtils.isNotEmpty(moduleName) && !testType.equals("integration")) {
 				rootModulePath = Utility.getProjectHome() + appDirName;
 				subModuleName = moduleName;
 			} else {
 				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
 			// TO kill the Process
-			String rootModule = appDirName;
-			if (StringUtils.isNotEmpty(moduleName)) {
-				appDirName = appDirName + File.separator + moduleName;
-			}
+//			String rootModule = appDirName;
+//			if (StringUtils.isNotEmpty(moduleName)) {
+//				appDirName = appDirName + File.separator + moduleName;
+//			}
+			
 			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, subModuleName);
+			if(pomFileLocation != null  && pomFileLocation.exists()) {
 			Utility.killProcess(pomFileLocation.getParent(), testType);
+			}
 			if(StringUtils.isNotEmpty(techReport)) {
 				techReport = techReport.toLowerCase();
 			}
 			String testSuitePath = getTestSuitePath(appDirName, rootModulePath, subModuleName, testType, techReport);
 			String testCasePath = getTestCasePath(appDirName, rootModulePath, subModuleName, testType, techReport);
-			List<TestSuite> testSuites = testSuites(rootModule, moduleName, testType, moduleName, techReport,
+			List<TestSuite> testSuites = testSuites(appDirName, moduleName, testType, techReport,
 					testSuitePath, testCasePath, ALL,rootModulePath, subModuleName);
 			if (CollectionUtils.isEmpty(testSuites)) {
 				ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, null,
@@ -272,12 +275,12 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 * @return the list
 	 * @throws PhrescoException the phresco exception
 	 */
-	private List<TestSuite> testSuites(String appDirName, String moduleName, String testType, String module, String techReport, String testSuitePath, String testCasePath, String testSuite, String rootModulePath,String subModule) throws PhrescoException {
+	private List<TestSuite> testSuites(String appDirName, String moduleName, String testType, String techReport, String testSuitePath, String testCasePath, String testSuite, String rootModulePath,String subModule) throws PhrescoException {
 		setTestSuite(testSuite);
 		List<TestSuite> allSuites = new ArrayList<TestSuite>();
 		try {
 			String mapKey = constructMapKey(appDirName, moduleName);
-			String testSuitesMapKey = mapKey + testType + module + techReport;
+			String testSuitesMapKey = mapKey + testType + moduleName + techReport;
 			String testResultPath = getTestResultPath(appDirName, rootModulePath, subModule, testType, techReport);
 			File[] testResultFiles = getTestResultFiles(testResultPath);
 			if (ArrayUtils.isEmpty(testResultFiles)) {

@@ -299,6 +299,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 		String host = null, protocol = null, environmentName = null, port = null;
 		Boolean connectionAlive = false;
 		FileReader readers = null;
+		boolean checkForFailureInLog = false;
 		try {
 			String rootModulePath = "";
 			String subModuleName = "";
@@ -319,7 +320,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, connectionAlive, RESPONSE_STATUS_SUCCESS, PHR710005);
 			return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
-			boolean checkForFailureInLog = checkForFailureInLog(logFile);
+			checkForFailureInLog = checkForFailureInLog(logFile);
 			if (checkForFailureInLog) {
 				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, connectionAlive, RESPONSE_STATUS_SUCCESS, PHR710005);
 				return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
@@ -529,6 +530,9 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 		String line = null;
 		boolean errorParam = false ;
 		try {
+			if(!errorLog.exists()) {
+				return errorParam;
+			}
 			reader = new BufferedReader(new FileReader(errorLog));
 			while ((line = reader.readLine()) != null) {
 				if (line.contains("[INFO] BUILD FAILURE") || line.contains("[ERROR]") || line.contains("Error")) {

@@ -380,7 +380,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		try {
 			response = serviceManager.createProject(projectInfo);
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new PhrescoException(e);
 		}
 
@@ -1196,6 +1195,9 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		} finally {
 			Utility.closeStream(inputStream);
 			Utility.closeStream(fileOutputStream);
+			if((archiveFile != null) && archiveFile.exists()) {
+				FileUtil.delete(archiveFile);
+			}
 		}
 	}
 	
@@ -1785,9 +1787,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		    OrderedJSONObject search_result = new OrderedJSONObject(JSONResponse);
 		    return search_result;
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new PhrescoException("Exception occured while trying to retrieve the search result");
 		}
 	}
-	
 }
