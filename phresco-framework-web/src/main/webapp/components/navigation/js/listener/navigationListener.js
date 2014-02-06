@@ -915,6 +915,7 @@ define([], function() {
 				//commonVariables.loadingScreen.showLoading();
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
+					
 						//commonVariables.loadingScreen.removeLoading();
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							if(response.responseCode === "PHR200017") {
@@ -962,6 +963,7 @@ define([], function() {
 								commonVariables.api.showError("prjtexists" ,"error", true);
 								$('.popuploading').hide();
 							}
+							$('#project_list_import').find('input, textarea, button, select').attr("disabled", false);
 						}
 					},
 					function(textStatus) {

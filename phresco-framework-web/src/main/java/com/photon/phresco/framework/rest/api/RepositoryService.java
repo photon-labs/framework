@@ -192,7 +192,13 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				//SCM tags, pom-properties and distribution tags will be added here
 				scmi.updatePoms(repoInfo, srcAppInfo, projInfo, serviceManager);
 			}
-			
+			if (projInfo == null) {
+				status = RESPONSE_STATUS_FAILURE;
+				errorCode = PHR210054;
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+				.build();
+			}
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200017;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);

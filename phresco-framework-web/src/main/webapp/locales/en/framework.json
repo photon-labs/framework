@@ -235,6 +235,7 @@
 		"PHR10LCR001" : "Update in progress. ",
 		"PHR10LMIN01" : "Minification in progress. ",
 		"PHR10LIM001" : "Import in progress. ",
+		"PHR210053"   : "Project is not Phresco Specific",
 		"enteruniquename" : "Enter Unique Name",
 		"configureatleastonejob" : "Configure atleast one Job!",
 		"hasdependencies" : "Feature has dependencies.",
