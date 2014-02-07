@@ -200,4 +200,7 @@ public interface ProjectManager {
 	 * @throws PhrescoException
 	 */
 	OrderedJSONObject getdata(DashboardSearchInfo dashboardsearchinfo) throws PhrescoException;
+	
+	
+	ProjectInfo  addIntegrationTest(ProjectInfo projectInfo, ServiceManager serviceManager) throws PhrescoException;
 }

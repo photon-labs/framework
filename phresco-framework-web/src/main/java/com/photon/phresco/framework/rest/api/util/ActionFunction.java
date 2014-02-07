@@ -2868,7 +2868,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		BufferedInputStream reader = null;
 		Parameter parameter = null;
 		MojoProcessor mojo = null;
-		boolean flagForParam = false;
 		try {
 			// TODO: delete the server.log and create empty server.log file
 			deleteLogFile(workingDir);
@@ -2879,26 +2878,18 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 				if (parameter != null) {
 					String execValue = parameter.getValue();
 					if (execValue.equals("true")) {
-						flagForParam = true;
 						parameter.setValue("false");
 						mojo.save();
 					}
 				}
 			}
 //			// TODO: delete the server.log and create empty server.log file
-//			deleteLogFile(workingDir);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-//			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(directory);
-//			String workingDirectory = Utility.getWorkingDirectoryPath(getAppDirName());
 			List<String> buildArgCmds = new ArrayList<String>();
 			buildArgCmds.add(HYPHEN_N);
 			appendMultiModuleCommand(getModule(), buildArgCmds);
 			reader = applicationManager.performAction(projectInfo, ActionType.RUNAGAINSTSOURCE, buildArgCmds, workingDir);
 
-			if(flagForParam) {
-				parameter.setValue("true");
-				mojo.save();
-			}
 		} catch (PhrescoException e) {
 			if (isDebugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.startServer()" + FrameworkUtil.getStackTraceAsString(e));

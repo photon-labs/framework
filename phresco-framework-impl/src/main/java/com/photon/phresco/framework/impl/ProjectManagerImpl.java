@@ -1790,4 +1790,35 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			throw new PhrescoException("Exception occured while trying to retrieve the search result");
 		}
 	}
+
+	@Override
+	public ProjectInfo addIntegrationTest(ProjectInfo projectInfo, ServiceManager serviceManager) throws PhrescoException {
+		if (isDebugEnabled) {
+			S_LOGGER.debug("Entering Method ProjectManagerImpl.integrationTest(ProjectInfo projectInfo, ServiceManager serviceManager)");
+		}
+		ClientResponse response = null;
+		try {
+			response = serviceManager.createIntegrationTest(projectInfo);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+
+		if (isDebugEnabled) {
+			S_LOGGER.debug("createProject response code " + response.getStatus());
+		}
+
+		if (response.getStatus() == 200) {
+			try {
+				extractArchive(response, projectInfo);
+			} catch (IOException e) {
+				throw new PhrescoException(e);
+			}
+			return projectInfo;
+		} else if (response.getStatus() == 401) {
+			throw new PhrescoException("Session expired");
+		} else {
+			throw new PhrescoException("Project updation failed");
+		}
+	}
+
 }
