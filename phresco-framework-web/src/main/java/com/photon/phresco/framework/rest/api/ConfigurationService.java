@@ -2068,6 +2068,9 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 						String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(Utility.getProjectHome() + appDirectoryName, "");
 						File path = new File(dotPhrescoFolderPath + File.separator +  CONFIGURATION_INFO_FILE_NAME);
 						environmentExists = checkDuplicateEnv(environmentName, path, "Configuration");
+						 if(StringUtils.isNotEmpty(environmentExists)) {
+                            return environmentExists;
+                        }
 					}
 				}
 			} else {
