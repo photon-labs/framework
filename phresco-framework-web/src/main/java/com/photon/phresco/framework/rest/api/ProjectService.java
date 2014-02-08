@@ -214,11 +214,12 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			}
 			if (projectinfo != null) {
 				ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().create(projectinfo, serviceManager);
-				handleDependencies(Utility.getProjectHome(), projectInfo, null);
+				ProjectInfo availableProjectInfo = getProject(projectinfo.getId(), projectinfo.getCustomerIds().get(0));
+				handleDependencies(Utility.getProjectHome(), availableProjectInfo, null);
 				status = RESPONSE_STATUS_SUCCESS;
 				successCode = PHR200004;
 				ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
-						projectInfo, status, successCode);
+						availableProjectInfo, status, successCode);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 			}
 		} catch (PhrescoException e) {
@@ -1218,7 +1219,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	}
 
 	private void removeDependencies(List<String> dependents, String moduleNameToDelete, String rootModulePath) throws PhrescoException, PhrescoPomException {
-		ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, moduleNameToDelete);
+		ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
 		File docFolderLocation = Utility.getSourceFolderLocation(projectInfo, rootModulePath, moduleNameToDelete);
 		File currentPomFile = new File(docFolderLocation + File.separator + Constants.POM_NAME);
 		if (currentPomFile.exists()) {
@@ -1226,7 +1227,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			String groupId = processor.getGroupId();
 			String artifactId = processor.getArtifactId();
 			for (String dependent : dependents) {
-				ProjectInfo subProjectInfo = Utility.getProjectInfo(rootModulePath, moduleNameToDelete);
+				ProjectInfo subProjectInfo = Utility.getProjectInfo(rootModulePath, "");
 				File subFolderLocation = Utility.getSourceFolderLocation(subProjectInfo, rootModulePath, dependent);
 				File dependentPomFile = new File(subFolderLocation + File.separator + Constants.POM_NAME);
 				if (dependentPomFile.exists()) {
