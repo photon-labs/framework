@@ -724,6 +724,15 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					} 
 
 					updatePom(file, srcUrl, srcType, pomFileName, appPomProcessor, "");
+					
+					
+					File alwaysPom = baseDir;
+					if (repoInfo.isSplitPhresco() || repoInfo.isSplitTest()) {
+						alwaysPom = new File(baseDir,appInfo.getAppDirName());
+					}
+					if (!POM_XML.equals(pomFileName)) {
+						updatePom(alwaysPom, srcUrl, srcType, POM_XML, appPomProcessor, "");
+					}
 				}
 
 				RepoDetail phrescoRepoDetail = repoInfo.getPhrescoRepoDetail();
@@ -1679,8 +1688,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			}
 			pomProcessor.setProperty(Constants.POM_PROP_KEY_ROOT_SRC_DIR, sb.toString() + srcRootPrpty);
 			
-			pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_SRC_DIR, appDirName);
 			pomProcessor.setProperty(Constants.POM_PROP_KEY_SRC_REPO_URL, srcRepoUrl);
+			
+			if (StringUtils.isNotEmpty(phrescoRepoUrl) || StringUtils.isNotEmpty(testRepoUrl)) {
+				pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_SRC_DIR, appDirName);
+			}
+			
 			if (StringUtils.isNotEmpty(phrescoRepoUrl)) {
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_PHRESCO_DIR, appDirName + Constants.SUFFIX_PHRESCO);
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_PHRESCO_REPO_URL, phrescoRepoUrl);

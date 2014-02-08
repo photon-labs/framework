@@ -69,7 +69,6 @@ public class LockUtil implements Constants {
 				}
 				LOCK_DETAILS.clear();
 				LOCK_DETAILS.addAll(availableLockDetails);
-				System.out.println("availableLockDetails =====>"+availableLockDetails);
 			}
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
