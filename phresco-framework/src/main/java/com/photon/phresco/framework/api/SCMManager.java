@@ -25,7 +25,6 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.model.RepoDetail;
 import com.photon.phresco.framework.model.RepoInfo;
 import com.photon.phresco.service.client.api.ServiceManager;
-import com.photon.phresco.service.client.impl.ServiceManagerImpl;
 
 public interface SCMManager {
 
@@ -102,5 +101,5 @@ public interface SCMManager {
 	 * @param serviceManager
 	 * @throws PhrescoException
 	 */
-	public void updatePoms(RepoInfo repoInfo, ApplicationInfo appInfo, ProjectInfo projInfo, ServiceManager serviceManager) throws PhrescoException;
+	public void updatePoms(RepoInfo repoInfo, ProjectInfo projInfo, ServiceManager serviceManager) throws PhrescoException;
 }

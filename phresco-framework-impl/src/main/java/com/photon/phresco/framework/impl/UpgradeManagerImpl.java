@@ -38,20 +38,20 @@ import org.codehaus.plexus.util.FileUtils;
 import com.google.gson.Gson;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
-import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.commons.model.VersionInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.UpgradeManager;
-import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.ArchiveUtil;
 import com.photon.phresco.util.ArchiveUtil.ArchiveType;
+import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.model.Scm;
 import com.phresco.pom.util.PomProcessor;
 
 public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   {
@@ -98,14 +98,14 @@ public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   
 			latestVersionZip = serviceManager.getUpdateVersionContent(customerId).getEntityInputStream();
 			tempFile = new File(Utility.getPhrescoTemp(), FrameworkConstants.TEMP_ZIP_FILE);
 			outPutFile = new FileOutputStream(tempFile);
-			 
+
 			int read = 0;
 			byte[] bytes = new byte[1024];
-		 
+
 			while ((read = latestVersionZip.read(bytes)) != -1) {
 				outPutFile.write(bytes, 0, read);
 			}
-			
+
 			extractUpdate(tempFile);
 			markVersionUpdated(newVersion);
 			updateProjects(serviceManager);
@@ -122,7 +122,8 @@ public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   
 		File[] appDirs = projectsHome.listFiles();
 		for (File appDir : appDirs) {
 			if(appDir.isDirectory()) {
-				File dotPhresco = new File(appDir, ".phresco/project.info");
+				String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(Utility.getProjectHome() + appDir.getName(), "");
+				File dotPhresco = new File(dotPhrescoFolderPath, Constants.PROJECT_INFO_FILE);
 				FileWriter fstream = null;
 				BufferedWriter out = null;
 				FileReader reader = null;
@@ -131,6 +132,7 @@ public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   
 						reader = new FileReader(dotPhresco);
 						ProjectInfo projectInfo = new Gson().fromJson(reader, ProjectInfo.class);
 						ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+						updatePomProperties(applicationInfo);
 						updateFeatureIds(applicationInfo);
 						TechnologyInfo techInfo = applicationInfo.getTechInfo();
 						String appTypeId = techInfo.getAppTypeId();
@@ -157,6 +159,38 @@ public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   
 				}
 			}
 		}
+	}
+	
+	private void updatePomProperties (ApplicationInfo appInfo) throws PhrescoException {
+		try {
+			File pomFileLocation = Utility.getPomFileLocation(Utility.getProjectHome() + appInfo.getAppDirName(), "");
+			PomProcessor pomProcessor = new PomProcessor(pomFileLocation);
+			Scm scm = pomProcessor.getSCM();
+			if (scm != null) {
+				String connection = scm.getConnection();
+				String repoType = getRepoType(connection);
+				String scmUrl = SCM + COLON + repoType + COLON + connection;
+				pomProcessor.setSCM(connection, scmUrl, scmUrl, "");
+				pomProcessor.setProperty(Constants.POM_PROP_KEY_SRC_REPO_URL, connection);
+				pomProcessor.save();
+			}
+		} catch (PhrescoException e) {
+			throw e;
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	private String getRepoType(String repoUrl) {
+		String repoType = "";
+		if (repoUrl.startsWith("bk")) {
+			repoType = BITKEEPER;
+		} else if (repoUrl.endsWith(".git") || repoUrl.contains("gerrit") || repoUrl.startsWith("ssh")) {
+			repoType = GIT;
+		} else if (repoUrl.contains("svn")) {
+			repoType = SVN;
+		}
+		return repoType;
 	}
 	
 	// To update the feature ids to the changed ids

@@ -50,7 +50,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 					start();
 					equal($('#reportOptionsDrop').text(), "js", "Unit test tech options rendering tested");
 					self.moduleOptionsTest();
-				}, 1500);
+				}, 700);
 			});
 		},
 
@@ -61,7 +61,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 					start();
 					equal($('#modulesDrop').text(), "phresco-framework", "Unit test module options rendering tested");
 					self.noTestsuitesTest();
-				}, 1500);
+				}, 700);
 			});
 		},
 
@@ -72,7 +72,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 					start();
 					equal($('#messagedisp').length, 1, "Unit test no testsuites tested");
 					self.testsuitesRenderTest();
-				}, 1500);
+				}, 700);
 			});
 		},
 
@@ -125,7 +125,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 					start();
 					equal($('#consoleImg').attr('data-flag'), "false", "Unit test testsuite open console tested");
 					self.graphicalViewTest();
-				}, 3000);
+				}, 700);
 			});
 		},
 
@@ -137,7 +137,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 					start();
 					equal($("#testSuites").css("display"), "block", "Unit test testsuite graphical view tested");
 					self.tabularViewTest();
-				}, 3000);
+				}, 700);
 			});
 		},
 
@@ -149,7 +149,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 					start();
 					equal($("#graphView").css("display"), "block", "Unit test testsuite tabular view tested");
 					self.techOptionChangeTest();
-				}, 3000);
+				}, 700);
 			});
 		},
 
@@ -162,7 +162,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 					start();
 					equal($('.testsuiteClm a[name=testDescription]').text(), "SampleUnitTest", "Unit test tech options change tested");
 					self.moduleOptionChangeTest();
-				}, 1500);
+				}, 700);
 			});
 		},
 
@@ -357,7 +357,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 					start();
 					equal($("#testcases").css("display"), "block", "Unit test testcase graphical view tested");
 					self.testcaseTabularViewTest();
-				}, 3000);
+				}, 700);
 			});
 		},
 
@@ -369,7 +369,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 					start();
 					equal($("#graphView").css("display"), "block", "Unit test testcase tabular view tested");
 					self.showTestcaseConsole();
-				}, 3000);
+				}, 700);
 			});
 		},
 
@@ -382,7 +382,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 					$('#consoleImg').attr('data-flag','false');
 					equal($('#consoleImg').attr('data-flag'), "false", "Unit test testcase open console tested");
 					self.pdfIconBtnClickTest();
-				}, 3000);
+				}, 700);
 			});
 		},
 

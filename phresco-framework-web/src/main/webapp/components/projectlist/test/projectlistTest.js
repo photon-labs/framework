@@ -56,6 +56,16 @@ define(["projectlist/projectList"], function(ProjectList) {
 					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":null,"status":"success"});
 				  }
 				});
+				$.mockjax({
+				  url: commonVariables.webserviceurl+"repository/repoExists?appDirName=wordpress-WordPress",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200053","data":false,"status":"success"});
+				  }
+				});
 
 				$('.tooltiptop[name^="addRepo"]').click();
 				setTimeout(function() {
@@ -2483,9 +2493,9 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();
 					equal("", "", 'Configuration type Test');
-					/* require(["configurationTest"], function(configurationTest){
-						configurationTest.runTests();
-					}); */ 
+					 require(["projectTest"], function(projectTest){
+						 projectTest.runTests();
+					});  
 				}, 1000);
 			});
 		}

@@ -690,8 +690,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		return true;
 	}
 	
-	public void updatePoms(RepoInfo repoInfo, ApplicationInfo appInfo, ProjectInfo projInfo, ServiceManager serviceManager) throws PhrescoException {
+	public void updatePoms(RepoInfo repoInfo, ProjectInfo projInfo, ServiceManager serviceManager) throws PhrescoException {
 		try {
+			ApplicationInfo appInfo = projInfo.getAppInfos().get(0);
 			if (repoInfo != null && appInfo != null) {
 				String srcUrl = "";
 				String phrescoUrl = "";

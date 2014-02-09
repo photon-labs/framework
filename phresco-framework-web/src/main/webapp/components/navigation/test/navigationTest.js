@@ -293,7 +293,7 @@ define(["navigation/navigation"], function() {
 			var self = this;
 			asyncTest("Import Application - Import svn project with head option test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl+"repository/importApplication?displayName=Admin",
+					url: commonVariables.webserviceurl+"repository/importApplication?displayName=Admin&userId=admin",
 					type: "POST",
 					dataType: "json",
 					contentType: "application/json",
@@ -575,7 +575,7 @@ define(["navigation/navigation"], function() {
 			var self = this;
 			asyncTest("Import Application - Import git project test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl+"repository/importApplication?displayName=Admin",
+					url: commonVariables.webserviceurl+"repository/importApplication?displayName=Admin&userId=admin",
 					type: "POST",
 					dataType: "json",
 					contentType: "application/json",
@@ -798,7 +798,7 @@ define(["navigation/navigation"], function() {
 			var self = this;
 			asyncTest("Import Application - Import perforce project test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl+"repository/importApplication?displayName=Admin",
+					url: commonVariables.webserviceurl+"repository/importApplication?displayName=Admin&userId=admin",
 					type: "POST",
 					dataType: "json",
 					contentType: "application/json",
@@ -919,7 +919,7 @@ define(["navigation/navigation"], function() {
 			var self = this;
 			asyncTest("Import Application - Import bitkeeper project test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl+"repository/importApplication?displayName=Admin",
+					url: commonVariables.webserviceurl+"repository/importApplication?displayName=Admin&userId=admin",
 					type: "POST",
 					dataType: "json",
 					contentType: "application/json",
@@ -1216,7 +1216,7 @@ define(["navigation/navigation"], function() {
 			var self = this;
 			asyncTest("Import Application - Import tfs project test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl+"repository/importApplication?displayName=Admin",
+					url: commonVariables.webserviceurl+"repository/importApplication?displayName=Admin&userId=admin",
 					type: "POST",
 					dataType: "json",
 					contentType: "application/json",

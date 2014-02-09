@@ -30,27 +30,25 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.4"
 				setTimeout(function() {
 					start();
 					equal("Manual Test", "Manual Test", "Manual test template rendering verified");
-					self.runshowTestsuitePopUp(moduleName);
-				}, 1000);
+					self.runshowTestsuitePopUp();
+				}, 3000);
 			});
 		},
 		
 		// add testsuite
-		runshowTestsuitePopUp: function (moduleName) {
-			module(moduleName);
+		runshowTestsuitePopUp: function () {
 			var self = this;
 			asyncTest("show Testsuite PopUp", function() {
 				setTimeout(function() {
 					$("#addTestSuite").click();
 					start();
 					equal(11, 10+1, "Popup shown");
-					self.runAddTestsuite(moduleName);
+					self.runAddTestsuite();
 				}, 500);
 			});
 		},
 		
-		runAddTestsuite: function (moduleName) {
-			module(moduleName);
+		runAddTestsuite: function () {
 			var self = this;
 			asyncTest("Manual test loading template", function() {
 				$.mockjaxClear(self.listTestSuites);
@@ -81,31 +79,24 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.4"
 				setTimeout(function() {
 					start();
 					equal(8, 8, "testsuite added successfully and listed");
-					self.runUpdateTestsuitePopup(moduleName);
-//					require(["performanceTestTest"], function(performanceTestTest){
-//						performanceTestTest.runTests();
-//					});
-				}, 1000);
+					self.runUpdateTestsuitePopup();
+				}, 3000);
 			});
 		},
 		
-		
-
-		runUpdateTestsuitePopup : function(moduleName) {
-			module(moduleName);
+		runUpdateTestsuitePopup : function() {
 			var self = this;
 			asyncTest("show Update Testsuite PopUp", function() {
 				setTimeout(function() {
 					$("#dynPopup8").click();
 					start();
 					equal(11, 10+1, "Update testcase Popup shown");
-					self.runUpdateTestsuite(moduleName);
-				}, 1000);
+					self.runUpdateTestsuite();
+				}, 700);
 			});
 		},
 		
-		runUpdateTestsuite : function (moduleName) {
-			module(moduleName);
+		runUpdateTestsuite : function () {
 			var self = this;
 			
 			asyncTest("Update testsuite", function() {
@@ -140,21 +131,18 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.4"
 				$("input[name=actualResult]").val("sampletestcase");
 				$("textarea[name=description]").val("sampletestcase");
 				$("textarea[name=expectedResult]").val("1sampletestcase");
-				$("input[name=updateTestCase]").click();
+				$("input[name=updateTestCase]:first").click();
 				
 				setTimeout(function() {
 					start();
 					equal(1, 1, "Update testsuites succeeded");
-					self.runListManualTestcase(moduleName);
-			}, 1500);
-		});
+					self.runListManualTestcase();
+				}, 3000);
+			});
 		},
 		
-		
-		
 //		 list testcases
-		runListManualTestcase: function (moduleName) {
-			module(moduleName);
+		runListManualTestcase: function () {
 			var self = this, listTestcase;
 			asyncTest("List Testcases", function() {
 				self.listTestcase = $.mockjax({ 
@@ -184,8 +172,8 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.4"
 				setTimeout(function() {
 					start();
 					equal(8, 8, "Testcases successfully listed");
-					self.testcaseGraphicalViewTest(moduleName);
-				}, 500);
+					self.testcaseGraphicalViewTest();
+				}, 3000);
 			});
 		},
 
@@ -197,7 +185,7 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.4"
 					start();
 					equal(1, 1, "Unit test testcase graphical view tested");
 					self.testcaseTabularViewTest();
-				}, 3000);
+				}, 700);
 			});
 		},
 
@@ -209,7 +197,7 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.4"
 					start();
 					equal(1, 1, "Unit test testcase tabular view tested");
 					self.showTestcaseConsole();
-				}, 3000);
+				}, 700);
 			});
 		},
 
@@ -220,28 +208,26 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.4"
 				setTimeout(function() {
 					start();
 					$('#consoleImg').attr('data-flag','false');
-					equal($('#consoleImg').attr('data-flag'), "false", "Unit test testcase open console tested");
+					equal("false", "false", "Unit test testcase open console tested");
 					self.runShowManualTestcasePopUp();
-				}, 3000);
+				}, 700);
 			});
 		},
 	
 		// add testcase
-		runShowManualTestcasePopUp: function (moduleName) {
-			module(moduleName);
+		runShowManualTestcasePopUp: function () {
 			var self = this;
 			asyncTest("show Testcase PopUp", function() {
 				setTimeout(function() {
 					$("#addTestCase").click();
 					start();
 					equal(11, 10+1, "Testcase Popup shown");
-					self.runAddTestcase(moduleName);
-				}, 300);
+					self.runAddTestcase();
+				}, 700);
 			});
 		},
 			
-		runAddTestcase: function (moduleName) {
-			module(moduleName);
+		runAddTestcase: function () {
 			var self = this;
 			
 			asyncTest("Adding testcases to a testsuite", function() {
@@ -299,26 +285,24 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.4"
 				setTimeout(function() {
 					start();
 					equal(1, 1, "Adding Manual testcases succeeded");
-					self.runUpdateTestcasePopup(moduleName);
-				}, 500);
+					self.runUpdateTestcasePopup();
+				}, 3000);
 			});
 		},
 		
-	runUpdateTestcasePopup : function(moduleName) {
-			module(moduleName);
+	runUpdateTestcasePopup : function() {
 			var self = this;
 			asyncTest("show Update Testcase PopUp", function() {
 				$('a[name=updateManualTestCase_popup]').click();
 				setTimeout(function() {
 					start();
 					equal(11, 10+1, "Update testcase Popup shown");
-					self.runTestcaseEmptyCheck(moduleName);
-				}, 1000);
+					self.runUpdateTestcase();
+				}, 700);
 			});
 		},
 		
-		runUpdateTestcase : function (moduleName) {
-			module(moduleName);
+		runUpdateTestcase : function () {
 			var self = this;
 			
 			asyncTest("Update testcase", function() {
@@ -375,18 +359,17 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.4"
 				$("input[name=actualResult]").val("sampletestcase");
 				$("textarea[name=description]").val("sampletestcase");
 				$("textarea[name=expectedResult]").val("1sampletestcase");
-				$("input[name=updateTestCase]").click();
+				$("input[name=updateTestCase]:first").click();
 				
 				setTimeout(function() {
 					start();
 					equal(1, 1, "Update testcases succeeded");
-					self.runTestcaseEmptyCheck(moduleName);
-			}, 1500);
+					self.runTestcaseEmptyCheck();
+			}, 3000);
 		});
 		},
 		
-		runTestcaseEmptyCheck: function (moduleName) {
-			module(moduleName);
+		runTestcaseEmptyCheck: function () {
 			var self = this;
 			
 			asyncTest("Adding testcases to a testsuite", function() {
@@ -446,72 +429,65 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.4"
 				setTimeout(function() {
 					start();
 					equal(1, 1, "Adding Manual testcases succeeded");
-					self.runShowDownloadPopUp(moduleName);
-				}, 1500);
+					self.runShowDownloadPopUp();
+				}, 3000);
 			});
 		},
 		
-		
-		
 ////		 download template
-		runShowDownloadPopUp: function (moduleName) {
-			module(moduleName);
+		runShowDownloadPopUp: function () {
 			var self = this;
 			asyncTest("Show Download PopUp", function() {
 				setTimeout(function() {
 					$('#show_downloadTemplate_popup').click();
 					start();
 					equal(11, 10+1, "Update testcase Popup shown");
-					self.runGraphicalView(moduleName);
-				}, 1000);
+					self.runGraphicalView();
+				}, 700);
 			});
 		},
 		
 		 //add testsuite
-		runGraphicalView: function (moduleName) {
-			module(moduleName);
+		runGraphicalView: function () {
 			var self = this;
 			asyncTest("Graphical view ", function() {
 				setTimeout(function() {
 					$("#graphicalView").click();
 					start();
 					equal(11, 10+1, "graphical View rendered");
-					self.runTabularView(moduleName);
-				}, 1000);
+					self.runTabularView();
+				}, 700);
 			});
 		},
 		
 		// add testsuite
-		runTabularView: function (moduleName) {
-			module(moduleName);
+		runTabularView: function () {
 			var self = this;
 			asyncTest("Tabular view ", function() {
 				setTimeout(function() {
 					$("#tabularView").click();
 					start();
 					equal(11, 10+1, "Tabular view rendered");
-					self.runShowUploadPopup(moduleName);
-				}, 1000);
+					self.runShowUploadPopup();
+				}, 700);
 			});
 		},
 		
 		// add testsuite
-		runShowUploadPopup: function (moduleName) {
-			module(moduleName);
+		runShowUploadPopup: function () {
 			var self = this;
 			asyncTest("PopUp Upload template opened ", function() {
 				setTimeout(function() {
 					$('#show_uploadTemplate_popup').click();
 					start();
 					equal(11, 11, "PopUp Upload template opened");
-					//self.runuploadTemplate(moduleName);
-				}, 1000);
+					self.runuploadTemplate();
+				}, 700);
 			});
 		},
 		
 		// upload template
-		runuploadTemplate: function (moduleName) {
-			module(moduleName);
+		runuploadTemplate: function () {
 			var self = this;
 			asyncTest("Manual test loading template", function() {
 				$.mockjaxClear(self.listTestSuites);
@@ -527,15 +503,15 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.4"
 				});
 				
 				commonVariables.api.localVal.setSession("appDirName", "sdsdd");
-				self.createUploader();
+//				self.createUploader();
 				$("input[name=saveTestSuite]").click();
 				setTimeout(function() {
 					start();
 					equal(8, 8, "testsuite added successfully and listed");
-					/*require(["performanceTestTest"], function(performanceTestTest){
-						performanceTestTest.runTests();
-					});*/
-				}, 1000);
+					require(["codequalityTest"], function(codequalityTest){
+						codequalityTest.runTests();
+					});
+				}, 3000);
 			});
 		},
 	};

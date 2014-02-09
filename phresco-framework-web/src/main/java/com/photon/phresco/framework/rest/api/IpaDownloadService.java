@@ -1,6 +1,5 @@
 package com.photon.phresco.framework.rest.api;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,7 +8,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -29,9 +27,6 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.api.ActionType;
-import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
@@ -56,7 +51,6 @@ public class IpaDownloadService extends RestBase implements ServiceConstants, Fr
 				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
 			
-			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo info = Utility.getProjectInfo(rootModulePath, subModuleName);
 			ApplicationInfo applicationInfo = info.getAppInfos().get(0);
 			
@@ -65,29 +59,6 @@ public class IpaDownloadService extends RestBase implements ServiceConstants, Fr
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 			String ipaFileName = applicationInfo.getName();
-			File pomFile = Utility.getPomFileLocation(rootModulePath, subModuleName);
-			String buildName = getBuildName(rootModulePath,subModuleName, buildNumber).getDeployLocation();
-//			String workingDirectory = FrameworkServiceUtil.getApplicationHome(appDirName);
-			String buildNameSubstring = buildName.substring(0, buildName.lastIndexOf( File.separator));
-			String appBuildName = buildNameSubstring.substring(buildNameSubstring.lastIndexOf( File.separator) + 1);
-			List<String> buildArgCmds = new ArrayList<String>();
-			buildArgCmds.add("-Dapplication.name=" + ipaFileName);
-			buildArgCmds.add("-Dapp.path=" + buildName);
-			buildArgCmds.add("-Dbuild.name=" + appBuildName);
-			BufferedInputStream readers = applicationManager.performAction(info, ActionType.IPA_DOWNLOAD, buildArgCmds, pomFile.getParent());
-			
-			int available = readers.available();
-			while (available != 0) {
-				byte[] buf = new byte[available];
-                int read = readers.read(buf);
-                if (read == -1 ||  buf[available-1] == -1) {
-                	break;
-                } else {
-                	System.out.println(new String(buf));
-                }
-                available = readers.available();
-			}
-			
 			String ipaPath = getBuildName(rootModulePath,subModuleName, buildNumber).getDeployLocation();
 			ipaPath = ipaPath.substring(0, ipaPath.lastIndexOf( File.separator)) +  File.separator + ipaFileName + ".ipa";
 			InputStream fileInputStream = new FileInputStream(new File(ipaPath));
@@ -101,7 +72,6 @@ public class IpaDownloadService extends RestBase implements ServiceConstants, Fr
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
-	
 	
 	private BuildInfo getBuildName(String rootModulePath, String subModuleName, String buildNo) throws PhrescoException {
 		try {

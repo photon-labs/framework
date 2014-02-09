@@ -503,6 +503,7 @@ public interface FrameworkConstants {
 	String FUNCTIONAL_TEST = "functionalTest";
 	String CODE_VALIDATION = "codeValidation";
 	String PDF_REPORT = "pdfReport";
+	String IPA_DOWNLOAD = "ipaDownload";
 	String LOAD_TEST = "loadTest";
 	String PERFORMANCE_TEST_CI = "performanceTest";
 	String COMPONENT_TEST_CI = "componentTest";

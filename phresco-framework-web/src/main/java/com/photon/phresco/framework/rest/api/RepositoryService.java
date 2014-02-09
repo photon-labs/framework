@@ -190,7 +190,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 				
 				//SCM tags, pom-properties and distribution tags will be added here
-				scmi.updatePoms(repoInfo, srcAppInfo, projInfo, serviceManager);
+				scmi.updatePoms(repoInfo, projInfo, serviceManager);
 			}
 			if (projInfo == null) {
 				status = RESPONSE_STATUS_FAILURE;

@@ -81,6 +81,7 @@ define(["testResult/listener/testResultListener"], function() {
 			} 
 			//To get the testsuites
 			self.testResultListener.getTestsuites(function(response) {
+				$('#graphicalView').hide();
 				var data = {};
 				if ("manualTest" === currentTab) {
 					data.testSuites = response.data.testSuites;

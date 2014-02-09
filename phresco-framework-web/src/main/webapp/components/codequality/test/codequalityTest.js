@@ -9,7 +9,43 @@ define(["codequality/codequality"], function(Codequality) {
 		var codequality = new Codequality(), self = this;
 		asyncTest("Codequality sonar status check test case", function() {
 			$.mockjax({
-			  url: commonVariables.webserviceurl+"parameter/sonarUrl",
+			  url: commonVariables.webserviceurl+"parameter/sonarUrl?appDirName=wordpress-WordPress",
+			  type: "GET",
+			  dataType: "json",
+			  contentType: "application/json",
+			  status: 200,
+			  response : function() {
+				  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR500004","data":"http://localhost:9000/sonar","status":"success"});
+				  
+			  }
+			});
+			
+			$.mockjax({
+			  url: commonVariables.webserviceurl+"parameter/sonarUrl?appDirName=html5",
+			  type: "GET",
+			  dataType: "json",
+			  contentType: "application/json",
+			  status: 200,
+			  response : function() {
+				  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR500004","data":"http://localhost:9000/sonar","status":"success"});
+				  
+			  }
+			});
+			
+			$.mockjax({
+				  url: commonVariables.webserviceurl+"parameter/sonarUrl?appDirName=javaws",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR500004","data":"http://localhost:9000/sonar","status":"success"});
+					  
+				  }
+				});
+			
+			$.mockjax({
+			  url: commonVariables.webserviceurl+"parameter/sonarUrl?appDirName=drupal7",
 			  type: "GET",
 			  dataType: "json",
 			  contentType: "application/json",
@@ -40,7 +76,6 @@ define(["codequality/codequality"], function(Codequality) {
 				  
 			  }
 			});
-			/* var codequalityAPI =  new Clazz.com.components.codequality.js.api.CodeQualityAPI(); */
 			commonVariables.api.localVal.setSession("appDirName" , "wordpress-WordPress");
 
 			require(["navigation/navigation"], function(){
@@ -167,7 +202,7 @@ define(["codequality/codequality"], function(Codequality) {
 					start();
 					output = $("#content_div").children(".alert").text();
 					notEqual('Report not available', output, "Codequality get report not available test case");
-					//self.codevalidation(codequality);
+					self.codevalidation(codequality);
 				}, 3000);
 			});
 		},	
@@ -176,7 +211,7 @@ define(["codequality/codequality"], function(Codequality) {
 			var self = this;
 			asyncTest("Codequality Code Validation test case", function() {
 				$.mockjax({
-				  url: commonVariables.webserviceurl+"parameter/dynamic?appDirName=javaws&goal=validate-code&phase=validate-code&customerId=photon&userId=sudhakar_rag",
+				  url: commonVariables.webserviceurl+"parameter/dynamic?appDirName=html5webyui&goal=validate-code&phase=validate-code&customerId=photon&userId=sudhakar_rag",
 				  type: "GET",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -187,7 +222,7 @@ define(["codequality/codequality"], function(Codequality) {
 				});
 				
 				$.mockjax({
-				  url: commonVariables.webserviceurl+"app/codeValidate?username=sudhakar_rag&appId=ecb70c02-8b9d-4414-b7fe-662abb154cfb&customerId=photon&goal=validate-code&phase=validate-code&projectId=65c580d2-bce6-4a19-88dc-7bb69d97e8aa&sonar=src",
+				  url: commonVariables.webserviceurl+"app/codeValidate?username=sudhakar_rag&appId=626eee78-54ef-4b0d-9811-bea80408d533&customerId=photon&goal=validate-code&phase=validate-code&projectId=35d27b51-c28b-4d96-85eb-ca828d9edb4b&sonar=src&displayName=Admin&appDirName=html5webyui",
 				  type: "POST",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -198,13 +233,13 @@ define(["codequality/codequality"], function(Codequality) {
 				});
 				
 				$.mockjax({
-				  url: commonVariables.webserviceurl+"app/readlog?&uniquekey=bc69d3de-5007-4b69-9d81-31362d634ee3",
+				  url: commonVariables.webserviceurl+"app/readlog?uniquekey=bc69d3de-5007-4b69-9d81-31362d634ee3&appDirName=html5webyui",
 				  type: "GET",
 				  dataType: "json",
 				  contentType: "application/json",
 				  status: 200,
 				  response : function() {
-					  this.responseText = JSON.stringify({"log":null,"configErrorMsg":null,"service_exception":null,"parameterKey":null,"uniquekey":"85228032-b36b-48c0-99d2-11b3f68790fa","configErr":false,"connectionAlive":false,"errorFound":false,"responseCode":null,"status":"COMPLETED"});
+					  this.responseText = JSON.stringify({"log":"","configErrorMsg":null,"service_exception":null,"parameterKey":null,"uniquekey":"85228032-b36b-48c0-99d2-11b3f68790fa","configErr":false,"connectionAlive":false,"errorFound":false,"responseCode":null,"status":"COMPLETED"});
 					}
 				});
 				
@@ -231,7 +266,7 @@ define(["codequality/codequality"], function(Codequality) {
 					start();
 					output = $("#content_div").children(".alert").text();
 					notEqual('Report not available', output, "Codequality Code Validation test case");
-					self.openconsole(codequality);
+					self.dependencynotfetched(codequality);
 				}, 3000);
 			});
 		},	
@@ -262,8 +297,9 @@ define(["codequality/codequality"], function(Codequality) {
 					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR510003","data":null,"status":"failure"});
 					}
 				});
-			
+				
 				codequality.codequalityListener.onProjects();
+				$("#repTypes").attr('key', 'src');
 				$("#reportUl li[name=selectType]").attr('key','src');
 				$("#reportUl li[name=selectType]").click();
 				setTimeout(function() {
@@ -271,9 +307,6 @@ define(["codequality/codequality"], function(Codequality) {
 					output = $("#repTypes").attr('key');
 					equal('src', output, "Codequality change function test case success");
 					self.dependencynotfetched(codequality);
-					/* require(["unitTestTest"], function(unitTestTest){
-						unitTestTest.runTests();
-					}); */
 				}, 3000);
 			});
 		},	
@@ -303,7 +336,6 @@ define(["codequality/codequality"], function(Codequality) {
 					}
 				});
 
-				//var codequalityAPI =  new Clazz.com.components.codequality.js.api.CodeQualityAPI();
 				commonVariables.api.localVal.setSession("appDirName" , "drupal7");
 
 				require(["navigation/navigation"], function(){
@@ -316,9 +348,9 @@ define(["codequality/codequality"], function(Codequality) {
 					start();
 					output = $("#content_div").text();
 					notEqual('Sonar started', output, "Codequality sonar status check failure test case");
-					/* require(["buildTest"], function(buildTest){
-						buildTest.runTests();
-					}); */
+//					 require(["buildTest"], function(buildTest){
+//						buildTest.runTests();
+//					}); 
 				}, 1500);
 			});
 		},	

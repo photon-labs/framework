@@ -115,10 +115,10 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			bar1.Set('chart.background.barcolor1', 'transparent');
 			bar1.Set('chart.background.barcolor2', 'transparent');
 			bar1.Set('chart.labels', testSuiteLabels);
-			bar1.Set('chart.key', ['Success', 'Failure', 'Error', '** - TestSteps']);
+			bar1.Set('chart.key', ['Success', 'Failure', 'Error']);
 			bar1.Set('chart.key.position.y', 35);
 			bar1.Set('chart.key.position', 'gutter');
-			bar1.Set('chart.colors', [successColor, failureColor, errorColor, 'white']);
+			bar1.Set('chart.colors', [successColor, failureColor, errorColor]);
 			bar1.Set('chart.shadow', false);
 			bar1.Set('chart.shadow.blur', 0);
 			bar1.Set('chart.shadow.offsetx', 0);

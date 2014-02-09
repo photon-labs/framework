@@ -1250,7 +1250,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					start();
 					var trCount = $("a[name=addMobileLayer]").parents('tr.mobilelayercontent:last').length;
 					equal(trCount, 0, "Add Project- Remove Mob Layer Event Test");
-					self.runEditProjectTest();
+					self.runEditProjectVersionClickEventTest();
 				}, 2500);
 			});
 		},
@@ -1332,7 +1332,10 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					start();
 					var msg = $(".msgdisplay").hasClass('success');
 					equal(msg, true, "Update Project Test Tested");
-					self.runEditInputFromStorageBtnTest();
+//					self.runEditInputBtnTest();
+					 require(["applicationTest"], function(applicationTest){
+						 applicationTest.runTests();
+					});
 				}, 3000);
 			});
 		},
@@ -1397,9 +1400,6 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					start();
 					var applnLayer = $("tr[id=MobLayer]").attr('key');
 					equal(applnLayer, "hidden", "Edit Project - Edit Project Close Image Test");
-//					require(["applicationTest"], function(applicationTest){
-//						applicationTest.runTests();
-//					});
 				}, 1500);
 			});
 		}

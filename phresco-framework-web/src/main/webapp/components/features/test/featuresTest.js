@@ -466,8 +466,8 @@ define(["features/features"], function(Features) {
 				setTimeout(function() { 
 					start();
 					equal('', '', "Click functions Tested");
-					require(["codequalityTest"], function(codequalityTest){
-						codequalityTest.runTests();
+					require(["unitTestTest"], function(unitTestTest){
+						unitTestTest.runTests();
 					});
 				}, 2000);
 			});

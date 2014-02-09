@@ -4,6 +4,7 @@ define(["login/login"], function(Login) {
 	 */
 	return { 
 		runTests : function (configData) {
+			commonVariables.api.localVal.clearSession();
 			module("login.js");
 			var login = new Login(), self = this;
 			
