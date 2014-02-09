@@ -1652,7 +1652,7 @@ define([], function() {
 						if (modules !== null && modules !== undefined && modules.length > 0) {
 							disabledAttr = "disabled";
 						}
-						var appendData = '<tr class="applnlayercontent" position="'+position+'" name="dynamicAppLayer"><td class="applnappcode"><input id="appcode" type="text" value="'+value.code+'" disabled class="appln-appcode appCodeText"></td>'+
+						var appendData = '<tr class="applnlayercontent" position="'+position+'" name="dynamicAppLayer"><td class="applnappcode"><input id="appcode" type="text" parentArchrtypeCreated="'+value.parentArchrtypeCreated+'" value="'+value.code+'" disabled class="appln-appcode appCodeText"></td>'+
 											'<td name="frontEnd" class="frontEnd"><select name="frontEnd" class="frontEnd selectpicker" title="Select Group" disabled><option>'+value.techInfo.techGroupId+'</option></select></td>'+
 											'<td name="technology" class="technology"><select class="selectpicker appln_technology" name="appln_technology" disabled>'+ self.getTechnology(value.techInfo.id) +'</select></td>'+
 											'<td name="version" class="version"><select name="appln_version" class="selectpicker appln_version" disabled><option>'+versionMsg+'</option></select></td>'+
@@ -1729,7 +1729,7 @@ define([], function() {
 						if (modules !== null && modules !== undefined && modules.length > 0) {
 							disabledAttr = "disabled";
 						}
-						var appendData = '<tr class="weblayercontent" position="'+position+'" name="dynamicWebLayer"><td class="webappcode"><input id="webappcode" class="web-appcode appCodeText" type="text" value="'+value.code+'" disabled></td>'+
+						var appendData = '<tr class="weblayercontent" position="'+position+'" name="dynamicWebLayer"><td class="webappcode"><input id="webappcode" class="web-appcode appCodeText" type="text" parentArchrtypeCreated="'+value.parentArchrtypeCreated+'" value="'+value.code+'" disabled></td>'+
 											'<td name="web" class="web"><select name="weblayer" class="weblayer selectpicker" disabled><option>'+value.techInfo.techGroupId+'</option></select></td>'+
 											'<td name="widget" class="widget"><select name="web_widget" class="selectpicker web_widget" disabled> '+ self.editgetwidgettype(value.techInfo.id) +'</select></td>'+
 											'<td name="widgetversion" class="widgetversion"><select name="web_version" class="selectpicker web_version" disabled><option>'+value.techInfo.version+'</option></select></td>'+
@@ -1808,7 +1808,7 @@ define([], function() {
 						if (modules !== null && modules !== undefined && modules.length > 0) {
 							disabledAttr = "disabled";
 						}
-						var appendData = '<tr class="mobilelayercontent" position="'+position+'" name="dynamicMobileLayer"><td class="mobileappcode"><input id="mobileappcode" class="mobile-appcode appCodeText" type="text" value="'+value.code+'" disabled></td>'+
+						var appendData = '<tr class="mobilelayercontent" position="'+position+'" name="dynamicMobileLayer"><td class="mobileappcode"><input id="mobileappcode" class="mobile-appcode appCodeText" type="text" parentArchrtypeCreated="'+value.parentArchrtypeCreated+'" value="'+value.code+'" disabled></td>'+
 											'<td name="mobile" class="mobile"><select name="mobile_layer" class="selectpicker mobile_layer" disabled><option>'+value.techInfo.techGroupId+'</option></select></td>'+
 											'<td name="types" class="types"><select name="mobile_types" class="selectpicker mobile_types" disabled>'+self.editgetmobiletype(value.techInfo.id)+'</select></td>'+
 											'<td name="mobileversion" class="mobileversion"><select name="mobile_version" disabled class="mobile_version selectpicker"><option>'+versionMsg +'</option></select></td>'+
@@ -1936,6 +1936,7 @@ define([], function() {
 					var appInfoId = "";
 					var techName = "";
 					var code = "";
+					var parentArchrtypeCreated = false;
 					var appInfo = {};
 					var mobdata = {};
 					var versionText = "";
@@ -1951,6 +1952,7 @@ define([], function() {
 								appInfoId = $(value).children("td.technology").children("select.appln_technology").attr('appInfoId');
 								techName = $(tech).find(":selected").text();
 								code = $(value).children("td.applnappcode").children("input.appln-appcode").val();
+								parentArchrtypeCreated = $(value).children("td.applnappcode").children("input.appln-appcode").attr("parentArchrtypeCreated");
 								var appInfoFromSession = commonVariables.api.localVal.getJson(code);
 								var appInfo = (appInfoFromSession !== null) ? appInfoFromSession : {};
 								if(appInfoId !== undefined && appInfoId !== null) {
@@ -1964,6 +1966,8 @@ define([], function() {
 								appInfo.showDatabase = true;
 								appInfo.showWebservice = true;
 								appInfo.showTestingFramework = true;
+								
+								appInfo.parentArchrtypeCreated = Boolean(parentArchrtypeCreated);
 								techInfo.id = $(value).children("td.technology").children("select.appln_technology").val();
 								techInfo.appTypeId = "1dbcf61c-e7b7-4267-8431-822c4580f9cf";
 								techInfo.techGroupId = $(value).children("td.frontEnd").children("select.frontEnd").find(":selected").text();
@@ -2065,6 +2069,7 @@ define([], function() {
 								tech = $(value).children("td.widget").children("select.web_widget");
 								techName = $(tech).find(":selected").text();
 								code = $(value).children("td.webappcode").children("input.web-appcode").val();
+								parentArchrtypeCreated = $(value).children("td.webappcode").children("input.web-appcode").attr("parentArchrtypeCreated");
 								var appInfoFromSession = commonVariables.api.localVal.getJson(code);
 								var appInfo = (appInfoFromSession !== null) ? appInfoFromSession : {};
 								appInfoId = $(value).children("td.web").children("select.weblayer").attr('appInfoId');
@@ -2079,6 +2084,7 @@ define([], function() {
 								appInfo.showDatabase = true;
 								appInfo.showWebservice = true;
 								appInfo.showTestingFramework = true;
+								appInfo.parentArchrtypeCreated = Boolean(parentArchrtypeCreated);
 								techInfo.id = $(value).children("td.widget").children("select.web_widget").val();
 								techInfo.appTypeId = "e1af3f5b-7333-487d-98fa-46305b9dd6ee";
 								techInfo.techGroupId = $(value).children("td.web").children("select.weblayer").find(":selected").text();
@@ -2181,6 +2187,7 @@ define([], function() {
 								tech = $(value).children("td.types").children("select.mobile_types");
 								techName = $(tech).find(":selected").text();
 								code = $(value).children("td.mobileappcode").children("input.mobile-appcode").val();
+								parentArchrtypeCreated = $(value).children("td.mobileappcode").children("input.mobile-appcode").attr("parentArchrtypeCreated");
 								var appInfoFromSession = commonVariables.api.localVal.getJson(code);
 								var appInfo = (appInfoFromSession !== null) ? appInfoFromSession : {};
 								appInfoId = $(value).children("td.mobile").children("select.mobile_layer").attr('appInfoId');
@@ -2195,6 +2202,7 @@ define([], function() {
 								appInfo.showDatabase = true;
 								appInfo.showWebservice = true;
 								appInfo.showTestingFramework = true;
+								appInfo.parentArchrtypeCreated = Boolean(parentArchrtypeCreated);
 								techInfo.id = $(value).children("td.types").children("select.mobile_types").find(':selected').val();
 								techInfo.appTypeId = "99d55693-dacd-4f77-994a-f02a66176ff9";
 								techInfo.techGroupId = $(value).children("td.mobile").children("select.mobile_layer").find(':selected').text();
