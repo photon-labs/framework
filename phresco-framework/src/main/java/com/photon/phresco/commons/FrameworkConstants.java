@@ -2197,29 +2197,65 @@ public interface FrameworkConstants {
 	     * Publication configurations
 	     * 
 	     */
-	    String PARENT_PUBLICATIONS = "parentPublications";
-	    String PARENT_SUB_PUBLICATION = "parentPublication";
-	    String PUBLICATIONS = "publications";
+	    String PARENT_PUBLICATIONS = "ParentPublications";
+	    String PARENT_SUB_PUBLICATION = "ParentPublication";
+	    String PUBLICATIONS = "Publications";
 	    String PUBLICATION = "publication";
 	    String CONFIGURATIONS = "Configuration";
 		String PUBLICATION_NAME = "publicationName";
 		String PUBLICATION_KEY = "publicationKey";
 		String PUBLICATION_PATH = "publicationPath";
 		String PUBLICATION_URL = "publicationUrl";
+		String PUBLICATION_LIST = "publicationList";
+		String PUBLICATION_TARGET = "publicationTarget";
+		String PERCENT_TWENTY = "%20";
 		String IMAGE_URL = "imageUrl";
 		String IMAGE_PATH = "imagePath";
 		String ENVIRONMENT = "environment";
 		String PUBLICATION_TYPE = "publicationType";
-		String PUBLICATION_CONFIG_FILE =  "publicationConfig.xml";
+		String PUBLICATION_CONFIG_FILE =  "PublicationConfig.xml";
+		String PUBLICATION_VIRTUAL_CONFIG_FILE =  "PublicationVirtualConfig.xml";
 		String PUBLICATION_SUCCESS = "File saved Successfully";
 		String PUBLICATION_FAILURE = "File saved FAILED";
 	    String FILE_NOT_FOUND   = "File Not Found";
 	    String READ_CONFIG = "/readConfig";
 	    String SAVE_CONFIG = "/saveConfig";
-	    String GET_PUBLICATIONS = "/getPublications";
+	    String GET_PUBLICATIONS = "/getPublicationsList";
+	    String CREATE_PUBLICATIONS = "/createPublication";
 	    String PUBLICATIONS_NOT_FOUND =  "Publications name  not found";
 	    String PARENT_NAME = "name";
 	    String PRIORITY = "priority";
+	    String SCHEMA = "Schema";
+	    String TEMPLATE = "Template";
+	    String CONTENTS = "Content";
+	    String WEBSITE = "Website";
 	    String GIT_URL = "https://api.github.com";
+	    
+	    
+	    /**
+	     *  Publication Powershell command
+	     *   
+	     */
+	    String CMS_SERVER = "server";
+	    String CMS_USERNAME = "username";
+	    String CMS_PASSWORD = "password";
+	    String POWER_SHELL = "powershell";
+	    String INPUTFORMAT_NONE = "-inputformat none";
+	    String EXECUTION_POLICY_BYPASS = "-executionpolicy bypass";
+	    String PUBLICATION_COMMAND = "-command";
+	    String PUBLICATION_CONSTANT = "\"&{.";
+	    String PUBLICATION_SCRIPT = "psTridionService.ps1; ";
+	    String GET_PUBLICATIONLIST = "Get-PublicationList";
+	    String GET_PUBLICATION_TARGET = "Get-PublicationTargets";
+	    String CREATE_PUBLICATION = "Create-Publication";
+	    String PUBLICATION_CLOSE = "}\"";
+	    String DOLLAR = "$";
+	    String TCM_ID = "tcmId";
+	    String TCM = "tcm";
+	    String PUBLICATION_ERROR = "Error";
+	    String DEV_SMALL = "dev";
+	    String DEV_CAPS = "Dev";
+	    String ENVIRONMENT_LIST = "/environmentList";
+	    
 	    
 }

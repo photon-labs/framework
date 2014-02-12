@@ -649,5 +649,7 @@ public interface ResponseCodes {
 	 */
 	
 	String PHRSR1001 = "PHRSR1001"; // Publication Config saved
+	String PHRSR1002 = "PHRSR1002"; // Publication Config not saved
+	String PHRTRP0001 = "PHRTRP0001"; // Publication created successfully
 	
 }
