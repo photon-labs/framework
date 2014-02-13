@@ -28,6 +28,9 @@ define([], function() {
 			try {
 				commonVariables.api.ajaxRequest(header, function(response) {
 						if (response !== null) {
+							if(response.responseCode === "PHR800022") {
+								commonVariables.api.showError(response.responseCode ,"success", true, false, false);
+							}
 							callback(response);
 						} else {
 							callback({ "status" : "service failure"});
