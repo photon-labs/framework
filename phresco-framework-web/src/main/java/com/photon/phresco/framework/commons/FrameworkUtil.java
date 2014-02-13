@@ -2367,11 +2367,11 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 			
 			//Iterating through each row of the selected sheet
 			org.jopendocument.dom.spreadsheet.Cell cell = null;
-			for(int nRowIndex = 24; nRowIndex < nRowCount; nRowIndex++)
+			for(int nRowIndex = 23; nRowIndex < nRowCount; nRowIndex++)
 			{
 				//Iterating through each column
 				cell = sheet.getCellAt(1, nRowIndex);
-				if(nRowIndex == 24 && StringUtils.isEmpty(cell.getTextValue())){
+				if(nRowIndex == 23 && StringUtils.isEmpty(cell.getTextValue())){
 					sheet.duplicateRows(nRowIndex, 1, 1);
 				}
 				if (StringUtils.isNotEmpty(cell.getTextValue())) {
@@ -2393,13 +2393,13 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 				}
 				
 				if(StringUtils.isEmpty(cell.getTextValue())) {
-					if(nRowIndex > 24) {
+					if(nRowIndex > 23) {
 						sheet.duplicateRows(nRowIndex-1, 1, 1);
 					}
-					for(int i=0; i<13;i++) {
+					for(int i=0; i<12;i++) {
 						sheet.getCellAt(i, nRowIndex).clearValue();
 					}
-					for(int j=1; j<14;j++) {
+					for(int j=1; j<13;j++) {
 						sheet.setValueAt(cellValue[j], j, nRowIndex);
 					}
 					break;
