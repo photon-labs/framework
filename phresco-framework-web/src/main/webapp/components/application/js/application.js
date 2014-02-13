@@ -218,11 +218,11 @@ define(["application/listener/applicationListener"], function() {
 				var appId = appdetails.data.projectInfo.appInfos[0].id;
 				$('.headerAppId').val(appId);
 			}
-			if (commonVariables.api.localVal.getJson('functionalFrameworkInfo') !== null) {
+			/* if (commonVariables.api.localVal.getJson('functionalFrameworkInfo') !== null) {
 				$('select[name=func_framework]').attr("disabled", true);
 				$('select[name=func_framework_tools]').attr("disabled", true);
 				$('select[name=tools_version]').attr("disabled", true);
-			}
+			} */
 			
 			if (self.layerDisplay.showServer === false) {
 				self.onRemoveLayerEvent.dispatch($("#servers"));
