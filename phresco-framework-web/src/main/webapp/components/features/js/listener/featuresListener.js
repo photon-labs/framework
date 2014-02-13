@@ -29,12 +29,37 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 			var self = this;
 			if (txtSearch !== "" && txtSearch !== undefined) {
 				var txtSearch = txtSearch.toLowerCase();
-				if(classval === "switch switchOff" || classval === "switch switchOn") {
+				if(classval === "switch switchOn") {
 					if (txtSearch !== "" && txtSearch !== undefined) {
 						$("#"+divId+" li").hide();//To hide all the ul
 						var hasRecord = false;				
 						var i=0;
-						$("#"+divId+" li").each(function() {//To search for the txtSearch and search option thru all td
+						$("#"+divId+" li > fieldset.switchOn").each(function(index, value) {//To search for the txtSearch and search option thru all td
+							var tdText = $(value).parent().attr("name").toLowerCase();
+							if (tdText.match(txtSearch)) {
+								$(this).parent().show();
+								hasRecord = true;
+								i++;
+							}
+							
+						});
+						if (hasRecord === false) {
+							self.norecordShow(divId);				
+						} else {
+							self.norecordHide(divId);
+						}
+					}
+					else {	
+						$("#"+divId+" li").show();
+						self.norecordHide(divId);
+					}
+					self.scrollbarUpdate();
+				} else if(classval === "switch switchOff") {
+					if (txtSearch !== "" && txtSearch !== undefined) {
+						$("#"+divId+" li").hide();//To hide all the ul
+						var hasRecord = false;				
+						var i=0;
+						$("#"+divId+" li").each(function(index, value) {//To search for the txtSearch and search option thru all td
 							var tdText = $(this).text().toLowerCase();
 							if (tdText.match(txtSearch)) {
 								$(this).show();
@@ -44,24 +69,18 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 							
 						});
 						if (hasRecord === false) {
-							if(divId === "moduleContent"){
-								$("#norecord1").show();
-							} if(divId === "jsibrariesContent"){
-								$("#norecord2").show();
-							} if(divId === "componentsContent"){
-								$("#norecord3").show();
-							}					
+							self.norecordShow(divId);				
 						} else {
 							self.norecordHide(divId);
 						}
 					}
-					else {				
+					else {	
 						$("#"+divId+" li").show();
 						self.norecordHide(divId);
 					}
 					self.scrollbarUpdate();
-				} else {
-					
+				}				
+				else {					
 					if (txtSearch !== "") {
 						$("#"+divId+" li").hide();//To hide all the ul
 						var hasRecord = false;				
@@ -78,13 +97,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 							
 						});
 						if (hasRecord === false) {
-							if(divId === "moduleContent"){
-								$("#norecord1").show();
-							} if(divId === "jsibrariesContent"){
-								$("#norecord2").show();
-							} if(divId === "componentsContent"){
-								$("#norecord3").show();
-							}					
+							self.norecordShow(divId);				
 						} else {
 							self.norecordHide(divId);
 						}
@@ -114,6 +127,16 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				$("#norecord2").hide();
 			} if(divId === "componentsContent"){
 				$("#norecord3").hide();
+			}
+		},
+		
+		norecordShow : function(divId) {
+			if(divId === "moduleContent"){
+				$("#norecord1").show();
+			} if(divId === "jsibrariesContent"){
+				$("#norecord2").show();
+			} if(divId === "componentsContent"){
+				$("#norecord3").show();
 			}
 		},
 
