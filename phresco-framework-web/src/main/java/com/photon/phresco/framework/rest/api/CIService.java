@@ -1567,32 +1567,37 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				splitPath = splitPath + File.separator +job.getModule();
 			} 
 			
-			File pomFileLocation = Utility.getPomFileLocation(Utility.getProjectHome() + File.separator + job.getAppDirName(), "");
+			File pomFileLocation = Utility.getPomFileLocation(Utility.getProjectHome() + job.getAppDirName(), "");
 			PomProcessor pom = new PomProcessor(pomFileLocation);
 			String splitDir = pom.getProperty(POM_PROP_KEY_SPLIT_PHRESCO_DIR);
 			String srcDir = pom.getProperty(POM_PROP_KEY_SPLIT_SRC_DIR);
-			
+			String testDir = pom.getProperty(POM_PROP_KEY_SPLIT_TEST_DIR);
+			String localPom = POM_XML;
+			if (appInfo != null) {
+				localPom = appInfo.getPomFile();
+				if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
+					localPom = appInfo.getPhrescoPomFile();
+				}
+			}
 			if (BUILD.equalsIgnoreCase(operation)) {
 				// enable archiving
 				job.setEnableArtifactArchiver(true);
 				// if the enable build release option is choosed in UI, the file pattenr value will be used
 				List<String> modules = FrameworkServiceUtil.getProjectModules(job.getAppDirName());
 				String releasePattern = "";
-				if (!POM_NAME.equals(pomFileName) && StringUtils.isNotEmpty(splitDir)) {
-					releasePattern = splitDir;
-				} else if (POM_NAME.equals(pomFileName) && StringUtils.isNotEmpty(splitDir)){
-					releasePattern = srcDir;
-				} else if (!POM_NAME.equals(pomFileName) && StringUtils.isNotEmpty(srcDir)){
-					releasePattern = srcDir;
-				} else if (POM_NAME.equals(pomFileName) && StringUtils.isNotEmpty(srcDir)){
-					releasePattern = srcDir;
-				}
+				if (!StringUtils.isNotEmpty(splitDir) && StringUtils.isNotEmpty(testDir) && !POM_XML.equals(localPom)) {
+					releasePattern = srcDir + FILE_SEPARATOR;
+				} else if ((StringUtils.isNotEmpty(splitDir) || StringUtils.isNotEmpty(srcDir) || StringUtils.isNotEmpty(testDir)) && POM_XML.equals(localPom)) {
+					releasePattern = srcDir + FILE_SEPARATOR;
+				} else if ((StringUtils.isNotEmpty(splitDir) || StringUtils.isNotEmpty(srcDir) || StringUtils.isNotEmpty(testDir)) && !POM_XML.equals(localPom)) {
+					releasePattern = splitDir + FILE_SEPARATOR;
+				} 
 				
 				if (StringUtils.isNotEmpty(job.getModule())) {
-					releasePattern = job.getModule() + File.separator + releasePattern;
-					job.setCollabNetFileReleasePattern(releasePattern+"/do_not_checkin/build/*.zip");
+					releasePattern =  releasePattern + job.getModule() + FILE_SEPARATOR;
+					job.setCollabNetFileReleasePattern(releasePattern + CI_BUILD_EXT);
 				} else if (CollectionUtils.isEmpty(modules)) {
-					job.setCollabNetFileReleasePattern(releasePattern + File.separator + CI_BUILD_EXT);
+					job.setCollabNetFileReleasePattern(releasePattern + CI_BUILD_EXT);
 				} else {
 					job.setEnableArtifactArchiver(false);
 				}
@@ -1633,20 +1638,24 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				String attachPattern = "do_not_checkin/archives/" + attacheMentPattern + "/*.pdf";
 				job.setAttachmentsPattern(attachPattern); //do_not_checkin/archives/cumulativeReports/*.pdf
 				// if the enable build release option is choosed in UI, the file pattenr value will be used
-				String releasePattern = "";
-				if (!POM_NAME.equals(pomFileName) && StringUtils.isNotEmpty(splitDir)) {
-					releasePattern = splitDir;
-				} else 	if (POM_NAME.equals(pom) && StringUtils.isNotEmpty(srcDir)){
-					releasePattern = srcDir;
-				}
 				List<String> modules = FrameworkServiceUtil.getProjectModules(job.getAppDirName());
+				String releasePattern = "";
+				if (!StringUtils.isNotEmpty(splitDir) && StringUtils.isNotEmpty(testDir) && !POM_XML.equals(localPom)) {
+					releasePattern = srcDir + FILE_SEPARATOR;
+				} else if ((StringUtils.isNotEmpty(splitDir) || StringUtils.isNotEmpty(srcDir) || StringUtils.isNotEmpty(testDir)) && POM_XML.equals(localPom)) {
+					releasePattern = srcDir + FILE_SEPARATOR;
+				} else if ((StringUtils.isNotEmpty(splitDir) || StringUtils.isNotEmpty(srcDir) || StringUtils.isNotEmpty(testDir)) && !POM_XML.equals(localPom)) {
+					releasePattern = splitDir + FILE_SEPARATOR;
+				} 
+				
 				if (StringUtils.isNotEmpty(job.getModule())) {
-					releasePattern = job.getModule()+ File.separator + releasePattern;
-					job.setCollabNetFileReleasePattern(releasePattern + File.separator + attachPattern);
+					releasePattern = releasePattern + job.getModule() + FILE_SEPARATOR;
+					job.setCollabNetFileReleasePattern(releasePattern  + attachPattern);
+				} else if (CollectionUtils.isEmpty(modules)) {
+					job.setCollabNetFileReleasePattern(releasePattern + attachPattern);
 				} else {
-					job.setCollabNetFileReleasePattern(releasePattern + File.separator + attachPattern);
+					job.setEnableArtifactArchiver(false);
 				}
-
 				// here we can set necessary values in request and we can change object value as well...
 				// getting sonar url
 				
@@ -1774,16 +1783,22 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 						+ Constants.SPACE + HYPHEN_APPDIR_NAME + job.getAppDirName() + Constants.SPACE + HYPHEN_REPO_USERNAME + 
 						repoInfo.getRepoUserName() + Constants.SPACE + HYPHEN_REPO_PWD + repoInfo.getRepoPassword();
 				operationName = PHASE_RELEASE;
+				if (Boolean.parseBoolean(job.getSkipTests())) {
+					mvncmd = mvncmd + Constants.SPACE + SKIP_TESTS;
+				}
 			} else if (PHASE_NEXUS_DEPLOY.equals(operation)) {
 				ActionType actionType = ActionType.NEXUS_DEPLOY;
 				mvncmd =  actionType.getActionType().toString();
 				mvncmd = mvncmd + Constants.SPACE + "-Dusername=" + job.getNexusUsername() + Constants.SPACE + "-Dpassword=" + job.getNexusPassword()+ Constants.SPACE + HYPHEN_JOBNAME + job.getJobName()
 				+ Constants.SPACE + HYPHEN_APPDIR_NAME + job.getAppDirName(); 
 				operationName = PHASE_NEXUS_DEPLOY;
+				if (Boolean.parseBoolean(job.getSkipTests())) {
+					mvncmd = mvncmd + Constants.SPACE + SKIP_TESTS;
+				}
 			}
 			
 			prebuildCmd = CI_PRE_BUILD_STEP + HYPHEN_GOAL + Constants.PHASE_CI + HYPHEN_PHASE + operationName +
-			CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
+			CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + STR_DOUBLE_QUOTES + name + STR_DOUBLE_QUOTES; 
 			if(!POM_NAME.equals(pomFileName)) {
 				prebuildCmd = prebuildCmd + HYPHEN_F_SPACE + pomFileName; 
 			}
