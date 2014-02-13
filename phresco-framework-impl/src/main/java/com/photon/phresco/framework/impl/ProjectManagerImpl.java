@@ -1001,8 +1001,9 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	}
 	
 	private void updateProjectPom(ProjectInfo projectInfo, String rootPath, String module) throws PhrescoException {
+		ProjectInfo rootInfo = Utility.getProjectInfo(rootPath, "");
 		ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
-		File docFolderLocation = Utility.getSourceFolderLocation(projectInfo, rootPath, module);
+		File docFolderLocation = Utility.getSourceFolderLocation(rootInfo, rootPath, module);
 		File pomFile = new File(docFolderLocation + File.separator +  "pom.xml");
 		if(!pomFile.exists()) {
 			return;

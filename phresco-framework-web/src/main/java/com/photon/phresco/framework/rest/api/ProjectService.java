@@ -805,7 +805,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 
 	private void updateSubModulePomParentTagInfo(String newFolderDir, ApplicationInfo appInfo, String rootModulePath, String submodule) throws PhrescoException  {
 		try {
-			ProjectInfo rootProjInfo = Utility.getProjectInfo(rootModulePath, submodule);
+			ProjectInfo rootProjInfo = Utility.getProjectInfo(rootModulePath, "");
 			String pomFile = rootProjInfo.getAppInfos().get(0).getPomFile();
 			File rootPom = new File(rootModulePath +  File.separator + pomFile);
 			if(!rootPom.exists()) {
@@ -882,8 +882,8 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	
 	private void updateRootPomModules(String rootModule, String oldSubModuleName, String newSubModuleName, String rootModulePath,
 			ProjectInfo projectinfo) throws PhrescoPomException, PhrescoException {
-		File docFolderLocation = Utility.getSourceFolderLocation(projectinfo, rootModulePath, newSubModuleName);
-		File rootPom = new File(docFolderLocation.getParent() + File.separator + Constants.POM_NAME);
+		File docFolderLocation = Utility.getSourceFolderLocation(projectinfo, rootModulePath, "");
+		File rootPom = new File(docFolderLocation + File.separator + Constants.POM_NAME);
 		if(rootPom.exists()) {
 		PomProcessor processor = new PomProcessor(rootPom);
 		Modules pomModules = processor.getModel().getModules();

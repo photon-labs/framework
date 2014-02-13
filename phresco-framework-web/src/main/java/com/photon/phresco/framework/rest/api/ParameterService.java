@@ -772,7 +772,10 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	private void setPossibleValuesInReq(ProjectInfo projectInfo, List<Parameter> parameters, 
     		Map<String, DependantParameters> watcherMap, ParameterValues parameterValues) throws PhrescoException {
         try {
-        	ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+        	ApplicationInfo appInfo = null;
+        	if (projectInfo != null) {
+        		appInfo = projectInfo.getAppInfos().get(0);
+        	}
         	MojoProcessor mojo = parameterValues.getMojoProcessor();
         	String goal = parameterValues.getGoal();
         	String userId = parameterValues.getUserId();
@@ -1424,9 +1427,11 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
         if (dependantParameters != null) {
             paramMap.putAll(getDependantParameters(dependantParameters.getParentMap(), watcherMap));
         }
-        paramMap.put(DynamicParameter.KEY_APP_INFO, projectInfo.getAppInfos().get(0));
+        if(projectInfo != null) {
+	        paramMap.put(DynamicParameter.KEY_APP_INFO, projectInfo.getAppInfos().get(0));
+	        paramMap.put(DynamicParameter.KEY_PROJECT_CODE, projectInfo.getProjectCode());
+        }
         paramMap.put(REQ_CUSTOMER_ID, customerId);
-        paramMap.put(DynamicParameter.KEY_PROJECT_CODE, projectInfo.getProjectCode());
         if (StringUtils.isNotEmpty(buildNumber)) {
         	paramMap.put(DynamicParameter.KEY_BUILD_NO, buildNumber);
         }
