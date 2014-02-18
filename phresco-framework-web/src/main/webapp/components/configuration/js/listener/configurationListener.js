@@ -864,7 +864,7 @@ define(["croneExpression/croneExpression"], function() {
 					} else {
 						self.configRequestBody = {};
 						self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "fileBrowse", ''), function(response) {
-							self.fileTree(response, function(res){
+							self.fileTree(response, false, "", function(res){
 								var temptree = $('<div class=""></div>');
 								temptree.append('<ul id="filetree" class="filetree"><li><span><strong>Click here to select file path </strong></span>' + res + '</li></ul>');
 								setTimeout(function(){
