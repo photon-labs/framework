@@ -155,7 +155,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				projectCode = projectInfo.getProjectCode();
 			}
 			List<Parameter> parameters = null;
-			String filePath = getInfoFileDir(appDirName, goal, phase, rootModulePath, subModuleName);
+			String filePath = getInfoFileDir(goal, phase, rootModulePath, subModuleName);
 			File file = new File(filePath);
 			if (file.exists()) {
 				MojoProcessor mojo = new MojoProcessor(file);
@@ -196,6 +196,64 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		}
+	}
+	
+	@GET
+	@Path(REST_API_DYNAMIC_PARAMETER_TREE)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getDynamicParameterTree(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName, @QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_PHASE) String phase, 
+			@QueryParam(REST_QUERY_PARAMETER_KEY) String parameterKey, @QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_USERID) String userId) throws PhrescoException {
+		ResponseInfo<PossibleValues> responseData = new ResponseInfo<PossibleValues>();
+		try {
+			String appDirPath = Utility.getProjectHome() + appDirName;
+			ProjectInfo projectInfo = Utility.getProjectInfo(appDirPath, moduleName);
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+			String infoFilePath = getInfoFileDir(goal, phase, appDirPath, moduleName);
+			File infoFile = new File(infoFilePath);
+			if (infoFile.exists()) {
+				MojoProcessor mojo = new MojoProcessor(infoFile);
+				Parameter parameter = mojo.getParameter(goal, parameterKey);
+				String className = parameter.getDynamicParameter().getClazz();
+				DynamicParameter dynamicParameter = null;
+				PhrescoDynamicLoader phrescoDynamicLoader = pdlMap.get(customerId);
+				if (MapUtils.isNotEmpty(pdlMap) && phrescoDynamicLoader != null) {
+					dynamicParameter = phrescoDynamicLoader.getDynamicParameter(className);
+				} else {
+					ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+					Customer customer = serviceManager.getCustomer(customerId);
+					RepoInfo repoInfo = customer.getRepoInfo();
+					//To set groupid,artfid,type infos to List<ArtifactGroup>
+					List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
+					ArtifactGroup artifactGroup = new ArtifactGroup();
+					artifactGroup.setGroupId(parameter.getDynamicParameter().getDependencies().getDependency().getGroupId());
+					artifactGroup.setArtifactId(parameter.getDynamicParameter().getDependencies().getDependency().getArtifactId());
+					artifactGroup.setPackaging(parameter.getDynamicParameter().getDependencies().getDependency().getType());
+					//to set version
+					List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
+			        ArtifactInfo artifactInfo = new ArtifactInfo();
+			        artifactInfo.setVersion(parameter.getDynamicParameter().getDependencies().getDependency().getVersion());
+					artifactInfos.add(artifactInfo);
+			        artifactGroup.setVersions(artifactInfos);
+					artifactGroups.add(artifactGroup);
+					
+					//dynamically loads specified Class
+					phrescoDynamicLoader = new PhrescoDynamicLoader(repoInfo, artifactGroups);
+				}
+				dynamicParameter = phrescoDynamicLoader.getDynamicParameter(className);
+				pdlMap.put(customerId, phrescoDynamicLoader);
+				Map<String, DependantParameters> watcherMap = valueMap.get(applicationInfo.getId() + goal);
+				Map<String, Object> constructMapForDynVals = constructMapForDynVals(projectInfo, watcherMap, parameterKey, customerId, "");
+				PossibleValues values = dynamicParameter.getValues(constructMapForDynVals);
+				responseData = responseDataEvaluation(responseData, null, values, RESPONSE_STATUS_SUCCESS, PHRSR1001);
+				return Response.ok(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+			}
+		} catch (Exception e) {
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e,
+					null,RESPONSE_STATUS_ERROR, PHR7C10001);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+					.build();
+		}
+		return null;
 	}
 
 	public static void getValues(String iphoneDeploy, MojoProcessor mojo, String goal) throws PhrescoException {
@@ -330,7 +388,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			Map<String, DependantParameters> watcherMap = valueMap.get(applicationInfo.getId() + goal);
 			Map<String, Object> constructMapForDynVals = constructMapForDynVals(projectInfo, watcherMap, key, customerId, null);
-			String filePath = getInfoFileDir(appDirName, goal, phase, rootModulePath, subModuleName);
+			String filePath = getInfoFileDir(goal, phase, rootModulePath, subModuleName);
 			MojoProcessor mojo = new MojoProcessor(new File(filePath));
 			Parameter dependentParameter = mojo.getParameter(goal, key);
 			constructMapForDynVals.put(REQ_MOJO, mojo);
@@ -424,7 +482,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
         	
-            String infoFileDir = getInfoFileDir(appDirName, goal, phase, rootModulePath, subModuleName);
+            String infoFileDir = getInfoFileDir(goal, phase, rootModulePath, subModuleName);
             ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
             ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
             List<CodeValidationReportType> codeValidationReportTypes = new ArrayList<CodeValidationReportType>();
@@ -560,7 +618,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
             PomProcessor processor = Utility.getPomProcessor(rootModulePath, subModuleName);
             File pomFile = Utility.getPomFileLocation(rootModulePath, subModuleName);
 			String validateReportUrl = "";
-			String infoFileDir = getInfoFileDir(appDirName, Constants.PHASE_VALIDATE_CODE, Constants.PHASE_VALIDATE_CODE, rootModulePath, subModuleName);
+			String infoFileDir = getInfoFileDir(Constants.PHASE_VALIDATE_CODE, Constants.PHASE_VALIDATE_CODE, rootModulePath, subModuleName);
 			MojoProcessor mojoProcessor = new MojoProcessor(new File(infoFileDir));
 			Parameter srcParameter = mojoProcessor.getParameter(Constants.PHASE_VALIDATE_CODE, "src");
 			if (srcParameter != null && srcParameter.getPossibleValues() != null && CollectionUtils.isNotEmpty(srcParameter.getPossibleValues().getValue())) {
@@ -913,7 +971,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	        ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
 		    ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 			StringTemplate constructDynamicTemplate = new StringTemplate();
-			String filePath = getInfoFileDir(appDirName, goal, phase,rootModulePath,subModuleName);
+			String filePath = getInfoFileDir(goal, phase,rootModulePath,subModuleName);
 			File file = new File(filePath);
 			if (file.exists()) {
 				MojoProcessor mojo = new MojoProcessor(file);
@@ -1589,7 +1647,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	 * @return the info file dir
 	 * @throws PhrescoException 
 	 */
-	private String getInfoFileDir(String appDirName, String goal, String phase, String  rootModulePath, String subModuleName) throws PhrescoException {
+	private String getInfoFileDir(String goal, String phase, String  rootModulePath, String subModuleName) throws PhrescoException {
 		StringBuilder sb = new StringBuilder();
 		String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModuleName);
 		sb.append(dotPhrescoFolderPath).append(File.separatorChar);
