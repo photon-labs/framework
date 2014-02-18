@@ -1829,7 +1829,7 @@ define([], function() {
 				}
  
 				// append the configureJob json (jobJson) in  job template name id
-				var jobConfiguration = $('#jonConfiguration :input[name!=targetFolder][name!=selectedFileOrFolder]').serializeObject();
+				var jobConfiguration = $('#jonConfiguration :input[name!=targetFolder][name!=selectedFileOrFolder][name!=folder]').serializeObject();
 				if(!self.isBlank(templateJsonData.module)) {
 					jobConfiguration.module = templateJsonData.module;
 				}
