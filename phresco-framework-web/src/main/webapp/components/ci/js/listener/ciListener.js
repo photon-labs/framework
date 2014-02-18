@@ -213,7 +213,7 @@ define([], function() {
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/lastBuildStatus?name="+ciRequestBody.jobName+"&projectId="+projectId+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName + "&customerId=" + customerId +"&rootModule="+rootModule;
 			} else if (action === "deleteBuild") {
 				header.requestMethod = "DELETE";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/deletebuilds?buildNumber="+ciRequestBody.buildNumber+"&name="+ciRequestBody.jobName+"&projectId="+projectId+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName +"&rootModule="+rootModule;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/deletebuilds?buildNumber="+ciRequestBody.buildNumber+"&name="+ciRequestBody.jobName+"&projectId="+projectId + "&customerId=" + customerId + "&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName +"&rootModule="+rootModule;
 			} else if(action === "download"){
 				header.requestMethod = "GET";
 				header.webserviceurl  =commonVariables.webserviceurl + commonVariables.ci +"/downloadBuild?buildDownloadUrl=" +ciRequestBody.buildDownloadUrl+"&downloadJobName="+ciRequestBody.jobName+ "&customerId=" + customerId +"&projectId="+projectId+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName + "&rootModule="+rootModule;
@@ -962,12 +962,19 @@ define([], function() {
 			$("#nexusDeploy").html('');
 			if (templateJsonData.type === "release") {
 				$("#release").html('<thead><tr><th colspan="3">Release Parameters</th></tr></thead>'+
-									'<tbody><tr><td><input name="releaseVersion" type="text" placeholder="Release Version"></td><td><input name="developmentVersion" type="text" placeholder="Development Version"></td><td><input name="tagName" type="text" placeholder="Tag Name"></td></tr>'
-						+'<tr><td><input name="releaseUsername" type="text" placeholder="Username"></td><td><input name="releasePassword" type="password" placeholder="Password"></td><td><input name="releaseMessage" type="text" placeholder="Message"></td></tr></tbody>');
+									'<tbody><tr><td><input name="releaseVersion" type="text" placeholder="Release Version"></td>'+
+									'<td><input name="developmentVersion" type="text" placeholder="Development Version"></td>'+
+									'<td><input name="tagName" type="text" placeholder="Tag Name"></td></tr>'+
+									'<tr><td><input name="releaseUsername" type="text" placeholder="Username"></td>'+
+									'<td><input name="releasePassword" type="password" placeholder="Password"></td>'+
+									'<td><input name="releaseMessage" type="text" placeholder="Message"></td></tr>'+
+									'<tr><td colspan="3"><input type="checkbox" name="skipTests">SkipTests</input></td></tr></tbody>');
 			} 
 			if (templateJsonData.type === "nexusDeploy") {
 				$("#nexusDeploy").html('<thead><tr><th colspan="3">Nexus-Deploy Parameters</th></tr></thead>'+
-						'<tbody><tr><td><input name="nexusUsername" type="text" placeholder="Nexus Username"></td><td><input name="nexusPassword" type="text" placeholder="Nexus Password"></td></tr></tbody>');
+										'<tbody><tr><td><input name="nexusUsername" type="text" placeholder="Nexus Username"></td>'+
+										'<td><input name="nexusPassword" type="text" placeholder="Nexus Password"></td>'+
+										'<td colspan="3"><input type="checkbox" name="skipTests">SkipTests</input></td></tr></tbody>');
 			}
 			
 			$('#repoType').hide();
@@ -1699,6 +1706,25 @@ define([], function() {
 					emptyFound = true;	
 				}
 			});
+			
+			var testFlight = $("#testFlightUploadSettings input, #testFlightUploadSettings select").not("input[type=hidden]");
+			testFlight.each(function() {
+				if (self.isBlank(this.value) && (this.name === 'tokenPairName')) {
+					$('#errMsg').html('Select atleast One TokenPair');
+					$('#confluenceSite').focus();
+					$('#confluenceSite').addClass("errormessage");
+					$('#errMsg').addClass("errormessage");
+					emptyFound = true;
+				} else if (self.isBlank(this.value)) {
+					this.placeholder = "Enter "+ this.name;
+					$("input[name="+this.name+"]").addClass("errormessage");
+					$("input[name="+this.name+"]").focus();
+					$("input[name="+this.name+"]").bind('keypress', function() {
+						$("input[name="+this.name+"]").removeClass("errormessage");
+					});		
+					emptyFound = true;
+				}	
+			});
 
 			if (self.isBlank($("input[name=jobName]").val())) {
 				$("input[name=jobName]").focus();
@@ -1806,6 +1832,11 @@ define([], function() {
 				var jobConfiguration = $('#jonConfiguration :input[name!=targetFolder][name!=selectedFileOrFolder]').serializeObject();
 				if(!self.isBlank(templateJsonData.module)) {
 					jobConfiguration.module = templateJsonData.module;
+				}
+				if (templateJsonData.type === 'release' || templateJsonData.type === 'nexusDeploy') {
+					if ($('input[name=skipTests]').is(":checked")) {
+						jobConfiguration.skipTests = "true";
+					}
 				}
 				jobConfiguration.operation = templateJsonData.type;
 				jobConfiguration.triggers = triggers;

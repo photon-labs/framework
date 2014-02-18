@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
@@ -59,6 +60,7 @@ import org.sonar.wsclient.connectors.HttpClient4Connector;
 import org.sonar.wsclient.services.DeleteQuery;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
 import com.google.gson.reflect.TypeToken;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.LockUtil;
@@ -102,6 +104,7 @@ import com.phresco.pom.model.Model.Modules;
 import com.phresco.pom.model.Profile;
 import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
+import com.photon.phresco.commons.model.Element;
 
 /**
  * The Class ProjectService.
@@ -216,6 +219,9 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 				ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().create(projectinfo, serviceManager);
 				ProjectInfo availableProjectInfo = getProject(projectinfo.getId(), projectinfo.getCustomerIds().get(0));
 				handleDependencies(Utility.getProjectHome(), availableProjectInfo, null);
+				if (projectInfo.isPreBuilt()) {
+					updateAppId(projectInfo);
+				}
 				status = RESPONSE_STATUS_SUCCESS;
 				successCode = PHR200004;
 				ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
@@ -799,7 +805,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 
 	private void updateSubModulePomParentTagInfo(String newFolderDir, ApplicationInfo appInfo, String rootModulePath, String submodule) throws PhrescoException  {
 		try {
-			ProjectInfo rootProjInfo = Utility.getProjectInfo(rootModulePath, submodule);
+			ProjectInfo rootProjInfo = Utility.getProjectInfo(rootModulePath, "");
 			String pomFile = rootProjInfo.getAppInfos().get(0).getPomFile();
 			File rootPom = new File(rootModulePath +  File.separator + pomFile);
 			if(!rootPom.exists()) {
@@ -876,8 +882,8 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	
 	private void updateRootPomModules(String rootModule, String oldSubModuleName, String newSubModuleName, String rootModulePath,
 			ProjectInfo projectinfo) throws PhrescoPomException, PhrescoException {
-		File docFolderLocation = Utility.getSourceFolderLocation(projectinfo, rootModulePath, newSubModuleName);
-		File rootPom = new File(docFolderLocation.getParent() + File.separator + Constants.POM_NAME);
+		File docFolderLocation = Utility.getSourceFolderLocation(projectinfo, rootModulePath, "");
+		File rootPom = new File(docFolderLocation + File.separator + Constants.POM_NAME);
 		if(rootPom.exists()) {
 		PomProcessor processor = new PomProcessor(rootPom);
 		Modules pomModules = processor.getModel().getModules();
@@ -1667,6 +1673,40 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		return "";
 	}
 
+	/**
+	 * update AppId
+	 * @param projectInfos
+	 * @throws PhrescoException
+	 */
+	private void updateAppId(ProjectInfo projectInfos) throws PhrescoException {
+		try {
+			List<ApplicationInfo> appInfos = projectInfos.getAppInfos();	
+			Gson gson = new Gson();
+			ProjectInfo projectInfo = null;
+			if (CollectionUtils.isNotEmpty(appInfos)) {
+				for (ApplicationInfo applicationInfo : appInfos) {
+					String appDirName = applicationInfo.getAppDirName();
+					String appDirPath = Utility.getProjectHome()+ appDirName;
+					String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(appDirPath, "");
+					projectInfo = Utility.getProjectInfo(appDirPath, "");
+
+					ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+					String appId = new Element().getId();
+					appInfo.setId(appId); 
+					
+					FileWriter fileWriter = new FileWriter( new File(dotPhrescoFolderPath, PROJECT_INFO));
+					
+					gson.toJson(projectInfo, fileWriter);
+					fileWriter.close();
+				}
+			}
+		} catch (JsonIOException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		}
+	} 
+	
 	private void addDependency(String depAppCode, File pomFile, String version, String groupId, String packageType) throws PhrescoException {
 		try {
 			PomProcessor processor = new PomProcessor(pomFile);
