@@ -221,7 +221,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 						var csvAvailableValue = $("input[name='"+parameterKey+"']").val();
 						self.fileTree(xmlDoc, showChkBox, csvAvailableValue, function(res) {
 							var temptree = $('<div class=""></div>');
-							temptree.append('<ul id="filetree" class="filetree"><li><span><strong>Click here to select file path </strong></span>' + res + '</li></ul>');
+							temptree.append('<ul id="filetree" class="filetree"><li><span><strong>Select '+parameterKey+'</strong></span>' + res + '</li></ul>');
 							setTimeout(function() {
 								$(temptree).jstree({
 								"themes": {
