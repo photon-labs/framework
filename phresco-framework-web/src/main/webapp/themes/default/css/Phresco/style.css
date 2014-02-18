@@ -2282,7 +2282,7 @@ img[name="close"] {
 	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password],
 	.create_proj table tr td .bootstrap-select button.dropdown-toggle, 
 	.appInfo table tr td .bootstrap-select button.dropdown-toggle, .create_edit_table tr td div.dropdown-menu {
-		width: 182px !important;	
+		width: 186px !important;	
 	}
 	
 	 /*.bootstrap-select .btn  {
@@ -5826,3 +5826,70 @@ textarea[name="regex"] {
 }
 
 map area { cursor:pointer !important; display:block; }
+
+.classificationId {
+	float : left;
+	margin-left : 5px;
+	padding-top : 4px;
+	font-size : 12px;
+	color : #747474;
+}
+
+.tridion_info {
+	width:98%;
+	padding:1%;
+	position:absolute;
+	margin-top:170px;
+	z-index:0;
+	/*border-top: 1px solid #d2d2d2;*/
+}
+.parent_border{
+	border-bottom : 1px solid #cdcdcd;
+}
+
+.no_border  {
+	border:none !important;
+}
+
+.parentpublication{
+	cursor :pointer;
+	font-size : 12px;
+	color:ffffff;
+	float : left;
+	border-top-left-radius: 6px;
+	border-bottom-left-radius: 6px;
+	border-top-right-radius: 6px;
+	border-bottom-right-radius: 6px;
+	text-align:center;
+	line-height: 29px;
+	margin:6px 0 0 6px !important;
+	padding-left: 4px;
+    padding-right: 4px;
+	background-color: #00958F !important;
+  
+}
+
+.parentpublicationdiv  div.pub_head{
+	font-size:14px;
+	font-weight:bold;
+	padding:8px 0px;
+	border-bottom:1px solid #cdcdcd;
+	width:100%;
+	padding-left:10px;
+}
+
+.tridion_classification {
+	background-color: #00958F !important;
+	float:left;
+	color: #ffffff;
+	line-height: 29px;
+	width: 100px;
+	border-top-left-radius: 6px;
+	border-bottom-left-radius: 6px;
+	text-align:center;
+	margin:6px 0 0 6px !important;
+}
+
+.publicationheading{
+	color: #00958F !important;
+}

@@ -155,6 +155,16 @@
 		"repository" : {
 			"moduleName":"repository",
 			"path" : "../components/repository/js"
+		},				
+		
+		"tridiongeneral" : {
+			"moduleName":"tridiongeneral",
+			"path" : "../components/tridiongeneral/js"
+		},
+		
+		"blueprinting" : {
+			"moduleName":"blueprinting",
+			"path" : "../components/blueprinting/js"
 		}		
 	}
 }

@@ -38,6 +38,8 @@ define([], function() {
 		act:null,
 		sourceRepo : null,
 		buildRepo : null,
+		tridiongeneral : null,
+		blueprinting : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -482,6 +484,30 @@ define([], function() {
 							callback(self.sourceRepo);
 						}
 						
+						break;
+						
+					case commonVariables.tridiongeneral :
+						if(self.tridiongeneral === null) {
+							require(["tridiongeneral/tridiongeneral"], function(){
+								self.tridiongeneral = new Clazz.com.components.tridiongeneral.js.tridiongeneral();
+								callback(self.tridiongeneral);	
+							});
+						}else{
+							callback(self.tridiongeneral);
+						}
+						
+						break;						
+											
+					case commonVariables.blueprinting :
+						if(self.blueprinting === null) {
+							require(["blueprinting/blueprinting"], function(){
+								self.blueprinting = new Clazz.com.components.blueprinting.js.blueprinting();
+								callback(self.blueprinting);	
+							});
+						}else{
+							callback(self.blueprinting);
+						}
+						
 						break;						
 					
 				}
@@ -774,6 +800,16 @@ define([], function() {
 				});
 			} else if (self.currentTab !== commonVariables.continuousDeliveryConfigure && keyword === commonVariables.continuousDeliveryConfigure) {
 				self.getMyObj(commonVariables.continuousDeliveryConfigure, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
+			}  else if (self.currentTab !== commonVariables.tridiongeneral && keyword === commonVariables.tridiongeneral) {
+				self.getMyObj(commonVariables.tridiongeneral, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
+			}  else if (self.currentTab !== commonVariables.blueprinting && keyword === commonVariables.blueprinting) {
+				self.getMyObj(commonVariables.blueprinting, function(returnVal){
 					currentObj = returnVal;
 					self.myTabRenderFunction(currentObj, keyword);
 				});

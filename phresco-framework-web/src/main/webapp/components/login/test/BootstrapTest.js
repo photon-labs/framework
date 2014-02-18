@@ -23,6 +23,7 @@ var commonVariables = {
 	navigationContext : "",
 	mavenService : "mavenService",
 
+	tridiongeneral : "tridiongeneral",
 	
 	configuration : "configuration",
 	editConfiguration : "editConfiguration",

@@ -94,6 +94,9 @@ var commonVariables = {
 	continuousDeliveryView : "continuousDeliveryView",
 	continuousDeliveryConfigure : "continuousDeliveryConfigure",
 	
+	tridiongeneral : "tridiongeneral",
+	blueprinting : "blueprinting",	
+	
 	settings : "settings",
 	projectSettings : "projectsettings",
 	editprojectSettings : "editSettings",

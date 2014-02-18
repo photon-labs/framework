@@ -246,6 +246,9 @@
 		"PHRD100010" : "Unable to retrieve the search result.",
 		"configurations" : "Environment already exists in Settings",
 		"settings" : "Environmento already exists in Configuration"
+		"PHRTR1001" : "Publication saving failed",
+		"PHRTR1002" : "Please select atleast one parent publication",
+		"PHRSR10007" : "Content and WebSite is need to create further proceed"
 	},
 	"successCodes" : {
 		"PHR100008" : "Password emailed",
@@ -294,7 +297,9 @@
 		"choosedb" : "Choose the DB Type from App Info",
 		"PHR500005" : "Report not available",
 		"PHR610042"	: "Name already exists in configurations of the project",
-		"PHRD010008" : "No Dashboards Exist."
+		"PHRD010008" : "No Dashboards Exist.",
+		"PHRTR0001"  : "Publication Saved successfully",
+		"PHRTRP0001"  : "Publication created successfully"
 		
 	},
 	"navigation" : {
@@ -329,7 +334,10 @@
 			"dashboard" : "Dashboard",
 			"repository" : "Repository",
 			"sourceRepo" : "Source Repo",
-			"buildRepo" : "Build Repo"
+			"buildRepo" : "Build Repo",
+			"tridioninfo" : "Tridion Info",
+			"tridiongeneral" : "General",
+			"blueprinting" : "BluePrinting"
  		}
 	},
 	

@@ -324,6 +324,15 @@
 		"buildRepositoryTest" : {
 			"moduleName":"buildRepositoryTest",
 			"path" : "components/repository/test/buildRepositoryTest"
+		},
+		
+		"tridiongeneral" : {
+			"moduleName":"tridiongeneral",
+			"path" : "components/tridiongeneral/js"
+		},
+		"tridiongeneralTest" : {
+			"moduleName":"tridiongeneral",
+			"path" : "components/tridiongeneral/test/tridiongeneralTest"
 		}		
 		
 	}

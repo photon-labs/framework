@@ -289,6 +289,19 @@
     	<div class="title_nav navbar navbar-static">
         	<ul class="nav" id="myTab">
             	<li id="appinfo" name="editMenu"><a href="javascript:void(0)" class="act" data-i18n="navigation.application.appinfo"></a></li>
+            	
+				<!--<li class="dropdown" name="editMenu">
+                	<a href="javascript:void(0)" id="drop5" role="tridioninfo" class="dropdown-toggle drop-qual" id="tridionMenu" data-toggle="dropdown">Tridion Info<b class="caret"></b></a>
+                	<div class="dropdown-menu cust_sel test_options" role="tridioninfo" aria-labelledby="drop5">
+                      	<ul id="tridioninfo">
+                        	<li id="tridiongeneral" name="tridionMenu"><a href="javascript:void(0)" data-i18n="navigation.application.tridiongeneral"></a></li>
+                        	 <li id="blueprinting" name="tridionMenu"><a href="javascript:void(0)" data-i18n="navigation.application.blueprinting"></a></li> 
+                        </ul>
+                      </div>
+                </li>
+				-->
+				<li id="tridiongeneral" name="editMenu"><a href="javascript:void(0)">Tridion Info</a></li>
+				
                 <li id="featurelist" name="editMenu"><a href="javascript:void(0)" data-i18n="navigation.application.features"></a></li>
                 <li id="codequality" name="editMenu"><a href="javascript:void(0)" data-i18n="navigation.application.codequality"></a></li>
 				<li id="configuration" class="dropdown" name="editMenu">

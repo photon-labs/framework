@@ -1,0 +1,96 @@
+ <section class="optiontitle" id="codequalityContent">
+        <div class="flt_right" style="margin-right:0px;">
+			<div class="tridion_classification">
+				<font>Classification</font>
+            </div>
+			<div id="codereportTypes" class="navbar navbar-static code_func" style="display: block;">
+				<ul class="nav">
+					<li class="dropdown" id="fat-menu">
+						<a data-toggle="dropdown" class="dropdown-toggle" role="button" id="drop5" href="javascript:void(0)">
+							<b key="schema" id="repTypes">Schema</b><b class="caret"></b>
+						</a> 
+						<div aria-labelledby="drop5" role="menu" class="dropdown-menu cust_sel code_test_opt"> 
+							<ul id="reportUl">
+								<li style="padding-left:8px;cursor:pointer;" data="Schema" key="schema" name="selectType" class="dropdown-key">Schema</li>
+								<li style="padding-left:8px;cursor:pointer;" data="Template" key="template" name="selectType" class="dropdown-key">Template</li>
+								<li style="padding-left:8px;cursor:pointer;" data="Content" key="content" name="selectType" class="dropdown-key">Content</li>
+								<li style="padding-left:8px;cursor:pointer;" data="Website" key="website" name="selectType" class="dropdown-key">Website</li>
+							</ul>
+						</div>
+					</li>
+				</ul>				
+			</div>
+		</div>
+    </section>
+	
+<section class="tridion_info tab_line testSuiteTable">
+<div class="fixed-table-container">
+	<div class="header-background"><span class="classificationId" id="classificationId">Schema</span></div>
+	<div class="fixed-table-container-inner">
+		<div class="scrolldiv no_border">
+		<table class="table table-striped table_border table-hover table-bordered" cellpadding="0" cellspacing="0" border="0">
+			<tbody name="ConfigurationLists"> 
+				<tr>
+					<td>Name<sup>*</sup></td>
+					<td><input type="text" name="publicationName" title="30 Characters only" value="{{publicationInfo.data.0.publicationName}}"/></td>
+					<td>Publication Key<sup>*</sup></td>
+					<td colspan="3"><input name="publicationKey" type="text" title="150 Characters only" value="{{publicationInfo.data.0.publicationKey}}"/></td>
+				</tr>			
+				<tr>
+					<td>Publication Path<sup>*</sup></td>
+					<td><input name="publicationPath" type="text" title="150 Characters only" value="{{publicationInfo.data.0.publicationPath}}"/></td>
+					<td>Publication URL<sup>*</sup></td>
+					<td colspan="3"><input type="text" name="publicationUrl" title="30 Characters only" value="{{publicationInfo.data.0.publicationUrl}}"/></td>
+				</tr>
+				<tr>
+					<td>Image Path<sup>*</sup></td>
+					<td><input name="imagePath" type="text"  title="150 Characters only" value="{{publicationInfo.data.0.imagePath}}"/></td>
+					<td>Images URL<sup>*</sup></td>
+					<td colspan="3"><input name="imageUrl" type="text"  title="150 Characters only" value="{{publicationInfo.data.0.imageUrl}}"/></td>
+				</tr>
+				<tr>
+					<td>Link Publication<sup>*</sup></td>
+					<td><a class="parentpublication" id="parent_publication" style="color:#ffffff;">Parent Publication</a></td>
+					<td colspan="4"><span id="parentPublications">{{#each publicationInfo.data.0.parentPublications}}&nbsp;<span>{{name}}</span>,&nbsp;{{/each}}</span></td>
+				</tr>
+			</tbody>
+		</table>
+	<!-- Parent Publication -->
+	<div class="parentpublicationdiv" key="hidden" style="display:none">
+		<div class="pub_head">Parent Publication</div>
+		<div class="scroll_cont" style="margin-left:20px; padding-top:10px;" >
+			<div class="sortablecont_one">
+					<!-- Drag Drop section 1 starts -->
+					<ul id="sortable1" class="connectedSortable type_test ui-sortable" style="height:350px; margin-bottom:20px;">
+	                  <div class="sorthead publicationheading">Available Publications </div>
+						<div>
+							<input type="text" class="search_text flt_left" data-i18n="[placeholder]features.placeholder" style="width:84%;" id="avbleparent">
+							<img class="cleartext flt_right" name="avbleparent" src="themes/default/images/Phresco/cross_cancel.png" style="margin-top:17px; margin-right:0px;" border="0" alt="">
+						</div>
+						<div class="clear"></div>
+						<!--<li id="norecord1" style="display:none" align="center" data-i18n="features.norecords"></li>	-->
+					</ul>
+					<!-- Drag Drop section 1 ends -->
+			</div>
+			<div class="sortablecont_two">
+				
+					<!-- Drag Drop section 2 starts -->
+					<ul id="sortable2" class="connectedSortable type_test ui-sortable"" style="height:350px; margin-bottom:20px;">
+					  <div class="sorthead publicationheading">Parent Publications</div>
+					</ul>
+					<!-- Drag Drop section 2 ends -->
+			</div>
+	</div>
+<!-- Parent Publication ends here-->
+	</div>
+</div>
+</div>
+</section>
+<section class="content_end" name="configContent">
+	<div class="flt_right">
+		<input type="submit" name="savePublication" id="savePublication" value="Save" class="btn btn_style save_btn">
+		<input type="submit" name="submitPublication" id="submitPublication" value="Submit" class="btn btn_style">
+	</div>
+	<div class="msgdisplay"></div>
+	<!--content_title ends here -->
+</section>		    
