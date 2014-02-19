@@ -300,7 +300,7 @@
                       </div>
                 </li>
 				-->
-				<li id="tridiongeneral" name="editMenu"><a href="javascript:void(0)">Tridion Info</a></li>
+				<li id="tridiongeneral" name="editMenu"><a href="javascript:void(0)" data-i18n="navigation.application.tridioninfo"></a></li>
 				
                 <li id="featurelist" name="editMenu"><a href="javascript:void(0)" data-i18n="navigation.application.features"></a></li>
                 <li id="codequality" name="editMenu"><a href="javascript:void(0)" data-i18n="navigation.application.codequality"></a></li>

@@ -245,7 +245,7 @@
 		"prjtexists" : "Project already exists",
 		"PHRD100010" : "Unable to retrieve the search result.",
 		"configurations" : "Environment already exists in Settings",
-		"settings" : "Environmento already exists in Configuration"
+		"settings" : "Environment already exists in Configuration",
 		"PHRTR1001" : "Publication saving failed",
 		"PHRTR1002" : "Please select atleast one parent publication",
 		"PHRSR10007" : "Content and WebSite is need to create further proceed"
