@@ -2221,5 +2221,15 @@ public interface FrameworkConstants {
 	    String PARENT_NAME = "name";
 	    String PRIORITY = "priority";
 	    String GIT_URL = "https://api.github.com";
+  /**
+	     *  TestFlight upload service post parameters
+	     *   
+	     */
+	    String API_TOKEN_TF = "api_token";
+	    String TEAM_TOKEN_TF = "team_token";
+	    String NOTES = "notes";
+	    String NOTIFY = "notify";
+	    String DISTRIBUTION_LISTS = "distribution_lists";
+	    
 	    
 }

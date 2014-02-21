@@ -625,6 +625,8 @@ public interface ResponseCodes {
 	 */
 	String PHRU000001 = "PHRU000001"; // Build uploaded to TestFlight server successfully
 	String PHRU010001 = "PHRU010001"; // Build uploading failed
+	String PHRU010002 = "PHRU010002"; // unable to upload build since build number is empty
+
 	
 	/**
 	 * Repository service
