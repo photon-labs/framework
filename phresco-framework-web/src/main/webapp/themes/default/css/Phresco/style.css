@@ -5825,4 +5825,15 @@ textarea[name="regex"] {
 	text-decoration:none;
 }
 
+.testflight {
+	margin-right: 7px;
+}
+
 map area { cursor:pointer !important; display:block; }
+
+.testflight_btn input.btn_style {
+	padding-top:6px !important;
+	padding-bottom:6px !important;
+	font-size:13px;
+	margin-top:5px;
+}
