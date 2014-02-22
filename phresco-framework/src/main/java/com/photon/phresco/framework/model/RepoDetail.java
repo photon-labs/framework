@@ -2,6 +2,7 @@ package com.photon.phresco.framework.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -23,6 +24,8 @@ public class RepoDetail implements Serializable {
 	private String commitMessage;
 	private List<String>commitableFiles;
 	private List<RepoFileInfo> repoInfoFile;
+	private List<String> tfsAddedFiles;
+	private List<String> tfsEditedFiles;
 	private String type;
 	private boolean testCheckOut;
 	private String testRepoUrl;
@@ -232,6 +235,22 @@ public class RepoDetail implements Serializable {
 
 	public void setServerPath(String serverPath) {
 		this.serverPath = serverPath;
+	}
+
+	public List<String> getTfsAddedFiles() {
+		return tfsAddedFiles;
+	}
+
+	public void setTfsAddedFiles(List<String> tfsAddedFiles) {
+		this.tfsAddedFiles = tfsAddedFiles;
+	}
+
+	public List<String> getTfsEditedFiles() {
+		return tfsEditedFiles;
+	}
+
+	public void setTfsEditedFiles(List<String> tfsEditedFiles) {
+		this.tfsEditedFiles = tfsEditedFiles;
 	}
 
 	public String toString() {

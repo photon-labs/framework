@@ -106,6 +106,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.google.gson.Gson;
+import com.microsoft.tfs.client.clc.exceptions.ArgumentException;
+import com.microsoft.tfs.client.clc.exceptions.CLCException;
+import com.microsoft.tfs.client.clc.exceptions.InvalidOptionException;
+import com.microsoft.tfs.client.clc.exceptions.InvalidOptionValueException;
+import com.microsoft.tfs.client.clc.exceptions.LicenseException;
 import com.perforce.p4java.exception.ConnectionException;
 import com.perforce.p4java.exception.RequestException;
 import com.photon.phresco.commons.FrameworkConstants;
@@ -2124,6 +2129,8 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			repoType = GIT;
 		} else if (repoUrl.contains("svn")) {
 			repoType = SVN;
+		} else if (repoUrl.contains("visualstudio")) {
+			repoType = TFS;
 		}
 		return repoType;
 	}
@@ -2142,11 +2149,28 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			} else if (repoType.equals(SVN)) {
 				repodetail.setRepoExist(true);
 				repodetail.setRepoInfoFile(svnCommitableFiles(workingDir));
+			} else if (TFS.equals(repoType)) {
+				repodetail.setRepoExist(true);
+				SCMManagerImpl impl = new SCMManagerImpl();
+				Map<String, List<String>> pendingChanges = impl.getPendingChanges(workingDir.getCanonicalPath());
+				System.out.println("pendingChanges...."+pendingChanges);
+				if (MapUtils.isNotEmpty(pendingChanges)) {
+					List<String> addedFiles = pendingChanges.get(ADD);
+					List<String> editedFiles = pendingChanges.get(EDIT);
+					if (CollectionUtils.isNotEmpty(addedFiles)) {
+						repodetail.setTfsAddedFiles(addedFiles);
+					}
+					if (CollectionUtils.isNotEmpty(editedFiles)) {
+						repodetail.setTfsEditedFiles(editedFiles);
+					}
+				}
 			}
 			repodetail.setUserName(userId);
 			repodetail.setType(repoType);
 			repodetail.setRepoUrl(repoUrl);
 		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
 			throw new PhrescoException(e);
 		}
 		return repodetail;

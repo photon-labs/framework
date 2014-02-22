@@ -75,11 +75,9 @@
                                     	<td><input name="stream" type="text" class="stream"></td>
                                 	</tr>
 									<tr class="tfsdata">
-										<td><span name="branch" value="proName">Project Name</laspanbel></td>
 										<td><span name="branch" value="serverPath">Server Path</span></td>
 									</tr>
 									<tr class="tfsdata">	
-										<td><input name="proName" type="text" class="projname" id="projcName"></td>
 										<td><input name="serverPath" type="text" class="serverpath" id="servPath"></td>
 									</tr>
                             	</tbody>
@@ -148,11 +146,9 @@
                                     	<td><input name="phrescoStream" type="text" class="phrescoStream"></td>
                                 	</tr>
 									<tr class="tfsdata">
-										<td><span name="branch" value="proName">Project Name</laspanbel></td>
 										<td><span name="branch" value="serverPath">Server Path</span></td>
 									</tr>
 									<tr class="tfsdata">	
-										<td><input name="proName" type="text" class="projname" id="projcName"></td>
 										<td><input name="serverPath" type="text" class="serverpath" id="servPath"></td>
 									</tr>
                             	</tbody>
@@ -221,11 +217,9 @@
                                     	<td><input name="testStream" type="text" class="testStream"></td>
                                 	</tr>
 									<tr class="tfsdata">
-										<td><span name="branch" value="proName">Project Name</laspanbel></td>
 										<td><span name="branch" value="serverPath">Server Path</span></td>
 									</tr>
 									<tr class="tfsdata">	
-										<td><input name="proName" type="text" class="projname" id="projcName"></td>
 										<td><input name="serverPath" type="text" class="serverpath" id="servPath"></td>
 									</tr>
                             	</tbody>

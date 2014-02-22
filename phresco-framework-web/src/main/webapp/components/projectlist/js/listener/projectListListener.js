@@ -405,7 +405,9 @@ define([], function() {
 				srcRepoDetail.passPhrase = $(".commitPassPhraseval"+dynid).val();
 				var arrayCommitableFiles = [];
 				$.each($('.commitChildChk[dynamicId='+dynid+'][from=src]') , function(index, value) {
-					if ($(this).is(':checked')) {
+					if ("tfs" === srcRepoDetail.type && $(this).is(':checked')) {
+
+					} else if ($(this).is(':checked')) {
 						arrayCommitableFiles.push($(this).val());
 					}
 				});
@@ -545,8 +547,8 @@ define([], function() {
 							$(value).attr('selected', 'selected');
 						}
 					});
-					
-					if (srcRepoDetail.repoInfoFile !== undefined && srcRepoDetail.repoInfoFile !== null && srcRepoDetail.repoInfoFile.length > 0) {
+					console.info("srcRepoDetail....",srcRepoDetail);
+					if ((srcRepoDetail.repoInfoFile !== undefined && srcRepoDetail.repoInfoFile !== null && srcRepoDetail.repoInfoFile.length > 0) || "tfs" === srcRepoDetail.type) {
 						$('.srcCommitableFiles').show();
 						self.constructCommitableFiles(dynamicId, srcRepoDetail, $('.commitable_files_'+dynamicId), "src");
 						self.checkBoxEvent($('.commitParentChk[dynamicId='+dynamicId+']'), 'commitChildChk[dynamicId='+dynamicId+'][from=src]', $('input[name=commitbtn][id='+dynamicId+']'));
@@ -563,7 +565,7 @@ define([], function() {
 							}
 						});
 						
-						if (phrescoRepoDetail.repoInfoFile !== undefined && phrescoRepoDetail.repoInfoFile !== null && phrescoRepoDetail.repoInfoFile.length > 0) {
+						if ((phrescoRepoDetail.repoInfoFile !== undefined && phrescoRepoDetail.repoInfoFile !== null && phrescoRepoDetail.repoInfoFile.length > 0) || "tfs" === phrescoRepoDetail.type) {
 							$('.phrCommitableFiles').show();
 							self.constructCommitableFiles(dynamicId, phrescoRepoDetail, $('.phrCommitable_files_'+dynamicId), "phr");
 							self.checkBoxEvent($('.phrCommitParentChk[dynamicId='+dynamicId+']'), 'commitChildChk[dynamicId='+dynamicId+'][from=phr]', $('input[name=commitbtn][id='+dynamicId+']'));
@@ -580,7 +582,7 @@ define([], function() {
 							}
 						});
 						
-						if (testRepoDetail.repoInfoFile !== undefined && testRepoDetail.repoInfoFile !== null && testRepoDetail.repoInfoFile.length > 0) {
+						if ((testRepoDetail.repoInfoFile !== undefined && testRepoDetail.repoInfoFile !== null && testRepoDetail.repoInfoFile.length > 0) || "tfs" === testRepoDetail.type) {
 							$('.testCommitableFiles').show();
 							self.constructCommitableFiles(dynamicId, testRepoDetail, $('.testCommitable_files_'+dynamicId), "test");
 							self.checkBoxEvent($('.tesCommitParentChk[dynamicId='+dynamicId+']'), 'commitChildChk[dynamicId='+dynamicId+'][from=test]', $('input[name=commitbtn][id='+dynamicId+']'));
@@ -595,11 +597,31 @@ define([], function() {
 		constructCommitableFiles : function(dynamicId, repoDetail, tbodyObj, from) {
 			var self = this;
 			var commitableFiles = '';
-			$.each(repoDetail.repoInfoFile, function(index, value) {
-				commitableFiles += '<tr><td style="vertical-align: top;"><input checkVal="check" dynamicId="'+ dynamicId +'" class="commitChildChk" from="'+from+'" type="checkbox" value="' + value.commitFilePath + '"></td>';
-				commitableFiles += '<td style="width:280px !important;" title="'+ value.commitFilePath +'">"' + value.commitFilePath + '"</td>';
-				commitableFiles += '<td style="vertical-align: top;text-align: center;">"' + value.status + '"</td></tr>';
-			});
+			if ("tfs" === repoDetail.type && repoDetail.tfsAddedFiles !== null && repoDetail.tfsAddedFiles !== undefined && repoDetail.tfsAddedFiles.length > 0) {
+				console.info('...repoDetail.tfsAddedFiles',repoDetail.tfsAddedFiles);
+				console.info('...repoDetail.from',from);
+				$.each(repoDetail.tfsAddedFiles, function(index, addedFile) {
+					commitableFiles += '<tr><td style="vertical-align: top;"><input checkVal="check" tfs="add" dynamicId="'+ dynamicId +'" class="commitChildChk" from="'+from+'" type="checkbox" value="' + addedFile + '"></td>';
+					commitableFiles += '<td style="width:280px !important;" title="'+ addedFile +'">"' + addedFile + '"</td>';
+					commitableFiles += '<td style="vertical-align: top;text-align: center;"> ? </td></tr>';
+				});
+			} 
+			 if ("tfs" === repoDetail.type && repoDetail.tfsEditedFiles !== null && repoDetail.tfsEditedFiles !== undefined && repoDetail.tfsEditedFiles.length > 0) {
+				console.info('...repoDetail.tfsEditedFiles;',repoDetail.tfsEditedFiles);
+				$.each(repoDetail.tfsEditedFiles, function(index, editedFile) {
+					commitableFiles += '<tr><td style="vertical-align: top;"><input checkVal="check" tfs="edit" dynamicId="'+ dynamicId +'" class="commitChildChk" from="'+from+'" type="checkbox" value="' + editedFile + '"></td>';
+					commitableFiles += '<td style="width:280px !important;" title="'+ editedFile +'">"' + editedFile + '"</td>';
+					commitableFiles += '<td style="vertical-align: top;text-align: center;"> M </td></tr>';
+				});
+			}  else {
+				$.each(repoDetail.repoInfoFile, function(index, value) {
+					commitableFiles += '<tr><td style="vertical-align: top;"><input checkVal="check" dynamicId="'+ dynamicId +'" class="commitChildChk" from="'+from+'" type="checkbox" value="' + value.commitFilePath + '"></td>';
+					commitableFiles += '<td style="width:280px !important;" title="'+ value.commitFilePath +'">"' + value.commitFilePath + '"</td>';
+					commitableFiles += '<td style="vertical-align: top;text-align: center;">"' + value.status + '"</td></tr>';
+				});
+			}
+			
+
 			tbodyObj.html(commitableFiles);
 		},
 		
@@ -1137,10 +1159,16 @@ define([], function() {
 		},
 		
 		showHideCommitAppCtrls : function(repoType, dynamicId) {
+			$(".commitTfsdata"+dynamicId).hide();
+			$(".search").show();
 			if (repoType === "git") {
 				$(".commitGitdata"+dynamicId).show();
 			}
-			if (repoType === "svn" || repoType === "bitkeeper") {
+			if (repoType === "tfs") {
+				$(".commitTfsdata"+dynamicId).show();
+				$(".search").hide();
+			}
+			if (repoType === "svn" || repoType === "bitkeeper" || repoType === "tfs") {
 				$(".commitGitdata"+dynamicId).hide();
 			}
 		},

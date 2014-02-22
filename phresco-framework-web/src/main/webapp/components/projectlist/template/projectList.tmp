@@ -324,6 +324,7 @@
 	                                                <option value="svn" data-i18n="projectlist.label.svn"></option>
 	                                        		<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 	                                        		<option value="git" data-i18n="projectlist.label.git"></option>
+	                                        		<option value="tfs" data-i18n="projectlist.label.tfs"></option>
 	                                            </select>
 	                            			</td>
 	                            			<td><input type="text" id="commitRepourl{{id}}" data-i18n="[placeholder]navigation.application.apprepourl" readonly="readonly"></td>
@@ -347,6 +348,12 @@
 										</tr>
 										<tr class="commitGitdata{{id}}">
 											<td><input type="password" class="commitPassPhraseval{{id}}"></td>
+										</tr>
+										<tr class="commitTfsdata{{id}}">
+											<td><span name="serverPath" value="serverPath">Server Path</span></td>
+										</tr>
+										<tr class="commitTfsdata{{id}}">
+											<td><input type="text" class="commitServerPathval{{id}}"></td>
 										</tr>
 	                                	<tr>
 	                                        <td colspan="2">
@@ -409,6 +416,12 @@
 										<tr class="commitGitdata{{id}}">	
 											<td><input type="password" class="phrCommitPassPhraseval{{id}}"></td>
 										</tr>
+										<tr class="commitTfsdata{{id}}">
+											<td><span name="serverPath" value="serverPath">Server Path</span></td>
+										</tr>
+										<tr class="commitTfsdata{{id}}">
+											<td><input type="text" class="phrCommitServerPathval{{id}}"></td>
+										</tr>
 	                                	<tr>
 	                                        <td colspan="2">
 	                                            <textarea class="popuptextarea" data-i18n="[placeholder]projectlist.label.message" id="phrCommitMessage_{{id}}" name="phrCommitMsg"></textarea><img class="phrescosearch" typeOfRepo="commit" dynId="{{id}}" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
@@ -469,6 +482,12 @@
 										</tr>
 										<tr class="commitGitdata{{id}}">	
 											<td><input type="password" class="testCommitPassPhraseval{{id}}"></td>
+										</tr>
+										<tr class="commitTfsdata{{id}}">
+											<td><span name="serverPath" value="serverPath">Server Path</span></td>
+										</tr>
+										<tr class="commitTfsdata{{id}}">
+											<td><input type="text" class="testCommitServerPathval{{id}}"></td>
 										</tr>
 	                                	<tr>
 	                                        <td colspan="2">

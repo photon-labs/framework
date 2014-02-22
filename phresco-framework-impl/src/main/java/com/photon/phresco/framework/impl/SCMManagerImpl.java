@@ -25,6 +25,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.Proxy.Type;
 import java.net.ProxySelector;
@@ -36,8 +37,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -103,19 +106,24 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
 import com.google.gson.Gson;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
+import com.microsoft.tfs.client.clc.commands.Command;
+import com.microsoft.tfs.client.clc.exceptions.ArgumentException;
+import com.microsoft.tfs.client.clc.exceptions.CLCException;
+import com.microsoft.tfs.client.clc.exceptions.InvalidOptionException;
+import com.microsoft.tfs.client.clc.exceptions.InvalidOptionValueException;
+import com.microsoft.tfs.client.clc.exceptions.LicenseException;
+import com.microsoft.tfs.client.clc.options.Option;
+import com.microsoft.tfs.client.clc.vc.VersionControlCommands;
+import com.microsoft.tfs.client.clc.vc.VersionControlOptions;
+import com.microsoft.tfs.client.clc.vc.commands.CommandAdd;
+import com.microsoft.tfs.client.clc.vc.commands.CommandCheckin;
+import com.microsoft.tfs.client.clc.vc.commands.CommandGet;
+import com.microsoft.tfs.client.clc.vc.commands.CommandWorkFold;
+import com.microsoft.tfs.client.clc.vc.commands.CommandWorkspace;
 import com.microsoft.tfs.core.TFSTeamProjectCollection;
-import com.microsoft.tfs.core.clients.versioncontrol.GetOptions;
-import com.microsoft.tfs.core.clients.versioncontrol.VersionControlClient;
-import com.microsoft.tfs.core.clients.versioncontrol.WorkspaceLocation;
-import com.microsoft.tfs.core.clients.versioncontrol.WorkspacePermissionProfile;
-import com.microsoft.tfs.core.clients.versioncontrol.path.LocalPath;
-import com.microsoft.tfs.core.clients.versioncontrol.soapextensions.GetRequest;
-import com.microsoft.tfs.core.clients.versioncontrol.soapextensions.RecursionType;
-import com.microsoft.tfs.core.clients.versioncontrol.soapextensions.WorkingFolder;
-import com.microsoft.tfs.core.clients.versioncontrol.soapextensions.Workspace;
-import com.microsoft.tfs.core.clients.versioncontrol.specs.ItemSpec;
-import com.microsoft.tfs.core.clients.versioncontrol.specs.version.LatestVersionSpec;
-import com.microsoft.tfs.core.clients.workitem.project.ProjectCollection;
+import com.microsoft.tfs.core.clients.versioncontrol.soapextensions.ChangeType;
+import com.microsoft.tfs.core.clients.versioncontrol.soapextensions.PendingChange;
+import com.microsoft.tfs.core.clients.versioncontrol.soapextensions.PendingSet;
 import com.microsoft.tfs.core.httpclient.Credentials;
 import com.microsoft.tfs.core.httpclient.DefaultNTCredentials;
 import com.microsoft.tfs.core.httpclient.UsernamePasswordCredentials;
@@ -148,7 +156,6 @@ import com.photon.phresco.framework.model.RepoDetail;
 import com.photon.phresco.framework.model.RepoFileInfo;
 import com.photon.phresco.framework.model.RepoInfo;
 import com.photon.phresco.service.client.api.ServiceManager;
-import com.photon.phresco.service.client.impl.ServiceManagerImpl;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.Utility;
@@ -159,7 +166,6 @@ import com.phresco.pom.model.Plugin;
 import com.phresco.pom.util.PomProcessor;
 
 
-
 public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 	private static final Logger S_LOGGER = Logger.getLogger(SCMManagerImpl.class);
@@ -167,17 +173,19 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	public static String HTTP_PROXY_URL = "";
 	boolean dotphresco ;
 	SVNClientManager cm = null;
+	VersionControlOptions optionsMap = new VersionControlOptions();
 
 	public ProjectInfo importProject(RepoInfo repoInfo, String displayName, String uniqueKey) throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importProject()");
 		}
-	
+		String uniqueId = UUID.randomUUID().toString();
+		File tempFolder = new File(Utility.getPhrescoTemp(), uniqueId);
 		ProjectInfo projInfo = null;
 		if(repoInfo.isSplitPhresco()) {
-			projInfo = validatePhrescoProject(repoInfo.getPhrescoRepoDetail());
+			projInfo = validatePhrescoProject(repoInfo.getPhrescoRepoDetail(), tempFolder);
 		} else {
-			projInfo = validatePhrescoProject(repoInfo.getSrcRepoDetail());
+			projInfo = validatePhrescoProject(repoInfo.getSrcRepoDetail(), tempFolder);
 		}
 		
 		if(projInfo != null) {
@@ -240,11 +248,17 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				String workDirPath = workDirPath(repoInfo, applicationInfo);
 				importToWorkspace(tempFile, new File(workDirPath));
 			} else if (TFS.equals(srcRepoDetail.getType())){
-				String uuid = UUID.randomUUID().toString();
-				File tfsImportTemp = new File(Utility.getPhrescoTemp(), uuid);
-				importFromTfs(srcRepoDetail, tfsImportTemp);
 				String workDirPath = workDirPath(repoInfo, applicationInfo);
-				importToWorkspace(tfsImportTemp, new File(workDirPath));
+				File workspaceProjectDir = new File (workDirPath);
+				if (workspaceProjectDir.exists()) {
+					if(debugEnabled){
+						S_LOGGER.debug("workspaceProjectDir exists "+ workspaceProjectDir);
+					}
+					throw new PhrescoException(workspaceProjectDir.getName() + " " + "Already Exists");
+				} else {
+					workspaceProjectDir.mkdir();
+				}
+				importFromTfs(srcRepoDetail, workspaceProjectDir); 
 			}
 		}
 		
@@ -262,41 +276,33 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
     	return str.toString();
 	}
 	
-	private ProjectInfo validatePhrescoProject(RepoDetail phrescoRepoDetail) throws PhrescoException {
+	private ProjectInfo validatePhrescoProject(RepoDetail phrescoRepoDetail, File tempFolder) throws PhrescoException {
 		ProjectInfo projInfo = null;
 		try {
 			if(phrescoRepoDetail.getType().equals(SVN)) {
 				projInfo = checkOutFilter(phrescoRepoDetail);
 			}
 			if(phrescoRepoDetail.getType().equals(GIT)) {
-				String uuid = UUID.randomUUID().toString();
-				File gitImportTemp = new File(Utility.getPhrescoTemp(), uuid);
-				importFromGit(phrescoRepoDetail, gitImportTemp);
-				ProjectInfo gitAppInfo = getGitAppInfo(gitImportTemp);
+				importFromGit(phrescoRepoDetail, tempFolder);
+				ProjectInfo gitAppInfo = getGitAppInfo(tempFolder);
 				if(gitAppInfo != null) {
 					return gitAppInfo;
 				}
 			}
 			if(phrescoRepoDetail.getType().equals(BITKEEPER)) {
-				String uuid = UUID.randomUUID().toString();
-				File bkImportTemp = new File(Utility.getPhrescoTemp(), uuid);
-				boolean imported = importFromBitKeeper(phrescoRepoDetail.getRepoUrl(), bkImportTemp);
+				boolean imported = importFromBitKeeper(phrescoRepoDetail.getRepoUrl(), tempFolder);
 				if(imported) {
-					ProjectInfo projectInfo = getGitAppInfo(bkImportTemp);
+					ProjectInfo projectInfo = getGitAppInfo(tempFolder);
 					if (projectInfo != null) {
 						return projectInfo;
 					}
 				}
 			}
 			if(phrescoRepoDetail.getType().equals(PERFORCE)) {
-				String uuid = UUID.randomUUID().toString();
-				File bkImportTemp = new File(Utility.getPhrescoTemp(), uuid);
-				projInfo = importFromPerforce(phrescoRepoDetail, bkImportTemp);
+				projInfo = importFromPerforce(phrescoRepoDetail, tempFolder);
 			}
 			if (phrescoRepoDetail.getType().equals(TFS)) {
-				String uuid = UUID.randomUUID().toString();
-				File tfsTemp = new File(Utility.getPhrescoTemp(), uuid);
-				projInfo = importFromTfs(phrescoRepoDetail, tfsTemp);
+				projInfo = importFromTfs(phrescoRepoDetail, tempFolder);
 			}
 		} catch(Exception e){
 			throw new PhrescoException(e);
@@ -433,7 +439,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					S_LOGGER.debug("workspaceProjectDir exists "+ workspaceProjectDir);
 				}
 				throw new PhrescoException(workspaceProjectDir.getName() + " " + "Already Exists");
-			}
+			} 
 
 			if(debugEnabled){
 				S_LOGGER.debug("Copyin from Temp to workspace...");
@@ -875,27 +881,24 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 	}
 	
-	private ProjectInfo importFromTfs(RepoDetail repodetail, File tfsImportTemp) throws PhrescoException {
+	private ProjectInfo importFromTfs(RepoDetail repodetail, File tempDirectory) throws PhrescoException {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importFromTfs()");
 		}
 		ProjectInfo projectInfo = null;
 		try {
-			System.getProperty("com.microsoft.tfs.jni.native.base-directory"); 
-			String collectionUrl = repodetail.getRepoUrl();
-			String userName = repodetail.getUserName();
+			FileUtils.forceMkdir(tempDirectory);
+			//TODO: Delete below line before commit
+//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
+			String url = repodetail.getRepoUrl();
+			String serverPath = repodetail.getServerPath();
+			String username = repodetail.getUserName();
 			String password = repodetail.getPassword();
-			String proName = repodetail.getProName();
-			String serverPath = "$/" +repodetail.getServerPath();
-			String localPath = tfsImportTemp.getAbsolutePath();
-			
-			final TFSTeamProjectCollection tpc = connectToTFS(userName, password, collectionUrl);
-			ProjectCollection projects = tpc.getWorkItemClient().getProjects();
-			VersionControlClient client = tpc.getVersionControlClient();
-			final Workspace workspace = createAndMapWorkspace(tpc, localPath, serverPath);
-			addGetEventListeners(tpc);
-			getLatest(workspace, localPath);
-			projectInfo = getGitAppInfo(tfsImportTemp);
+			String workspaceName = "VCWorkspace" + System.currentTimeMillis();
+			createWorkspace(workspaceName, url, username, password);
+			mapLocalWorkspaceToRemote(workspaceName, serverPath, tempDirectory.getCanonicalPath(), url, username, password);
+			getProjectFromTFS(tempDirectory.getCanonicalPath(), username, password);
+			projectInfo = getGitAppInfo(tempDirectory);
 		} catch(Exception e) {
 			throw new PhrescoException(e);
 		}
@@ -903,87 +906,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		return projectInfo;
 	}
 	
-	private static Workspace createAndMapWorkspace(final TFSTeamProjectCollection tpc,String localPath, String serverPath) throws PhrescoException {
-		final String workspaceName = "VCWorkspace" + System.currentTimeMillis();
-		Workspace workspace = null;
-
-		try {
-			// Get the workspace
-			workspace = tpc.getVersionControlClient().tryGetWorkspace(localPath);
-			// Create and map the workspace if it does not exist
-			if (workspace == null) {
-				workspace = tpc.getVersionControlClient().createWorkspace(null, workspaceName, "workspace comment", WorkspaceLocation.SERVER,
-						null, WorkspacePermissionProfile.getPrivateProfile());
-
-				// Map the workspace
-				WorkingFolder workingFolder = new WorkingFolder(serverPath, LocalPath.canonicalize(localPath));
-				workspace.createWorkingFolder(workingFolder);
-			}
-		} catch(Exception e){
-			throw new PhrescoException(e);
-		}
-
-		return workspace;
-	}
-	
-	public static void addGetEventListeners(final TFSTeamProjectCollection tpc) throws PhrescoException {
-		
-		try {
-		// Adding a get operation started event listener, this is fired once per
-		// get call
-		TfsGetOperationStartedListener getOperationStartedListener = new TfsGetOperationStartedListener();
-		tpc.getVersionControlClient().getEventEngine().addOperationStartedListener(getOperationStartedListener);
-
-		// Adding a get event listener, this fired once per get operation(which
-		// might be multiple times per get call)
-		TfsGetEventListener getListener = new TfsGetEventListener();
-		tpc.getVersionControlClient().getEventEngine().addGetListener(getListener);
-
-		// Adding a get operation completed event listener, this is fired once
-		// per get call
-		TfsGetOperationCompletedListener getOperationCompletedListener = new TfsGetOperationCompletedListener();
-		tpc.getVersionControlClient().getEventEngine().addOperationCompletedListener(getOperationCompletedListener);
-		} catch (Exception e){
-			throw new PhrescoException(e);
-		}
-	}
-
-	public static void getLatest(final Workspace workspace, String localPath) {
-		ItemSpec spec = new ItemSpec(localPath, RecursionType.FULL);
-		GetRequest request = new GetRequest(spec, LatestVersionSpec.INSTANCE);
-		workspace.get(request, GetOptions.NONE);
-	}
-	
-	public static TFSTeamProjectCollection connectToTFS(String userName, String password, String collectionUrl ) throws PhrescoException {
-		TFSTeamProjectCollection tpc = null;
-		Credentials credentials;
-
-		try {
-		// In case no username is provided and the current platform supports
-		// default credentials, use default credentials
-		if ((userName == null || userName.length() == 0) && CredentialsUtils.supportsDefaultCredentials()) {
-			credentials = new DefaultNTCredentials();
-		} else {
-			credentials = new UsernamePasswordCredentials(userName, password);
-		}
-
-		URI httpProxyURI = null;
-		if (HTTP_PROXY_URL != null && HTTP_PROXY_URL.length() > 0) {
-			try {
-				httpProxyURI = new URI(HTTP_PROXY_URL);
-			} catch (URISyntaxException e) {
-				// Do Nothing
-			}
-		}
-		ConsoleSamplesConnectionAdvisor connectionAdvisor = new ConsoleSamplesConnectionAdvisor(httpProxyURI);
-		tpc = new TFSTeamProjectCollection(URIUtils.newURI(collectionUrl), credentials, connectionAdvisor);
-		} catch (Exception e) {
-			throw new PhrescoException(e);
-		}
-
-		return tpc;
-	}
-
 	private void importFromGit(RepoDetail repodetail, File gitImportTemp)throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importFromGit()");
@@ -1216,6 +1138,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				S_LOGGER.debug(dotProjectFile.getAbsolutePath());
 				S_LOGGER.debug("dotProjectFile" + dotProjectFile);
 			}
+			System.out.println(".phresco path..."+dotProjectFile.getAbsolutePath());
+			System.out.println(".phresco file exists..."+dotProjectFile.exists());
 			if (!dotProjectFile.exists()) {
 				return null;
 			}
@@ -2404,5 +2328,252 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			importFromTfs(phrescoRepoDetail, tempFile);
 			importToWorkspace(tempFile, new File(builder.toString()));
 		}
+	}
+	public static TFSTeamProjectCollection connectToTFS(String userName, String password, String collectionUrl ) throws PhrescoException {
+		TFSTeamProjectCollection tpc = null;
+		Credentials credentials;
+
+		try {
+		// In case no username is provided and the current platform supports
+		// default credentials, use default credentials
+		if ((userName == null || userName.length() == 0) && CredentialsUtils.supportsDefaultCredentials()) {
+			credentials = new DefaultNTCredentials();
+		} else {
+			credentials = new UsernamePasswordCredentials(userName, password);
+		}
+
+		URI httpProxyURI = null;
+		if (HTTP_PROXY_URL != null && HTTP_PROXY_URL.length() > 0) {
+			try {
+				httpProxyURI = new URI(HTTP_PROXY_URL);
+			} catch (URISyntaxException e) {
+				// Do Nothing
+			}
+		}
+		ConsoleSamplesConnectionAdvisor connectionAdvisor = new ConsoleSamplesConnectionAdvisor(httpProxyURI);
+		tpc = new TFSTeamProjectCollection(URIUtils.newURI(collectionUrl), credentials, connectionAdvisor);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+
+		return tpc;
+	}
+
+	
+	public static void main(String[] args) throws IOException {
+		TFSTeamProjectCollection tpc;
+		String[] cmd = new String[5];
+		try {
+			String uniqueId = UUID.randomUUID().toString();
+			File tempFile = new File("D:/tfs-temp", uniqueId);
+			FileUtils.forceMkdir(tempFile);
+			System.out.println("tempFile ===>"+tempFile.getCanonicalPath());
+//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
+			SCMManagerImpl impl = new SCMManagerImpl();
+			String url = "https://vivekraja.visualstudio.com/DefaultCollection";
+			String serverPath = "$/phresco/ios-hybrid-app/";
+			String username = "vivekraja.vasudevan@photoninfotech.com";
+			String password = "phresco123";
+			String workspaceName = "VCWorkspace" + System.currentTimeMillis();
+			String appDir = "C:/Documents and Settings/rajeshkumar_ra/workspace/projects/jquery_mobile";
+			
+			int createWorkspace = impl.createWorkspace(workspaceName, url, username, password);
+			System.out.println("createWorkspace === " + createWorkspace);
+			int mapLocalWorkspaceToRemote = impl.mapLocalWorkspaceToRemote(workspaceName, serverPath, tempFile.getCanonicalPath(), url, username, password);
+			System.out.println("mapLocalWorkspaceToRemote === " + mapLocalWorkspaceToRemote);
+//////			
+//			int project = impl.getProjectFromTFS(tempFile.getCanonicalPath(), username, password);
+//			System.out.println("project === " + project);
+			Map<String, List<String>> pendingChanges = impl.getPendingChanges(appDir);
+			List<String> newFiles = new ArrayList<String>();
+//			newFiles.add("D:/tfsTest/Backend/src/com/photon/phresco/tfs/code/code3.java");
+			impl.addNewFilesToTFS(serverPath, appDir, username, password, newFiles);
+			List<String> files = new ArrayList<String>();
+//			files.add("D:/tfsTest/Backend/src/com/photon/phresco/tfs/Demo.java");
+//			files.add("D:/tfsTest/Backend/src/com/photon/phresco/tfs/code/code3.java");
+			impl.commitPendingChangesToTFS(serverPath, appDir, username, password, "Checkin through api", files);
+			System.out.println("pendingChanges===>"+pendingChanges);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Exception "+e.getLocalizedMessage());
+		}
+	}
+	
+	private void addNewFilesToTFS(String serverPath, String appDir, String username, String password, List<String> newFiles) throws InvalidOptionValueException, InvalidOptionException,
+	ArgumentException, MalformedURLException, CLCException, LicenseException {
+		//tf add D:\tfsTest\teststatus\src\com\photon\phresco\tfs\Demo.java /noprompt /login:vivekraja.vasudevan@photoninfotech.com,phresco123 
+		Command cmdAdd = new CommandAdd();
+		List<Option> options = new ArrayList<Option>(3);
+		appendRecursive(options);
+		appendNoPrompt(options);
+		appendCredentials(username, password, options);
+		String[] freeArguments = new String[newFiles.size()];
+		freeArguments = newFiles.toArray(freeArguments);
+		int executeCmd = executeCmd(freeArguments, cmdAdd, options);
+		System.out.println("add command.."+executeCmd);
+	}
+
+	private void commitPendingChangesToTFS(String serverPath, String appDir, String username, String password, String comment, List<String> files) throws InvalidOptionValueException, InvalidOptionException,
+		ArgumentException, MalformedURLException, CLCException, LicenseException {
+		//tf checkin D:\tfsTest\teststatus\src\com\photon\phresco\tfs\Demo.java /noprompt /login:vivekraja.vasudevan@photoninfotech.com,phresco123 
+			//	/comment:"Test commit" /login:vivekraja.vasudevan@photoninfotech.com,phresco123
+		
+		Command cmdCheckIn = new CommandCheckin();
+		List<Option> options = new ArrayList<Option>(4);
+		appendRecursive(options);
+		appendNoPrompt(options);
+		appendCredentials(username, password, options);
+		appendComment(comment, options);
+		
+	    String[] freeArguments = new String[files.size()];
+	    freeArguments = files.toArray(freeArguments);
+	    int executeCmd = executeCmd(freeArguments, cmdCheckIn, options);
+	    System.out.println("checkin command.."+executeCmd);
+	}
+	
+	public Map<String, List<String>> getPendingChanges(String appDir) throws PhrescoException {
+		Map<String, List<String>> changes;
+		try {
+			//TODO: Delete below line before commit
+//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
+			com.photon.phresco.framework.impl.CommandStatus cmdStatus = new com.photon.phresco.framework.impl.CommandStatus();
+			List<Option> options = new ArrayList<Option>(2);
+			VersionControlOptions optionsMap1 = new VersionControlOptions();
+			options.add(optionsMap1.findOption("-recursive"));
+			cmdStatus.setOptions((Option[]) options .toArray(new Option[0]), new VersionControlCommands().getGlobalOptions());
+			cmdStatus.setFreeArguments(new String[] { appDir });
+			cmdStatus.run();
+			cmdStatus.close();
+			PendingSet[] pendingSets = cmdStatus.getPendingSets();
+			List<String> editedFiles = new ArrayList<String> ();
+			List<String> addedFiles = new ArrayList<String> ();
+			changes = new HashMap<String, List<String>>();
+			if (pendingSets != null && pendingSets.length > 0) {
+				for (PendingSet pendingSet : pendingSets) {
+					PendingChange[] pendingChanges = pendingSet.getPendingChanges();
+					getChangedFilesList(pendingChanges, addedFiles, editedFiles);
+					PendingChange[] candidatePendingChanges = pendingSet.getCandidatePendingChanges();
+					getChangedFilesList(candidatePendingChanges, addedFiles, editedFiles);
+				}
+				if (CollectionUtils.isNotEmpty(addedFiles)) {
+					changes.put(ADD, addedFiles);
+				}
+				if (CollectionUtils.isNotEmpty(editedFiles)) {
+					changes.put(EDIT, editedFiles);
+				}
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		} 
+
+		return changes;
+	}
+
+	private static void getChangedFilesList(PendingChange[] pendingChanges, List<String> addedFiles, List<String> editedFiles) {
+		for (PendingChange pendingChange : pendingChanges) {
+			ChangeType changeType = pendingChange.getChangeType();
+			int intFlags = changeType.toIntFlags();
+			//4 -- edit, 14 -- add
+			if (intFlags == 4) {
+				editedFiles.add(pendingChange.getLocalItem());
+			} 
+			if (intFlags == 14) {
+				addedFiles.add(pendingChange.getLocalItem());
+			}
+		}
+	}
+
+	private int createWorkspace(String workspaceName, String url, String username, String password) 
+			throws MalformedURLException, ArgumentException, CLCException, LicenseException {
+		// tf workspace -new tfs_work -noprompt -server:https://vivekraja.visualstudio.com/DefaultCollection -login:vivekraja.vasudevan@photoninfotech.com,phresco123
+
+		System.out.println("workspaceName === " + workspaceName);
+		Command cmdWorkspace = new CommandWorkspace();
+		List<Option> options = new ArrayList<Option>(4);
+		options.add(optionsMap.findOption("-new"));
+		appendNoPrompt(options);
+		appendServerUrl(url, options);
+		appendCredentials(username, password, options);
+		return executeCmd(new String[] { workspaceName }, cmdWorkspace, options);
+	}
+	
+	private int mapLocalWorkspaceToRemote(String workspaceName, String serverPath, String localPath, String url, 
+			String username, String password)
+			throws MalformedURLException, ArgumentException, CLCException, LicenseException {
+		// tf workfold -map $/phresco/ios-hybrid-app D:\tfsTest\sample -workspace:tfs_work -server:https://vivekraja.visualstudio.com/DefaultCollection /login:vivekraja.vasudevan@photoninfotech.com,phresco123
+		Command cmdWorkFold = new CommandWorkFold();
+		List<Option> options = new ArrayList<Option>(4);
+		appendMapWorkspace(options);
+		appendWorkspaceName(workspaceName, options);
+		appendServerUrl(url, options);
+		appendCredentials(username, password, options);
+		return executeCmd(new String[] { serverPath, localPath }, cmdWorkFold, options);
+	}
+	
+	private int getProjectFromTFS(String localPath, String username, String password) 
+			throws MalformedURLException, ArgumentException, CLCException, LicenseException {
+		// tf get -all -noprompt /login:vivekraja.vasudevan@photoninfotech.com,phresco123
+		Command cmdGet = new CommandGet();
+		List<Option> options = new ArrayList<Option>(4);
+		appendNoPrompt(options);
+		appendCredentials(username, password, options);
+		appendRecursive(options);
+//		List<String> freeArgs = new ArrayList<String> ();
+//		freeArgs.add(localPath);
+//		if (StringUtils.isNotEmpty(projectInfoPath)) {
+//			freeArgs.add(projectInfoPath);
+//		} else {
+//			options.add(optionsMap.findOption("-all"));
+//		}
+		
+//		String[] freeArguments = new String[freeArgs.size()]; 
+//		freeArguments = freeArgs.toArray(freeArguments);
+		
+		return executeCmd(new String[] { localPath }, cmdGet, options);
+	}
+
+	private void appendMapWorkspace(List<Option> options) throws InvalidOptionValueException {
+		options.add(optionsMap.findOption("-map"));
+	}
+
+	private int executeCmd(String[] args, Command cmd, List<Option> options) 
+			throws InvalidOptionException, ArgumentException, MalformedURLException, CLCException, LicenseException {
+		System.out.println("args..."+args);
+		System.out.println("cmd..."+cmd);
+		System.out.println("options..."+options);
+		cmd.setOptions((Option[]) options .toArray(new Option[0]), new VersionControlCommands().getGlobalOptions());
+		cmd.setFreeArguments(args);
+		cmd.run();
+		cmd.close();
+		System.out.println("exitCode " + cmd.getExitCode());
+		return cmd.getExitCode();
+	}
+
+	private void appendWorkspaceName(String workspaceName, List<Option> options)
+			throws InvalidOptionValueException {
+		options.add(optionsMap.findOption("-workspace:"+workspaceName));
+	}
+
+	private void appendCredentials(String username, String password, List<Option> options)
+			throws InvalidOptionValueException {
+		options.add(optionsMap.findOption("-login:" + username + "," + password));
+	}
+
+	private void appendServerUrl(String url, List<Option> options) throws InvalidOptionValueException {
+		options.add(optionsMap.findOption("-server:"+url));
+	}
+	
+	private void appendComment(String comment, List<Option> options) throws InvalidOptionValueException {
+		options.add(optionsMap.findOption("-comment:\""+comment+"\""));
+	}
+	
+	private void appendRecursive(List<Option> options) throws InvalidOptionValueException {
+		options.add(optionsMap.findOption("-recursive"));
+	}
+	
+	private void appendNoPrompt(List<Option> options)
+			throws InvalidOptionValueException {
+		options.add(optionsMap.findOption("-noprompt"));
 	}
 }
