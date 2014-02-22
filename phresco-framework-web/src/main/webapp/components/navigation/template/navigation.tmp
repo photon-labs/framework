@@ -43,7 +43,7 @@
 			                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="importUserName" readonly="readonly"></td>
 			                            <td><input type="password" placeholder="*******" id="importPassword" readonly="readonly"></td>
 			                        </tr>
-			                        <tr class="svndata">
+			                        <tr class="svndata revisionOption">
 			                        	<td>
 			                        		<input type="radio" name="headoption" value="HEAD" checked>
 			                        		<span data-i18n="projectlist.label.headrevision"></span>
@@ -114,7 +114,7 @@
 			                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="importPhrescoUserName"></td>
 			                            <td><input type="password" placeholder="*******" id="importPhrescoPassword"></td>
 			                        </tr>
-			                        <tr class="svndata">
+			                        <tr class="svndata revisionOption">
 			                        	<td>
 			                        		<input type="radio" name="phrescoHeadoption" value="HEAD" checked>
 			                        		<span data-i18n="projectlist.label.headrevision"></span>
@@ -185,7 +185,7 @@
 			                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="importTestUserName"></td>
 			                            <td><input type="password" placeholder="*******" id="importTestPassword"></td>
 			                        </tr>
-			                        <tr class="svndata">
+			                        <tr class="svndata revisionOption">
 			                        	<td>
 			                        		<input type="radio" name="testHeadoption" value="HEAD" checked>
 			                        		<span data-i18n="projectlist.label.headrevision"></span>

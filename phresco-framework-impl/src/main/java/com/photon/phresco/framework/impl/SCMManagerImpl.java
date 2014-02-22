@@ -383,6 +383,11 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			String baseDir = updateDir.getAbsolutePath();
 		    perforceSync(repodetail, baseDir, updateDir.getName(),"update");
 //			updateSCMConnection(appInfo, repodetail.getRepoUrl()+repodetail.getStream());
+		} else if (TFS.equals(repodetail.getType())) {
+			int responseCode = getProjectFromTFS(repodetail, updateDir.getCanonicalPath());
+			if (responseCode == -1) {
+				return true;
+			}
 		}
 
 		return false;
@@ -889,7 +894,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		try {
 			FileUtils.forceMkdir(tempDirectory);
 			//TODO: Delete below line before commit
-//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
+//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "/Users/kaleeswaran/phresco-framework/workspace/tools/native/native");
 			String url = repodetail.getRepoUrl();
 			String serverPath = repodetail.getServerPath();
 			String username = repodetail.getUserName();
@@ -897,7 +902,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			String workspaceName = "VCWorkspace" + System.currentTimeMillis();
 			createWorkspace(workspaceName, url, username, password);
 			mapLocalWorkspaceToRemote(workspaceName, serverPath, tempDirectory.getCanonicalPath(), url, username, password);
-			getProjectFromTFS(tempDirectory.getCanonicalPath(), username, password);
+			getProjectFromTFS(repodetail, tempDirectory.getCanonicalPath());
 			projectInfo = getGitAppInfo(tempDirectory);
 		} catch(Exception e) {
 			throw new PhrescoException(e);
@@ -1914,6 +1919,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	}
 	
 	private boolean commitToTFSRepo(RepoDetail repoDetail, String appDir) throws PhrescoException {
+//		System.setProperty("com.microsoft.tfs.jni.native.base-directory", "/Users/kaleeswaran/workspace/tools/native/native");
 		int commited = 100;
 	    if (CollectionUtils.isNotEmpty(repoDetail.getTfsAddedFiles())) {
 	    	int added = addNewFilesToTFS(appDir, repoDetail.getUserName(), repoDetail.getPassword(), repoDetail.getTfsAddedFiles());
@@ -2535,25 +2541,16 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		return executeCmd(new String[] { serverPath, localPath }, cmdWorkFold, options);
 	}
 	
-	private int getProjectFromTFS(String localPath, String username, String password) 
+	private int getProjectFromTFS(RepoDetail repoDetail, String localPath) 
 			throws MalformedURLException, ArgumentException, CLCException, LicenseException {
 		// tf get -all -noprompt /login:vivekraja.vasudevan@photoninfotech.com,phresco123
+//		System.setProperty("com.microsoft.tfs.jni.native.base-directory", "/Users/kaleeswaran/workspace/tools/native/native");
 		Command cmdGet = new CommandGet();
 		List<Option> options = new ArrayList<Option>(4);
+		options.add(optionsMap.findOption("-all"));
 		appendNoPrompt(options);
-		appendCredentials(username, password, options);
+		appendCredentials(repoDetail.getUserName(), repoDetail.getPassword(), options);
 		appendRecursive(options);
-//		List<String> freeArgs = new ArrayList<String> ();
-//		freeArgs.add(localPath);
-//		if (StringUtils.isNotEmpty(projectInfoPath)) {
-//			freeArgs.add(projectInfoPath);
-//		} else {
-//			options.add(optionsMap.findOption("-all"));
-//		}
-		
-//		String[] freeArguments = new String[freeArgs.size()]; 
-//		freeArguments = freeArgs.toArray(freeArguments);
-		
 		return executeCmd(new String[] { localPath }, cmdGet, options);
 	}
 

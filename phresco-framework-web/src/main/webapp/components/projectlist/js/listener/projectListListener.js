@@ -916,7 +916,7 @@ define([], function() {
 			repoDetail.type = repoType;
 			repoDetail.repoUrl = $("#updateRepourl"+dynid).val();
 			
-			if ('svn' === repoType) {
+			if ('svn' === repoType || 'tfs' === repoType) {
 				repoDetail.userName = $("#updateUserName"+dynid).val();
 				repoDetail.password = $("#updatePassword"+dynid).val();
 				repoDetail.revision = revision;
@@ -946,7 +946,7 @@ define([], function() {
 			repoDetail.type = repoType;
 			repoDetail.repoUrl = $("#updatePhrescoRepourl"+dynid).val();
 			
-			if ('svn' === repoType) {
+			if ('svn' === repoType || 'tfs' === repoType) {
 				repoDetail.userName = $("#updatePhrescoUserName"+dynid).val();
 				repoDetail.password = $("#updatePhrescoPassword"+dynid).val();
 				repoDetail.revision = revision;
@@ -976,7 +976,7 @@ define([], function() {
 			repoDetail.type = repoType;
 			repoDetail.repoUrl = $("#updateTestRepourl"+dynid).val();
 			
-			if ('svn' === repoType) {
+			if ('svn' === repoType || 'tfs' === repoType) {
 				repoDetail.userName = $("#updateTestUserName"+dynid).val();
 				repoDetail.password = $("#updateTestPassword"+dynid).val();
 				repoDetail.revision = revision;
@@ -1177,6 +1177,21 @@ define([], function() {
 				$(".updatePerforcedata"+dynamicId).hide();
 				$(".updateImportCredential"+dynamicId).hide();
 				$(".updateBitkeeperdata"+dynamicId).show();
+			}
+			if (repoType === "tfs") {
+				$(".updateSvndata"+dynamicId).hide();
+				$(".updateGitdata"+dynamicId).hide();
+				$(".updatePerforcedata"+dynamicId).hide();
+				$(".updateImportCredential"+dynamicId).hide();
+				$(".updateBitkeeperdata"+dynamicId).hide();
+				$(".updateImportCredential").hide();
+				$(".updateTfsdata"+dynamicId).show();
+				$("#updateUserName"+dynamicId).removeAttr("readonly").val("");
+				$("#updatePassword"+dynamicId).removeAttr("readonly").val("");
+				$("#updatePhrescoUserName"+dynamicId).removeAttr("readonly").val("");
+				$("#updatePhrescoPassword"+dynamicId).removeAttr("readonly").val("");
+				$("#updateTestUserName"+dynamicId).removeAttr("readonly").val("");
+				$("#updateTestPassword"+dynamicId).removeAttr("readonly").val("");
 			}
 		},
 		

@@ -12,6 +12,8 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         contextUrlsRowId : "",
         dynamicParameters : [],
         formObj : "",
+        selectedPaths : [],
+        previousPath : "",
 
         /***
          * Called in initialization time of this class 
@@ -249,25 +251,33 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         
         dynamicParameterTreeClickEvent : function(parameterKey) {
         	var self = this;
+            $("input[name=folder]").attr("disabled", false);
         	$("input[name=folder]:checked").each(function() {
-        		self.enableDisableTreeChkBx($(this));
+        		self.selectUnselectTreeChkBx($(this));
         	});
         	
         	$("input[name=folder]").unbind("click");
         	$("input[name=folder]").bind("click", function() {
-        		self.enableDisableTreeChkBx($(this));
+        		self.selectUnselectTreeChkBx($(this));
         	});
         	
         	$("input[name=selectFilePath]").unbind("click");
         	$("input[name=selectFilePath]").bind("click", function() {
         		$("#browse").toggle();
-        		var selectedPaths = [];
+        		self.selectedPaths = [];
         		$("input[name=folder]:checked").each(function() {
-        			selectedPaths.push($(this).val());
-        		});
-        		if (selectedPaths.length > 0) {
-        			$("input[name='"+parameterKey+"']").val(selectedPaths.join(","));
-        		}
+                    if (self.isBlank(self.previousPath)) {
+                        self.getSelectedChkBx($(this));
+                    } else if ($(this).val().indexOf(self.previousPath) === -1) {
+                        self.getSelectedChkBx($(this));
+                    }
+                });
+        		if (self.selectedPaths.length > 0) {
+        			$("input[name='"+parameterKey+"']").val(self.selectedPaths.join(","));
+        		} else {
+                    $("input[name='"+parameterKey+"']").val("");
+                }
+                $("input[name=folder]").attr("disabled", true);
         	});
         	
         	$(".jstree-icon").unbind("click");
@@ -280,15 +290,51 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         	$("input[name=treePopupClose]").unbind("click");
         	$("input[name=treePopupClose]").bind("click", function() {
         		$("#browse").toggle();
-        	})
+        	});
+        },
+
+        getSelectedChkBx : function(thisObj) {
+            var self = this;
+            if (thisObj.attr("hasParent") === "true") {
+                var parentChkBxObj = thisObj.parents(".group:first").parent().find("span:first input[name=folder]");
+                if (parentChkBxObj.is(":checked")) {
+                    self.getSelectedChkBx(parentChkBxObj);
+                } else {
+                    self.previousPath = thisObj.val();
+                    self.selectedPaths.push(thisObj.val());
+                }
+            } else {
+                self.previousPath = thisObj.val();
+                self.selectedPaths.push(thisObj.val());
+            }
         },
         
-        enableDisableTreeChkBx : function(thisObj) {
+        selectUnselectTreeChkBx : function(thisObj) {
+        	var self = this;
+            var childFolderChkBxObj = thisObj.parent().next().find("input[name=folder]"); 
         	if (thisObj.is(":checked")) {
-        		thisObj.parent().next().find("input[name=folder]").attr("checked", false).attr("disabled", true);
+                childFolderChkBxObj.prop("checked", true);
     		} else {
-    			thisObj.parent().next().find("input[name=folder]").attr("disabled", false);
+                childFolderChkBxObj.prop("checked", false);
     		}
+            if (thisObj.attr("hasParent") === "true") {
+                self.selectUnselectParentChkBx(thisObj);
+            }
+        },
+        
+        selectUnselectParentChkBx : function(thisObj) {
+        	var self = this;
+        	var available = thisObj.parents(".group:first").find("input[name=folder]").length;
+        	var selected = thisObj.parents(".group:first").find("input[name=folder]:checked").length;
+        	var parentChkBxObj = thisObj.parents(".group:first").parent().find("span:first input[name=folder]");
+            if (available === selected) {
+        		parentChkBxObj.prop("checked", true);
+            } else {
+        		parentChkBxObj.prop("checked", false);
+        	}
+            if (parentChkBxObj.attr("hasParent") === "true") {
+                self.selectUnselectParentChkBx(parentChkBxObj);
+            }
         },
         
 		consDragnDropcnt : function(parameter, columnClass, whereToRender){

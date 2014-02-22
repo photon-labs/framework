@@ -386,6 +386,7 @@
 	                                                <option value="svn" data-i18n="projectlist.label.svn"></option>
 	                                        		<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 	                                        		<option value="git" data-i18n="projectlist.label.git"></option>
+	                                        		<option value="tfs" data-i18n="projectlist.label.tfs"></option>
 	                                            </select>
 	                            			</td>
 	                            			<td><input type="text" id="phrCommitRepourl{{id}}" data-i18n="[placeholder]navigation.application.apprepourl" readonly="readonly"></td>
@@ -447,6 +448,7 @@
 	                                                <option value="svn" data-i18n="projectlist.label.svn"></option>
 	                                        		<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 	                                        		<option value="git" data-i18n="projectlist.label.git"></option>
+	                                        		<option value="tfs" data-i18n="projectlist.label.tfs"></option>
 	                                            </select>
 	                            			</td>
 	                            			<td><input type="text" id="testCommitRepourl{{id}}" data-i18n="[placeholder]navigation.application.apprepourl" readonly="readonly"></td>
@@ -522,6 +524,7 @@
 													<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 													<option value="git" data-i18n="projectlist.label.git"></option>
 				                                    <option value="perforce" data-i18n="projectlist.label.perforce"></option>
+				                                    <option value="tfs" data-i18n="projectlist.label.tfs"></option>
 				                            	</select>
 	                            			</td>
 	                            			<td><input type="text" id="updateRepourl{{id}}" data-i18n="[placeholder]navigation.application.apprepourl" readonly="readonly"></td>
@@ -532,11 +535,11 @@
                             				</td>
 	                            			<td></td>
 	                        			</tr>
-				                        <tr class="updateSvndata{{id}}">
+				                        <tr class="updateSvndata{{id}} updateTfsdata{{id}}">
 				                            <td><span data-i18n="login.placeholder.username"></span><sup class="svnusr">*</sup></td>
 				                            <td><span data-i18n="login.placeholder.password"></span><sup class="svnpswd">*</sup></td>
 				                        </tr>
-				                        <tr class="updateSvndata{{id}}">
+				                        <tr class="updateSvndata{{id}} updateTfsdata{{id}}">
 				                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="updateUserName{{id}}" readonly="readonly"></td>
 				                            <td><input type="password" placeholder="*******" id="updatePassword{{id}}" readonly="readonly"></td>
 				                        </tr>
@@ -588,6 +591,7 @@
 													<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 													<option value="git" data-i18n="projectlist.label.git"></option>
 				                                    <option value="perforce" data-i18n="projectlist.label.perforce"></option>
+				                                    <option value="tfs" data-i18n="projectlist.label.tfs"></option>
 				                            	</select>
 	                            			</td>
 	                            			<td><input type="text" id="updatePhrescoRepourl{{id}}" data-i18n="[placeholder]navigation.application.phrescorepourl" readonly="readonly"></td>
@@ -598,11 +602,11 @@
                             				</td>
 	                            			<td></td>
 	                        			</tr>
-				                        <tr class="updateSvndata{{id}}">
+				                        <tr class="updateSvndata{{id}} updateTfsdata{{id}}">
 				                            <td><span data-i18n="login.placeholder.username"></span><sup class="svnusr">*</sup></td>
 				                            <td><span data-i18n="login.placeholder.password"></span><sup class="svnpswd">*</sup></td>
 				                        </tr>
-				                        <tr class="updateSvndata{{id}}">
+				                        <tr class="updateSvndata{{id}} updateTfsdata{{id}}">
 				                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="updatePhrescoUserName{{id}}" readonly="readonly"></td>
 				                            <td><input type="password" placeholder="*******" id="updatePhrescoPassword{{id}}" readonly="readonly"></td>
 				                        </tr>
@@ -654,6 +658,7 @@
 													<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 													<option value="git" data-i18n="projectlist.label.git"></option>
 				                                    <option value="perforce" data-i18n="projectlist.label.perforce"></option>
+				                                    <option value="tfs" data-i18n="projectlist.label.tfs"></option>
 				                            	</select>
 	                            			</td>
 	                            			<td><input type="text" id="updateTestRepourl{{id}}" data-i18n="[placeholder]navigation.application.testrepourl" readonly="readonly"></td>
@@ -664,11 +669,11 @@
                             				</td>
 	                            			<td></td>
 	                        			</tr>
-				                        <tr class="updateSvndata{{id}}">
+				                        <tr class="updateSvndata{{id}} updateTfsdata{{id}}">
 				                            <td><span data-i18n="login.placeholder.username"></span><sup class="svnusr">*</sup></td>
 				                            <td><span data-i18n="login.placeholder.password"></span><sup class="svnpswd">*</sup></td>
 				                        </tr>
-				                        <tr class="updateSvndata{{id}}">
+				                        <tr class="updateSvndata{{id}} updateTfsdata{{id}}">
 				                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="updateTestUserName{{id}}" readonly="readonly"></td>
 				                            <td><input type="password" placeholder="*******" id="updateTestPassword{{id}}" readonly="readonly"></td>
 				                        </tr>
