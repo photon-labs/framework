@@ -433,6 +433,8 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				response = commitGitProject(applicationInfo, repoDetail, type, unique_key, displayName, workingDir);
 			} else if (type.equals(BITKEEPER)) {
 				response = commitBitKeeperProject(applicationInfo, repoDetail, type, unique_key, displayName, workingDir);
+			} else if (type.equals(TFS)) {
+				response = commitTFSProject(applicationInfo, repoDetail, type, unique_key, displayName, workingDir);
 			}
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
@@ -2077,6 +2079,55 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			}
 		}
 	}
+	
+	/**
+	 * Commit TFS project.
+	 *
+	 * @param appDirName the app dir name
+	 * @param repodetail the repodetail
+	 * @param type the type
+	 * @return the response
+	 */
+	public Response commitTFSProject(ApplicationInfo applicationInfo, RepoDetail repodetail, 
+			String type, String uniqueKey, String displayName, File workingDir) {
+		ResponseInfo responseData = new ResponseInfo();
+		SCMManagerImpl scmi = new SCMManagerImpl();
+		try {
+			//To generate the lock for the particular operation
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), COMMIT , displayName, uniqueKey)), true);
+			scmi.commitToRepo(repodetail, workingDir);
+			status = RESPONSE_STATUS_SUCCESS;
+			successCode = PHR200020;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			if (e.getLocalizedMessage().contains("Nothing to push")) {
+				status = RESPONSE_STATUS_ERROR;
+				errorCode = PHR210034;
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
+				"*").build();
+			} else {
+				status = RESPONSE_STATUS_ERROR;
+				errorCode = PHR210033;
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), COMMIT_PROJECT_FAIL, null);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
+				"*").build();
+			}
+		} catch (Exception e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210033;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
+		} finally {
+			try {
+				LockUtil.removeLock(uniqueKey);
+			} catch (PhrescoException e) {
+
+			}
+		}
+	}
 
 	/**
 	 * Commit git project.
@@ -2153,7 +2204,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				repodetail.setRepoExist(true);
 				SCMManagerImpl impl = new SCMManagerImpl();
 				Map<String, List<String>> pendingChanges = impl.getPendingChanges(workingDir.getCanonicalPath());
-				System.out.println("pendingChanges...."+pendingChanges);
 				if (MapUtils.isNotEmpty(pendingChanges)) {
 					List<String> addedFiles = pendingChanges.get(ADD);
 					List<String> editedFiles = pendingChanges.get(EDIT);

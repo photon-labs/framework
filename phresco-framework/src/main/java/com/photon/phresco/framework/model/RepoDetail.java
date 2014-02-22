@@ -21,7 +21,7 @@ public class RepoDetail implements Serializable {
 	private String userName;
 	private String password;
 	private String revisionVal;
-	private String commitMessage;
+	private String commitMessage = "";
 	private List<String>commitableFiles;
 	private List<RepoFileInfo> repoInfoFile;
 	private List<String> tfsAddedFiles;

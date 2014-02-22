@@ -394,7 +394,6 @@ define([], function() {
 			var commitdata = {}, action;
 			if (!self.validateCommitData(dynid)) {
 				self.showBtnLoading("button[name='commitbtn'][id='"+dynid+"']");
-				
 				var repoInfo = {};
 				var srcRepoDetail = {};
 				srcRepoDetail.type = $("#commitType_"+dynid).val();
@@ -403,15 +402,17 @@ define([], function() {
 				srcRepoDetail.password = $("#commitPassword"+dynid).val();
 				srcRepoDetail.commitMessage = $("#commitMessage_"+dynid).val();
 				srcRepoDetail.passPhrase = $(".commitPassPhraseval"+dynid).val();
-				var arrayCommitableFiles = [];
+				var arrayCommitableFiles = [], srcTfsAddedFiles = [], srcTfsEditedFiles = [];
 				$.each($('.commitChildChk[dynamicId='+dynid+'][from=src]') , function(index, value) {
 					if ("tfs" === srcRepoDetail.type && $(this).is(':checked')) {
-
+						self.getTFSCommitableFiles($(this), srcTfsAddedFiles, srcTfsEditedFiles);
 					} else if ($(this).is(':checked')) {
 						arrayCommitableFiles.push($(this).val());
 					}
 				});
 				srcRepoDetail.commitableFiles = arrayCommitableFiles;
+				srcRepoDetail.tfsAddedFiles = srcTfsAddedFiles;
+				srcRepoDetail.tfsEditedFiles = srcTfsEditedFiles;
 				repoInfo.srcRepoDetail = srcRepoDetail;
 				
 				var phrescoRepoDetail = {};
@@ -422,13 +423,17 @@ define([], function() {
 					phrescoRepoDetail.password = $("#phrCommitPassword"+dynid).val();
 					phrescoRepoDetail.commitMessage = $("#phrCommitMessage_"+dynid).val();
 					phrescoRepoDetail.passPhrase = $(".phrCommitPassPhraseval"+dynid).val();
-					var phrCommitableFiles = [];
+					var phrCommitableFiles = [], phrTfsAddedFiles = [], phrTfsEditedFiles = [];
 					$.each($('.commitChildChk[dynamicId='+dynid+'][from=phr]') , function(index, value) {
-						if ($(this).is(':checked')) {
+						if ("tfs" === phrescoRepoDetail.type && $(this).is(':checked')) {
+							self.getTFSCommitableFiles($(this), phrTfsAddedFiles, phrTfsEditedFiles);
+						} else if ($(this).is(':checked')) {
 							phrCommitableFiles.push($(this).val());
 						}
 					});
 					phrescoRepoDetail.commitableFiles = phrCommitableFiles;
+					phrescoRepoDetail.tfsAddedFiles = phrTfsAddedFiles;
+					phrescoRepoDetail.tfsEditedFiles = phrTfsEditedFiles;
 					repoInfo.phrescoRepoDetail = phrescoRepoDetail;
 				}
 				
@@ -440,13 +445,17 @@ define([], function() {
 					testRepoDetail.password = $("#testCommitPassword"+dynid).val();
 					testRepoDetail.commitMessage = $("#testCommitMessage_"+dynid).val();
 					testRepoDetail.passPhrase = $(".testCommitPassPhraseval"+dynid).val();
-					var testCommitableFiles = [];
+					var testCommitableFiles = [], testTfsAddedFiles = [], testTfsEditedFiles = [];
 					$.each($('.commitChildChk[dynamicId='+dynid+'][from=test]') , function(index, value) {
-						if ($(this).is(':checked')) {
+						if ("tfs" === testRepoDetail.type && $(this).is(':checked')) {
+							self.getTFSCommitableFiles($(this), testTfsAddedFiles, testTfsEditedFiles);
+						} else if ($(this).is(':checked')) {
 							testCommitableFiles.push($(this).val());
 						}
 					});
 					testRepoDetail.commitableFiles = testCommitableFiles;
+					testRepoDetail.tfsAddedFiles = testTfsAddedFiles;
+					testRepoDetail.tfsEditedFiles = testTfsEditedFiles;
 					repoInfo.testRepoDetail = testRepoDetail;
 				}
 				repoInfo.splitPhresco = $("#commitDotPhresco_"+dynid).is(":checked");
@@ -466,6 +475,15 @@ define([], function() {
 			}
 		},
 		
+		getTFSCommitableFiles : function(checkboxObj, tfsAddedFiles, tfsEditedFiles) {
+			if ("add" === $(checkboxObj).attr("tfs")) {
+				tfsAddedFiles.push($(checkboxObj).val());
+				tfsEditedFiles.push($(checkboxObj).val());
+			} else if ("edit" === $(checkboxObj).attr("tfs")) {
+				tfsEditedFiles.push($(checkboxObj).val());
+			}
+		},
+
 		checkForDependents : function(subModuleName, rootModule, callback) {
 			var self = this, moduleData = {};
 			moduleData.subModuleName = subModuleName;
@@ -547,7 +565,7 @@ define([], function() {
 							$(value).attr('selected', 'selected');
 						}
 					});
-					console.info("srcRepoDetail....",srcRepoDetail);
+					
 					if ((srcRepoDetail.repoInfoFile !== undefined && srcRepoDetail.repoInfoFile !== null && srcRepoDetail.repoInfoFile.length > 0) || "tfs" === srcRepoDetail.type) {
 						$('.srcCommitableFiles').show();
 						self.constructCommitableFiles(dynamicId, srcRepoDetail, $('.commitable_files_'+dynamicId), "src");
@@ -597,34 +615,38 @@ define([], function() {
 		constructCommitableFiles : function(dynamicId, repoDetail, tbodyObj, from) {
 			var self = this;
 			var commitableFiles = '';
-			if ("tfs" === repoDetail.type && repoDetail.tfsAddedFiles !== null && repoDetail.tfsAddedFiles !== undefined && repoDetail.tfsAddedFiles.length > 0) {
-				console.info('...repoDetail.tfsAddedFiles',repoDetail.tfsAddedFiles);
-				console.info('...repoDetail.from',from);
-				$.each(repoDetail.tfsAddedFiles, function(index, addedFile) {
-					commitableFiles += '<tr><td style="vertical-align: top;"><input checkVal="check" tfs="add" dynamicId="'+ dynamicId +'" class="commitChildChk" from="'+from+'" type="checkbox" value="' + addedFile + '"></td>';
-					commitableFiles += '<td style="width:280px !important;" title="'+ addedFile +'">"' + addedFile + '"</td>';
-					commitableFiles += '<td style="vertical-align: top;text-align: center;"> ? </td></tr>';
-				});
-			} 
-			 if ("tfs" === repoDetail.type && repoDetail.tfsEditedFiles !== null && repoDetail.tfsEditedFiles !== undefined && repoDetail.tfsEditedFiles.length > 0) {
-				console.info('...repoDetail.tfsEditedFiles;',repoDetail.tfsEditedFiles);
-				$.each(repoDetail.tfsEditedFiles, function(index, editedFile) {
-					commitableFiles += '<tr><td style="vertical-align: top;"><input checkVal="check" tfs="edit" dynamicId="'+ dynamicId +'" class="commitChildChk" from="'+from+'" type="checkbox" value="' + editedFile + '"></td>';
-					commitableFiles += '<td style="width:280px !important;" title="'+ editedFile +'">"' + editedFile + '"</td>';
-					commitableFiles += '<td style="vertical-align: top;text-align: center;"> M </td></tr>';
-				});
+			if ("tfs" === repoDetail.type) { 
+				self.constructTFSCommitableFiles(dynamicId, repoDetail, tbodyObj, from);
 			}  else {
 				$.each(repoDetail.repoInfoFile, function(index, value) {
 					commitableFiles += '<tr><td style="vertical-align: top;"><input checkVal="check" dynamicId="'+ dynamicId +'" class="commitChildChk" from="'+from+'" type="checkbox" value="' + value.commitFilePath + '"></td>';
 					commitableFiles += '<td style="width:280px !important;" title="'+ value.commitFilePath +'">"' + value.commitFilePath + '"</td>';
 					commitableFiles += '<td style="vertical-align: top;text-align: center;">"' + value.status + '"</td></tr>';
 				});
+				tbodyObj.html(commitableFiles);
 			}
-			
-
-			tbodyObj.html(commitableFiles);
 		},
-		
+
+		constructTFSCommitableFiles : function (dynamicId, repoDetail, tbodyObj, from) {
+			var self = this;
+			var commitableFiles = '';
+			if (repoDetail.tfsAddedFiles !== null && repoDetail.tfsAddedFiles !== undefined && repoDetail.tfsAddedFiles.length > 0) {
+				$.each(repoDetail.tfsAddedFiles, function(index, addedFile) {
+					commitableFiles += '<tr><td style="vertical-align: top;"><input checkVal="check" tfs="add" dynamicId="'+ dynamicId +'" class="commitChildChk" from="'+from+'" type="checkbox" value="' + addedFile + '"></td>';
+					commitableFiles += '<td style="width:280px !important;" title="'+ addedFile +'">"' + addedFile + '"</td>';
+					commitableFiles += '<td style="vertical-align: top;text-align: center;"> ? </td></tr>';
+				});
+			} 
+			if (repoDetail.tfsEditedFiles !== null && repoDetail.tfsEditedFiles !== undefined && repoDetail.tfsEditedFiles.length > 0) {
+				$.each(repoDetail.tfsEditedFiles, function(index, editedFile) {
+					commitableFiles += '<tr><td style="vertical-align: top;"><input checkVal="check" tfs="edit" dynamicId="'+ dynamicId +'" class="commitChildChk" from="'+from+'" type="checkbox" value="' + editedFile + '"></td>';
+					commitableFiles += '<td style="width:280px !important;" title="'+ editedFile +'">"' + editedFile + '"</td>';
+					commitableFiles += '<td style="vertical-align: top;text-align: center;"> M </td></tr>';
+				});
+			} 
+			tbodyObj.html(commitableFiles);
+		}, 
+
 		getUpdatableFiles : function(data, obj) {
 			var self = this;
 			var dynamicId = data.dynamicId;

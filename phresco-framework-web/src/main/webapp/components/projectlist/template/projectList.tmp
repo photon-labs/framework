@@ -349,13 +349,7 @@
 										<tr class="commitGitdata{{id}}">
 											<td><input type="password" class="commitPassPhraseval{{id}}"></td>
 										</tr>
-										<tr class="commitTfsdata{{id}}">
-											<td><span name="serverPath" value="serverPath">Server Path</span></td>
-										</tr>
-										<tr class="commitTfsdata{{id}}">
-											<td><input type="text" class="commitServerPathval{{id}}"></td>
-										</tr>
-	                                	<tr>
+										<tr>
 	                                        <td colspan="2">
 	                                            <textarea class="popuptextarea" data-i18n="[placeholder]projectlist.label.message" id="commitMessage_{{id}}" name="commitMsg"></textarea><img class="search" typeOfRepo="commit"  dynId="{{id}}" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
 	                                        </td>
@@ -416,13 +410,7 @@
 										<tr class="commitGitdata{{id}}">	
 											<td><input type="password" class="phrCommitPassPhraseval{{id}}"></td>
 										</tr>
-										<tr class="commitTfsdata{{id}}">
-											<td><span name="serverPath" value="serverPath">Server Path</span></td>
-										</tr>
-										<tr class="commitTfsdata{{id}}">
-											<td><input type="text" class="phrCommitServerPathval{{id}}"></td>
-										</tr>
-	                                	<tr>
+										<tr>
 	                                        <td colspan="2">
 	                                            <textarea class="popuptextarea" data-i18n="[placeholder]projectlist.label.message" id="phrCommitMessage_{{id}}" name="phrCommitMsg"></textarea><img class="phrescosearch" typeOfRepo="commit" dynId="{{id}}" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
 	                                        </td>
@@ -483,13 +471,7 @@
 										<tr class="commitGitdata{{id}}">	
 											<td><input type="password" class="testCommitPassPhraseval{{id}}"></td>
 										</tr>
-										<tr class="commitTfsdata{{id}}">
-											<td><span name="serverPath" value="serverPath">Server Path</span></td>
-										</tr>
-										<tr class="commitTfsdata{{id}}">
-											<td><input type="text" class="testCommitServerPathval{{id}}"></td>
-										</tr>
-	                                	<tr>
+										<tr>
 	                                        <td colspan="2">
 	                                            <textarea class="popuptextarea" data-i18n="[placeholder]projectlist.label.message" id="testCommitMessage_{{id}}" name="testCommitMsg"></textarea><img class="testsearch" typeOfRepo="commit"  dynId="{{id}}" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
 	                                        </td>

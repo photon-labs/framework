@@ -1138,8 +1138,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				S_LOGGER.debug(dotProjectFile.getAbsolutePath());
 				S_LOGGER.debug("dotProjectFile" + dotProjectFile);
 			}
-			System.out.println(".phresco path..."+dotProjectFile.getAbsolutePath());
-			System.out.println(".phresco file exists..."+dotProjectFile.exists());
 			if (!dotProjectFile.exists()) {
 				return null;
 			}
@@ -1848,6 +1846,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				importToGITRepo(repodetail, null, dir);
 			} else if (BITKEEPER.equals(repodetail.getType())) {
 			    return commitToBitKeeperRepo(repodetail.getRepoUrl(), dir.getPath(), repodetail.getCommitMessage());
+			} else if (TFS.equals(repodetail.getType())) {
+			    return commitToTFSRepo(repodetail, dir.getCanonicalPath());
 			}
 		} catch (PhrescoException e) {
 			throw e;
@@ -1911,6 +1911,21 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
         }
         
         return isCommitted;
+	}
+	
+	private boolean commitToTFSRepo(RepoDetail repoDetail, String appDir) throws PhrescoException {
+		int commited = 100;
+	    if (CollectionUtils.isNotEmpty(repoDetail.getTfsAddedFiles())) {
+	    	int added = addNewFilesToTFS(appDir, repoDetail.getUserName(), repoDetail.getPassword(), repoDetail.getTfsAddedFiles());
+	    	if (added != -1) {
+	    		throw new PhrescoException("Unable to add new files to repo");
+	    	}
+	    } 
+	    if (CollectionUtils.isNotEmpty(repoDetail.getTfsEditedFiles())) {
+	    	commited = commitPendingChangesToTFS(appDir, repoDetail.getUserName(), repoDetail.getPassword(), repoDetail.getCommitMessage(), repoDetail.getTfsEditedFiles());
+	    }
+		boolean success = (commited == 0) ? true : false;
+		return success;
 	}
 	
 	public SVNCommitInfo deleteDirectoryInSubversion(RepoDetail repodetail, String subVersionedDirectory) throws SVNException, IOException {
@@ -2366,9 +2381,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		try {
 			String uniqueId = UUID.randomUUID().toString();
 			File tempFile = new File("D:/tfs-temp", uniqueId);
-			FileUtils.forceMkdir(tempFile);
+//			FileUtils.forceMkdir(tempFile);
 			System.out.println("tempFile ===>"+tempFile.getCanonicalPath());
-//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
+			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
 			SCMManagerImpl impl = new SCMManagerImpl();
 			String url = "https://vivekraja.visualstudio.com/DefaultCollection";
 			String serverPath = "$/phresco/ios-hybrid-app/";
@@ -2377,22 +2392,22 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			String workspaceName = "VCWorkspace" + System.currentTimeMillis();
 			String appDir = "C:/Documents and Settings/rajeshkumar_ra/workspace/projects/jquery_mobile";
 			
-			int createWorkspace = impl.createWorkspace(workspaceName, url, username, password);
-			System.out.println("createWorkspace === " + createWorkspace);
-			int mapLocalWorkspaceToRemote = impl.mapLocalWorkspaceToRemote(workspaceName, serverPath, tempFile.getCanonicalPath(), url, username, password);
-			System.out.println("mapLocalWorkspaceToRemote === " + mapLocalWorkspaceToRemote);
+//			int createWorkspace = impl.createWorkspace(workspaceName, url, username, password);
+//			System.out.println("createWorkspace === " + createWorkspace);
+//			int mapLocalWorkspaceToRemote = impl.mapLocalWorkspaceToRemote(workspaceName, serverPath, tempFile.getCanonicalPath(), url, username, password);
+//			System.out.println("mapLocalWorkspaceToRemote === " + mapLocalWorkspaceToRemote);
 //////			
 //			int project = impl.getProjectFromTFS(tempFile.getCanonicalPath(), username, password);
 //			System.out.println("project === " + project);
-			Map<String, List<String>> pendingChanges = impl.getPendingChanges(appDir);
-			List<String> newFiles = new ArrayList<String>();
-//			newFiles.add("D:/tfsTest/Backend/src/com/photon/phresco/tfs/code/code3.java");
-			impl.addNewFilesToTFS(serverPath, appDir, username, password, newFiles);
+//			Map<String, List<String>> pendingChanges = impl.getPendingChanges(appDir);
+//			List<String> newFiles = new ArrayList<String>();
+//			newFiles.add("C:/Documents and Settings/rajeshkumar_ra/workspace/projects/jquery_mobile/test.xml111");
+//			impl.addNewFilesToTFS(appDir, username, password, newFiles);
 			List<String> files = new ArrayList<String>();
-//			files.add("D:/tfsTest/Backend/src/com/photon/phresco/tfs/Demo.java");
-//			files.add("D:/tfsTest/Backend/src/com/photon/phresco/tfs/code/code3.java");
-			impl.commitPendingChangesToTFS(serverPath, appDir, username, password, "Checkin through api", files);
-			System.out.println("pendingChanges===>"+pendingChanges);
+//			files.add("C:/Documents and Settings/rajeshkumar_ra/workspace/projects/jquery_mobile/test.xml");
+			files.add("C:/Documents and Settings/rajeshkumar_ra/workspace/projects/jquery_mobile/pom.xml");
+			impl.commitPendingChangesToTFS(appDir, username, password, "lohes working in update", files);
+//			System.out.println("pendingChanges===>"+pendingChanges);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2400,36 +2415,47 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 	}
 	
-	private void addNewFilesToTFS(String serverPath, String appDir, String username, String password, List<String> newFiles) throws InvalidOptionValueException, InvalidOptionException,
-	ArgumentException, MalformedURLException, CLCException, LicenseException {
-		//tf add D:\tfsTest\teststatus\src\com\photon\phresco\tfs\Demo.java /noprompt /login:vivekraja.vasudevan@photoninfotech.com,phresco123 
-		Command cmdAdd = new CommandAdd();
-		List<Option> options = new ArrayList<Option>(3);
-		appendRecursive(options);
-		appendNoPrompt(options);
-		appendCredentials(username, password, options);
-		String[] freeArguments = new String[newFiles.size()];
-		freeArguments = newFiles.toArray(freeArguments);
-		int executeCmd = executeCmd(freeArguments, cmdAdd, options);
-		System.out.println("add command.."+executeCmd);
+	private int addNewFilesToTFS(String appDir, String username, String password, List<String> newFiles) throws PhrescoException {
+		int added = -1; 
+		try {
+			//tf add D:\tfsTest\teststatus\src\com\photon\phresco\tfs\Demo.java /noprompt /login:vivekraja.vasudevan@photoninfotech.com,phresco123
+			//TODO: Delete below line before commit
+//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
+			Command cmdAdd = new CommandAdd();
+			List<Option> options = new ArrayList<Option>(3);
+			appendRecursive(options);
+			appendNoPrompt(options);
+			appendCredentials(username, password, options);
+			String[] freeArguments = new String[newFiles.size()];
+			freeArguments = newFiles.toArray(freeArguments);
+			added = executeCmd(freeArguments, cmdAdd, options);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		return added;
 	}
 
-	private void commitPendingChangesToTFS(String serverPath, String appDir, String username, String password, String comment, List<String> files) throws InvalidOptionValueException, InvalidOptionException,
-		ArgumentException, MalformedURLException, CLCException, LicenseException {
+	private int commitPendingChangesToTFS(String appDir, String username, String password, String comment, List<String> files) throws PhrescoException {
 		//tf checkin D:\tfsTest\teststatus\src\com\photon\phresco\tfs\Demo.java /noprompt /login:vivekraja.vasudevan@photoninfotech.com,phresco123 
 			//	/comment:"Test commit" /login:vivekraja.vasudevan@photoninfotech.com,phresco123
-		
-		Command cmdCheckIn = new CommandCheckin();
-		List<Option> options = new ArrayList<Option>(4);
-		appendRecursive(options);
-		appendNoPrompt(options);
-		appendCredentials(username, password, options);
-		appendComment(comment, options);
-		
-	    String[] freeArguments = new String[files.size()];
-	    freeArguments = files.toArray(freeArguments);
-	    int executeCmd = executeCmd(freeArguments, cmdCheckIn, options);
-	    System.out.println("checkin command.."+executeCmd);
+		int commited = -1; 
+		try {
+			//TODO: Delete below line before commit
+//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
+			Command cmdCheckIn = new CommandCheckin();
+			List<Option> options = new ArrayList<Option>(4);
+			appendRecursive(options);
+			appendNoPrompt(options);
+			appendCredentials(username, password, options);
+			appendComment(comment, options);
+			
+			String[] freeArguments = new String[files.size()];
+			freeArguments = files.toArray(freeArguments);
+			commited = executeCmd(freeArguments, cmdCheckIn, options);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		} 
+		return commited;
 	}
 	
 	public Map<String, List<String>> getPendingChanges(String appDir) throws PhrescoException {
@@ -2487,8 +2513,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	private int createWorkspace(String workspaceName, String url, String username, String password) 
 			throws MalformedURLException, ArgumentException, CLCException, LicenseException {
 		// tf workspace -new tfs_work -noprompt -server:https://vivekraja.visualstudio.com/DefaultCollection -login:vivekraja.vasudevan@photoninfotech.com,phresco123
-
-		System.out.println("workspaceName === " + workspaceName);
 		Command cmdWorkspace = new CommandWorkspace();
 		List<Option> options = new ArrayList<Option>(4);
 		options.add(optionsMap.findOption("-new"));
@@ -2539,14 +2563,11 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 	private int executeCmd(String[] args, Command cmd, List<Option> options) 
 			throws InvalidOptionException, ArgumentException, MalformedURLException, CLCException, LicenseException {
-		System.out.println("args..."+args);
-		System.out.println("cmd..."+cmd);
-		System.out.println("options..."+options);
 		cmd.setOptions((Option[]) options .toArray(new Option[0]), new VersionControlCommands().getGlobalOptions());
 		cmd.setFreeArguments(args);
 		cmd.run();
 		cmd.close();
-		System.out.println("exitCode " + cmd.getExitCode());
+		
 		return cmd.getExitCode();
 	}
 
