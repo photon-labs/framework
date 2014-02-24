@@ -597,8 +597,12 @@ define(["projectlist/listener/projectListListener"], function() {
 				}
 				//functionality for search log messages
 				$("#type_"+dynamicId).bind('change',function() {
-					if($(this).val() !== 'svn') {
-						$(".search").hide();
+
+					if($("#type_"+dynamicId).val() === 'tfs'){
+						$('.search, .phrescosearch, .testsearch').hide();
+						$('.tfsAddServerPath').show();
+					} else if($(this).val() !== 'svn') {
+						$(".search, .tfsAddServerPath").hide();
 						$('.searchdropdown').hide();
 						$(".phrescosearch").hide();
 						$('.dotphrescosearchdropdown').hide();
@@ -615,10 +619,12 @@ define(["projectlist/listener/projectListListener"], function() {
 					$('.search').show();
 					$('.phrescosearch').show();
 					$('.testsearch').show();
+					$('.tfsAddServerPath').hide();
 				} else {
 					$(".search").hide();
 					$(".phrescosearch").hide();
 					$(".testsearch").hide();
+					$('.tfsAddServerPath').hide();
 				}	
 				
 				$('.search').unbind("click");

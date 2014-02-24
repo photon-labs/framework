@@ -124,6 +124,7 @@ import com.microsoft.tfs.core.TFSTeamProjectCollection;
 import com.microsoft.tfs.core.clients.versioncontrol.soapextensions.ChangeType;
 import com.microsoft.tfs.core.clients.versioncontrol.soapextensions.PendingChange;
 import com.microsoft.tfs.core.clients.versioncontrol.soapextensions.PendingSet;
+import com.microsoft.tfs.core.exceptions.TFSUnauthorizedException;
 import com.microsoft.tfs.core.httpclient.Credentials;
 import com.microsoft.tfs.core.httpclient.DefaultNTCredentials;
 import com.microsoft.tfs.core.httpclient.UsernamePasswordCredentials;
@@ -187,7 +188,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		} else {
 			projInfo = validatePhrescoProject(repoInfo.getSrcRepoDetail(), tempFolder);
 		}
-		
+
 		if(projInfo != null) {
 			RepoDetail srcRepoDetail = repoInfo.getSrcRepoDetail();
 			com.photon.phresco.framework.impl.util.FrameworkUtil.saveCredential(srcRepoDetail, null);
@@ -235,12 +236,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				File bkImportTemp = new File(Utility.getPhrescoTemp(), uuid);
 				boolean isImported = importFromBitKeeper(srcRepoDetail.getRepoUrl(), bkImportTemp);
 				if (isImported) {
-                	String appId = applicationInfo.getId();
-                	LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appId, FrameworkConstants.IMPORT, 
-                			displayName, uniqueKey)), true);
-                	String workDirPath = workDirPath(repoInfo, applicationInfo);
-        			importToWorkspace(bkImportTemp, new File(workDirPath.toString()));
-		        } 	
+					String appId = applicationInfo.getId();
+					LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appId, FrameworkConstants.IMPORT, 
+							displayName, uniqueKey)), true);
+					String workDirPath = workDirPath(repoInfo, applicationInfo);
+					importToWorkspace(bkImportTemp, new File(workDirPath.toString()));
+				} 	
 			} else if(PERFORCE.equals(srcRepoDetail.getType())){
 				String uuid = UUID.randomUUID().toString();
 				File tempFile = new File(Utility.getPhrescoTemp(), uuid);
@@ -249,33 +250,33 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				importToWorkspace(tempFile, new File(workDirPath));
 			} else if (TFS.equals(srcRepoDetail.getType())){
 				String workDirPath = workDirPath(repoInfo, applicationInfo);
-				File workspaceProjectDir = new File (workDirPath);
-				if (workspaceProjectDir.exists()) {
+				File appDirectoryPath = new File (workDirPath);
+				if (appDirectoryPath.exists()) {
 					if(debugEnabled){
-						S_LOGGER.debug("workspaceProjectDir exists "+ workspaceProjectDir);
+						S_LOGGER.debug("workspaceProjectDir exists "+ appDirectoryPath);
 					}
-					throw new PhrescoException(workspaceProjectDir.getName() + " " + "Already Exists");
+					throw new PhrescoException(appDirectoryPath.getName() + " " + "Already Exists");
 				} else {
-					workspaceProjectDir.mkdir();
+					appDirectoryPath.mkdir();
 				}
-				importFromTfs(srcRepoDetail, workspaceProjectDir); 
+				importFromTfs(srcRepoDetail, appDirectoryPath); 
 			}
 		}
-		
+
 		return projInfo;
 	}
-	
+
 	private String workDirPath(RepoInfo repoInfo, ApplicationInfo applicaionInfo) throws Exception {
 		StringBuilder str = new StringBuilder(Utility.getProjectHome()).append(applicaionInfo.getAppDirName());
-    	if(repoInfo.isSplitPhresco() || repoInfo.isSplitTest()) {
-//    		File pom = getPomFromRepository(applicaionInfo, repoInfo);
-//    		PomProcessor processor = new PomProcessor(pom);
-//    		String property = processor.getProperty("sourcename");
-    		str.append(File.separator).append(applicaionInfo.getAppDirName());
-    	}
-    	return str.toString();
+		if(repoInfo.isSplitPhresco() || repoInfo.isSplitTest()) {
+			//    		File pom = getPomFromRepository(applicaionInfo, repoInfo);
+			//    		PomProcessor processor = new PomProcessor(pom);
+			//    		String property = processor.getProperty("sourcename");
+			str.append(File.separator).append(applicaionInfo.getAppDirName());
+		}
+		return str.toString();
 	}
-	
+
 	private ProjectInfo validatePhrescoProject(RepoDetail phrescoRepoDetail, File tempFolder) throws PhrescoException {
 		ProjectInfo projInfo = null;
 		try {
@@ -319,13 +320,13 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 		return svnurl;
 	}
-	
+
 	private SVNClientManager getSVNClientManager(String userName, String password) {
 		DAVRepositoryFactory.setup();
 		DefaultSVNOptions options = new DefaultSVNOptions();
 		return SVNClientManager.newInstance(options, userName, password);
 	}
-	
+
 	public boolean updateProject(RepoDetail repodetail, File updateDir) throws Exception  {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.updateproject()");
@@ -340,9 +341,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.debug("update SCM Connection " + repodetail.getRepoUrl());
 			}
-//			 updateSCMConnection(appInfo, repodetail.getRepoUrl());
-				// revision = HEAD_REVISION.equals(revision) ? revision
-				// : revisionVal;
+			//			 updateSCMConnection(appInfo, repodetail.getRepoUrl());
+			// revision = HEAD_REVISION.equals(revision) ? revision
+			// : revisionVal;
 			if(debugEnabled){
 				S_LOGGER.debug("updateDir SVN... " + updateDir);
 				S_LOGGER.debug("Updating...");
@@ -357,13 +358,13 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.debug("GIT type");
 			}
-//			updateSCMConnection(appInfo, repodetail.getRepoUrl());
+			//			updateSCMConnection(appInfo, repodetail.getRepoUrl());
 			if(debugEnabled){
 				S_LOGGER.debug("updateDir GIT... " + updateDir);
 			}
 			//for https and ssh
 			additionalAuthentication(repodetail.getPassPhrase());
-			
+
 			Git git = Git.open(updateDir); // checkout is the folder with .git
 			git.pull().call(); // succeeds
 			git.getRepository().close();
@@ -372,17 +373,17 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			}
 			return true;
 		} else if (BITKEEPER.equals(repodetail.getType())) {
-		    if (debugEnabled) {
-                S_LOGGER.debug("BITKEEPER type");
-            }
-		    updateFromBitKeeperRepo(repodetail.getRepoUrl(), updateDir.getPath());
+			if (debugEnabled) {
+				S_LOGGER.debug("BITKEEPER type");
+			}
+			updateFromBitKeeperRepo(repodetail.getRepoUrl(), updateDir.getPath());
 		} else if (PERFORCE.equals(repodetail.getType())) {
-		    if (debugEnabled) {
-                S_LOGGER.debug("PERFORCE type");
-            }
+			if (debugEnabled) {
+				S_LOGGER.debug("PERFORCE type");
+			}
 			String baseDir = updateDir.getAbsolutePath();
-		    perforceSync(repodetail, baseDir, updateDir.getName(),"update");
-//			updateSCMConnection(appInfo, repodetail.getRepoUrl()+repodetail.getStream());
+			perforceSync(repodetail, baseDir, updateDir.getName(),"update");
+			//			updateSCMConnection(appInfo, repodetail.getRepoUrl()+repodetail.getStream());
 		} else if (TFS.equals(repodetail.getType())) {
 			int responseCode = getProjectFromTFS(repodetail, updateDir.getCanonicalPath());
 			if (responseCode == -1) {
@@ -392,44 +393,44 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 		return false;
 	}
-	
+
 	private boolean updateFromBitKeeperRepo(String repoUrl, String appDir) throws PhrescoException {
-        BufferedReader reader = null;
-        File file = new File(Utility.getPhrescoTemp() + "bitkeeper.info");
-        boolean isUpdated = false;
-        try {
-            List<String> commands = new ArrayList<String>();
-            commands.add(BK_PARENT + SPACE + repoUrl);
-            commands.add(BK_PULL);
-            for (String command : commands) {
-                Utility.executeStreamconsumer(appDir, command, new FileOutputStream(file));
-            }
-            reader = new BufferedReader(new FileReader(file));
-            String strLine;
-            while ((strLine = reader.readLine()) != null) {
-                if (strLine.contains("Nothing to pull")) {
-                    throw new PhrescoException("Nothing to pull");
-                } else if (strLine.contains("[pull] 100%")) {
-                    isUpdated = true;
-                }
-            }
-        } catch (Exception e) {
-            throw new PhrescoException(e);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    throw new PhrescoException(e);
-                }
-            }
-            if (file.exists()) {
-                file.delete();
-            }
-        }
-        
-        return isUpdated;
-    }
+		BufferedReader reader = null;
+		File file = new File(Utility.getPhrescoTemp() + "bitkeeper.info");
+		boolean isUpdated = false;
+		try {
+			List<String> commands = new ArrayList<String>();
+			commands.add(BK_PARENT + SPACE + repoUrl);
+			commands.add(BK_PULL);
+			for (String command : commands) {
+				Utility.executeStreamconsumer(appDir, command, new FileOutputStream(file));
+			}
+			reader = new BufferedReader(new FileReader(file));
+			String strLine;
+			while ((strLine = reader.readLine()) != null) {
+				if (strLine.contains("Nothing to pull")) {
+					throw new PhrescoException("Nothing to pull");
+				} else if (strLine.contains("[pull] 100%")) {
+					isUpdated = true;
+				}
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					throw new PhrescoException(e);
+				}
+			}
+			if (file.exists()) {
+				file.delete();
+			}
+		}
+
+		return isUpdated;
+	}
 
 	private void importToWorkspace(File gitImportTemp, File workspaceProjectDir) throws Exception {
 		try {
@@ -451,7 +452,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				S_LOGGER.debug("gitImportTemp " + gitImportTemp);
 				S_LOGGER.debug("workspaceProjectDir " + workspaceProjectDir);
 			}
-			
+
 			FileUtils.copyDirectory(gitImportTemp, workspaceProjectDir);
 			if(debugEnabled){
 				S_LOGGER.debug("Deleting pack file");
@@ -469,15 +470,15 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method SCMManagerImpl.updateSCMConnection()");
 		}
-		
+
 		try {
 			PomProcessor processor = getPomProcessor(appInfo);
-				if(debugEnabled){
-					S_LOGGER.debug("processor.getSCM() exists and repo url "+ repoUrl);
-				}
+			if(debugEnabled){
+				S_LOGGER.debug("processor.getSCM() exists and repo url "+ repoUrl);
+			}
 			processor.setSCM(repoUrl, "", "", "");
 			processor.save();
-			
+
 			// To write in phresco-pom.xml
 			PomProcessor phrescoPomProcessor = getPhrescoPomProcessor(appInfo);
 			phrescoPomProcessor.setSCM(repoUrl, "", "", "");
@@ -486,11 +487,11 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.error("Entering catch block of updateSCMConnection()"+ e.getLocalizedMessage());
 			}
-			
+
 			throw new PhrescoException(POM_URL_FAIL);
 		}
 	}
-	
+
 	public void updateSCMConnection(RepoInfo repoInfo, ApplicationInfo appInfo)throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method SCMManagerImpl.updateSCMConnection()");
@@ -500,8 +501,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			String repoUrl = repoInfo.getSrcRepoDetail().getRepoUrl();
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome()).append(File.separator).append(appInfo.getAppDirName());
 			if(repoInfo.isSplitPhresco() || repoInfo.isSplitTest()) {
-//				File pomfile = getPomFromRepository(appInfo, repoInfo);
-//				PomProcessor processor = new PomProcessor(pomfile);
+				//				File pomfile = getPomFromRepository(appInfo, repoInfo);
+				//				PomProcessor processor = new PomProcessor(pomfile);
 				builder.append(File.separator).append(appInfo.getAppDirName());
 			}
 			builder.append(File.separator).append(appInfo.getPomFile());
@@ -509,7 +510,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			PomProcessor processor = new PomProcessor(pomFile);
 			processor.setSCM(repoUrl, "", "", "");
 			processor.save();
-			
+
 			// To write in phresco-pom.xml
 			if(StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
 				if(repoInfo.isSplitPhresco()) {
@@ -528,7 +529,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			throw new PhrescoException(POM_URL_FAIL);
 		}
 	}
-	
+
 	private File getPomFromRepository(ApplicationInfo applicationInfo, RepoInfo repoInfo) throws Exception {
 		File pomFile = null;
 		String pomFileName = applicationInfo.getPhrescoPomFile();
@@ -546,10 +547,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		if(phrescoRepoDetail.getType().equals(BITKEEPER)) {
 			pomFile = getPomFromBitkeeper(applicationInfo, phrescoRepoDetail, pomFileName);
 		}
-		
+
 		return pomFile;
 	}
-	
+
 	private File getPomFromBitkeeper(ApplicationInfo applicationInfo, RepoDetail repoDetail, String pomName) throws PhrescoException {
 		File pomfile = null;
 		String uuid = UUID.randomUUID().toString();
@@ -560,7 +561,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 		return pomfile;
 	}
-	
+
 	private PomProcessor getPomProcessor(ApplicationInfo appInfo)throws Exception {
 		try {
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
@@ -573,7 +574,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			throw new PhrescoException(NO_POM_XML);
 		}
 	}
-	
+
 	private PomProcessor getPhrescoPomProcessor(ApplicationInfo appInfo)throws Exception {
 		try {
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
@@ -586,7 +587,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			throw new PhrescoException(NO_POM_XML);
 		}
 	}
-	
+
 	private static void setupLibrary() {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.setupLibrary()");
@@ -607,23 +608,23 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		SVNRepository repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(repoURL));
 		ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(userName, password);
 		repository.setAuthenticationManager(authManager);
-			SVNNodeKind nodeKind = repository.checkPath("", -1);
-			if (nodeKind == SVNNodeKind.NONE) {
-				if(debugEnabled){
-					S_LOGGER.error("There is no entry at '" + srcRepoDetail.getRepoUrl() + "'.");
-				}
-			} else if (nodeKind == SVNNodeKind.FILE) {
-				if(debugEnabled){
-					S_LOGGER.error("The entry at '" + srcRepoDetail.getRepoUrl() + " is a file while a directory was expected.");
-				}
-			}
+		SVNNodeKind nodeKind = repository.checkPath("", -1);
+		if (nodeKind == SVNNodeKind.NONE) {
 			if(debugEnabled){
-				S_LOGGER.debug("Repository Root: " + repository.getRepositoryRoot(true));
-				S_LOGGER.debug("Repository UUID: " + repository.getRepositoryUUID(true));
+				S_LOGGER.error("There is no entry at '" + srcRepoDetail.getRepoUrl() + "'.");
 			}
-			return recurseMethod(repository, "", srcRepoDetail, getSVNURL(srcRepoDetail.getRepoUrl()), true);
+		} else if (nodeKind == SVNNodeKind.FILE) {
+			if(debugEnabled){
+				S_LOGGER.error("The entry at '" + srcRepoDetail.getRepoUrl() + " is a file while a directory was expected.");
+			}
+		}
+		if(debugEnabled){
+			S_LOGGER.debug("Repository Root: " + repository.getRepositoryRoot(true));
+			S_LOGGER.debug("Repository UUID: " + repository.getRepositoryUUID(true));
+		}
+		return recurseMethod(repository, "", srcRepoDetail, getSVNURL(srcRepoDetail.getRepoUrl()), true);
 	}
-	
+
 	private ProjectInfo recurseMethod(SVNRepository repository, String path, RepoDetail repoDetail, SVNURL svnURL, 
 			boolean recursive) throws Exception {
 		Collection entries = repository.getDir(path, -1, null, (Collection) null);
@@ -649,7 +650,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		} 
 		return projInfo;
 	}
-	
+
 	private ProjectInfo dotPhrescoEvaluator(Collection entries, RepoDetail repoDetail) throws Exception {
 		Iterator iterator = entries.iterator();
 		if(debugEnabled){
@@ -670,7 +671,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 		return null;
 	}
-	
+
 	boolean checkoutSVN(ApplicationInfo appInfo, RepoInfo repoInfo, String displayName, String uniqueKey) throws Exception {
 		RepoDetail srcRepoDetail = repoInfo.getSrcRepoDetail();
 		SVNUpdateClient uc = getSVNClientManager(srcRepoDetail.getUserName(), srcRepoDetail.getPassword()).getUpdateClient();
@@ -684,11 +685,11 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		File file = new File(strbuilder.toString());
 		if (file.exists()) {
 			throw new PhrescoException(PROJECT_ALREADY);
-        } else {
-        	//generate import lock
-        	String appId = appInfo.getId();
-        	LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appId, FrameworkConstants.IMPORT, displayName, uniqueKey)), true);
-        }
+		} else {
+			//generate import lock
+			String appId = appInfo.getId();
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appId, FrameworkConstants.IMPORT, displayName, uniqueKey)), true);
+		}
 		if(debugEnabled){
 			S_LOGGER.debug("Checking out...");
 		}
@@ -700,7 +701,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 		return true;
 	}
-	
+
 	public void updatePoms(RepoInfo repoInfo, ProjectInfo projInfo, ServiceManager serviceManager) throws PhrescoException {
 		try {
 			ApplicationInfo appInfo = projInfo.getAppInfos().get(0);
@@ -724,11 +725,11 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				if (srcRepoDetail != null) {
 					srcUrl = srcRepoDetail.getRepoUrl();
 					srcType = srcRepoDetail.getType();
-					
+
 					if (repoInfo.isSplitPhresco() || repoInfo.isSplitTest()) {
 						file = new File(baseDir, appInfo.getAppDirName());
 					}
-					
+
 					if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile()) && !repoInfo.isSplitPhresco() && repoInfo.isSplitTest()) {
 						pomFileName = appInfo.getPhrescoPomFile();
 					} else if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile()) && !repoInfo.isSplitPhresco() && !repoInfo.isSplitTest()) {
@@ -736,8 +737,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					} 
 
 					updatePom(file, srcUrl, srcType, pomFileName, appPomProcessor, "");
-					
-					
+
+
 					File alwaysPom = baseDir;
 					if (repoInfo.isSplitPhresco() || repoInfo.isSplitTest()) {
 						alwaysPom = new File(baseDir,appInfo.getAppDirName());
@@ -752,42 +753,42 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					file = new File(baseDir, appInfo.getAppDirName()+"-phresco");
 					phrescoUrl = phrescoRepoDetail.getRepoUrl();
 					phrescoType = phrescoRepoDetail.getType();
-					
+
 					if (StringUtils.isNotBlank(appInfo.getPhrescoPomFile())) {
 						pomFileName = appInfo.getPhrescoPomFile();
 					} else {
 						pomFileName = "phresco-pom.xml";
 					}
-					
+
 					updatePom(file, phrescoUrl, phrescoType, pomFileName, appPomProcessor, "");
 				}
-					
-					
+
+
 				RepoDetail testRepoDetail = repoInfo.getTestRepoDetail();
 				if (testRepoDetail != null && repoInfo.isSplitTest()) {
 					file = new File(baseDir, appInfo.getAppDirName()+"-test");
 					testUrl = testRepoDetail.getRepoUrl();
 					testType = testRepoDetail.getType();
 					pomFileName = appInfo.getPomFile();
-					
+
 					updatePom(file, testUrl, testType, pomFileName, appPomProcessor, "");
 				}
-				
+
 				pomFileName = appInfo.getPomFile();
 				if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
 					pomFileName = appInfo.getPhrescoPomFile();
 				}
-				
+
 				File propertyPom = returnPropertyPom(pomFileName, repoInfo, new File(baseDir, pomFileName), baseDir, "",appInfo);
 				updatePomProperties(appInfo, "", propertyPom, phrescoUrl, srcUrl, testUrl);
-				
-				
+
+
 				List<ModuleInfo> modules = appInfo.getModules();
-				
+
 				//module Pom update
 				if (CollectionUtils.isNotEmpty(modules)) {
 					for (ModuleInfo module : modules) {
-						
+
 						String moduleAppInfoPath = baseDir.getPath() + File.separator + module.getCode() + File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator + PROJECT_INFO;
 						if (repoInfo.isSplitPhresco()) {
 							moduleAppInfoPath = baseDir.getPath() + File.separator + appInfo.getAppDirName()+"-phresco" + File.separator + module.getCode() + File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator + PROJECT_INFO; 
@@ -798,20 +799,20 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 							if (StringUtils.isNotEmpty(moduleAppInfo.getPhrescoPomFile())) {
 								modPomFileName = moduleAppInfo.getPhrescoPomFile();
 							}
-							
+
 							File modulePropertyPom = returnPropertyPom(modPomFileName, repoInfo, new File(baseDir, module.getCode() + File.separator + modPomFileName), baseDir, module.getCode(),appInfo);
 							updatePomProperties(moduleAppInfo, module.getCode(), modulePropertyPom, phrescoUrl, srcUrl, testUrl);
 						}
 					}
 				}
-				
+
 				//Write Distribution Tag
 				File distributionPath1 = baseDir;
 				if (repoInfo.isSplitPhresco() || repoInfo.isSplitTest()) {
 					distributionPath1 = new File(baseDir, appInfo.getAppDirName());
 				}
 				writeDistributionTag(new File(distributionPath1, POM_XML), projInfo, serviceManager);
-				
+
 				if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
 					File distributionPath2 = baseDir;
 					if (repoInfo.isSplitPhresco() && !repoInfo.isSplitTest()) {
@@ -832,7 +833,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			throw new PhrescoException(e);
 		}
 	}
-	
+
 	private File returnPropertyPom(String pomFileName, RepoInfo repoInfo, File propertyPom, File baseDir, String module, ApplicationInfo appInfo) {
 		propertyPom = baseDir;
 		if (!POM_XML.equals(pomFileName) && repoInfo.isSplitPhresco() && repoInfo.isSplitTest()) {
@@ -844,11 +845,11 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		} else if (POM_XML.equals(pomFileName) && repoInfo.isSplitPhresco() || repoInfo.isSplitTest()) {
 			propertyPom = new File(baseDir, appInfo.getAppDirName());
 		}
-		
+
 		if (StringUtils.isNotEmpty(module)) {
 			propertyPom = new File(propertyPom, module);
 		}
-		
+
 		propertyPom = new File(propertyPom, pomFileName);
 		return propertyPom;
 	}
@@ -885,119 +886,115 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			throw new PhrescoException(e);
 		}
 	}
-	
-	private ProjectInfo importFromTfs(RepoDetail repodetail, File tempDirectory) throws PhrescoException {
+
+	private ProjectInfo importFromTfs(RepoDetail repodetail, File appDirectoryPath) throws PhrescoException {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importFromTfs()");
 		}
 		ProjectInfo projectInfo = null;
 		try {
-			FileUtils.forceMkdir(tempDirectory);
+			String appDirName = appDirectoryPath.getName();
+			FileUtils.forceMkdir(appDirectoryPath);
 			//TODO: Delete below line before commit
-//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "/Users/kaleeswaran/phresco-framework/workspace/tools/native/native");
-			String url = repodetail.getRepoUrl();
-			String serverPath = repodetail.getServerPath();
-			String username = repodetail.getUserName();
-			String password = repodetail.getPassword();
-			String workspaceName = "VCWorkspace" + System.currentTimeMillis();
-			createWorkspace(workspaceName, url, username, password);
-			mapLocalWorkspaceToRemote(workspaceName, serverPath, tempDirectory.getCanonicalPath(), url, username, password);
-			getProjectFromTFS(repodetail, tempDirectory.getCanonicalPath());
-			projectInfo = getGitAppInfo(tempDirectory);
+			//System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
+			createWorkspace(appDirName, repodetail);
+			mapLocalWorkspaceToRemote(appDirName, appDirectoryPath.getCanonicalPath(), repodetail);
+			getProjectFromTFS(repodetail, appDirectoryPath.getCanonicalPath());
+			projectInfo = getGitAppInfo(appDirectoryPath);
 		} catch(Exception e) {
 			throw new PhrescoException(e);
 		}
 
 		return projectInfo;
 	}
-	
+
 	private void importFromGit(RepoDetail repodetail, File gitImportTemp)throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importFromGit()");
 		}	
-			if (StringUtils.isEmpty(repodetail.getBranch())) {
-				repodetail.setBranch(MASTER);
-			}
-			// For https and ssh
-			additionalAuthentication(repodetail.getPassPhrase());
-			
-			UsernamePasswordCredentialsProvider userCredential = new UsernamePasswordCredentialsProvider(repodetail.getUserName(), repodetail.getPassword());
-			Git r = Git.cloneRepository().setDirectory(gitImportTemp)
-			.setCredentialsProvider(userCredential)
-			.setURI(repodetail.getRepoUrl())
-//			.setProgressMonitor(new TextProgressMonitor())
-			.setBranch(repodetail.getBranch())
-			.call();
-	        r.getRepository().close();      
+		if (StringUtils.isEmpty(repodetail.getBranch())) {
+			repodetail.setBranch(MASTER);
+		}
+		// For https and ssh
+		additionalAuthentication(repodetail.getPassPhrase());
+
+		UsernamePasswordCredentialsProvider userCredential = new UsernamePasswordCredentialsProvider(repodetail.getUserName(), repodetail.getPassword());
+		Git r = Git.cloneRepository().setDirectory(gitImportTemp)
+		.setCredentialsProvider(userCredential)
+		.setURI(repodetail.getRepoUrl())
+		//			.setProgressMonitor(new TextProgressMonitor())
+		.setBranch(repodetail.getBranch())
+		.call();
+		r.getRepository().close();      
 	}
-	
+
 	void additionalAuthentication(String passPhrase) {
 		final String passwordPhrase = passPhrase;
 		JschConfigSessionFactory sessionFactory = new JschConfigSessionFactory() {
-        	@Override
-        	protected void configure(OpenSshConfig.Host hc, Session session) {
-        	    CredentialsProvider provider = new CredentialsProvider() {
-        	        @Override
-        	        public boolean isInteractive() {
-        	            return false;
-        	        }
+			@Override
+			protected void configure(OpenSshConfig.Host hc, Session session) {
+				CredentialsProvider provider = new CredentialsProvider() {
+					@Override
+					public boolean isInteractive() {
+						return false;
+					}
 
-        	        @Override
-        	        public boolean supports(CredentialItem... items) {
-        	            return true;
-        	        }
-        	        
-        	        @Override
-        	        public boolean get(URIish uri, CredentialItem... items) throws UnsupportedCredentialItem {
-        	            for (CredentialItem item : items) {
-        	            	if (item instanceof CredentialItem.StringType) {
-        	            		((CredentialItem.StringType) item).setValue(passwordPhrase);
-        	            	}
-        	            }
-        	            return true;
-        	        }
-        	    };
-        	    UserInfo userInfo = new CredentialsProviderUserInfo(session, provider);
-        	    // Unknown host key for ssh
-        	    java.util.Properties config = new java.util.Properties(); 
-        	    config.put(STRICT_HOST_KEY_CHECKING, NO);
-        	    session.setConfig(config);
-        	    
-        	    session.setUserInfo(userInfo);
-        	}
-    	};
-    	
-    	SshSessionFactory.setInstance(sessionFactory);
-    	
-    	/*
-    	 * Enable clone of https url by trusting those urls
-    	 */
+					@Override
+					public boolean supports(CredentialItem... items) {
+						return true;
+					}
+
+					@Override
+					public boolean get(URIish uri, CredentialItem... items) throws UnsupportedCredentialItem {
+						for (CredentialItem item : items) {
+							if (item instanceof CredentialItem.StringType) {
+								((CredentialItem.StringType) item).setValue(passwordPhrase);
+							}
+						}
+						return true;
+					}
+				};
+				UserInfo userInfo = new CredentialsProviderUserInfo(session, provider);
+				// Unknown host key for ssh
+				java.util.Properties config = new java.util.Properties(); 
+				config.put(STRICT_HOST_KEY_CHECKING, NO);
+				session.setConfig(config);
+
+				session.setUserInfo(userInfo);
+			}
+		};
+
+		SshSessionFactory.setInstance(sessionFactory);
+
+		/*
+		 * Enable clone of https url by trusting those urls
+		 */
 		// Create a trust manager that does not validate certificate chains
 		TrustManager[] trustAllCerts = new TrustManager[] { 
-		    new X509TrustManager() {     
-		        public java.security.cert.X509Certificate[] getAcceptedIssuers() { 
-		            return null;
-		        } 
-		        public void checkClientTrusted( 
-		            java.security.cert.X509Certificate[] certs, String authType) {
-		            } 
-		        public void checkServerTrusted( 
-		            java.security.cert.X509Certificate[] certs, String authType) {
-		        }
-		    } 
+				new X509TrustManager() {     
+					public java.security.cert.X509Certificate[] getAcceptedIssuers() { 
+						return null;
+					} 
+					public void checkClientTrusted( 
+							java.security.cert.X509Certificate[] certs, String authType) {
+					} 
+					public void checkServerTrusted( 
+							java.security.cert.X509Certificate[] certs, String authType) {
+					}
+				} 
 		}; 
-		
+
 		final String https_proxy = System.getenv(HTTPS_PROXY);
 		final String http_proxy = System.getenv(HTTP_PROXY);
-		
+
 		ProxySelector.setDefault(new ProxySelector() {
 			final ProxySelector delegate = ProxySelector.getDefault();
 
 			@Override
 			public List<Proxy> select(URI uri) {
 				// Filter the URIs to be proxied
-				
-				
+
+
 				if (uri.toString().contains(HTTPS) && StringUtils.isNotEmpty(http_proxy) && http_proxy != null) {
 					try {
 						URI httpsUri = new URI(https_proxy);
@@ -1011,7 +1008,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						}	
 					}
 				}
-				
+
 				if (uri.toString().contains(HTTP) && StringUtils.isNotEmpty(http_proxy) && http_proxy != null) {
 					try {
 						URI httpUri = new URI(http_proxy);
@@ -1025,7 +1022,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						}					
 					}
 				}
-				
+
 				// revert to the default behaviour
 				return delegate == null ? Arrays.asList(Proxy.NO_PROXY)
 						: delegate.select(uri);
@@ -1042,20 +1039,20 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 		// Install the all-trusting trust manager
 		try {
-		    SSLContext sc = SSLContext.getInstance(SSL); 
-		    sc.init(null, trustAllCerts, new java.security.SecureRandom()); 
-		    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+			SSLContext sc = SSLContext.getInstance(SSL); 
+			sc.init(null, trustAllCerts, new java.security.SecureRandom()); 
+			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 		} catch (GeneralSecurityException e) {
 			e.getLocalizedMessage();
 		} 
 	}
-	
+
 	private boolean importFromBitKeeper(String repoUrl, File bkImportTemp) throws PhrescoException {
-	    BufferedReader reader = null;
-	    File file = new File(Utility.getPhrescoTemp() + "bitkeeper.info");
-	    boolean isImported = false;
-	    try {
-	        String command = BK_CLONE + SPACE + repoUrl;
+		BufferedReader reader = null;
+		File file = new File(Utility.getPhrescoTemp() + "bitkeeper.info");
+		boolean isImported = false;
+		try {
+			String command = BK_CLONE + SPACE + repoUrl;
 			if(debugEnabled){
 				S_LOGGER.debug("bkImportTemp " + bkImportTemp);
 			}
@@ -1065,36 +1062,36 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				}
 				FileUtils.deleteDirectory(bkImportTemp);
 			}
-	        Utility.executeStreamconsumer(bkImportTemp.getPath(), command, new FileOutputStream(file));
-	        reader = new BufferedReader(new FileReader(file));
-	        String strLine;
-	        while ((strLine = reader.readLine()) != null) {
-	            if (strLine.contains("OK")) {
-	                isImported = true;
-	                break;
-	            } else if (strLine.contains(ALREADY_EXISTS)) {
-	                throw new PhrescoException("Project already imported");
-	            } else if (strLine.contains("FAILED")) {
-	                throw new PhrescoException("Failed to import project");
-	            }
-	        }
-	        return isImported;
-	    } catch (IOException e) {
-	        throw new PhrescoException(e);
-	    } catch (Exception e) {
+			Utility.executeStreamconsumer(bkImportTemp.getPath(), command, new FileOutputStream(file));
+			reader = new BufferedReader(new FileReader(file));
+			String strLine;
+			while ((strLine = reader.readLine()) != null) {
+				if (strLine.contains("OK")) {
+					isImported = true;
+					break;
+				} else if (strLine.contains(ALREADY_EXISTS)) {
+					throw new PhrescoException("Project already imported");
+				} else if (strLine.contains("FAILED")) {
+					throw new PhrescoException("Failed to import project");
+				}
+			}
+			return isImported;
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		} catch (Exception e) {
 			throw new PhrescoException(e);
 		} finally {
-	        if (reader != null) {
-	            try {
-	                reader.close();
-	            } catch (IOException e) {
-	                throw new PhrescoException(e);
-	            }
-	        }
-	        if (file.exists()) {
-	            file.delete();
-	        }
-	    }
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					throw new PhrescoException(e);
+				}
+			}
+			if (file.exists()) {
+				file.delete();
+			}
+		}
 	}
 
 	private void cloneFilter(ApplicationInfo applicationInfo, File appDir, String displayName, 
@@ -1104,25 +1101,25 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 		if (appDir.isDirectory()) {
 			//generate import lock
-        	String appId = applicationInfo.getId();
-        	LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appId, FrameworkConstants.IMPORT, 
-        			displayName, uniqueKey)), true);
-        	StringBuilder str = new StringBuilder(Utility.getProjectHome()).append(applicationInfo.getAppDirName());
-        	if(repoInfo.isSplitPhresco() || repoInfo.isSplitTest()) {
-//        		pomFromGit = getPomFromRepository(applicationInfo, repoInfo);
-//        		PomProcessor processor = new PomProcessor(pomFromGit);
-//        		String property = processor.getProperty("sourcename");
-        		str.append(File.separator).append(applicationInfo.getAppDirName());
-        	}
-        	importToWorkspace(appDir, new File(str.toString()));
+			String appId = applicationInfo.getId();
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appId, FrameworkConstants.IMPORT, 
+					displayName, uniqueKey)), true);
+			StringBuilder str = new StringBuilder(Utility.getProjectHome()).append(applicationInfo.getAppDirName());
+			if(repoInfo.isSplitPhresco() || repoInfo.isSplitTest()) {
+				//        		pomFromGit = getPomFromRepository(applicationInfo, repoInfo);
+				//        		PomProcessor processor = new PomProcessor(pomFromGit);
+				//        		String property = processor.getProperty("sourcename");
+				str.append(File.separator).append(applicationInfo.getAppDirName());
+			}
+			importToWorkspace(appDir, new File(str.toString()));
 			if(debugEnabled){
 				S_LOGGER.debug("updating pom.xml");
 			}
 			// update connection in pom.xml
-//			updateSCMConnection(applicationInfo, repoInfo.getSrcRepoDetail().getRepoUrl());
+			//			updateSCMConnection(applicationInfo, repoInfo.getSrcRepoDetail().getRepoUrl());
 		}
 	}
-	
+
 	private File getPomFromGit(ApplicationInfo applicationInfo, RepoDetail repoDetail, String pomFile) throws Exception {
 		String uuid = UUID.randomUUID().toString();
 		File gitImportTemp = new File(Utility.getPhrescoTemp(), uuid);
@@ -1130,12 +1127,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		File pom = new File(gitImportTemp, pomFile);
 		return pom;
 	}
-	
+
 	private ProjectInfo getGitAppInfo(File directory)throws PhrescoException {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.getGitAppInfo()");
 		}
-		
+
 		BufferedReader reader = null;
 		try {
 			File dotProjectFile = new File(directory, FOLDER_DOT_PHRESCO+ File.separator + PROJECT_INFO);
@@ -1175,9 +1172,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			SVNClientManager svnClientManager = getSVNClientManager(userName, password);
 			SVNUpdateClient uc = svnClientManager.getUpdateClient();
 			try {
-			uc.doCheckout(getSVNURL(repoURL).appendPath(PHRESCO, true), tempDir,
-					SVNRevision.UNDEFINED, SVNRevision.parse(revision),
-					SVNDepth.UNKNOWN, false);
+				uc.doCheckout(getSVNURL(repoURL).appendPath(PHRESCO, true), tempDir,
+						SVNRevision.UNDEFINED, SVNRevision.parse(revision),
+						SVNDepth.UNKNOWN, false);
 			} catch(SVNException er) {
 				er.printStackTrace();
 				ProjectInfo projInfo = new ProjectInfo();
@@ -1198,7 +1195,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			}
 		}
 	}
-	
+
 	public File getPomFromSVN(ApplicationInfo appInfo, RepoDetail repoDetail, String pomName) throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.getPomFromSVN()");
@@ -1210,15 +1207,15 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		SVNUpdateClient uc = getSVNClientManager(repoDetail.getUserName(), repoDetail.getPassword()).getUpdateClient();
 		try {
 			uc.doCheckout(getSVNURL(repoDetail.getRepoUrl()), tempDir,
-			SVNRevision.UNDEFINED, SVNRevision.parse(repoDetail.getRevision()),
-				SVNDepth.UNKNOWN, false);
+					SVNRevision.UNDEFINED, SVNRevision.parse(repoDetail.getRevision()),
+					SVNDepth.UNKNOWN, false);
 		} catch(SVNException er) {
 			er.printStackTrace();
 		}
 		File pom = new File(tempDir, pomName);
 		return pom;
 	}
-	
+
 	public boolean importToRepo(RepoInfo repoInfo, ApplicationInfo appInfo) throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importToRepo()");
@@ -1309,12 +1306,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				File pomDest = null;
 				splitSrcContents(appInfo, tempSrcFile, repoInfo, appendedPhrUrl.toString(), appendedSrcUrl.toString(), appendedTestUrl.toString());
 				if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
-					 pomDest = new File(tempSrcFile, appInfo.getPhrescoPomFile());
-					 if(pomDest.exists()) {
-						 updatePom(tempSrcFile, appendedSrcUrl.toString(), repoType, pomDest.getName(),appPomProcessor, "");
-					 }
+					pomDest = new File(tempSrcFile, appInfo.getPhrescoPomFile());
+					if(pomDest.exists()) {
+						updatePom(tempSrcFile, appendedSrcUrl.toString(), repoType, pomDest.getName(),appPomProcessor, "");
+					}
 				} 
-				
+
 				if (StringUtils.isNotEmpty(appInfo.getPomFile())) {
 					pomDest = new File(tempSrcFile, appInfo.getPomFile());
 					if (pomDest.exists()) {
@@ -1331,11 +1328,11 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					if (tempPhrescoFile.exists()) {
 						FileUtils.copyDirectoryToDirectory(tempPhrescoFile, dir);
 					}
-					
+
 					if (tempSrcFile.exists()) {
 						FileUtils.copyDirectoryToDirectory(tempSrcFile, dir);
 					}
-					
+
 					if (tempTestFile.exists()) {
 						FileUtils.copyDirectoryToDirectory(tempTestFile, dir);
 					}
@@ -1352,7 +1349,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						processor.setSCM(appendedSrcUrl.toString(), scmUrl, scmUrl, "");
 						processor.save();
 					}
-					
+
 				}
 				addToRepo(srcRepoDetail, appInfo, dir, appDirName, dir, hasSplit);
 			}
@@ -1367,7 +1364,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 		return true;
 	}
-	
+
 	private void updatePom(File file, String url, String repoType, String pomFileName, PomProcessor appPomProcessor, String packaging) throws PhrescoException {
 		try {
 			File pomFile = new File(file, pomFileName);
@@ -1393,7 +1390,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		String artifactId = appPomProcessor.getArtifactId();
 		String version = appPomProcessor.getVersion();
 		Plugin plugin = appPomProcessor.getPlugin(COM_PHOTON_PHRESCO_PLUGINS, PHRESCO_MAVEN_PLUGIN);
-		
+
 		splitPomProcessor.setName(name);
 		splitPomProcessor.setGroupId(groupId);
 		splitPomProcessor.setArtifactId(artifactId);
@@ -1408,7 +1405,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		splitPomProcessor.save();
 		return splitPomProcessor;
 	}
-	
+
 	private void splitDotPhrescoContents(ApplicationInfo appInfo, File tempPhrescoFile, String phrescoRepoUrl, String srcRepoUrl, String testRepoUrl) throws PhrescoException {
 		try {
 			String appDirName = appInfo.getAppDirName();
@@ -1443,7 +1440,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			throw new PhrescoException(e);
 		}
 	}
-	
+
 	private void splitTestContents(ApplicationInfo appInfo, File tempTestFile) throws PhrescoException {
 		try {
 			String appDirName = appInfo.getAppDirName();
@@ -1481,7 +1478,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			throw new PhrescoException(e);
 		}
 	}
-	
+
 	private void splitSrcContents(ApplicationInfo appInfo, File tempSrcFile, RepoInfo repoInfo, String phrescoRepoUrl, String srcRepoUrl, String testRepoUrl) throws PhrescoException {
 		try {
 			File pomDest = null;
@@ -1495,7 +1492,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					FileUtils.copyDirectory(srcDir, srcDest, false);
 					String moduleAppInfoPath = appHome + module.getCode() + File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator + PROJECT_INFO;
 					ApplicationInfo moduleAppInfo = getApplicationInfo(moduleAppInfoPath);
-					
+
 					if (StringUtils.isNotEmpty(moduleAppInfo.getPhrescoPomFile())) {
 						pomDest = new File(srcDest, moduleAppInfo.getPhrescoPomFile());
 						if(pomDest.exists()) {
@@ -1507,8 +1504,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						updatePomProperties(appInfo, moduleAppInfo.getAppDirName(), pomDest, phrescoRepoUrl, srcRepoUrl,
 								testRepoUrl);
 					}
-//					updatePomProperties(appInfo, moduleAppInfo.getAppDirName(), pomDest, phrescoRepoUrl, srcRepoUrl,
-//							testRepoUrl);
+					//					updatePomProperties(appInfo, moduleAppInfo.getAppDirName(), pomDest, phrescoRepoUrl, srcRepoUrl,
+					//							testRepoUrl);
 
 					if (repoInfo.isSplitPhresco()) {
 						FileUtils.deleteDirectory(new File(srcDest, Constants.DOT_PHRESCO_FOLDER));
@@ -1541,7 +1538,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						File pomFile = new File(appHome, appInfo.getPomFile());
 						FileUtils.copyFileToDirectory(pomFile, tempSrcFile, false);
 					}
-					
+
 					String pomFileName = appInfo.getPomFile();
 					if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
 						pomFileName = appInfo.getPhrescoPomFile();
@@ -1562,7 +1559,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					pomDest = new File(tempSrcFile, appInfo.getPomFile());
 					updatePomProperties(appInfo, "", pomDest, phrescoRepoUrl, srcRepoUrl, testRepoUrl);
 				}
-//				updatePomProperties(appInfo, "", pomDest, phrescoRepoUrl, srcRepoUrl, testRepoUrl);
+				//				updatePomProperties(appInfo, "", pomDest, phrescoRepoUrl, srcRepoUrl, testRepoUrl);
 
 				if (repoInfo.isSplitPhresco()) {
 					FileUtils.deleteDirectory(new File(tempSrcFile, Constants.DOT_PHRESCO_FOLDER));
@@ -1581,7 +1578,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					FileUtils.deleteDirectory(new File(tempSrcFile, testDir));
 				}
 			}
-			
+
 			if (StringUtils.isNotEmpty(appInfo.getPomFile())) {
 				File phrescoPomSrc = new File(appHome + appInfo.getPomFile());
 				FileUtils.copyFileToDirectory(phrescoPomSrc, tempSrcFile);
@@ -1589,12 +1586,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					updatePomProperties(appInfo, "", new File(tempSrcFile, appInfo.getPomFile()), phrescoRepoUrl, srcRepoUrl, testRepoUrl);
 				}
 			}
-			
+
 		} catch (Exception e) {
 			throw new PhrescoException(e);
 		}
 	}
-	
+
 	private void updatePomProperties(ApplicationInfo appInfo, String moduleName, File pomFile, String phrescoRepoUrl, String srcRepoUrl, String testRepoUrl) throws PhrescoException {
 		try {
 			String appDirName = appInfo.getAppDirName();
@@ -1609,19 +1606,19 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				sb.append(moduleName);
 				sb.append(FORWARD_SLASH);
 			}
-			
+
 			String srcRootPrpty = pomProcessor.getProperty(Constants.POM_PROP_KEY_ROOT_SRC_DIR);
 			if (!sb.toString().endsWith(FORWARD_SLASH) && !srcRootPrpty.startsWith(FORWARD_SLASH)) {
 				sb.append(FORWARD_SLASH);
 			}
 			pomProcessor.setProperty(Constants.POM_PROP_KEY_ROOT_SRC_DIR, sb.toString() + srcRootPrpty);
-			
+
 			pomProcessor.setProperty(Constants.POM_PROP_KEY_SRC_REPO_URL, srcRepoUrl);
-			
+
 			if (StringUtils.isNotEmpty(phrescoRepoUrl) || StringUtils.isNotEmpty(testRepoUrl)) {
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_SRC_DIR, appDirName);
 			}
-			
+
 			if (StringUtils.isNotEmpty(phrescoRepoUrl)) {
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_PHRESCO_DIR, appDirName + Constants.SUFFIX_PHRESCO);
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_PHRESCO_REPO_URL, phrescoRepoUrl);
@@ -1635,7 +1632,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			throw new PhrescoException(e);
 		}
 	}
-	
+
 	private ApplicationInfo getApplicationInfo(String path) throws PhrescoException {
 		BufferedReader bufferedReader = null;
 		try {
@@ -1658,7 +1655,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			}
 		}
 	}
-	
+
 	private void addToRepo(RepoDetail repodetail, ApplicationInfo appInfo, File dir, String dirName, File srcDir, boolean hasSplit) throws PhrescoException {
 		String phrescoTemp = Utility.getPhrescoTemp();
 		String uuid = UUID.randomUUID().toString();
@@ -1689,6 +1686,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				importDirectoryContentToSubversion(repodetail, tempUuidFile.getPath());
 			} else if (GIT.equals(repoType)) {
 				importToGITRepo(repodetail, appInfo, srcDir);
+			}  else if (TFS.equals(repoType)) {
+				addToTFSRepo(repodetail, appInfo, srcDir);
 			}
 		} catch (Exception e) {
 			throw new PhrescoException(e);
@@ -1698,18 +1697,34 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			}
 		}
 	}
-	
+
+	private void addToTFSRepo(RepoDetail repoDetail, ApplicationInfo appInfo, File dir) throws PhrescoException {
+		SCMManagerImpl impl = new SCMManagerImpl();
+		String workspaceName = appInfo.getAppDirName();
+		int mapped = 100;
+		try {
+			impl.createWorkspace(workspaceName, repoDetail);
+			mapped = impl.mapLocalWorkspaceToRemote(workspaceName, dir.getCanonicalPath(), repoDetail);
+			impl.addFilesToTFSRepo(dir.getCanonicalPath(), repoDetail);
+			impl.checkinProjectToTFSRepo(dir.getCanonicalPath(), repoDetail);
+		} catch (Exception e) {
+			if (mapped == -1) {
+				deleteWorkspace(workspaceName, repoDetail);
+			}
+			throw new PhrescoException(e);
+		} 
+	}
 	private SVNCommitInfo importDirectoryContentToSubversion(RepoDetail repodetail, final String subVersionedDirectory) throws SVNException {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importDirectoryContentToSubversion()");
 		}
 		setupLibrary();
 		DefaultSVNOptions defaultSVNOptions = new DefaultSVNOptions();
-        defaultSVNOptions.setIgnorePatterns(new String[] {DO_NOT_CHECKIN_DIR,RUN});
-        final SVNClientManager cm = SVNClientManager.newInstance(defaultSVNOptions, repodetail.getUserName(), repodetail.getPassword());
-        return cm.getCommitClient().doImport(new File(subVersionedDirectory), SVNURL.parseURIEncoded(repodetail.getRepoUrl()), repodetail.getCommitMessage(), null, true, true, SVNDepth.fromRecurse(true));
-    }
-	
+		defaultSVNOptions.setIgnorePatterns(new String[] {DO_NOT_CHECKIN_DIR,RUN});
+		final SVNClientManager cm = SVNClientManager.newInstance(defaultSVNOptions, repodetail.getUserName(), repodetail.getPassword());
+		return cm.getCommitClient().doImport(new File(subVersionedDirectory), SVNURL.parseURIEncoded(repodetail.getRepoUrl()), repodetail.getCommitMessage(), null, true, true, SVNDepth.fromRecurse(true));
+	}
+
 	private void checkoutImportedApp(RepoDetail repodetail, ApplicationInfo appInfo, String dirName, boolean hasSplit) throws PhrescoException {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.checkoutImportedApp()");
@@ -1752,14 +1767,14 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		try {
 			//For https and ssh
 			additionalAuthentication(repodetail.getPassPhrase());
-			
+
 			CredentialsProvider cp = new UsernamePasswordCredentialsProvider(repodetail.getUserName(), repodetail.getPassword());
 			FileRepositoryBuilder builder = new FileRepositoryBuilder();
 			Repository repository = builder.setGitDir(appDir).readEnvironment().findGitDir().build();
 			String dirPath = appDir.getPath();
 			File gitignore = new File(dirPath + GITIGNORE_FILE);
 			gitignore.createNewFile();
-			
+
 			if (gitignore.exists()) {
 				String contents = FileUtils.readFileToString(gitignore);
 				if (!contents.isEmpty() && !contents.contains(DO_NOT_CHECKIN_DIR)) {
@@ -1769,20 +1784,20 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					out.write(buf);
 					out.close();
 				} else if (contents.isEmpty()){
-				String source = NEWLINE + DO_NOT_CHECKIN_DIR + NEWLINE;
-				OutputStream out = new FileOutputStream((dirPath + GITIGNORE_FILE), true);
-				byte buf[] = source.getBytes();
-				out.write(buf);
-				out.close();
+					String source = NEWLINE + DO_NOT_CHECKIN_DIR + NEWLINE;
+					OutputStream out = new FileOutputStream((dirPath + GITIGNORE_FILE), true);
+					byte buf[] = source.getBytes();
+					out.write(buf);
+					out.close();
 				}
 			}
-		
+
 			Git git = new Git(repository);
-		
+
 			InitCommand initCommand = Git.init();
 			initCommand.setDirectory(appDir);
 			git = initCommand.call();
-		
+
 			AddCommand add = git.add();
 			add.addFilepattern(".");
 			add.call();
@@ -1805,7 +1820,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				git.getRepository().close();
 				throw e;
 			}
-		
+
 			if (appInfo != null) {
 				updateSCMConnection(appInfo, repodetail.getRepoUrl());
 			}
@@ -1827,12 +1842,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				InitCommand initCommand = Git.init();
 				initCommand.setDirectory(appDir);
 				git = initCommand.call();
-			
+
 				ResetCommand reset = git.reset();
 				ResetType mode = ResetType.SOFT;
 				reset.setRef("HEAD~1").setMode(mode);
 				reset.call();
-						
+
 				git.getRepository().close();
 			}
 		} catch (Exception pe) {
@@ -1850,99 +1865,99 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			} else if (GIT.equals(repodetail.getType())) {
 				importToGITRepo(repodetail, null, dir);
 			} else if (BITKEEPER.equals(repodetail.getType())) {
-			    return commitToBitKeeperRepo(repodetail.getRepoUrl(), dir.getPath(), repodetail.getCommitMessage());
+				return commitToBitKeeperRepo(repodetail.getRepoUrl(), dir.getPath(), repodetail.getCommitMessage());
 			} else if (TFS.equals(repodetail.getType())) {
-			    return commitToTFSRepo(repodetail, dir.getCanonicalPath());
+				return commitToTFSRepo(repodetail, dir.getCanonicalPath());
 			}
 		} catch (PhrescoException e) {
 			throw e;
 		}
 		return true;
 	}
-	
+
 	private SVNCommitInfo commitDirectoryContentToSubversion(RepoDetail repodetail, String subVersionedDirectory) throws SVNException {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.commitDirectoryContentToSubversion()");
 		}
 		setupLibrary();
-		
+
 		final SVNClientManager cm = SVNClientManager.newInstance(new DefaultSVNOptions(), repodetail.getUserName(), repodetail.getPassword());
 		SVNWCClient wcClient = cm.getWCClient();
 		File subVerDir = new File(subVersionedDirectory);
 		// This one recursively adds an existing local item under version control (schedules for addition)
 		wcClient.doAdd(subVerDir, true, false, false, SVNDepth.INFINITY, false, false);
 		return cm.getCommitClient().doCommit(new File[]{subVerDir}, false, repodetail.getCommitMessage(), null, null, false, true, SVNDepth.INFINITY);
-    }
-	
-	private boolean commitToBitKeeperRepo(String repoUrl, String appDir, String commitMsg) throws PhrescoException {
-	    BufferedReader reader = null;
-        File file = new File(Utility.getPhrescoTemp() + "bitkeeper.info");
-        boolean isCommitted = false;
-	    try {
-	        List<String> commands = new ArrayList<String>();
-	        commands.add(BK_PARENT + SPACE + repoUrl);
-	        commands.add(BK_PULL);
-	        commands.add(BK_CI + SPACE + BK_ADD_COMMENT + commitMsg + KEY_QUOTES);
-	        commands.add(BK_ADD_FILES + SPACE + BK_ADD_COMMENT + commitMsg + KEY_QUOTES);
-	        commands.add(BK_COMMIT + SPACE + BK_ADD_COMMENT + commitMsg + KEY_QUOTES);
-	        commands.add(BK_PUSH);
-	        for (String command : commands) {
-	            Utility.executeStreamconsumer(appDir, command, new FileOutputStream(file));
-            }
-	        reader = new BufferedReader(new FileReader(file));
-            String strLine;
-            while ((strLine = reader.readLine()) != null) {
-                if (strLine.contains("push") && strLine.contains("OK")) {
-                    isCommitted = true;
-                } else if (strLine.contains("Nothing to push")) {
-                    throw new PhrescoException("Nothing to push");
-                } else if (strLine.contains("Cannot resolve host")) {
-                    throw new PhrescoException("Failed to commit");
-                }
-            }
-        } catch (Exception e) {
-            throw new PhrescoException(e);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    throw new PhrescoException(e);
-                }
-            }
-            if (file.exists()) {
-                file.delete();
-            }
-        }
-        
-        return isCommitted;
 	}
-	
+
+	private boolean commitToBitKeeperRepo(String repoUrl, String appDir, String commitMsg) throws PhrescoException {
+		BufferedReader reader = null;
+		File file = new File(Utility.getPhrescoTemp() + "bitkeeper.info");
+		boolean isCommitted = false;
+		try {
+			List<String> commands = new ArrayList<String>();
+			commands.add(BK_PARENT + SPACE + repoUrl);
+			commands.add(BK_PULL);
+			commands.add(BK_CI + SPACE + BK_ADD_COMMENT + commitMsg + KEY_QUOTES);
+			commands.add(BK_ADD_FILES + SPACE + BK_ADD_COMMENT + commitMsg + KEY_QUOTES);
+			commands.add(BK_COMMIT + SPACE + BK_ADD_COMMENT + commitMsg + KEY_QUOTES);
+			commands.add(BK_PUSH);
+			for (String command : commands) {
+				Utility.executeStreamconsumer(appDir, command, new FileOutputStream(file));
+			}
+			reader = new BufferedReader(new FileReader(file));
+			String strLine;
+			while ((strLine = reader.readLine()) != null) {
+				if (strLine.contains("push") && strLine.contains("OK")) {
+					isCommitted = true;
+				} else if (strLine.contains("Nothing to push")) {
+					throw new PhrescoException("Nothing to push");
+				} else if (strLine.contains("Cannot resolve host")) {
+					throw new PhrescoException("Failed to commit");
+				}
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					throw new PhrescoException(e);
+				}
+			}
+			if (file.exists()) {
+				file.delete();
+			}
+		}
+
+		return isCommitted;
+	}
+
 	private boolean commitToTFSRepo(RepoDetail repoDetail, String appDir) throws PhrescoException {
-//		System.setProperty("com.microsoft.tfs.jni.native.base-directory", "/Users/kaleeswaran/workspace/tools/native/native");
+		//		System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
 		int commited = 100;
-	    if (CollectionUtils.isNotEmpty(repoDetail.getTfsAddedFiles())) {
-	    	int added = addNewFilesToTFS(appDir, repoDetail.getUserName(), repoDetail.getPassword(), repoDetail.getTfsAddedFiles());
-	    	if (added != -1) {
-	    		throw new PhrescoException("Unable to add new files to repo");
-	    	}
-	    } 
-	    if (CollectionUtils.isNotEmpty(repoDetail.getTfsEditedFiles())) {
-	    	commited = commitPendingChangesToTFS(appDir, repoDetail.getUserName(), repoDetail.getPassword(), repoDetail.getCommitMessage(), repoDetail.getTfsEditedFiles());
-	    }
+		if (CollectionUtils.isNotEmpty(repoDetail.getTfsAddedFiles())) {
+			int added = addNewFilesToTFS(appDir, repoDetail);
+			if (added != -1) {
+				throw new PhrescoException("Unable to add new files to repo");
+			}
+		} 
+		if (CollectionUtils.isNotEmpty(repoDetail.getTfsEditedFiles())) {
+			commited = commitPendingChangesToTFS(appDir, repoDetail);
+		}
 		boolean success = (commited == 0) ? true : false;
 		return success;
 	}
-	
+
 	public SVNCommitInfo deleteDirectoryInSubversion(RepoDetail repodetail, String subVersionedDirectory) throws SVNException, IOException {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.commitDirectoryContentToSubversion()");
 		}
 		setupLibrary();
-		
+
 		File subVerDir = new File(subVersionedDirectory);		
 		final SVNClientManager cm = SVNClientManager.newInstance(new DefaultSVNOptions(), repodetail.getUserName(), repodetail.getPassword());
-		
+
 		SVNWCClient wcClient = cm.getWCClient();
 		//wcClient.doDelete(subVerDir, true, false);
 		FileUtils.listFiles(subVerDir, TrueFileFilter.TRUE, FileFilterUtils.makeSVNAware(null));
@@ -1951,33 +1966,33 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				wcClient.doDelete(child, true, true, false);
 			}
 		}
-		
+
 		return cm.getCommitClient().doCommit(new File[]{subVerDir}, false, repodetail.getCommitMessage(), null, null, false, true, SVNDepth.INFINITY);
-    }
-	
-	public List<RepoFileInfo> getCommitableFiles(File path, String revision) throws SVNException {
-		
-	    SVNClientManager svnClientManager = SVNClientManager.newInstance();
-	    final List<RepoFileInfo> filesList = new ArrayList<RepoFileInfo>();
-	    svnClientManager.getStatusClient().doStatus(path, SVNRevision.parse(revision), SVNDepth.INFINITY, false, false, false, false, new ISVNStatusHandler() {
-	        public void handleStatus(SVNStatus status) throws SVNException {
-	            SVNStatusType statusType = status.getContentsStatus();
-	            if (statusType != SVNStatusType.STATUS_NONE && statusType != SVNStatusType.STATUS_NORMAL
-	                    && statusType != SVNStatusType.STATUS_IGNORED) {
-	            	RepoFileInfo repoFileInfo = new RepoFileInfo();
-	            	String filePath = status.getFile().getPath();
-	            	 String FileStatus = Character.toString(statusType.getCode());
-	            	 repoFileInfo.setContentsStatus(statusType);
-	            	 repoFileInfo.setStatus(FileStatus);
-	            	 repoFileInfo.setCommitFilePath(filePath);
-	            	 filesList.add(repoFileInfo);
-	            }
-	        }
-	    }, null);
-	    
-	    return filesList;
 	}
-	
+
+	public List<RepoFileInfo> getCommitableFiles(File path, String revision) throws SVNException {
+
+		SVNClientManager svnClientManager = SVNClientManager.newInstance();
+		final List<RepoFileInfo> filesList = new ArrayList<RepoFileInfo>();
+		svnClientManager.getStatusClient().doStatus(path, SVNRevision.parse(revision), SVNDepth.INFINITY, false, false, false, false, new ISVNStatusHandler() {
+			public void handleStatus(SVNStatus status) throws SVNException {
+				SVNStatusType statusType = status.getContentsStatus();
+				if (statusType != SVNStatusType.STATUS_NONE && statusType != SVNStatusType.STATUS_NORMAL
+						&& statusType != SVNStatusType.STATUS_IGNORED) {
+					RepoFileInfo repoFileInfo = new RepoFileInfo();
+					String filePath = status.getFile().getPath();
+					String FileStatus = Character.toString(statusType.getCode());
+					repoFileInfo.setContentsStatus(statusType);
+					repoFileInfo.setStatus(FileStatus);
+					repoFileInfo.setCommitFilePath(filePath);
+					filesList.add(repoFileInfo);
+				}
+			}
+		}, null);
+
+		return filesList;
+	}
+
 	public List<RepoFileInfo> getGITCommitableFiles(File path) throws IOException, GitAPIException
 	{
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
@@ -1988,7 +2003,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		initCommand.setDirectory(path);
 		git = initCommand.call();
 		Status status = git.status().call();
-		
+
 		Set<String> added = status.getAdded();
 		Set<String> changed = status.getChanged();
 		Set<String> conflicting = status.getConflicting();
@@ -1996,7 +2011,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		Set<String> modified = status.getModified();
 		Set<String> removed = status.getRemoved();
 		Set<String> untracked = status.getUntracked();
-		
+
 		if (!added.isEmpty()) {
 			for (String add : added) {
 				RepoFileInfo repoFileInfo = new RepoFileInfo();
@@ -2093,10 +2108,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 		return logMessages;
 	}
-	
+
 	public SVNCommitInfo commitSpecifiedFiles(List<File> listModifiedFiles, String username, String password, String commitMessage) throws Exception {
 		setupLibrary();
-		
+
 		final SVNClientManager cm = SVNClientManager.newInstance(new DefaultSVNOptions(), username, password);
 		SVNWCClient wcClient = cm.getWCClient();
 		File[] comittableFiles = listModifiedFiles.toArray(new File[listModifiedFiles.size()]);
@@ -2121,7 +2136,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				return true; 
 			} 
 		}); 
-		
+
 		//to List Unversioned Files 
 		List<File> unversionedFiles = new ArrayList<File>();
 		for (File file : comittableFiles) {
@@ -2134,7 +2149,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				} 
 			}
 		}
-		
+
 		//Add only Unversioned Files
 		if (CollectionUtils.isNotEmpty(unversionedFiles)) {
 			File[] newlyAddedFiles = unversionedFiles.toArray(new File[unversionedFiles.size()]);
@@ -2145,7 +2160,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 		return commitInfo;
 	}
-	
+
 	public String svnCheckout(String path, String userName, String password, String repoURL, String revision) {
 		DAVRepositoryFactory.setup();
 		SVNClientManager clientManager = SVNClientManager.newInstance();
@@ -2163,7 +2178,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 		return SUCCESSFUL;
 	}
-	
+
 	public ProjectInfo importFromPerforce(RepoDetail repodetail, File tempFile) throws Exception {
 		perforceSync(repodetail, tempFile.getAbsolutePath(), tempFile.getName(),"import");
 		String path = tempFile.getAbsolutePath();
@@ -2179,7 +2194,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 		return projectInfo;
 	}
-	
+
 	public void perforceSync(RepoDetail repodetail,String baseDir , String projectName,String flag) throws ConnectionException, RequestException  {
 		String url=repodetail.getRepoUrl();
 		String userName=repodetail.getUserName();
@@ -2209,11 +2224,11 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			ClientView clientView = new ClientView();
 			clientView.addEntry(tempMappingEntry);
 			try {
-			String[] arr=repodetail.getStream().split("//");
-			String[] arr1=arr[1].split("/");
-			client.setStream("//"+arr1[0]+"/"+arr1[1]);
-			client.setClientView(clientView);
-			client.setOptions(new ClientOptions("noallwrite clobber nocompress unlocked nomodtime normdir"));
+				String[] arr=repodetail.getStream().split("//");
+				String[] arr1=arr[1].split("/");
+				client.setStream("//"+arr1[0]+"/"+arr1[1]);
+				client.setClientView(clientView);
+				client.setOptions(new ClientOptions("noallwrite clobber nocompress unlocked nomodtime normdir"));
 			}catch (ArrayIndexOutOfBoundsException e) {
 				throw new RequestException();
 			}
@@ -2311,7 +2326,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 	@Override
 	public void importPhresco(ApplicationInfo applicationInfo, RepoInfo repoInfo)
-			throws Exception {
+	throws Exception {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome()).append(File.separator);
 		builder.append(applicationInfo.getAppDirName());
 		if(repoInfo.isSplitPhresco()) {
@@ -2355,24 +2370,24 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		Credentials credentials;
 
 		try {
-		// In case no username is provided and the current platform supports
-		// default credentials, use default credentials
-		if ((userName == null || userName.length() == 0) && CredentialsUtils.supportsDefaultCredentials()) {
-			credentials = new DefaultNTCredentials();
-		} else {
-			credentials = new UsernamePasswordCredentials(userName, password);
-		}
-
-		URI httpProxyURI = null;
-		if (HTTP_PROXY_URL != null && HTTP_PROXY_URL.length() > 0) {
-			try {
-				httpProxyURI = new URI(HTTP_PROXY_URL);
-			} catch (URISyntaxException e) {
-				// Do Nothing
+			// In case no username is provided and the current platform supports
+			// default credentials, use default credentials
+			if ((userName == null || userName.length() == 0) && CredentialsUtils.supportsDefaultCredentials()) {
+				credentials = new DefaultNTCredentials();
+			} else {
+				credentials = new UsernamePasswordCredentials(userName, password);
 			}
-		}
-		ConsoleSamplesConnectionAdvisor connectionAdvisor = new ConsoleSamplesConnectionAdvisor(httpProxyURI);
-		tpc = new TFSTeamProjectCollection(URIUtils.newURI(collectionUrl), credentials, connectionAdvisor);
+
+			URI httpProxyURI = null;
+			if (HTTP_PROXY_URL != null && HTTP_PROXY_URL.length() > 0) {
+				try {
+					httpProxyURI = new URI(HTTP_PROXY_URL);
+				} catch (URISyntaxException e) {
+					// Do Nothing
+				}
+			}
+			ConsoleSamplesConnectionAdvisor connectionAdvisor = new ConsoleSamplesConnectionAdvisor(httpProxyURI);
+			tpc = new TFSTeamProjectCollection(URIUtils.newURI(collectionUrl), credentials, connectionAdvisor);
 		} catch (Exception e) {
 			throw new PhrescoException(e);
 		}
@@ -2380,14 +2395,14 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		return tpc;
 	}
 
-	
+
 	public static void main(String[] args) throws IOException {
 		TFSTeamProjectCollection tpc;
 		String[] cmd = new String[5];
 		try {
 			String uniqueId = UUID.randomUUID().toString();
 			File tempFile = new File("D:/tfs-temp", uniqueId);
-//			FileUtils.forceMkdir(tempFile);
+			//			FileUtils.forceMkdir(tempFile);
 			System.out.println("tempFile ===>"+tempFile.getCanonicalPath());
 			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
 			SCMManagerImpl impl = new SCMManagerImpl();
@@ -2397,78 +2412,177 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			String password = "phresco123";
 			String workspaceName = "VCWorkspace" + System.currentTimeMillis();
 			String appDir = "C:/Documents and Settings/rajeshkumar_ra/workspace/projects/jquery_mobile";
-			
-//			int createWorkspace = impl.createWorkspace(workspaceName, url, username, password);
-//			System.out.println("createWorkspace === " + createWorkspace);
-//			int mapLocalWorkspaceToRemote = impl.mapLocalWorkspaceToRemote(workspaceName, serverPath, tempFile.getCanonicalPath(), url, username, password);
-//			System.out.println("mapLocalWorkspaceToRemote === " + mapLocalWorkspaceToRemote);
-//////			
-//			int project = impl.getProjectFromTFS(tempFile.getCanonicalPath(), username, password);
-//			System.out.println("project === " + project);
-//			Map<String, List<String>> pendingChanges = impl.getPendingChanges(appDir);
-//			List<String> newFiles = new ArrayList<String>();
-//			newFiles.add("C:/Documents and Settings/rajeshkumar_ra/workspace/projects/jquery_mobile/test.xml111");
-//			impl.addNewFilesToTFS(appDir, username, password, newFiles);
+			SCMManagerImpl m = new SCMManagerImpl();
+//			int deleteWorkspace = m.deleteWorkspace("", null);
+//			System.out.println("Delete..."+deleteWorkspace);
+			RepoDetail detail = new RepoDetail();
+			detail.setRepoUrl("https://vivekraja.visualstudio.com/DefaultCollection");
+			detail.setUserName("vivekraja.vasudevan@photoninfotech.com");
+			detail.setPassword("phresco123");
+			detail.setServerPath("$/phresco/ios-hybrid-app/");
+						int createWorkspace = impl.createWorkspace(workspaceName, detail);
+						System.out.println("createWorkspace === " + createWorkspace);
+						int mapLocalWorkspaceToRemote = impl.mapLocalWorkspaceToRemote(workspaceName, tempFile.getCanonicalPath(), detail);
+						System.out.println("mapLocalWorkspaceToRemote === " + mapLocalWorkspaceToRemote);
+			//////			
+			//			int project = impl.getProjectFromTFS(tempFile.getCanonicalPath(), username, password);
+			//			System.out.println("project === " + project);
+			//			Map<String, List<String>> pendingChanges = impl.getPendingChanges(appDir);
+			//			List<String> newFiles = new ArrayList<String>();
+			//			newFiles.add("C:/Documents and Settings/rajeshkumar_ra/workspace/projects/jquery_mobile/test.xml111");
+			//			impl.addNewFilesToTFS(appDir, username, password, newFiles);
 			List<String> files = new ArrayList<String>();
-//			files.add("C:/Documents and Settings/rajeshkumar_ra/workspace/projects/jquery_mobile/test.xml");
+			//			files.add("C:/Documents and Settings/rajeshkumar_ra/workspace/projects/jquery_mobile/test.xml");
 			files.add("C:/Documents and Settings/rajeshkumar_ra/workspace/projects/jquery_mobile/pom.xml");
-			impl.commitPendingChangesToTFS(appDir, username, password, "lohes working in update", files);
-//			System.out.println("pendingChanges===>"+pendingChanges);
-			
+			//			impl.commitPendingChangesToTFS(appDir, username, password, "lohes working in update", files);
+			//			System.out.println("pendingChanges===>"+pendingChanges);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Exception "+e.getLocalizedMessage());
 		}
 	}
-	
-	private int addNewFilesToTFS(String appDir, String username, String password, List<String> newFiles) throws PhrescoException {
+
+	private int addNewFilesToTFS(String appDir, RepoDetail repoDetail) throws PhrescoException {
 		int added = -1; 
 		try {
 			//tf add D:\tfsTest\teststatus\src\com\photon\phresco\tfs\Demo.java /noprompt /login:vivekraja.vasudevan@photoninfotech.com,phresco123
 			//TODO: Delete below line before commit
-//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
+			//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
 			Command cmdAdd = new CommandAdd();
 			List<Option> options = new ArrayList<Option>(3);
 			appendRecursive(options);
 			appendNoPrompt(options);
-			appendCredentials(username, password, options);
-			String[] freeArguments = new String[newFiles.size()];
-			freeArguments = newFiles.toArray(freeArguments);
+			appendCredentials(repoDetail.getUserName(), repoDetail.getPassword(), options);
+			String[] freeArguments = new String[repoDetail.getTfsAddedFiles().size()];
+			freeArguments = repoDetail.getTfsAddedFiles().toArray(freeArguments);
 			added = executeCmd(freeArguments, cmdAdd, options);
-		} catch (Exception e) {
+		} catch (TFSUnauthorizedException e) {
+			throw new PhrescoException(e);
+		} catch (InvalidOptionValueException e) {
+			throw new PhrescoException(e);
+		} catch (InvalidOptionException e) {
+			throw new PhrescoException(e);
+		} catch (MalformedURLException e) {
+			throw new PhrescoException(e);
+		} catch (ArgumentException e) {
+			throw new PhrescoException(e);
+		} catch (CLCException e) {
+			throw new PhrescoException(e);
+		} catch (LicenseException e) {
 			throw new PhrescoException(e);
 		}
+
 		return added;
 	}
 
-	private int commitPendingChangesToTFS(String appDir, String username, String password, String comment, List<String> files) throws PhrescoException {
+	private int addFilesToTFSRepo(String appDir, RepoDetail repoDetail) throws PhrescoException {
+		int added = -1; 
+		try {
+			//tf add D:\tfsTest\teststatus\src\com\photon\phresco\tfs\Demo.java /noprompt /login:vivekraja.vasudevan@photoninfotech.com,phresco123
+			//TODO: Delete below line before commit
+			//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
+			Command cmdAdd = new CommandAdd();
+			List<Option> options = new ArrayList<Option>(3);
+			appendRecursive(options);
+			appendNoPrompt(options);
+			appendCredentials(repoDetail.getUserName(), repoDetail.getPassword(), options);
+			added = executeCmd(new String[] { appDir }, cmdAdd, options);
+		} catch (TFSUnauthorizedException e) {
+			throw new PhrescoException(e);
+		} catch (InvalidOptionValueException e) {
+			throw new PhrescoException(e);
+		} catch (InvalidOptionException e) {
+			throw new PhrescoException(e);
+		} catch (MalformedURLException e) {
+			throw new PhrescoException(e);
+		} catch (ArgumentException e) {
+			throw new PhrescoException(e);
+		} catch (CLCException e) {
+			throw new PhrescoException(e);
+		} catch (LicenseException e) {
+			throw new PhrescoException(e);
+		}
+
+		return added;
+	}
+
+	private int checkinProjectToTFSRepo(String appDir, RepoDetail repoDetail) throws PhrescoException {
 		//tf checkin D:\tfsTest\teststatus\src\com\photon\phresco\tfs\Demo.java /noprompt /login:vivekraja.vasudevan@photoninfotech.com,phresco123 
-			//	/comment:"Test commit" /login:vivekraja.vasudevan@photoninfotech.com,phresco123
+		//	/comment:"Test commit" /login:vivekraja.vasudevan@photoninfotech.com,phresco123
 		int commited = -1; 
 		try {
 			//TODO: Delete below line before commit
-//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
+			//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
 			Command cmdCheckIn = new CommandCheckin();
 			List<Option> options = new ArrayList<Option>(4);
 			appendRecursive(options);
 			appendNoPrompt(options);
-			appendCredentials(username, password, options);
-			appendComment(comment, options);
-			
-			String[] freeArguments = new String[files.size()];
-			freeArguments = files.toArray(freeArguments);
-			commited = executeCmd(freeArguments, cmdCheckIn, options);
-		} catch (Exception e) {
+			appendCredentials(repoDetail.getUserName(), repoDetail.getPassword(), options);
+			appendComment(repoDetail.getCommitMessage(), options);
+
+			commited = executeCmd(new String[] { appDir }, cmdCheckIn, options);
+		} catch (TFSUnauthorizedException e) {
 			throw new PhrescoException(e);
-		} 
+		} catch (InvalidOptionValueException e) {
+			throw new PhrescoException(e);
+		} catch (InvalidOptionException e) {
+			throw new PhrescoException(e);
+		} catch (MalformedURLException e) {
+			throw new PhrescoException(e);
+		} catch (ArgumentException e) {
+			throw new PhrescoException(e);
+		} catch (CLCException e) {
+			throw new PhrescoException(e);
+		} catch (LicenseException e) {
+			throw new PhrescoException(e);
+		}
+
 		return commited;
 	}
-	
+
+	private int commitPendingChangesToTFS(String appDir, RepoDetail repoDetail) throws PhrescoException {
+		//.getUserName(), repoDetail.getPassword(), repoDetail.getCommitMessage(), repoDetail.getTfsEditedFiles()
+		//tf checkin D:\tfsTest\teststatus\src\com\photon\phresco\tfs\Demo.java /noprompt /login:vivekraja.vasudevan@photoninfotech.com,phresco123 
+		//	/comment:"Test commit" /login:vivekraja.vasudevan@photoninfotech.com,phresco123
+		int commited = -1; 
+		try {
+			//TODO: Delete below line before commit
+			//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
+			Command cmdCheckIn = new CommandCheckin();
+			List<Option> options = new ArrayList<Option>(4);
+			appendRecursive(options);
+			appendNoPrompt(options);
+			appendCredentials(repoDetail.getUserName(), repoDetail.getPassword(), options);
+			appendComment(repoDetail.getCommitMessage(), options);
+
+			String[] freeArguments = new String[repoDetail.getTfsEditedFiles().size()];
+			freeArguments = repoDetail.getTfsEditedFiles().toArray(freeArguments);
+			commited = executeCmd(freeArguments, cmdCheckIn, options);
+		} catch (TFSUnauthorizedException e) {
+			throw new PhrescoException(e);
+		}  catch (InvalidOptionValueException e) {
+			throw new PhrescoException(e);
+		} catch (InvalidOptionException e) {
+			throw new PhrescoException(e);
+		} catch (MalformedURLException e) {
+			throw new PhrescoException(e);
+		} catch (ArgumentException e) {
+			throw new PhrescoException(e);
+		} catch (CLCException e) {
+			throw new PhrescoException(e);
+		} catch (LicenseException e) {
+			throw new PhrescoException(e);
+		}
+
+		return commited;
+	}
+
 	public Map<String, List<String>> getPendingChanges(String appDir) throws PhrescoException {
 		Map<String, List<String>> changes;
 		try {
 			//TODO: Delete below line before commit
-//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
+			//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
 			com.photon.phresco.framework.impl.CommandStatus cmdStatus = new com.photon.phresco.framework.impl.CommandStatus();
 			List<Option> options = new ArrayList<Option>(2);
 			VersionControlOptions optionsMap1 = new VersionControlOptions();
@@ -2495,9 +2609,21 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					changes.put(EDIT, editedFiles);
 				}
 			}
-		} catch (Exception e) {
+		} catch (TFSUnauthorizedException e) {
 			throw new PhrescoException(e);
-		} 
+		}  catch (InvalidOptionValueException e) {
+			throw new PhrescoException(e);
+		} catch (InvalidOptionException e) {
+			throw new PhrescoException(e);
+		} catch (MalformedURLException e) {
+			throw new PhrescoException(e);
+		} catch (ArgumentException e) {
+			throw new PhrescoException(e);
+		} catch (CLCException e) {
+			throw new PhrescoException(e);
+		} catch (LicenseException e) {
+			throw new PhrescoException(e);
+		}
 
 		return changes;
 	}
@@ -2516,42 +2642,126 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 	}
 
-	private int createWorkspace(String workspaceName, String url, String username, String password) 
-			throws MalformedURLException, ArgumentException, CLCException, LicenseException {
-		// tf workspace -new tfs_work -noprompt -server:https://vivekraja.visualstudio.com/DefaultCollection -login:vivekraja.vasudevan@photoninfotech.com,phresco123
-		Command cmdWorkspace = new CommandWorkspace();
-		List<Option> options = new ArrayList<Option>(4);
-		options.add(optionsMap.findOption("-new"));
-		appendNoPrompt(options);
-		appendServerUrl(url, options);
-		appendCredentials(username, password, options);
-		return executeCmd(new String[] { workspaceName }, cmdWorkspace, options);
+	private int createWorkspace(String workspaceName, RepoDetail repoDetail)  throws PhrescoException {
+		int executeCmd;
+		try {
+//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
+			// tf workspace -new tfs_work -noprompt -server:https://vivekraja.visualstudio.com/DefaultCollection -login:vivekraja.vasudevan@photoninfotech.com,phresco123
+			Command cmdWorkspace = new CommandWorkspace();
+			List<Option> options = new ArrayList<Option>(4);
+			options.add(optionsMap.findOption("-new"));
+			appendNoPrompt(options);
+			appendServerUrl(repoDetail.getRepoUrl(), options);
+			appendCredentials(repoDetail.getUserName(), repoDetail.getPassword(), options);
+			executeCmd = executeCmd(new String[] { workspaceName }, cmdWorkspace, options);
+		} catch (TFSUnauthorizedException e) {
+			throw new PhrescoException(e);
+		} catch (InvalidOptionValueException e) {
+			throw new PhrescoException(e);
+		} catch (InvalidOptionException e) {
+			throw new PhrescoException(e);
+		} catch (MalformedURLException e) {
+			throw new PhrescoException(e);
+		} catch (ArgumentException e) {
+			throw new PhrescoException(e);
+		} catch (CLCException e) {
+			throw new PhrescoException(e);
+		} catch (LicenseException e) {
+			throw new PhrescoException(e);
+		}
+		return executeCmd;
 	}
-	
-	private int mapLocalWorkspaceToRemote(String workspaceName, String serverPath, String localPath, String url, 
-			String username, String password)
-			throws MalformedURLException, ArgumentException, CLCException, LicenseException {
-		// tf workfold -map $/phresco/ios-hybrid-app D:\tfsTest\sample -workspace:tfs_work -server:https://vivekraja.visualstudio.com/DefaultCollection /login:vivekraja.vasudevan@photoninfotech.com,phresco123
-		Command cmdWorkFold = new CommandWorkFold();
-		List<Option> options = new ArrayList<Option>(4);
-		appendMapWorkspace(options);
-		appendWorkspaceName(workspaceName, options);
-		appendServerUrl(url, options);
-		appendCredentials(username, password, options);
-		return executeCmd(new String[] { serverPath, localPath }, cmdWorkFold, options);
+
+	public int deleteWorkspace(String workspaceName, RepoDetail repoDetail) 
+	throws PhrescoException {
+		int executeCmd = 1;
+		try {
+			//System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
+			// tf workspace -delete tfs_work -noprompt -server:https://vivekraja.visualstudio.com/DefaultCollection -login:vivekraja.vasudevan@photoninfotech.com,phresco123
+			Command cmdWorkspace = new CommandWorkspace();
+			List<Option> options = new ArrayList<Option>(4);
+			options.add(optionsMap.findOption("-delete"));
+			appendNoPrompt(options);
+			appendServerUrl(repoDetail.getRepoUrl(), options);
+			appendCredentials(repoDetail.getUserName(), repoDetail.getPassword(), options);
+			executeCmd = executeCmd(new String[] { workspaceName }, cmdWorkspace, options);
+		} catch (TFSUnauthorizedException e) {
+			throw new PhrescoException(e);
+		} catch (InvalidOptionException e) {
+			throw new PhrescoException(e);
+		} catch (MalformedURLException e) {
+			throw new PhrescoException(e);
+		} catch (ArgumentException e) {
+			throw new PhrescoException(e);
+		} catch (CLCException e) {
+			throw new PhrescoException(e);
+		} catch (LicenseException e) {
+			throw new PhrescoException(e);
+		}
+		return executeCmd;
 	}
-	
+
+	private int mapLocalWorkspaceToRemote(String workspaceName,  String localPath, RepoDetail repodetail)
+	throws PhrescoException {
+		int executeCmd;
+		try {
+			// tf workfold -map $/phresco/ios-hybrid-app D:\tfsTest\sample -workspace:tfs_work -server:https://vivekraja.visualstudio.com/DefaultCollection /login:vivekraja.vasudevan@photoninfotech.com,phresco123
+			Command cmdWorkFold = new CommandWorkFold();
+			List<Option> options = new ArrayList<Option>(4);
+			appendMapWorkspace(options);
+			appendWorkspaceName(workspaceName, options);
+			appendServerUrl(repodetail.getRepoUrl(), options);
+			appendCredentials(repodetail.getUserName(), repodetail.getPassword(), options);
+			executeCmd = executeCmd(new String[] { repodetail.getServerPath(), localPath }, cmdWorkFold, options);
+		} catch (TFSUnauthorizedException e) {
+			throw new PhrescoException(e);
+		} catch (InvalidOptionValueException e) {
+			throw new PhrescoException(e);
+		} catch (InvalidOptionException e) {
+			throw new PhrescoException(e);
+		} catch (MalformedURLException e) {
+			throw new PhrescoException(e);
+		} catch (ArgumentException e) {
+			throw new PhrescoException(e);
+		} catch (CLCException e) {
+			throw new PhrescoException(e);
+		} catch (LicenseException e) {
+			throw new PhrescoException(e);
+		} 
+
+		return executeCmd;
+	}
+
 	private int getProjectFromTFS(RepoDetail repoDetail, String localPath) 
-			throws MalformedURLException, ArgumentException, CLCException, LicenseException {
-		// tf get -all -noprompt /login:vivekraja.vasudevan@photoninfotech.com,phresco123
-//		System.setProperty("com.microsoft.tfs.jni.native.base-directory", "/Users/kaleeswaran/workspace/tools/native/native");
-		Command cmdGet = new CommandGet();
-		List<Option> options = new ArrayList<Option>(4);
-		options.add(optionsMap.findOption("-all"));
-		appendNoPrompt(options);
-		appendCredentials(repoDetail.getUserName(), repoDetail.getPassword(), options);
-		appendRecursive(options);
-		return executeCmd(new String[] { localPath }, cmdGet, options);
+	throws PhrescoException {
+		int executeCmd; 
+		try {
+			// tf get -all -noprompt /login:vivekraja.vasudevan@photoninfotech.com,phresco123
+			//		System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
+			Command cmdGet = new CommandGet();
+			List<Option> options = new ArrayList<Option>(4);
+			options.add(optionsMap.findOption("-all"));
+			appendNoPrompt(options);
+			appendCredentials(repoDetail.getUserName(), repoDetail.getPassword(), options);
+			appendRecursive(options);
+			executeCmd = executeCmd(new String[] { localPath }, cmdGet, options);
+		} catch (TFSUnauthorizedException e) {
+			throw new PhrescoException(e);
+		} catch (InvalidOptionValueException e) {
+			throw new PhrescoException(e);
+		} catch (InvalidOptionException e) {
+			throw new PhrescoException(e);
+		} catch (MalformedURLException e) {
+			throw new PhrescoException(e);
+		} catch (ArgumentException e) {
+			throw new PhrescoException(e);
+		} catch (CLCException e) {
+			throw new PhrescoException(e);
+		} catch (LicenseException e) {
+			throw new PhrescoException(e);
+		}  
+
+		return executeCmd;
 	}
 
 	private void appendMapWorkspace(List<Option> options) throws InvalidOptionValueException {
@@ -2559,39 +2769,39 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	}
 
 	private int executeCmd(String[] args, Command cmd, List<Option> options) 
-			throws InvalidOptionException, ArgumentException, MalformedURLException, CLCException, LicenseException {
+	throws InvalidOptionException, ArgumentException, MalformedURLException, CLCException, LicenseException {
 		cmd.setOptions((Option[]) options .toArray(new Option[0]), new VersionControlCommands().getGlobalOptions());
 		cmd.setFreeArguments(args);
 		cmd.run();
 		cmd.close();
-		
+
 		return cmd.getExitCode();
 	}
 
 	private void appendWorkspaceName(String workspaceName, List<Option> options)
-			throws InvalidOptionValueException {
+	throws InvalidOptionValueException {
 		options.add(optionsMap.findOption("-workspace:"+workspaceName));
 	}
 
 	private void appendCredentials(String username, String password, List<Option> options)
-			throws InvalidOptionValueException {
+	throws InvalidOptionValueException {
 		options.add(optionsMap.findOption("-login:" + username + "," + password));
 	}
 
 	private void appendServerUrl(String url, List<Option> options) throws InvalidOptionValueException {
 		options.add(optionsMap.findOption("-server:"+url));
 	}
-	
+
 	private void appendComment(String comment, List<Option> options) throws InvalidOptionValueException {
 		options.add(optionsMap.findOption("-comment:\""+comment+"\""));
 	}
-	
+
 	private void appendRecursive(List<Option> options) throws InvalidOptionValueException {
 		options.add(optionsMap.findOption("-recursive"));
 	}
-	
+
 	private void appendNoPrompt(List<Option> options)
-			throws InvalidOptionValueException {
+	throws InvalidOptionValueException {
 		options.add(optionsMap.findOption("-noprompt"));
 	}
 }

@@ -349,6 +349,7 @@ define([], function() {
 				srcRepoDetail.password = $("#pwd_"+dynid).val();
 				srcRepoDetail.commitMessage = $("#repomessage_"+dynid).val();
 				srcRepoDetail.passPhrase = $("#repoPhrase_"+dynid).val();
+				srcRepoDetail.serverPath = $("#addTfsServerPath_"+dynid).val();
 				repoInfo.srcRepoDetail = srcRepoDetail;
 				
 				if ($("#splitDotPhresco_"+dynid).is(":checked")) {
@@ -358,6 +359,7 @@ define([], function() {
 					phrescoRepoDetail.password = $("#phrescopwd_"+dynid).val();
 					phrescoRepoDetail.commitMessage = $("#phrescorepomessage_"+dynid).val();
 					phrescoRepoDetail.passPhrase = $("#phrescorepoPhrase_"+dynid).val();
+					phrescoRepoDetail.serverPath = $("#addPhrTfsServerPath_"+dynid).val();
 					repoInfo.phrescoRepoDetail = phrescoRepoDetail;
 				}
 				
@@ -368,6 +370,7 @@ define([], function() {
 					testRepoDetail.password = $("#testpwd_"+dynid).val();
 					testRepoDetail.commitMessage = $("#testrepomessage_"+dynid).val();
 					testRepoDetail.passPhrase = $("#testrepoPhrase_"+dynid).val();
+					testRepoDetail.serverPath = $("#addTestTfsServerPath_"+dynid).val();
 					repoInfo.testRepoDetail = testRepoDetail;
 				}
 				repoInfo.splitPhresco = $("#splitDotPhresco_"+dynid).is(":checked");

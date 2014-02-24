@@ -151,6 +151,7 @@
 											<option value="svn" data-i18n="projectlist.label.svn"></option>
 											<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 											<option value="git" data-i18n="projectlist.label.git"></option>
+											<option value="tfs" data-i18n="projectlist.label.tfs"></option>
 										</select>
 									</td>
 									<td><input type="text" name="repoUrl" placeholder="Repo Url" id="repourl_{{id}}" class="repourltext" ></td>
@@ -172,6 +173,12 @@
 								</tr>
 								<tr class="passPhrase hideContent">
 									<td><input type="text" id="repoPhrase_{{id}}"/></td>
+								</tr>
+								<tr class="tfsAddServerPath hideContent">
+									<td><span name="serverpath" value="tfsServerPath">Server Path</span><sup>*</sup></td>
+								</tr>
+								<tr class="tfsAddServerPath hideContent">	
+									<td><input type="text" id="addTfsServerPath_{{id}}"/></td>
 								</tr>
 								<tr>
 									<td colspan="2">
@@ -197,6 +204,7 @@
 											<option value="svn" data-i18n="projectlist.label.svn"></option>
 											<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 											<option value="git" data-i18n="projectlist.label.git"></option>
+											<option value="tfs" data-i18n="projectlist.label.tfs"></option>
 										</select>
 									</td>
 									<td><input type="text" name="repoUrl" placeholder="Repo Url" id="phrescorepourl_{{id}}" class="repourltext"></td>
@@ -218,6 +226,12 @@
 								</tr>
 								<tr class="passPhrase hideContent">
 									<td><input type="text" id="phrescorepoPhrase_{{id}}"/></td>
+								</tr>
+									<tr class="tfsAddServerPath hideContent">
+									<td><span name="serverpath" value="tfsServerPath">Server Path</span><sup>*</sup></td>
+								</tr>
+								<tr class="tfsAddServerPath hideContent">	
+									<td><input type="text" id="addPhrTfsServerPath_{{id}}"/></td>
 								</tr>
 								<tr>
 									<td colspan="2">
@@ -243,6 +257,7 @@
 											<option value="svn" data-i18n="projectlist.label.svn"></option>
 											<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 											<option value="git" data-i18n="projectlist.label.git"></option>
+											<option value="tfs" data-i18n="projectlist.label.tfs"></option>
 										</select>
 									</td>
 									<td><input type="text" name="repoUrl" placeholder="Repo Url" id="testrepourl_{{id}}" class="repourltext"></td>
@@ -264,6 +279,12 @@
 								</tr>
 								<tr class="passPhrase hideContent">
 									<td><input type="text" id="testrepoPhrase_{{id}}"/></td>
+								</tr>
+								<tr class="tfsAddServerPath hideContent">
+									<td><span name="serverpath" value="tfsServerPath">Server Path</span><sup>*</sup></td>
+								</tr>
+								<tr class="tfsAddServerPath hideContent">	
+									<td><input type="text" id="addTestTfsServerPath_{{id}}"/></td>
 								</tr>
 								<tr>
 									<td colspan="2">

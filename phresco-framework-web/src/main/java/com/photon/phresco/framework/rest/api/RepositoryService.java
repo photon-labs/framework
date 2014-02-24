@@ -2029,7 +2029,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		try {
 			SCMManagerImpl impl = new SCMManagerImpl();
 			Map<String, List<String>> pendingChanges = impl.getPendingChanges(workingDir.getCanonicalPath());
-			System.out.println("pendingChanges...."+pendingChanges);
 			if (MapUtils.isNotEmpty(pendingChanges)) {
 				List<String> addedFiles = pendingChanges.get(ADD);
 				List<String> editedFiles = pendingChanges.get(EDIT);
