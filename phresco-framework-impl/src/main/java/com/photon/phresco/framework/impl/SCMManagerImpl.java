@@ -891,8 +891,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		ProjectInfo projectInfo = null;
 		try {
 			FileUtils.forceMkdir(appDirectoryPath);
-			//TODO: Delete below line before commit
-			//System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
 			createWorkspace(repodetail);
 			mapLocalWorkspaceToRemote(appDirectoryPath.getCanonicalPath(), dotPhrescoPath, repodetail);
 			getProjectFromTFS(repodetail, appDirectoryPath.getCanonicalPath());
@@ -1987,7 +1985,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	}
 
 	private boolean commitToTFSRepo(RepoDetail repoDetail, String appDir) throws PhrescoException {
-		//		System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
 		int commited = 100;
 		if (CollectionUtils.isNotEmpty(repoDetail.getTfsAddedFiles())) {
 			int added = addNewFilesToTFS(appDir, repoDetail);
@@ -2452,9 +2449,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	private int addNewFilesToTFS(String appDir, RepoDetail repoDetail) throws PhrescoException {
 		int added = -1; 
 		try {
-			//tf add D:\tfsTest\teststatus\src\com\photon\phresco\tfs\Demo.java /noprompt /login:vivekraja.vasudevan@photoninfotech.com,phresco123
-			//TODO: Delete below line before commit
-			//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
 			Command cmdAdd = new CommandAdd();
 			List<Option> options = new ArrayList<Option>(3);
 			appendRecursive(options);
@@ -2485,9 +2479,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	private int addFilesToTFSRepo(String appDir, RepoDetail repoDetail) throws PhrescoException {
 		int added = -1; 
 		try {
-			//tf add D:\tfsTest\teststatus\src\com\photon\phresco\tfs\Demo.java /noprompt /login:vivekraja.vasudevan@photoninfotech.com,phresco123
-			//TODO: Delete below line before commit
-			//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
 			Command cmdAdd = new CommandAdd();
 			List<Option> options = new ArrayList<Option>(3);
 			appendRecursive(options);
@@ -2514,12 +2505,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	}
 
 	private int checkinProjectToTFSRepo(String appDir, RepoDetail repoDetail) throws PhrescoException {
-		//tf checkin D:\tfsTest\teststatus\src\com\photon\phresco\tfs\Demo.java /noprompt /login:vivekraja.vasudevan@photoninfotech.com,phresco123 
-		//	/comment:"Test commit" /login:vivekraja.vasudevan@photoninfotech.com,phresco123
 		int commited = -1; 
 		try {
-			//TODO: Delete below line before commit
-			//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
 			Command cmdCheckIn = new CommandCheckin();
 			List<Option> options = new ArrayList<Option>(4);
 			appendRecursive(options);
@@ -2548,13 +2535,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	}
 
 	private int commitPendingChangesToTFS(String appDir, RepoDetail repoDetail) throws PhrescoException {
-		//.getUserName(), repoDetail.getPassword(), repoDetail.getCommitMessage(), repoDetail.getTfsEditedFiles()
-		//tf checkin D:\tfsTest\teststatus\src\com\photon\phresco\tfs\Demo.java /noprompt /login:vivekraja.vasudevan@photoninfotech.com,phresco123 
-		//	/comment:"Test commit" /login:vivekraja.vasudevan@photoninfotech.com,phresco123
 		int commited = -1; 
 		try {
-			//TODO: Delete below line before commit
-			//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
 			Command cmdCheckIn = new CommandCheckin();
 			List<Option> options = new ArrayList<Option>(4);
 			appendRecursive(options);
@@ -2587,8 +2569,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	public Map<String, List<String>> getPendingChanges(String appDir) throws PhrescoException {
 		Map<String, List<String>> changes;
 		try {
-			//TODO: Delete below line before commit
-			//			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
 			com.photon.phresco.framework.impl.CommandStatus cmdStatus = new com.photon.phresco.framework.impl.CommandStatus();
 			List<Option> options = new ArrayList<Option>(2);
 			VersionControlOptions optionsMap1 = new VersionControlOptions();
@@ -2651,8 +2631,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	private int createWorkspace(RepoDetail repoDetail)  throws PhrescoException {
 		int executeCmd;
 		try {
-			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\work\\TEE-CLC-12.0.0\\native");
-			// tf workspace -new tfs_work -noprompt -server:https://vivekraja.visualstudio.com/DefaultCollection -login:vivekraja.vasudevan@photoninfotech.com,phresco123
 			Command cmdWorkspace = new CommandWorkspace();
 			List<Option> options = new ArrayList<Option>(4);
 			options.add(optionsMap.findOption("-new"));
@@ -2681,9 +2659,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	public int deleteWorkspace(RepoDetail repoDetail) throws PhrescoException {
 		int executeCmd = 1;
 		try {
-			System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\work\\TEE-CLC-12.0.0\\native");
-			//System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
-			// tf workspace -delete tfs_work -noprompt -server:https://vivekraja.visualstudio.com/DefaultCollection -login:vivekraja.vasudevan@photoninfotech.com,phresco123
 			Command cmdWorkspace = new CommandWorkspace();
 			List<Option> options = new ArrayList<Option>(4);
 			options.add(optionsMap.findOption("-delete"));
@@ -2713,7 +2688,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	throws PhrescoException {
 		int executeCmd;
 		try {
-			// tf workfold -map $/phresco/ios-hybrid-app D:\tfsTest\sample -workspace:tfs_work -server:https://vivekraja.visualstudio.com/DefaultCollection /login:vivekraja.vasudevan@photoninfotech.com,phresco123
 			Command cmdWorkFold = new CommandWorkFold();
 			List<Option> options = new ArrayList<Option>(4);
 			appendMapWorkspace(options);
@@ -2751,8 +2725,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	throws PhrescoException {
 		int executeCmd; 
 		try {
-			// tf get -all -noprompt /login:vivekraja.vasudevan@photoninfotech.com,phresco123
-			//		System.setProperty("com.microsoft.tfs.jni.native.base-directory", "D:\\Builds\\3.2.0.7001\\workspace\\tools\\native\\native");
 			Command cmdGet = new CommandGet();
 			List<Option> options = new ArrayList<Option>(4);
 			options.add(optionsMap.findOption("-all"));
