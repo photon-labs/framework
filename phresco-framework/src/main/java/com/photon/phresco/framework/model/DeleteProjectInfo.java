@@ -7,6 +7,8 @@ public class DeleteProjectInfo {
 	private List<String> dependents;
 	private String rootModule;
 	private String actionType;
+	private String userName;
+	private String password;
 
 	public List<String> getAppDirNames() {
 		return appDirNames;
@@ -32,11 +34,24 @@ public class DeleteProjectInfo {
 	public void setActionType(String actionType) {
 		this.actionType = actionType;
 	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public String getPassword() {
+		return password;
+	}
 	
 	@Override
 	public String toString() {
 		return "DeleteProjectInfo [appDirNames=" + appDirNames
 				+ ", dependents=" + dependents + ", rootModule=" + rootModule
-				+ ", actionType=" + actionType + "]";
+				+ ", actionType=" + actionType + ", userName=" + userName
+				+ ", password=" + password + "]";
 	}
 }
