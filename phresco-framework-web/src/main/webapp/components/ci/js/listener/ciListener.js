@@ -1236,6 +1236,14 @@ define([], function() {
 							$('#urlTest').prop('checked', true);
 						}
 						
+						if (!self.isBlank(jobJsonData.osxKeychainBuild)) {
+							$('#osxKeychainBuild').prop('checked', true);
+						}
+						
+						if (!self.isBlank(jobJsonData.buildIpa)) {
+							$('#buildIpa').prop('checked', true);
+						}
+						
 						$('input[name=jobName]').val(jobJsonData.jobName);
 						self.restoreFormValues($("#jonConfiguration"), jobJsonData);
 						if (!self.isBlank(jobJsonData.confluenceSite)) {
