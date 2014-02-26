@@ -628,6 +628,7 @@
 	"build" : {
 		"label" : {
 			"build" : "Build",
+			"deviceBuild" : "DeviceBuild",
 			"stop" : "Stop",
 			"minifer" : "Minifer",
 			"minify" : "Minify",

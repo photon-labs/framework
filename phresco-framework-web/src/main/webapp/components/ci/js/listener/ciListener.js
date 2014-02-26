@@ -1180,6 +1180,8 @@ define([], function() {
 				commonVariables.goal = commonVariables.codeValidateGoal;
 			} else if ("build" === operation) {
 				commonVariables.goal = commonVariables.packageGoal;
+			} else if("deviceBuild" === operation) {
+				commonVariables.goal = "device-build";
 			} else if ("deploy" === operation) {
 				commonVariables.goal = commonVariables.deployGoal;
 			} else if ("unittest" === operation) {
@@ -1201,6 +1203,9 @@ define([], function() {
 			}
 
 			commonVariables.phase = commonVariables.ciPhase + commonVariables.goal; // ci phase
+			if("deviceBuild" === operation) {
+				commonVariables.phase = commonVariables.ciPhase + commonVariables.packageGoal;
+			}
 			commonVariables.appDirName = appDirName;
 			commonVariables.moduleName = moduleName;
 			

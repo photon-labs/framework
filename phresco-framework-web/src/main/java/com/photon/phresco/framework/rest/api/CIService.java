@@ -1248,12 +1248,17 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				module = appDir;
 				appDir = rootModule;
 			} 
-			splitPath = Utility.splitPathConstruction(appDir);
-			if(StringUtils.isNotEmpty(rootModule)) {
-				splitPath = splitPath + File.separator + module;
-			}
+			
 			if (StringUtils.isNotEmpty(appDir)) {
+				splitPath = Utility.splitPathConstruction(appDir);
+				if(StringUtils.isNotEmpty(rootModule)) {
+					splitPath = splitPath + File.separator + module;
+				}
 				appDir = splitPath;
+				ProjectInfo projectInfo = Utility.getProjectInfo(Utility.getProjectHome() + appDir, "");
+				if (projectInfo != null) {
+					projectId = projectInfo.getId();
+				}
 			}
 			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
 			CIJob job = ciManager.getJob(downloadJobName, projectId, ciJobInfo, continuousName);
@@ -1642,7 +1647,10 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 					localPom = appInfo.getPhrescoPomFile();
 				}
 			}
-			if (BUILD.equalsIgnoreCase(operation)) {
+			if (BUILD.equalsIgnoreCase(operation) || DEVICE_BUILD.equalsIgnoreCase(operation)) {
+				if(DEVICE_BUILD.equalsIgnoreCase(operation)) {
+					job.setEnablePostBuildStep(true);
+				}
 				// enable archiving
 				job.setEnableArtifactArchiver(true);
 				// if the enable build release option is choosed in UI, the file pattenr value will be used

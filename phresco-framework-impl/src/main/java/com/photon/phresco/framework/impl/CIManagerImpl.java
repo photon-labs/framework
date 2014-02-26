@@ -954,10 +954,17 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 		if (job.isEnablePostBuildStep()) {
 			String mvnCommand = job.getMvnCommand();
-			List<String> postBuildStepCommands = job.getPostbuildStepCommands(); 
-			for (String postBuildStepCommand : postBuildStepCommands) {
-				processor.enablePostBuildStep(job.getPomLocation(), postBuildStepCommand);
+			if(CollectionUtils.isNotEmpty(job.getPostbuildStepCommands())) {
+				List<String> postBuildStepCommands = job.getPostbuildStepCommands(); 
+				for (String postBuildStepCommand : postBuildStepCommands) {
+					processor.enablePostBuildStep(job.getPomLocation(), postBuildStepCommand);
+				}
 			}
+			
+			if(DEVICE_BUILD.equalsIgnoreCase(job.getOperation())) {
+				processor.enableXcode(job);
+			}
+			
 		}
 		if (job.isEnablePreBuildStep()) {
 			//iterate over loop

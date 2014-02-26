@@ -19,6 +19,7 @@
                                       <select name="type" class="selectpicker">
 											<option value="codeValidation" data-i18n="ci.codevalidation"></option>
 											<option value="build" data-i18n="build.label.build"></option>
+											<option value="deviceBuild" data-i18n="build.label.deviceBuild"></option>
 											<option value="deploy" data-i18n="build.label.deploy"></option>
 											<option value="unittest" data-i18n="unit.label.unittest"></option>
 											<option value="componentTest" data-i18n="component.label.componenttest"></option>

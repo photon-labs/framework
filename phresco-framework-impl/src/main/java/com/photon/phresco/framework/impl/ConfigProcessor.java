@@ -559,6 +559,91 @@ public class ConfigProcessor implements FrameworkConstants {
     	}
     }
     
+    public void enableXcode(CIJob job)  throws PhrescoException {
+    	if (DebugEnabled) {
+    		S_LOGGER.debug("Entering Method ConfigProcessor.enableXcode()");
+    	}
+    	try {
+    		XPath xpath = XPath.newInstance(POST_BUILDERS_NODE);
+    		xpath.addNamespace(root_.getNamespace());
+    		Element postBuildNode = (Element) xpath.selectSingleNode(root_);
+//			String symroot_path = Utility.getJenkinsHome() + File.separator + WORKSPACE_DIR + File.separator + job.getJobName() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + TARGET;
+    		org.jdom.Element element = null;
+    			element = new Element(XCODE_BUILDER);
+    			element.addContent(createElement(CLEAN_BEFORE_BUILD, FALSE));
+    			if (job.isCleanBeforeBuild()) {
+    				element.addContent(createElement(CLEAN_BEFORE_BUILD, TRUE));
+    			}
+    			element.addContent(createElement(CLEAN_TEST_REPORTS, FALSE));
+    			if (job.isCleanTestReports()) {
+    				element.addContent(createElement(CLEAN_TEST_REPORTS, TRUE));
+    			}
+    			element.addContent(createElement(CONFIGURATION, job.getXcodeconfiguration()));
+    			element.addContent(createElement(TARGET, job.getXcodeTarget()));
+    			element.addContent(createElement(SDK, job.getSdk()));
+    			element.addContent(createElement("symRoot", job.getSymRoot()));
+    			element.addContent(createElement(XCODE_PROJECT_PATH, job.getXcodeProjectPath()));
+    			element.addContent(createElement(BUILD_IPA, FALSE));
+    			if(job.isBuildIpa()) {
+    				element.addContent(createElement(BUILD_IPA, TRUE));
+    			} 
+    			element.addContent(createElement(CODE_SIGNING_IDENTITY, job.getCodeSigningIdentity()));
+    			
+    			element.addContent(createElement(CONFIGURATIONBUILDDIR , job.getConfigurationBuildDir()));
+    			element.addContent(createElement(XCODEPROJECTFILE , job.getXcodeProjectFile()));
+    			element.addContent(createElement(XCODEBUILDARGS , job.getXcodebuildArguments()));
+    			element.addContent(createElement(XCODESCHEMA , job.getXcodeSchema()));
+    			element.addContent(createElement(XCODEWORSPACEFILE , job.getXcodeWorkspaceFile()));
+    			element.addContent(createElement(EMBEDDEDPROFILE , job.getEmbeddedProfileFile()));
+    			element.addContent(createElement(CFBUNDLEVERSIONVALUE , job.getCfBundleVersionValue()));
+    			element.addContent(createElement(CFBUNDLESHORTVERSION , job.getCfBundleVersionValue()));
+    			element.addContent(createElement(GENERATIVE_ARCHIVE, FALSE));
+    			if (job.isGenerateArchive()) {
+    				element.addContent(createElement(GENERATIVE_ARCHIVE, TRUE));
+    			}
+    			element.addContent(createElement(UNLOCK_KEYCHAIN, FALSE));
+    			if (job.isUnlockKeychain()) {
+    				element.addContent(createElement(UNLOCK_KEYCHAIN, TRUE));
+    			}
+    			element.addContent(createElement(KEYCHAINNAME , job.getKeychainName()));
+    			element.addContent(createElement(KEYCHAINPATH , job.getKeychainPath()));
+    			
+    			element.addContent(createElement(KEYCHAINPWD , job.getKeychainPwd()));
+    			element.addContent(createElement(ALLOWFAILINGBUILDRESULTS , FALSE));
+    			if (job.isAllowFailingBuildResults()) {
+    				element.addContent(createElement(ALLOWFAILINGBUILDRESULTS, TRUE));
+    			}
+    			element.addContent(createElement(IPANAME , job.getIpaName()));
+    			element.addContent(createElement(IPAOUTPUTDIR , job.getIpaOutputDirectory()));
+    			element.addContent(createElement(PROVIDEAPPLVERSION , FALSE));
+    			if (job.isProvideApplicationVersion()) {
+    				element.addContent(createElement(PROVIDEAPPLVERSION, TRUE));
+    			}
+    			
+    		if (element != null) {
+    			postBuildNode.addContent(element);
+    		}
+    		
+    		XPath buildWrapers = XPath.newInstance(BUILD_WRAPPERS);
+    		buildWrapers.addNamespace(root_.getNamespace());
+    		Element buildWraper = (Element) buildWrapers.selectSingleNode(root_);
+
+    		org.jdom.Element buildElement = null;
+    			buildElement = new Element(XCODE_KEYCHAIN_BUILDWRAPPER);
+    		if (buildElement != null) {
+    			buildWraper.addContent(buildElement);
+    		}
+    		
+    		S_LOGGER.debug("publisherNode " + postBuildNode);
+
+    	} catch (Exception e) {
+    		if (DebugEnabled) {
+        		S_LOGGER.debug("Entering catch block of ConfigProcessor.enableXcode() "+e.getLocalizedMessage());
+        	}
+    		throw new PhrescoException(e);
+    	}
+    }
+    
     public void enablePreBuildStep(String pomLocation, String mvnCommand) throws PhrescoException {
     	if (DebugEnabled) {
     		S_LOGGER.debug("Entering Method ConfigProcessor.enablePreBuildStep");
