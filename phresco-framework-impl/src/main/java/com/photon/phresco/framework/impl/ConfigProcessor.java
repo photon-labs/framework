@@ -570,25 +570,28 @@ public class ConfigProcessor implements FrameworkConstants {
 //			String symroot_path = Utility.getJenkinsHome() + File.separator + WORKSPACE_DIR + File.separator + job.getJobName() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + TARGET;
     		org.jdom.Element element = null;
     			element = new Element(XCODE_BUILDER);
-    			element.addContent(createElement(CLEAN_BEFORE_BUILD, FALSE));
+    			
     			if (job.isCleanBeforeBuild()) {
     				element.addContent(createElement(CLEAN_BEFORE_BUILD, TRUE));
+    			} else {
+    				element.addContent(createElement(CLEAN_BEFORE_BUILD, FALSE));
     			}
-    			element.addContent(createElement(CLEAN_TEST_REPORTS, FALSE));
     			if (job.isCleanTestReports()) {
     				element.addContent(createElement(CLEAN_TEST_REPORTS, TRUE));
+    			} else {
+    				element.addContent(createElement(CLEAN_TEST_REPORTS, FALSE));
     			}
     			element.addContent(createElement(CONFIGURATION, job.getXcodeconfiguration()));
     			element.addContent(createElement(TARGET, job.getXcodeTarget()));
     			element.addContent(createElement(SDK, job.getSdk()));
-    			element.addContent(createElement("symRoot", job.getSymRoot()));
+    			element.addContent(createElement(SYMROOT, job.getSymRoot()));
     			element.addContent(createElement(XCODE_PROJECT_PATH, job.getXcodeProjectPath()));
-    			element.addContent(createElement(BUILD_IPA, FALSE));
     			if(job.isBuildIpa()) {
     				element.addContent(createElement(BUILD_IPA, TRUE));
-    			} 
+    			} else {
+    				element.addContent(createElement(BUILD_IPA, FALSE));
+    			}
     			element.addContent(createElement(CODE_SIGNING_IDENTITY, job.getCodeSigningIdentity()));
-    			
     			element.addContent(createElement(CONFIGURATIONBUILDDIR , job.getConfigurationBuildDir()));
     			element.addContent(createElement(XCODEPROJECTFILE , job.getXcodeProjectFile()));
     			element.addContent(createElement(XCODEBUILDARGS , job.getXcodebuildArguments()));
@@ -597,27 +600,31 @@ public class ConfigProcessor implements FrameworkConstants {
     			element.addContent(createElement(EMBEDDEDPROFILE , job.getEmbeddedProfileFile()));
     			element.addContent(createElement(CFBUNDLEVERSIONVALUE , job.getCfBundleVersionValue()));
     			element.addContent(createElement(CFBUNDLESHORTVERSION , job.getCfBundleVersionValue()));
-    			element.addContent(createElement(GENERATIVE_ARCHIVE, FALSE));
     			if (job.isGenerateArchive()) {
     				element.addContent(createElement(GENERATIVE_ARCHIVE, TRUE));
+    			} else {
+    				element.addContent(createElement(GENERATIVE_ARCHIVE, FALSE));
     			}
-    			element.addContent(createElement(UNLOCK_KEYCHAIN, FALSE));
     			if (job.isUnlockKeychain()) {
     				element.addContent(createElement(UNLOCK_KEYCHAIN, TRUE));
+    			} else {
+    				element.addContent(createElement(UNLOCK_KEYCHAIN, FALSE));
     			}
     			element.addContent(createElement(KEYCHAINNAME , job.getKeychainName()));
     			element.addContent(createElement(KEYCHAINPATH , job.getKeychainPath()));
     			
     			element.addContent(createElement(KEYCHAINPWD , job.getKeychainPwd()));
-    			element.addContent(createElement(ALLOWFAILINGBUILDRESULTS , FALSE));
     			if (job.isAllowFailingBuildResults()) {
     				element.addContent(createElement(ALLOWFAILINGBUILDRESULTS, TRUE));
+    			} else {
+    				element.addContent(createElement(ALLOWFAILINGBUILDRESULTS , FALSE));
     			}
     			element.addContent(createElement(IPANAME , job.getIpaName()));
     			element.addContent(createElement(IPAOUTPUTDIR , job.getIpaOutputDirectory()));
-    			element.addContent(createElement(PROVIDEAPPLVERSION , FALSE));
     			if (job.isProvideApplicationVersion()) {
     				element.addContent(createElement(PROVIDEAPPLVERSION, TRUE));
+    			} else {
+    				element.addContent(createElement(PROVIDEAPPLVERSION , FALSE));
     			}
     			
     		if (element != null) {

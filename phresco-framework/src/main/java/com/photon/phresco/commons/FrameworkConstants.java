@@ -376,6 +376,7 @@ public interface FrameworkConstants {
 	String IPANAME = "ipaName";
 	String IPAOUTPUTDIR = "ipaOutputDirectory";
 	String PROVIDEAPPLVERSION = "provideApplicationVersion";
+	String SYMROOT = "symRoot";
 	
 	
 	String HUDSON_TASKS_MAVEN_NODE = "hudson.tasks.Maven";
