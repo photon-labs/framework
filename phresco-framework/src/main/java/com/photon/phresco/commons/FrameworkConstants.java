@@ -483,6 +483,7 @@ public interface FrameworkConstants {
     String CONFLUENCE_PASSWORD_KEY = "confluencePassword";
     String VALUES_KEY = "values";
     String MAVEN_SEP_COBER = "mvn#SEP#cobertura:cobertura";
+    String IMPL_KEYCHAINS = "//keychains/au.com.rayh.Keychain";
 
     String JAVA_STAND_ALONE = "tech-java-standalone";
     String MAINCLASSNAME = "mainClassName";
@@ -730,6 +731,7 @@ public interface FrameworkConstants {
     String CI_CREDENTIAL_XML = "hudson.scm.SubversionSCM.xml";
     String CI_CONFLUENCE_XML = "com.myyearbook.hudson.plugins.confluence.ConfluencePublisher.xml";
     String CI_TESTFLIGHT_XML = "testflight.TestflightRecorder.xml";
+    String CI_XCODE_XML = "au.com.rayh.GlobalConfigurationImpl.xml";
     String CI_MAILER_XML = "hudson.tasks.Mailer.xml";
     String CI_TFS_XML = "hudson.plugins.tfs.TeamFoundationServerScm.xml";
     String CI_MAIL_EXT_PLUGIN = "email-ext.hpi";

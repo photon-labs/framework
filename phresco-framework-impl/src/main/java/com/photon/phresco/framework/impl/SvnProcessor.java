@@ -37,6 +37,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -48,6 +50,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -57,6 +60,9 @@ import org.jdom.output.XMLOutputter;
 import org.jdom.xpath.XPath;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.exception.PhrescoException;
@@ -286,59 +292,7 @@ public class SvnProcessor implements FrameworkConstants{
     		if (!confluenceHomeXml.exists()) {
     			return null;
     		} else {
-    			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-    			domFactory.setNamespaceAware(true); 
-    			DocumentBuilder builder = domFactory.newDocumentBuilder();
-    			org.w3c.dom.Document doc = builder.parse(confluenceHomeXml);
-    			XPathFactory xpathfactory = XPathFactory.newInstance();
-    			javax.xml.xpath.XPath xpath = xpathfactory.newXPath();
-    			XPathExpression expr = xpath.compile(SITES_CONFLUENCESITE_URL);
-    			Object result = expr.evaluate(doc, XPathConstants.NODESET);
-    			NodeList nodes = (NodeList) result;
-    			if (nodes.getLength() == 0) {
-    				return null;
-    			}
-    			if (nodes != null) {
-    				JSONArray jsonarray = new JSONArray();
-    				for (int i = 0; i < nodes.getLength(); i++) {
-    					JSONObject json = new JSONObject();
-    					String url = "";
-    					String userName = "";
-    					String password = "";
-    					String urlNode = nodes.item(i).getNodeName();
-    					if (CONFLUENCE_SITE_URL.equalsIgnoreCase(urlNode)) {
-    						url = nodes.item(i).getTextContent();
-    					} else if (CONFLUENCE_USERNAME.equalsIgnoreCase(urlNode)) {
-    						userName = nodes.item(i).getTextContent();
-    					} else if (PASSWORD.equalsIgnoreCase(urlNode)) {
-    						password = nodes.item(i).getTextContent();
-    					}
-
-    					String nameNode = nodes.item(i).getNextSibling().getNextSibling().getNodeName();
-    					if (CONFLUENCE_SITE_URL.equalsIgnoreCase(nameNode)) {
-    						url = nodes.item(i).getNextSibling().getNextSibling().getTextContent();
-    					} else if (CONFLUENCE_USERNAME.equalsIgnoreCase(nameNode)) {
-    						userName = nodes.item(i).getNextSibling().getNextSibling().getTextContent();
-    					} else if (PASSWORD.equalsIgnoreCase(nameNode)) {
-    						password = nodes.item(i).getNextSibling().getNextSibling().getTextContent();
-    					}
-
-    					String passNode = nodes.item(i).getNextSibling().getNextSibling().getNextSibling().getNextSibling().getNodeName();
-    					if (CONFLUENCE_SITE_URL.equalsIgnoreCase(passNode)) {
-    						url = nodes.item(i).getNextSibling().getNextSibling().getNextSibling().getNextSibling().getTextContent();
-    					} else if (CONFLUENCE_USERNAME.equalsIgnoreCase(passNode)) {
-    						userName = nodes.item(i).getNextSibling().getNextSibling().getNextSibling().getNextSibling().getTextContent();
-    					} else if (PASSWORD.equalsIgnoreCase(passNode)) {
-    						password = nodes.item(i).getNextSibling().getNextSibling().getNextSibling().getNextSibling().getTextContent();
-    					}
-    					json.put(REPO_URL, url);
-    					json.put(USERNAME, userName);
-    					json.put(PASSWORD, decyPassword(password));
-    					jsonarray.put(json);
-    				}
-
-    				return jsonarray;
-    			}
+    			return getXml(confluenceHomeXml.getPath());
     		}
     	} catch (Exception e) {
     		if (debugEnabled) {
@@ -346,9 +300,223 @@ public class SvnProcessor implements FrameworkConstants{
     		}
     		throw new PhrescoException(e);
     	}
-    	
-		return null;
     }
+    
+    public JSONArray getXml(String path){  
+    	final JSONArray jsonArray = new JSONArray();
+    	try {  
+    		// obtain and configure a SAX based parser  
+    		SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();  
+
+    		// obtain object for SAX parser  
+    		SAXParser saxParser = saxParserFactory.newSAXParser();  
+
+    		// default handler for SAX handler class  
+    		// all three methods are written in handler's body  
+    		DefaultHandler defaultHandler = new DefaultHandler(){  
+    			JSONObject json = new JSONObject();
+    			//KEYCHAINS
+    			String au_com_rayh_Keychain = "close";
+    			String keychainName="close";  
+    			String keychainPath="close";  
+    			String keychainPassword="close";  
+    			String inSearchPath="close";
+//    			String defaultKeychain = "close";
+    			
+    			//CONFLUENCE
+    			String com_myyearbook_hudson_plugins_confluence_ConfluenceSite = "close";
+    			String url = "close";
+    			String username = "close";
+    			String password = "close";
+    			
+    			//TESTFLIGHT
+    			String testflight_TokenPair = "close";
+    			String tokenPairName = "close";
+    			String apiToken = "close";
+    			String teamToken = "close";
+
+    			// this method is called every time the parser gets an open tag '<'  
+    			// identifies which tag is being open at time by assigning an open flag  
+    			public void startElement(String uri, String localName, String qName,  
+    					Attributes attributes) throws SAXException {  
+    				//KEYCHAINS
+    				if (qName.equalsIgnoreCase("au.com.rayh.Keychain")) {  
+    					au_com_rayh_Keychain = "open"; 
+    					json = new JSONObject();
+    				} 
+    				if (qName.equalsIgnoreCase("keychainName")) {  
+    					keychainName = "open";  
+    				}  
+    				if (qName.equalsIgnoreCase("keychainPath")) {  
+    					keychainPath = "open";  
+    				}  
+    				if (qName.equalsIgnoreCase("keychainPassword")) {  
+    					keychainPassword = "open";  
+    				}  
+    				if (qName.equalsIgnoreCase("inSearchPath")) {  
+    					inSearchPath = "open";  
+    				}
+//    				if (qName.equalsIgnoreCase("defaultKeychain")) {  
+//    					defaultKeychain = "open"; 
+//    					json = new JSONObject();
+//    				}
+    				
+    				//CONFLUENCE
+    				if (qName.equalsIgnoreCase("com.myyearbook.hudson.plugins.confluence.ConfluenceSite")) {  
+    					com_myyearbook_hudson_plugins_confluence_ConfluenceSite = "open"; 
+    					json = new JSONObject();
+    				} 
+    				if (qName.equalsIgnoreCase("url")) {  
+    					url = "open";  
+    				}  
+    				if (qName.equalsIgnoreCase("username")) {  
+    					username = "open";  
+    				}  
+    				if (qName.equalsIgnoreCase("password")) {  
+    					password = "open";  
+    				}  
+    				
+    				//TESTFLIGHT
+    				if (qName.equalsIgnoreCase("testflight.TokenPair")) {  
+    					testflight_TokenPair = "open"; 
+    					json = new JSONObject();
+    				} 
+    				if (qName.equalsIgnoreCase("tokenPairName")) {  
+    					tokenPairName = "open";  
+    				}  
+    				if (qName.equalsIgnoreCase("apiToken")) {  
+    					apiToken = "open";  
+    				}  
+    				if (qName.equalsIgnoreCase("teamToken")) {  
+    					teamToken = "open";  
+    				}  
+    			}  
+
+    			// prints data stored in between '<' and '>' tags  
+    			public void characters(char ch[], int start, int length)  
+    					throws SAXException {  
+    				try {
+    					//KEYCHAIN
+    					if (au_com_rayh_Keychain.equals("open")) {  
+    						//Do Nothing
+    					} 
+    					if (keychainName.equals("open")) {  
+    						json.put("keychainName", new String(ch, start, length));
+    					}  
+    					if (keychainPath.equals("open")) {  
+    						json.put("keychainPath", new String(ch, start, length));
+    					}  
+    					if (keychainPassword.equals("open")) {  
+    						json.put("keychainPassword", new String(ch, start, length));
+    					}  
+    					if (inSearchPath.equals("open")) {  
+    						json.put("inSearchPath", new String(ch, start, length));
+    					}  
+//    					if (defaultKeychain.equals("open")) {  
+//    						json.put("defaultKeychain", new String(ch, start, length));
+//    					}
+    					
+    					//CONFLUENCE
+    					if (com_myyearbook_hudson_plugins_confluence_ConfluenceSite.equals("open")) {  
+    						//Do Nothing
+    					}
+    					if (url.equals("open")) {  
+    						json.put("url", new String(ch, start, length));
+    					}  
+    					if (username.equals("open")) {  
+    						json.put("username", new String(ch, start, length));
+    					}  
+    					if (password.equals("open")) {  
+    						json.put("password", new String(ch, start, length));
+    					} 
+    					
+    					//TESTFLIGHT
+    					if (testflight_TokenPair.equals("open")) {  
+    						//Do Nothing
+    					}
+    					if (tokenPairName.equals("open")) {  
+    						json.put("tokenPairName", new String(ch, start, length));
+    					}  
+    					if (apiToken.equals("open")) {  
+    						json.put("apiToken", new String(ch, start, length));
+    					}  
+    					if (teamToken.equals("open")) {  
+    						json.put("teamToken", new String(ch, start, length));
+    					} 
+    				} catch (JSONException e) {
+    					// TODO Auto-generated catch block
+    					e.printStackTrace();
+    				}
+    			}  
+
+    			// calls by the parser whenever '>' end tag is found in xml   
+    			// makes tags flag to 'close'  
+    			public void endElement(String uri, String localName, String qName)  
+    					throws SAXException {  
+    				//KEYCHAIN
+    				if (qName.equalsIgnoreCase("au.com.rayh.Keychain")) {  
+    					au_com_rayh_Keychain = "close";  
+    					jsonArray.put(json);
+    				} 
+    				if (qName.equalsIgnoreCase("keychainName")) {  
+    					keychainName = "close";  
+    				}  
+    				if (qName.equalsIgnoreCase("keychainPath")) {  
+    					keychainPath = "close";  
+    				}  
+    				if (qName.equalsIgnoreCase("keychainPassword")) {  
+    					keychainPassword = "close";  
+    				}  
+    				if (qName.equalsIgnoreCase("inSearchPath")) {  
+    					inSearchPath = "close";  
+    				}  
+//    				if (qName.equalsIgnoreCase("defaultKeychain")) {  
+//    					defaultKeychain = "close"; 
+//    					jsonArray.put(json);
+//    				}  
+    				
+    				//CONFLUENCE
+    				if (qName.equalsIgnoreCase("com.myyearbook.hudson.plugins.confluence.ConfluenceSite")) {  
+    					com_myyearbook_hudson_plugins_confluence_ConfluenceSite = "close";  
+    					jsonArray.put(json);
+    				} 
+    				if (qName.equalsIgnoreCase("url")) {  
+    					url = "close"; 
+    				} 
+    				if (qName.equalsIgnoreCase("username")) {  
+    					username = "close"; 
+    				} 
+    				if (qName.equalsIgnoreCase("password")) {  
+    					password = "close"; 
+    				} 
+    				
+    				//TESTFLIGHT
+    				if (qName.equalsIgnoreCase("testflight.TokenPair")) {  
+    					testflight_TokenPair = "close";  
+    					jsonArray.put(json);
+    				} 
+    				if (qName.equalsIgnoreCase("tokenPairName")) {  
+    					tokenPairName = "close"; 
+    				} 
+    				if (qName.equalsIgnoreCase("teamToken")) {  
+    					teamToken = "close"; 
+    				} 
+    				if (qName.equalsIgnoreCase("apiToken")) {  
+    					apiToken = "close"; 
+    				} 
+    			}  
+    		};  
+
+    		// parse the XML specified in the given path and uses supplied  
+    		// handler to parse the document  
+    		// this calls startElement(), endElement() and character() methods  
+    		// accordingly  
+    		saxParser.parse(path, defaultHandler); 
+    	} catch (Exception e) {  
+    		e.printStackTrace();  
+    	}
+    	return jsonArray;  
+    }  
     
     public JSONArray readTestFlightXml() throws PhrescoException {
     	if (debugEnabled) {
@@ -362,59 +530,7 @@ public class SvnProcessor implements FrameworkConstants{
     		if (!testFlightHomeXml.exists()) {
     			return null;
     		} else {
-    			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-    			domFactory.setNamespaceAware(true); 
-    			DocumentBuilder builder = domFactory.newDocumentBuilder();
-    			org.w3c.dom.Document doc = builder.parse(testFlightHomeXml);
-    			XPathFactory xpathfactory = XPathFactory.newInstance();
-    			javax.xml.xpath.XPath xpath = xpathfactory.newXPath();
-    			XPathExpression expr = xpath.compile(TESTFLIGHT_TOKENPAIR);
-    			Object result = expr.evaluate(doc, XPathConstants.NODESET);
-    			NodeList nodes = (NodeList) result;
-    			if (nodes.getLength() == 0) {
-    				return null;
-    			}
-    			if (nodes != null) {
-    				JSONArray jsonarray = new JSONArray();
-    				for (int i = 0; i < nodes.getLength(); i++) {
-    					JSONObject json = new JSONObject();
-    					String tokenPairName = "";
-    					String apiToken = "";
-    					String teamToken = "";
-    					String tokenNode = nodes.item(i).getNodeName();
-    					if (TESTFLIGHT_TOKEN_NAME.equalsIgnoreCase(tokenNode)) {
-    						tokenPairName = nodes.item(i).getTextContent();
-    					} else if (API_TOKEN.equalsIgnoreCase(tokenNode)) {
-    						apiToken = nodes.item(i).getTextContent();
-    					} else if (TEAM_TOKEN.equalsIgnoreCase(tokenNode)) {
-    						teamToken = nodes.item(i).getTextContent();
-    					}
-
-    					String apiTokenNode = nodes.item(i).getNextSibling().getNextSibling().getNodeName();
-    					if (TESTFLIGHT_TOKEN_NAME.equalsIgnoreCase(apiTokenNode)) {
-    						tokenPairName = nodes.item(i).getNextSibling().getNextSibling().getTextContent();
-    					} else if (API_TOKEN.equalsIgnoreCase(apiTokenNode)) {
-    						apiToken = nodes.item(i).getNextSibling().getNextSibling().getTextContent();
-    					} else if (TEAM_TOKEN.equalsIgnoreCase(apiTokenNode)) {
-    						teamToken = nodes.item(i).getNextSibling().getNextSibling().getTextContent();
-    					}
-
-    					String teamTokenNode = nodes.item(i).getNextSibling().getNextSibling().getNextSibling().getNextSibling().getNodeName();
-    					if (TESTFLIGHT_TOKEN_NAME.equalsIgnoreCase(teamTokenNode)) {
-    						tokenPairName = nodes.item(i).getNextSibling().getNextSibling().getNextSibling().getNextSibling().getTextContent();
-    					} else if (API_TOKEN.equalsIgnoreCase(teamTokenNode)) {
-    						apiToken = nodes.item(i).getNextSibling().getNextSibling().getNextSibling().getNextSibling().getTextContent();
-    					} else if (TEAM_TOKEN.equalsIgnoreCase(teamTokenNode)) {
-    						teamToken = nodes.item(i).getNextSibling().getNextSibling().getNextSibling().getNextSibling().getTextContent();
-    					}
-    					json.put(TESTFLIGHT_TOKEN_NAME, tokenPairName);
-    					json.put(API_TOKEN, decyPassword(apiToken));
-    					json.put(TEAM_TOKEN, decyPassword(teamToken));
-    					jsonarray.put(json);
-    				}
-
-    				return jsonarray;
-    			}
+    			return getXml(testFlightHomeXml.getPath());
     		}
     	} catch (Exception e) {
     		if (debugEnabled) {
@@ -422,8 +538,6 @@ public class SvnProcessor implements FrameworkConstants{
     		}
     		throw new PhrescoException(e);
     	}
-    	
-		return null;
     }
     
     public List<String> readConfluenceSites() throws PhrescoException {

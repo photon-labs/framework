@@ -531,7 +531,8 @@ public interface ResponseCodes {
 	String PHR810045 = "PHR810045"; // returned TFS configuration Failed
 	String PHR810046 = "PHR810046"; // Setup details retrieved successfully
 	String PHR810047 = "PHR810047"; // Setup details retrieval Failed
-	
+	String PHR800027 = "PHR800027"; // Keychains retrieved successfully
+	String PHR810048 = "PHR810048"; // Keychains retrieval Failed
 	/*
 	 * Upgrade Service
 	 */

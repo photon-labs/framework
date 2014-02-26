@@ -80,6 +80,7 @@ import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.impl.CIManagerImpl;
 import com.photon.phresco.framework.impl.util.FrameworkUtil;
 import com.photon.phresco.framework.model.GlobalSettings;
+import com.photon.phresco.framework.model.Keychain;
 import com.photon.phresco.framework.model.RepoDetail;
 import com.photon.phresco.framework.model.TestFlight;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
@@ -1019,8 +1020,8 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				for (int i = 0; i < confluenceConfiguration.length(); i++) {
 					RepoDetail repo = new RepoDetail();
 					org.codehaus.jettison.json.JSONObject JSONobject = (org.codehaus.jettison.json.JSONObject) confluenceConfiguration.get(i);
-					repo.setRepoUrl(JSONobject.getString(REPO_URL));
-					repo.setUserName(JSONobject.getString(USERNAME));
+					repo.setRepoUrl(JSONobject.getString(CONFLUENCE_SITE_URL));
+					repo.setUserName(JSONobject.getString(CONFLUENCE_USERNAME));
 					repo.setPassword(JSONobject.getString(FrameworkConstants.PASSWORD));
 					confluenceDetail.add(repo);
 				}
@@ -1082,6 +1083,55 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	 * @return
 	 * @throws PhrescoException
 	 */
+	@GET
+	@Path("/keyChains")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response getKeyChains()	throws PhrescoException {
+		ResponseInfo responseData = new ResponseInfo();
+		ResponseInfo finalOutput = null;
+		List<Keychain> keyChains = new ArrayList<Keychain>();
+		try {
+			String defaultKeychain = "";
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			org.codehaus.jettison.json.JSONArray keyChainsConfiguration = ciManager.getKeyChains();
+			if (keyChainsConfiguration != null) {
+//				for (int i = 0; i < keyChainsConfiguration.length(); i++) {
+//					org.codehaus.jettison.json.JSONObject JSONobject = (org.codehaus.jettison.json.JSONObject) keyChainsConfiguration.get(i);
+//					defaultKeychain = JSONobject.getString("defaultKeychain");
+//				}
+
+				for (int i = 0; i < keyChainsConfiguration.length(); i++) {
+					Keychain keys = new Keychain();
+					org.codehaus.jettison.json.JSONObject JSONobject = (org.codehaus.jettison.json.JSONObject) keyChainsConfiguration.get(i);
+					String name = JSONobject.getString("keychainName");
+					keys.setKeychainName(name);
+					keys.setKeychainPath(JSONobject.getString("keychainPath"));
+					keys.setKeychainPassword(JSONobject.getString("keychainPassword"));
+					if ((StringUtils.isNotEmpty(defaultKeychain)) && (name.equalsIgnoreCase(defaultKeychain))) {
+						keys.setDefaultKeychain(true);
+					}
+					keyChains.add(keys);
+				}
+			}
+			finalOutput = responseDataEvaluation(responseData, null, keyChains, RESPONSE_STATUS_SUCCESS, PHR800027);
+		} catch (PhrescoException e) {
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810048);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			.build();
+		} catch (org.codehaus.jettison.json.JSONException e) {
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810048);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			.build();
+		}
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+		.build();
+	}
+	
+	/**
+	 * @return
+	 * @throws PhrescoException
+	 */
 	@POST
 	@Path("/global")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -1131,7 +1181,20 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				}
 			}
 			
-			setGlobalConfiguration = ciManager.setGlobalConfiguration(jenkinsUrl, submitUrl, JSONarray, emailAddress, emailPassword, testFlightJSONarray, tfsUrl);
+			org.json.JSONArray keyChainJSONarray = new org.json.JSONArray();
+			List<Keychain> keyChainConfigs = globalInfo.getKeychains();
+			if(CollectionUtils.isNotEmpty(keyChainConfigs)) {
+				for (Keychain keyChain : keyChainConfigs) {
+					org.json.JSONObject keyChainObj = new org.json.JSONObject();
+					keyChainObj.put("keychainName", keyChain.getKeychainName());
+					keyChainObj.put("keychainPath", keyChain.getKeychainPath());
+					keyChainObj.put("keychainPassword", keyChain.getKeychainPassword());
+					keyChainObj.put("inSearchPath", true);
+					keyChainJSONarray.put(keyChainObj);
+				}
+			}
+			
+			setGlobalConfiguration = ciManager.setGlobalConfiguration(jenkinsUrl, submitUrl, JSONarray, emailAddress, emailPassword, testFlightJSONarray, keyChainJSONarray,tfsUrl);
 		} catch (PhrescoException e) {
 			finalOutput = responseDataEvaluation(responseData, e, setGlobalConfiguration, RESPONSE_STATUS_ERROR, PHR810034);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)

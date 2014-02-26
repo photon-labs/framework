@@ -71,6 +71,9 @@ define([], function() {
 			} else if(action === "getTestFlight") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/testFlight";
+			} else if(action === "getKeyChains") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/keyChains";
 			} else if (action === "setup") {
 				header.requestMethod = "POST";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.mvnCiSetup;
@@ -115,6 +118,27 @@ define([], function() {
 				$('input[name=tfcle][temp=jenkins]').val(tfs.data);
 			});
 			
+			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'getKeyChains'), function(response) {
+				for (i in response.data) {
+					var data = response.data[i];
+					var tds = $('#keychainPrototype').html();
+					var tr = $('<tr class=keychain>');
+					tr.append(tds);
+					tr.find('[name=keychainName]').val(data.keychainName);
+					tr.find('[name=keychainPath]').val(data.keychainPath);
+					tr.find('[name=keychainPassword]').val(data.keychainPassword);
+					
+					tr.insertBefore($('#keychainSave'));
+				}
+				self.switchStatus();
+				setTimeout(function() {
+					$('#keychainTable').on('click', 'a.deleteKeychain', function() {
+						console.info("hello enterin")
+						$(this).closest('.keychain').remove();
+					});
+				}, 500);
+			});
+			
 			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'getConfluence'), function(response) {
 				for (i in response.data) {
 					var data = response.data[i];
@@ -128,15 +152,10 @@ define([], function() {
 					tr.insertBefore($('#save'));
 				}
 				self.switchStatus();
-//				self.iconsmanipulator();
-				
 				setTimeout(function() {
-					
-					
 					$('#conflTable').on('click', 'a.delete', function() {
 						$(this).closest('.confluence').remove();
 					});
-					
 				}, 500);
 			});
 			
@@ -153,15 +172,10 @@ define([], function() {
 					tr.insertBefore($('#testFlightSave'));
 				}
 				self.switchStatus();
-//				self.iconsmanipulator();
-				
 				setTimeout(function() {
-					
-					
 					$('#testFlightTable').on('click', 'a.deleteTestFlight', function() {
 						$(this).closest('.testFlight').remove();
 					});
-					
 				}, 500);
 			});
 			
@@ -355,6 +369,8 @@ define([], function() {
 				var confluenceRequestBody = [];
 				var testFlight = $('.testFlight');
 				var testFlightRequestBody = [];
+				var keyChains = $('.keychain');
+				var keyChainsRequestBody = [];
 				
 				confluence.each(function(i, selected) {
 					var confluenceObj = {};
@@ -375,6 +391,15 @@ define([], function() {
 				});
 				
 				postdata.testFlight = testFlightRequestBody
+				
+				keyChains.each(function(i, selected) {
+					var keyChainObj = {};
+					keyChainObj.keychainName = $(this).find('input[name=keychainName]').val();
+					keyChainObj.keychainPath = $(this).find('input[name=keychainPath]').val();
+					keyChainObj.keychainPassword = $(this).find('input[name=keychainPassword]').val();
+					keyChainsRequestBody.push(keyChainObj);
+				});
+				postdata.keychains = keyChainsRequestBody
 				ciRequestBody.push(postdata);
 				
 				self.getHeaderResponse(self.getRequestHeader(postdata, 'save'), function(response) {

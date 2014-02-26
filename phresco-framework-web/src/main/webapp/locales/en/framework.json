@@ -282,7 +282,7 @@
 		"PHR800018" : "Job template deleted successfully",
 		"PHR800016" : "Job template created successfully",
 		"PHR800017" : "Job templates updated successfully",
-		"PHR800022" : "Email and Confluence configuration saved successfully",
+		"PHR800022" : "Configuration saved successfully",
 		"PHRQ400004" : "Test suite added successfully",
 		"PHRQ400008" : "TestSuite deleted successfully",
 		"PHRQ400009" : "TestCase deleted successfully",
@@ -295,7 +295,9 @@
 		"PHR500005" : "Report not available",
 		"PHR610042"	: "Name already exists in configurations of the project",
 		"PHRD010008" : "No Dashboards Exist.",
-		"PHRU000001" : "Build uploaded successfully"
+		"PHRU000001" : "Build uploaded successfully",
+		"PHR800027" : "Keychains retrieved successfully",
+		"PHR810048" : "Keychains retrieval Failed"
 		
 	},
 	"navigation" : {
