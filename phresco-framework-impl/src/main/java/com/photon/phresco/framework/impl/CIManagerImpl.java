@@ -56,8 +56,10 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
@@ -105,6 +107,8 @@ import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.impl.util.FrameworkUtil;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.model.Dependency;
+import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.trilead.ssh2.crypto.Base64;
 
@@ -271,6 +275,19 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 	}
 
+	public String getJenkinsVersion() throws PhrescoPomException {
+		
+		String jenkinsJobHome = System.getenv(JENKINS_HOME);
+		StringBuilder jenkinsHome = new StringBuilder(jenkinsJobHome);
+		jenkinsHome.append(File.separator);
+		File pomFile = new File(jenkinsHome.toString() + POM_FILE);
+		PomProcessor pom= new PomProcessor(pomFile);
+		Dependency dependency = pom.getDependency("org.jenkins-ci.main", "jenkins-war");
+		
+		return dependency.getVersion();
+		
+	}
+	
 	public void saveMailConfiguration(String jenkinsPort, String senderEmailId, String senderEmailPassword) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.saveMailConfiguration(String jenkinsPort, String senderEmailId, String senderEmailPassword)");
@@ -442,9 +459,10 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			StringBuilder jenkinsHome = new StringBuilder(jenkinsJobHome);
 			jenkinsHome.append(File.separator);
 			File confluenceHomeXml = new File(jenkinsHome.toString() + CI_CONFLUENCE_XML);
+			String jenkinsVersion = getJenkinsVersion();
 			if (confluenceHomeXml.exists()) {
 				SvnProcessor processor = new SvnProcessor(confluenceHomeXml);
-				return processor.readConfluenceXml();
+				return processor.readConfluenceXml(jenkinsVersion);
 			}
 		} catch (Exception e) {
 			if (debugEnabled) {
@@ -465,9 +483,10 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			StringBuilder jenkinsHome = new StringBuilder(jenkinsJobHome);
 			jenkinsHome.append(File.separator);
 			File testFlightHomeXml = new File(jenkinsHome.toString() + CI_TESTFLIGHT_XML);
+			String jenkinsVersion = getJenkinsVersion();
 			if (testFlightHomeXml.exists()) {
 				SvnProcessor processor = new SvnProcessor(testFlightHomeXml);
-				return processor.readTestFlightXml();
+				return processor.readTestFlightXml(jenkinsVersion);
 			}
 		} catch (Exception e) {
 			if (debugEnabled) {
@@ -1749,8 +1768,14 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			//Configuring global configuration in remote jenkins
 //			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 //			ciManager.getAuthenticatedHttpClient(client, httpContext);
-			
-			String globalConfig = "/ciGlobalConfig.json";
+			String jenkinsVersion = getJenkinsVersion();
+			String globalConfig;
+			if(jenkinsVersion.equalsIgnoreCase("1.442")) {
+				globalConfig = "/ciGlobalConfig.json";
+			} else {
+				globalConfig = "/ciGlobalConfig1.json";
+			}
+//			String globalConfig = "/ciGlobalConfig.json";
 			InputStream resourceAsStream = CIManagerImpl.class.getResourceAsStream(globalConfig);
 			String json = IOUtils.toString(resourceAsStream);
 
@@ -1762,25 +1787,40 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			if(StringUtils.isNotEmpty(emailAddress)) {
 				String smtpServer="smtp.gmail.com";
 				JSONObject mailConfiguration = new JSONObject();
-				// Mail config
-				//				String string = "http://localhost:3579/ci/"; jenkins url
 				mailConfiguration.put("url", jenkinsUrl);
 				mailConfiguration.put("smtpServer", smtpServer);
 				mailConfiguration.put("defaultSuffix", "");
 				mailConfiguration.put("adminAddress", emailAddress); 
-				// UseSMTPAuth
-				JSONObject emailCrdential = new JSONObject();
-				emailCrdential.put("smtpAuthUserName", emailAddress); 
-				emailCrdential.put("smtpAuthPassword", emailPassword);
-				mailConfiguration.put("useSMTPAuth", emailCrdential);
-				// Basic
-				mailConfiguration.put("useSsl", true);
+				
+				if(jenkinsVersion.equalsIgnoreCase("1.442")) {
+					JSONObject emailCrdential = new JSONObject();
+					emailCrdential.put("smtpAuthUserName", emailAddress); 
+					emailCrdential.put("smtpAuthPassword", "");
+					mailConfiguration.put("useSMTPAuth", emailCrdential);
+				} else {
+					mailConfiguration.put("smtpAuthUserName", emailAddress); 
+					mailConfiguration.put("smtpAuthPassword", "");
+					mailConfiguration.put("replyToAddress", "");
+				}
+				
+//				// Basic
+				mailConfiguration.put("useSsl", false);
 				mailConfiguration.put("smtpPort", "465");
+				mailConfiguration.put("replyToAddress", "");
 				mailConfiguration.put("charset", "UTF-8");
-
+//
 				jsonObj.put("hudson-tasks-Mailer", mailConfiguration);
 				nameValuePairs.add(new BasicNameValuePair("_.smtpServer", smtpServer));
-				nameValuePairs.add(new BasicNameValuePair("_.adminAddress", emailAddress));
+				//nameValuePairs.add(new BasicNameValuePair("_.adminAddress", emailAddress));
+				if(jenkinsVersion.equalsIgnoreCase("1.546")) {
+					nameValuePairs.add(new BasicNameValuePair("_.defaultSuffix", ""));
+					nameValuePairs.add(new BasicNameValuePair("_.smtpAuthUserName", emailAddress));
+					nameValuePairs.add(new BasicNameValuePair("_.smtpAuthPassword", ""));
+					nameValuePairs.add(new BasicNameValuePair("_.smtpPort", "465"));
+					nameValuePairs.add(new BasicNameValuePair("_.replyToAddress", ""));
+					nameValuePairs.add(new BasicNameValuePair("_.charset", "UTF-8"));
+					nameValuePairs.add(new BasicNameValuePair("sendTestMailTo", ""));
+				}
 			}
 
 			// Confluence list need to be handled
@@ -1788,12 +1828,18 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				JSONObject confluenceSites = new JSONObject();
 				confluenceSites.put("sites", confluenceObj);
 				jsonObj.put("com-myyearbook-hudson-plugins-confluence-ConfluencePublisher", confluenceSites);
+				for (int j = 0; j<confluenceObj.length(); j++) {
+					JSONObject jsonObject = confluenceObj.getJSONObject(j);
+					nameValuePairs.add(new BasicNameValuePair("_.url", jsonObject.getString("url")));
+					nameValuePairs.add(new BasicNameValuePair("_.username", jsonObject.getString("username")));
+					nameValuePairs.add(new BasicNameValuePair("_.password", ""));
+				}
 			}
 			
 			if(testFlightJSONarray != null) {
 				JSONObject testFlights = new JSONObject();
 				testFlights.put("tokenPairs", testFlightJSONarray);
-//				jsonObj.put("testflight.TestflightRecorder", testFlights);
+				jsonObj.put("testflight-TestflightRecorder", testFlights);
 			 	for (int j = 0; j<testFlightJSONarray.length(); j++) {
 			 		JSONObject jsonObject = testFlightJSONarray.getJSONObject(j);
 					nameValuePairs.add(new BasicNameValuePair("tokenPair.tokenPairName", jsonObject.getString("tokenPairName")));
@@ -1813,61 +1859,154 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 
 	private boolean postConfigData(String jenkinsUrl, HttpClient client, HttpPost post, HttpContext httpContext, List<NameValuePair> nameValuePairs, JSONObject jsonObj, String tfsUrl) throws Exception {
 		// Default values
+		String jenkinsVersion = getJenkinsVersion();
 		nameValuePairs.add(new BasicNameValuePair("_.rawWorkspaceDir","${JENKINS_HOME}/workspace/${ITEM_FULLNAME}"));
 		nameValuePairs.add(new BasicNameValuePair("_.rawBuildsDir","${ITEM_ROOTDIR}/builds"));
+		if(jenkinsVersion.equalsIgnoreCase("1.546")) {
+			nameValuePairs.add(new BasicNameValuePair("system_message",""));
+		}
 		//system_message
 		nameValuePairs.add(new BasicNameValuePair("_.numExecutors","2"));
 		nameValuePairs.add(new BasicNameValuePair("_.quietPeriod","5"));
 		nameValuePairs.add(new BasicNameValuePair("_.scmCheckoutRetryCount","0"));
-		nameValuePairs.add(new BasicNameValuePair("slaveAgentPortType","random"));
-		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.markup.RawHtmlMarkupFormatter"));
-		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.plugins.collabnet.auth.CollabNetSecurityRealm"));
-		// collabnet url
-		nameValuePairs.add(new BasicNameValuePair("_.enableSSOAuthFromCTF","on"));
-		nameValuePairs.add(new BasicNameValuePair("_.enableSSOAuthToCTF","on"));
-		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.LegacySecurityRealm"));
-		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.HudsonPrivateSecurityRealm"));
-		nameValuePairs.add(new BasicNameValuePair("privateRealm.allowsSignup","on"));
-		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.LDAPSecurityRealm"));
-		//ldap.server
-		nameValuePairs.add(new BasicNameValuePair("authorization","0"));
-		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.AuthorizationStrategy$Unsecured"));
-		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.plugins.collabnet.auth.CNAuthorizationStrategy"));
-		nameValuePairs.add(new BasicNameValuePair("_.authCacheTimeoutMin","5"));
-		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.LegacyAuthorizationStrategy"));
-		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.FullControlOnceLoggedInAuthorizationStrategy"));
-		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.GlobalMatrixAuthorizationStrategy"));
-		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.ProjectMatrixAuthorizationStrategy"));
-		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.csrf.DefaultCrumbIssuer"));
+		
+		if(jenkinsVersion.equalsIgnoreCase("1.546")) {
+			nameValuePairs.add(new BasicNameValuePair("namingStrategy","0"));
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","jenkins.model.ProjectNamingStrategy$DefaultProjectNamingStrategy"));
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","jenkins.model.ProjectNamingStrategy$PatternProjectNamingStrategy"));
+			nameValuePairs.add(new BasicNameValuePair("_.namePattern",".*"));
+			nameValuePairs.add(new BasicNameValuePair("_.description",""));
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","jenkins.mvn.DefaultSettingsProvider"));
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","jenkins.mvn.FilePathSettingsProvider"));
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","jenkins.mvn.DefaultGlobalSettingsProvider"));
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","jenkins.mvn.FilePathGlobalSettingsProvider"));
+		}
+		
 		nameValuePairs.add(new BasicNameValuePair("_.name","JAVA_HOME"));
 		nameValuePairs.add(new BasicNameValuePair("_.home","${JAVA_HOME}"));
 		nameValuePairs.add(new BasicNameValuePair("stapler-class-bag","true"));
 		nameValuePairs.add(new BasicNameValuePair("_.name","Default"));
-		//	nameValuePairs.add(new BasicNameValuePair("_.home","git.exe")); // git home
-		nameValuePairs.add(new BasicNameValuePair("_.home","git"));
+		if(jenkinsVersion.equalsIgnoreCase("1.546")) {
+			nameValuePairs.add(new BasicNameValuePair("_.home","git.exe"));
+		}
+		 // git home
 		nameValuePairs.add(new BasicNameValuePair("stapler-class-bag","true"));
+		
+		if(jenkinsVersion.equalsIgnoreCase("1.546")) {
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.plugins.git.GitTool"));
+			nameValuePairs.add(new BasicNameValuePair("kind","hudson.plugins.git.GitTool"));
+//			nameValuePairs.add(new BasicNameValuePair("stapler-class-bag","true"));
+		}
+		
 		nameValuePairs.add(new BasicNameValuePair("_.name","MAVEN_HOME"));
 		nameValuePairs.add(new BasicNameValuePair("_.home","${M2_HOME}"));
 		nameValuePairs.add(new BasicNameValuePair("stapler-class-bag","true"));
+		
+		if(jenkinsVersion.equalsIgnoreCase("1.442")) {
+			nameValuePairs.add(new BasicNameValuePair("slaveAgentPortType","random"));
+			nameValuePairs.add(new BasicNameValuePair("_.home","git"));
+		} else {
+			nameValuePairs.add(new BasicNameValuePair("globalMavenOpts",""));
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.maven.local_repo.DefaultLocalRepositoryLocator"));
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.maven.local_repo.PerExecutorLocalRepositoryLocator"));
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.maven.local_repo.PerJobLocalRepositoryLocator"));
+		}
+		
+		if(jenkinsVersion.equalsIgnoreCase("1.442")) {
+			// collabnet url
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.markup.RawHtmlMarkupFormatter"));
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.plugins.collabnet.auth.CollabNetSecurityRealm"));
+			nameValuePairs.add(new BasicNameValuePair("_.enableSSOAuthFromCTF","on"));
+			nameValuePairs.add(new BasicNameValuePair("_.enableSSOAuthToCTF","on"));
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.LegacySecurityRealm"));
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.HudsonPrivateSecurityRealm"));
+			nameValuePairs.add(new BasicNameValuePair("privateRealm.allowsSignup","on"));
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.LDAPSecurityRealm"));
+			
+			//ldap.server
+			nameValuePairs.add(new BasicNameValuePair("authorization","0"));
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.AuthorizationStrategy$Unsecured"));
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.plugins.collabnet.auth.CNAuthorizationStrategy"));
+			nameValuePairs.add(new BasicNameValuePair("_.authCacheTimeoutMin","5"));
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.LegacyAuthorizationStrategy"));
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.FullControlOnceLoggedInAuthorizationStrategy"));
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.GlobalMatrixAuthorizationStrategy"));
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.ProjectMatrixAuthorizationStrategy"));
+			nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.csrf.DefaultCrumbIssuer"));
+		}
+		
 		nameValuePairs.add(new BasicNameValuePair("_.usageStatisticsCollected","on"));
+		nameValuePairs.add(new BasicNameValuePair("_.url", jenkinsUrl)); //"http://localhost:3579/ci/"
+		nameValuePairs.add(new BasicNameValuePair("_.adminAddress","address not configured yet <nobody@nowhere>"));
+		
+		if(jenkinsVersion.equalsIgnoreCase("1.546")) {
+			nameValuePairs.add(new BasicNameValuePair("port.type","random"));
+			nameValuePairs.add(new BasicNameValuePair("_.url",""));
+			nameValuePairs.add(new BasicNameValuePair("_.username",""));
+			nameValuePairs.add(new BasicNameValuePair("_.password",""));
+			nameValuePairs.add(new BasicNameValuePair("_.globalConfigName",""));
+			nameValuePairs.add(new BasicNameValuePair("globalConfigEmail",""));
+		}
 		//TFS
 		nameValuePairs.add(new BasicNameValuePair("tfs.tfExecutable",tfsUrl));
+		if(jenkinsVersion.equalsIgnoreCase("1.546")) {
+			nameValuePairs.add(new BasicNameValuePair("cvsCompression","3"));
+			nameValuePairs.add(new BasicNameValuePair("privateKeyLocation","C:\\Documents and Settings\\Jagadeesh_r\\.ssh\\id_rsa"));
+			nameValuePairs.add(new BasicNameValuePair("privateKeyPassword","vH6G4/JJ/zzhh5MfEJmzVQ=="));
+			nameValuePairs.add(new BasicNameValuePair("knownHostsLocation","C:\\Documents and Settings\\Jagadeesh_r\\.ssh\\known_hosts"));
+		}
 		nameValuePairs.add(new BasicNameValuePair("svn.workspaceFormat","8"));
+		
+		if(jenkinsVersion.equalsIgnoreCase("1.546")) {
+			nameValuePairs.add(new BasicNameValuePair("svn.global_excluded_revprop",""));
+		}
 		nameValuePairs.add(new BasicNameValuePair("svn.storeAuthToDisk","on"));
+		if(jenkinsVersion.equalsIgnoreCase("1.546")) {
+			nameValuePairs.add(new BasicNameValuePair("shell",""));
+			nameValuePairs.add(new BasicNameValuePair("ext_mailer_smtp_server",""));
+			nameValuePairs.add(new BasicNameValuePair("ext_mailer_default_suffix",""));
+		}
+		
+		
 		nameValuePairs.add(new BasicNameValuePair("ext_mailer_admin_address","address not configured yet <nobody>"));
 		nameValuePairs.add(new BasicNameValuePair("ext_mailer_hudson_url", jenkinsUrl)); //"http://localhost:3579/ci/"
+		if(jenkinsVersion.equalsIgnoreCase("1.546")) {
+			nameValuePairs.add(new BasicNameValuePair("extmailer.SMTPAuth.userName",""));
+			nameValuePairs.add(new BasicNameValuePair("extmailer.SMTPAuth.password",""));
+			nameValuePairs.add(new BasicNameValuePair("ext_mailer_smtp_port",""));
+			nameValuePairs.add(new BasicNameValuePair("ext_mailer_charset",""));
+		}
 		nameValuePairs.add(new BasicNameValuePair("ext_mailer_default_content_type","text/plain"));
+		if(jenkinsVersion.equalsIgnoreCase("1.546")) {
+			nameValuePairs.add(new BasicNameValuePair("extmailer.ListID.id",""));
+			nameValuePairs.add(new BasicNameValuePair("ext_mailer_default_recipients",""));
+			nameValuePairs.add(new BasicNameValuePair("ext_mailer_emergency_reroute",""));
+		}
 		nameValuePairs.add(new BasicNameValuePair("ext_mailer_default_subject","$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!"));
+		if(jenkinsVersion.equalsIgnoreCase("1.546")) {
+			nameValuePairs.add(new BasicNameValuePair("ext_mailer_max_attachment_size",""));
+		}
 		nameValuePairs.add(new BasicNameValuePair("ext_mailer_default_body","$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS:\nCheck console output at $BUILD_URL to view the results."));
-		nameValuePairs.add(new BasicNameValuePair("_.url", jenkinsUrl)); //"http://localhost:3579/ci/"
-		nameValuePairs.add(new BasicNameValuePair("_.charset","UTF-8"));
+		
+	//	nameValuePairs.add(new BasicNameValuePair("_.charset","UTF-8"));
 		nameValuePairs.add(new BasicNameValuePair("url", jenkinsUrl + "github-webhook/")); //"http://localhost:3579/ci/github-webhook/"
+		if(jenkinsVersion.equalsIgnoreCase("1.546")) {
+			nameValuePairs.add(new BasicNameValuePair("_.apiUrl",""));
+			nameValuePairs.add(new BasicNameValuePair("_.username",""));
+			nameValuePairs.add(new BasicNameValuePair("_.password",""));
+			nameValuePairs.add(new BasicNameValuePair("_.oauthAccessToken",""));
+		}
 		nameValuePairs.add(new BasicNameValuePair("hookMode","none"));
+		if(jenkinsVersion.equalsIgnoreCase("1.546")) {
+			nameValuePairs.add(new BasicNameValuePair("core:apply",""));
+		}
+		
 		nameValuePairs.add(new BasicNameValuePair("json", jsonObj.toString()));
 		nameValuePairs.add(new BasicNameValuePair("Submit", "Save"));
-
 		post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 		HttpResponse response = client.execute(post,httpContext);
+		StatusLine statusLine = response.getStatusLine();
+	        
 		int statusCode = response.getStatusLine().getStatusCode();
 		if (302 == statusCode) {
 			return true;

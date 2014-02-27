@@ -274,7 +274,7 @@ public class SvnProcessor implements FrameworkConstants{
     	} 
     }
     
-    public JSONArray readConfluenceXml() throws PhrescoException {
+    public JSONArray readConfluenceXml(String jenkinsVersion) throws PhrescoException {
     	if (debugEnabled) {
 			S_LOGGER.error("Entered Method SvnProcessor.readConfluenceXml");
 		}
@@ -333,7 +333,12 @@ public class SvnProcessor implements FrameworkConstants{
     					}
     					json.put(REPO_URL, url);
     					json.put(USERNAME, userName);
-    					json.put(PASSWORD, decyPassword(password));
+    					if(jenkinsVersion.equalsIgnoreCase("1.442")) {
+    						json.put(PASSWORD, decyPassword(password));
+    					} else {
+    						json.put(PASSWORD, password);
+    					}
+    					
     					jsonarray.put(json);
     				}
 
@@ -350,7 +355,7 @@ public class SvnProcessor implements FrameworkConstants{
 		return null;
     }
     
-    public JSONArray readTestFlightXml() throws PhrescoException {
+    public JSONArray readTestFlightXml(String jenkinsVersion) throws PhrescoException {
     	if (debugEnabled) {
 			S_LOGGER.error("Entered Method SvnProcessor.readTestFlightXml");
 		}
@@ -408,8 +413,14 @@ public class SvnProcessor implements FrameworkConstants{
     						teamToken = nodes.item(i).getNextSibling().getNextSibling().getNextSibling().getNextSibling().getTextContent();
     					}
     					json.put(TESTFLIGHT_TOKEN_NAME, tokenPairName);
-    					json.put(API_TOKEN, decyPassword(apiToken));
-    					json.put(TEAM_TOKEN, decyPassword(teamToken));
+    					if(jenkinsVersion.equalsIgnoreCase("1.442")) {
+    						json.put(API_TOKEN, decyPassword(apiToken));
+        					json.put(TEAM_TOKEN, decyPassword(teamToken));
+    					} else {
+    						json.put(API_TOKEN, apiToken);
+        					json.put(TEAM_TOKEN, teamToken);
+    					}
+    					
     					jsonarray.put(json);
     				}
 
