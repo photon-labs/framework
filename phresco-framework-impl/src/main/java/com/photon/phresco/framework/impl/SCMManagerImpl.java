@@ -2574,6 +2574,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			List<Option> options = new ArrayList<Option>(2);
 			VersionControlOptions optionsMap1 = new VersionControlOptions();
 			options.add(optionsMap1.findOption("-recursive"));
+			appendCredentials("someone@company.com", "dummy", options);
 			cmdStatus.setOptions((Option[]) options .toArray(new Option[0]), new VersionControlCommands().getGlobalOptions());
 			cmdStatus.setFreeArguments(new String[] { appDir });
 			cmdStatus.run();
