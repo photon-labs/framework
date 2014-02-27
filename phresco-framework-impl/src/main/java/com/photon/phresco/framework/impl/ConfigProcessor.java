@@ -567,7 +567,7 @@ public class ConfigProcessor implements FrameworkConstants {
     		XPath xpath = XPath.newInstance(POST_BUILDERS_NODE);
     		xpath.addNamespace(root_.getNamespace());
     		Element postBuildNode = (Element) xpath.selectSingleNode(root_);
-//			String symroot_path = Utility.getJenkinsHome() + File.separator + WORKSPACE_DIR + File.separator + job.getJobName() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + TARGET;
+			String symroot_path = Utility.getJenkinsHome() + WORKSPACE_DIR + File.separator + job.getJobName() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + TARGET;
     		org.jdom.Element element = null;
     			element = new Element(XCODE_BUILDER);
     			
@@ -584,7 +584,7 @@ public class ConfigProcessor implements FrameworkConstants {
     			element.addContent(createElement(CONFIGURATION, job.getXcodeconfiguration()));
     			element.addContent(createElement(TARGET, job.getXcodeTarget()));
     			element.addContent(createElement(SDK, job.getSdk()));
-    			element.addContent(createElement(SYMROOT, job.getSymRoot()));
+    			element.addContent(createElement(SYMROOT, symroot_path));
     			element.addContent(createElement(XCODE_PROJECT_PATH, job.getXcodeProjectPath()));
     			if(job.isBuildIpa()) {
     				element.addContent(createElement(BUILD_IPA, TRUE));

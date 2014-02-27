@@ -733,7 +733,7 @@ define([], function() {
 			var self = this;
 			var operation = $("select[name=type]").val();
 			$("select[name=features]").selectpicker('deselectAll');
-			if (operation === 'build' || operation === 'pdfReport') {
+			if (operation === 'build' || operation === 'pdfReport' || operation === 'deviceBuild') {
 				$("#upload").removeAttr("disabled");
 			} else {
 				$("#upload").attr("disabled", "disabled");

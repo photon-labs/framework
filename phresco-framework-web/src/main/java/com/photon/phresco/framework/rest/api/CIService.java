@@ -1898,7 +1898,9 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if (BUILD.equals(operation) || PDF_REPORT.equals(operation)) {
 				mvncmd = CI_PROFILE + mvncmd;
 			}
-			preBuildStepCmds.add(prebuildCmd);
+			if (!DEVICE_BUILD.equalsIgnoreCase(operation)) {
+				preBuildStepCmds.add(prebuildCmd);
+			}
 			// To handle multi module project
 			mvncmd = mvncmd + FrameworkConstants.SPACE + HYPHEN_N;
 			job.setMvnCommand(mvncmd);
