@@ -107,6 +107,7 @@ import com.google.gson.Gson;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
 import com.microsoft.tfs.client.clc.commands.Command;
+import com.microsoft.tfs.client.clc.commands.shared.CommandEULA;
 import com.microsoft.tfs.client.clc.exceptions.ArgumentException;
 import com.microsoft.tfs.client.clc.exceptions.CLCException;
 import com.microsoft.tfs.client.clc.exceptions.InvalidOptionException;
@@ -2631,6 +2632,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	private int createWorkspace(RepoDetail repoDetail)  throws PhrescoException {
 		int executeCmd;
 		try {
+			acceptLicense();
 			Command cmdWorkspace = new CommandWorkspace();
 			List<Option> options = new ArrayList<Option>(4);
 			options.add(optionsMap.findOption("-new"));
@@ -2682,6 +2684,27 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			throw new PhrescoException(AUTHENTICATION_FAILED);
 		}
 		return executeCmd;
+	}
+
+	private void acceptLicense() throws PhrescoException {
+		try {
+			Command licenseCmd = new CommandEULA();
+			List<Option> options = new ArrayList<Option>(4);
+			options.add(optionsMap.findOption("-accept"));
+			executeCmd(new String[] {}, licenseCmd, options);
+		} catch (InvalidOptionValueException e) {
+			throw new PhrescoException(e);
+		} catch (InvalidOptionException e) {
+			throw new PhrescoException(e);
+		} catch (MalformedURLException e) {
+			throw new PhrescoException(e);
+		} catch (ArgumentException e) {
+			throw new PhrescoException(e);
+		} catch (CLCException e) {
+			throw new PhrescoException(e);
+		} catch (LicenseException e) {
+			throw new PhrescoException(e);
+		}
 	}
 
 	private int mapLocalWorkspaceToRemote(String localPath, String dotPhrescoPath, RepoDetail repodetail)
