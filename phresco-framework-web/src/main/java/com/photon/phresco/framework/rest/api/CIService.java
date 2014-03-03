@@ -1490,7 +1490,10 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			appDir = splitPath;
 		}
 		List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
-		ProjectDelivery projectDelivery = Utility.getProjectDelivery(projectId, ciJobInfo);
+		ProjectDelivery projectDelivery = null;
+		if(CollectionUtils.isNotEmpty(ciJobInfo)) {
+			projectDelivery = Utility.getProjectDelivery(projectId, ciJobInfo);
+		}
 		if (projectDelivery != null) {
 			List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
 			for (ContinuousDelivery continuousDelivery : continuousDeliveries) {
