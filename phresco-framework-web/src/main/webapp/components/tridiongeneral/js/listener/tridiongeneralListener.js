@@ -41,7 +41,6 @@ define([], function() {
 				//$("#norecord1").hide();
 			}			
 		},
-
 		
 		getRequestHeader : function(data , action) {
 			var self=this, header, userId, appDirName;
@@ -72,21 +71,6 @@ define([], function() {
 			if(action === 'createPublication'){
 				header.webserviceurl = commonVariables.webserviceurl+"tridion/createPublication?appDirName="+appDirName;
 			}	
-	/* 		if(action === 'editApplication'){
-				var displayName="", userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
-				if (userInfo !== null) {
-					displayName = userInfo.displayName;
-				}
-				moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&rootModule='+$('.rootModule').val()+'&moduleName='+$('.moduleName').val();
-				oldAppDirName = self.isBlank($('.moduleName').val()) ? oldAppDirName : $('.moduleName').val();
-				header.requestMethod ="PUT";
-				header.requestPostBody = appDirName;
-				header.webserviceurl = commonVariables.webserviceurl+"project/updateApplication?userId="+userId+"&oldAppDirName="+oldAppDirName+"&customerId=photon&displayName="+displayName+moduleParam;
-			}
-			if (action === 'getApplicableOptions') {
-				header.requestMethod ="GET";
-				header.webserviceurl = commonVariables.webserviceurl+"util/techOptions?userId="+userId+"&techId="+techId;
-			} */
 			return header;
 		},
 		
@@ -123,7 +107,6 @@ define([], function() {
 			var publicationType = $("#repTypes").html();
 			$("#sortable1 li").remove();
 			$("#sortable2 li").remove();
-			//if(commonVariables.api.localVal.getJson("availableParents") === "" || commonVariables.api.localVal.getJson("availableParents") === null || commonVariables.api.localVal.getJson("availableParents") === undefined){
 				self.getData(self.getRequestHeader('', action), function(response) {
 					if(response.data !== null && response.data.length !== 0) {
 						if(response.responseCode === "PHRSR1001"){
@@ -209,6 +192,7 @@ define([], function() {
 				 }
 
  				self.getData(self.getRequestHeader(JSON.stringify(publicationInfo), "saveConfig"), function(response) {
+					$(".msgdisplay").removeClass("error");
 					if(response.data !== null && response.data.length !== 0) {
 						if(response.responseCode === "PHRSR1001"){
 							commonVariables.api.showError("PHRTR0001" ,"success", true, false, true);
@@ -217,11 +201,11 @@ define([], function() {
 							commonVariables.api.showError("PHRTR1001" ,"error", true, false, true);
 						}
 					}
-				});				 
- 			}	
+				});
+ 			}
 		},
+
 		validation : function() {
-		
 			 var flag1=0,flag2=0,flag3=0;
 			 var publicationName = $("input[name='publicationName']").val();
 			 var publicationKey = $("input[name='publicationKey']").val();
@@ -280,9 +264,9 @@ define([], function() {
 					});
 					self.hasError = true;
 			   }
-			  return self.hasError;	
+			  return self.hasError;
 		},
-		
+
 		readConfigData : function(publicationType , action){
 			var self = this;
 			//var publicationType = $("#classificationId").text();
@@ -304,13 +288,13 @@ define([], function() {
 										parentPublications += parent.name + ", ";
 									});
 									$("#parentPublications").text(parentPublications);
-								}				
+								}
 							});
 					}
 				}
 			});
 		},
-		
+
 		submitPublication : function (){
 			var self = this;
 			self.getData(self.getRequestHeader('', "createPublication"), function(response) {

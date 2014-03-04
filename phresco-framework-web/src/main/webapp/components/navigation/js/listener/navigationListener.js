@@ -588,6 +588,7 @@ define([], function() {
 		showHideTechOptions : function() {
 			var self = this;
 			var applicableOptions = JSON.parse(commonVariables.api.localVal.getSession('applicableOptions'));
+			console.info('applicableOptions = ' , applicableOptions);
 			if (jQuery.inArray(commonVariables.optionsCode, applicableOptions) === -1) {
 				$("#codequality").hide();
 			} else {
@@ -664,16 +665,14 @@ define([], function() {
 			} else {
 				$('img[name=ipaDownload]').show();
 			}
-			if (jQuery.inArray(commonVariables.optionsFeatureConfig, applicableOptions) === -1) {
-
+			if (jQuery.inArray(commonVariables.optionsTridioninfo, applicableOptions) === -1) {
+			console.info('applicableOptions = ');
+				$("#tridiongeneral").hide();
 			} else {
-				
+			console.info('applicableOptions else ' );
+				$("#tridiongeneral").show();
 			}
-			if (jQuery.inArray(commonVariables.optionsComponentConfig, applicableOptions) === -1) {
 
-			} else {
-				
-			}
 			if (jQuery.inArray(commonVariables.optionsProcessBuild, applicableOptions) === -1) {
 				//process build
 				$("table th[name=prcBuild]").hide();
