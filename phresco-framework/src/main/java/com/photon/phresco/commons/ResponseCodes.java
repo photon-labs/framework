@@ -648,8 +648,27 @@ public interface ResponseCodes {
 	 * Publication Configuration
 	 */
 	
-	String PHRSR1001 = "PHRSR1001"; // Publication Config saved
-	String PHRSR1002 = "PHRSR1002"; // Publication Config not saved
-	String PHRTRP0001 = "PHRTRP0001"; // Publication created successfully
+	String PHRTR0001 = "PHRTR0001"; // Publication Saved successfully
+	String PHRTR0002 = "PHRTR0002"; // Publication retrieved successfully
+	String PHRTR0003 = "PHRTR0003"; // Publication List fetched successfully
+	String PHRTR0004 = "PHRTR0004"; // Publication Target fetched successfully
+	String PHRTR0005 = "PHRTR0005"; // Publication created successfully
+	String PHRTR0006 = "PHRTR0006"; // Environment fetched successfully
+	String PHRTR0007 = "PHRTR0007"; // Site published successfully
+	String PHRTR0008 = "PHRTR0008"; // Publish queue status fetched successfully
+	
+	
+	
+	
+	String PHRTR1001 = "PHRTR1001"; // Publication Save Failed
+	String PHRTR1002 = "PHRTR1002"; // Publication retrieve failed
+	String PHRTR1003 = "PHRTR1003"; // Publication fetch failed
+	String PHRTR1004 = "PHRTR1004"; // content or theme  creation needed to proceed
+	String PHRTR1005 = "PHRTR1005"; // publication creation failed
+	String PHRTR1006 = "PHRTR1006"; // check Publicationconfig.xml File
+	String PHRTR1007 = "PHRTR1007"; // Failed to fetch environment3
+	String PHRTR1008 = "PHRTR1008"; // Failed to publish site
+	String PHRTR1009 = "PHRTR1009"; // Failed to fetch publish queue status
+	
 	
 }
