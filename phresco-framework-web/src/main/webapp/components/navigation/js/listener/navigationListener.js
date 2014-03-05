@@ -39,7 +39,7 @@ define([], function() {
 		sourceRepo : null,
 		buildRepo : null,
 		tridiongeneral : null,
-		blueprinting : null,
+		tridionpublish : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -498,14 +498,17 @@ define([], function() {
 						
 						break;						
 											
-					case commonVariables.blueprinting :
-						if(self.blueprinting === null) {
-							require(["blueprinting/blueprinting"], function(){
-								self.blueprinting = new Clazz.com.components.blueprinting.js.blueprinting();
-								callback(self.blueprinting);	
+					case commonVariables.tridionpublish :
+						if(self.tridionpublish === null) {
+							console.info('pubi');
+							require(["tridionpublish/tridionpublish"], function(){
+							console.info('tridionpublish');
+								self.tridionpublish = new Clazz.com.components.tridionpublish.js.tridionpublish();
+								console.info('tridionpublish = ' , self.tridionpublish);
+								callback(self.tridionpublish);	
 							});
 						}else{
-							callback(self.blueprinting);
+							callback(self.tridionpublish);
 						}
 						
 						break;						
@@ -588,7 +591,7 @@ define([], function() {
 		showHideTechOptions : function() {
 			var self = this;
 			var applicableOptions = JSON.parse(commonVariables.api.localVal.getSession('applicableOptions'));
-			console.info('applicableOptions = ' , applicableOptions);
+			//console.info('applicableOptions = ' , applicableOptions);
 			if (jQuery.inArray(commonVariables.optionsCode, applicableOptions) === -1) {
 				$("#codequality").hide();
 			} else {
@@ -666,10 +669,10 @@ define([], function() {
 				$('img[name=ipaDownload]').show();
 			}
 			if (jQuery.inArray(commonVariables.optionsTridioninfo, applicableOptions) === -1) {
-			console.info('applicableOptions = ');
+			//console.info('applicableOptions = ');
 				$("#tridiongeneral").hide();
 			} else {
-			console.info('applicableOptions else ' );
+			//console.info('applicableOptions else ' );
 				$("#tridiongeneral").show();
 			}
 
@@ -807,8 +810,8 @@ define([], function() {
 					currentObj = returnVal;
 					self.myTabRenderFunction(currentObj, keyword);
 				});
-			}  else if (self.currentTab !== commonVariables.blueprinting && keyword === commonVariables.blueprinting) {
-				self.getMyObj(commonVariables.blueprinting, function(returnVal){
+			}  else if (self.currentTab !== commonVariables.tridionpublish && keyword === commonVariables.tridionpublish) {
+				self.getMyObj(commonVariables.tridionpublish, function(returnVal){
 					currentObj = returnVal;
 					self.myTabRenderFunction(currentObj, keyword);
 				});

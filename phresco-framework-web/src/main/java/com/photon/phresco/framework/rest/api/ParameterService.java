@@ -1002,9 +1002,9 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			ResponseInfo<String> responseData = new ResponseInfo<String>();
 			boolean fileSaved = saveCofiguration(appDirName, module, publication);
 			if (fileSaved) {
-				responseData = responseDataEvaluation(responseData, null, PUBLICATION_SUCCESS, RESPONSE_STATUS_SUCCESS, PHRSR1001);
+				responseData = responseDataEvaluation(responseData, null, PUBLICATION_SUCCESS, RESPONSE_STATUS_SUCCESS, PHRTR0001);
 			} else {
-				responseData = responseDataEvaluation(responseData, null, PUBLICATION_FAILURE, RESPONSE_STATUS_SUCCESS, PHRSR1001);
+				responseData = responseDataEvaluation(responseData, null, PUBLICATION_FAILURE, RESPONSE_STATUS_SUCCESS, PHRTR1001);
 			}
 			return Response.ok(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (Exception e) {
@@ -1022,7 +1022,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			File publicationConfigPath = new File (Utility.getProjectHome() + File.separator +  appDirName + File.separator + FOLDER_DOT_PHRESCO + File.separator + PUBLICATION_CONFIG_FILE);
 			if (publicationConfigPath.exists()) {
 				Publication publication = readConfiguration(publicationConfigPath);
-				responseData = responseDataEvaluation(responseData, null, publication, RESPONSE_STATUS_SUCCESS, PHRSR1001);
+				responseData = responseDataEvaluation(responseData, null, publication, RESPONSE_STATUS_SUCCESS, PHRTR0002);
 				return Response.ok(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 			} else {
 				return Response.status(Status.EXPECTATION_FAILED).entity(FILE_NOT_FOUND).header(ACCESS_CONTROL_ALLOW_ORIGIN,
@@ -1052,7 +1052,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			jsonArray.add(publicationItem2);
 			String publicationJson =  jsonArray.toJSONString();
 
-			responseData = responseDataEvaluation(responseData, null, publicationJson, RESPONSE_STATUS_SUCCESS, PHRSR1001);
+			responseData = responseDataEvaluation(responseData, null, publicationJson, RESPONSE_STATUS_SUCCESS, PHRTR0003);
 			return Response.ok(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 
 		} catch (Exception e) {

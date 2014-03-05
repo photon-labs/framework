@@ -1,0 +1,15 @@
+{
+    "info":{
+        "widgetId":"101",
+        "widgetName":"tridionpublish"
+    },
+    "components":{
+        "login":{
+            "moduleName":"tridionpublish",
+            "host":"http://localhost",
+            "port":"2020"
+        }
+    },
+	
+	"theme" : "default"
+}

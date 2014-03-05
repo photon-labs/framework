@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +38,7 @@ import org.xml.sax.SAXException;
 
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.configuration.Configuration;
+import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.impl.ConfigurationReader;
 import com.photon.phresco.framework.model.Publications;
@@ -69,7 +69,6 @@ public class PublicationsList implements FrameworkConstants {
 	 */
 	public List<Publications> getPublicationList(String server, String username, String password) throws PhrescoException {
 		BufferedReader inputReader = null;
-		BufferedReader errorReader = null;
 		int totalPublications = 0;
 		List<Publications> publicationList = new ArrayList<Publications>();
 		try {
@@ -137,7 +136,8 @@ public class PublicationsList implements FrameworkConstants {
 		publicationList.addAll(newPublicationList);
 		return publicationList;
 	}
-
+	
+	
 	/**
 	 * Get Publication from File
 	 * @return List<Publications>
@@ -299,8 +299,6 @@ public class PublicationsList implements FrameworkConstants {
      */
 	public static void createPublication(String server, String username, String password, String environmentName) throws PhrescoException {
 		BufferedReader rd = null;
-		int totalPublications = 0;
-		List<Publications> publicationList = new ArrayList<Publications>();
 		try {
 			StringBuilder builder = new  StringBuilder();
 			builder.append(POWER_SHELL);
@@ -363,6 +361,137 @@ public class PublicationsList implements FrameworkConstants {
 			throw new PhrescoException(e);
 		}
 	}
+	
+	public static String publishPagesToserver(String server, String username, String password, String targetId, String publishSiteId) throws PhrescoException {
+		BufferedReader rd = null;
+		String siteId = "";
+		try {
+			StringBuilder builder = new  StringBuilder();
+			builder.append(POWER_SHELL);
+			builder.append(SPACE);
+			builder.append(INPUTFORMAT_NONE);
+			builder.append(SPACE);
+			builder.append(EXECUTION_POLICY_BYPASS);
+			builder.append(SPACE);
+			builder.append(PUBLICATION_COMMAND);
+			builder.append(SPACE);
+			builder.append(PUBLICATION_CONSTANT);
+			builder.append(SPACE);
+			builder.append(configPath.getPath());
+			builder.append(File.separator);
+			builder.append(PUBLICATION_SCRIPT);
+			builder.append(SPACE);
+			builder.append("PublishPages");
+			builder.append(SPACE);
+			builder.append("\"" + server + "\"");
+			builder.append(SPACE);
+			builder.append("\"" + username + "\"");
+			builder.append(SPACE);
+			builder.append("\"" + password + "\"");
+			builder.append(SPACE);
+			builder.append("\"" + publishSiteId + "\"");
+			builder.append(SPACE);
+			builder.append("\""+ targetId +"\"");
+			builder.append(PUBLICATION_CLOSE);
+			
+			
+			String command = builder.toString();
+			System.out.println(command);
+			Commandline commandline = new Commandline(command);
+			commandline.setWorkingDirectory(configPath);
+			System.out.println(" Executing............");
+			Process process = commandline.execute();
+			String line = "";
+			StringBuilder errorBuilder = new StringBuilder();
+			boolean errorOccured = false;
+			rd = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			while ((line = rd.readLine())!= null) {
+				if (line.startsWith("Id")) {
+					String[] splits = line.split(":" , 2);
+					siteId = splits[1];
+					}
+				if (line.startsWith(PUBLICATION_ERROR) || line.startsWith("Warning") || errorOccured ) {
+					errorBuilder.append(line);
+					errorOccured = true;
+				}
+			}
+			if (errorOccured) {
+				throw new PhrescoException(errorBuilder.toString());
+			}
+		}
+		catch (CommandLineException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		}
+		return siteId;
+	}
+	
+	
+	public static String getPublishQueue(String server, String username, String password, String publishSiteId) throws PhrescoException {
+		BufferedReader rd = null;
+		String stateId = "";
+		try {
+			StringBuilder builder = new  StringBuilder();
+			builder.append(POWER_SHELL);
+			builder.append(SPACE);
+			builder.append(INPUTFORMAT_NONE);
+			builder.append(SPACE);
+			builder.append(EXECUTION_POLICY_BYPASS);
+			builder.append(SPACE);
+			builder.append(PUBLICATION_COMMAND);
+			builder.append(SPACE);
+			builder.append(PUBLICATION_CONSTANT);
+			builder.append(SPACE);
+			builder.append(configPath.getPath());
+			builder.append(File.separator);
+			builder.append(PUBLICATION_SCRIPT);
+			builder.append(SPACE);
+			builder.append("Get-PublishingQueue");
+			builder.append(SPACE);
+			builder.append("\"" + server + "\"");
+			builder.append(SPACE);
+			builder.append("\"" + username + "\"");
+			builder.append(SPACE);
+			builder.append("\"" + password + "\"");
+			builder.append(SPACE);
+			builder.append("\"" + publishSiteId + "\"");
+			builder.append(PUBLICATION_CLOSE);
+			
+			
+			String command = builder.toString();
+			System.out.println(command);
+			Commandline commandline = new Commandline(command);
+			commandline.setWorkingDirectory(configPath);
+			System.out.println(" Executing............");
+			Process process = commandline.execute();
+			String line = "";
+			StringBuilder errorBuilder = new StringBuilder();
+			boolean errorOccured = false;
+			rd = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			while ((line = rd.readLine())!= null) {
+				if (line.startsWith("State")) {
+					String[] splits = line.split(":" , 2);
+					stateId = splits[1];
+					break;
+					}
+				if (line.startsWith(PUBLICATION_ERROR) || line.startsWith("Warning") || errorOccured ) {
+					errorBuilder.append(line);
+					errorOccured = true;
+				}
+			}
+			if (errorOccured) {
+				throw new PhrescoException(errorBuilder.toString());
+			}
+		}
+		catch (CommandLineException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		}
+		return stateId;
+	}
+	
 
 	/**
 	 * Update the TcmID
@@ -418,12 +547,54 @@ public class PublicationsList implements FrameworkConstants {
 			e.printStackTrace();
 		}
 	}
+	
+	public String getPublishSiteId(String type) throws PhrescoException {
+		String attribute = "";
+		try {
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder documentBuilder = docFactory.newDocumentBuilder();
+		File virtualConfigFile = new File(configPath + File.separator + PUBLICATION_CONFIG_FILE);
+		
+		Document doc = documentBuilder.parse(virtualConfigFile);
+		StringBuilder expBuilder = new StringBuilder();
+		expBuilder.append("/Publications/publication[@type='"); 
+		expBuilder.append(type);
+		expBuilder.append("']");	
+		expBuilder.append("/target/environment");
+		
+		XPathFactory xPathFactory = XPathFactory.newInstance();
+		XPath newXPath = xPathFactory.newXPath();
+
+		XPathExpression xPathExpression = newXPath.compile(expBuilder.toString());
+		Node node = (Node) xPathExpression.evaluate(doc, XPathConstants.NODE);
+		if (node != null) {
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element ele = (Element) node; 
+				attribute = ele.getAttribute(TCM_ID);
+				if (StringUtils.isNotEmpty(attribute)) {
+					return attribute;
+				}
+				}
+		}
+		} catch (XPathExpressionException e) {
+			throw new PhrescoException(e);
+		} catch (ParserConfigurationException e) {
+			throw new PhrescoException(e);
+		} catch (SAXException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		}
+		return attribute;
+		
+	}
 
 	/**
 	 * Create the Virtual Config File
 	 * @param type
+	 * @throws PhrescoException 
 	 */
-	public static void createVirtualConfigFile(String type) {
+	public static void createVirtualConfigFile(String type) throws PhrescoException {
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder documentBuilder = docFactory.newDocumentBuilder();
@@ -463,17 +634,17 @@ public class PublicationsList implements FrameworkConstants {
 			
 			
 		} catch (XPathExpressionException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		} catch (SAXException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		} catch (TransformerConfigurationException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		} catch (TransformerException e) {
-			e.printStackTrace();
+			throw new PhrescoException(e);
 		}
 	}
 
@@ -537,22 +708,27 @@ public class PublicationsList implements FrameworkConstants {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	public static Map<String, String> getAuthenticationDetails(String dotPhrescoFolderPath) throws PhrescoException  {
+	public static Map<String, String> getAuthenticationDetails(String dotPhrescoFolderPath, String envName) throws PhrescoException  {
 		Map<String, String> credentials = new HashMap<String, String>();	
 		try {
 			File configFile = new File(dotPhrescoFolderPath, CONFIGURATION_INFO_FILE_NAME );
 			ConfigurationReader configReader = new ConfigurationReader(configFile);
-			Collection<String> environmentNames = configReader.getEnvironmentNames();
-			boolean devEnvironmentExist = false;
+			List<Environment> allEnvironments = configReader.getAllEnvironments();
 			String environmentName = "";
-			for (String env : environmentNames) {
-				if (env.startsWith(DEV_SMALL) | env.startsWith(DEV_CAPS)) {
-					devEnvironmentExist = true;
-					environmentName = env;
-				} 
+			boolean devEnvironmentExists = false;
+			if (CollectionUtils.isNotEmpty(allEnvironments)) {
+				for (Environment environment : allEnvironments) {
+					if(StringUtils.isNotEmpty(envName) && envName.equalsIgnoreCase(environment.getName())) {
+						environmentName = environment.getName();
+						devEnvironmentExists = true;
+					} else if(environment.isDefaultEnv()) {
+						environmentName = environment.getName();
+						devEnvironmentExists = true;
+					}
+				}
 			}
-			if (!devEnvironmentExist) {
-				throw new PhrescoException("Authentication is required and Dev Environment is need before futher proceed ");
+			if (!devEnvironmentExists) {
+				throw new PhrescoException("Authentication is required and Dev Environment is need before further proceed ");
 			}
 			List<Configuration> configs = configReader.getConfigurations(environmentName, REQ_DEPLOY_SERVER);
 			for (Configuration configuration : configs) {

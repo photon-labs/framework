@@ -95,7 +95,7 @@ var commonVariables = {
 	continuousDeliveryConfigure : "continuousDeliveryConfigure",
 	
 	tridiongeneral : "tridiongeneral",
-	blueprinting : "blueprinting",	
+	tridionpublish : "tridionpublish",	
 	
 	settings : "settings",
 	projectSettings : "projectsettings",
@@ -160,6 +160,7 @@ var commonVariables = {
 	optionsEmbedApplication : "Embed_Application",
 	optionsThemeBuilder : "Theme_Builder",
 	optionsTridioninfo : "Tridion_info",
+	optionsTridionpublish : "Tridion_Publish",
 
 	/******* Customer main menu options constants *******/
 	optionsDashboard : "Home",

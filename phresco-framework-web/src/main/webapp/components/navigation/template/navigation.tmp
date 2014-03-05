@@ -307,6 +307,7 @@
 				<li id="configuration" class="dropdown" name="editMenu">
                 </li>
                 <li id="build" name="editMenu"><a href="javascript:void(0)" data-i18n="navigation.application.build"></a></li>
+				<li id="tridionpublish" name="editMenu"><a href="javascript:void(0)" data-i18n="navigation.application.tridionpublish"></a></li> 
 				<li class="dropdown" name="editMenu">
                 	<a href="javascript:void(0)" id="drop4" role="quality" class="dropdown-toggle drop-qual" id="qualityMenu" data-toggle="dropdown">Quality Assurance<b class="caret"></b></a>
                 	<div class="dropdown-menu cust_sel test_options" role="quality" aria-labelledby="drop4">

@@ -109,7 +109,7 @@ define([], function() {
 			$("#sortable2 li").remove();
 				self.getData(self.getRequestHeader('', action), function(response) {
 					if(response.data !== null && response.data.length !== 0) {
-						if(response.responseCode === "PHRSR1001"){
+						if(response.responseCode === "PHRTR0003"){
 							commonVariables.api.localVal.setJson('availableParents', response.data);
 							var  readConfigData = commonVariables.api.localVal.getJson('readConfigData');
 							$.each(response.data, function(index, value){
@@ -192,9 +192,9 @@ define([], function() {
 				 }
 
  				self.getData(self.getRequestHeader(JSON.stringify(publicationInfo), "saveConfig"), function(response) {
-					$(".msgdisplay").removeClass("error");
 					if(response.data !== null && response.data.length !== 0) {
-						if(response.responseCode === "PHRSR1001"){
+						if(response.responseCode === "PHRTR0001"){
+							$(".msgdisplay").removeClass("error");
 							commonVariables.api.showError("PHRTR0001" ,"success", true, false, true);
 							self.readConfigData(publicationType , 'readConfig');
 						} else {
@@ -272,7 +272,7 @@ define([], function() {
 			//var publicationType = $("#classificationId").text();
 			self.getData(self.getRequestHeader('', action), function(response) {
 				if(response.data !== null && response.data.length !== 0) {
-					if(response.responseCode === "PHRSR1001"){
+					if(response.responseCode === "PHRTR0002"){
 						commonVariables.api.localVal.setJson('readConfigData', response.data);
 							$.each(response.data, function(index, value){
 								//returnVal += '<li class="ui-state-default" style="padding-left:10px;">'+ value.item +'</li>';
@@ -298,9 +298,9 @@ define([], function() {
 		submitPublication : function (){
 			var self = this;
 			self.getData(self.getRequestHeader('', "createPublication"), function(response) {
-				/* if(response.responseCode === "PHRSR10007"){
-					commonVariables.api.showError(response.responseCode ,"error", true, false, true);
-				} */
+				if(response.responseCode === "PHRTR0005"){
+					commonVariables.api.showError("PHRTR0005" ,"success", true, false, true);
+				}
 			});	
 		}
 	});
