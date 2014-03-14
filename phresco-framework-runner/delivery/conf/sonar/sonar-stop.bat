@@ -1,0 +1,1 @@
+catalina.bat stop -config server.xml

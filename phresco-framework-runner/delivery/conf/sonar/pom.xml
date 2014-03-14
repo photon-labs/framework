@@ -1,0 +1,295 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.photon.phresco.sonar</groupId>
+	<artifactId>sonar</artifactId>
+	<packaging>war</packaging>
+	<version>3.5.1</version>
+	<name>sonar</name>
+
+    <properties>		
+		<sonar.version>3.5.1</sonar.version>
+	</properties>
+
+	<dependencies>
+	  
+	  <dependency>
+		<groupId>sonar</groupId>
+		<artifactId>sonar</artifactId>
+		<version>${sonar.version}</version>
+		<type>war</type>
+	  </dependency>
+	  
+      <!-- Ant dependency for (if and for) loop to run in ant -->
+	
+        <dependency>
+          <groupId>ant-contrib</groupId>
+          <artifactId>ant-contrib</artifactId>
+          <version>1.0b3</version>
+        </dependency>
+   
+         <!-- Sonar plungins dependencies -->
+         
+        <dependency>
+            <groupId>sonar.plugin</groupId>
+            <artifactId>sonar-w3c-markup-validation-plugin</artifactId>
+            <version>0.1</version>
+        </dependency>
+         <!-- for code coverage with emma start-->
+		
+		<dependency>
+            <groupId>sonar.plugin</groupId>
+            <artifactId>sonar-emma-plugin</artifactId>
+            <version>1.3</version>
+        </dependency>
+		
+        <!-- for code coverage with emma end -->
+        <dependency>
+          <groupId>sonar.plugin</groupId>
+          <artifactId>sonar-web-plugin</artifactId>
+          <version>2.1</version>
+        </dependency>
+		
+		<dependency>
+			<groupId>sonar.plugin</groupId>
+			<artifactId>sonar-csharp-plugin</artifactId>
+			<version>2.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>sonar.plugin</groupId>
+			<artifactId>sonar-dotnet-plugin</artifactId>
+			<version>2.1</version>
+		</dependency>
+        
+        <dependency>
+          <groupId>sonar.plugin</groupId>
+          <artifactId>w3cmarkupvalidationfilter</artifactId>
+          <version>1.0.2</version>
+        </dependency>
+
+        <dependency>
+          <groupId>sonar.plugin</groupId>
+          <artifactId>mem-tracker-sonar-plugin</artifactId>
+          <version>1.0.0</version>
+        </dependency>
+        
+        <dependency>
+           <groupId>org.codehaus.sonar-plugins</groupId>
+           <artifactId>sonar-artifact-size-plugin</artifactId>
+           <version>0.3</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.codehaus.sonar-plugins</groupId>
+            <artifactId>sonar-branding-plugin</artifactId>
+            <version>0.4</version>
+        </dependency>
+        
+        <dependency>
+           <groupId>org.codehaus.sonar-plugins</groupId>
+           <artifactId>sonar-build-breaker-plugin</artifactId>
+           <version>1.1</version>
+        </dependency>
+        
+        <dependency>
+           <groupId>org.codehaus.sonar-plugins</groupId>
+           <artifactId>sonar-build-stability-plugin</artifactId>
+           <version>1.1.2</version>
+        </dependency>
+        
+        <dependency>
+           <groupId>org.codehaus.sonar-plugins</groupId>
+           <artifactId>sonar-clirr-plugin</artifactId>
+           <version>1.1</version>
+        </dependency>
+          
+        <dependency>
+           <groupId>org.codehaus.sonar-plugins</groupId>
+           <artifactId>sonar-cutoff-plugin</artifactId>
+           <version>0.1.1</version>
+        </dependency>
+        
+        <dependency>
+          <groupId>sonar.plugin</groupId>
+          <artifactId>sonar-javascript-plugin</artifactId>
+          <version>1.3</version>
+        </dependency>
+        
+        <dependency>
+           <groupId>org.codehaus.sonar-plugins.jmeter</groupId>
+           <artifactId>sonar-jmeter-plugin</artifactId>
+           <version>0.2</version>
+        </dependency>
+        
+        <dependency>
+           <groupId>org.codehaus.sonar-plugins</groupId>
+           <artifactId>sonar-motion-chart-plugin</artifactId>
+           <version>1.5</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.codehaus.sonar-plugins.php</groupId>
+            <artifactId>sonar-php-plugin</artifactId>
+            <version>1.1</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.codehaus.sonar-plugins.scm-activity</groupId>
+            <artifactId>sonar-scm-activity-plugin</artifactId>
+            <version>1.4</version>
+        </dependency>
+        
+        <dependency>
+           <groupId>org.codehaus.sonar-plugins</groupId>
+           <artifactId>sonar-switch-off-violations-plugin</artifactId>
+           <version>1.1</version>
+        </dependency>
+        
+        <dependency>
+           <groupId>org.codehaus.sonar-plugins</groupId>
+           <artifactId>sonar-tab-metrics-plugin</artifactId>
+           <version>1.2</version>
+        </dependency>
+        
+        <dependency>
+           <groupId>org.codehaus.sonar-plugins</groupId>
+           <artifactId>sonar-technicaldebt-plugin</artifactId>
+           <version>1.2.1</version>
+        </dependency>
+        
+        <dependency>
+           <groupId>org.codehaus.sonar-plugins</groupId>
+           <artifactId>sonar-useless-code-tracker-plugin</artifactId>
+           <version>0.5</version>
+        </dependency>
+        
+        <dependency>
+           <groupId>org.codehaus.sonar-plugins</groupId>
+           <artifactId>sonar-violationdensity-plugin</artifactId>
+           <version>1.2</version>
+        </dependency>
+        
+        <dependency>
+           <groupId>org.codehaus.sonar-plugins</groupId>
+           <artifactId>sonar-xml-plugin</artifactId>
+           <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.codehaus.sonar-plugins</groupId>
+            <artifactId>sonar-security-rules-plugin</artifactId>
+            <version>0.3.2</version>
+        </dependency>
+        
+        <!-- 3.5.1 -->
+        
+        <dependency>
+            <groupId>org.codehaus.sonar-plugins.java</groupId>
+            <artifactId>sonar-checkstyle-plugin</artifactId>
+            <version>1.1</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.codehaus.sonar-plugins.java</groupId>
+            <artifactId>sonar-cobertura-plugin</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.sonar-plugins.java</groupId>
+            <artifactId>sonar-findbugs-plugin</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.sonar-plugins.java</groupId>
+            <artifactId>sonar-java-plugin</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.sonar-plugins.java</groupId>
+            <artifactId>sonar-pmd-plugin</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.sonar-plugins.java</groupId>
+            <artifactId>sonar-squid-java-plugin</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.sonar-plugins.java</groupId>
+            <artifactId>sonar-surefire-plugin</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+         <dependency>
+            <groupId>org.codehaus.sonar-plugins.java</groupId>
+            <artifactId>sonar-jacoco-plugin</artifactId>
+            <version>1.2</version>
+        </dependency>
+        
+	</dependencies>
+	    
+	<build>	
+		<plugins>		
+		  
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.3</version>
+				<executions>
+					<!-- download the necessary files -->
+					<execution>
+						<id>unpack-binaries</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<markersDirectory>../workspace/temp/markers</markersDirectory>
+							<artifactItems>
+								<!-- extracting sonar zip file -->
+								<artifactItem>
+									<groupId>sonar</groupId>
+									<artifactId>sonar</artifactId>
+									<version>${sonar.version}</version>
+									<type>zip</type>
+									<overWrite>false</overWrite>
+									<outputDirectory>../workspace/tools</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+            
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+                    <execution>
+						<id>sonar-plugin-phresco</id>
+						<phase>validate</phase>
+						<goals>
+						  <goal>run</goal>
+						</goals>
+						<configuration>
+                            <tasks>  
+                                <property name="sonar-version" value="${sonar.version}"/>
+								<echo message="Sonar Plugins copied to plugin directory "/>
+								<ant antfile="sonar-build.xml" target="init" inheritRefs="true" inheritAll="true"/>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+		</plugins>
+	</build>
+    
+
+</project>
