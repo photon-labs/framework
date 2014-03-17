@@ -132,7 +132,7 @@
                <groupId>com.photon.phresco.plugins</groupId>
                <artifactId>ci-phresco-plugin</artifactId>
                <type>jar</type>
-               <version>3.3.0.5001-SNAPSHOT</version>
+               <version>3.2.1.3002-SNAPSHOT</version>
                <class>com.photon.phresco.plugins.CIPlugin</class>
            </dependency>
        </implementation>
