@@ -10,6 +10,7 @@ define(["build/listener/buildListener"], function() {
 		buildListener : null,
 		onProgressEvent : null,
 		onDownloadEvent : null,
+		onUploadEvent : null,
 		onValidationEvent : null,
 		dynamicpage : null,
 		dynamicPageListener : null,
@@ -58,6 +59,9 @@ define(["build/listener/buildListener"], function() {
 			}	
 			if(self.onDownloadEvent === null){
 				self.onDownloadEvent = new signals.Signal();
+			}
+			if(self.onUploadEvent === null){
+				self.onUploadEvent = new signals.Signal();
 			}
 			if(self.onValidationEvent === null){
 				self.onValidationEvent = new signals.Signal();
@@ -244,7 +248,7 @@ define(["build/listener/buildListener"], function() {
 						buildObject.userPermissions = userPermissions;
 						
 						if($("#buildRow").length < 1){
-							var table = '<table class="table table-striped table_border table-bordered big" cellpadding="0" cellspacing="0" border="0" id="buildRow"><thead class="fixedHeader"><tr><th data-i18n="build.label.bNo"></th><th data-i18n="build.label.date"></th><th data-i18n="build.label.download"><th name="prcBuild" data-i18n="build.label.processBuild"></th></th><th name="buildDep" data-i18n="build.label.deploy"></th><th data-i18n="build.label.delete"></th></tr></thead><tbody class="scrollContent"></tbody></table>';
+							var table = '<table class="table table-striped table_border table-bordered big" cellpadding="0" cellspacing="0" border="0" id="buildRow"><thead class="fixedHeader"><tr><th data-i18n="build.label.bNo"></th><th data-i18n="build.label.date"></th><th data-i18n="build.label.download"></th><th name="prcBuild" data-i18n="build.label.processBuild"></th><th name="buildDep" data-i18n="build.label.deploy"></th><th data-i18n="build.label.delete"></th><th data-i18n="build.label.upload"></th></tr></thead><tbody class="scrollContent"></tbody></table>';
 							$('.qual_unit_main').html(table);
 						}
 
@@ -253,9 +257,12 @@ define(["build/listener/buildListener"], function() {
 							var manageBuilds = "";
 							var deviceDeploy = "";
 							var deleteOpt = "";
+							var testFlightupload = "";
 
 							if(current.options !== null && current.options.canCreateIpa === true){
 								cancreateIpa = '<a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="IPA Download"><img name="ipaDownload" src="themes/default/images/Phresco/ipa_icon.png" width="13" height="18" border="0" alt=""></a>';
+								
+								testFlightupload = '<td class="list_img" name="UploadBuildtd"><a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Upload"><img build="uploadBuild" name="upload_'+current.buildNo+'" src="themes/default/images/Phresco/testflight_icon.png" width="15" height="18" border="0" alt=""></a><div id="upload_'+current.buildNo+'" name="testFlightUploadDiv" class="dyn_popup deleteproj_msg"><div><div><font class="testflight">Api Token<sup>*</sup></font><input id="apiToken" type="text" maxlength="253" value="" name="ApiToken" showhide="true" parametertype="String"><input id="apiToken" type="hidden"  name="fileName"></div><div><font class="testflight">Team Token<sup>*</sup></font><input id="teamToken" type="text" maxlength="253" value="" name="teamToken" showhide="true" parametertype="String"></div><div><font class="testflight">Notes<sup>*</sup></font><input id="notes" type="text" maxlength="253" value="" name="notes" showhide="true" parametertype="String"></div><div><font class="testflight">Notify</font><input id="notify" type="text" maxlength="253" value="" name="notify" showhide="true" parametertype="String"></div><div><font class="testflight">Distribution Lists</font><input id="distributionLists" type="text" maxlength="253" value="" name="distributionLists" showhide="true" parametertype="String"></div><div class="testflight_btn"><input type="button" name="uploadTestFlight" fileExtn="ipa" buildNo='+current.buildNo+' data-i18n="[value]build.label.upload" class="btn btn_style" /><input type="button" data-i18n="[value]build.label.close" class="btn btn_style dyn_popup_close" /></div></div></div></td>'
 							}
 
 							deviceDeploy = '<div id="deploye_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none;"><div id="bdeploy_'+ current.buildNo +'"><form name="deployForm"><ul class="row dynamicControls"></ul><div class="hiddenControls"></div></form><div class="flt_right"><input type="button" name="deploy" data-i18n="[value]build.label.deploy" class="btn btn_style dyn_popup_close"><input type="button" data-i18n="[value]build.label.close" class="btn btn_style dyn_popup_close"></div></div></div>';
@@ -270,7 +277,7 @@ define(["build/listener/buildListener"], function() {
 								deleteOpt ='<img src="themes/default/images/Phresco/delete_row_off.png" width="14" height="18" border="0" alt="">';
 							}
 						
-							tbody += '<tr><td name="'+ current.buildNo +'">'+ current.buildNo +'</td><td>'+ current.timeStamp +'</td><td class="list_img"><a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Download"><img name="downloadBuild" src="themes/default/images/Phresco/download_icon.png" width="15" height="18" border="0" alt=""></a>'+ cancreateIpa +'</td><td name="prcBuild" class="list_img"><a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Process build"><img name="procBuild" src="themes/default/images/Phresco/download_icon.png" width="15" height="18" border="0" alt=""></a><div id="prcBuild_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none; width:30%;"><div id="prcBuild_'+ current.buildNo +'"><form name="prcBForm"><ul class="row dynamicControls"></ul><div class="hiddenControls"></div></form><div class="flt_right"><input class="btn btn_style" type="button" name="processBuild" data-i18n="[value]common.btn.ok"><input class="btn btn_style dyn_popup_close" type="button"  data-i18n="[value]common.btn.close"></div></div></div></td><td name="buildDep" class="list_img">'+ manageBuilds +'</td><td class="list_img">'+ deleteOpt +'</td></tr>';
+							tbody += '<tr><td name="'+ current.buildNo +'">'+ current.buildNo +'</td><td>'+ current.timeStamp +'</td><td class="list_img"><a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Download"><img name="downloadBuild" src="themes/default/images/Phresco/download_icon.png" width="15" height="18" border="0" alt=""></a>'+ cancreateIpa +'</td><td name="prcBuild" class="list_img"><a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Process build"><img name="procBuild" src="themes/default/images/Phresco/download_icon.png" width="15" height="18" border="0" alt=""></a><div id="prcBuild_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none; width:30%;"><div id="prcBuild_'+ current.buildNo +'"><form name="prcBForm"><ul class="row dynamicControls"></ul><div class="hiddenControls"></div></form><div class="flt_right"><input class="btn btn_style" type="button" name="processBuild" data-i18n="[value]common.btn.ok"><input class="btn btn_style dyn_popup_close" type="button"  data-i18n="[value]common.btn.close"></div></div></div></td><td name="buildDep" class="list_img">'+ manageBuilds +'</td><td class="list_img">'+ deleteOpt +'</td>'+testFlightupload+'</tr>';
 						});
 						
 						$("#buildRow tbody").html(tbody);
@@ -375,6 +382,37 @@ define(["build/listener/buildListener"], function() {
 				self.onDownloadEvent.dispatch($(this).parent().parent().siblings(":first").text(), 'download', function(response){});
 			});
 			
+			//Build upload click event
+			$("img[build=uploadBuild]").unbind('click');
+			$("img[build=uploadBuild]").click(function(){
+				self.opencc(this, $(this).attr('name'), '', 50);
+				$('#apiToken').val('');
+				$('#teamToken').val('');
+				$('#notes').val('');
+				$('#notify').val('');
+				$('#distributionLists').val('');
+			});
+
+			//Upload Button click event
+			$("input[name=uploadTestFlight]").unbind('click');
+			$("input[name=uploadTestFlight]").click(function(){
+				var buildInfo = {};
+				buildInfo.buildNo = $(this).attr('buildNo');
+				buildInfo.fileExtn = $(this).attr('fileExtn');
+				var testFlightObj = {};
+				testFlightObj.apiToken = $('#apiToken').val();
+				testFlightObj.teamToken = $('#teamToken').val();
+				testFlightObj.notes = $('#notes').val();
+				testFlightObj.notify = $('#notify').val();
+				testFlightObj.distributionLists = $('#distributionLists').val();
+				if (self.testFlightValidation()) {
+					self.buildListener.getInfo(self.buildListener.getRequestHeader(JSON.stringify(testFlightObj), buildInfo, 'upload'), function(response){
+						$('div[ name=testFlightUploadDiv]').hide();
+					});
+				}
+				
+			});
+			
 			//build delete click event
 			$('input[name=buildDelete]').unbind('click');
 			$('input[name=buildDelete]').click(function(){
@@ -454,6 +492,40 @@ define(["build/listener/buildListener"], function() {
 			
 			//Show tool tip
 			$(".tooltiptop").tooltip();
+		},
+		
+		testFlightValidation :function() {
+			var self=this, bCheck = true;
+			var apiToken = $('#apiToken').val();
+			var teamToken = $('#teamToken').val();
+			var notes = $('#notes').val();
+			if(apiToken === undefined || apiToken === null || $.trim(apiToken) === ""){
+				bCheck = false;
+				self.validationMessage($('#apiToken'));
+				return bCheck;
+			} else if(teamToken === undefined || teamToken === null || $.trim(teamToken) === ""){
+				bCheck = false;
+				self.validationMessage($('#teamToken'));
+				return bCheck;
+			} else if(notes === undefined || notes === null || $.trim(notes) === ""){
+				bCheck = false;
+				self.validationMessage($('#notes'));
+				return bCheck;
+			} else {
+				bCheck = true;
+			}
+			return bCheck;
+		},
+		
+		validationMessage : function(id) {
+			var self=this;
+			$(id).attr('placeholder','Enter the Value');
+			$(id).addClass("errormessage");
+			$(id).focus();
+			$(id).val('');
+			$(id).bind('keypress', function() {
+				$(this).removeClass("errormessage");
+			});
 		},
 		
 		miniferClickEvents : function(){

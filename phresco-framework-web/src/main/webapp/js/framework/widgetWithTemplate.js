@@ -22,6 +22,8 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			showingDatePicker : false,
 
 			renderFnc : null,
+
+			rootElementsPath : null,
 			
 			doMore: function(element) {}, 
 			
@@ -1197,12 +1199,19 @@ define(["framework/widget", "framework/templateProvider"], function() {
 
 			},
 			
-			fileTree : function (retValue, callback) {
+			fileTree : function (retValue, showChkBox, csvAvailableValue, callback) {
 				var self=this;
-				//var strTree = $('<div></div>');
 				var rootItem = $(retValue).contents().children().children();
-				self.getList(rootItem, function(returnValue){
-					//var tree = $(strTree).append(returnValue);	
+				var availableValues = [];
+				if (!self.isBlank(csvAvailableValue)) {
+					availableValues = csvAvailableValue.split(',');
+				}
+				self.rootElementsPath = [];
+				$(rootItem).each(function(index, value) {
+					var path = $(value).attr('path');
+					self.rootElementsPath.push(path);
+				});
+				self.getList(rootItem, showChkBox, availableValues, function(returnValue){
 					callback('<div>'+ returnValue +'</div>');
 				});
 			},
@@ -1250,22 +1259,34 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				return header;
 			}, 
 
-			getList : function(ItemList, callback) {
+			getList : function(ItemList, showChkBox, availableValues, callback) {
 				var self=this, strUl = "", strRoot ="", strItems ="", strCollection = "";
 				$(ItemList).each(function(index, value){
+					var showClass = "hideContent";
+					if (showChkBox) {
+						showClass = "";
+					}
+					var path = $(value).attr('path');
+					var hasParent = "true";
+					if ($.inArray(path, self.rootElementsPath) >= 0) {
+						hasParent = "false";
+					}
+					var checkedStr = "";
+					if (availableValues.length > 0 && $.inArray(path, availableValues) >= 0) {
+						checkedStr = "checked";
+					}
 					if($(value).children().length > 0) {
 						strRoot = $(value).attr('name');
-						self.getList($(value).children(),function(callback) {
+						self.getList($(value).children(), showChkBox, availableValues, function(callback) {
 							strCollection = callback;
 						});
-						strItems += '<li value='+$(value).attr('path').replace(/\s/g,"+")+'><span class="folder"><a>' + strRoot + '</a></span>' + strCollection +'</li>';
+						strItems += '<li value='+$(value).attr('path').replace(/\s/g,"+")+'><span class="folder"><input class="'+showClass+'" hasParent="'+hasParent+'" type="checkbox" hasChildren="true" name="folder" value="'+path+'" '+checkedStr+'/><a>' + strRoot + '</a></span>' + strCollection +'</li>';
 					} else { 
-						
-						strItems += '<li value='+$(value).attr('path').replace(/\s/g,"+")+'><span class="file"><a>' + $(value).attr('name') + '</a></span></li>';
+						strItems += '<li value='+$(value).attr('path').replace(/\s/g,"+")+'><span class="file"><input class="'+showClass+'" hasParent="'+hasParent+'" type="checkbox" name="folder" value="'+path+'" '+checkedStr+'/><a>' + $(value).attr('name') + '</a></span></li>';
 					}
 				});
 				
-				strUl = '<ul >' + strItems + '</ul>';
+				strUl = '<ul class="group">' + strItems + '</ul>';
 				callback(strUl); 
 			},
 			

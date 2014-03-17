@@ -73,6 +73,11 @@
 							<th width="15%" name="prcBuild"><div class="th-inner" data-i18n="build.label.processBuild"></div></th>
 							<th width="15%" name="buildDep"><div class="th-inner" data-i18n="build.label.deploy"></div></th>
 							<th width="15%"><div class="th-inner" data-i18n="build.label.delete"></div></th>
+							{{#each buildInfos}}
+								{{#if options.canCreateIpa}}
+									<th width="15%" name="uploadBuildHeader"><div class="th-inner" data-i18n="build.label.upload"></div></th>
+								{{/if}}
+							{{/each}}
 						</tr>    
 					</thead>  
 					<tbody> 
@@ -148,6 +153,27 @@
 										<img src="themes/default/images/Phresco/delete_row_off.png" width="14" height="18" border="0" alt="">
 									{{/if}}
 								</td>
+								{{#if options.canCreateIpa}}
+								<td class="list_img" name="UploadBuildtd">
+									<a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Upload">
+										<img build="uploadBuild" name="upload_{{buildNo}}" src="themes/default/images/Phresco/testflight_icon.png" width="15" height="18" border="0" alt="">
+									</a>
+									<div id="upload_{{buildNo}}" name="testFlightUploadDiv" class="dyn_popup deleteproj_msg">
+											<div>
+												<div><font class="testflight">Api Token<sup>*</sup></font><input id="apiToken" type="text" maxlength="253" value="" name="ApiToken" showhide="true" parametertype="String">
+												<input type="hidden" value="{{buildName}}" name="fileName"></div>
+												<div><font class="testflight">Team Token<sup>*</sup></font><input id="teamToken" type="text" maxlength="253" value="" name="teamToken" showhide="true" parametertype="String"></div>
+												<div><font class="testflight">Notes<sup>*</sup></font><input id="notes" type="text" maxlength="253" value="" name="notes" showhide="true" parametertype="String"></div>
+												<div><font class="testflight">Notify</font><input id="notify" type="text" maxlength="253" value="" name="notify" showhide="true" parametertype="String"></div>	
+												<div><font class="testflight">Distribution Lists</font><input id="distributionLists" type="text" maxlength="253" value="" name="distributionLists" showhide="true" parametertype="String"></div>
+												<div class="testflight_btn">
+													<input type="button" name="uploadTestFlight" fileExtn="ipa" buildNo={{buildNo}} data-i18n="[value]build.label.upload" class="btn btn_style" />
+													<input type="button" data-i18n="[value]build.label.close" class="btn btn_style dyn_popup_close" />
+												</div>
+											</div>
+										</div>									
+								</td>
+								{{/if}}
 							</tr>
 						{{/each}}
 					</tbody>  

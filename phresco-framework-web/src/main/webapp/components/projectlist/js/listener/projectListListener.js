@@ -349,6 +349,7 @@ define([], function() {
 				srcRepoDetail.password = $("#pwd_"+dynid).val();
 				srcRepoDetail.commitMessage = $("#repomessage_"+dynid).val();
 				srcRepoDetail.passPhrase = $("#repoPhrase_"+dynid).val();
+				srcRepoDetail.serverPath = $("#addTfsServerPath_"+dynid).val();
 				repoInfo.srcRepoDetail = srcRepoDetail;
 				
 				if ($("#splitDotPhresco_"+dynid).is(":checked")) {
@@ -358,6 +359,7 @@ define([], function() {
 					phrescoRepoDetail.password = $("#phrescopwd_"+dynid).val();
 					phrescoRepoDetail.commitMessage = $("#phrescorepomessage_"+dynid).val();
 					phrescoRepoDetail.passPhrase = $("#phrescorepoPhrase_"+dynid).val();
+					phrescoRepoDetail.serverPath = $("#addPhrTfsServerPath_"+dynid).val();
 					repoInfo.phrescoRepoDetail = phrescoRepoDetail;
 				}
 				
@@ -368,6 +370,7 @@ define([], function() {
 					testRepoDetail.password = $("#testpwd_"+dynid).val();
 					testRepoDetail.commitMessage = $("#testrepomessage_"+dynid).val();
 					testRepoDetail.passPhrase = $("#testrepoPhrase_"+dynid).val();
+					testRepoDetail.serverPath = $("#addTestTfsServerPath_"+dynid).val();
 					repoInfo.testRepoDetail = testRepoDetail;
 				}
 				repoInfo.splitPhresco = $("#splitDotPhresco_"+dynid).is(":checked");
@@ -394,7 +397,6 @@ define([], function() {
 			var commitdata = {}, action;
 			if (!self.validateCommitData(dynid)) {
 				self.showBtnLoading("button[name='commitbtn'][id='"+dynid+"']");
-				
 				var repoInfo = {};
 				var srcRepoDetail = {};
 				srcRepoDetail.type = $("#commitType_"+dynid).val();
@@ -403,13 +405,17 @@ define([], function() {
 				srcRepoDetail.password = $("#commitPassword"+dynid).val();
 				srcRepoDetail.commitMessage = $("#commitMessage_"+dynid).val();
 				srcRepoDetail.passPhrase = $(".commitPassPhraseval"+dynid).val();
-				var arrayCommitableFiles = [];
+				var arrayCommitableFiles = [], srcTfsAddedFiles = [], srcTfsEditedFiles = [];
 				$.each($('.commitChildChk[dynamicId='+dynid+'][from=src]') , function(index, value) {
-					if ($(this).is(':checked')) {
+					if ("tfs" === srcRepoDetail.type && $(this).is(':checked')) {
+						self.getTFSCommitableFiles($(this), srcTfsAddedFiles, srcTfsEditedFiles);
+					} else if ($(this).is(':checked')) {
 						arrayCommitableFiles.push($(this).val());
 					}
 				});
 				srcRepoDetail.commitableFiles = arrayCommitableFiles;
+				srcRepoDetail.tfsAddedFiles = srcTfsAddedFiles;
+				srcRepoDetail.tfsEditedFiles = srcTfsEditedFiles;
 				repoInfo.srcRepoDetail = srcRepoDetail;
 				
 				var phrescoRepoDetail = {};
@@ -420,13 +426,17 @@ define([], function() {
 					phrescoRepoDetail.password = $("#phrCommitPassword"+dynid).val();
 					phrescoRepoDetail.commitMessage = $("#phrCommitMessage_"+dynid).val();
 					phrescoRepoDetail.passPhrase = $(".phrCommitPassPhraseval"+dynid).val();
-					var phrCommitableFiles = [];
+					var phrCommitableFiles = [], phrTfsAddedFiles = [], phrTfsEditedFiles = [];
 					$.each($('.commitChildChk[dynamicId='+dynid+'][from=phr]') , function(index, value) {
-						if ($(this).is(':checked')) {
+						if ("tfs" === phrescoRepoDetail.type && $(this).is(':checked')) {
+							self.getTFSCommitableFiles($(this), phrTfsAddedFiles, phrTfsEditedFiles);
+						} else if ($(this).is(':checked')) {
 							phrCommitableFiles.push($(this).val());
 						}
 					});
 					phrescoRepoDetail.commitableFiles = phrCommitableFiles;
+					phrescoRepoDetail.tfsAddedFiles = phrTfsAddedFiles;
+					phrescoRepoDetail.tfsEditedFiles = phrTfsEditedFiles;
 					repoInfo.phrescoRepoDetail = phrescoRepoDetail;
 				}
 				
@@ -438,13 +448,17 @@ define([], function() {
 					testRepoDetail.password = $("#testCommitPassword"+dynid).val();
 					testRepoDetail.commitMessage = $("#testCommitMessage_"+dynid).val();
 					testRepoDetail.passPhrase = $(".testCommitPassPhraseval"+dynid).val();
-					var testCommitableFiles = [];
+					var testCommitableFiles = [], testTfsAddedFiles = [], testTfsEditedFiles = [];
 					$.each($('.commitChildChk[dynamicId='+dynid+'][from=test]') , function(index, value) {
-						if ($(this).is(':checked')) {
+						if ("tfs" === testRepoDetail.type && $(this).is(':checked')) {
+							self.getTFSCommitableFiles($(this), testTfsAddedFiles, testTfsEditedFiles);
+						} else if ($(this).is(':checked')) {
 							testCommitableFiles.push($(this).val());
 						}
 					});
 					testRepoDetail.commitableFiles = testCommitableFiles;
+					testRepoDetail.tfsAddedFiles = testTfsAddedFiles;
+					testRepoDetail.tfsEditedFiles = testTfsEditedFiles;
 					repoInfo.testRepoDetail = testRepoDetail;
 				}
 				repoInfo.splitPhresco = $("#commitDotPhresco_"+dynid).is(":checked");
@@ -464,6 +478,15 @@ define([], function() {
 			}
 		},
 		
+		getTFSCommitableFiles : function(checkboxObj, tfsAddedFiles, tfsEditedFiles) {
+			if ("add" === $(checkboxObj).attr("tfs")) {
+				tfsAddedFiles.push($(checkboxObj).val());
+				tfsEditedFiles.push($(checkboxObj).val());
+			} else if ("edit" === $(checkboxObj).attr("tfs")) {
+				tfsEditedFiles.push($(checkboxObj).val());
+			}
+		},
+
 		checkForDependents : function(subModuleName, rootModule, callback) {
 			var self = this, moduleData = {};
 			moduleData.subModuleName = subModuleName;
@@ -546,7 +569,7 @@ define([], function() {
 						}
 					});
 					
-					if (srcRepoDetail.repoInfoFile !== undefined && srcRepoDetail.repoInfoFile !== null && srcRepoDetail.repoInfoFile.length > 0) {
+					if ((srcRepoDetail.repoInfoFile !== undefined && srcRepoDetail.repoInfoFile !== null && srcRepoDetail.repoInfoFile.length > 0) || "tfs" === srcRepoDetail.type) {
 						$('.srcCommitableFiles').show();
 						self.constructCommitableFiles(dynamicId, srcRepoDetail, $('.commitable_files_'+dynamicId), "src");
 						self.checkBoxEvent($('.commitParentChk[dynamicId='+dynamicId+']'), 'commitChildChk[dynamicId='+dynamicId+'][from=src]', $('input[name=commitbtn][id='+dynamicId+']'));
@@ -563,7 +586,7 @@ define([], function() {
 							}
 						});
 						
-						if (phrescoRepoDetail.repoInfoFile !== undefined && phrescoRepoDetail.repoInfoFile !== null && phrescoRepoDetail.repoInfoFile.length > 0) {
+						if ((phrescoRepoDetail.repoInfoFile !== undefined && phrescoRepoDetail.repoInfoFile !== null && phrescoRepoDetail.repoInfoFile.length > 0) || "tfs" === phrescoRepoDetail.type) {
 							$('.phrCommitableFiles').show();
 							self.constructCommitableFiles(dynamicId, phrescoRepoDetail, $('.phrCommitable_files_'+dynamicId), "phr");
 							self.checkBoxEvent($('.phrCommitParentChk[dynamicId='+dynamicId+']'), 'commitChildChk[dynamicId='+dynamicId+'][from=phr]', $('input[name=commitbtn][id='+dynamicId+']'));
@@ -580,7 +603,7 @@ define([], function() {
 							}
 						});
 						
-						if (testRepoDetail.repoInfoFile !== undefined && testRepoDetail.repoInfoFile !== null && testRepoDetail.repoInfoFile.length > 0) {
+						if ((testRepoDetail.repoInfoFile !== undefined && testRepoDetail.repoInfoFile !== null && testRepoDetail.repoInfoFile.length > 0) || "tfs" === testRepoDetail.type) {
 							$('.testCommitableFiles').show();
 							self.constructCommitableFiles(dynamicId, testRepoDetail, $('.testCommitable_files_'+dynamicId), "test");
 							self.checkBoxEvent($('.tesCommitParentChk[dynamicId='+dynamicId+']'), 'commitChildChk[dynamicId='+dynamicId+'][from=test]', $('input[name=commitbtn][id='+dynamicId+']'));
@@ -595,14 +618,38 @@ define([], function() {
 		constructCommitableFiles : function(dynamicId, repoDetail, tbodyObj, from) {
 			var self = this;
 			var commitableFiles = '';
-			$.each(repoDetail.repoInfoFile, function(index, value) {
-				commitableFiles += '<tr><td style="vertical-align: top;"><input checkVal="check" dynamicId="'+ dynamicId +'" class="commitChildChk" from="'+from+'" type="checkbox" value="' + value.commitFilePath + '"></td>';
-				commitableFiles += '<td style="width:280px !important;" title="'+ value.commitFilePath +'">"' + value.commitFilePath + '"</td>';
-				commitableFiles += '<td style="vertical-align: top;text-align: center;">"' + value.status + '"</td></tr>';
-			});
-			tbodyObj.html(commitableFiles);
+			if ("tfs" === repoDetail.type) { 
+				self.constructTFSCommitableFiles(dynamicId, repoDetail, tbodyObj, from);
+			}  else {
+				$.each(repoDetail.repoInfoFile, function(index, value) {
+					commitableFiles += '<tr><td style="vertical-align: top;"><input checkVal="check" dynamicId="'+ dynamicId +'" class="commitChildChk" from="'+from+'" type="checkbox" value="' + value.commitFilePath + '"></td>';
+					commitableFiles += '<td style="width:280px !important;" title="'+ value.commitFilePath +'">"' + value.commitFilePath + '"</td>';
+					commitableFiles += '<td style="vertical-align: top;text-align: center;">"' + value.status + '"</td></tr>';
+				});
+				tbodyObj.html(commitableFiles);
+			}
 		},
-		
+
+		constructTFSCommitableFiles : function (dynamicId, repoDetail, tbodyObj, from) {
+			var self = this;
+			var commitableFiles = '';
+			if (repoDetail.tfsAddedFiles !== null && repoDetail.tfsAddedFiles !== undefined && repoDetail.tfsAddedFiles.length > 0) {
+				$.each(repoDetail.tfsAddedFiles, function(index, addedFile) {
+					commitableFiles += '<tr><td style="vertical-align: top;"><input checkVal="check" tfs="add" dynamicId="'+ dynamicId +'" class="commitChildChk" from="'+from+'" type="checkbox" value="' + addedFile + '"></td>';
+					commitableFiles += '<td style="width:280px !important;" title="'+ addedFile +'">"' + addedFile + '"</td>';
+					commitableFiles += '<td style="vertical-align: top;text-align: center;"> ? </td></tr>';
+				});
+			} 
+			if (repoDetail.tfsEditedFiles !== null && repoDetail.tfsEditedFiles !== undefined && repoDetail.tfsEditedFiles.length > 0) {
+				$.each(repoDetail.tfsEditedFiles, function(index, editedFile) {
+					commitableFiles += '<tr><td style="vertical-align: top;"><input checkVal="check" tfs="edit" dynamicId="'+ dynamicId +'" class="commitChildChk" from="'+from+'" type="checkbox" value="' + editedFile + '"></td>';
+					commitableFiles += '<td style="width:280px !important;" title="'+ editedFile +'">"' + editedFile + '"</td>';
+					commitableFiles += '<td style="vertical-align: top;text-align: center;"> M </td></tr>';
+				});
+			} 
+			tbodyObj.html(commitableFiles);
+		}, 
+
 		getUpdatableFiles : function(data, obj) {
 			var self = this;
 			var dynamicId = data.dynamicId;
@@ -872,7 +919,7 @@ define([], function() {
 			repoDetail.type = repoType;
 			repoDetail.repoUrl = $("#updateRepourl"+dynid).val();
 			
-			if ('svn' === repoType) {
+			if ('svn' === repoType || 'tfs' === repoType) {
 				repoDetail.userName = $("#updateUserName"+dynid).val();
 				repoDetail.password = $("#updatePassword"+dynid).val();
 				repoDetail.revision = revision;
@@ -902,7 +949,7 @@ define([], function() {
 			repoDetail.type = repoType;
 			repoDetail.repoUrl = $("#updatePhrescoRepourl"+dynid).val();
 			
-			if ('svn' === repoType) {
+			if ('svn' === repoType || 'tfs' === repoType) {
 				repoDetail.userName = $("#updatePhrescoUserName"+dynid).val();
 				repoDetail.password = $("#updatePhrescoPassword"+dynid).val();
 				repoDetail.revision = revision;
@@ -932,7 +979,7 @@ define([], function() {
 			repoDetail.type = repoType;
 			repoDetail.repoUrl = $("#updateTestRepourl"+dynid).val();
 			
-			if ('svn' === repoType) {
+			if ('svn' === repoType || 'tfs' === repoType) {
 				repoDetail.userName = $("#updateTestUserName"+dynid).val();
 				repoDetail.password = $("#updateTestPassword"+dynid).val();
 				repoDetail.revision = revision;
@@ -1134,13 +1181,34 @@ define([], function() {
 				$(".updateImportCredential"+dynamicId).hide();
 				$(".updateBitkeeperdata"+dynamicId).show();
 			}
+			if (repoType === "tfs") {
+				$(".updateSvndata"+dynamicId).hide();
+				$(".updateGitdata"+dynamicId).hide();
+				$(".updatePerforcedata"+dynamicId).hide();
+				$(".updateImportCredential"+dynamicId).hide();
+				$(".updateBitkeeperdata"+dynamicId).hide();
+				$(".updateImportCredential").hide();
+				$(".updateTfsdata"+dynamicId).show();
+				$("#updateUserName"+dynamicId).removeAttr("readonly").val("");
+				$("#updatePassword"+dynamicId).removeAttr("readonly").val("");
+				$("#updatePhrescoUserName"+dynamicId).removeAttr("readonly").val("");
+				$("#updatePhrescoPassword"+dynamicId).removeAttr("readonly").val("");
+				$("#updateTestUserName"+dynamicId).removeAttr("readonly").val("");
+				$("#updateTestPassword"+dynamicId).removeAttr("readonly").val("");
+			}
 		},
 		
 		showHideCommitAppCtrls : function(repoType, dynamicId) {
+			$(".commitTfsdata"+dynamicId).hide();
+			$(".search").show();
 			if (repoType === "git") {
 				$(".commitGitdata"+dynamicId).show();
 			}
-			if (repoType === "svn" || repoType === "bitkeeper") {
+			if (repoType === "tfs") {
+				$(".commitTfsdata"+dynamicId).show();
+				$(".search").hide();
+			}
+			if (repoType === "svn" || repoType === "bitkeeper" || repoType === "tfs") {
 				$(".commitGitdata"+dynamicId).hide();
 			}
 		},

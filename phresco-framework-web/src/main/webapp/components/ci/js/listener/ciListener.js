@@ -733,7 +733,7 @@ define([], function() {
 			var self = this;
 			var operation = $("select[name=type]").val();
 			$("select[name=features]").selectpicker('deselectAll');
-			if (operation === 'build' || operation === 'pdfReport') {
+			if (operation === 'build' || operation === 'pdfReport' || operation === 'deviceBuild') {
 				$("#upload").removeAttr("disabled");
 			} else {
 				$("#upload").attr("disabled", "disabled");
@@ -1180,6 +1180,8 @@ define([], function() {
 				commonVariables.goal = commonVariables.codeValidateGoal;
 			} else if ("build" === operation) {
 				commonVariables.goal = commonVariables.packageGoal;
+			} else if("deviceBuild" === operation) {
+				commonVariables.goal = "device-build";
 			} else if ("deploy" === operation) {
 				commonVariables.goal = commonVariables.deployGoal;
 			} else if ("unittest" === operation) {
@@ -1201,6 +1203,9 @@ define([], function() {
 			}
 
 			commonVariables.phase = commonVariables.ciPhase + commonVariables.goal; // ci phase
+			if("deviceBuild" === operation) {
+				commonVariables.phase = commonVariables.ciPhase + commonVariables.packageGoal;
+			}
 			commonVariables.appDirName = appDirName;
 			commonVariables.moduleName = moduleName;
 			
@@ -1229,6 +1234,14 @@ define([], function() {
 						
 						if (!self.isBlank(jobJsonData.testUrl)) {
 							$('#urlTest').prop('checked', true);
+						}
+						
+						if (!self.isBlank(jobJsonData.osxKeychainBuild)) {
+							$('#osxKeychainBuild').prop('checked', true);
+						}
+						
+						if (!self.isBlank(jobJsonData.buildIpa)) {
+							$('#buildIpa').prop('checked', true);
 						}
 						
 						$('input[name=jobName]').val(jobJsonData.jobName);
@@ -1829,7 +1842,7 @@ define([], function() {
 				}
  
 				// append the configureJob json (jobJson) in  job template name id
-				var jobConfiguration = $('#jonConfiguration :input[name!=targetFolder][name!=selectedFileOrFolder]').serializeObject();
+				var jobConfiguration = $('#jonConfiguration :input[name!=targetFolder][name!=selectedFileOrFolder][name!=folder]').serializeObject();
 				if(!self.isBlank(templateJsonData.module)) {
 					jobConfiguration.module = templateJsonData.module;
 				}

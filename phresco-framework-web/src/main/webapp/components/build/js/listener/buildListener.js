@@ -34,6 +34,9 @@ define([], function() {
 					function(response) {
 						if (response !== null && (response.status !== "error" || response.status !== "failure")) {
 							callback(response);
+							if(response.responseCode === "PHRU000001") {
+								commonVariables.api.showError(response.responseCode ,"success", true);
+							}
 						} else {commonVariables.api.showError(response.responseCode ,"error", true);}
 					},
 
@@ -133,6 +136,9 @@ define([], function() {
 			} else if (action === "logContent") {
 				method = "GET";
 				url = 'buildinfo/logContent?status=' + buildInfo + '&appDirName=' + appdirName+moduleParam;
+			} else if (action === "upload") {
+				method = "POST";
+				url = 'uploadBuild/uploadToTestFlight?moduleName=&appDirName='+ appdirName +'&buildNumber='+ buildInfo.buildNo +'&&fileExtn='+buildInfo.fileExtn;
 			}
 			
 			header = {

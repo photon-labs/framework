@@ -38,7 +38,7 @@ public interface SCMManager {
 	 * @throws Exception 
 	 
 	 */
-	ProjectInfo importProject(RepoInfo repodetail, String displayName, String uniqueKey) throws Exception ;
+	void importProject(ApplicationInfo applicationInfo, RepoInfo repodetail, String displayName, String uniqueKey) throws Exception ;
 	
 	/**
 	 * 

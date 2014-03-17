@@ -62,6 +62,35 @@ public class BuildInfoTest extends RestBaseTest {
 		assertEquals("STARTED", entity.getStatus());
 	}
 	
+//	@Test
+	public void generateBuild1() throws PhrescoException {
+		String osType = System.getProperty("os.name");
+		if (!isMac(osType)) {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setParameter("buildName", "");
+		request.setParameter("projectType", "xcode");
+		request.setParameter("buildNumber", "");
+		request.setParameter("environmentName", "Production");
+		request.setParameter("sdk", "iphoneos7.0");
+		request.setParameter("target", "Phresco");
+		request.setParameter("mode", "Debug");
+		request.setParameter("plistFile", "Phresco/phresco-env-config.xml");
+		request.setParameter("logs", "showErrors");
+		request.setParameter("displayName", "Admin");
+		request.setParameter("customerId", "photon");
+		request.setParameter("appId", "TestIphoneProject");
+		request.setParameter("projectId", "TestIphoneProject");
+		request.setParameter("username", "admin");
+		request.setParameter("appDirName", "TestIphoneProject");
+	
+		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+		Response build = actionservice.build(httpServletRequest);
+		ActionResponse entity = (ActionResponse) build.getEntity();
+		uniqueKey = entity.getUniquekey();
+		assertEquals("STARTED", entity.getStatus());
+		}
+	}
+	
 	@Test
 	public void readBuildLog() throws PhrescoException {
 		assertEquals(true, readLog());
@@ -381,4 +410,9 @@ private ProjectInfo iphoneProjectInfo() {
 		
 		return projectInfo;
 	}
+
+	public static boolean isMac(String os) {
+		return (os.indexOf("Mac") >= 0) ||(os.indexOf("mac") >= 0)  ;
+	}
+
 }

@@ -174,11 +174,109 @@
 	 	  	 <artifactId>wink-json4j</artifactId>
           	 <version>1.4</version>
 		</dependency>
+		<!--  TFS dependencies starts-->
 		<dependency>
-		    <groupId>com.tfs</groupId>
-	 	  	<artifactId>tfssdk</artifactId>
-          	<version>1.0</version>
+		  <groupId>com.microsoft.tfs.client</groupId>
+		  <artifactId>clc</artifactId>
+		  <version>1.0</version>
 		</dependency>
+		
+		<dependency>
+		  <groupId>com.microsoft.tfs.client</groupId>
+		  <artifactId>common</artifactId>
+		  <version>1.0</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.microsoft.tfs</groupId>
+		  <artifactId>core</artifactId>
+		  <version>1.0</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.microsoft.tfs</groupId>
+		  <artifactId>util</artifactId>
+		  <version>1.0</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.microsoft.tfs.checkinpolicies</groupId>
+		  <artifactId>build</artifactId>
+		  <version>1.0</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.microsoft.tfs.checkinpolicies</groupId>
+		  <artifactId>checkforcomments</artifactId>
+		  <version>1.0</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.microsoft.tfs.checkinpolicies</groupId>
+		  <artifactId>forbiddenpatterns</artifactId>
+		  <version>1.0</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.microsoft.tfs.checkinpolicies</groupId>
+		  <artifactId>workitempolicy</artifactId>
+		  <version>1.0</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.microsoft.tfs.checkinpolicies</groupId>
+		  <artifactId>workitemquerypolicy</artifactId>
+		  <version>1.0</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.microsoft.tfs.client.clc</groupId>
+		  <artifactId>nl1</artifactId>
+		  <version>1.0</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.microsoft.tfs.client.common</groupId>
+		  <artifactId>pid</artifactId>
+		  <version>1.0</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.microsoft.tfs</groupId>
+		  <artifactId>console</artifactId>
+		  <version>1.0</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.microsoft.tfs.core</groupId>
+		  <artifactId>httpclient</artifactId>
+		  <version>1.0</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.microsoft.tfs.core</groupId>
+		  <artifactId>ws</artifactId>
+		  <version>1.0</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.microsoft.tfs.core.ws</groupId>
+		  <artifactId>runtime</artifactId>
+		  <version>1.0</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.microsoft.tfs</groupId>
+		  <artifactId>jni</artifactId>
+		  <version>1.0</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.microsoft.tfs</groupId>
+		  <artifactId>logging</artifactId>
+		  <version>1.0</version>
+		</dependency>
+		<!--  TFS dependencies ends-->
     </dependencies>
     
     <build>

@@ -78,7 +78,7 @@ define(["build/build"], function(Build) {
 				
 				setTimeout(function() {
 					start();
-					output = $(commonVariables.contentPlaceholder).find("form[name=buildForm] .dyn_popup").attr('id');
+					output = $(commonVariables.contentPlaceholder).find("form[name=buildForm]").parent(".dyn_popup").attr('id');
 					equal("build_genbuild", output, "Build Component Rendered and Run Again Source Status Check Successfully");
 					self.ipaFileDownload(build, self, buildListener); // call delete build event
 				}, 1500);
@@ -116,7 +116,7 @@ define(["build/build"], function(Build) {
 			
 				//mock delete build ajax call 
 				var buildDelete = $.mockjax({
-				  url: commonVariables.webserviceurl + 'buildinfo/deletebuild?customerId=photon&appId=00195d40-60fb-433c-ac1a-2b57251a17da&projectId=fe5478f9-7636-42d0-9093-e0878dd83dfd',
+				  url: commonVariables.webserviceurl + 'buildinfo/deletebuild?appDirName=NativeApp',
 				  type: "DELETE",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -181,7 +181,7 @@ define(["build/build"], function(Build) {
 				
 				//mock generate build ajax call 
 				var genBuild = $.mockjax({
-				  url: commonVariables.webserviceurl + 'app/build?appDirName=HTML&buildName=&buildNumber=&environmentName=Production&logs=showErrors&package-type=war&minify=true&displayName=Kavinraj Mani&customerId=photon&appId=137223b6-8454-4041-b52d-07c110ab57fb&projectId=d6528c06-b2f6-4388-8001-54e7e25d59db&username=kavinraj_m',
+				  url: commonVariables.webserviceurl + 'app/build?buildName=&buildNumber=&environmentName=Production&logs=showErrors&package-type=war&targetFolder=&selectedFileOrFolder=&selectedFiles=&minify=true&displayName=Kavinraj Mani&customerId=photon&appId=137223b6-8454-4041-b52d-07c110ab57fb&projectId=d6528c06-b2f6-4388-8001-54e7e25d59db&username=kavinraj_m&appDirName=HTML',
 				  type: "POST",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -192,7 +192,7 @@ define(["build/build"], function(Build) {
 				});
 				
 				var paramValidation = $.mockjax({
-				  url: commonVariables.webserviceurl + 'util/validation?appDirName=HTML&customerId=photon&phase=package&buildName=&buildNumber=&environmentName=Production&logs=showErrors&package-type=war&minify=true&displayName=Kavinraj Mani',
+				  url: commonVariables.webserviceurl + 'util/validation?appDirName=HTML&customerId=photon&phase=package&buildName=&buildNumber=&environmentName=Production&logs=showErrors&package-type=war&targetFolder=&selectedFileOrFolder=&selectedFiles=&minify=true&displayName=Kavinraj Mani',
 				  type: "GET",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -417,7 +417,7 @@ define(["build/build"], function(Build) {
 				build.loadPage();
 				setTimeout(function() {
 					start();
-					output = $(commonVariables.contentPlaceholder).find("form[name=buildForm] .dyn_popup").attr('id');
+					output = $(commonVariables.contentPlaceholder).find("form[name=buildForm]").parent(".dyn_popup").attr('id');
 					equal("build_genbuild", output, "Build Component Rendered and Run Again Source Status Check Successfully");
 					self.rasPopup(build, self, buildListener); 
 				}, 1500);
@@ -501,7 +501,7 @@ define(["build/build"], function(Build) {
 				//mock RAS run ajax call 
 				var RASPopUp = $.mockjax({
 
-				  url: commonVariables.webserviceurl + 'app/runAgainstSource?appDirName=node&environmentName=Production&executeSql=true&dataBase=mysql&fetchSql={}&displayName=Kavinraj Mani&customerId=photon&appId=f1aed01f-f4fb-44da-8ae5-e3a74b60e88c&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&username=kavinraj_m',
+				  url: commonVariables.webserviceurl + 'app/runAgainstSource?environmentName=Production&executeSql=true&dataBase=mysql&fetchSql={}&displayName=Kavinraj Mani&customerId=photon&appId=f1aed01f-f4fb-44da-8ae5-e3a74b60e88c&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&username=kavinraj_m&appDirName=node',
 				  type: "POST",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -550,7 +550,7 @@ define(["build/build"], function(Build) {
 				//mock RAS restart ajax call 
 				var RASPopUp = $.mockjax({
 
-				  url: commonVariables.webserviceurl + 'app/restartServer?appDirName=node&customerId=photon&appId=f1aed01f-f4fb-44da-8ae5-e3a74b60e88c&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&username=kavinraj_m',
+				  url: commonVariables.webserviceurl + 'app/restartServer?customerId=photon&appId=f1aed01f-f4fb-44da-8ae5-e3a74b60e88c&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&username=kavinraj_m&appDirName=node',
 				  type: "POST",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -599,7 +599,7 @@ define(["build/build"], function(Build) {
 				//mock RAS restart ajax call 
 				var RASPopUp = $.mockjax({
 
-				  url: commonVariables.webserviceurl + 'app/stopServer?appDirName=node&customerId=photon&appId=f1aed01f-f4fb-44da-8ae5-e3a74b60e88c&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&username=kavinraj_m',
+				  url: commonVariables.webserviceurl + 'app/stopServer?customerId=photon&appId=f1aed01f-f4fb-44da-8ae5-e3a74b60e88c&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&username=kavinraj_m&appDirName=node',
 				  type: "POST",
 				  dataType: "json",
 				  contentType: "application/json",

@@ -2746,6 +2746,26 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 		}
 	}
 	
+	/**
+	 * Gets the repo type.
+	 *
+	 * @param repoUrl the repo url
+	 * @return the repo type
+	 */
+	public static String getRepoType(String repoUrl) {
+		String repoType = "";
+		if (repoUrl.startsWith("bk")) {
+			repoType = BITKEEPER;
+		} else if (repoUrl.endsWith(".git") || repoUrl.contains("gerrit") || repoUrl.startsWith("ssh")) {
+			repoType = GIT;
+		} else if (repoUrl.contains("svn")) {
+			repoType = SVN;
+		} else if (repoUrl.contains("visualstudio") || repoUrl.contains(TFS)) {
+			repoType = TFS;
+		}
+		return repoType;
+	}
+	
 	private static TrustManager[ ] get_trust_mgr() {
 	     TrustManager[ ] certs = new TrustManager[ ] {
 	        new X509TrustManager() {

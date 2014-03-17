@@ -462,7 +462,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			String jenkinsVersion = getJenkinsVersion();
 			if (confluenceHomeXml.exists()) {
 				SvnProcessor processor = new SvnProcessor(confluenceHomeXml);
-				return processor.readConfluenceXml(jenkinsVersion);
+				return processor.getXml(confluenceHomeXml.getPath());
 			}
 		} catch (Exception e) {
 			if (debugEnabled) {
@@ -486,11 +486,33 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			String jenkinsVersion = getJenkinsVersion();
 			if (testFlightHomeXml.exists()) {
 				SvnProcessor processor = new SvnProcessor(testFlightHomeXml);
-				return processor.readTestFlightXml(jenkinsVersion);
+				return processor.getXml(testFlightHomeXml.getPath());
 			}
 		} catch (Exception e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into the catch block of CIManagerImpl.getTestFlightConfiguration " + e.getLocalizedMessage());
+			}
+			throw new PhrescoException(e);
+		}
+		return null;
+	}
+	
+	public JSONArray getKeyChains() throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method CIManagerImpl.getKeychains()");
+		}
+		try {
+			String jenkinsJobHome = System.getenv(JENKINS_HOME);
+			StringBuilder jenkinsHome = new StringBuilder(jenkinsJobHome);
+			jenkinsHome.append(File.separator);
+			File xcodeHomeXml = new File(jenkinsHome.toString() + CI_XCODE_XML);
+			if (xcodeHomeXml.exists()) {
+				SvnProcessor processor = new SvnProcessor(xcodeHomeXml);
+				return processor.getXml(xcodeHomeXml.getPath());
+			}
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into the catch block of CIManagerImpl.getConfluenceConfiguration " + e.getLocalizedMessage());
 			}
 			throw new PhrescoException(e);
 		}
@@ -951,10 +973,17 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 		if (job.isEnablePostBuildStep()) {
 			String mvnCommand = job.getMvnCommand();
-			List<String> postBuildStepCommands = job.getPostbuildStepCommands(); 
-			for (String postBuildStepCommand : postBuildStepCommands) {
-				processor.enablePostBuildStep(job.getPomLocation(), postBuildStepCommand);
+			if(CollectionUtils.isNotEmpty(job.getPostbuildStepCommands())) {
+				List<String> postBuildStepCommands = job.getPostbuildStepCommands(); 
+				for (String postBuildStepCommand : postBuildStepCommands) {
+					processor.enablePostBuildStep(job.getPomLocation(), postBuildStepCommand);
+				}
 			}
+			
+			if(DEVICE_BUILD.equalsIgnoreCase(job.getOperation())) {
+				processor.enableXcode(job);
+			}
+			
 		}
 		if (job.isEnablePreBuildStep()) {
 			//iterate over loop
@@ -1754,7 +1783,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 	}
 
-	public boolean setGlobalConfiguration(String jenkinsUrl, String submitUrl,	org.json.JSONArray confluenceObj, String emailAddress, String emailPassword, org.json.JSONArray testFlightJSONarray, String tfsUrl) throws PhrescoException {
+	public boolean setGlobalConfiguration(String jenkinsUrl, String submitUrl,	org.json.JSONArray confluenceObj, String emailAddress, String emailPassword, org.json.JSONArray testFlightJSONarray, org.json.JSONArray keyChainJSONarray, String tfsUrl) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.setGlobalConfiguration()");
 		}
@@ -1845,6 +1874,28 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 					nameValuePairs.add(new BasicNameValuePair("tokenPair.tokenPairName", jsonObject.getString("tokenPairName")));
 					nameValuePairs.add(new BasicNameValuePair("tokenPair.apiToken", jsonObject.getString("apiToken")));
 					nameValuePairs.add(new BasicNameValuePair("tokenPair.teamToken", jsonObject.getString("teamToken")));
+			 	}
+			}
+			
+			if(keyChainJSONarray != null) {
+				JSONObject keyChains = new JSONObject();
+				keyChains.put("xcodebuildPath", "/usr/bin/xcodebuild");
+				keyChains.put("agvtoolPath", "/usr/bin/agvtool");
+				keyChains.put("xcrunPath", "/usr/bin/xcrun");
+				keyChains.put("keychain", keyChainJSONarray);
+				keyChains.put("defaultKeychain", "");
+				
+				jsonObj.put("au-com-rayh-GlobalConfigurationImpl", keyChains);
+				nameValuePairs.add(new BasicNameValuePair("_.xcodebuildPath", "/usr/bin/xcodebuild"));
+				nameValuePairs.add(new BasicNameValuePair("_.agvtoolPath", "/usr/bin/agvtool"));
+				nameValuePairs.add(new BasicNameValuePair("_.xcrunPath", "/usr/bin/xcrun"));
+				nameValuePairs.add(new BasicNameValuePair("_.defaultKeychain", ""));
+			 	for (int j = 0; j<keyChainJSONarray.length(); j++) {
+			 		JSONObject jsonObject = keyChainJSONarray.getJSONObject(j);
+					nameValuePairs.add(new BasicNameValuePair("keychain.keychainName", jsonObject.getString("keychainName")));
+					nameValuePairs.add(new BasicNameValuePair("keychain.keychainPath", jsonObject.getString("keychainPath")));
+					nameValuePairs.add(new BasicNameValuePair("keychain.keychainPassword", jsonObject.getString("keychainPassword")));
+					nameValuePairs.add(new BasicNameValuePair("keychain.inSearchPath", "true"));
 			 	}
 			}
 			

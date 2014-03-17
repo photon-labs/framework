@@ -174,16 +174,29 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
 		try {
-			ProjectInfo projInfo = scmi.importProject(repoInfo, displayName, unique_key);
-			ApplicationInfo srcAppInfo = null;
-			if (projInfo != null) {
-				srcAppInfo = projInfo.getAppInfos().get(0);
+			String uniqueId = UUID.randomUUID().toString();
+			File tempFolder = new File(Utility.getPhrescoTemp(), uniqueId);
+			ProjectInfo projInfo = null;
+			if(repoInfo.isSplitPhresco()) {
+				RepoDetail phrescoRepoDetail = repoInfo.getPhrescoRepoDetail();
+				phrescoRepoDetail.setWorkspaceName(uniqueId + System.currentTimeMillis());
+				projInfo = scmi.validatePhrescoProject(phrescoRepoDetail, tempFolder);
+			} else {
+				RepoDetail srcRepoDetail = repoInfo.getSrcRepoDetail();
+				srcRepoDetail.setWorkspaceName(uniqueId + System.currentTimeMillis());
+				projInfo = scmi.validatePhrescoProject(srcRepoDetail, tempFolder);
 			}
-			if (srcAppInfo != null) {
+			
+			if (projInfo != null) {
+				ApplicationInfo srcAppInfo = projInfo.getAppInfos().get(0);
+				repoInfo.getSrcRepoDetail().setWorkspaceName(srcAppInfo.getAppDirName() + UUID.randomUUID().toString());
+				scmi.importProject(srcAppInfo, repoInfo, displayName, unique_key);
 				if(repoInfo.isSplitTest()) {
+					repoInfo.getPhrescoRepoDetail().setWorkspaceName(srcAppInfo.getAppDirName() + UUID.randomUUID().toString());
 					scmi.importTest(srcAppInfo, repoInfo);
 				}
 				if(repoInfo.isSplitPhresco()) {
+					repoInfo.getTestRepoDetail().setWorkspaceName(srcAppInfo.getAppDirName() + UUID.randomUUID().toString());
 					scmi.importPhresco(srcAppInfo, repoInfo);
 				}
 				scmi.updateSCMConnection(repoInfo, srcAppInfo);
@@ -277,7 +290,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			String unique_key = uniqueKey.toString();
 			ProjectInfo projectInfo = Utility.getProjectInfo(Utility.getProjectHome() + appDirName, "");
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
-			response = updateSVNProject(responseData, applicationInfo, appDirName, repoInfo, unique_key, displayName);
+			response = updateSCMProject(responseData, applicationInfo, appDirName, repoInfo, unique_key, displayName);
 			return response;
 		} catch (PhrescoException e) {
 			status = RESPONSE_STATUS_ERROR;
@@ -428,6 +441,8 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				response = commitGitProject(applicationInfo, repoDetail, type, unique_key, displayName, workingDir);
 			} else if (type.equals(BITKEEPER)) {
 				response = commitBitKeeperProject(applicationInfo, repoDetail, type, unique_key, displayName, workingDir);
+			} else if (type.equals(TFS)) {
+				response = commitTFSProject(applicationInfo, repoDetail, type, unique_key, displayName, workingDir);
 			}
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
@@ -577,114 +592,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	}
 
 	/**
-	 * Import git application.
-	 *
-	 * @param type the type
-	 * @param repodetail the repodetail
-	 * @return the response
-	 */
-	private Response importGITApplication(String type, RepoInfo repodetail, String displayName) {
-		SCMManagerImpl scmi = new SCMManagerImpl();
-		ResponseInfo responseData = new ResponseInfo();
-		UUID uniqueKey = UUID.randomUUID();
-		String unique_key = uniqueKey.toString();
-		try {
-			ProjectInfo importProject = scmi.importProject(repodetail, displayName, unique_key);
-			if (importProject != null) {
-				status = RESPONSE_STATUS_SUCCESS;
-				successCode = PHR200017;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-				.build();
-			} else {
-				status = RESPONSE_STATUS_FAILURE;
-				errorCode = PHR210022;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-				"*").build();
-			}
-		} catch (FileExistsException e) {
-			status = RESPONSE_STATUS_FAILURE;
-			errorCode = PHR210027;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} catch (PhrescoException e) {
-			status = RESPONSE_STATUS_ERROR;
-			errorCode = PHR210026;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} catch (Exception e) {
-			status = RESPONSE_STATUS_ERROR;
-			errorCode = PHR210026;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} finally {
-			try {
-				LockUtil.removeLock(unique_key);
-			} catch (PhrescoException e) {
-			}
-		}
-	}
-
-	/**
-	 * Import bit keeper application.
-	 *
-	 * @param type the type
-	 * @param repodetail the repodetail
-	 * @return the response
-	 */
-	private Response importBitKeeperApplication(String type, RepoInfo repodetail, String displayName) {
-		SCMManagerImpl scmi = new SCMManagerImpl();
-		ResponseInfo responseData = new ResponseInfo();
-		UUID uniqueKey = UUID.randomUUID();
-		String unique_key = uniqueKey.toString();
-		try {
-			ProjectInfo importProject = scmi.importProject(repodetail, displayName, unique_key);
-			if (importProject != null) {
-				status = RESPONSE_STATUS_SUCCESS;
-				successCode = PHR200017;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-				.build();
-			} else {
-				status = RESPONSE_STATUS_FAILURE;
-				errorCode = PHR210022;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-				"*").build();
-			}
-		} catch (Exception e) {
-			if ("Project already imported".equals(e.getLocalizedMessage())) {
-				status = RESPONSE_STATUS_FAILURE;
-				errorCode = PHR210027;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-				"*").build();
-			} else if ("Failed to import project".equals(e.getLocalizedMessage())) {
-				status = RESPONSE_STATUS_ERROR;
-				errorCode = PHR210026;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-				"*").build();
-			} else {
-				status = RESPONSE_STATUS_ERROR;
-				errorCode = PHR210026;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-				"*").build();
-			}
-		} finally {
-			try {
-				LockUtil.removeLock(unique_key);
-			} catch (PhrescoException e) {
-			}
-		}
-	}
-
-	/**
 	 * Fetch pop up values.
 	 *
 	 * @param appDirName the app dir name
@@ -806,7 +713,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 					srcRepoUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
 				}
 				if (StringUtils.isNotEmpty(srcRepoUrl)) {
-					String repoType = getRepoType(srcRepoUrl);
+					String repoType = FrameworkUtil.getRepoType(srcRepoUrl);
 					RepositoryManager repositoryManager = RepositoryFactory.getRepository(repoType);
 					File credentialPath = new File(Utility.getPhrescoTemp() + File.separator + CREADENTIAL_JSON);
 					if (credentialPath.exists()) {
@@ -1144,7 +1051,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
             if (StringUtils.isEmpty(connectionUrl) || !PHR_POM_XML.equals(pomFile.getName())) {
             	connectionUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
             }
-            String repoType = getRepoType(connectionUrl);
+            String repoType = FrameworkUtil.getRepoType(connectionUrl);
             if (Constants.SCM_GIT.equals(repoType)) {
                 gitPomCheckout(connectionUrl, currentBranch, phrescoTemp, uuid, pomFile);
             } else if (Constants.SCM_SVN.equals(repoType)) {
@@ -1558,142 +1465,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		}
 	}
 
-	private Response importTfsApplication(String type, RepoInfo repodetail, String displayName) throws Exception {
-		SCMManagerImpl scmi = new SCMManagerImpl();
-		ResponseInfo responseData = new ResponseInfo();
-		UUID uniqueKey = UUID.randomUUID();
-		String unique_key = uniqueKey.toString();
-		try {
-			ProjectInfo importProject = scmi.importProject(repodetail, displayName, unique_key);
-			if (importProject != null) {
-				status = RESPONSE_STATUS_SUCCESS;
-				successCode = PHR200017;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-				.build();
-			} else {
-				status = RESPONSE_STATUS_FAILURE;
-				errorCode = PHR210022;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-				"*").build();
-			}
-		} catch (Exception e) {
-			if (PROJECT_ALREADY_IMPORTED.equals(e.getLocalizedMessage())) {
-				status = RESPONSE_STATUS_FAILURE;
-				errorCode = PHR210027;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-				"*").build();
-			} else if ("Failed to import project".equals(e.getLocalizedMessage())) {
-				status = RESPONSE_STATUS_ERROR;
-				errorCode = PHR210026;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-				"*").build();
-			} else {
-				status = RESPONSE_STATUS_ERROR;
-				errorCode = PHR210026;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-				"*").build();
-			}
-		} finally {
-			try {
-				LockUtil.removeLock(unique_key);
-			} catch (PhrescoException e) {
-			}
-		}
-	}
-
-	/**
-	 * Update git project.
-	 *
-	 * @param responseData the response data
-	 * @param type the type
-	 * @param applicationInfo the application info
-	 * @param repodetail the repodetail
-	 * @return the response
-	 */
-	private Response updateGitProject(ResponseInfo responseData, String type, ApplicationInfo applicationInfo,
-			RepoDetail repodetail, String uniqueKey, String displayName) {
-		SCMManagerImpl scmi = new SCMManagerImpl();
-		try {
-			//To generate the lock for the particular operation
-			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), FrameworkConstants.UPDATE, displayName, uniqueKey)), true);
-
-			scmi.updateProject(repodetail, new File(""));
-
-			status = RESPONSE_STATUS_SUCCESS;
-			successCode = PHR200018;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-
-		} catch (InvalidRemoteException e) {
-			status = RESPONSE_STATUS_FAILURE;
-			errorCode = PHR210024;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} catch (TransportException e) {
-			status = RESPONSE_STATUS_FAILURE;
-			errorCode = PHR210024;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} catch (SVNAuthenticationException e) {
-			status = RESPONSE_STATUS_FAILURE;
-			errorCode = PHR210023;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} catch (SVNException e) {
-			if (e.getMessage().indexOf(SVN_FAILED) != -1) {
-				status = RESPONSE_STATUS_FAILURE;
-				errorCode = PHR210024;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-				"*").build();
-			} else if (e.getMessage().indexOf(SVN_INTERNAL) != -1) {
-				status = RESPONSE_STATUS_FAILURE;
-				errorCode = PHR210025;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-				"*").build();
-			} else {
-				status = RESPONSE_STATUS_ERROR;
-				errorCode = PHR210028;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-				"*").build();
-			}
-		} catch (FileExistsException e) {
-			status = RESPONSE_STATUS_FAILURE;
-			errorCode = PHR210027;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} catch (PhrescoException e) {
-			status = RESPONSE_STATUS_ERROR;
-			errorCode = PHR210028;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} catch (Exception e) {
-			status = RESPONSE_STATUS_ERROR;
-			errorCode = PHR210028;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} finally {
-			try {
-				LockUtil.removeLock(uniqueKey);
-			} catch (PhrescoException e) {
-
-			}
-		}
-	}
-
 	/**
 	 * Update svn project.
 	 *
@@ -1703,7 +1474,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @param repodetail the repodetail
 	 * @return the response
 	 */
-	private Response updateSVNProject(ResponseInfo responseData, ApplicationInfo applicationInfo,
+	private Response updateSCMProject(ResponseInfo responseData, ApplicationInfo applicationInfo,
 			String appDirName, RepoInfo repoInfo, String uniqueKey, String displayName) {
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		try {
@@ -1830,108 +1601,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		}
 	}
 
-	/**
-	 * Update bit keeper project.
-	 *
-	 * @param type the type
-	 * @param applicationInfo the application info
-	 * @param repodetail the repodetail
-	 * @return the response
-	 */
-	private Response updateBitKeeperProject(String type, ApplicationInfo applicationInfo, RepoDetail repodetail, String uniqueKey, String displayName) {
-		SCMManagerImpl scmi = new SCMManagerImpl();
-		ResponseInfo responseData = new ResponseInfo();
-		try {
-			//To generate the lock for the particular operation
-			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), FrameworkConstants.UPDATE, displayName, uniqueKey)), true);
-			scmi.updateProject(repodetail, new File(""));
-			status = RESPONSE_STATUS_SUCCESS;
-			successCode = PHR200018;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-
-		} catch (PhrescoException e) {
-			if (e.getLocalizedMessage().contains("Nothing to pull")) {
-				status = RESPONSE_STATUS_ERROR;
-				errorCode = PHR210030;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-				"*").build();
-			} else {
-				status = RESPONSE_STATUS_ERROR;
-				errorCode = PHR210028;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-				"*").build();
-			}
-		} catch (Exception e) {
-			status = RESPONSE_STATUS_ERROR;
-			errorCode = PHR210028;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} finally {
-			try {
-				LockUtil.removeLock(uniqueKey);
-			} catch (PhrescoException e) {
-
-			}
-		}
-	}
-
-	private Response updatePerforceProject(String type, ApplicationInfo applicationInfo, RepoDetail repodetail, String uniqueKey, String displayName) {
-		SCMManagerImpl scmi = new SCMManagerImpl();
-		ResponseInfo responseData = new ResponseInfo();
-		try {
-			//To generate the lock for the particular operation
-			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), FrameworkConstants.UPDATE, displayName, uniqueKey)), true);
-			scmi.updateProject(repodetail, new File(""));
-			status = RESPONSE_STATUS_SUCCESS;
-			successCode = PHR200018;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-
-		} catch (PhrescoException e) {
-			if (e.getLocalizedMessage().contains("Nothing to pull")) {
-				status = RESPONSE_STATUS_ERROR;
-				errorCode = PHR210030;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-				"*").build();
-			} else {
-				status = RESPONSE_STATUS_ERROR;
-				errorCode = PHR210028;
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-				"*").build();
-			}
-		} catch (ConnectionException e) {
-			status = RESPONSE_STATUS_FAILURE;
-			errorCode = PHR210049;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} catch (RequestException e) {
-			status = RESPONSE_STATUS_FAILURE;
-			errorCode = PHR210050;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} catch (Exception e) {
-			status = RESPONSE_STATUS_ERROR;
-			errorCode = PHR210028;
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} finally {
-			try {
-				LockUtil.removeLock(uniqueKey);
-			} catch (PhrescoException e) {
-
-			}
-		}
-	}
-	
 	/**
 	 * Adds the svn project.
 	 *
@@ -2072,6 +1741,55 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			}
 		}
 	}
+	
+	/**
+	 * Commit TFS project.
+	 *
+	 * @param appDirName the app dir name
+	 * @param repodetail the repodetail
+	 * @param type the type
+	 * @return the response
+	 */
+	public Response commitTFSProject(ApplicationInfo applicationInfo, RepoDetail repodetail, 
+			String type, String uniqueKey, String displayName, File workingDir) {
+		ResponseInfo responseData = new ResponseInfo();
+		SCMManagerImpl scmi = new SCMManagerImpl();
+		try {
+			//To generate the lock for the particular operation
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), COMMIT , displayName, uniqueKey)), true);
+			scmi.commitToRepo(repodetail, workingDir);
+			status = RESPONSE_STATUS_SUCCESS;
+			successCode = PHR200020;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			if (e.getLocalizedMessage().contains("Nothing to push")) {
+				status = RESPONSE_STATUS_ERROR;
+				errorCode = PHR210034;
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
+				"*").build();
+			} else {
+				status = RESPONSE_STATUS_ERROR;
+				errorCode = PHR210033;
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), COMMIT_PROJECT_FAIL, null);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
+				"*").build();
+			}
+		} catch (Exception e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210033;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
+		} finally {
+			try {
+				LockUtil.removeLock(uniqueKey);
+			} catch (PhrescoException e) {
+
+			}
+		}
+	}
 
 	/**
 	 * Commit git project.
@@ -2110,53 +1828,66 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		}
 	}
 
-	/**
-	 * Gets the repo type.
-	 *
-	 * @param repoUrl the repo url
-	 * @return the repo type
-	 */
-	private String getRepoType(String repoUrl) {
-		String repoType = "";
-		if (repoUrl.startsWith("bk")) {
-			repoType = BITKEEPER;
-		} else if (repoUrl.endsWith(".git") || repoUrl.contains("gerrit") || repoUrl.startsWith("ssh")) {
-			repoType = GIT;
-		} else if (repoUrl.contains("svn")) {
-			repoType = SVN;
-		}
-		return repoType;
-	}
-
 	private RepoDetail createRepoDetail(String repoUrl, String userId, String action, File workingDir) throws PhrescoException {
 		RepoDetail repodetail = new RepoDetail();
 		boolean setRepoExistForCommit = false;
 		try {
-			String repoType = getRepoType(repoUrl);
+			String repoType = FrameworkUtil.getRepoType(repoUrl);
 			if (repoType.equals(BITKEEPER)) {
 				repodetail.setRepoExist(true);
 			} else if (repoType.equals(GIT)) {
 				setRepoExistForCommit  = checkGitProject(workingDir, setRepoExistForCommit);
 				repodetail.setRepoExist(setRepoExistForCommit);
-				repodetail.setRepoInfoFile(gitCommitableFiles(workingDir));
+				if (COMMIT.equals(action)) {
+					repodetail.setRepoInfoFile(gitCommitableFiles(workingDir));
+				}
 			} else if (repoType.equals(SVN)) {
 				repodetail.setRepoExist(true);
-				repodetail.setRepoInfoFile(svnCommitableFiles(workingDir));
+				if (COMMIT.equals(action)) {
+					repodetail.setRepoInfoFile(svnCommitableFiles(workingDir));
+				}
+			} else if (TFS.equals(repoType)) {
+				repodetail.setRepoExist(true);
+				if (COMMIT.equals(action)) {
+					getTfsCommitableFiles(workingDir, repodetail);
+				}
 			}
 			repodetail.setUserName(userId);
 			repodetail.setType(repoType);
 			repodetail.setRepoUrl(repoUrl);
 		} catch (PhrescoException e) {
+			throw e;
+		}
+
+		return repodetail;
+	}
+
+	private void getTfsCommitableFiles(File workingDir, RepoDetail repodetail) throws PhrescoException {
+		try {
+			SCMManagerImpl impl = new SCMManagerImpl();
+			Map<String, List<String>> pendingChanges = impl.getPendingChanges(workingDir.getCanonicalPath());
+			if (MapUtils.isNotEmpty(pendingChanges)) {
+				List<String> addedFiles = pendingChanges.get(ADD);
+				List<String> editedFiles = pendingChanges.get(EDIT);
+				if (CollectionUtils.isNotEmpty(addedFiles)) {
+					repodetail.setTfsAddedFiles(addedFiles);
+				}
+				if (CollectionUtils.isNotEmpty(editedFiles)) {
+					repodetail.setTfsEditedFiles(editedFiles);
+				}
+			}
+		} catch (PhrescoException e) {
+			throw e;
+		} catch (IOException e) {
 			throw new PhrescoException(e);
 		}
-		return repodetail;
 	}
 
 	private void fillRepoDetail(RepoDetail repoDetail, String url, String userId, boolean exist) {
 		repoDetail.setUserName(userId);
 		repoDetail.setRepoUrl(url);
 		repoDetail.setRepoExist(exist);
-		repoDetail.setType(getRepoType(url));
+		repoDetail.setType(FrameworkUtil.getRepoType(url));
 	}
 
 	private File getPomFromWrokDir(ApplicationInfo appInfo) {

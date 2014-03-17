@@ -100,6 +100,12 @@
 		</dependency>
 
 		
+		<dependency>
+			<groupId>org.jenkins-ci</groupId>
+			<artifactId>xcode-plugin</artifactId>
+			<version>1.0</version>
+			<type>hpi</type>
+		</dependency>	
 	</dependencies>
 	
 	<build>	

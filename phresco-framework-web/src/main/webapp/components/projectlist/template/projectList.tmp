@@ -151,6 +151,7 @@
 											<option value="svn" data-i18n="projectlist.label.svn"></option>
 											<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 											<option value="git" data-i18n="projectlist.label.git"></option>
+											<option value="tfs" data-i18n="projectlist.label.tfs"></option>
 										</select>
 									</td>
 									<td><input type="text" name="repoUrl" placeholder="Repo Url" id="repourl_{{id}}" class="repourltext" ></td>
@@ -172,6 +173,12 @@
 								</tr>
 								<tr class="passPhrase hideContent">
 									<td><input type="text" id="repoPhrase_{{id}}"/></td>
+								</tr>
+								<tr class="tfsAddServerPath hideContent">
+									<td><span name="serverpath" value="tfsServerPath">Server Path</span><sup>*</sup></td>
+								</tr>
+								<tr class="tfsAddServerPath hideContent">	
+									<td><input type="text" id="addTfsServerPath_{{id}}"/></td>
 								</tr>
 								<tr>
 									<td colspan="2">
@@ -197,6 +204,7 @@
 											<option value="svn" data-i18n="projectlist.label.svn"></option>
 											<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 											<option value="git" data-i18n="projectlist.label.git"></option>
+											<option value="tfs" data-i18n="projectlist.label.tfs"></option>
 										</select>
 									</td>
 									<td><input type="text" name="repoUrl" placeholder="Repo Url" id="phrescorepourl_{{id}}" class="repourltext"></td>
@@ -218,6 +226,12 @@
 								</tr>
 								<tr class="passPhrase hideContent">
 									<td><input type="text" id="phrescorepoPhrase_{{id}}"/></td>
+								</tr>
+									<tr class="tfsAddServerPath hideContent">
+									<td><span name="serverpath" value="tfsServerPath">Server Path</span><sup>*</sup></td>
+								</tr>
+								<tr class="tfsAddServerPath hideContent">	
+									<td><input type="text" id="addPhrTfsServerPath_{{id}}"/></td>
 								</tr>
 								<tr>
 									<td colspan="2">
@@ -243,6 +257,7 @@
 											<option value="svn" data-i18n="projectlist.label.svn"></option>
 											<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 											<option value="git" data-i18n="projectlist.label.git"></option>
+											<option value="tfs" data-i18n="projectlist.label.tfs"></option>
 										</select>
 									</td>
 									<td><input type="text" name="repoUrl" placeholder="Repo Url" id="testrepourl_{{id}}" class="repourltext"></td>
@@ -264,6 +279,12 @@
 								</tr>
 								<tr class="passPhrase hideContent">
 									<td><input type="text" id="testrepoPhrase_{{id}}"/></td>
+								</tr>
+								<tr class="tfsAddServerPath hideContent">
+									<td><span name="serverpath" value="tfsServerPath">Server Path</span><sup>*</sup></td>
+								</tr>
+								<tr class="tfsAddServerPath hideContent">	
+									<td><input type="text" id="addTestTfsServerPath_{{id}}"/></td>
 								</tr>
 								<tr>
 									<td colspan="2">
@@ -324,6 +345,7 @@
 	                                                <option value="svn" data-i18n="projectlist.label.svn"></option>
 	                                        		<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 	                                        		<option value="git" data-i18n="projectlist.label.git"></option>
+	                                        		<option value="tfs" data-i18n="projectlist.label.tfs"></option>
 	                                            </select>
 	                            			</td>
 	                            			<td><input type="text" id="commitRepourl{{id}}" data-i18n="[placeholder]navigation.application.apprepourl" readonly="readonly"></td>
@@ -348,7 +370,7 @@
 										<tr class="commitGitdata{{id}}">
 											<td><input type="password" class="commitPassPhraseval{{id}}"></td>
 										</tr>
-	                                	<tr>
+										<tr>
 	                                        <td colspan="2">
 	                                            <textarea class="popuptextarea" data-i18n="[placeholder]projectlist.label.message" id="commitMessage_{{id}}" name="commitMsg"></textarea><img class="search" typeOfRepo="commit"  dynId="{{id}}" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
 	                                        </td>
@@ -385,6 +407,7 @@
 	                                                <option value="svn" data-i18n="projectlist.label.svn"></option>
 	                                        		<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 	                                        		<option value="git" data-i18n="projectlist.label.git"></option>
+	                                        		<option value="tfs" data-i18n="projectlist.label.tfs"></option>
 	                                            </select>
 	                            			</td>
 	                            			<td><input type="text" id="phrCommitRepourl{{id}}" data-i18n="[placeholder]navigation.application.apprepourl" readonly="readonly"></td>
@@ -409,7 +432,7 @@
 										<tr class="commitGitdata{{id}}">	
 											<td><input type="password" class="phrCommitPassPhraseval{{id}}"></td>
 										</tr>
-	                                	<tr>
+										<tr>
 	                                        <td colspan="2">
 	                                            <textarea class="popuptextarea" data-i18n="[placeholder]projectlist.label.message" id="phrCommitMessage_{{id}}" name="phrCommitMsg"></textarea><img class="phrescosearch" typeOfRepo="commit" dynId="{{id}}" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
 	                                        </td>
@@ -446,6 +469,7 @@
 	                                                <option value="svn" data-i18n="projectlist.label.svn"></option>
 	                                        		<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 	                                        		<option value="git" data-i18n="projectlist.label.git"></option>
+	                                        		<option value="tfs" data-i18n="projectlist.label.tfs"></option>
 	                                            </select>
 	                            			</td>
 	                            			<td><input type="text" id="testCommitRepourl{{id}}" data-i18n="[placeholder]navigation.application.apprepourl" readonly="readonly"></td>
@@ -470,7 +494,7 @@
 										<tr class="commitGitdata{{id}}">	
 											<td><input type="password" class="testCommitPassPhraseval{{id}}"></td>
 										</tr>
-	                                	<tr>
+										<tr>
 	                                        <td colspan="2">
 	                                            <textarea class="popuptextarea" data-i18n="[placeholder]projectlist.label.message" id="testCommitMessage_{{id}}" name="testCommitMsg"></textarea><img class="testsearch" typeOfRepo="commit"  dynId="{{id}}" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
 	                                        </td>
@@ -521,6 +545,7 @@
 													<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 													<option value="git" data-i18n="projectlist.label.git"></option>
 				                                    <option value="perforce" data-i18n="projectlist.label.perforce"></option>
+				                                    <option value="tfs" data-i18n="projectlist.label.tfs"></option>
 				                            	</select>
 	                            			</td>
 	                            			<td><input type="text" id="updateRepourl{{id}}" data-i18n="[placeholder]navigation.application.apprepourl" readonly="readonly"></td>
@@ -531,11 +556,11 @@
                             				</td>
 	                            			<td></td>
 	                        			</tr>
-				                        <tr class="updateSvndata{{id}}">
+				                        <tr class="updateSvndata{{id}} updateTfsdata{{id}}">
 				                            <td><span data-i18n="login.placeholder.username"></span><sup class="svnusr">*</sup></td>
 				                            <td><span data-i18n="login.placeholder.password"></span><sup class="svnpswd">*</sup></td>
 				                        </tr>
-				                        <tr class="updateSvndata{{id}}">
+				                        <tr class="updateSvndata{{id}} updateTfsdata{{id}}">
 				                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="updateUserName{{id}}" readonly="readonly"></td>
 				                            <td><input type="password" placeholder="*******" id="updatePassword{{id}}" readonly="readonly"></td>
 				                        </tr>
@@ -587,6 +612,7 @@
 													<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 													<option value="git" data-i18n="projectlist.label.git"></option>
 				                                    <option value="perforce" data-i18n="projectlist.label.perforce"></option>
+				                                    <option value="tfs" data-i18n="projectlist.label.tfs"></option>
 				                            	</select>
 	                            			</td>
 	                            			<td><input type="text" id="updatePhrescoRepourl{{id}}" data-i18n="[placeholder]navigation.application.phrescorepourl" readonly="readonly"></td>
@@ -597,11 +623,11 @@
                             				</td>
 	                            			<td></td>
 	                        			</tr>
-				                        <tr class="updateSvndata{{id}}">
+				                        <tr class="updateSvndata{{id}} updateTfsdata{{id}}">
 				                            <td><span data-i18n="login.placeholder.username"></span><sup class="svnusr">*</sup></td>
 				                            <td><span data-i18n="login.placeholder.password"></span><sup class="svnpswd">*</sup></td>
 				                        </tr>
-				                        <tr class="updateSvndata{{id}}">
+				                        <tr class="updateSvndata{{id}} updateTfsdata{{id}}">
 				                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="updatePhrescoUserName{{id}}" readonly="readonly"></td>
 				                            <td><input type="password" placeholder="*******" id="updatePhrescoPassword{{id}}" readonly="readonly"></td>
 				                        </tr>
@@ -653,6 +679,7 @@
 													<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
 													<option value="git" data-i18n="projectlist.label.git"></option>
 				                                    <option value="perforce" data-i18n="projectlist.label.perforce"></option>
+				                                    <option value="tfs" data-i18n="projectlist.label.tfs"></option>
 				                            	</select>
 	                            			</td>
 	                            			<td><input type="text" id="updateTestRepourl{{id}}" data-i18n="[placeholder]navigation.application.testrepourl" readonly="readonly"></td>
@@ -663,11 +690,11 @@
                             				</td>
 	                            			<td></td>
 	                        			</tr>
-				                        <tr class="updateSvndata{{id}}">
+				                        <tr class="updateSvndata{{id}} updateTfsdata{{id}}">
 				                            <td><span data-i18n="login.placeholder.username"></span><sup class="svnusr">*</sup></td>
 				                            <td><span data-i18n="login.placeholder.password"></span><sup class="svnpswd">*</sup></td>
 				                        </tr>
-				                        <tr class="updateSvndata{{id}}">
+				                        <tr class="updateSvndata{{id}} updateTfsdata{{id}}">
 				                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="updateTestUserName{{id}}" readonly="readonly"></td>
 				                            <td><input type="password" placeholder="*******" id="updateTestPassword{{id}}" readonly="readonly"></td>
 				                        </tr>

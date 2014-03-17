@@ -394,6 +394,7 @@ define(["navigation/listener/navigationListener"], function() {
 				$(".perforcedata").hide();
 				$(".importCredential").hide();
 				$(".tfsdata").show();
+				$(".revisionOption").hide();
 			}
 		}
 	});

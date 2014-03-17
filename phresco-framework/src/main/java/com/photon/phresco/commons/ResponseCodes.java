@@ -531,7 +531,8 @@ public interface ResponseCodes {
 	String PHR810045 = "PHR810045"; // returned TFS configuration Failed
 	String PHR810046 = "PHR810046"; // Setup details retrieved successfully
 	String PHR810047 = "PHR810047"; // Setup details retrieval Failed
-	
+	String PHR800027 = "PHR800027"; // Keychains retrieved successfully
+	String PHR810048 = "PHR810048"; // Keychains retrieval Failed
 	/*
 	 * Upgrade Service
 	 */
@@ -625,6 +626,8 @@ public interface ResponseCodes {
 	 */
 	String PHRU000001 = "PHRU000001"; // Build uploaded to TestFlight server successfully
 	String PHRU010001 = "PHRU010001"; // Build uploading failed
+	String PHRU010002 = "PHRU010002"; // unable to upload build since build number is empty
+
 	
 	/**
 	 * Repository service
