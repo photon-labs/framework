@@ -331,7 +331,11 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					
 					if(projectinfo.isIntegrationTest()) {
 						projectinfo = PhrescoFrameworkFactory.getProjectManager().addIntegrationTest(projectinfo, serviceManager);
-						
+					} else {
+							File integrationFolder = new File(Utility.getProjectHome() + projectinfo.getProjectCode() + "-integrationtest");
+							if (integrationFolder.exists()) {
+								 FileUtil.delete(integrationFolder);
+						}
 					}
 				}
 			}

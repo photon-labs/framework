@@ -1694,7 +1694,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), REQ_START, displayName, uniqueKey)), true);
 			
-			BufferedReader compileReader = compileSource(workingDir);
+			BufferedReader compileReader = compileSource(workingDir, pomFileLocation);
 			String line = compileReader.readLine();
 			while (StringUtils.isNotEmpty(line) && !line.startsWith("[INFO] BUILD FAILURE")) {
 				line = compileReader.readLine();
@@ -1771,7 +1771,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
 			String workingDir = pomFileLocation.getParent();
 			handleStopServer(true);
-			BufferedReader compileReader = compileSource(workingDir);
+			BufferedReader compileReader = compileSource(workingDir, pomFileLocation);
 			String line = compileReader.readLine();
 			while (line != null && !line.startsWith("[INFO] BUILD FAILURE")) {
 				line = compileReader.readLine();
@@ -2799,14 +2799,23 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	}
 
 
-	private BufferedReader compileSource(String workingDir) throws PhrescoException {
+	private BufferedReader compileSource(String workingDir, File pomFile) throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method Build.compileSource()");
 		}
 
 		BufferedReader reader = null;
 		try {
-			Commandline cl = new Commandline("mvn clean compile");
+			StringBuilder sb = new StringBuilder();
+			sb.append("mvn clean compile");
+			if(!Constants.POM_NAME.equals(pomFile.getName())) {
+				sb.append(Constants.SPACE);
+				sb.append("-f");
+				sb.append(Constants.SPACE);
+				sb.append(pomFile.getName());
+			}
+			
+			Commandline cl = new Commandline(sb.toString());
 //			String projectDir = Utility.getProjectHome() + directory;
 			cl.setWorkingDirectory(workingDir);
 			Process process = cl.execute();
