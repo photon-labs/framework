@@ -244,7 +244,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				Map<String, DependantParameters> watcherMap = valueMap.get(applicationInfo.getId() + goal);
 				Map<String, Object> constructMapForDynVals = constructMapForDynVals(projectInfo, watcherMap, parameterKey, customerId, "");
 				PossibleValues values = dynamicParameter.getValues(constructMapForDynVals);
-				responseData = responseDataEvaluation(responseData, null, values, RESPONSE_STATUS_SUCCESS, PHRSR1001);
+				responseData = responseDataEvaluation(responseData, null, values, RESPONSE_STATUS_SUCCESS, PHRTR0001);
 				return Response.ok(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 			}
 		} catch (Exception e) {
