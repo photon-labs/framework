@@ -663,6 +663,10 @@ define(["projectlist/listener/projectListListener"], function() {
 								});
 								commonVariables.hideloading = false;
 								self.projectslistListener.hidePopupLoad();
+
+								// Loading latest message by default
+								var repoMsg = $('.searchdropdown').eq(0).find('option:first').text();
+								$("#commitMessage_"+dynamicId).val(repoMsg);
 							});
 							$('.searchdropdown').show();
 					}
@@ -688,9 +692,10 @@ define(["projectlist/listener/projectListListener"], function() {
 								});
 								commonVariables.hideloading = false;
 								self.projectslistListener.hidePopupLoad();
+
 								// Loading latest message by default
 								var repoMsg = $('.dotphrescosearchdropdown').eq(0).find('option:first').text();
-								$("#phrescorepomessage_"+dynamicId).val(repoMsg);	
+								$("#phrescorepomessage_"+dynamicId).val(repoMsg);
 							});
 							$('.dotphrescosearchdropdown').show();
 						}
@@ -709,6 +714,10 @@ define(["projectlist/listener/projectListListener"], function() {
 								});
 								commonVariables.hideloading = false;
 								self.projectslistListener.hidePopupLoad();
+
+								// Loading latest message by default
+								var repoMsg = $('.dotphrescosearchdropdown').eq(0).find('option:first').text();
+								$("#phrCommitMessage_"+dynamicId).val(repoMsg);
 							});
 							$('.dotphrescosearchdropdown').show();
 					}
@@ -734,6 +743,7 @@ define(["projectlist/listener/projectListListener"], function() {
 								});
 								commonVariables.hideloading = false;
 								self.projectslistListener.hidePopupLoad();
+
 								// Loading latest message by default
 								var repoMsg = $('.testsearchdropdown').eq(0).find('option:first').text();
 								$("#testrepomessage_"+dynamicId).val(repoMsg);
@@ -755,6 +765,10 @@ define(["projectlist/listener/projectListListener"], function() {
 								});
 								commonVariables.hideloading = false;
 								self.projectslistListener.hidePopupLoad();
+
+								// Loading latest message by default
+								var repoMsg = $('.testsearchdropdown').eq(0).find('option:first').text();
+								$("#testCommitMessage_"+dynamicId).val(repoMsg);
 							});
 							$('.testsearchdropdown').show();
 					}
