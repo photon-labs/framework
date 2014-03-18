@@ -32,6 +32,16 @@ public class ProjectServiceTest extends LoginServiceTest {
 		assertEquals(200 , response.getStatus());
 	}
 	
+	
+//	@Test
+	public void createIphoneProjectTest() {
+		ProjectInfo projectInfo = createProjectInfo2();
+		Response responseonFail = projectService.createProject(projectInfo, "");
+		assertEquals(200 , responseonFail.getStatus());
+		Response response = projectService.createProject(projectInfo, userId);
+		assertEquals(200 , response.getStatus());
+	}
+	
 	@Test
 	public void createProjectForGitTest() {
 		ProjectInfo projectInfo = projectInfo();
@@ -257,6 +267,19 @@ public class ProjectServiceTest extends LoginServiceTest {
 		return projectInfo;
 	}
 	
+	private ProjectInfo createProjectInfo2() {
+		ProjectInfo projectInfo = new ProjectInfo();
+		projectInfo.setCustomerIds(getCustomer());
+		projectInfo.setId("TestIphoneProject");
+		projectInfo.setName("TestIphoneProject");
+		projectInfo.setNoOfApps(1);
+		projectInfo.setProjectCode("TestIphoneProject");
+		projectInfo.setVersion("1.0");
+		projectInfo.setProjectCode("TestIphoneProject");
+		projectInfo.setAppInfos(Collections.singletonList(getApplicationInfo2()));
+		return projectInfo;
+	}
+	
 	private ProjectInfo createMinifyProjectInfo() {
 		ProjectInfo projectInfo = new ProjectInfo();
 		projectInfo.setCustomerIds(getCustomer());
@@ -437,6 +460,37 @@ public class ProjectServiceTest extends LoginServiceTest {
 		projectInfo.setProjectCode("TestProject");
 		projectInfo.setAppInfos(Collections.singletonList(getApplicationInfo1()));
 		return projectInfo;
+	}
+	
+	private static ApplicationInfo getApplicationInfo2() {
+		ApplicationInfo info = new ApplicationInfo();
+		info.setAppDirName("TestIphoneProject");
+		info.setCode("TestIphoneProject");
+		info.setId("TestIphoneProject");
+		info.setCustomerIds(getCollections("photon"));
+		info.setEmailSupported(false);
+		info.setPhoneEnabled(false);
+		info.setTabletEnabled(false);
+		info.setDescription("Test iphone project");
+		info.setHelpText("Help");
+		info.setName("TestIphoneProject");
+		info.setPilot(false);
+		info.setUsed(false);
+		info.setDisplayName("TestIphoneProject");
+		info.setVersion("1.0");
+		info.setPomFile("pom.xml");
+		info.setPhrescoPomFile("phresco-pom.xml");
+
+		// TechnologyInfo
+
+		TechnologyInfo techInfo = new TechnologyInfo();
+		techInfo.setAppTypeId("1dbcf61c-e7b7-4267-8431-822c4580f9cf");
+		techInfo.setVersion("1.6");
+		techInfo.setId("tech-iphone-native");
+		techInfo.setSystem(false);
+		info.setTechInfo(techInfo);
+
+		return info;
 	}
 	
 	private static ApplicationInfo getApplicationInfo1() {

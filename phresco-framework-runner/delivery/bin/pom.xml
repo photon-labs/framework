@@ -4,18 +4,19 @@
 	<groupId>com.photon.phresco.framework</groupId>
 	<artifactId>PhrescoFrameworkRuntime</artifactId>
 	<packaging>pom</packaging>
-	<version>3.3.0.4001-SNAPSHOT</version>
+	<version>3.3.0.5001-SNAPSHOT</version>
 	<name>Phresco Framework Web Application</name>
 
     <properties>
-		<phresco.framework.version>3.3.0.4001-SNAPSHOT</phresco.framework.version>		
-		<tomcat.version>7.0.21.2</tomcat.version>
+		<phresco.framework.version>3.3.0.5001-SNAPSHOT</phresco.framework.version>		
+		<tomcat.version>7.0.21.3</tomcat.version>
 		<sonar.version>3.5.1</sonar.version>
 		<checker.version>0.1</checker.version>
 		<device.deploy.version>1.0</device.deploy.version>
 		<phantomjs.version>1.5.0</phantomjs.version>
 		<ios-sim.version>2.0</ios-sim.version>
 		<tfs.version>1.0</tfs.version>
+		<depot_tools.version>1.0</depot_tools.version>
 	</properties>
 
 	<dependencies>
@@ -316,6 +317,16 @@
 									<groupId>binaries</groupId>
 									<artifactId>apache-tomcat-https</artifactId>
 									<version>${tomcat.version}</version>
+									<type>zip</type>
+									<overWrite>false</overWrite>
+									<outputDirectory>../workspace/tools</outputDirectory>
+								</artifactItem>
+                                
+                                <!-- extracting depot_tools -->
+                                <artifactItem>
+									<groupId>softwares.cpp</groupId>
+									<artifactId>depot_tools</artifactId>
+									<version>${depot_tools.version}</version>
 									<type>zip</type>
 									<overWrite>false</overWrite>
 									<outputDirectory>../workspace/tools</outputDirectory>

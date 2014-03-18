@@ -78,14 +78,14 @@ public class IosTargetParameterImpl implements DynamicParameter {
             PomProcessor pomProcessor = new PomProcessor(pomFileLocation);
             File sourceDir = null;
             String sourceDirectory = pomProcessor.getSourceDirectory();
-			if (sourceDirectory.startsWith("${project.basedir}")) {
-				sourceDirectory = sourceDirectory.substring("${project.basedir}".length());
+            if (sourceDirectory.startsWith("${project.basedir}")) {
+            	sourceDirectory = sourceDirectory.substring("${project.basedir}".length());
             	sourceDir = new File(pomFileLocation.getParent() + sourceDirectory);
-			} else if (sourceDirectory.startsWith("/source")) {
-				sourceDir = new File(pomFileLocation.getParent() + File.separatorChar + sourceDirectory);
-			} else {
-				sourceDir = new File(sourceDirectory);
-			}
+            } else if (sourceDirectory.startsWith("/source")) {
+            	sourceDir = new File(pomFileLocation.getParent() + File.separatorChar + sourceDirectory);
+            } else {
+            	sourceDir = new File(Utility.getProjectHome() + applicationInfo.getAppDirName() + File.separator + sourceDirectory);
+            }
             
             FilenameFilter filter = new FileListFilter("", IPHONE_XCODE_WORKSPACE_PROJ_EXTN, IPHONE_XCODE_PROJ_EXTN);
             File[] listFiles = sourceDir.listFiles(filter);

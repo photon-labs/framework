@@ -12,6 +12,8 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         contextUrlsRowId : "",
         dynamicParameters : [],
         formObj : "",
+        selectedPaths : [],
+        previousPath : "",
 
         /***
          * Called in initialization time of this class 
@@ -132,6 +134,8 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                         self.constructFileUploadCtrl(parameter, whereToRender, goal);
                     } else if(type === "filebrowse") {
 						self.constructFileBrowseCtrl(parameter, whereToRender, goal);
+					} else if ("dynamicparametertree") {
+						self.dynamicParameterTree(parameter, whereToRender, goal);
 					}
                 });
                 if (!self.isBlank(btnObj) && openccObj !== 'jobConfigure') {
@@ -153,6 +157,186 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         
         /********************* Controls construction methods starts**********************************/
 		
+        dynamicParameterTree : function(parameter, whereToRender, goal) {
+			var self = this;
+			whereToRender.append('<li id="'+parameter.key+'Li" class="ctrl"><label>'+parameter.name.value[0].value+'</label><input type="hidden" name="'+parameter.key+'" value="'+parameter.value+'"/><input type="button" value="Browse" btnId="'+parameter.key+'" name="browse'+parameter.key+'" class="btn btn_style" style="width: 120px ! important;"><div id="browse" class="dyn_popup" style="display:none"><div id="'+parameter.key+'"></div><div class="flt_right"><input type="button" name="selectFilePath" key="'+parameter.key+'" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div></li>');
+			$("input[value=Browse][btnId="+parameter.key+"]").click(function() {
+				self.constructDynamicParameterTree(this, $("#"+parameter.key), parameter.key);
+			});
+        },
+        
+        openDynamicParameterTreePopup : function(thisObj) {
+			var self = this;
+			$('.content_main').addClass('z_index_ci');
+			var target = $("#browse");
+			$(target).toggle();
+			self.alignDynamicParameterTreePopup(thisObj);
+		},
+		
+		alignDynamicParameterTreePopup : function (thisObj) {
+			var clicked = thisObj;
+			var target = $("#browse");
+			var twowidth = window.innerWidth/1.5;
+			if (clicked.offset().left < twowidth) {
+				var a = target.height()/2;
+				var b = clicked.height()/2;
+				var t=clicked.offset().top + (b+12) - (a+12) ;
+				var l=clicked.offset().left + clicked.width()+ 4;
+				$(target).offset({
+					top: t,
+					left: l
+				});
+				$(target).addClass('speakstyleleft').removeClass('speakstyleright');
+			} else {
+				var t=clicked.offset().top - target.height()/2 + 12;
+				var l=clicked.offset().left - (target.width()+ 30);
+				$(target).offset({
+					top: t,
+					left: l
+				});
+				$(target).addClass('speakstyleright').removeClass('speakstyleleft');
+			}
+		},
+        
+        getxmlDoc : function(xmlStr, callback) {
+			var parseXml;
+			if (window.DOMParser) {
+				parseXml = function(xmlStr) {
+					return ( new window.DOMParser() ).parseFromString(xmlStr, "text/xml");
+				};
+			}
+			callback(parseXml(xmlStr));
+		},
+        
+        constructDynamicParameterTree : function(current, divId, parameterKey) {
+        	var self = this;
+        	divId.css("height", "240px");
+			divId.html('');
+			commonVariables.hideloading = true;
+			self.showDynamicPopupLoading();
+			commonVariables.api.ajaxRequest(self.getRequestHeader(self.projectRequestBody, parameterKey, "", "dynamicParameterTree", ""), function(response) {
+				commonVariables.hideloading = false;
+				if (response !== undefined && response !== null && response.status !== "error" && response.status !== "failure") {
+					var value = response.data.value[0].value;
+					self.getxmlDoc(value, function(xmlDoc) {
+						var showChkBox = true;
+						var csvAvailableValue = $("input[name='"+parameterKey+"']").val();
+						self.fileTree(xmlDoc, showChkBox, csvAvailableValue, function(res) {
+							var temptree = $('<div class=""></div>');
+							temptree.append('<ul id="filetree" class="filetree"><li><span><strong>Select '+parameterKey+'</strong></span>' + res + '</li></ul>');
+							setTimeout(function() {
+								$(temptree).jstree({
+								"themes": {
+									"dots": false,
+									"icons": false
+								}
+								}).bind("init.jstree", function(event, data){ 
+								}).bind("loaded.jstree", function (event, data) {
+									divId.append(temptree);
+									divId.mCustomScrollbar({
+										autoHideScrollbar:true,
+										theme:"light-thin",
+										advanced:{ updateOnContentResize: true}
+									});
+									self.openDynamicParameterTreePopup($(current));
+									self.dynamicParameterTreeClickEvent(parameterKey);
+									self.hideDynamicPopupLoading();
+								});
+							}, 100);
+						});
+					});
+				}
+			});
+        },
+        
+        dynamicParameterTreeClickEvent : function(parameterKey) {
+        	var self = this;
+            $("input[name=folder]").attr("disabled", false);
+        	$("input[name=folder]:checked").each(function() {
+        		self.selectUnselectTreeChkBx($(this));
+        	});
+        	
+        	$("input[name=folder]").unbind("click");
+        	$("input[name=folder]").bind("click", function() {
+        		self.selectUnselectTreeChkBx($(this));
+        	});
+        	
+        	$("input[name=selectFilePath]").unbind("click");
+        	$("input[name=selectFilePath]").bind("click", function() {
+        		$("#browse").toggle();
+        		self.selectedPaths = [];
+        		$("input[name=folder]:checked").each(function() {
+                    if (self.isBlank(self.previousPath)) {
+                        self.getSelectedChkBx($(this));
+                    } else if ($(this).val().indexOf(self.previousPath) === -1) {
+                        self.getSelectedChkBx($(this));
+                    }
+                });
+        		if (self.selectedPaths.length > 0) {
+        			$("input[name='"+parameterKey+"']").val(self.selectedPaths.join(","));
+        		} else {
+                    $("input[name='"+parameterKey+"']").val("");
+                }
+                $("input[name=folder]").attr("disabled", true);
+        	});
+        	
+        	$(".jstree-icon").unbind("click");
+        	$(".jstree-icon").bind("click", function() {
+        		setTimeout(function() {
+        			self.alignDynamicParameterTreePopup($("input[value=Browse][btnId="+parameterKey+"]"));
+        		}, 100);
+        	});
+        	
+        	$("input[name=treePopupClose]").unbind("click");
+        	$("input[name=treePopupClose]").bind("click", function() {
+        		$("#browse").toggle();
+        	});
+        },
+
+        getSelectedChkBx : function(thisObj) {
+            var self = this;
+            if (thisObj.attr("hasParent") === "true") {
+                var parentChkBxObj = thisObj.parents(".group:first").parent().find("span:first input[name=folder]");
+                if (parentChkBxObj.is(":checked")) {
+                    self.getSelectedChkBx(parentChkBxObj);
+                } else {
+                    self.previousPath = thisObj.val();
+                    self.selectedPaths.push(thisObj.val());
+                }
+            } else {
+                self.previousPath = thisObj.val();
+                self.selectedPaths.push(thisObj.val());
+            }
+        },
+        
+        selectUnselectTreeChkBx : function(thisObj) {
+        	var self = this;
+            var childFolderChkBxObj = thisObj.parent().next().find("input[name=folder]"); 
+        	if (thisObj.is(":checked")) {
+                childFolderChkBxObj.prop("checked", true);
+    		} else {
+                childFolderChkBxObj.prop("checked", false);
+    		}
+            if (thisObj.attr("hasParent") === "true") {
+                self.selectUnselectParentChkBx(thisObj);
+            }
+        },
+        
+        selectUnselectParentChkBx : function(thisObj) {
+        	var self = this;
+        	var available = thisObj.parents(".group:first").find("input[name=folder]").length;
+        	var selected = thisObj.parents(".group:first").find("input[name=folder]:checked").length;
+        	var parentChkBxObj = thisObj.parents(".group:first").parent().find("span:first input[name=folder]");
+            if (available === selected) {
+        		parentChkBxObj.prop("checked", true);
+            } else {
+        		parentChkBxObj.prop("checked", false);
+        	}
+            if (parentChkBxObj.attr("hasParent") === "true") {
+                self.selectUnselectParentChkBx(parentChkBxObj);
+            }
+        },
+        
 		consDragnDropcnt : function(parameter, columnClass, whereToRender){
 			var self = this;
 			if(parameter != null && parameter != ""){
@@ -1165,7 +1349,6 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 			});
 		},
 		
-		
 		loadTree : function(current, placeCnt, divId, fileType, hiddenCnt, minify){
 			var self = this;
 			self.configRequestBody = {};
@@ -1173,7 +1356,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 					 if(response !== undefined && response !== null && response.status !== "error" && response.status !== "failure"){
 						divId.css("height", "240px");
 						divId.html('');
-						self.fileTree(response, function(res){
+						self.fileTree(response, false, "", function(res){
 							var temptree = $('<div></div>');
 							temptree.append('<ul id="keyStorefiletree" class="filetree"><li><span><strong>Click here to select file path </strong></span>' + res + '</li></ul>');
 							setTimeout(function(){
@@ -1554,6 +1737,9 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 				header.dataType = "xml";
 				header.contentType = "application/xml",
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/fileBrowse?&appDirName="+ appDirName + (fileType === undefined || fileType === null ? "" : "&fileType=" + fileType)+moduleParam;
+			} else if (action === "dynamicParameterTree") {
+				header.requestMethod = "GET";
+                header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/dynamicParameterTree?appDirName="+appDirName+"&goal="+ goal+"&phase="+phase+"&customerId="+customerId+"&userId="+userId+"&parameterKey="+ key+moduleParam;
 			}
             
             return header;

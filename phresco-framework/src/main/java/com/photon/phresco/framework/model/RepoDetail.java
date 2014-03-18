@@ -20,9 +20,11 @@ public class RepoDetail implements Serializable {
 	private String userName;
 	private String password;
 	private String revisionVal;
-	private String commitMessage;
+	private String commitMessage = "";
 	private List<String>commitableFiles;
 	private List<RepoFileInfo> repoInfoFile;
+	private List<String> tfsAddedFiles;
+	private List<String> tfsEditedFiles;
 	private String type;
 	private boolean testCheckOut;
 	private String testRepoUrl;
@@ -34,7 +36,8 @@ public class RepoDetail implements Serializable {
 	private String passPhrase;
 	private String stream;
 	private String proName;
-	private String serverPath; 
+	private String serverPath;
+	private String workspaceName;
 	
 	private boolean repoExist;
 
@@ -234,6 +237,30 @@ public class RepoDetail implements Serializable {
 		this.serverPath = serverPath;
 	}
 
+	public List<String> getTfsAddedFiles() {
+		return tfsAddedFiles;
+	}
+
+	public void setTfsAddedFiles(List<String> tfsAddedFiles) {
+		this.tfsAddedFiles = tfsAddedFiles;
+	}
+
+	public List<String> getTfsEditedFiles() {
+		return tfsEditedFiles;
+	}
+
+	public void setTfsEditedFiles(List<String> tfsEditedFiles) {
+		this.tfsEditedFiles = tfsEditedFiles;
+	}
+	
+	public void setWorkspaceName(String workspaceName) {
+		this.workspaceName = workspaceName;
+	}
+
+	public String getWorkspaceName() {
+		return workspaceName;
+	}
+
 	public String toString() {
 		 return new ToStringBuilder(this,
 	                ToStringStyle.DEFAULT_STYLE)
@@ -251,6 +278,7 @@ public class RepoDetail implements Serializable {
 	                .append("stream", getStream())
 	                .append("proName", getProName())
 	                .append("serverPath", getServerPath())
+	                .append("workspaceName", getWorkspaceName())
 	                .toString();
 	}
 }

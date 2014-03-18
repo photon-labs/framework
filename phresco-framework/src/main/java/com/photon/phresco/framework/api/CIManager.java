@@ -152,6 +152,11 @@ public interface CIManager {
 	 */
 	JSONArray getTestFlightConfiguration() throws PhrescoException;
 
+	/**
+	 * @return
+	 * @throws PhrescoException
+	 */
+	JSONArray getKeyChains() throws PhrescoException;
 	
 	/**
 	 * @throws PhrescoException
@@ -303,7 +308,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	public boolean setGlobalConfiguration(String jenkinsUrl, String submitUrl, org.json.JSONArray confluenceObj, String emailAddress, String emailPassword, org.json.JSONArray testFlightJSONarray, String tfsUrl) throws PhrescoException;
+	public boolean setGlobalConfiguration(String jenkinsUrl, String submitUrl, org.json.JSONArray confluenceObj, String emailAddress, String emailPassword, org.json.JSONArray testFlightJSONarray, org.json.JSONArray keyChainJSONarray, String tfsUrl) throws PhrescoException;
 	
 	/**
 	 * @param job

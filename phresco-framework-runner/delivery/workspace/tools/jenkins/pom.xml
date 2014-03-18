@@ -3,7 +3,7 @@
 	<groupId>com.photon.phresco.ci</groupId>
 	<artifactId>ci</artifactId>
 	<packaging>war</packaging>
-	<version>3.3.0.4001-SNAPSHOT</version>
+	<version>3.3.0.5001-SNAPSHOT</version>
 	<name>CI Web Application</name>
    
 	<dependencies>
@@ -100,6 +100,12 @@
 		</dependency>
 
 		
+		<dependency>
+			<groupId>org.jenkins-ci</groupId>
+			<artifactId>xcode-plugin</artifactId>
+			<version>1.0</version>
+			<type>hpi</type>
+		</dependency>	
 	</dependencies>
 	
 	<build>	

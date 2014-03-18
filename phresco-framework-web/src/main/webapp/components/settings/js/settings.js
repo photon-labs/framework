@@ -148,6 +148,14 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 				tr.insertBefore($('#save'));
 			});
    			
+   			
+   			$('.addKeychain').bind('click', function() {
+				var tds = $('#keychainPrototype').html();
+				var tr = $('<tr class=keychain>');
+				tr.append(tds);
+				tr.insertBefore($('#keychainSave'));
+			});
+   			
 			$('.addTestFlight').bind('click', function() {
 				var tds = $('#testFlightPrototype').html();
 				var tr = $('<tr class=testFlight>');

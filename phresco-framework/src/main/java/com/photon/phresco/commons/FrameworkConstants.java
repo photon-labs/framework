@@ -352,9 +352,39 @@ public interface FrameworkConstants {
 	String POM_NODE = "pom";
 	String MAVEN_NAME_NODE = "mavenName";
 	String TARGETS_NODE = "targets";
+	String CLEAN_BEFORE_BUILD= "cleanBeforeBuild";
+	String CLEAN_TEST_REPORTS = "cleanTestReports";
+	String TARGET = "target";
+	String SDK = "sdk";
+	String XCODE_PROJECT_PATH = "xcodeProjectPath";
+	String BUILD_IPA = "buildIpa";
+	String GENERATIVE_ARCHIVE = "generateArchive";
+	String UNLOCK_KEYCHAIN = "unlockKeychain";
+	String CODE_SIGNING_IDENTITY = "codeSigningIdentity";
+	String CONFIGURATIONBUILDDIR  = "configurationBuildDir";
+	String XCODEPROJECTFILE = "xcodeProjectFile";
+	String XCODEBUILDARGS = "xcodebuildArguments";
+	String XCODESCHEMA = "xcodeSchema";
+	String XCODEWORSPACEFILE = "xcodeWorkspaceFile";
+	String EMBEDDEDPROFILE = "embeddedProfileFile";
+	String CFBUNDLEVERSIONVALUE = "cfBundleVersionValue";
+	String CFBUNDLESHORTVERSION = "cfBundleShortVersionStringValue";
+	String KEYCHAINNAME = "keychainName";
+	String KEYCHAINPATH = "keychainPath";
+	String KEYCHAINPWD = "keychainPwd";
+	String ALLOWFAILINGBUILDRESULTS = "allowFailingBuildResults";
+	String IPANAME = "ipaName";
+	String IPAOUTPUTDIR = "ipaOutputDirectory";
+	String PROVIDEAPPLVERSION = "provideApplicationVersion";
+	String SYMROOT = "symRoot";
+	
+	
 	String HUDSON_TASKS_MAVEN_NODE = "hudson.tasks.Maven";
+	String XCODE_BUILDER = "au.com.rayh.XCodeBuilder";
+	String XCODE_KEYCHAIN_BUILDWRAPPER = "au.com.rayh.OSXKeychainBuildWrapper";
 	String HUDSON_TASKS_SHELL = "hudson.tasks.Shell";
 	String POST_BUILDERS_NODE = "postbuilders";
+	String BUILD_WRAPPERS = "buildWrappers";
 	String PRE_BUILDERS_NODE = "prebuilders";
 	String SCM_SUBVERSION_SCM_POST_CREDENTIAL = "/scm/SubversionSCM/postCredential";
     String CI_FILE_RELEASE_PUBLISHER_NODE="publishers";
@@ -484,6 +514,7 @@ public interface FrameworkConstants {
     String CONFLUENCE_PASSWORD_KEY = "confluencePassword";
     String VALUES_KEY = "values";
     String MAVEN_SEP_COBER = "mvn#SEP#cobertura:cobertura";
+    String IMPL_KEYCHAINS = "//keychains/au.com.rayh.Keychain";
 
     String JAVA_STAND_ALONE = "tech-java-standalone";
     String MAINCLASSNAME = "mainClassName";
@@ -514,6 +545,7 @@ public interface FrameworkConstants {
 	String SELENIUM_WEBDRIVER = "webdriver";
 	String SELENIUM_UIAUTOMATION = "UIAutomation";
 	String BUILD = "build";
+	String DEVICE_BUILD = "deviceBuild";
     String DEPLOY = "deploy";
     String BUILD_INFO_ENVS = "buildInfoEnvs";
     String DEPLOY_IMPORT_SQL = "importSql";
@@ -731,6 +763,7 @@ public interface FrameworkConstants {
     String CI_CREDENTIAL_XML = "hudson.scm.SubversionSCM.xml";
     String CI_CONFLUENCE_XML = "com.myyearbook.hudson.plugins.confluence.ConfluencePublisher.xml";
     String CI_TESTFLIGHT_XML = "testflight.TestflightRecorder.xml";
+    String CI_XCODE_XML = "au.com.rayh.GlobalConfigurationImpl.xml";
     String CI_MAILER_XML = "hudson.tasks.Mailer.xml";
     String CI_TFS_XML = "hudson.plugins.tfs.TeamFoundationServerScm.xml";
     String CI_MAIL_EXT_PLUGIN = "email-ext.hpi";
@@ -2231,6 +2264,16 @@ public interface FrameworkConstants {
 	    String CONTENTS = "Content";
 	    String WEBSITE = "Website";
 	    String GIT_URL = "https://api.github.com";
+  /**
+	     *  TestFlight upload service post parameters
+	     *   
+	     */
+	    String API_TOKEN_TF = "api_token";
+	    String TEAM_TOKEN_TF = "team_token";
+	    String NOTES = "notes";
+	    String NOTIFY = "notify";
+	    String DISTRIBUTION_LISTS = "distribution_lists";
+	    
 	    
 	    
 	    /**

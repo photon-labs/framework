@@ -125,6 +125,32 @@
 							</td>
 						</tr>
 						
+						<tr>
+							<td>
+								<table id="keychainTable" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0">
+									<thead>
+										<tr>
+											<th colspan="5">System KeyChains &nbsp&nbsp&nbsp
+											<a align="right" class="addKeychain flt_right"><img  src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr id="keychainPrototype" class="hideContent">
+											<td><input type="text" name="keychainName" placeholder="Keychain Name"></td>
+											<td><input type="text" name="keychainPath" placeholder="Keychain Path"></td>
+											<td><input type="password" name="keychainPassword" placeholder="Keychain Password"></td>
+											<td>
+												<a class="deleteKeychain flt_right"><img src="themes/default/images/Phresco/minus_icon.png"  border="0" alt=""></a>
+											</td> 
+											 
+										</tr>
+										
+										<tr id="keychainSave"><td colspan="4" align="right"></td></tr>
+								  </tbody>
+							   </table>
+							</td>
+						</tr>
+						
 						<tr id="save"><td colspan="4" align="right"><input type="button" value="Save" name="save" class="btn btn_style flt_right"></td></tr>    
 							
 							

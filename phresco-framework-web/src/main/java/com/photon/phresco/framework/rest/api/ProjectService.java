@@ -51,6 +51,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
@@ -71,6 +72,7 @@ import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.CoreOption;
 import com.photon.phresco.commons.model.DownloadInfo;
+import com.photon.phresco.commons.model.Element;
 import com.photon.phresco.commons.model.FunctionalFramework;
 import com.photon.phresco.commons.model.FunctionalFrameworkInfo;
 import com.photon.phresco.commons.model.FunctionalFrameworkProperties;
@@ -87,7 +89,9 @@ import com.photon.phresco.exception.PhrescoWebServiceException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.impl.SCMManagerImpl;
 import com.photon.phresco.framework.model.DeleteProjectInfo;
+import com.photon.phresco.framework.model.RepoDetail;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.util.MojoProcessor;
@@ -104,13 +108,12 @@ import com.phresco.pom.model.Model.Modules;
 import com.phresco.pom.model.Profile;
 import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
-import com.photon.phresco.commons.model.Element;
 
 /**
  * The Class ProjectService.
  */
 @Path(ServiceConstants.REST_API_PROJECT)
-public class ProjectService extends RestBase implements FrameworkConstants, ServiceConstants, ResponseCodes {
+public class ProjectService extends RestBase implements FrameworkConstants, ServiceConstants, ResponseCodes, Constants {
 	
 	String status;
 	String errorCode;
@@ -1049,15 +1052,16 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			if (CollectionUtils.isNotEmpty(appDirNames)) {
 				for (String appDirName : appDirNames) {
 					if (REQ_MODULE.equals(actionType) && StringUtils.isNotEmpty(rootModule)) {
-							rootModulePath = Utility.getProjectHome() + rootModule;
-							subModule = appDirName;
+						rootModulePath = Utility.getProjectHome() + rootModule;
+						subModule = appDirName;
 					} else {
 						rootModulePath = Utility.getProjectHome() + appDirName;
+						deleteTFSWorkspace(appDirName, deleteProjectInfo.getUserName(), deleteProjectInfo.getPassword());
 					}
 					String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModule);
-					File getpomFileLocation = Utility.getPomFileLocation(rootModulePath, subModule);
-					if (getpomFileLocation != null) {
-					projectinfo = Utility.getProjectInfo(rootModulePath, subModule);
+					File pomFileLocation = Utility.getPomFileLocation(rootModulePath, subModule);
+					if (pomFileLocation != null) {
+						projectinfo = Utility.getProjectInfo(rootModulePath, subModule);
 						StringBuilder sb = new StringBuilder(dotPhrescoFolderPath).append(File.separator).append(
 								RUNAGNSRC_INFO_FILE);
 						File file = new File(sb.toString());
@@ -1077,23 +1081,24 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 							}
 						}
 					}
-					
+
 					if(projectinfo.isIntegrationTest()) {
 						File integrationFolder = new File(Utility.getProjectHome() + projectinfo.getProjectCode() + "-integrationtest");
 						if (integrationFolder.exists()) {
-							 FileUtil.delete(integrationFolder);
+							FileUtil.delete(integrationFolder);
 						}
 					}
-//					String applicationHome = FrameworkServiceUtil.getApplicationHome(appDirName);
-					Utility.killProcess(getpomFileLocation.getParent(), REQ_EQLIPSE); // need to handle for build version
-					deleteProjectFromSonar(getpomFileLocation, request);
+					Utility.killProcess(pomFileLocation.getParent(), REQ_EQLIPSE); // need to handle for build version
+					deleteProjectFromSonar(pomFileLocation, request);
 				}
 			}
-			
+
 			if (REQ_MODULE.equals(actionType) && StringUtils.isNotEmpty(rootModule)) {
 				removeAllEntriesOfModuleToBeDeleted(deleteProjectInfo.getDependents(), deleteProjectInfo.getAppDirNames().get(0), rootModulePath);
 			}
+			
 			boolean status  = projectManager.delete(deleteProjectInfo);
+			
 			if(status && actionType.equals(APPLICATION_PROJECT)) {
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_SUCCESS, PHR200010);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
@@ -1108,17 +1113,87 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 			}
 		} catch (PhrescoException e) {
+			if (AUTHENTICATION_FAILED.equalsIgnoreCase(e.getLocalizedMessage())) {
+				status = RESPONSE_STATUS_SUCCESS;
+				errorCode = PHRSR10007;
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+				"*").build();
+			}
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210012;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
-					"*").build();
+			"*").build();
 		} catch (FileNotFoundException e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210013;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
-					"*").build();
+			"*").build();
+		}
+	}
+
+	/**
+	 * To delete the TFS workspace
+	 * @param appDirName
+	 * @throws PhrescoException
+	 */
+	private void deleteTFSWorkspace(String appDirName, String userName, String password) throws PhrescoException {
+		try {
+			File pomFileLocation = Utility.getPomFileLocation(Utility.getProjectHome() + appDirName, "");
+			PomProcessor pomProcessor = new PomProcessor(pomFileLocation);
+			String developerConnection = pomProcessor.getSCM().getDeveloperConnection();
+			String repoType = FrameworkUtil.getRepoType(developerConnection);
+			if (TFS.equals(repoType)) {
+				SCMManagerImpl scmMImpl = new SCMManagerImpl();
+				String srcRepoUrlProperty = pomProcessor.getProperty(POM_PROP_KEY_SRC_REPO_URL);
+				RepoDetail repoDetail = new RepoDetail();
+				if (StringUtils.isNotEmpty(userName) && StringUtils.isNotEmpty(password)) {
+					String encryptedPassword = com.photon.phresco.framework.impl.util.FrameworkUtil.getEncryptedPassword(password);
+					com.photon.phresco.framework.impl.util.FrameworkUtil.saveCredential(srcRepoUrlProperty, userName, encryptedPassword);
+				}
+
+				File credentialPath = new File(Utility.getPhrescoTemp() + File.separator + CREADENTIAL_JSON);
+				if (credentialPath.exists()) {
+					Map<String, String> credential = com.photon.phresco.framework.impl.util.FrameworkUtil.getCredential(srcRepoUrlProperty);
+					if (MapUtils.isNotEmpty(credential)) {
+						userName = credential.get(REQ_USER_NAME);
+						String encryptedPassword = credential.get(REQ_PASSWORD);
+						password = com.photon.phresco.framework.impl.util.FrameworkUtil.getdecryptedPassword(encryptedPassword);
+						repoDetail.setUserName(userName);
+						repoDetail.setPassword(password);
+					}
+				}
+
+				//To delete the phresco repo workspace
+				String splitPhrDirProperty = pomProcessor.getProperty(POM_PROP_KEY_SPLIT_PHRESCO_DIR);
+				if (StringUtils.isNotEmpty(splitPhrDirProperty)) {
+					String phrRepoUrlProperty = pomProcessor.getProperty(POM_PROP_KEY_PHRESCO_REPO_URL);
+					String phrWorkspaceProperty = pomProcessor.getProperty(POM_PROP_KEY_TFS_PHR_WORKSPACE_NAME);
+					repoDetail.setWorkspaceName(phrWorkspaceProperty);
+					repoDetail.setRepoUrl(phrRepoUrlProperty);
+					scmMImpl.deleteWorkspace(repoDetail);
+				}
+
+				//To delete the test repo workspace
+				String splitTestDirProperty = pomProcessor.getProperty(POM_PROP_KEY_SPLIT_TEST_DIR);
+				if (StringUtils.isNotEmpty(splitTestDirProperty)) {
+					String testWorkspaceProperty = pomProcessor.getProperty(POM_PROP_KEY_TFS_TEST_WORKSPACE_NAME);
+					String testRepoUrlProperty = pomProcessor.getProperty(POM_PROP_KEY_TEST_REPO_URL);
+					repoDetail.setRepoUrl(testRepoUrlProperty);
+					repoDetail.setWorkspaceName(testWorkspaceProperty);
+					scmMImpl.deleteWorkspace(repoDetail);
+				}
+
+				//To delete the src repo workspace
+				String srcWorkspaceProperty = pomProcessor.getProperty(POM_PROP_KEY_TFS_SRC_WORKSPACE_NAME);
+				repoDetail.setRepoUrl(srcRepoUrlProperty);
+				repoDetail.setWorkspaceName(srcWorkspaceProperty);
+				scmMImpl.deleteWorkspace(repoDetail);
+			}
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
 		}
 	}
 

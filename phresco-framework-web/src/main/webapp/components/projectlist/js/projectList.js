@@ -25,6 +25,7 @@ define(["projectlist/listener/projectListListener"], function() {
 		flagged: null,
 		flag:null,
 		delobj:null,
+		deleteObj : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -180,19 +181,49 @@ define(["projectlist/listener/projectListListener"], function() {
 		getAction : function(actionBody, action, callback) {
 			var self = this;
 			self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, action), "" , function(response) {
-				if ("delete" === action) {
-					callback();
-				}				
-				if(self.flagged!=1) {
-					self.loadPage(commonVariables.animation);
+				console.info("after projectListAction........");
+				if (response.responseCode === "PHRSR10007") {
+					self.showCredentialsPopupForTfs();
 				} else {
-					self.flagged=1;
+					if ("delete" === action) {
+						callback();
+					}				
+					if(self.flagged!=1) {
+						self.loadPage(commonVariables.animation);
+					} else {
+						self.flagged=1;
+					}
 				}
+			});
+		},
+		
+		//To show the credentials popup to delete the TFS workspace during deletion of the tfs application
+		showCredentialsPopupForTfs : function() {
+			var self = this;
+			$('.modal-backdrop, #tfsRepoCredentials').remove();
+			$(commonVariables.basePlaceholder).append('<div id="tfsRepoCredentials" class="modal fade errpopup hideContent" tabindex="-1"><div class="modal-body temp"><table><tr><td colspan="2"><span>Credentials to deletet the TFS workspace : </span></td></tr><tr><td><span>User Name</span><sup>*</sup></td><td><span>Password</span><sup>*</sup></td></tr><tr><td><input type="text" id="repoUsername" style="margin-right:10px"></td><td><input type="password" id="repoPassword"></td></tr></table></div><div class="modal-footer"><input type="button" id="submitCredentials" class="btn btn_style" value="Ok"><input type="button" data-dismiss="modal" value="Cancel" class="btn btn_style" id="closeCredPopup"></div></div>');
+			$("#tfsRepoCredentials").modal("show");
+			self.submitCredentials();
+		},
+		
+		submitCredentials : function() {
+			var self = this;
+			$('#submitCredentials').unbind("click");
+			$('#submitCredentials').bind("click", function() {
+				$("#tfsRepoCredentials").modal("hide");
+				self.deleteObj.userName = $("#repoUsername").val();
+				self.deleteObj.password = $("#repoPassword").val();
+				self.getAction(self.deleteObj, "delete", function(response) {
+					commonVariables.navListener.getMyObj(commonVariables.projectlist, function(retVal) {
+						Clazz.navigationController.push(retVal, commonVariables.animation);
+					});
+				});
 			});
 		},
 		
 		deleteProjectfn : function(deletObj, imgname1, imgname2, deleteproject, flag_multi){
 			var self = this;
+			self.deleteObj = deleteObj;
 			self.getAction(deletObj,"delete",function(response) {
 				//commonVariables.loadingScreen.removeLoading();
 				self.deleterow(imgname1, imgname2, deleteproject, flag_multi);
@@ -597,8 +628,12 @@ define(["projectlist/listener/projectListListener"], function() {
 				}
 				//functionality for search log messages
 				$("#type_"+dynamicId).bind('change',function() {
-					if($(this).val() !== 'svn') {
-						$(".search").hide();
+
+					if($("#type_"+dynamicId).val() === 'tfs'){
+						$('.search, .phrescosearch, .testsearch').hide();
+						$('.tfsAddServerPath').show();
+					} else if($(this).val() !== 'svn') {
+						$(".search, .tfsAddServerPath").hide();
 						$('.searchdropdown').hide();
 						$(".phrescosearch").hide();
 						$('.dotphrescosearchdropdown').hide();
@@ -615,10 +650,12 @@ define(["projectlist/listener/projectListListener"], function() {
 					$('.search').show();
 					$('.phrescosearch').show();
 					$('.testsearch').show();
+					$('.tfsAddServerPath').hide();
 				} else {
 					$(".search").hide();
 					$(".phrescosearch").hide();
 					$(".testsearch").hide();
+					$('.tfsAddServerPath').hide();
 				}	
 				
 				$('.search').unbind("click");
@@ -874,6 +911,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				deleteObj.actionType = "project";
 				deleteObj.appDirNames = projectnameArray;
 				//commonVariables.loadingScreen.showLoading();
+				self.deleteObj = deleteObj;
 				self.getAction(deleteObj,"delete",function(response) {
 					//commonVariables.loadingScreen.removeLoading();
 						while(curr !== null && curr.length !== 0) {
