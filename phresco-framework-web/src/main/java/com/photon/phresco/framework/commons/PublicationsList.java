@@ -54,6 +54,8 @@ import com.photon.phresco.framework.model.Publications;
  */
 public class PublicationsList implements FrameworkConstants {
 	private static File configPath;
+	private static Map<String, String> statusMap = new HashMap<String, String>();
+	private static Map<String, String> actionMap = new HashMap<String, String>();
 
 	public PublicationsList(File configPath) {
 		this.configPath = configPath;
@@ -156,6 +158,7 @@ public class PublicationsList implements FrameworkConstants {
 				publicationsTypes.add(SCHEMA);
 				publicationsTypes.add(TEMPLATE);
 				publicationsTypes.add(CONTENT);
+				publicationsTypes.add(GLOBAL_LANGUAGE_CONTENT);
 				String publicationName = "";
 				String tcmId = "";
 				if (CollectionUtils.isNotEmpty(publicationsTypes)) {
@@ -362,9 +365,9 @@ public class PublicationsList implements FrameworkConstants {
 		}
 	}
 	
-	public static String publishPagesToserver(String server, String username, String password, String targetId, String publishSiteId) throws PhrescoException {
+	public static String publishPagesToserver(String server, String username, String password, String targetId, String publishSiteId, String type) throws PhrescoException {
 		BufferedReader rd = null;
-		String siteId = "";
+		String transactionId = "";
 		try {
 			StringBuilder builder = new  StringBuilder();
 			builder.append(POWER_SHELL);
@@ -381,7 +384,7 @@ public class PublicationsList implements FrameworkConstants {
 			builder.append(File.separator);
 			builder.append(PUBLICATION_SCRIPT);
 			builder.append(SPACE);
-			builder.append("PublishPages");
+			builder.append(type);
 			builder.append(SPACE);
 			builder.append("\"" + server + "\"");
 			builder.append(SPACE);
@@ -393,8 +396,6 @@ public class PublicationsList implements FrameworkConstants {
 			builder.append(SPACE);
 			builder.append("\""+ targetId +"\"");
 			builder.append(PUBLICATION_CLOSE);
-			
-			
 			String command = builder.toString();
 			System.out.println(command);
 			Commandline commandline = new Commandline(command);
@@ -408,7 +409,7 @@ public class PublicationsList implements FrameworkConstants {
 			while ((line = rd.readLine())!= null) {
 				if (line.startsWith("Id")) {
 					String[] splits = line.split(":" , 2);
-					siteId = splits[1];
+					transactionId = splits[1];
 					}
 				if (line.startsWith(PUBLICATION_ERROR) || line.startsWith("Warning") || errorOccured ) {
 					errorBuilder.append(line);
@@ -424,13 +425,13 @@ public class PublicationsList implements FrameworkConstants {
 		} catch (IOException e) {
 			throw new PhrescoException(e);
 		}
-		return siteId;
+		return transactionId;
 	}
 	
 	
-	public static String getPublishQueue(String server, String username, String password, String publishSiteId) throws PhrescoException {
+	public static Map<String, String> getPublishQueue(String server, String username, String password, String publishSiteId) throws PhrescoException {
 		BufferedReader rd = null;
-		String stateId = "";
+		Map<String, String> publicationQueue = new HashMap<String, String>();
 		try {
 			StringBuilder builder = new  StringBuilder();
 			builder.append(POWER_SHELL);
@@ -458,7 +459,6 @@ public class PublicationsList implements FrameworkConstants {
 			builder.append("\"" + publishSiteId + "\"");
 			builder.append(PUBLICATION_CLOSE);
 			
-			
 			String command = builder.toString();
 			System.out.println(command);
 			Commandline commandline = new Commandline(command);
@@ -470,12 +470,52 @@ public class PublicationsList implements FrameworkConstants {
 			boolean errorOccured = false;
 			rd = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			while ((line = rd.readLine())!= null) {
-				if (line.startsWith("State")) {
-					String[] splits = line.split(":" , 2);
-					stateId = splits[1];
-					break;
+				System.out.println(line);
+				if (line.contains("State")) {
+					Map<String, String> populateStatus = populateStatus();
+					String[] split = line.split(":");
+					for (String string : split) {
+						if(string.trim().contains("State") && string.trim().equals("State")) {
+							publicationQueue.put("state",populateStatus.get(StringUtils.strip(split[1])));
+						}
+						if(string.trim().contains("StateChangeDate") && string.trim().equals("StateChangeDate")) {
+							publicationQueue.put("Time", split[1]);
+						}
 					}
-				if (line.startsWith(PUBLICATION_ERROR) || line.startsWith("Warning") || errorOccured ) {
+				} else if (line.contains("Publication")) {
+					String[] split = line.split(":");
+					for (String string : split) {
+						if(string.trim().contains("Publication") && string.trim().equals("Publication")) {
+							publicationQueue.put("Publication", split[1]);
+						}
+						if(string.trim().contains("PublicationTarget") && string.trim().equals("PublicationTarget")) {
+							publicationQueue.put("target", split[1]);
+						}
+					}
+				} else if (line.startsWith("ItemPath")) {
+					String[] splits = line.split(":" , 2);
+					String itemPath = splits[1];
+					publicationQueue.put("Path", itemPath);
+				} else if (line.startsWith("Action")) {
+					String[] splits = line.split(":");
+					if (StringUtils.strip(splits[1]).equals("0")) {
+						publicationQueue.put("Action", "Publish");
+					} else {
+						publicationQueue.put("Action", "UnPublish");
+					}
+				} else if (line.startsWith("Priority")) {
+					String[] splits = line.split(":" , 2);
+					String Priority = splits[1];
+					publicationQueue.put("Priority", Priority);
+				}  else if (line.startsWith("User")) {
+					String[] splits = line.split(":" , 2);
+					String user = splits[1];
+					publicationQueue.put("User", user);
+				} else if (line.startsWith("Title")) {
+					String[] splits = line.split(":" , 2);
+					String name = splits[1];
+					publicationQueue.put("Name", name);
+				} else if (line.startsWith(PUBLICATION_ERROR) || line.startsWith("Warning") || errorOccured ) {
 					errorBuilder.append(line);
 					errorOccured = true;
 				}
@@ -488,10 +528,36 @@ public class PublicationsList implements FrameworkConstants {
 			throw new PhrescoException(e);
 		} catch (IOException e) {
 			throw new PhrescoException(e);
+		} finally {
+			try {
+				if (rd != null) {
+					rd.close();
+				}
+			} catch (IOException e) {
+				throw new PhrescoException(e);
+			}
 		}
-		return stateId;
+		return publicationQueue;
 	}
 	
+	private static Map<String, String> populateStatus() {
+		statusMap.put("1", "Scheduled");
+		statusMap.put("2", "Waiting for Publish");
+		statusMap.put("3", "In Progress");
+		statusMap.put("4", "Waiting");
+		statusMap.put("5", "Failed");
+		statusMap.put("6", "Waiting for Deployment");
+		statusMap.put("7", "In Progress");
+		statusMap.put("8", "Transport is not successfull");
+		statusMap.put("9", "Deployment is Successfull");
+		statusMap.put("11", "Ready for Transport");
+		return statusMap;
+	}
+	private static Map<String, String> populateAction() {
+		actionMap.put("0", "Publish");
+		actionMap.put("1", "UnPublish");
+		return actionMap;
+	}
 
 	/**
 	 * Update the TcmID
@@ -599,7 +665,9 @@ public class PublicationsList implements FrameworkConstants {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder documentBuilder = docFactory.newDocumentBuilder();
 			File virtualConfigFile = new File(configPath + File.separator + PUBLICATION_VIRTUAL_CONFIG_FILE);
-			
+			if (!virtualConfigFile.exists() || virtualConfigFile.length() == 0) {
+				return;
+			}
 			Document doc = documentBuilder.parse(virtualConfigFile);
 			StringBuilder expBuilder = new StringBuilder();
 			expBuilder.append("/Publications/publication[@type='"); 
@@ -647,7 +715,63 @@ public class PublicationsList implements FrameworkConstants {
 			throw new PhrescoException(e);
 		}
 	}
+	
+	/**
+	 * Clone the Publication
+	 * @param environmentName
+	 * @param type
+	 * @throws PhrescoException
+	 */
+	public static void clonePublication(String environmentName, String type) throws PhrescoException {
+		try {
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = docFactory.newDocumentBuilder();
+			File virtualConfigFile = new File(configPath + File.separator + PUBLICATION_VIRTUAL_CONFIG_FILE);
+			
+			Document doc = documentBuilder.parse(virtualConfigFile);
+			StringBuilder expBuilder = new StringBuilder();
+			expBuilder.append("/Publications/publication[@type='"); 
+			expBuilder.append(type);
+			expBuilder.append("']");	
+			expBuilder.append("/target/environment");
 
+			XPathFactory xPathFactory = XPathFactory.newInstance();
+			XPath newXPath = xPathFactory.newXPath();
+
+			XPathExpression xPathExpression = newXPath.compile(expBuilder.toString());
+			Node node = (Node) xPathExpression.evaluate(doc, XPathConstants.NODE);
+			if (node != null) {
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					Element element = (Element) node; 
+					element.setAttribute(TCM_ID, "");
+					element.setAttribute(NAME, environmentName);
+				}
+			}
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, YES);
+			transformer.setOutputProperty(OutputKeys.INDENT, YES);
+
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(virtualConfigFile.toString());
+			transformer.transform(source, result);
+			
+			
+		} catch (XPathExpressionException e) {
+			throw new PhrescoException(e);
+		} catch (ParserConfigurationException e) {
+			throw new PhrescoException(e);
+		} catch (SAXException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		} catch (TransformerConfigurationException e) {
+			throw new PhrescoException(e);
+		} catch (TransformerException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
 	/**
 	 * Check the Content and Website 
 	 * @param virtualConfigFile
@@ -728,7 +852,7 @@ public class PublicationsList implements FrameworkConstants {
 				}
 			}
 			if (!devEnvironmentExists) {
-				throw new PhrescoException("Authentication is required and Dev Environment is need before further proceed ");
+				throw new PhrescoException(" No environment configuration found - authentication missing ");
 			}
 			List<Configuration> configs = configReader.getConfigurations(environmentName, REQ_DEPLOY_SERVER);
 			for (Configuration configuration : configs) {
@@ -745,6 +869,104 @@ public class PublicationsList implements FrameworkConstants {
 			throw new PhrescoException(e);
 		}
 		return credentials;
+	}
+
+	public String updateTransactionId(String transactionId, String environmentName) throws PhrescoException {
+		String transactionIds = "";
+		try {
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = docFactory.newDocumentBuilder();
+			File path = new File(configPath + File.separator + PUBLICATION_CONFIG_FILE);
+			Document doc = documentBuilder.parse(path);
+			StringBuilder expBuilder = new StringBuilder();
+			expBuilder.append("/Publications/PublicationTransaction"); 
+			
+			XPathFactory xPathFactory = XPathFactory.newInstance();
+			XPath newXPath = xPathFactory.newXPath();
+
+			XPathExpression xPathExpression = newXPath.compile(expBuilder.toString());
+			Node node = (Node) xPathExpression.evaluate(doc, XPathConstants.NODE);
+			if (node != null) {
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					Element PublicationTransaction = (Element) node;
+					transactionIds = PublicationTransaction.getAttribute("id");
+					String exisitingEnvName = PublicationTransaction.getAttribute("envName");
+					if (StringUtils.isNotEmpty(transactionId)) {
+						PublicationTransaction.setAttribute("id", transactionId);
+						if (StringUtils.isNotEmpty(exisitingEnvName)) {
+							if (!exisitingEnvName.trim().contains(environmentName)) {
+								PublicationTransaction.setAttribute("envName", exisitingEnvName + "," + environmentName);
+							}
+						} else {
+							PublicationTransaction.setAttribute("envName",environmentName);
+						}
+					}
+				}
+			}
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, YES);
+			transformer.setOutputProperty(OutputKeys.INDENT, YES);
+
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(path.toString());
+			transformer.transform(source, result);
+			
+			
+		} catch (XPathExpressionException e) {
+			throw new PhrescoException(e);
+		} catch (ParserConfigurationException e) {
+			throw new PhrescoException(e);
+		} catch (SAXException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		} catch (TransformerConfigurationException e) {
+			throw new PhrescoException(e);
+		} catch (TransformerException e) {
+			throw new PhrescoException(e);
+		}
+		return transactionIds;
+	}
+
+	public Map<String, String> checkPublished() throws PhrescoException {
+		Map<String, String> transactionDetails = new HashMap<String, String>();
+		try {
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = docFactory.newDocumentBuilder();
+			File path = new File(configPath + File.separator + PUBLICATION_CONFIG_FILE);
+			Document doc = documentBuilder.parse(path);
+			StringBuilder expBuilder = new StringBuilder();
+			expBuilder.append("/Publications/PublicationTransaction"); 
+
+			XPathFactory xPathFactory = XPathFactory.newInstance();
+			XPath newXPath = xPathFactory.newXPath();
+
+			XPathExpression xPathExpression = newXPath.compile(expBuilder.toString());
+			Node node = (Node) xPathExpression.evaluate(doc, XPathConstants.NODE);
+			if (node != null) {
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					Element PublicationTransaction = (Element) node;
+					String transactionId = PublicationTransaction.getAttribute("id");
+					String environmentName = PublicationTransaction.getAttribute("envName");
+					if (StringUtils.isNotEmpty(transactionId) && StringUtils.isNotEmpty(environmentName)) {
+						transactionDetails.put("id", transactionId);
+						transactionDetails.put("envName", environmentName);
+					} else {
+						transactionDetails = null;
+					}
+				}
+			}
+		} catch (XPathExpressionException e) {
+			throw new PhrescoException(e);
+		} catch (ParserConfigurationException e) {
+			throw new PhrescoException(e);
+		} catch (SAXException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		}
+		return transactionDetails;
 	}
 
 }

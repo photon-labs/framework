@@ -69,8 +69,21 @@ define([], function() {
 			}
 			
 			if(action === 'createPublication'){
-				header.webserviceurl = commonVariables.webserviceurl+"tridion/createPublication?appDirName="+appDirName;
-			}	
+				header.webserviceurl = commonVariables.webserviceurl+"tridion/createPublication?appDirName="+appDirName+"&environment="+data;
+			}
+			
+			if(action === 'getEnv'){
+				header.webserviceurl = commonVariables.webserviceurl+"configuration/allEnvironments?appDirName="+appDirName;
+			}
+			
+			if(action === 'PublicationStatus'){
+				header.webserviceurl = commonVariables.webserviceurl+"tridion/PublicationStatus?appDirName="+appDirName;
+			}			
+			
+			if(action === 'clonePublication'){
+				header.webserviceurl = commonVariables.webserviceurl+"tridion/clonePublication?appDirName="+appDirName+"&environment="+data;
+			}				
+
 			return header;
 		},
 		
@@ -100,6 +113,69 @@ define([], function() {
 			}
 		},
 
+		getAllEnvironments : function(action){
+			var self = this;
+			var environments = "";
+			self.getData(self.getRequestHeader('', action), function(response) {
+				if(response.data !== null && response.data.length !== 0) {
+					if(response.responseCode === "PHR600002"){
+						var publishedEnvsList = commonVariables.api.localVal.getJson('publishedEnvs');
+						var publishedEnvs = publishedEnvsList.data;
+						if(publishedEnvs.length > 0){
+							var envArray = publishedEnvs.split(',');
+							// To hide save button after creating publication
+							if(envArray.length !== 0){	
+								$("#savePublication").removeClass('btn_style');
+								$("#savePublication").addClass("btn_style_off");
+								$("input[type='text']").attr("disabled","disabled");
+							}
+						} 
+						$.each(response.data, function(index, value){
+							/* if(value.defaultEnv === true){
+								$("#selectedEnv").text(value.name);
+							} */
+							//if($.inArray(value.name , envArray)){
+							if (jQuery.inArray(value.name , envArray) === -1) {
+								environments += '<li disabled="disabled" style="padding-left:8px;" data="'+value.name+'" key="'+value.name+'" name="selectEnv" class="dropdown-key">'+value.name+'</li>';
+							} /* else {
+								environments += '<li style="padding-left:8px;cursor:none;" data="'+value.name+'" key="'+value.name+'" name="selectEnv">'+value.name+'</li>';
+							} */
+							//environments += '<li style="padding-left:8px;" data="'+value.name+'" key="'+value.name+'" name="selectEnv" class='+innerLiClass+'>'+value.name+'</li>';
+							
+						});	
+						$("#envList").append(environments);
+					}
+				}
+			});
+		},
+		
+		getPublicationStatus : function(action){
+			var self = this;
+			var environments = "";
+			self.getData(self.getRequestHeader('', action), function(response) {
+				if(response !== null && response !== "") {
+					//if(response.responseCode === "PHRTR0007"){
+						commonVariables.api.localVal.setJson('publishedEnvs', response);
+					//}
+				}
+			});
+		},
+		
+				
+		clonePublications : function(selEnvironment , action){
+			var self = this;
+			var environments = "";
+			self.getData(self.getRequestHeader(selEnvironment, action), function(response) {
+				/* if(response !== null && response !== "") {
+					if(response.responseCode === "PHRTR0009"){
+						//commonVariables.api.localVal.setJson('publishedEnvs', response);
+					}
+				} */
+			});
+		},
+		
+		
+		
 		getAllParents : function(action){
 			var self = this;
 			var availableParents = "";
@@ -187,7 +263,7 @@ define([], function() {
 				//&& (publicationType === 'Website' || publicationType === 'Content') 
 				//console.info('parentPublications = ' , parentPublications);
 				 if(parentPublications.length === 0 ){
-					commonVariables.api.showError("PHRTR1002" ,"error", true, false, true);
+					commonVariables.api.showError("PHR1002" ,"error", true, false, true);
 					return false;
 				 }
 
@@ -297,11 +373,16 @@ define([], function() {
 
 		submitPublication : function (){
 			var self = this;
-			self.getData(self.getRequestHeader('', "createPublication"), function(response) {
-				if(response.responseCode === "PHRTR0005"){
-					commonVariables.api.showError("PHRTR0005" ,"success", true, false, true);
-				}
-			});	
+			var selectedEnv = $("#selectedEnv").text();
+			if(selectedEnv !== "Select Env"){
+				self.getData(self.getRequestHeader(selectedEnv, "createPublication"), function(response) {
+					if(response.responseCode === "PHRTR0005"){
+						commonVariables.api.showError("PHRTR0005" ,"success", true, false, true);
+					}
+				});
+			} else {
+					commonVariables.api.showError("PHRTRS1020" ,"error", true, false, true);
+			}
 		}
 	});
 	return Clazz.com.components.tridiongeneral.js.listener.tridiongeneralListener;

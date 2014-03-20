@@ -3,6 +3,7 @@ package com.photon.phresco.framework.rest.api;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -39,7 +40,6 @@ import com.sun.jersey.api.client.ClientResponse.Status;
 /**
  *  Tridion Service
  * @author saravanan_na
- *
  */
 
 @Path("/tridion")
@@ -61,7 +61,7 @@ public class TridionService extends RestBase implements FrameworkConstants, Serv
 			}
 			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModuleName);
 			PublicationCreation publication = new PublicationCreation(dotPhrescoFolderPath);
-
+			
 			boolean fileSaved = publication.createPublicationXml(publicationConfig);
 			if (fileSaved) {
 				responseData = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_SUCCESS, PHRTR0001);
@@ -70,12 +70,9 @@ public class TridionService extends RestBase implements FrameworkConstants, Serv
 			}
 			return Response.ok(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
-			
 			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_FAILURE, PHRTR1001);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
-//			return Response.status(Status.EXPECTATION_FAILED).entity(PUBLICATION_FAILURE).header(ACCESS_CONTROL_ALLOW_ORIGIN,
-//					ALL_HEADER).build();	
 		}
 	}
 	
@@ -110,15 +107,11 @@ public class TridionService extends RestBase implements FrameworkConstants, Serv
 			} else {
 				responseData = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_FAILURE, PHRTR1002);
 				return Response.ok(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
-//				return Response.status(Status.EXPECTATION_FAILED).entity(FILE_NOT_FOUND).header(ACCESS_CONTROL_ALLOW_ORIGIN,
-//						ALL_HEADER).build();
 			}
 		} catch (Exception e) {
 			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_FAILURE, PHRTR1002);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
-//			return Response.status(Status.EXPECTATION_FAILED).entity(FILE_NOT_FOUND).header(ACCESS_CONTROL_ALLOW_ORIGIN,
-//					ALL_HEADER).build();
 		}
 	}
 	
@@ -192,13 +185,12 @@ public class TridionService extends RestBase implements FrameworkConstants, Serv
 	@GET
 	@Path(CREATE_PUBLICATIONS)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createPublication(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module) throws PhrescoException {
+	public Response createPublication(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module, @QueryParam(REST_QUERY_ENVIRONMENT) String environmentName) throws PhrescoException {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
 			String server = "";
 			String username = "";
 			String password = "";
-			String environmentName = "";
 			String rootModulePath = "";
 			String subModuleName = "";
 			if (StringUtils.isNotEmpty(module)) {
@@ -212,13 +204,16 @@ public class TridionService extends RestBase implements FrameworkConstants, Serv
 			File virtualConfigFile = new File(dotPhrescoFolderPath + File.separator + PUBLICATION_VIRTUAL_CONFIG_FILE);
 			
 			PublicationsList publicationList = new PublicationsList(new File(dotPhrescoFolderPath));
-			FileUtils.copyFile(publicationConfigPath, virtualConfigFile);
-			
+			Map<String, String> isPublished = publicationList.checkPublished();
+			if (MapUtils.isEmpty(isPublished)) {
+				FileUtils.copyFile(publicationConfigPath, virtualConfigFile);
+			}
 			List<String> types = new ArrayList<String>();
 			types.add(SCHEMA);
 			types.add(TEMPLATE);
 			types.add(CONTENTS);
 			types.add(WEBSITE);
+			types.add(GLOBAL_LANGUAGE_CONTENT);
 			
 			for (String type : types) {
 				publicationList.createVirtualConfigFile(type);
@@ -228,7 +223,7 @@ public class TridionService extends RestBase implements FrameworkConstants, Serv
 				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_FAILURE, PHRTR1004);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 			}
-			Map<String, String> authenticationDetails = publicationList.getAuthenticationDetails(dotPhrescoFolderPath, "");
+			Map<String, String> authenticationDetails = publicationList.getAuthenticationDetails(dotPhrescoFolderPath, environmentName);
 			if (MapUtils.isNotEmpty(authenticationDetails)) {
 				server = authenticationDetails.get(CMS_SERVER);
 				username = authenticationDetails.get(CMS_USERNAME);
@@ -254,6 +249,70 @@ public class TridionService extends RestBase implements FrameworkConstants, Serv
 		responseData = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_SUCCESS, PHRTR0005);
 		return Response.ok(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 	}
+	
+	/**
+	 * Clone the Publications
+	 * @param appDirName
+	 * @param module
+	 * @return
+	 * @throws PhrescoException
+	 */
+	
+	@GET
+	@Path(CLONE_PUBLICATIONS)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response clonePublication(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module, @QueryParam(REST_QUERY_ENVIRONMENT) String environmentName) throws PhrescoException {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		try {
+			String server = "";
+			String username = "";
+			String password = "";
+			String rootModulePath = "";
+			String subModuleName = "";
+			if (StringUtils.isNotEmpty(module)) {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = module;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+			}
+			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModuleName);
+			File publicationConfigPath = new File(dotPhrescoFolderPath + File.separator + PUBLICATION_CONFIG_FILE);
+			File virtualConfigFile = new File(dotPhrescoFolderPath + File.separator + PUBLICATION_VIRTUAL_CONFIG_FILE);
+			
+			PublicationsList publicationList = new PublicationsList(new File(dotPhrescoFolderPath));
+			FileUtils.copyFile(publicationConfigPath, virtualConfigFile);
+			
+			List<String> types = new ArrayList<String>();
+			types.add(SCHEMA);
+			types.add(TEMPLATE);
+			types.add(CONTENTS);
+			types.add(WEBSITE);
+			types.add(GLOBAL_LANGUAGE_CONTENT);
+			
+			for (String type : types) {
+				 if(StringUtils.isNotEmpty(environmentName)){
+					publicationList.clonePublication(environmentName, type);
+				}
+			}
+		} catch (PhrescoException e) {
+			String message = e.getMessage();
+			if (StringUtils.isNotEmpty(message)) {
+				Exception exception = new Exception(message);
+				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, exception, message, RESPONSE_STATUS_FAILURE, PHRTR1010);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+			}
+		} catch (IOException e) {
+			String message = e.getMessage();
+			if (StringUtils.isNotEmpty(message)) {
+				Exception exception = new Exception(message);
+				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, exception, message, RESPONSE_STATUS_FAILURE, PHRTR1010);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+			}
+		}
+		responseData = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_SUCCESS, PHRTR0009);
+		return Response.ok(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+	}
+	
 	/**
 	 * Get the Environment List
 	 * @param appDirName
@@ -298,22 +357,30 @@ public class TridionService extends RestBase implements FrameworkConstants, Serv
 		return Response.ok(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 	}
 	
-	
+	/**
+	 * Publish Pages
+	 * @param appDirName
+	 * @param module
+	 * @param targetIds
+	 * @param environmentName
+	 * @return
+	 * @throws PhrescoException
+	 */
 	@POST
 	@Path("/publishPages")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response PublishPages(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module, List<String> targetIds) throws PhrescoException {
+	public Response publishPages(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module, List<String> targetIds, @QueryParam(REST_QUERY_ENVIRONMENT) String environmentName, @QueryParam(REST_QUERY_PUBLICATION_TYPE) String type) throws PhrescoException {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
-		System.out.println("========appDirName============================" + appDirName);
-		
-		StringBuilder sb = new StringBuilder();
+		StringBuilder targetsToPublish = new StringBuilder();
 			String server = "";
 			String username = "";
 			String password = "";
 			String rootModulePath = "";
 			String subModuleName = "";
-			String publishPagesToserver = "";
+			String transactionId = "";
+			String successCode="";
+			String errorCode = "";
 			try {
 			if (StringUtils.isNotEmpty(module)) {
 				rootModulePath = Utility.getProjectHome() + appDirName;
@@ -326,71 +393,128 @@ public class TridionService extends RestBase implements FrameworkConstants, Serv
 			PublicationsList publicationList = new PublicationsList(new File(dotPhrescoFolderPath));
 			String publishSiteId = publicationList.getPublishSiteId(WEBSITE);
 		        for(String targetId: targetIds) {
-					System.out.println("****************targetId*******************" + targetId);
-		           sb.append(targetId).append(',');
+		           targetsToPublish.append(targetId).append(',');
 		        }
-		        sb.deleteCharAt(sb.length()-1); //delete last comma
+		        targetsToPublish.deleteCharAt(targetsToPublish.length()-1); //delete last comma
 		        
-			Map<String, String> authenticationDetails = publicationList.getAuthenticationDetails(dotPhrescoFolderPath, "");
+			Map<String, String> authenticationDetails = publicationList.getAuthenticationDetails(dotPhrescoFolderPath, environmentName);
 			if (MapUtils.isNotEmpty(authenticationDetails)) {
 				server = authenticationDetails.get(CMS_SERVER);
 				username = authenticationDetails.get(CMS_USERNAME);
 				password = authenticationDetails.get(CMS_PASSWORD);
-				publishPagesToserver = publicationList.publishPagesToserver(server, username, password, sb.toString(), publishSiteId);
+				transactionId = publicationList.publishPagesToserver(server, username, password, targetsToPublish.toString(), publishSiteId, type);
 			}
+			if (StringUtils.isNotEmpty(transactionId)) {
+				transactionId = StringUtils.strip(transactionId);
+				publicationList.updateTransactionId(transactionId, environmentName);
+			}
+			if (type.equalsIgnoreCase("PublishPages")) {
+				successCode = PHRTR0007;
+				errorCode =  PHRTR1008;
+			} else if (type.equalsIgnoreCase("UnPublishPages")){
+				successCode = PHRTR0010;
+				errorCode =   PHRTR1011;
+			}
+			
 			} catch(PhrescoException e) {
 				String message = e.getMessage();
 				if (StringUtils.isNotEmpty(message)) {
 					Exception exception = new Exception(message);
-					ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, exception, message, RESPONSE_STATUS_FAILURE, PHRTR1008);
+					ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, exception, message, RESPONSE_STATUS_FAILURE, errorCode);
 					return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 				}
 			}
-			responseData = responseDataEvaluation(responseData, null, publishPagesToserver, RESPONSE_STATUS_SUCCESS, PHRTR0007);
+			responseData = responseDataEvaluation(responseData, null, transactionId, RESPONSE_STATUS_SUCCESS, successCode);
 			return Response.ok(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 	}
 	
-	
+	/**
+	 * Publication Queue
+	 * @param appDirName
+	 * @param module
+	 * @param environmentName
+	 * @return
+	 * @throws PhrescoException
+	 */
 	@GET
 	@Path("/publishQueue")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getPublishQueue(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module, @QueryParam("siteId") String siteId) throws PhrescoException {
+	public Response getPublishQueue(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module, @QueryParam(REST_QUERY_ENVIRONMENT) String environmentName) throws PhrescoException {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
-			String server = "";
-			String username = "";
-			String password = "";
-			String rootModulePath = "";
-			String subModuleName = "";
-			String publishQueue = "";
-			try {
+		String server = "";
+		String username = "";
+		String password = "";
+		String rootModulePath = "";
+		String subModuleName = "";
+		Map<String, String> publishQueue = new HashMap<String, String>();
+		String publishQueueStatus = "";
+		Map<String, String> transactionDetails = null;
+		try {
 			if (StringUtils.isNotEmpty(module)) {
 				rootModulePath = Utility.getProjectHome() + appDirName;
 				subModuleName = module;
 			} else {
 				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
-			
+
 			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModuleName);
 			PublicationsList publicationList = new PublicationsList(new File(dotPhrescoFolderPath));
-			Map<String, String> authenticationDetails = publicationList.getAuthenticationDetails(dotPhrescoFolderPath, "");
+			Map<String, String> authenticationDetails = publicationList.getAuthenticationDetails(dotPhrescoFolderPath, environmentName);
 			if (MapUtils.isNotEmpty(authenticationDetails)) {
 				server = authenticationDetails.get(CMS_SERVER);
 				username = authenticationDetails.get(CMS_USERNAME);
 				password = authenticationDetails.get(CMS_PASSWORD);
-				publishQueue = publicationList.getPublishQueue(server, username, password, siteId);
+				transactionDetails = publicationList.checkPublished();
+				publishQueue = publicationList.getPublishQueue(server, username, password, transactionDetails.get("id"));
 			}
-			} catch(PhrescoException e) {
-				String message = e.getMessage();
-				if (StringUtils.isNotEmpty(message)) {
-					Exception exception = new Exception(message);
-					ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, exception, message, RESPONSE_STATUS_FAILURE, PHRTR1009);
-					return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
-				}
+		} catch(PhrescoException e) {
+			String message = e.getMessage();
+			if (StringUtils.isNotEmpty(message)) {
+				Exception exception = new Exception(message);
+				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, exception, message, RESPONSE_STATUS_FAILURE, PHRTR1009);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 			}
-			responseData = responseDataEvaluation(responseData, null, publishQueue, RESPONSE_STATUS_SUCCESS, PHRTR0008);
-			return Response.ok(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+		}
+		responseData = responseDataEvaluation(responseData, null, publishQueue, RESPONSE_STATUS_SUCCESS, PHRTR0008);
+		return Response.ok(responseData).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 	}
+	
+	@GET
+	@Path("/PublicationStatus")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response checkPublishedStatus(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module) throws PhrescoException {
+		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
+		Map<String, String> isPublished = null;
+		String environment = "";
+		try {
+			String rootModulePath = "";
+			String subModuleName = "";
+			if (StringUtils.isNotEmpty(module)) {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = module;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+			}
+			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModuleName);
 			
+			PublicationsList publicationList = new PublicationsList(new File(dotPhrescoFolderPath));
+			isPublished = publicationList.checkPublished();
+			if (MapUtils.isNotEmpty(isPublished)) {
+				environment = isPublished.get("envName");
+				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, isPublished.get("envName"), RESPONSE_STATUS_SUCCESS, PHRTR0011);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+			} 
+		} catch (PhrescoException e) {
+			String message = e.getMessage();
+			if (StringUtils.isNotEmpty(message)) {
+				Exception exception = new Exception(message);
+				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, exception, message, RESPONSE_STATUS_FAILURE, PHRTR0012);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+			}
+		}
+		ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, environment, RESPONSE_STATUS_SUCCESS, PHRTR0011);
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+	}
 	
 	/**
 	 * Get the Publication List

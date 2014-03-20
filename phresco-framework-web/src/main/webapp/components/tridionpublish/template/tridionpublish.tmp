@@ -1,43 +1,52 @@
- <section class="optiontitle">
-        <div class="flt_left" >
-			
-			<font>Publishing</font>
-		</div>
-    </section>
-	
-<section class="tridion_info tab_line testSuiteTable">
-<div class="scrolldiv">
-<div class="fixed-table-container">
-	<div class="header-background"><span class="classificationId" id="classificationId">Publishing</span></div>
-	<div class="fixed-table-container-inner">
-		<div class="scrolldiv no_border">
-		<table class="table table-striped table_border table-hover table-bordered" cellpadding="0" cellspacing="0" border="0">
+    <section class="content_main appInfo" id="appinfo">
+	<div class="scrolldiv">
+		<table class="table table-striped table_border table-bordered create_edit_table" cellpadding="0" cellspacing="0" border="0"> 
 			<tbody name="ConfigurationLists"> 
+				<tr class="proj_title">
+					<td colspan="4" data-i18n="navigation.application.tridionpublish">Publishing</td><td colspan="5"><span id="servererror"></span></td>
+				</tr>		
 				<tr>
-					<td>Environment<sup>*</sup></td>
-					<td>	
-					{{envlist.data}}
-						<select class="custon_dropdown" name="envList" id="envList">
-							<option value="0">Select Env</option>
-							{{#each envlist}}
-								<option>{{name}}</option>
-							{{/each}}
-						</select>
-					</td>
-					<td>Environment Target<sup>*</sup></td>
-					<td colspan="3">
-						<select class="custon_dropdown" name="envTarget" id="envTarget" multiple>
-						</select>
-					</td>
-				</tr>			
-			</tbody>
-		</table>
-
+						<td>Environment<sup>*</sup></td>
+						<td colspan="3">	
+						{{envlist.data}}
+							<select class="custon_dropdown" name="envList" id="envList">
+								<option value="0">Select Env</option>
+								{{#each envlist}}
+									<option>{{name}}</option>
+								{{/each}}
+							</select>
+						</td>
+						<td>Environment Target<sup>*</sup></td>
+						<td colspan="4">
+							<select class="custon_dropdown" name="envTarget" id="envTarget" multiple>
+							</select>
+						</td>
+					</tr>
+				<tr class="proj_title" id="viewQueue" style="cursor:pointer">
+					<td colspan="4" data-i18n="application.edit.publishqueue"></td><td colspan="5"></td>
+				</tr>
+						<tr id="publishQueue" current="hidden"  style="display:none;">
+							<th>Name</th>
+							<th>Target</th>
+							<th>Publication</th>
+							<th>Path</th>
+							<th>Action</th>
+							<th>State</th>
+							<th>Priority</th>
+							<th>Time</th>
+							<th>User</th>
+						</tr>						
+						<tr id="publishQueueList" current="hidden"  style="display:none;">
+						</tr>			
+					<div>
+				</tbody>
+			</table>
 	</div>
-</div>
-</div>
-</div>
-</section>
+</section>	
+
+
+
+
 <section class="content_end" name="configContent">
 	<div class="flt_right">
 		<input type="submit" name="unpublish" id="unpublish" value="Unpublish" class="btn btn_style save_btn">

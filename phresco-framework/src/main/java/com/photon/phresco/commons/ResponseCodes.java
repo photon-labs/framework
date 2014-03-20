@@ -659,9 +659,9 @@ public interface ResponseCodes {
 	String PHRTR0006 = "PHRTR0006"; // Environment fetched successfully
 	String PHRTR0007 = "PHRTR0007"; // Site published successfully
 	String PHRTR0008 = "PHRTR0008"; // Publish queue status fetched successfully
-	
-	
-	
+	String PHRTR0009 = "PHRTR0009"; // Publication clone created successfully
+	String PHRTR0010 = "PHRTR0010"; // Site Unpublished successfully
+	String PHRTR0011 = "PHRTR0011"; // Published environment  fetched successfully
 	
 	String PHRTR1001 = "PHRTR1001"; // Publication Save Failed
 	String PHRTR1002 = "PHRTR1002"; // Publication retrieve failed
@@ -672,6 +672,7 @@ public interface ResponseCodes {
 	String PHRTR1007 = "PHRTR1007"; // Failed to fetch environment3
 	String PHRTR1008 = "PHRTR1008"; // Failed to publish site
 	String PHRTR1009 = "PHRTR1009"; // Failed to fetch publish queue status
-	
-	
+	String PHRTR1010 = "PHRTR1010"; // Publication cloned Failed
+	String PHRTR1011 = "PHRTR1011"; // Failed to UnPublish site
+	String PHRTR0012 = "PHRTR0012"; // Environment published  fetched Failed
 }

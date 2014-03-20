@@ -30,6 +30,7 @@ define([], function() {
 			var self=this, header, userId, appDirName;
 			userId = commonVariables.api.localVal.getSession('username');
 			appDirName = commonVariables.api.localVal.getSession("appDirName");
+			var environment = $("#envList").val();
 			header = {
 				contentType: "application/json",
 				requestMethod: "GET",
@@ -48,22 +49,20 @@ define([], function() {
 			if(action === 'publishPages'){
 				header.requestMethod ="POST";
 				header.requestPostBody = data;
-				header.webserviceurl = commonVariables.webserviceurl+"tridion/publishPages?appDirName="+appDirName;
+				header.webserviceurl = commonVariables.webserviceurl+"tridion/publishPages?appDirName="+appDirName+"&environment="+environment+"&type=PublishPages";
 			}				
-			
-		/* 	if(action === 'saveConfig'){
+									
+			if(action === 'UnPublishPages'){
 				header.requestMethod ="POST";
 				header.requestPostBody = data;
-				header.webserviceurl = commonVariables.webserviceurl+"tridion/saveConfig?appDirName="+appDirName;
-			}
-			
-			if(action === 'readConfig'){
-				header.webserviceurl = commonVariables.webserviceurl+"tridion/readConfig?appDirName="+appDirName;
-			}
-			
-			if(action === 'createPublication'){
-				header.webserviceurl = commonVariables.webserviceurl+"tridion/createPublication?appDirName="+appDirName;
-			}	 */
+				header.webserviceurl = commonVariables.webserviceurl+"tridion/publishPages?appDirName="+appDirName+"&environment="+environment+"&type=UnPublishPages";
+			}				
+	
+			if(action === 'publishQueue'){
+				header.webserviceurl = commonVariables.webserviceurl+"tridion/publishQueue?appDirName="+appDirName+"&environment="+data;
+			}						
+	
+	
 			return header;
 		},
 		
@@ -108,6 +107,20 @@ define([], function() {
 				}
 			});
 		},
+				
+		getPublishingQueue : function(action){
+			var self = this;
+			var environmentSelected = $("#envList").val();
+			self.getData(self.getRequestHeader(environmentSelected, action), function(response) {
+				if(response.data !== null && response.data.length !== 0) {
+ 					 if(response.responseCode === "PHRTR0008"){
+						$("#publishQueueList").empty();
+						var pubQueue = '<td>'+$.trim(response.data.Name)+'</td><td>'+$.trim(response.data.target)+'</td><td>'+$.trim(response.data.Publication)+'</td><td>'+$.trim(response.data.Path)+'</td><td>'+$.trim(response.data.Action)+'</td><td>'+$.trim(response.data.state)+'</td><td>'+$.trim(response.data.Priority)+'</td><td>'+$.trim(response.data.Time)+'</td><td>'+$.trim(response.data.User)+'</td>';
+						$("#publishQueueList").append(pubQueue);
+					}  
+				}
+			});
+		},
 		
 		publishWebsite : function(){
 			var self = this;
@@ -120,7 +133,25 @@ define([], function() {
 						if(response.responseCode === "PHRTR0007"){
 							commonVariables.api.showError("PHRTR0007" ,"success", true, false, true);
 						} else {
-							commonVariables.api.showError("PHRTR1001" ,"error", true, false, true);
+							commonVariables.api.showError("PHRTR1008" ,"error", true, false, true);
+						}
+					} 
+				}); 
+ 			}
+		},	
+		
+		unPublishWebsite : function(){
+			var self = this;
+			if(!self.validation()) {
+			var publicationInfo = {};
+			var envList = $("#envList").val();
+			var envTarget = $("#envTarget").val();
+ 				self.getData(self.getRequestHeader(JSON.stringify(envTarget), "UnPublishPages"), function(response) {
+					 if(response.data !== null && response.data.length !== 0) {
+						if(response.responseCode === "PHRTR0010"){
+							commonVariables.api.showError("PHRTR0010" ,"success", true, false, true);
+						} else {
+							commonVariables.api.showError("PHRTR1011" ,"error", true, false, true);
 						}
 					} 
 				}); 
@@ -132,20 +163,10 @@ define([], function() {
 			var envList = $("#envList").val();
 			var envTarget = $("#envTarget").val();
 				if(envList === "0"){
-					$("input[name='envList']").focus();
-					$("input[name='envList']").attr('placeholder','Select Environment');
-					$("input[name='envList']").addClass("errormessage");
-					$("input[name='envList']").bind('keypress', function() {
-						$(this).removeClass("errormessage");
-					});
+					commonVariables.api.showError("PHRTRS1020" ,"error", true, false, true);
 					self.hasError = true;
-			   } else if(envTarget === ""){
-					$("input[name='envTarget']").focus();
-					$("input[name='envTarget']").attr('placeholder','Select Target');
-					$("input[name='envTarget']").addClass("errormessage");
-					$("input[name='envTarget']").bind('keypress', function() {
-						$(this).removeClass("errormessage");
-					});
+			   } else if(!envTarget){
+					commonVariables.api.showError("PHRTRS1030" ,"error", true, false, true);
 					self.hasError = true;
 			   } 
 			  return self.hasError;

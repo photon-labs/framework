@@ -500,11 +500,11 @@ define([], function() {
 											
 					case commonVariables.tridionpublish :
 						if(self.tridionpublish === null) {
-							console.info('pubi');
+							//console.info('pubi');
 							require(["tridionpublish/tridionpublish"], function(){
-							console.info('tridionpublish');
+							//console.info('tridionpublish');
 								self.tridionpublish = new Clazz.com.components.tridionpublish.js.tridionpublish();
-								console.info('tridionpublish = ' , self.tridionpublish);
+								//console.info('tridionpublish = ' , self.tridionpublish);
 								callback(self.tridionpublish);	
 							});
 						}else{
@@ -674,6 +674,13 @@ define([], function() {
 			} else {
 			//console.info('applicableOptions else ' );
 				$("#tridiongeneral").show();
+			}
+			if (jQuery.inArray(commonVariables.optionsTridionpublish, applicableOptions) === -1) {
+			//console.info('applicableOptions = ');
+				$("#tridionpublish").hide();
+			} else {
+			//console.info('applicableOptions else ' );
+				$("#tridionpublish").show();
 			}
 
 			if (jQuery.inArray(commonVariables.optionsProcessBuild, applicableOptions) === -1) {

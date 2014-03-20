@@ -2256,6 +2256,7 @@ public interface FrameworkConstants {
 	    String SAVE_CONFIG = "/saveConfig";
 	    String GET_PUBLICATIONS = "/getPublicationsList";
 	    String CREATE_PUBLICATIONS = "/createPublication";
+	    String CLONE_PUBLICATIONS = "/clonePublication";
 	    String PUBLICATIONS_NOT_FOUND =  "Publications name  not found";
 	    String PARENT_NAME = "name";
 	    String PRIORITY = "priority";
@@ -2263,6 +2264,7 @@ public interface FrameworkConstants {
 	    String TEMPLATE = "Template";
 	    String CONTENTS = "Content";
 	    String WEBSITE = "Website";
+	    String GLOBAL_LANGUAGE_CONTENT = "Global Language Content";
 	    String GIT_URL = "https://api.github.com";
   /**
 	     *  TestFlight upload service post parameters

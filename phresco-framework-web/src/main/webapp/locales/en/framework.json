@@ -246,9 +246,23 @@
 		"PHRD100010" : "Unable to retrieve the search result.",
 		"configurations" : "Environment already exists in Settings",
 		"settings" : "Environment already exists in Configuration",
+		"PHR1002" : "Please select atleast one parent publication",
 		"PHRTR1001" : "Publication saving failed",
-		"PHRTR1002" : "Please select atleast one parent publication",
+		"PHRTR1002" : "Publication retrieve failed",
+		"PHRTR1003" : "Publication fetch failed",
+		"PHRTR1004" : "Content or theme  creation needed to proceed",
+		"PHRTR1005" : "Publication creation failed",
+		"PHRTR1006" : "Check Publicationconfig.xml File",
+		"PHRTR1007" : "Failed to fetch environments",
+		"PHRTR1008" : "Failed to publish site",
+		"PHRTR1009" : "Failed to fetch publish queue status",
+		"PHRTR1010" : "Publication cloned Failed",
+		"PHRTR1011" : "Failed to UnPublish site",
+		"PHRTR1012" : "Published Environment fetch Failed",
+		"PHRTRS1020" : "Please Select Environment",
+		"PHRTRS1030" : "Please Select Target",
 		"PHRSR10007" : "Content and WebSite is need to create further proceed"
+		
 	},
 	"successCodes" : {
 		"PHR100008" : "Password emailed",
@@ -299,11 +313,17 @@
 		"PHR610042"	: "Name already exists in configurations of the project",
 		"PHRD010008" : "No Dashboards Exist.",
 		"PHRTR0001"  : "Publication Saved successfully",
+		"PHRTR0002"  : "Publication retrieved successfully",
+		"PHRTR0003"  : "Publication List fetched successfully",
+		"PHRTR0004"  : "Publication Target fetched successfully",
 		"PHRTR0005"  : "Publication Created successfully",
-		"PHRTR0007"  : "Website Published successfully",
-		"PHRU000001" : "Build uploaded successfully",
-		"PHR800027" : "Keychains retrieved successfully",
-		"PHR810048" : "Keychains retrieval Failed"
+		"PHRTR0006"  : "Environment fetched successfully",
+		"PHRTR0007"  : "Site Published successfully",
+		"PHRTR0008"  : "Publish queue status fetched successfully",
+		"PHRTR0009"  : "Publication cloned successfully",
+		"PHRTR0010"  : "Site Unpublished successfully",
+		"PHRTR0011"  : "Published environment fetched successfully"
+		
 		
 	},
 	"navigation" : {
@@ -704,7 +724,10 @@
 			"entername" : "Enter Name",
 			"entercode" : "Enter Code",
 			"enterappdir" : "Enter app directory",
-			"embedapplication" : "Embed"
+			"embedapplication" : "Embed",
+			"publishqueue" : "Publishing Queue",
+			"publishing" : "Publishing"
+			
 		},
 		"btn" : {
 			"cancel" : "Cancel",

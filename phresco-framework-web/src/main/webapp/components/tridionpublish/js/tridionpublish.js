@@ -9,6 +9,8 @@ define(["tridionpublish/listener/tridionpublishListener"], function() {
 		tridionpublishListener : null,
 		onChangeEvent: null,
 		publishWebsite: null,
+		unPublishWebsite: null,
+		publishingQueueEvent: null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -32,13 +34,23 @@ define(["tridionpublish/listener/tridionpublishListener"], function() {
 			if(self.onChangeEvent === null){
 				self.onChangeEvent = new signals.Signal();
 			}	
+			self.onChangeEvent.add(self.tridionpublishListener.getTargets, self.tridionpublishListener);
 						
 			if(self.publishWebsite === null){
 				self.publishWebsite = new signals.Signal();
 			}	
-			
-			self.onChangeEvent.add(self.tridionpublishListener.getTargets, self.tridionpublishListener);
 			self.publishWebsite.add(self.tridionpublishListener.publishWebsite, self.tridionpublishListener);
+									
+			if(self.unPublishWebsite === null){
+				self.unPublishWebsite = new signals.Signal();
+			}	
+			self.unPublishWebsite.add(self.tridionpublishListener.unPublishWebsite, self.tridionpublishListener);		
+			
+			if(self.publishingQueueEvent === null){
+				self.publishingQueueEvent = new signals.Signal();
+			}	
+			self.publishingQueueEvent.add(self.tridionpublishListener.getPublishingQueue, self.tridionpublishListener);
+			
 		}, 
 		
 		/***
@@ -97,8 +109,32 @@ define(["tridionpublish/listener/tridionpublishListener"], function() {
 			$("#publish").unbind('click');
 			$("#publish").bind('click', function(){
 				self.publishWebsite.dispatch();
+			});	
+			
+			$("#unpublish").unbind('click');
+			$("#unpublish").bind('click', function(){
+				self.unPublishWebsite.dispatch();
 			});
-								
+			
+			$("#viewQueue").unbind('click');
+			$("#viewQueue").bind('click', function(){
+				var publishQueue = $("#publishQueue").attr("current");
+				var publishQueueList = $("#publishQueueList").attr("current");
+				if(publishQueue === "hidden"){
+					$("#publishQueue").show("slow");
+					$("#publishQueue").attr("current" , "displayed");
+					$("#publishQueueList").show("slow");
+					$("#publishQueueList").attr("current" , "displayed");
+					self.publishingQueueEvent.dispatch('publishQueue');
+
+				} else {
+					$("#publishQueue").hide("slow");
+					$("#publishQueue").attr("current" , "hidden");	
+					$("#publishQueueList").hide("slow");
+					$("#publishQueueList").attr("current" , "hidden");
+				}
+			});
+			
 		}
 	});
 

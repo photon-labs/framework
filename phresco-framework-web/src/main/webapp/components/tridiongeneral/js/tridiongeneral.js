@@ -12,6 +12,9 @@ define(["tridiongeneral/listener/tridiongeneralListener"], function() {
 		savePublicationEvent : null,
 		readConfigEvent : null,
 		submitPublicationEvent : null,
+		getEnvironmentsEvent : null,
+		getPublishStatusEvent : null,
+		clonePublicationEvent : null,
 
 		/***
 		 * Called in initialization time of this class 
@@ -53,6 +56,21 @@ define(["tridiongeneral/listener/tridiongeneralListener"], function() {
 				self.submitPublicationEvent = new signals.Signal();				
 			}
 				self.submitPublicationEvent.add(self.tridiongeneralListener.submitPublication, self.tridiongeneralListener);	
+							
+			if(self.getEnvironmentsEvent === null ){
+				self.getEnvironmentsEvent = new signals.Signal();				
+			}
+				self.getEnvironmentsEvent.add(self.tridiongeneralListener.getAllEnvironments, self.tridiongeneralListener);	
+							
+			if(self.getPublishStatusEvent === null ){
+				self.getPublishStatusEvent = new signals.Signal();				
+			}
+				self.getPublishStatusEvent.add(self.tridiongeneralListener.getPublicationStatus, self.tridiongeneralListener);	
+							
+			if(self.clonePublicationEvent === null ){
+				self.clonePublicationEvent = new signals.Signal();				
+			}
+				self.clonePublicationEvent.add(self.tridiongeneralListener.clonePublications, self.tridiongeneralListener);	
 
 		},
 
@@ -67,6 +85,7 @@ define(["tridiongeneral/listener/tridiongeneralListener"], function() {
  		preRender: function(whereToRender, renderFunction) {
 			var self = this;
 			var publicationInfo = {};
+			self.getPublishStatusEvent.dispatch('PublicationStatus');
 			setTimeout(function() {
 				self.tridiongeneralListener.getData(self.tridiongeneralListener.getRequestHeader('' , "readConfig"), function(response) {
 					commonVariables.api.localVal.setJson('readConfigData', response.data);
@@ -75,10 +94,14 @@ define(["tridiongeneral/listener/tridiongeneralListener"], function() {
 				});
 			}, 200);
 		}, 
+		
 		postRender : function(element) {
 			var self = this;
-			//self.readConfigEvent.dispatch('readConfig');
+			//self.getPublishStatusEvent.dispatch('PublicationStatus');
+			self.getEnvironmentsEvent.dispatch('getEnv');
+			self.clickFunction();
 		},
+
 		/***
 		 * Called after the preRender() and bindUI() completes. 
 		 * Override and add any preRender functionality here
@@ -86,7 +109,18 @@ define(["tridiongeneral/listener/tridiongeneralListener"], function() {
 		 * @element: Element as the result of the template + data binding
 		 */
 
-		
+					
+		clickFunction : function(){
+			var self = this;
+			//$("#envList li[name=selectEnv]").unbind('click');
+			$("#envList li[name=selectEnv]").live("click" , function() {
+				$('.dyn_popup').hide();
+				var selEnvironment = $(this).attr('key');
+				$("#selectedEnv").text($(this).attr('data'));
+				$("#selectedEnv").attr("key",selEnvironment);
+				self.clonePublicationEvent.dispatch(selEnvironment , 'clonePublication');
+			});		
+		},		
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -125,8 +159,10 @@ define(["tridiongeneral/listener/tridiongeneralListener"], function() {
 				self.readConfigEvent.dispatch($(this).attr('data') , 'readConfig');
 				$(".parentpublicationdiv").hide('slow');
 				$(".parentpublicationdiv").attr("key", "hidden");
-				//self.getIframeReport(validateAgainst);
 			});
+			
+			
+
 			
 			$('#avbleparent').keyup(function(event) {
 				//var classval = $("#search").attr("class");
@@ -145,7 +181,9 @@ define(["tridiongeneral/listener/tridiongeneralListener"], function() {
 			
 			$("#savePublication").unbind('click');
 			$("#savePublication").bind('click', function(){
-				self.savePublicationEvent.dispatch();
+				if($(this).attr("class") === "btn btn_style save_btn"){
+					self.savePublicationEvent.dispatch();
+				}
 			});
 					
 						
@@ -153,8 +191,7 @@ define(["tridiongeneral/listener/tridiongeneralListener"], function() {
 			$("#submitPublication").bind('click', function(){
 				self.submitPublicationEvent.dispatch();
 			});
-					
-			
+
 			$(function() {
 				// sortable1 functionality
 				$( "#sortable1" ).sortable({

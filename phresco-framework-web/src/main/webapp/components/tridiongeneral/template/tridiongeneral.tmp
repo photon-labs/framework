@@ -14,6 +14,7 @@
 								<li style="padding-left:8px;cursor:pointer;" data="Schema" key="schema" name="selectType" class="dropdown-key">Schema</li>
 								<li style="padding-left:8px;cursor:pointer;" data="Template" key="template" name="selectType" class="dropdown-key">Template</li>
 								<li style="padding-left:8px;cursor:pointer;" data="Content" key="content" name="selectType" class="dropdown-key">Content</li>
+								<li style="padding-left:8px;cursor:pointer;" data="Global Language Content" key="Global Language Content" name="selectType" class="dropdown-key">Global Language Content</li>
 								<li style="padding-left:8px;cursor:pointer;" data="Website" key="website" name="selectType" class="dropdown-key">Website</li>
 							</ul>
 						</div>
@@ -21,6 +22,25 @@
 				</ul>				
 			</div>
 		</div>
+		<div class="flt_right" style="margin-right:0px;">
+			<div class="tridion_classification">
+				<font>Environment</font>
+            </div>
+			<div id="allEnvironments" class="navbar navbar-static code_func" style="display: block;">
+				<ul class="nav">
+					<li class="dropdown" id="fat-menu">
+						<a data-toggle="dropdown" class="dropdown-toggle" role="button" id="drop5" href="javascript:void(0)">
+							<b key="schema" id="selectedEnv">Select Env</b><b class="caret"></b>
+						</a> 
+						<div aria-labelledby="drop5" role="menu" class="dropdown-menu cust_sel code_test_opt"> 
+							<ul id="envList">
+							</ul>
+						</div>
+					</li>
+				</ul>				
+			</div>
+		</div>
+		
     </section>
 	
 <section class="tridion_info tab_line testSuiteTable">
@@ -47,11 +67,11 @@
 					<td><input name="imagePath" type="text"  title="150 Characters only" value="{{publicationInfo.data.0.imagePath}}"/></td>
 					<td>Images URL<sup>*</sup></td>
 					<td colspan="3"><input name="imageUrl" type="text"  title="150 Characters only" value="{{publicationInfo.data.0.imageUrl}}"/></td>
-				</tr>
+				</tr>				
 				<tr>
 					<td>Link Publication<sup>*</sup></td>
 					<td><a class="parentpublication" id="parent_publication" style="color:#ffffff;">Parent Publication</a></td>
-					<td colspan="4"><span id="parentPublications">{{#each publicationInfo.data.0.parentPublications}}&nbsp;<span>{{name}}</span>,&nbsp;{{/each}}</span></td>
+					<td colspan="4"><span id="parentPublications">{{#each publicationInfo.data.0.parentPublications}}&nbsp;<span>{{name}}</span>;&nbsp;{{/each}}</span></td>
 				</tr>
 			</tbody>
 		</table>
