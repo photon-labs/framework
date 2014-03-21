@@ -23,9 +23,11 @@
 	<property name="tomcat.home" value="${phresco.home}/workspace/tools/apache-tomcat-https-7.0.21"/>
 	<property name="sonar.home" value="${phresco.home}/workspace/tools/sonar-${sonar.version}"/>
 	<property name="jenkins.home" value="${phresco.home}/workspace/tools/jenkins"/>
-	<property name="checkers.home" value="${phresco.home}/workspace/tools/checker"/>
-	<property name="chief.home" value="${phresco.home}/workspace/tools/chief"/>
-	<property name="ios-sim.home" value="${phresco.home}/workspace/tools/ios-sim"/>
+	<property name="checkers.home" value="../../tools/checker"/>
+	<property name="chief.home" value="../../tools/chief"/>
+	<property name="ios-sim.home" value="../../tools/ios-sim"/>
+    <property name="ocunit2junit.home" value="../../tools/ocunit2junit"/>
+    <property name="waxsim.home" value="../../tools/waxsim"/>
 	<property name="sonar.war.dir" value="${phresco.home}/workspace/tools/war/sonar.war"/>
 	<property name="phresco.upgrade.file" value="${phresco.home}/workspace/temp/upgrade.properties"/>
     <property name="phantomjs.mac.path" value="${phresco.home}/workspace/tools/phantomjs-1.5.0-mac/bin"/>
@@ -35,7 +37,7 @@
     <property file = "${phresco.home}/bin/framework.properties"/>
  <property name="phresco.war.dir" value="${phresco.home}/workspace/tools/war/${framework.context}.war"/>
 	<property name="phresco.url" value="http://localhost:${framework.http.port}"/>
-    <property name="waxsim.home" value="${phresco.home}/workspace/tools/waxsim"/>
+    
 	
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
@@ -65,7 +67,16 @@
           <fileset dir="${waxsim.home}">
 		    <include name="**/*"/>
 		  </fileset>
+          
+           <fileset dir="${ocunit2junit.home.home}">
+		    <include name="**/*"/>
+		  </fileset>
+          
 		</chmod>
+        
+         <antcall target="start-waxsim"/>
+        <antcall target="start-iossim"/>
+        
 	</target>
     
     <condition property="strings-match">
@@ -82,14 +93,14 @@
 
 	<target name="run-phresco">
 		<echo message="starting ${framework.context} deployment from ${phresco.home}"/>
-		<antcall target="set-execute-permissions"/>
+	<!-- 	<antcall target="set-execute-permissions"/> -->
         <antcall target="clean-tomcat-webapps"/>
 	<!-- 	<antcall target="clean-sonar"/> -->
         <antcall target="copy-phresco"/>
         <antcall target="copy-security"/>
 	<!-- 	<antcall target="copy-framework-config"/> -->
-        <antcall target="start-waxsim"/>
-        <antcall target="start-iossim"/>
+       <!--  <antcall target="start-waxsim"/>
+        <antcall target="start-iossim"/> -->
 		<parallel>
 			<antcall target="tomcat-start"/>
 			<antcall target="copy-sonar"/>

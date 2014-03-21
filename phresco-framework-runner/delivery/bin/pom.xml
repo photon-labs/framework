@@ -11,10 +11,7 @@
 		<phresco.framework.version>3.3.0.5003-SNAPSHOT</phresco.framework.version>		
 		<tomcat.version>7.0.21.3</tomcat.version>
 		<sonar.version>3.5.1</sonar.version>
-		<checker.version>0.1</checker.version>
-		<device.deploy.version>1.0</device.deploy.version>
 		<phantomjs.version>1.5.0</phantomjs.version>
-		<ios-sim.version>2.0</ios-sim.version>
 		<tfs.version>1.0</tfs.version>
 		<depot_tools.version>1.0</depot_tools.version>
 	</properties>
@@ -352,49 +349,6 @@
 									<outputDirectory>../workspace/tools</outputDirectory>
 								</artifactItem>
                                 
-                                <artifactItem>
-									<groupId>softwares.iphone.files</groupId>
-                                    <artifactId>checker-274</artifactId>
-                                    <version>${checker.version}</version>
-                                    <classifier>${checkers.classifier}</classifier>
-                                    <type>zip</type>
-									<overWrite>false</overWrite>
-									<outputDirectory>../workspace/tools</outputDirectory>
-								</artifactItem>
-                                
-                                <!-- extracting waxsim zip file -->
-								<artifactItem>
-									<groupId>softwares.iphone.files</groupId>
-                                    <artifactId>waxsim</artifactId>
-                                    <version>2.0</version>
-                                    <classifier>${waxsim.classifier}</classifier>
-                                    <type>zip</type>
-									<overWrite>false</overWrite>
-									<outputDirectory>../workspace/tools</outputDirectory>
-								</artifactItem>
-								
-								<!-- extracting ocunitjunit zip file -->
-								<artifactItem>
-									<groupId>softwares.iphone.files</groupId>
-									<artifactId>ocunit2junit</artifactId>
-									<version>1.0</version>
-                                    <classifier>${ocunit2junit.classifier}</classifier>
-									<type>zip</type>
-									<overWrite>false</overWrite>
-									<outputDirectory>../workspace/tools</outputDirectory>
-								</artifactItem>
-                                
-                                <!-- extracting chief zip file -->
-								<artifactItem>
-									<groupId>softwares.iphone.files</groupId>
-                                    <artifactId>device-deploy</artifactId>
-                                    <version>${device.deploy.version}</version>
-                                    <classifier>${chief.classifier}</classifier>
-                                    <type>zip</type>
-									<overWrite>false</overWrite>
-									<outputDirectory>../workspace/tools/chief</outputDirectory>
-								</artifactItem>
-                                
 								<!-- extracting Phantomjs  -->
 								<artifactItem>
 									<groupId>binaries</groupId>
@@ -405,17 +359,6 @@
 									<overWrite>false</overWrite>
 									<outputDirectory>../workspace/tools</outputDirectory>
 								</artifactItem>
-
-								<!--extracting ios-sim zip file-->
-								<artifactItem>
-									  <groupId>softwares.iphone.files</groupId>
-									  <artifactId>ios-sim</artifactId>
-									  <version>${ios-sim.version}</version>
-									  <classifier>${ios-sim.classifier}</classifier>
-									  <type>zip</type>
-									  <overWrite>false</overWrite>
-									  <outputDirectory>../workspace/tools</outputDirectory>
-									</artifactItem>
                                     
                                 <!--extracting ios-sim zip file-->
 								<artifactItem>
