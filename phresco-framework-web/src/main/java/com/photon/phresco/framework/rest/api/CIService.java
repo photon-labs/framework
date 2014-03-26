@@ -155,7 +155,6 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				}
 			}
 			builds = ciManager.getBuilds(job);
-			System.out.println("inside phresco framework"+ builds);
 			ResponseInfo<List<CIBuild>> finalOutput = responseDataEvaluation(responseData, null, builds, RESPONSE_STATUS_SUCCESS, PHR800001);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
