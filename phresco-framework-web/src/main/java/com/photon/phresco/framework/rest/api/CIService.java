@@ -155,6 +155,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				}
 			}
 			builds = ciManager.getBuilds(job);
+			System.out.println("inside phresco framework"+ builds);
 			ResponseInfo<List<CIBuild>> finalOutput = responseDataEvaluation(responseData, null, builds, RESPONSE_STATUS_SUCCESS, PHR800001);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
@@ -1901,9 +1902,9 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if (BUILD.equals(operation) || PDF_REPORT.equals(operation)) {
 				mvncmd = CI_PROFILE + mvncmd;
 			}
-			if (!DEVICE_BUILD.equalsIgnoreCase(operation)) {
+			//if (!DEVICE_BUILD.equalsIgnoreCase(operation)) {
 				preBuildStepCmds.add(prebuildCmd);
-			}
+			//}
 			// To handle multi module project
 			mvncmd = mvncmd + FrameworkConstants.SPACE + HYPHEN_N;
 			job.setMvnCommand(mvncmd);
