@@ -123,6 +123,7 @@ public class TridionService extends RestBase implements FrameworkConstants, Serv
 	 * @return
 	 * @throws PhrescoException
 	 */
+	
 	@GET
 	@Path(GET_PUBLICATIONS)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -204,20 +205,19 @@ public class TridionService extends RestBase implements FrameworkConstants, Serv
 			File virtualConfigFile = new File(dotPhrescoFolderPath + File.separator + PUBLICATION_VIRTUAL_CONFIG_FILE);
 			
 			PublicationsList publicationList = new PublicationsList(new File(dotPhrescoFolderPath));
-			Map<String, String> isPublished = publicationList.checkPublished();
-			if (MapUtils.isEmpty(isPublished)) {
+			Map<String, String> isCloned = publicationList.checkPublication();
+			if (MapUtils.isEmpty(isCloned)) {
 				FileUtils.copyFile(publicationConfigPath, virtualConfigFile);
-			}
-			List<String> types = new ArrayList<String>();
-			types.add(SCHEMA);
-			types.add(TEMPLATE);
-			types.add(CONTENTS);
-			types.add(WEBSITE);
-			types.add(GLOBAL_LANGUAGE_CONTENT);
-			
-			for (String type : types) {
-				publicationList.createVirtualConfigFile(type);
-			}
+//				List<String> types = new ArrayList<String>();
+//				types.add(SCHEMA);
+//				types.add(TEMPLATE);
+//				types.add(CONTENTS);
+//				types.add(WEBSITE);
+//				types.add(GLOBAL_LANGUAGE_CONTENT);
+//				for (String type : types) {
+//					publicationList.createVirtualConfigFile(type);
+//				}
+			} 
 			boolean publicationExists = publicationList.checkContentAndSite(virtualConfigFile);
 			if (!publicationExists) {
 				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_FAILURE, PHRTR1004);
@@ -298,7 +298,7 @@ public class TridionService extends RestBase implements FrameworkConstants, Serv
 			String message = e.getMessage();
 			if (StringUtils.isNotEmpty(message)) {
 				Exception exception = new Exception(message);
-				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, exception, message, RESPONSE_STATUS_FAILURE, PHRTR1010);
+				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, exception, message, RESPONSE_STATUS_FAILURE, PHRTR0009);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 			}
 		} catch (IOException e) {
@@ -391,7 +391,7 @@ public class TridionService extends RestBase implements FrameworkConstants, Serv
 			
 			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModuleName);
 			PublicationsList publicationList = new PublicationsList(new File(dotPhrescoFolderPath));
-			String publishSiteId = publicationList.getPublishSiteId(WEBSITE);
+			String publishSiteId = publicationList.getPublicationSiteId(environmentName);
 		        for(String targetId: targetIds) {
 		           targetsToPublish.append(targetId).append(',');
 		        }
@@ -464,8 +464,8 @@ public class TridionService extends RestBase implements FrameworkConstants, Serv
 				server = authenticationDetails.get(CMS_SERVER);
 				username = authenticationDetails.get(CMS_USERNAME);
 				password = authenticationDetails.get(CMS_PASSWORD);
-				transactionDetails = publicationList.checkPublished();
-				publishQueue = publicationList.getPublishQueue(server, username, password, transactionDetails.get("id"));
+				transactionDetails = publicationList.checkPublished(environmentName);
+				publishQueue = publicationList.getPublishQueue(server, username, password, transactionDetails.get("tcmId"));
 			}
 		} catch(PhrescoException e) {
 			String message = e.getMessage();
@@ -484,7 +484,7 @@ public class TridionService extends RestBase implements FrameworkConstants, Serv
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response checkPublishedStatus(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module) throws PhrescoException {
 		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
-		Map<String, String> isPublished = null;
+		Map<String, String> isPublicationCreated = null;
 		String environment = "";
 		try {
 			String rootModulePath = "";
@@ -498,10 +498,10 @@ public class TridionService extends RestBase implements FrameworkConstants, Serv
 			String dotPhrescoFolderPath = Utility.getDotPhrescoFolderPath(rootModulePath, subModuleName);
 			
 			PublicationsList publicationList = new PublicationsList(new File(dotPhrescoFolderPath));
-			isPublished = publicationList.checkPublished();
-			if (MapUtils.isNotEmpty(isPublished)) {
-				environment = isPublished.get("envName");
-				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, isPublished.get("envName"), RESPONSE_STATUS_SUCCESS, PHRTR0011);
+			isPublicationCreated = publicationList.checkPublication();
+			if (MapUtils.isNotEmpty(isPublicationCreated)) {
+				environment = isPublicationCreated.get("envName");
+				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, isPublicationCreated.get("envName"), RESPONSE_STATUS_SUCCESS, PHRTR0011);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 			} 
 		} catch (PhrescoException e) {

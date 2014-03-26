@@ -34,6 +34,7 @@ import org.codehaus.plexus.util.cli.Commandline;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.photon.phresco.commons.FrameworkConstants;
@@ -346,7 +347,6 @@ public class PublicationsList implements FrameworkConstants {
 				if (line.startsWith("publicationName")) {
 					publicationName = line.substring(line.indexOf(":")+1, line.indexOf("$"));
 					tcmId = line.substring(line.lastIndexOf("$")+1, line.length());
-					
 					updateTcmId(publicationName, tcmId, environmentName);
 				}
 				if (line.startsWith(PUBLICATION_ERROR) || errorOccured ) {
@@ -589,6 +589,41 @@ public class PublicationsList implements FrameworkConstants {
 					environmentElement.setAttribute(TCM_ID, tcmId);
 				}
 			}
+			
+			StringBuilder expBuilder1 = new StringBuilder();
+			expBuilder1.append("/Publications/PublicationTransaction/environment[@name='"); 
+			expBuilder1.append(environmentName);
+			expBuilder1.append("']");	
+			XPathFactory xPathFactory1 = XPathFactory.newInstance();
+			XPath newXPath1 = xPathFactory1.newXPath();
+
+			XPathExpression xPathExpression1 = newXPath1.compile(expBuilder1.toString());
+			Node node1 = (Node) xPathExpression1.evaluate(doc, XPathConstants.NODE);
+			if (node1 != null) {
+				if (node1.getNodeType() == Node.ELEMENT_NODE) {
+					Element PublicationTransaction = (Element) node1;
+					String id = PublicationTransaction.getAttribute("tcmId");
+					if (StringUtils.isNotEmpty(id)) {
+						PublicationTransaction.setAttribute("tcmId", tcmId);
+					}
+				}
+			} else {
+				StringBuilder expBuilder2 = new StringBuilder();
+				expBuilder2.append("//Publications//PublicationTransaction"); 
+				
+				XPathFactory xPathFactory2 = XPathFactory.newInstance();
+				XPath newXPath2 = xPathFactory2.newXPath();
+
+				XPathExpression xPathExpression2 = newXPath2.compile(expBuilder2.toString());
+				Node node2 = (Node) xPathExpression2.evaluate(doc, XPathConstants.NODE);
+				
+				Element createElement = doc.createElement("environment");
+				createElement.setAttribute("name", environmentName);
+				createElement.setAttribute("tcmId", tcmId);
+				node2.appendChild(createElement);
+				
+			}
+			
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, YES);
@@ -614,34 +649,33 @@ public class PublicationsList implements FrameworkConstants {
 		}
 	}
 	
-	public String getPublishSiteId(String type) throws PhrescoException {
+	public String getPublicationSiteId(String envname) throws PhrescoException {
 		String attribute = "";
 		try {
-		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder documentBuilder = docFactory.newDocumentBuilder();
-		File virtualConfigFile = new File(configPath + File.separator + PUBLICATION_CONFIG_FILE);
-		
-		Document doc = documentBuilder.parse(virtualConfigFile);
-		StringBuilder expBuilder = new StringBuilder();
-		expBuilder.append("/Publications/publication[@type='"); 
-		expBuilder.append(type);
-		expBuilder.append("']");	
-		expBuilder.append("/target/environment");
-		
-		XPathFactory xPathFactory = XPathFactory.newInstance();
-		XPath newXPath = xPathFactory.newXPath();
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = docFactory.newDocumentBuilder();
+			File virtualConfigFile = new File(configPath + File.separator + PUBLICATION_CONFIG_FILE);
 
-		XPathExpression xPathExpression = newXPath.compile(expBuilder.toString());
-		Node node = (Node) xPathExpression.evaluate(doc, XPathConstants.NODE);
-		if (node != null) {
-			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				Element ele = (Element) node; 
-				attribute = ele.getAttribute(TCM_ID);
-				if (StringUtils.isNotEmpty(attribute)) {
-					return attribute;
+			Document doc = documentBuilder.parse(virtualConfigFile);
+			StringBuilder expBuilder = new StringBuilder();
+			expBuilder.append("/Publications/PublicationTransaction/environment[@name='"); 
+			expBuilder.append(envname);
+			expBuilder.append("']");	
+
+			XPathFactory xPathFactory = XPathFactory.newInstance();
+			XPath newXPath = xPathFactory.newXPath();
+
+			XPathExpression xPathExpression = newXPath.compile(expBuilder.toString());
+			Node node = (Node) xPathExpression.evaluate(doc, XPathConstants.NODE);
+			if (node != null) {
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					Element ele = (Element) node; 
+					attribute = ele.getAttribute(TCM_ID);
+					if (StringUtils.isNotEmpty(attribute)) {
+						return attribute;
+					}
 				}
-				}
-		}
+			}
 		} catch (XPathExpressionException e) {
 			throw new PhrescoException(e);
 		} catch (ParserConfigurationException e) {
@@ -652,7 +686,7 @@ public class PublicationsList implements FrameworkConstants {
 			throw new PhrescoException(e);
 		}
 		return attribute;
-		
+
 	}
 
 	/**
@@ -865,7 +899,7 @@ public class PublicationsList implements FrameworkConstants {
 				credentials.put(CMS_SERVER, server);	
 				credentials.put(ENVIRONMENT_NAME, environmentName);	
 			}
-		} catch (Exception e) {
+		} catch (Exception e) { 
 			throw new PhrescoException(e);
 		}
 		return credentials;
@@ -878,30 +912,39 @@ public class PublicationsList implements FrameworkConstants {
 			DocumentBuilder documentBuilder = docFactory.newDocumentBuilder();
 			File path = new File(configPath + File.separator + PUBLICATION_CONFIG_FILE);
 			Document doc = documentBuilder.parse(path);
-			StringBuilder expBuilder = new StringBuilder();
-			expBuilder.append("/Publications/PublicationTransaction"); 
-			
-			XPathFactory xPathFactory = XPathFactory.newInstance();
-			XPath newXPath = xPathFactory.newXPath();
 
-			XPathExpression xPathExpression = newXPath.compile(expBuilder.toString());
-			Node node = (Node) xPathExpression.evaluate(doc, XPathConstants.NODE);
-			if (node != null) {
-				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Element PublicationTransaction = (Element) node;
-					transactionIds = PublicationTransaction.getAttribute("id");
-					String exisitingEnvName = PublicationTransaction.getAttribute("envName");
-					if (StringUtils.isNotEmpty(transactionId)) {
-						PublicationTransaction.setAttribute("id", transactionId);
-						if (StringUtils.isNotEmpty(exisitingEnvName)) {
-							if (!exisitingEnvName.trim().contains(environmentName)) {
-								PublicationTransaction.setAttribute("envName", exisitingEnvName + "," + environmentName);
-							}
-						} else {
-							PublicationTransaction.setAttribute("envName",environmentName);
-						}
+			StringBuilder expBuilder1 = new StringBuilder();
+			expBuilder1.append("/Publications/Publishedtransaction/environment[@name='"); 
+			expBuilder1.append(environmentName);
+			expBuilder1.append("']");	
+			XPathFactory xPathFactory1 = XPathFactory.newInstance();
+			XPath newXPath1 = xPathFactory1.newXPath();
+
+			XPathExpression xPathExpression1 = newXPath1.compile(expBuilder1.toString());
+			Node node1 = (Node) xPathExpression1.evaluate(doc, XPathConstants.NODE);
+			if (node1 != null) {
+				if (node1.getNodeType() == Node.ELEMENT_NODE) {
+					Element PublicationTransaction = (Element) node1;
+					String id = PublicationTransaction.getAttribute("tcmId");
+					if (StringUtils.isNotEmpty(id)) {
+						PublicationTransaction.setAttribute("tcmId", transactionId);
 					}
 				}
+			} else {
+				StringBuilder newExpressBuilder = new StringBuilder();
+				newExpressBuilder.append("//Publications//Publishedtransaction"); 
+
+				XPathFactory newxPathFactory = XPathFactory.newInstance();
+				XPath newXPaths = newxPathFactory.newXPath();
+
+				XPathExpression xPathExpression2 = newXPaths.compile(newExpressBuilder.toString());
+				Node node2 = (Node) xPathExpression2.evaluate(doc, XPathConstants.NODE);
+
+				Element createElement = doc.createElement("environment");
+				createElement.setAttribute("name", environmentName);
+				createElement.setAttribute("tcmId", transactionId);
+				node2.appendChild(createElement);
+
 			}
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
@@ -911,8 +954,7 @@ public class PublicationsList implements FrameworkConstants {
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(path.toString());
 			transformer.transform(source, result);
-			
-			
+
 		} catch (XPathExpressionException e) {
 			throw new PhrescoException(e);
 		} catch (ParserConfigurationException e) {
@@ -929,7 +971,7 @@ public class PublicationsList implements FrameworkConstants {
 		return transactionIds;
 	}
 
-	public Map<String, String> checkPublished() throws PhrescoException {
+	public Map<String, String> checkPublished(String environmentName) throws PhrescoException {
 		Map<String, String> transactionDetails = new HashMap<String, String>();
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -937,7 +979,46 @@ public class PublicationsList implements FrameworkConstants {
 			File path = new File(configPath + File.separator + PUBLICATION_CONFIG_FILE);
 			Document doc = documentBuilder.parse(path);
 			StringBuilder expBuilder = new StringBuilder();
-			expBuilder.append("/Publications/PublicationTransaction"); 
+			expBuilder.append("/Publications/Publishedtransaction/environment[@name='"); 
+			expBuilder.append(environmentName);
+			expBuilder.append("']");	
+			
+			XPathFactory xPathFactory = XPathFactory.newInstance();
+			XPath newXPath = xPathFactory.newXPath();
+			
+			XPathExpression xPathExpression = newXPath.compile(expBuilder.toString());
+			Node node = (Node) xPathExpression.evaluate(doc, XPathConstants.NODE);
+			if (node != null) {
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					Element element = (Element) node;
+					String id = element.getAttribute("tcmId");
+					transactionDetails.put("tcmId", id);
+					transactionDetails.put("envName", environmentName);
+				}
+				
+			}
+		} catch (XPathExpressionException e) {
+			throw new PhrescoException(e);
+		} catch (ParserConfigurationException e) {
+			throw new PhrescoException(e);
+		} catch (SAXException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		}
+		return transactionDetails;
+	}
+	
+	public Map<String, String> checkPublication() throws PhrescoException {
+		Map<String, String> transactionDetails = new HashMap<String, String>();
+		List<String> envNames = new ArrayList<String>();
+		try {
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = docFactory.newDocumentBuilder();
+			File path = new File(configPath + File.separator + PUBLICATION_CONFIG_FILE);
+			Document doc = documentBuilder.parse(path);
+			StringBuilder expBuilder = new StringBuilder();
+			expBuilder.append("//Publications//PublicationTransaction"); 
 
 			XPathFactory xPathFactory = XPathFactory.newInstance();
 			XPath newXPath = xPathFactory.newXPath();
@@ -945,15 +1026,23 @@ public class PublicationsList implements FrameworkConstants {
 			XPathExpression xPathExpression = newXPath.compile(expBuilder.toString());
 			Node node = (Node) xPathExpression.evaluate(doc, XPathConstants.NODE);
 			if (node != null) {
-				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Element PublicationTransaction = (Element) node;
-					String transactionId = PublicationTransaction.getAttribute("id");
-					String environmentName = PublicationTransaction.getAttribute("envName");
-					if (StringUtils.isNotEmpty(transactionId) && StringUtils.isNotEmpty(environmentName)) {
-						transactionDetails.put("id", transactionId);
-						transactionDetails.put("envName", environmentName);
-					} else {
-						transactionDetails = null;
+				NodeList childNodes = node.getChildNodes();
+				for (int temp = 0; temp < childNodes.getLength(); temp++) {
+					Node nNode = childNodes.item(temp);
+					if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+						Element ele = (Element) nNode;
+						String name = ele.getAttribute("name");
+						envNames.add(name);
+					}
+				}
+				String names = "";
+				if (CollectionUtils.isNotEmpty(envNames)) {
+					for (String string : envNames) {
+						names = string + "," + names; 
+					}
+					if (StringUtils.isNotEmpty(names)) {
+						String val = names.substring(0, names.length()-1);
+						transactionDetails.put("envName", val);
 					}
 				}
 			}

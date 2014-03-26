@@ -268,14 +268,12 @@ define([], function() {
 				 }
 
  				self.getData(self.getRequestHeader(JSON.stringify(publicationInfo), "saveConfig"), function(response) {
-					if(response.data !== null && response.data.length !== 0) {
-						if(response.responseCode === "PHRTR0001"){
-							$(".msgdisplay").removeClass("error");
-							commonVariables.api.showError("PHRTR0001" ,"success", true, false, true);
-							self.readConfigData(publicationType , 'readConfig');
-						} else {
-							commonVariables.api.showError("PHRTR1001" ,"error", true, false, true);
-						}
+					if(response.responseCode === "PHRTR0001"){
+						$(".msgdisplay").removeClass("error");
+						commonVariables.api.showError("PHRTR0001" ,"success", true, false, true);
+						self.readConfigData(publicationType , 'readConfig');
+					} else {
+						commonVariables.api.showError("PHRTR1001" ,"error", true, false, true);
 					}
 				});
  			}
