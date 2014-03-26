@@ -36,6 +36,8 @@
  <property name="phresco.war.dir" value="${phresco.home}/workspace/tools/war/${framework.context}.war"/>
 	<property name="phresco.url" value="http://localhost:${framework.http.port}"/>
     <property name="waxsim.home" value="${phresco.home}/workspace/tools/waxsim"/>
+	<property name="karma.home" value="${phresco.home}/workspace/tools/node_modules/karma"/>
+   <property name="grunt.home" value="${phresco.home}/workspace/tools/node_modules/grunt-cli"/>
 	
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
@@ -65,6 +67,14 @@
           <fileset dir="${waxsim.home}">
 		    <include name="**/*"/>
 		  </fileset>
+		  
+		  <fileset dir="${karma.home}">
+            <include name="**/*"/>
+          </fileset>
+
+          <fileset dir="${grunt.home}">
+            <include name="**/*"/>
+          </fileset>
 		</chmod>
 	</target>
     
