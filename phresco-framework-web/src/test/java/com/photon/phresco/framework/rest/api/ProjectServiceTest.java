@@ -105,7 +105,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 	}
 
 
-	@Test
+	//@Test
 	public void updateApplicationFeaturesTest() {
 		List<SelectedFeature> selectedFeatures = getSelectedFeatures();
 		Response response = projectService.updateApplicationFeatures(selectedFeatures, appDirName, userId, customerId, "admin","","");

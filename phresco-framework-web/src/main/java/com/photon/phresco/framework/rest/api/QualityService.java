@@ -440,10 +440,13 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			testSuitePath = getTestSuitePath(appDirName,rootModulePath, subModuleName, testType, techReport);
 			testCasePath = getTestCasePath(appDirName,rootModulePath, subModuleName, testType, techReport);
 			testStepPath = getTestStepNodeName(appDirName,rootModulePath, subModuleName, testType, techReport);
+			
 			return testReport(rootModule, moduleName, testType, moduleName, techReport, testSuitePath, testCasePath, testStepPath,
 					testSuite, rootModulePath, subModuleName);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new PhrescoException(e);
+			
 		}
 	}
 
@@ -703,6 +706,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		setTestSuite(testSuite);
 		ResponseInfo<TestReportResult> responseDataAll = new ResponseInfo<TestReportResult>();
 		ResponseInfo<List<TestCase>> responseData = new ResponseInfo<List<TestCase>>();
+		
 		try {
 			String mapKey = constructMapKey(appDirName, moduleName);
 			String testSuitesMapKey = mapKey + testType + module + techReport;
@@ -712,8 +716,9 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			}
 			Map<String, List<NodeList>> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
 			List<NodeList> testSuitesList = testResultNameMap.get(testSuite);
-			if (testSuitesList.size() > 0) {
-				List<TestCase> testCases;
+			
+			if (CollectionUtils.isNotEmpty(testSuitesList) && testSuitesList.size() > 0) {
+				List<TestCase> testCases ;
 				testCases = getTestCases(rootModulePath, subModule, testSuitesList, testSuitePath, testCasePath, testStepPath, testType);
 				if (CollectionUtils.isEmpty(testCases)) {
 					ResponseInfo<List<TestCase>> finalOutput = responseDataEvaluation(responseData, null,
@@ -738,7 +743,11 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			ResponseInfo<List<TestCase>> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHRQ010004);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 		}
-		return null;
+		
+		ResponseInfo<List<TestCase>> finalOutput = responseDataEvaluation(responseData, null,
+				null, RESPONSE_STATUS_SUCCESS, PHRQ000004);
+		return Response.status(Status.OK).entity(finalOutput)
+				.header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 	}
 
 	/**

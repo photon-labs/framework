@@ -38,9 +38,9 @@ public class TechnologyVersionImplTest {
 	public void setUp() throws PhrescoException {
 		//String serviceURL = "http://172.16.25.196:3030/service/rest/api";
 //		String serviceURL = "http://172.16.25.44:8081/service/rest/api";
-		String serviceURL = "http://172.16.18.178:80/service/rest/api";
-		String userName = "admin";
-        String password = "manage";
+		String serviceURL = "http://172.16.17.117:7070/service-3/rest/api";
+		String userName = "phresco";
+        String password = "Phresco@123";
 		ServiceContext context = new ServiceContext();
         context.put("phresco.service.url", serviceURL);
         context.put("phresco.service.username", userName);
