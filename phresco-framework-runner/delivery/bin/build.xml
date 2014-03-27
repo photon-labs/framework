@@ -51,7 +51,7 @@
 	
 	<target name="set-execute-permissions" depends="condition-true">
 		<echo message="Setting execute permissions ${checkers.home}, ${chief.home}" />
-		<chmod perm="ugo+rx" type="file">
+		<chmod perm="ugo+rx" type="file" maxparallel="300" >
 		  <fileset dir="${checkers.home}">
 		    <include name="**/*"/>
 		  </fileset>
