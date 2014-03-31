@@ -415,17 +415,6 @@
 							</tasks>
 						</configuration>
 					</execution>
-	    		    <execution>
-                       <phase>validate</phase>
-                       <configuration>
-                         <tasks>
-                            <chmod file="../workspace/tools/ocunit2junit/ocunit2junit.rb" perm="777"/>
-                         </tasks>
-                       </configuration>
-                    <goals>
-                      <goal>run</goal>
-                    </goals>
-                  </execution>	
 					<execution>
 						<id>deploy-phresco</id>
 						<phase>validate</phase>
