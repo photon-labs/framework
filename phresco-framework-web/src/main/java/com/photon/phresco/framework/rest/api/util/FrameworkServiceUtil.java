@@ -1400,6 +1400,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 					xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
 				}
 			}
+			
 
 			// functional xml check
 			if (!xmlResultsAvailable) {
@@ -1425,6 +1426,30 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 					xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
 				}
 				
+			}
+			// manualtest check
+			if (!xmlResultsAvailable) {
+					if(moduleNames != null && moduleNames.size() >0 && StringUtils.isEmpty(subModuleName)) {
+					    	for (String moduleName : moduleNames) {
+								if (!xmlResultsAvailable) {
+										File moduleTestFolder = Utility.getTestFolderLocation(projectInfo, rootModulePath, moduleName);
+										PomProcessor modulePomProcessor = Utility.getPomProcessor(rootModulePath, moduleName);
+										String manualDir = modulePomProcessor.getProperty(POM_PROP_KEY_MANUALTEST_RPT_DIR);
+			                        	if (StringUtils.isNotEmpty(manualDir)) {
+											file = new File(moduleTestFolder + File.separator + manualDir);
+											xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
+								}
+							}
+						}
+				} else {
+					 String manualDir = pomProcessor.getPropertyValue(POM_PROP_KEY_MANUALTEST_RPT_DIR);
+					 if (manualDir.contains(PHRESO_TEST_DIR)) {
+							manualDir = manualDir.replace(PHRESO_TEST_DIR, TEST);
+							manualDir = rootModulePath + manualDir ;
+					  }
+					 file = new File(manualDir);
+					 xmlResultsAvailable = xlsFileSearch(file, xmlResultsAvailable); 
+					}
 			}
 
 			// component xml check
@@ -1452,6 +1477,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 				}
 				
 			}
+			
 
 			// performance xml check
 			if (StringUtils.isEmpty(isIphone)) {
@@ -1616,6 +1642,23 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 			xmlResultsAvailable = true;
 		}
 		return xmlResultsAvailable;
+	}
+	
+	private boolean xlsFileSearch(File file, boolean xlsResultsAvailable) {//xlsx //ods
+		File[] xls_children = file.listFiles(new XmlNameFileFilter(XLS));
+		if (xls_children != null && xls_children.length > 0) {
+			xlsResultsAvailable = true;
+		}
+		File[] xlsx_children = file.listFiles(new XmlNameFileFilter(XLSX));
+		if (xlsx_children != null && xlsx_children.length > 0) {
+			xlsResultsAvailable = true;
+		}
+		File[] ods_children = file.listFiles(new XmlNameFileFilter(ODS));
+		if (ods_children != null && ods_children.length > 0) {
+			xlsResultsAvailable = true;
+		}
+		
+		return xlsResultsAvailable;
 	}
 
 	/**
