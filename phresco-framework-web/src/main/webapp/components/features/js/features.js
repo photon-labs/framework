@@ -232,6 +232,8 @@ define(["features/listener/featuresListener"], function() {
 			var collection = {};
 			self.featuresListener.showLoad();
 			self.getFeatures(collection, function(responseData){
+				var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
+				responseData.userPermissions = userPermissions;
 				renderFunction(responseData, whereToRender);
 				self.featuresListener.hideLoad();
 				setTimeout(function(){
