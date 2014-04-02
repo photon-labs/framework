@@ -1642,6 +1642,7 @@ public interface FrameworkConstants {
    String SIGNING_TYPES="keystore";
    
    String PROJECT_BASEDIR = "${project.basedir}";
+   String PHRESO_TEST_DIR = "${phresco.test.dir}";
    
    /* Unit test report directory */
    String UNIT_TEST_QUNIT_REPORT_DIR = "/do_not_checkin/target/surefire-reports/qunit";
