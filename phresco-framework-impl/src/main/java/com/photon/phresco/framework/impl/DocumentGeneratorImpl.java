@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import org.apache.bcel.generic.GETSTATIC;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -36,9 +35,7 @@ import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.DocumentGenerator;
-import com.photon.phresco.framework.docs.impl.DocConvertor;
 import com.photon.phresco.framework.docs.impl.DocumentUtil;
-import com.photon.phresco.framework.docs.impl.PdfInput;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.Utility;
