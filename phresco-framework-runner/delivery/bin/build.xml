@@ -28,15 +28,13 @@
 	<property name="ios-sim.home" value="../../tools/ios-sim"/>
     <property name="ocunit2junit.home" value="../../tools/ocunit2junit"/>
     <property name="waxsim.home" value="../../tools/waxsim"/>
-	<property name="sonar.war.dir" value="${phresco.home}/workspace/tools/war/sonar.war"/>
 	<property name="phresco.upgrade.file" value="${phresco.home}/workspace/temp/upgrade.properties"/>
     <property name="phantomjs.mac.path" value="${phresco.home}/workspace/tools/phantomjs-1.5.0-mac/bin"/>
 	<property name="phresco.file.server.home" value="${phresco.home}/workspace/projects"/>
 	<property name="phresco.file.server" value="PhrescoFileServer"/>
-    <property file = "${phresco.home}/conf/service.properties"/>
-    <property file = "${phresco.home}/bin/framework.properties"/>
- <property name="phresco.war.dir" value="${phresco.home}/workspace/tools/war/${framework.context}.war"/>
-	<property name="phresco.url" value="http://localhost:${framework.http.port}"/>
+    <property file ="${phresco.home}/conf/service.properties"/>
+    <property file ="${phresco.home}/bin/framework.properties"/>
+ 	<property name="phresco.url" value="http://localhost:${framework.http.port}"/>
     
 	
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
@@ -49,58 +47,16 @@
 		<available property="phresco.upgraded" file="${phresco.upgrade.file}"/>
 	</target>	
 	
-	<target name="set-execute-permissions" depends="condition-true">
-		<echo message="Setting execute permissions ${checkers.home}, ${chief.home}" />
-		<chmod perm="ugo+rx" type="file">
-		  <fileset dir="${checkers.home}">
-		    <include name="**/*"/>
-		  </fileset>
-		  
-		  <fileset dir="${chief.home}">
-		    <include name="**/*"/>
-		  </fileset>
-		  
-		  <fileset dir="${ios-sim.home}">
-		    <include name="**/*"/>
-		  </fileset>
-          
-          <fileset dir="${waxsim.home}">
-		    <include name="**/*"/>
-		  </fileset>
-          
-           <fileset dir="${ocunit2junit.home.home}">
-		    <include name="**/*"/>
-		  </fileset>
-          
-		</chmod>
-        
-         <antcall target="start-waxsim"/>
-        <antcall target="start-iossim"/>
-        
-	</target>
-    
-    <condition property="strings-match">
-        <equals arg1="${os.name}" arg2="mac os x" casesensitive="false"/>
-    </condition>
-
-    <target name="condition-true" if="${strings-match}">
-        <chmod perm="ugo+rx" type="file">
-              <fileset dir="${phantomjs.mac.path}">
-                <include name="**/*"/>
-              </fileset>
-        </chmod>
-    </target>
-
 	<target name="run-phresco">
 		<echo message="starting ${framework.context} deployment from ${phresco.home}"/>
-	<!-- 	<antcall target="set-execute-permissions"/> -->
-        <antcall target="clean-tomcat-webapps"/>
-	<!-- 	<antcall target="clean-sonar"/> -->
-        <antcall target="copy-phresco"/>
+		<antcall target="clean-tomcat-webapps"/>
+	    <antcall target="copy-phresco"/>
         <antcall target="copy-security"/>
-	<antcall target="copy-framework-config"/>
-       <!--  <antcall target="start-waxsim"/>
-        <antcall target="start-iossim"/> -->
+		<antcall target="copy-framework-config"/>
+   <!-- <antcall target="start-waxsim"/>
+		<antcall target="start-iossim"/>
+		<antcall target="set-execute-permissions"/>
+	-->
 		<parallel>
 			<antcall target="tomcat-start"/>
 			<antcall target="copy-sonar"/>
@@ -122,23 +78,7 @@
         </if>
 	</target>
 	
-	<target name="copy-security">
-		<echo message="copying security keystore"/>        
-		<copy file="${phresco.home}/conf/security/phresco.keystore" 
-			todir="${tomcat.home}/conf/" 
-			overwrite="true"
-		/>
-	</target>
-	
-    <target name="copy-framework-config">
-		<echo message="copying framework.config into conf"/>
-		<copy file="${phresco.home}/conf/service.properties" 
-			tofile="${tomcat.home}/webapps/${framework.context}/WEB-INF/classes/framework.config" 
-			overwrite="true"
-		/>
-	</target>
-    
-     <target name="check-url">
+    <target name="check-url">
         <sleep seconds="5"/>
 		<retry retrycount="30">
 			<get src="${phresco.url}" dest="${phresco.home}/workspace/temp/check-url.html" verbose="off">
@@ -162,7 +102,8 @@
 		<echo message="*******************************************************************"/>
 		
 		<antcall target="open-browser"/> 
-		<antcall target="sonar-startup-option"/> 
+   <!-- <antcall target="sonar-startup-option"/> 
+	-->
 	</target>
 	
 	<target name="sonar-startup-option"> 
@@ -197,11 +138,6 @@
         </exec>
 
     </target>
-	
-	<target name="clean-sonar">
-		<echo message="removing sonar war from tomcat"/>
-		<delete dir="${tomcat.home}/webapps/sonar"/>
-	</target>
 	
 	<target name="clean-phresco" depends="init" if="phresco.upgraded">
 		<echo message="removing older version of ${framework.context} war from tomcat"/>
@@ -290,5 +226,64 @@
           </fileset>  
         </delete> 
     </target>
-  
+	
+	<target name="copy-security">
+		<echo message="copying security keystore"/>        
+		<copy file="${phresco.home}/conf/security/phresco.keystore" 
+			todir="${tomcat.home}/conf/" 
+			overwrite="true"
+		/>
+	</target>
+	
+    <target name="copy-framework-config">
+		<echo message="copying framework.config into conf"/>
+		<copy file="${phresco.home}/conf/service.properties" 
+			tofile="${tomcat.home}/webapps/${framework.context}/WEB-INF/classes/framework.config" 
+			overwrite="true"
+		/>
+	</target>
+	
+	<target name="set-execute-permissions" depends="condition-true">
+		<echo message="Setting execute permissions ${checkers.home}, ${chief.home}" />
+		<chmod perm="ugo+rx" type="file">
+		  <fileset dir="${checkers.home}">
+		    <include name="**/*"/>
+		  </fileset>
+		  
+		  <fileset dir="${chief.home}">
+		    <include name="**/*"/>
+		  </fileset>
+		  
+		  <fileset dir="${ios-sim.home}">
+		    <include name="**/*"/>
+		  </fileset>
+          
+          <fileset dir="${waxsim.home}">
+		    <include name="**/*"/>
+		  </fileset>
+          
+           <fileset dir="${ocunit2junit.home.home}">
+		    <include name="**/*"/>
+		  </fileset>
+          
+		</chmod>
+        
+         <antcall target="start-waxsim"/>
+        <antcall target="start-iossim"/>
+        
+	</target>
+	
+	<condition property="strings-match">
+        <equals arg1="${os.name}" arg2="mac os x" casesensitive="false"/>
+    </condition>
+
+    <target name="condition-true" if="${strings-match}">
+        <chmod perm="ugo+rx" type="file">
+              <fileset dir="${phantomjs.mac.path}">
+                <include name="**/*"/>
+              </fileset>
+        </chmod>
+    </target>
+
+    
 </project>

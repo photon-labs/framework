@@ -10,7 +10,6 @@
     <properties>
 		<phresco.framework.version>3.3.1.3001-SNAPSHOT</phresco.framework.version>		
 		<tomcat.version>7.0.21.3</tomcat.version>
-		<sonar.version>3.5.1</sonar.version>
 		<phantomjs.version>1.5.0</phantomjs.version>
 		<tfs.version>1.0</tfs.version>
 		<depot_tools.version>1.0</depot_tools.version>
@@ -33,13 +32,6 @@
 	  </dependency>
 	  
 	  <dependency>
-		<groupId>sonar</groupId>
-		<artifactId>sonar</artifactId>
-		<version>${sonar.version}</version>
-		<type>war</type>
-	  </dependency>
-	 
-	  <dependency>
 		<groupId>com.photon.phresco.file.server</groupId>
 		<artifactId>file-server</artifactId>
 		<version>${phresco.framework.version}</version>
@@ -53,241 +45,7 @@
           <artifactId>ant-contrib</artifactId>
           <version>1.0b3</version>
         </dependency>
-   
-         <!-- Sonar plungins dependencies -->
-         
-        <dependency>
-            <groupId>sonar.plugin</groupId>
-            <artifactId>sonar-w3c-markup-validation-plugin</artifactId>
-            <version>0.1</version>
-        </dependency>
-         <!-- for code coverage with emma start-->
-		
-		<dependency>
-            <groupId>sonar.plugin</groupId>
-            <artifactId>sonar-emma-plugin</artifactId>
-            <version>1.3</version>
-        </dependency>
-		
-        <!-- for code coverage with emma end -->
-        <dependency>
-          <groupId>sonar.plugin</groupId>
-          <artifactId>sonar-web-plugin</artifactId>
-          <version>2.1</version>
-        </dependency>
-		
-		<dependency>
-			<groupId>sonar.plugin</groupId>
-			<artifactId>sonar-csharp-plugin</artifactId>
-			<version>2.1</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>sonar.plugin</groupId>
-			<artifactId>sonar-dotnet-plugin</artifactId>
-			<version>2.1</version>
-		</dependency>
-        
-        <dependency>
-          <groupId>sonar.plugin</groupId>
-          <artifactId>w3cmarkupvalidationfilter</artifactId>
-          <version>1.0.2</version>
-        </dependency>
-
-        <dependency>
-          <groupId>sonar.plugin</groupId>
-          <artifactId>mem-tracker-sonar-plugin</artifactId>
-          <version>1.0.0</version>
-        </dependency>
-        
-        <dependency>
-           <groupId>org.codehaus.sonar-plugins</groupId>
-           <artifactId>sonar-artifact-size-plugin</artifactId>
-           <version>0.3</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.codehaus.sonar-plugins</groupId>
-            <artifactId>sonar-branding-plugin</artifactId>
-            <version>0.4</version>
-        </dependency>
-        
-        <dependency>
-           <groupId>org.codehaus.sonar-plugins</groupId>
-           <artifactId>sonar-build-breaker-plugin</artifactId>
-           <version>1.1</version>
-        </dependency>
-        
-        <dependency>
-           <groupId>org.codehaus.sonar-plugins</groupId>
-           <artifactId>sonar-build-stability-plugin</artifactId>
-           <version>1.1.2</version>
-        </dependency>
-        
-        <dependency>
-           <groupId>org.codehaus.sonar-plugins</groupId>
-           <artifactId>sonar-clirr-plugin</artifactId>
-           <version>1.1</version>
-        </dependency>
-        
-       <!--  <dependency>
-            <groupId>org.codehaus.sonar-plugins.dotnet.csharp</groupId>
-            <artifactId>sonar-csharp-core-plugin</artifactId>
-            <version>1.3</version>
-        </dependency>
-        
-        <dependency>
-           <groupId>org.codehaus.sonar-plugins.dotnet.csharp</groupId>
-           <artifactId>sonar-csharp-gallio-plugin</artifactId>
-           <version>1.3</version>
-        </dependency>
-        
-        <dependency>
-           <groupId>org.codehaus.sonar-plugins.dotnet.csharp</groupId>
-           <artifactId>sonar-csharp-gendarme-plugin</artifactId>
-           <version>1.1</version>
-        </dependency>
-        
-        <dependency>
-          <groupId>sonar.plugin</groupId>
-          <artifactId>sonar-csharp-squid-plugin</artifactId>
-          <version>1.1.1</version>
-        </dependency>
-        
-        <dependency>
-           <groupId>org.codehaus.sonar-plugins.dotnet.csharp</groupId>
-           <artifactId>sonar-csharp-stylecop-plugin</artifactId>
-           <version>1.3</version>
-        </dependency> -->
-        
-        <dependency>
-           <groupId>org.codehaus.sonar-plugins</groupId>
-           <artifactId>sonar-cutoff-plugin</artifactId>
-           <version>0.1.1</version>
-        </dependency>
-        
-        <dependency>
-          <groupId>sonar.plugin</groupId>
-          <artifactId>sonar-javascript-plugin</artifactId>
-          <version>1.3</version>
-        </dependency>
-        
-        <dependency>
-           <groupId>org.codehaus.sonar-plugins.jmeter</groupId>
-           <artifactId>sonar-jmeter-plugin</artifactId>
-           <version>0.2</version>
-        </dependency>
-        
-        <dependency>
-           <groupId>org.codehaus.sonar-plugins</groupId>
-           <artifactId>sonar-motion-chart-plugin</artifactId>
-           <version>1.5</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.codehaus.sonar-plugins.php</groupId>
-            <artifactId>sonar-php-plugin</artifactId>
-            <version>1.1</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.codehaus.sonar-plugins.scm-activity</groupId>
-            <artifactId>sonar-scm-activity-plugin</artifactId>
-            <version>1.4</version>
-        </dependency>
-        
-        <dependency>
-           <groupId>org.codehaus.sonar-plugins</groupId>
-           <artifactId>sonar-switch-off-violations-plugin</artifactId>
-           <version>1.1</version>
-        </dependency>
-        
-        <dependency>
-           <groupId>org.codehaus.sonar-plugins</groupId>
-           <artifactId>sonar-tab-metrics-plugin</artifactId>
-           <version>1.2</version>
-        </dependency>
-        
-        <dependency>
-           <groupId>org.codehaus.sonar-plugins</groupId>
-           <artifactId>sonar-technicaldebt-plugin</artifactId>
-           <version>1.2.1</version>
-        </dependency>
-        
-        <dependency>
-           <groupId>org.codehaus.sonar-plugins</groupId>
-           <artifactId>sonar-useless-code-tracker-plugin</artifactId>
-           <version>0.5</version>
-        </dependency>
-        
-        <dependency>
-           <groupId>org.codehaus.sonar-plugins</groupId>
-           <artifactId>sonar-violationdensity-plugin</artifactId>
-           <version>1.2</version>
-        </dependency>
-        
-        <dependency>
-           <groupId>org.codehaus.sonar-plugins</groupId>
-           <artifactId>sonar-xml-plugin</artifactId>
-           <version>1.0</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.codehaus.sonar-plugins</groupId>
-            <artifactId>sonar-security-rules-plugin</artifactId>
-            <version>0.3.2</version>
-        </dependency>
-        
-        <!-- 3.5.1 -->
-        
-        <dependency>
-            <groupId>org.codehaus.sonar-plugins.java</groupId>
-            <artifactId>sonar-checkstyle-plugin</artifactId>
-            <version>1.1</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.codehaus.sonar-plugins.java</groupId>
-            <artifactId>sonar-cobertura-plugin</artifactId>
-            <version>1.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.codehaus.sonar-plugins.java</groupId>
-            <artifactId>sonar-findbugs-plugin</artifactId>
-            <version>1.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.codehaus.sonar-plugins.java</groupId>
-            <artifactId>sonar-java-plugin</artifactId>
-            <version>1.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.codehaus.sonar-plugins.java</groupId>
-            <artifactId>sonar-pmd-plugin</artifactId>
-            <version>1.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.codehaus.sonar-plugins.java</groupId>
-            <artifactId>sonar-squid-java-plugin</artifactId>
-            <version>1.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.codehaus.sonar-plugins.java</groupId>
-            <artifactId>sonar-surefire-plugin</artifactId>
-            <version>1.2</version>
-        </dependency>
-
-         <dependency>
-            <groupId>org.codehaus.sonar-plugins.java</groupId>
-            <artifactId>sonar-jacoco-plugin</artifactId>
-            <version>1.2</version>
-        </dependency>
-        
+    
 	</dependencies>
 	    
 	<build>	
@@ -299,7 +57,7 @@
 				<version>2.3</version>
 				<executions>
 
-					<!-- download the necessary files -->
+					<!-- Unpacking the downloaded files to the required location -->
 					<execution>
 						<id>unpack-binaries</id>
 						<phase>validate</phase>
@@ -330,16 +88,6 @@
 								</artifactItem>
 								
 
-								<!-- extracting sonar zip file -->
-								<artifactItem>
-									<groupId>sonar</groupId>
-									<artifactId>sonar</artifactId>
-									<version>${sonar.version}</version>
-									<type>zip</type>
-									<overWrite>false</overWrite>
-									<outputDirectory>../workspace/tools</outputDirectory>
-								</artifactItem>
-                                
 								<!-- extracting Phantomjs  -->
 								<artifactItem>
 									<groupId>binaries</groupId>
@@ -351,7 +99,7 @@
 									<outputDirectory>../workspace/tools</outputDirectory>
 								</artifactItem>
                                     
-                                <!--extracting ios-sim zip file-->
+                                <!--extracting tfs zip file-->
 								<artifactItem>
 									  <groupId>com.tfs</groupId>
 									  <artifactId>tfs</artifactId>
@@ -366,8 +114,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
-			
+		
         	<plugin>
         		<groupId>org.codehaus.mojo</groupId>
             	<artifactId>build-helper-maven-plugin</artifactId>
@@ -393,20 +140,6 @@
 				<version>1.7</version>
 				<executions>
                     <execution>
-						<id>sonar-plugin-phresco</id>
-						<phase>validate</phase>
-						<goals>
-						  <goal>run</goal>
-						</goals>
-						<configuration>
-                            <tasks>  
-                                <property name="sonar-version" value="${sonar.version}"/>
-								<echo message="Sonar Plugins copied to plugin directory "/>
-								<ant antfile="../conf/sonar/sonar-build.xml" target="init" inheritRefs="true" inheritAll="true"/>
-							</tasks>
-						</configuration>
-					</execution>
-					<execution>
 						<id>deploy-phresco</id>
 						<phase>validate</phase>
 						<goals>
@@ -448,12 +181,7 @@
                 </activation>
                 <properties>                
                     <phantomjs.classifier>windows</phantomjs.classifier>
-                    <waxsim.classifier>windows</waxsim.classifier>
-                    <chief.classifier>windows</chief.classifier>
-                    <checkers.classifier>windows</checkers.classifier>
-					<ios-sim.classifier>windows</ios-sim.classifier>
-                    <ocunit2junit.classifier>windows</ocunit2junit.classifier>
-                </properties>
+                    </properties>
             </profile>
             <profile>
                 <id>Linux-32bit</id>
@@ -466,12 +194,7 @@
                 </activation>
                 <properties>
                     <phantomjs.classifier>linux-x86</phantomjs.classifier>
-                    <waxsim.classifier>windows</waxsim.classifier>
-                    <chief.classifier>windows</chief.classifier>
-                    <checkers.classifier>windows</checkers.classifier>
-					<ios-sim.classifier>windows</ios-sim.classifier>
-                    <ocunit2junit.classifier>windows</ocunit2junit.classifier>
-                </properties>
+                    </properties>
             </profile>
             <profile>
                 <id>Linux-64bit</id>
@@ -484,12 +207,7 @@
                 </activation>
                 <properties>
                     <phantomjs.classifier>linux-x64</phantomjs.classifier>
-                    <waxsim.classifier>windows</waxsim.classifier>
-                    <chief.classifier>windows</chief.classifier>
-                    <checkers.classifier>windows</checkers.classifier>
-					<ios-sim.classifier>windows</ios-sim.classifier>
-                    <ocunit2junit.classifier>windows</ocunit2junit.classifier>
-                </properties>
+                    </properties>
             </profile>
             <profile>
                 <id>mac</id>
@@ -500,12 +218,7 @@
                 </activation>
                 <properties>
                     <phantomjs.classifier>mac</phantomjs.classifier>
-                    <waxsim.classifier>mac</waxsim.classifier>
-                    <chief.classifier>mac</chief.classifier>
-					<ios-sim.classifier>mac</ios-sim.classifier>
-                    <checkers.classifier>mac</checkers.classifier>
-                    <ocunit2junit.classifier>mac</ocunit2junit.classifier>
-                </properties>
+                    </properties>
             </profile>
         </profiles>
 
