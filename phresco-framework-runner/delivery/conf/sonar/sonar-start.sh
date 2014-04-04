@@ -1,1 +1,0 @@
-catalina.bat start -config server.xml
