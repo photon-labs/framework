@@ -98,7 +98,7 @@
 	<!-- 	<antcall target="clean-sonar"/> -->
         <antcall target="copy-phresco"/>
         <antcall target="copy-security"/>
-	<!-- 	<antcall target="copy-framework-config"/> -->
+	<antcall target="copy-framework-config"/>
        <!--  <antcall target="start-waxsim"/>
         <antcall target="start-iossim"/> -->
 		<parallel>
@@ -117,12 +117,8 @@
         </then>
         <else>
         <echo message="${framework.context} does not exist" />
-        <copy todir="${tomcat.home}/webapps/${framework.context}" overwrite="false">
-			<fileset dir="${phresco.war.dir}">
-                <include name="**/*" />
-            </fileset>
-		</copy>
-        </else>
+        <unwar src="${phresco.home}/workspace/repo/com/photon/phresco/framework/phresco-framework-web/${phresco.framework.version}/phresco-framework-web-${phresco.framework.version}.war" dest="${tomcat.home}/webapps/${framework.context}"/>
+	    </else>
         </if>
 	</target>
 	
