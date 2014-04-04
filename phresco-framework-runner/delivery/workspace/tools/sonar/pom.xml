@@ -271,23 +271,13 @@
 					<artifactId>maven-t7-plugin</artifactId>
 					<version>0.9.9</version>
 					<configuration>
-						<tomcatHttpPort>8000</tomcatHttpPort>
-						<tomcatShutdownPort>3005</tomcatShutdownPort>
+						<tomcatHttpPort>9000</tomcatHttpPort>
+						<tomcatShutdownPort>9005</tomcatShutdownPort>
 						<tomcatShutdownCommand>SHUTDOWN</tomcatShutdownCommand>
 						<tomcatVersion>7.0.6</tomcatVersion>
 						<tomcatSetAwait>false</tomcatSetAwait>
-					
-						
-					
 					<webapps>
-               <!--  <webappArtifact>
-                        		<groupId>sonar</groupId>
-		<artifactId>sonar</artifactId>
-		<version>${sonar.version}</version>
-<type>war</type>
-						<contextPath>sonar</contextPath>
-                </webappArtifact> -->
-</webapps>
+					</webapps>
 					
 					</configuration>
 			</plugin>

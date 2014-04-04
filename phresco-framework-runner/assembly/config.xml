@@ -61,6 +61,10 @@ xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assemb
 			    <include>workspace/tools/jenkins/*.xml</include>
 				<include>workspace/tools/jenkins/*.hpi</include>
 				<include>workspace/tools/jenkins/*.key</include>
+				<include>workspace/tools/sonar/**</include>
+				<include>workspace/tools/sonar/*.xml</include>
+				<include>workspace/tools/sonar/*.bat</include>
+				<include>workspace/tools/sonar/*.sh</include>
 			</includes>
 		</fileSet>
 		
