@@ -665,17 +665,17 @@
             <version>2.2</version>
         </dependency> -->
 		
-		<!-- <dependency>
+		 <dependency>
 		    <groupId>net.sf.jasperreports</groupId>
 		    <artifactId>jasperreports</artifactId>
 		    <version>${jasperreports.version}</version>
-		</dependency> -->
+		</dependency>
 		
 		<!-- <dependency>
 		    <groupId>org.apache.struts</groupId>
 		    <artifactId>struts2-jasperreports-plugin</artifactId>
 		    <version>${struts2-jasperreports-plugin.version}</version>
-		</dependency> -->
+		</dependency>  -->
 		
 		<!-- <dependency>
 			<groupId>com.lowagie</groupId>
