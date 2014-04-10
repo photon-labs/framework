@@ -272,6 +272,14 @@
         <antcall target="start-iossim"/>
         
 	</target>
+    
+    <target name="set-execute-permissions-2">
+		<chmod perm="ugo+rx" type="file">
+           <fileset dir="../../tools/node_modules">
+		    <include name="**/*"/>
+		  </fileset>
+		</chmod>
+	</target>
 	
 	<condition property="strings-match">
         <equals arg1="${os.name}" arg2="mac os x" casesensitive="false"/>
