@@ -129,7 +129,7 @@ case "$1" in
   		unit-test)
                 if [ -d ".phresco/" ];
                 then
-                noninteractive unit-test
+                pomcheck unit-test
                 else
                 echo "Invaild Location";
                 fi
