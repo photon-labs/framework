@@ -31,11 +31,9 @@
                                 {{#versiondata versions id}}{{/versiondata}}
 								{{#versionShowHide versions id}}{{/versionShowHide}} 
 								<input type="hidden" class="moduleId" value="{{id}}">
-                                <select class="input-mini flt_right">
-                                    {{#each versions}}									
-                                        <option value="{{id}}" {{#selectDefaultVersion appliesTo}}{{/selectDefaultVersion}} scope="{{scope}}">{{version}}</option>  
-                                    {{/each}} 
-                                </select>
+								<select class="input-mini flt_right">
+									{{#showOrderVersions versions}}{{/showOrderVersions}}
+								</select>
                                 {{#scopeShowHide packaging scope}}{{/scopeShowHide}}
 								{{#packagedata packaging versions appliesTo id}}{{/packagedata}}
                         </li>
@@ -70,9 +68,7 @@
 								<input type="hidden" class="moduleId" value="{{id}}">
                                 {{#if versions}}
 									<select class="input-mini flt_right">
-										{{#each versions}}										
-											<option value="{{id}}" {{#selectDefaultVersion appliesTo}}{{/selectDefaultVersion}} scope="{{scope}}">{{version}}</option>  
-										{{/each}} 
+										{{#showOrderVersions versions}}{{/showOrderVersions}}
 									</select>
 								{{/if}} 
                                 {{#scopeShowHide packaging scope}}{{/scopeShowHide}}
@@ -110,9 +106,7 @@
 								<input type="hidden" class="moduleId" value="{{id}}">
 								{{#if versions}}
 									<select class="input-mini flt_right">
-										{{#each versions}}										
-											<option value="{{id}}" {{#selectDefaultVersion appliesTo}}{{/selectDefaultVersion}} scope="{{scope}}">{{version}}</option>  
-										{{/each}} 
+										{{#showOrderVersions versions scope}}{{/showOrderVersions}}
 									</select>
 								{{/if}}
                                 {{#scopeShowHide packaging scope}}{{/scopeShowHide}}

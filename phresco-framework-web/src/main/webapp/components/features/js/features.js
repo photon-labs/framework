@@ -102,6 +102,15 @@ define(["features/listener/featuresListener"], function() {
 				}
 				return selectedString;
 			});
+			Handlebars.registerHelper('showOrderVersions',function(versions, scope) {
+				var sortedversion = [];
+				$.each( versions, function(index,value ){
+					var version_no = "<option value=\""+value.id+"\"  scope=\""+scope+"\">"+value.version+"</option>";
+					sortedversion.push(version_no.replace(/(^\s+|\s+$)/g, ''));         //removing white spaces from the string//
+				});
+				sortedversion.sort(function(a,b){return b-a});	
+				return sortedversion; 
+			});
 
 			Handlebars.registerHelper('versionShowHide', function(versions, id) {
 				var fieldset;
