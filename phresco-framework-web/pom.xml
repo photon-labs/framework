@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.photon.phresco.framework</groupId>
         <artifactId>phresco-framework-root</artifactId>
-        <version>3.3.1.3001-SNAPSHOT</version>
+        <version>3.3.1.4001-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
    
@@ -665,17 +665,17 @@
             <version>2.2</version>
         </dependency> -->
 		
-		<!-- <dependency>
+		 <dependency>
 		    <groupId>net.sf.jasperreports</groupId>
 		    <artifactId>jasperreports</artifactId>
 		    <version>${jasperreports.version}</version>
-		</dependency> -->
+		</dependency>
 		
 		<!-- <dependency>
 		    <groupId>org.apache.struts</groupId>
 		    <artifactId>struts2-jasperreports-plugin</artifactId>
 		    <version>${struts2-jasperreports-plugin.version}</version>
-		</dependency> -->
+		</dependency>  -->
 		
 		<!-- <dependency>
 			<groupId>com.lowagie</groupId>

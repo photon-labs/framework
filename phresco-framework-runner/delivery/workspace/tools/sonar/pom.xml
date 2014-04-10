@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.photon.phresco.sonar</groupId>
 	<artifactId>sonar</artifactId>
-	<packaging>war</packaging>
+	<packaging>pom</packaging>
 	<version>3.5.1</version>
 	<name>sonar</name>
 
@@ -250,7 +250,7 @@
 							<goal>unpack</goal>
 						</goals>
 						<configuration>
-							<markersDirectory>../workspace/temp/markers</markersDirectory>
+							<markersDirectory>../../temp/markers</markersDirectory>
 							<artifactItems>
 								<!-- extracting sonar zip file -->
 								<artifactItem>
@@ -259,13 +259,29 @@
 									<version>${sonar.version}</version>
 									<type>zip</type>
 									<overWrite>false</overWrite>
-									<outputDirectory>../workspace/tools</outputDirectory>
+									<outputDirectory>../</outputDirectory>
 								</artifactItem>
 							</artifactItems>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+					<groupId>com.googlecode.t7mp</groupId>
+					<artifactId>maven-t7-plugin</artifactId>
+					<version>0.9.9</version>
+					<configuration>
+						<tomcatHttpPort>9000</tomcatHttpPort>
+						<tomcatShutdownPort>9005</tomcatShutdownPort>
+						<tomcatShutdownCommand>SHUTDOWN</tomcatShutdownCommand>
+						<tomcatVersion>7.0.6</tomcatVersion>
+						<tomcatSetAwait>false</tomcatSetAwait>
+					<webapps>
+					</webapps>
+					
+					</configuration>
+			</plugin>
+			
             
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -282,6 +298,21 @@
                                 <property name="sonar-version" value="${sonar.version}"/>
 								<echo message="Sonar Plugins copied to plugin directory "/>
 								<ant antfile="sonar-build.xml" target="init" inheritRefs="true" inheritAll="true"/>
+							</tasks>
+						</configuration>
+					</execution>
+					
+					<execution>
+						<id>sonar-startup</id>
+						<phase>validate</phase>
+						<goals>
+						  <goal>run</goal>
+						</goals>
+						<configuration>
+                            <tasks>  
+                                <property name="sonar-version" value="${sonar.version}"/>
+								<echo message="Sonar Plugins copied to plugin directory "/>
+								<ant antfile="sonar-build.xml" target="sonar-startup-option" inheritRefs="true" inheritAll="true"/>
 							</tasks>
 						</configuration>
 					</execution>

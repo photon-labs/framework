@@ -4,7 +4,7 @@
     <artifactId>phresco-framework-root</artifactId>
     <packaging>pom</packaging>
     <name>Phresco Framework</name>
-    <version>3.3.1.3001-SNAPSHOT</version>
+    <version>3.3.1.4001-SNAPSHOT</version>
     <description>phresco-framework-root</description>
     <url>http://www.phresco.org</url>
 
@@ -262,7 +262,7 @@
     <repositories>
         <repository>
             <id>photon</id>
-            <url>http://phresco.photoninfotech.com/repo-2.0/content/groups/public/</url>
+            <url>http://172.16.17.226:8080/repository/content/groups/public/</url>
         </repository>
     </repositories>
     <dependencies>
