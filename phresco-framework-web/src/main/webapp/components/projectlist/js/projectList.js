@@ -153,8 +153,35 @@ define(["projectlist/listener/projectListListener"], function() {
 					return "";
 				}		
 			});
-		},
-		
+			
+			Handlebars.registerHelper('permissiondata', function(id, userPermissions) {
+				var manageapp;
+				if(userPermissions.manageRepo || userPermissions.manageApplication){
+					manageapp = '<a name="addRepo_' + id +'" dynamicId="'+ id +'" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Add Repo" ><img src="themes/default/images/Phresco/add_repo_icon.png" width="18" height="15" border="0" alt="" class="left_add_repo"></a><a name="commit'+ id +'" dynamicId="'+ id +'" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Commit" ><img src="themes/default/images/Phresco/commit_icon.png" width="16" height="15" border="0" alt="" class="centre_img"></a>';
+				}else{				
+					manageapp ='<img src="themes/default/images/Phresco/add_repo_icon_off.png" width="18" height="15" border="0" alt="" class="left_add_repo"> <img src="themes/default/images/Phresco/commit_icon_off.png" width="16" height="15" border="0" alt="">';
+				}return manageapp;
+			});	
+				
+			Handlebars.registerHelper('updatepermissiondata', function(id, userPermissions) {
+				var updateapp;
+				if( userPermissions.manageRepo || userPermissions.manageApplication){
+					updateapp = '<a name="svn_update' + id +'" dynamicId="'+ id +'" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Update" ><img src="themes/default/images/Phresco/update_svn_icon.png" width="22" height="15" border="0" alt=""></a>';  
+					}else{		
+					updateapp ='<img src="themes/default/images/Phresco/update_svn_icon_off.png" width="22" height="15" border="0" alt="">';
+				}return updateapp;
+				});	
+				
+			Handlebars.registerHelper('pdfpermissiondata', function(id, userPermissions) {
+				var pdfapp;
+				if(userPermissions.managePdfReports){
+					pdfapp ='<a name="pdf_report_'+ id +'" temp="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="'+ id +'" data-placement="bottom" data-t="tooltip" href="javascript:void(0)" data-original-title="PDF Report"><img src="themes/default/images/Phresco/pdf_icon.png" width="14" height="16" border="0" alt=""></a>';
+				}else{		
+				pdfapp ='<img src="themes/default/images/Phresco/pdf_icon.png" width="14" height="16" border="0" alt="">';
+				}return pdfapp;
+				});		
+		},	
+			
 		/***
 		 * Called after the preRender() and bindUI() completes. 
 		 * Override and add any preRender functionality here
@@ -181,7 +208,6 @@ define(["projectlist/listener/projectListListener"], function() {
 		getAction : function(actionBody, action, callback) {
 			var self = this;
 			self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, action), "" , function(response) {
-				console.info("after projectListAction........");
 				if (response.responseCode === "PHRSR10007") {
 					self.showCredentialsPopupForTfs();
 				} else {

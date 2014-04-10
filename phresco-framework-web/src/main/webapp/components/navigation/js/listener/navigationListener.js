@@ -570,7 +570,7 @@ define([], function() {
 			if(userPermissions){
 				switch(keyword) {
 					case commonVariables.projectlist :
-						if (!userPermissions.importApplication) {
+						if (!userPermissions.importApplication && !userPermissions.manageApplication) {
 							$("#importApp").prop("disabled", true);
 						}
 						if (!userPermissions.manageApplication) {
