@@ -61,6 +61,7 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 			}
 		
 			commonVariables.api.localVal.deleteSession('loggedout');
+			
 			commonVariables.api.localVal.deleteSession('multiplelogout');	
 			
 			if(commonVariables.api.localVal.getSession('statusmsg') !== null){
