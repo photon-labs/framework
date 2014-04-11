@@ -3,7 +3,7 @@
     <applicationHandler>
         <groupId>com.photon.phresco.commons</groupId>
         <artifactId>phresco-commons</artifactId>
-        <version>3.3.1.4002-SNAPSHOT</version>
+        <version>3.3.1.5001-SNAPSHOT</version>
         <class>com.photon.phresco.impl.JavaApplicationProcessor</class>
     </applicationHandler>
 </mojos>
