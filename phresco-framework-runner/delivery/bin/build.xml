@@ -2,7 +2,7 @@
 
     Framework Runner
 
-    Copyright (C) 1999-2013 Photon Infotech Inc.
+    Copyright (C) 1999-2014 Photon Infotech Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@
     <property name="ocunit2junit.home" value="../../tools/ocunit2junit"/>
     <property name="waxsim.home" value="../../tools/waxsim"/>
 	<property name="phresco.upgrade.file" value="${phresco.home}/workspace/temp/upgrade.properties"/>
-    <property name="phantomjs.mac.path" value="${phresco.home}/workspace/tools/phantomjs-1.5.0-mac/bin"/>
+    <property name="phantomjs.mac.path" value="../../tools/phantomjs-1.5.0-mac/bin"/>
 	<property name="phresco.file.server.home" value="${phresco.home}/workspace/projects"/>
 	<property name="phresco.file.server" value="PhrescoFileServer"/>
     <property file ="${phresco.home}/conf/service.properties"/>
@@ -262,7 +262,7 @@
 		    <include name="**/*"/>
 		  </fileset>
           
-           <fileset dir="${ocunit2junit.home.home}">
+           <fileset dir="${ocunit2junit.home}">
 		    <include name="**/*"/>
 		  </fileset>
           
@@ -271,6 +271,14 @@
          <antcall target="start-waxsim"/>
         <antcall target="start-iossim"/>
         
+	</target>
+    
+    <target name="set-execute-permissions-2">
+		<chmod perm="ugo+rx" type="file">
+           <fileset dir="../../tools/node_modules">
+		    <include name="**/*"/>
+		  </fileset>
+		</chmod>
 	</target>
 	
 	<condition property="strings-match">

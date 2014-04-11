@@ -1,7 +1,7 @@
 /**
  * Framework Web Archive
  *
- * Copyright (C) 1999-2013 Photon Infotech Inc.
+ * Copyright (C) 1999-2014 Photon Infotech Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +59,8 @@ import org.sonar.wsclient.Host;
 import org.sonar.wsclient.Sonar;
 import org.sonar.wsclient.connectors.HttpClient4Connector;
 import org.sonar.wsclient.services.DeleteQuery;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
@@ -105,7 +107,9 @@ import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Dependency;
 import com.phresco.pom.model.Model.Modules;
+import com.phresco.pom.model.PluginExecution.Configuration;
 import com.phresco.pom.model.Profile;
+import com.phresco.pom.model.Scm;
 import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
@@ -713,6 +717,9 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			
 			// to update functional framework in pom.xml
 			updateFunctionalTestProperties(appInfo, serviceManager, rootModule);
+			
+			//to update Selenium jar version in functional - pom.xml
+			updateSeleniumJarVersion(projectInfo, rootModulePath, subMod);
 			json = embedApplication(json, projectInfo, serviceManager, projectManager, folder);
 					status = RESPONSE_STATUS_SUCCESS;
 					successCode = PHR200008;
@@ -1147,7 +1154,9 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		try {
 			File pomFileLocation = Utility.getPomFileLocation(Utility.getProjectHome() + appDirName, "");
 			PomProcessor pomProcessor = new PomProcessor(pomFileLocation);
-			String developerConnection = pomProcessor.getSCM().getDeveloperConnection();
+			Scm scm = pomProcessor.getSCM();
+			if(scm != null) {
+			String developerConnection = scm.getDeveloperConnection();
 			String repoType = FrameworkUtil.getRepoType(developerConnection);
 			if (TFS.equals(repoType)) {
 				SCMManagerImpl scmMImpl = new SCMManagerImpl();
@@ -1196,6 +1205,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 				repoDetail.setWorkspaceName(srcWorkspaceProperty);
 				scmMImpl.deleteWorkspace(repoDetail);
 			}
+		  }
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		}
@@ -1793,6 +1803,65 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			processor.save();
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
+		}
+	}
+	
+	private String getSeleniumJarVersion(ApplicationInfo appInfo) {
+		FunctionalFrameworkInfo functionalFrameworkInfo = appInfo.getFunctionalFrameworkInfo();
+		if (functionalFrameworkInfo != null) {
+			return functionalFrameworkInfo.getVersion();
+		}
+		return "";
+	}
+	
+	
+	private void updateSeleniumJarVersion(ProjectInfo projectInfo, String rootPath, String moduleName) throws PhrescoException {
+		try {
+			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+			String seleniumJarVersion = getSeleniumJarVersion(appInfo);
+			if (StringUtils.isNotEmpty(seleniumJarVersion)) {
+				File testFolderLocation = Utility.getTestFolderLocation(projectInfo, rootPath, moduleName);
+				File pomFile = Utility.getPomFileLocation(rootPath, moduleName);
+				PomProcessor pomProcessor = new PomProcessor(pomFile);
+				String funcDir = pomProcessor.getProperty(POM_PROP_KEY_FUNCTEST_DIR);
+				String seleniumType = pomProcessor.getProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
+				if (SELENIUM_GRID.equals(seleniumType)) {
+					File functionalPomFile = new File(testFolderLocation + funcDir + File.separatorChar + POM_XML);
+					PomProcessor processor = new PomProcessor(functionalPomFile);
+					Configuration pluginExecutionConfiguration = processor.getPluginExecutionConfiguration("org.apache.maven.plugins", "maven-dependency-plugin", "copy");
+					if (pluginExecutionConfiguration != null) {
+						List<org.w3c.dom.Element> elements = pluginExecutionConfiguration.getAny();
+						setVersionInArtifactItem(elements, seleniumJarVersion);
+					}
+					processor.addDependency("org.seleniumhq.selenium", "selenium-server-standalone", seleniumJarVersion);
+					processor.save();
+				}
+			}
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	private void setVersionInArtifactItem(List<org.w3c.dom.Element> elements, String version) {
+		for (org.w3c.dom.Element element : elements) {
+			if ("artifactItems".equals(element.getTagName())) {
+				NodeList artifactItem = element.getElementsByTagName("artifactItem");
+				for (int i = 0; i < artifactItem.getLength(); i++) {
+					Node artifactItemNode = artifactItem.item(i);
+					boolean check = false;
+					NodeList childNodes = artifactItemNode.getChildNodes();
+					for (int j = 0; j < childNodes.getLength(); j++) {
+						Node childNode = childNodes.item(j);
+						if ("artifactId".equals(childNode.getNodeName()) && childNode.getTextContent().equalsIgnoreCase("selenium-server-standalone")) {
+							check = true;
+						}
+						if (check && "version".equals(childNode.getNodeName())) {
+							childNode.setTextContent(version);
+							break;
+						}
+					}
+				}
+			}
 		}
 	}
 }

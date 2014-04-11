@@ -47,8 +47,7 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 				$("#favicon").attr("href", "data:image/png;base64," + commonVariables.api.localVal.getSession('favicon'));
 			} else {
 				$("#favicon").attr("href", "themes/default/images/Phresco/favicon.png");
-			}
-			
+			}			
 			if(commonVariables.api.localVal.getSession('customerlogo') !== null &&
 				commonVariables.api.localVal.getSession('customerlogo') !== ""){
 				$('#loginlogo').attr("src", "data:image/png;base64," + commonVariables.api.localVal.getSession('customerlogo'));
@@ -60,7 +59,10 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 				$(".login_error_msg").text('Logged out');
 				$(".login_error_msg").css('color','green');
 			}
+		
 			commonVariables.api.localVal.deleteSession('loggedout');
+			
+			commonVariables.api.localVal.deleteSession('multiplelogout');	
 			
 			if(commonVariables.api.localVal.getSession('statusmsg') !== null){
 				if(commonVariables.api.localVal.getSession('statusmsg') === "Customer Context Required"){
