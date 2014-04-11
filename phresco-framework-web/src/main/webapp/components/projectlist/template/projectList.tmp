@@ -102,7 +102,7 @@
                   </td>
                         <td class="list_img">
                         {{#permissiondata id ../../userPermissions}}{{/permissiondata}}
-                        {{#updatepermissiondata id ../../userPermissions}}{{/updatepermissiondata}
+                        {{#updatepermissiondata id ../../userPermissions}}{{/updatepermissiondata}}
                   <div id="addRepo_{{id}}" class="add_repo dyn_popup" name="addRepo">
                   	<div class="flt_right" id="addToRepoHelpDiv{{id}}">
                   		<img src="themes/default/images/Phresco/question_mark.png" border="0" alt="" style="cursor:pointer;" dynamicId="{{id}}" class="addToRepoHelp">
