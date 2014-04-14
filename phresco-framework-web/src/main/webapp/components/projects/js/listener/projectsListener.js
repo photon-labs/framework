@@ -920,10 +920,9 @@ define([], function() {
 		},
 		
 		technologyAndVersionChangeEvent : function() {
-		
 			var self=this;
-			$("input.appCodeText").unbind("keyup");
-			$("input.appCodeText").bind("keyup", function() {
+			$(".appCodeText").unbind("keyup");
+			$(".appCodeText").bind("keyup", function() {
 				var currentCount = $(this).attr('count');
 				var currentVal =  $(this).val();
 				var appCodeTextObj = $(this);
@@ -949,8 +948,13 @@ define([], function() {
 						if(keyAttr === 'displayed'){
 							var valueCount = $(value).attr('count');
 							var appcodeVal = $(value).val();
+							console.info("currentCount", currentCount);
+							console.info("valueCount", valueCount);
+							console.info("currentVal", currentVal);
+							console.info("appcodeVal", appcodeVal);
 							if(currentCount !== valueCount && currentVal === appcodeVal){
 								//$(appCodeTextObj).val("");
+								console.info("true");
 								$(appCodeTextObj).focus();
 								$(appCodeTextObj).addClass('errormessage');
 								$(appCodeTextObj).attr('placeholder', 'Appcode Already Exists');
@@ -1400,6 +1404,7 @@ define([], function() {
 		
 		layerRender : function(selectedPilot) {
 			var self=this;
+			
 			var selectedPilotData = commonVariables.api.localVal.getJson(selectedPilot), dynamicValue, minusIcon = '<img src="themes/default/images/Phresco/minus_icon.png" border="0" alt="">';
 			if(selectedPilotData !== undefined && selectedPilotData !== null) {
 				$("input[name=Create]").attr('disabled', false);
@@ -1428,7 +1433,8 @@ define([], function() {
 						$("tr[name=applicationlayer]").show();
 						$("tr.applnLayer").show();
 						$("tr.applnLayer").attr('key','displayed');
-						var frontEnd = '<tr class="applnlayercontent" name="staticApplnLayer"><td class="applnappcode"><input type="text" id="appcode" maxlength="30" title="30 Characters only" class="appln-appcode appCodeText"></td><td name="frontEnd" class="frontEnd"><select name="frontEnd" class="frontEnd selectpicker" title="Select Group"><option value="Select Group" selected disabled>Select Group</option>'+self.getFrontEndTechGrp()+'</select></td><td name="technology" class="technology"><select name="appln_technology" class="appln_technology selectpicker"><option disabled>Select Technology</option></select></td><td name="version" class="version"><select name="appln_version" class="appln_version selectpicker"><option disabled>Select Version</option></select></td><td></td><td><div class="flt_right icon_center"><a name="addApplnLayer" class="hideContent"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeApplnLayer" class="hideContent"></a></div></td></tr>';
+						self.count++;
+						var frontEnd = '<tr class="applnlayercontent" name="staticApplnLayer"><td class="applnappcode"><input type="text" id="appcode" maxlength="30" title="30 Characters only" count='+ self.count +' class="appln-appcode appCodeText"></td><td name="frontEnd" class="frontEnd"><select name="frontEnd" class="frontEnd selectpicker" title="Select Group"><option value="Select Group" selected disabled>Select Group</option>'+self.getFrontEndTechGrp()+'</select></td><td name="technology" class="technology"><select name="appln_technology" class="appln_technology selectpicker"><option disabled>Select Technology</option></select></td><td name="version" class="version"><select name="appln_version" class="appln_version selectpicker"><option disabled>Select Version</option></select></td><td></td><td><div class="flt_right icon_center"><a name="addApplnLayer" class="hideContent"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeApplnLayer" class="hideContent"></a></div></td></tr>';
 						dynamicValue = $(frontEnd).insertAfter("tr.applnlayercontent:last");
 						
 						/*if (dynamicValue.prev('tr').attr("name") !== "dynamicAppLayer") {
@@ -1478,8 +1484,8 @@ define([], function() {
 						$("tr[name=weblayer]").show();
 						$("tr.webLayer").show();
 						$("tr.webLayer").attr('key','displayed');
-						
-						var middleTier ='<tr class="weblayercontent" name="staticWebLayer"><td class="webappcode"><input type="text" id="webappcode" maxlength="30" title="30 Characters only" class="web-appcode appCodeText"></td><td name="web" class="web"><select name="weblayer" class="weblayer selectpicker"><option selected disabled>Select Group</option>'+self.getWidget() +'</select></td><td name="widget" class="widget"><select name="web_widget" class="web_widget selectpicker"><option disabled>Select Technology</option></select></td><td name="widgetversion" class="widgetversion"><select name="web_version" class="web_version selectpicker"><option disabled>Select Version</option></select></td><td></td><td> <div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer" class="hideContent"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeWebLayer" class="hideContent"></a></div></td></tr>';
+						self.count++;
+						var middleTier ='<tr class="weblayercontent" name="staticWebLayer"><td class="webappcode"><input type="text" id="webappcode" maxlength="30" title="30 Characters only" class="web-appcode appCodeText" count='+ self.count +'></td><td name="web" class="web"><select name="weblayer" class="weblayer selectpicker"><option selected disabled>Select Group</option>'+self.getWidget() +'</select></td><td name="widget" class="widget"><select name="web_widget" class="web_widget selectpicker"><option disabled>Select Technology</option></select></td><td name="widgetversion" class="widgetversion"><select name="web_version" class="web_version selectpicker"><option disabled>Select Version</option></select></td><td></td><td> <div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer" class="hideContent"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeWebLayer" class="hideContent"></a></div></td></tr>';
 						dynamicValue = $(middleTier).insertAfter("tr.weblayercontent:last");
 						
 						/*if (dynamicValue.prev('tr').attr("name") !== "dynamicWebLayer") {
@@ -1529,8 +1535,8 @@ define([], function() {
 						$("tr[name=mobilelayer]").show();
 						$("tr.mobLayer").show();
 						$("tr.mobLayer").attr('key','displayed');
-						
-						var cmsLayer = '<tr class="mobilelayercontent" name="staticMobileLayer"><td class="mobileappcode"><input type="text" id="mobileappcode" maxlength="30" title="30 Characters only" class="mobile-appcode appCodeText"></td><td name="mobile" class="mobile"><select name="mobile_layer" class="mobile_layer selectpicker"><option selected disabled>Select Group</option>'+self.getMobile() +'</select></td><td name="types" class="types"><select name="mobile_types" class="mobile_types selectpicker"><option disabled>Select Technology</option></select></td><td colspan="2" name="mobileversion" class="mobileversion selectpicker"><select name="mobile_version" class="mobile_version selectpicker"><option disabled>Select Version</option></select></td><td></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer" class="hideContent"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeMobileLayer" class="hideContent"></a></div></td></tr>';
+						self.count++;
+						var cmsLayer = '<tr class="mobilelayercontent" name="staticMobileLayer"><td class="mobileappcode"><input type="text" id="mobileappcode" maxlength="30" title="30 Characters only" class="mobile-appcode appCodeText" count='+ self.count +'></td><td name="mobile" class="mobile"><select name="mobile_layer" class="mobile_layer selectpicker"><option selected disabled>Select Group</option>'+self.getMobile() +'</select></td><td name="types" class="types"><select name="mobile_types" class="mobile_types selectpicker"><option disabled>Select Technology</option></select></td><td colspan="2" name="mobileversion" class="mobileversion selectpicker"><select name="mobile_version" class="mobile_version selectpicker"><option disabled>Select Version</option></select></td><td></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer" class="hideContent"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeMobileLayer" class="hideContent"></a></div></td></tr>';
 						dynamicValue = $(cmsLayer).insertAfter("tr.mobilelayercontent:last");
 						
 						/*if (dynamicValue.prev('tr').attr("name") !== "dynamicMobileLayer") {
@@ -1576,8 +1582,11 @@ define([], function() {
 						$("select[name='mobile_version']:last").selectpicker('refresh');
 						$("tr.mobLayer").attr('key','displayed');
 					}
+					self.technologyAndVersionChangeEvent();
 				});
-			}		
+				 
+			}
+           			
 		}, 
 		
 		enablebuttonAdd : function() {
