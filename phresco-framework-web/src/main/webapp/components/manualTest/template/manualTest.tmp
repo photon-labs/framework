@@ -79,8 +79,13 @@
 					<ul>
 						<li>Upload File<br/></li>
 						<li>
+						{{#if userPermissions.manageTests}}
 							<div id="manual_temp_upload" class="file-uploader align" style="float:left"><noscript><p>Please enable JavaScript to use file uploader.</p><!-- or put a simple form for upload here --></noscript> </div>
+						{{else}}
+							<input type="button" value="Upload" class="btn btn_style" disabled>
+					{{/if}}
 							<input type="button" value="Close" class="btn btn_style dyn_popup_close manual_close_button" style="margin:0">
+							
 						</li>
 					</ul>
 				</form>
@@ -100,7 +105,11 @@
 						</li>
 					</ul>
 					<div class="flt_right">
-						<input type="button" value="Download" id="downloadTemplate" class="btn btn_style">
+						{{#if userPermissions.manageTests}}
+							<input type="button" value="Download" id="downloadTemplate" class="btn btn_style">
+						{{else}}
+							<input type="button" value="Download" class="btn btn_style" disabled>
+						{{/if}}
 						<input type="button" value="Close" class="btn btn_style dyn_popup_close">
 					 </div>
 				</form>
@@ -120,7 +129,11 @@
 						</tbody>
 					</table>
 					<div class="flt_right">
+					{{#if userPermissions.manageTests}}
 						<input type="button" value="Save" class="btn btn_style" name="saveTestSuite">
+					{{else}}
+						<input type="button" value="Save" class="btn btn_style" name="saveTestSuite" disabled>
+					{{/if}}
 						<input type="button" value="Close" class="btn btn_style dyn_popup_close">
 					</div>
 				</form>
