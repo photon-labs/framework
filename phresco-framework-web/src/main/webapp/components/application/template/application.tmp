@@ -30,7 +30,9 @@
 	                    		{{#embedselect ../projectlist.appdetails.data.embedList ../projectlist.appdetails.data.projectInfo.appInfos.0.embedAppId}}{{/embedselect}}
 	                    </select>  
                     </td>
-					<td colspan="3"></td>
+					<td><span data-i18n="application.edit.buildversion"></td>
+                    <td><input type="text" placeholder="buildversion" maxlength="20" name="buildVersion"/></td>
+					<td colspan="2"></td>
                 </tr>
 				{{/each}}	  
 					{{#if projectlist.serverData}}

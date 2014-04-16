@@ -666,6 +666,7 @@
 		"edit" : {
 			"database" : "Database",
 			"version" : "Version",
+			"buildversion" : "Build Version",
 			"technology" : "Technology",
 			"versions" : "Versions",
 			"code" : "Code",

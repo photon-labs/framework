@@ -319,6 +319,7 @@ define([], function() {
 				var rootModule = self.isBlank($('.rootModule').val()) ? "" : $('.rootModule').val();
 				appInfo.rootModule = rootModule;
 				appInfo.version = $("input[name='appVersion']").val();
+				appInfo.buildVersion = $("input[name='buildVersion']").val();
 				appInfo.name = $("input[name='appName']").val();
 				appInfo.emailSupported = renderData.appdetails.data.projectInfo.appInfos[0].emailSupported;
 				appInfo.phoneEnabled = renderData.appdetails.data.projectInfo.appInfos[0].phoneEnabled;
