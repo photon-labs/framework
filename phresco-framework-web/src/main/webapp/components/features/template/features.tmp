@@ -134,12 +134,8 @@
 	<div id="settingspopup"></div>
 	<div id="dependancypopup"></div>
     <section class="content_end">
-        <div class="flt_right">
-        	{{#if userPermissions.manageApplication}}
-        		<input type="submit" data-i18n="[value]features.btn.update" class="btn btn_style update_btn" id="featureUpdate">
-    		{{else}}
-            	<input type="submit" data-i18n="[value]features.btn.update" class="btn btn_style update_btn" id="featureUpdate" disabled>
-        	{{/if}}
+        <div class="flt_right">		
+			{{#importapppermission userPermissions }}{{/importapppermission}}        
         	<input type="submit" id="cancelUpdateFeature" data-i18n="[value]features.btn.cancel" class="btn btn_style cancel_icon_btn">
         </div>
 		<div class="msgdisplay"></div>

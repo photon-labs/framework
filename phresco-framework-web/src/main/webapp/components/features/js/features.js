@@ -161,6 +161,16 @@ define(["features/listener/featuresListener"], function() {
 				}				
 				return settingimg;
 			});
+			
+			
+			Handlebars.registerHelper('importapppermission', function(userPermissions) {
+				var importapp;
+				if(userPermissions.manageApplication || userPermissions.importApplication){
+					importapp = '<input type="submit" data-i18n="[value]features.btn.update" class="btn btn_style update_btn" id="featureUpdate">';  
+					}else{		
+					importapp ='<input type="submit" data-i18n="[value]features.btn.update" class="btn btn_style update_btn" id="featureUpdate" disabled>';
+				}return importapp;
+			});	
 		},
 
 		/***
