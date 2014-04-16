@@ -719,6 +719,7 @@
 		"placeholder" : "Search"
 	},
 	"ci" : {
+		"version" : "Build Version",
         "jobtemplates" : "Job Templates",
         "create" : "Create",
         "name" : "Name",

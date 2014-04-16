@@ -1,7 +1,7 @@
 /**
  * Phresco Framework Implementation
  *
- * Copyright (C) 1999-2013 Photon Infotech Inc.
+ * Copyright (C) 1999-2014 Photon Infotech Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,6 +101,9 @@ public class ApplicationManagerImpl implements ApplicationManager {
 			}
 		}
 		StringBuilder command = buildMavenCommand(action, mavenArgCommands);
+		String buildVersion = projectInfo.getAppInfos().get(0).getBuildVersion();
+		command.append(Constants.SPACE);
+		command.append("-Dbuild.version=" + buildVersion);
 		if (action.equals(ActionType.LIQUIBASE)) {
 			return executeLiquibaseMavenCommand(projectInfo, action, command, workingDirectory);
 		} else {

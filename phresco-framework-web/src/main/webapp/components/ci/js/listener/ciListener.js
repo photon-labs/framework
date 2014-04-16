@@ -53,13 +53,14 @@ define([], function() {
 			}); 
 		},
 
-		editContinuousDeliveryConfigure : function(contDeliveryName, envName) {
+		editContinuousDeliveryConfigure : function(contDeliveryName, envName, version) {		
 			var self = this;			
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			commonVariables.navListener.getMyObj(commonVariables.continuousDeliveryConfigure, function(retVal){
 				self.edit = retVal;
 				self.edit.name = contDeliveryName;
 				self.edit.envName = envName;
+				self.edit.version = version;
 				Clazz.navigationController.push(self.edit, commonVariables.animation);
 			}); 
 		},
@@ -76,6 +77,8 @@ define([], function() {
 				$('input[name=continuousDeliveryName]').val(data.name);
 				$('input[name=continuousDeliveryName]').attr('oldName', data.name);
 				$('select[name=environments]').val(data.envName);
+				$('input[name=buildVersion]').val(data.version);
+				$('input[name=buildVersion]').attr('oldVersion', data.version);
 				$.each(data.jobs, function(key, value) {
 					var id = value.appName + value.templateName;
 					var parentli = $('#'+id).parent();
@@ -201,7 +204,8 @@ define([], function() {
 				header.requestMethod = "PUT";
 				header.requestPostBody = JSON.stringify(ciRequestBody);
 				var oldName = $('input[name=continuousDeliveryName]').attr('oldName');
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/update" + "?customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+appDir + "&userId=" +userId + "&oldname=" + oldName +"&rootModule="+rootModule;
+				var oldVersion = $('input[name=buildVersion]').attr('oldVersion');
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/update" + "?customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+appDir + "&userId=" +userId + "&oldname=" + oldName+ "&oldversion=" + oldVersion + "&rootModule="+rootModule;
 			}  else if (action === "getBuilds") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/builds?projectId="+projectId+"&name="+ciRequestBody.jobName+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName + "&customerId=" + customerId +"&rootModule="+rootModule;
@@ -2098,6 +2102,7 @@ define([], function() {
 			var contDeliveryName = $("[name=continuousDeliveryName]").val();
 			var oldName = $("[name=continuousDeliveryName]").attr('oldname');
 			var envName = $("select[name=environments]").val();
+			var version = $("input[name=buildVersion]").val();
 			var sortable2LiObj = $("#sortable2 li[temp=ci]");
 			var sortable2Obj = $("#sortable2");
 			var name = [];
@@ -2159,6 +2164,7 @@ define([], function() {
 								
 								contDelivery.name = contDeliveryName;
 								contDelivery.envName = envName;
+								contDelivery.version = version;								
 								contDelivery.jobs = jobs;
 		
 								callback(contDelivery);

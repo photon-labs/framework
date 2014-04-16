@@ -1049,11 +1049,12 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		return updateProjectDeliveries;
 	}
 
-	private ContinuousDelivery createNewContinuousDelivery(String name, String environment, List<CIJob> jobs) {
+	private ContinuousDelivery createNewContinuousDelivery(String name, String environment, List<CIJob> jobs, String version) {
 		ContinuousDelivery updateContinuousDeliveries = new ContinuousDelivery();
 		updateContinuousDeliveries.setName(name);
 		updateContinuousDeliveries.setEnvName(environment);
 		updateContinuousDeliveries.setJobs(jobs);
+		updateContinuousDeliveries.setVersion(version);
 		return updateContinuousDeliveries;
 	}
 
@@ -1072,7 +1073,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			ProjectDelivery createNewProjectDelivery = createNewProjectDelivery(continuousDelivery.getName(), continuousDelivery.getEnvName(), jobs, projId);
 			newProjectDelivery.add(createNewProjectDelivery);
 
-			ContinuousDelivery createNewContinuousDelivery = createNewContinuousDelivery(continuousDelivery.getName(), continuousDelivery.getEnvName(), jobs);
+			ContinuousDelivery createNewContinuousDelivery = createNewContinuousDelivery(continuousDelivery.getName(), continuousDelivery.getEnvName(), jobs, continuousDelivery.getVersion());
 
 			if (CollectionUtils.isEmpty(projectDeliveries)) {
 				projectDeliveries = newProjectDelivery;

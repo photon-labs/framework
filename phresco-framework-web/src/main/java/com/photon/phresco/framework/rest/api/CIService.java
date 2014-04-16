@@ -386,7 +386,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateJob(@Context HttpServletRequest request, ContinuousDelivery continuousDelivery, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, 
-			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_OLDNAME)String oldname, @QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule)
+			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_OLDNAME)String oldname, @QueryParam("oldVersion")String oldversion, @QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule)
 	throws PhrescoException, ClientProtocolException, IOException, JSONException {
 		String thisName = continuousDelivery.getName();
 		if (StringUtils.isNotEmpty(oldname) && (!thisName.equalsIgnoreCase(oldname))) {
@@ -433,8 +433,9 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 						boolean equals = ciJob.equals(oldCiJob);
 						//tempCiJobs.add(ciJob);
 						ApplicationInfo applicationInfo = new ApplicationInfo();
-						String ciName = continuousDelivery.getName();
-						if(!equals || (!ciName.equalsIgnoreCase(oldname))) {
+						String ciName = continuousDelivery.getName();						
+						String version = continuousDelivery.getVersion();
+						if(!equals || (!ciName.equalsIgnoreCase(oldname)) || !(version.equalsIgnoreCase(oldversion))) {
 							exists = true;
 							if(StringUtils.isNotEmpty(ciJob.getAppDirName())) {
 								splitPath = Utility.splitPathConstruction(ciJob.getAppDirName());
@@ -443,7 +444,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 								}
 								applicationInfo = FrameworkServiceUtil.getApplicationInfo(splitPath);
 							}
-							CIJob job = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId, customerId, request);
+							CIJob job = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId, customerId, request, continuousDelivery.getVersion());
 							updateJob = ciManager.updateJob(job);
 							//						if(updateJob) {
 							tempJobs.add(ciJob);
@@ -463,7 +464,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 						}
 						applicationInfo = FrameworkServiceUtil.getApplicationInfo(splitPath);
 					}
-					CIJob jobWithCmds = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId, customerId, request);
+					CIJob jobWithCmds = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId, customerId, request, continuousDelivery.getVersion());
 					boolean validateJob = validateJob(jobWithCmds.getJobName());
 					if(validateJob){
 						boolean createJob = ciManager.createJob(jobWithCmds);
@@ -690,6 +691,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 						} 
 						contDelivery.setName(continuousDelivery.getName());
 						contDelivery.setEnvName(continuousDelivery.getEnvName());
+						contDelivery.setVersion(continuousDelivery.getVersion());
 						contDeliveryList.add(contDelivery);
 						projectContinuousDelivery.setContinuousDeliveries(contDeliveryList);
 					}
@@ -1539,8 +1541,8 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 						splitPath = splitPath + File.separator + job.getModule();
 					}
 					applicationInfo = FrameworkServiceUtil.getApplicationInfo(splitPath);
-				}
-				CIJob jobWithCmds = setPreBuildCmds(job,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId, customerId, request);
+				}				
+				CIJob jobWithCmds = setPreBuildCmds(job,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId, customerId, request, continuousDelivery.getVersion());
 				boolean createJob = ciManager.createJob(job);
 				if (createJob) {
 					ciJobs.add(job);
@@ -1597,7 +1599,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		}
 	}
 	
-	public CIJob setPreBuildCmds(CIJob job, ApplicationInfo appInfo, String appDir, String id, String name, String userId, String customerId, HttpServletRequest request) throws PhrescoException, FileNotFoundException {
+	public CIJob setPreBuildCmds(CIJob job, ApplicationInfo appInfo, String appDir, String id, String name, String userId, String customerId, HttpServletRequest request,String version) throws PhrescoException, FileNotFoundException {
 		try {
 			List<String> preBuildStepCmds = new ArrayList<String>();
 
@@ -1895,6 +1897,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 					mvncmd = mvncmd + FrameworkConstants.SPACE + buildArgCmd;
 				}
 			}
+			
+		if (StringUtils.isNotEmpty(version)){
+			mvncmd= mvncmd + FrameworkConstants.SPACE + "-Dbuild.version="+version;
+		}
+			
+			
 
 			// for build job alone existing do_not_checkin need to be cleared
 			// For pdf report, it should clear existing pdf reports in do_not_checkin folder

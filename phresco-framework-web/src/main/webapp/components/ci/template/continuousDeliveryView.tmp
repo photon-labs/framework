@@ -20,7 +20,8 @@
                     	<a temp="clone" name="{{name}}" class="clone_popup tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Clone">
                     		<img src="themes/default/images/Phresco/stack.png" width="29" height="23" border="0" alt="">
                     	</a>
-                    	<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" continuousName="{{name}}" envName="{{envName}}" name="editContinuousDelivery" data-original-title="Edit">
+                    	<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" continuousName="{{name}}" envName="{{envName}}" 
+						 version="{{version}}" name="editContinuousDelivery" data-original-title="Edit">
                     		<img src="themes/default/images/Phresco/edit_row_icon.png" width="29" height="23" border="0" alt="">
                     	</a> 
                     	<a temp="deleteCI" name="{{name}}" class="deleteCI tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Delete">
@@ -32,7 +33,7 @@
                     	<a name="{{name}}" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:;" data-original-title="clone">
                     		<img src="themes/default/images/Phresco/stack_dis.png" width="29" height="23" border="0" alt="">
                     	</a>
-                    	<a title="" data-placement="bottom" data-toggle="tooltip" continuousName="{{name}}" envName="{{envName}}" data-original-title="Edit">
+                    	<a title="" data-placement="bottom" data-toggle="tooltip" continuousName="{{name}}" envName="{{envName}}" version="{{version}}" data-original-title="Edit">
                     		<img src="themes/default/images/Phresco/edit_row_icon_dis.png" width="29" height="23" border="0" alt="">
                     	</a> 
                     	<a name="{{name}}" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:;" data-original-title="Delete">
@@ -111,6 +112,12 @@
                     <select name="envName">
                         
                     </select>
+                </li>
+                 <li data-i18n="ci.version"><br/></li>
+				    <li>
+                    <input type="text" name="version" class="clone_text">
+                        
+                  
                 </li>
                 <li>
                     <div class="flt_right">

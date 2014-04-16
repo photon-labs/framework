@@ -122,8 +122,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
 			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, "continuousDeliveryList"), function(response) {
-				self.templateData.projectDelivery = response.data;
-				renderFunction(self.templateData, whereToRender);
+				self.templateData.projectDelivery = response.data;				
+				renderFunction(self.templateData, whereToRender);							
 			});		
 		},
 
@@ -209,7 +209,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
    			$("a[name=editContinuousDelivery]").click(function() {
    				var contName = $(this).attr("continuousName");
    				var envName = $(this).attr("envName");
-				self.continuousDeliveryConfigureEditEvent.dispatch(contName, envName);
+				var version = $(this).attr("version");
+				self.continuousDeliveryConfigureEditEvent.dispatch(contName, envName, version);
    			});
    			clearInterval(self.interval);
    			self.interval = setInterval(function() {   

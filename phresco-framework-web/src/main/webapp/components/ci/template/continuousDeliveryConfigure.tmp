@@ -6,7 +6,7 @@
 		<div class="scroll_cont">
 			<div class="sortablecont_one">
 				<span data-i18n="configuration.label.name"></span>
-				<input name="continuousDeliveryName" type="text" id="continuousDeliveryNameDiv">
+				<input name="continuousDeliveryName" type="text" id="continuousDeliveryNameDiv">				
 					<!-- Drag Drop section 1 starts -->
 					<ul id="sortable1" class="connectedSortable type_test">
 	<!--                     <div class="sorthead" data-i18n="application.edit.webservice"> </div>
@@ -43,6 +43,11 @@
 					</ul>
 					<!-- Drag Drop section 2 ends -->
 			</div>
+			<div class="sortablecont_three">
+				<span data-i18n="ci.version"></span>
+				<input name="buildVersion" type="text" id="buildVersion">
+				
+			</div>			
 			<!-- popup starts -->
 			<div id="jobConfigure" class="cont_delivery dyn_popup popup_bg job_configure">
 				<div class="jobConfigure">
