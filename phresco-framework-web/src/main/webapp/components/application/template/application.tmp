@@ -249,12 +249,8 @@
             <input type="submit" name="webservice" value="Webservice" data-i18n="[value]application.edit.webservice" class="btn btn_style webservice_btn" style="display:none;">
             <input type="submit" name="testing" value="Testing" data-i18n="[value]application.edit.testing" class="btn btn_style testing_btn" style="display:none;">
         </div>
-        <div class="flt_right">
-        	{{#if userPermissions.manageApplication}}
-				<input type="submit" data-i18n="[value]application.btn.update;" id="updatebutton" class="btn btn_style update_btn">
-			{{else}}
-				<input type="submit" data-i18n="[value]application.btn.update;" id="updatebutton" class="btn btn_style update_btn" disabled>
-			{{/if}}
+        <div class="flt_right">			
+			{{#appinfopermission userPermissions }}{{/appinfopermission}}        	
             <input type="submit" data-i18n="[value]application.btn.cancel;" id="cancelbutton" class="btn btn_style cancel_icon_btn">
         </div>
 		<div class="msgdisplay"></div>

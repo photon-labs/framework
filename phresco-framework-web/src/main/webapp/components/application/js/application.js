@@ -186,6 +186,15 @@ define(["application/listener/applicationListener"], function() {
 					functionalFrameworkInfo.iframeUrl : "";
 				return iframeUrl;
 			});
+			
+			Handlebars.registerHelper('appinfopermission', function(userPermissions) {
+				var importapp;
+				if(userPermissions.manageApplication || userPermissions.importApplication){
+					importapp = '<input type="submit" data-i18n="[value]application.btn.update;" id="updatebutton" class="btn btn_style update_btn">';  
+					}else{		
+					importapp ='<input type="submit" data-i18n="[value]application.btn.update;" id="updatebutton" class="btn btn_style update_btn" disabled>';
+				}return importapp;
+			});	
 		},
 		 
 		
