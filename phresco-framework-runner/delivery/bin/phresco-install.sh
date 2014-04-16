@@ -48,7 +48,7 @@ function pomcheck {
                       else
                       if [ "$RESP" = "y" ]; then
                       
-                      mvn phresco:$1 -Dinteractive=true -e
+                      mvn phresco:$1 -Dinteractive=true -e -N
                       else
                       mvn phresco:$1 -e
                       fi
