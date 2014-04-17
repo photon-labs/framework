@@ -457,16 +457,18 @@ define([], function() {
 			var ciRequestBody = {},jobName;
 			ciRequestBody.data = obj.closest("form").serialize();
 			var name = $("input[name=cloneName]").val();
+			var version = $("input[name=version]").val();
 			if(self.isBlank(name)) {
 				$('#errMsg').html('');
 				$("input[name='cloneName']").focus();
 				$("input[name='cloneName']").attr('placeholder','Enter Name');
 				$("input[name='cloneName']").addClass("errormessage");
-				$("input[name='ncloneNameame']").bind('keypress', function() {
+				$("input[name='cloneName']").bind('keypress', function() {
 					$(this).removeClass("errormessage");
 				});
 			} else if(!self.isBlank(name)) {
 				ciRequestBody.name = name;
+				ciRequestBody.version = version;
 				self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'pipeline'), function (response) {
 					if (response.data === true || response.data === 'true') {
 						var msg = name+ " " + commonVariables.api.error[response.responseCode];

@@ -286,6 +286,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createClone(@Context HttpServletRequest request, @QueryParam(REST_QUERY_CLONE_NAME) String cloneName, @QueryParam(REST_QUERY_ENV_NAME) String envName,
+			@QueryParam("version") String version,
 			@QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, 
 			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule)
@@ -328,6 +329,9 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if(specificContinuousDelivery.getName().equals(trimmedName)) {
 				continuousDelivery.setName(cloneName);
 				continuousDelivery.setEnvName(envName);
+				if (StringUtils.isNotEmpty(version)) {				
+					continuousDelivery.setVersion(version);
+				}
 				jobs = specificContinuousDelivery.getJobs();
 			}
 
@@ -341,7 +345,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 					cijob.setUsedClonnedWorkspace(cijob.getUpstreamApplication()+"-"+envName);
 					cijob.setUpstreamApplication(cijob.getUpstreamApplication()+"-"+envName);
 				}
-
+				
 				ciJobs.add(cijob);
 			}
 			continuousDelivery.setJobs(ciJobs);
