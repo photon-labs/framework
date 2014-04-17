@@ -26,12 +26,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -78,7 +82,6 @@ public class LoginService extends RestBase implements FrameworkConstants, Respon
 	String status;
 	String errorCode;
 	String successCode;
-	
 	/**
 	 * Authenticate User for login.
 	 *
@@ -88,9 +91,10 @@ public class LoginService extends RestBase implements FrameworkConstants, Respon
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response authenticate(Credentials credentials) {
+	public Response authenticate(@Context HttpServletRequest request, @Context HttpServletResponse response , Credentials credentials) {
 		User user = null;
 		ResponseInfo<User> responseData = new ResponseInfo<User>();
+		
 		try {
 			user = doLogin(credentials);
 			if (user == null) {
@@ -144,6 +148,7 @@ public class LoginService extends RestBase implements FrameworkConstants, Respon
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR100001;
 			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, null, user, status, successCode);
+			request.getSession().setAttribute("user", user);
 			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoWebServiceException e) {
 			if (e.getResponse().getStatus() == 204) {

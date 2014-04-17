@@ -14,7 +14,7 @@ define(["header/api/headerAPI"], function() {
 			}	
 		},
 		
-		doLogout : function() {
+/*		doLogout : function() {
 			var self = this;
 			self.performAction(self.getActionHeader("logout"), function(response) {
 				var url = location.href;
@@ -31,8 +31,6 @@ define(["header/api/headerAPI"], function() {
 				commonVariables.customerContext = '';
 				location.href = url;
 			});
-			
-			
 		},
 		
 		clearSession : function(){
@@ -45,7 +43,7 @@ define(["header/api/headerAPI"], function() {
 				this.headerAPI.localVal.setSession('password', password);
 				this.headerAPI.localVal.setSession('rememberMe', "true");
 			}
-		},
+		},*/
 		
 		loadTab : function(){
 			var self = this;
@@ -77,7 +75,7 @@ define(["header/api/headerAPI"], function() {
 			
 		},
 
-		removePlaceholder : function() {
+		/*removePlaceholder : function() {
 			$(commonVariables.headerPlaceholder).remove();
 			$(commonVariables.headerPlaceholder).empty();
 			
@@ -89,7 +87,7 @@ define(["header/api/headerAPI"], function() {
 			
 			$(commonVariables.footerPlaceholder).remove();
 			$(commonVariables.footerPlaceholder).empty();
-		},
+		},*/
 		
 		selectCoustomer : function(customerValue, customerId) {
 			var self=this;

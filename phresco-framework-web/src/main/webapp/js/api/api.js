@@ -1,4 +1,4 @@
-define(["framework/base", "api/localStorageAPI"], function(){	
+define(["api/localStorageAPI", "framework/widgetWithTemplate"], function(){	
 	Clazz.createPackage("com.js.api");
 
 	Clazz.com.js.api.API = Clazz.extend(Clazz.Base, {
@@ -7,6 +7,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 		error : null,
 		success : null,
 		successResponse: null,
+		widgetTemp : null,
 		
 		/***
 		 * Written by Kavinraj.M Date - 23/08/2013
@@ -17,7 +18,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 		initialize : function(){
 			var self = this;
 			this.localVal = new Clazz.com.js.api.LocalStorageAPI();
-			
+			this.widgetTemp = new Clazz.WidgetWithTemplate();
 			$.get(commonVariables.globalconfig.environments.locales, function(data){
 				if(data !== undefined && data !== null){
 					self.error = data.errorCodes; 
@@ -61,6 +62,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				async : true,
 				
 				beforeSend : function(){
+					
 					self.successResponse = null;
 					$('section#serviceError').remove();
 					if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading && !commonVariables.hideloading){
@@ -93,10 +95,12 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				},
 				
 				complete : function(response, e ,xhr){
+					if (response.statusText == "Unauthorized"){
+						self.widgetTemp.doLogout();
+					}
 					if (commonVariables.callLadda) {
 						Ladda.stopAll();
 					}
-					
 					if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading){
 						commonVariables.hideloading = false;
 						commonVariables.loadingScreen.removeLoading();
@@ -195,7 +199,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 					}else if((response.status === "error" || response.status === "failure") && (Clazz.navigationController.loadingActive || commonVariables.continueloading)){
 						self.showError(response.responseCode, 'error', false);
 					}
-
+					
 					if ((response !== undefined && response !== null && response.status !== "error") || self.bCheck) {
 						self.successResponse = response;
 					} else if (response.exception && response.exception.message === "import.project.already") {
