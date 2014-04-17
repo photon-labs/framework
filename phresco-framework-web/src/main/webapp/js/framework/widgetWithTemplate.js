@@ -1415,6 +1415,67 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				}
 			},
 			
+			temp:function(){
+				var sample = "hello test";
+				return sample;
+			},
+			
+			doLogout : function() {
+				console.info("inside doLOgout.....");
+				var self = this;
+				console.info("inside doLOgout.....");
+				var url = location.href;
+				if (commonVariables.customerContext == undefined) {
+					commonVariables.customerContext = '#';
+					console.info("inside if  doLOgout.....");
+				}
+				console.info("inside clear session doLOgout.....");
+				url = url.substr(0, url.lastIndexOf('/')) + "/" + commonVariables.customerContext;
+				self.clearSession();
+				console.info("inside clear session doLOgout.....");
+				Clazz.navigationController.jQueryContainer = commonVariables.basePlaceholder;
+				console.info("inside clear session doLOgout BEFORE")
+				self.removePlaceholder();
+				console.info("inside clear session doLOgout After")
+				commonVariables.api.localVal.setSession('loggedout', 'true');
+				console.info("inside clear session doLOgout loged out");
+				commonVariables.api.localVal.setSession('multiplelogout', 'true');
+				console.info("inside clear session doLOgout mulitiple")
+				location.hash = '';
+				commonVariables.customerContext = '';
+				location.href = url;
+			},
+			
+			clearSession : function(){
+				console.info("inside clear session .....");
+				var username = commonVariables.api.localVal.getSession('username'), password = commonVariables.api.localVal.getSession('password'), rememberMe = commonVariables.api.localVal.getSession('rememberMe');
+				
+				commonVariables.api.localVal.clearSession();
+				console.info("inside clear session doLOgout this .headerApi.....");
+				if(rememberMe === "true"){
+					commonVariables.api.localVal.setSession('username', username);
+					console.info("inside clear session doLOgout this .headerApi usrname.....")
+					commonVariables.api.localVal.setSession('password', password);
+					console.info("inside clear session doLOgout this .headerAp pSSSSSi.....")
+					commonVariables.api.localVal.setSession('rememberMe', "true");
+					console.info("inside clear session doLOgout this .headerApi ZCXCXCX.....")
+				}
+			},
+			
+			removePlaceholder : function() {
+				$(commonVariables.headerPlaceholder).remove();
+				$(commonVariables.headerPlaceholder).empty();
+				
+				$(commonVariables.navigationPlaceholder).remove();
+				$(commonVariables.navigationPlaceholder).empty();
+				
+				$(commonVariables.contentPlaceholder).remove();
+				$(commonVariables.contentPlaceholder).empty();
+				
+				$(commonVariables.footerPlaceholder).remove();
+				$(commonVariables.footerPlaceholder).empty();
+			},
+			
 			killProcess : function() {
 				var self = this, requestBody = {};
 				$("input[name=kill]").unbind('click');

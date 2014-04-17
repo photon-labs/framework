@@ -1,4 +1,4 @@
-define(["header/listener/headerListener"] , function(template) {
+define(["header/listener/headerListener", "framework/widgetWithTemplate"] , function(template) {
 
 	Clazz.createPackage("com.commonComponents.modules.header");
 
@@ -18,11 +18,11 @@ define(["header/listener/headerListener"] , function(template) {
 		onAboutClickEvent: null,
 		onUpgradeEvent: null,
 		downloads: null,
+		widgetTemp:null,
 		
 		initialize : function(globalConfig){
 			var self = this;
 			self.globalConfig = globalConfig;
-			
 			if(self.headerListener === null){
 				self.headerListener = new Clazz.com.commonComponents.modules.header.js.listener.HeaderListener(); 
 			}	
@@ -111,7 +111,7 @@ define(["header/listener/headerListener"] , function(template) {
 			$(".scrollable, .cus_themes").css("height","200px");			
 			//Logout event
 			$('#logout').click(function(){
-				self.onLogoutEvent.dispatch();
+				self.doLogout();
 			});
 			
 			$(".header_left ul li").click(function(){
