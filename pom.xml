@@ -361,7 +361,7 @@
         </site>
     </distributionManagement>
     <properties>
-        <phresco.env.config.xml>/src/main/resources/phresco-env-config.xml</phresco.env.config.xml>
+       <phresco.env.config.xml>/src/main/webapp/WEB-INF/resources/phresco-env-config.xml</phresco.env.config.xml>
         <phresco.env.test.config.xml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/src/test/webapp/resources/phresco-env-config.xml</phresco.env.test.config.xml>
         <project.build.sourceEncoding xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">UTF-8</project.build.sourceEncoding>
         <sonar.language xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">js</sonar.language>
