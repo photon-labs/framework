@@ -707,6 +707,10 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 //					}
 					applicationManager.performAction(projectInfo, ActionType.ECLIPSE, null,pom.getParent());
 				}
+				//
+				if(StringUtils.isNotEmpty(appInfo.getBuildVersion())) {
+					updateBuildVersionInRoot(rootModulePath, appInfo.getBuildVersion());
+				}
 				createConfigurationXml(serviceManager, rootModulePath, appDirName, dotPhrescoFolderPath);
 			} else if (response.getStatus() == 401) {
 				throw new PhrescoException("Session expired");
@@ -714,6 +718,23 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				throw new PhrescoException("Project updation failed");
 			}
 		return projectInfo;
+	}
+
+	private void updateBuildVersionInRoot(String rootModulePath, String buildVersion) throws PhrescoException {
+		try {
+			File rootPath = new File(rootModulePath);
+			if(rootPath.exists()) {
+				ProjectInfo projectInfo = ProjectUtils.getProjectInfoFile(rootPath);
+				projectInfo.getAppInfos().get(0).setBuildVersion(buildVersion);
+				File projectInfoFile = new File(rootModulePath, ".phresco/project.info");
+				if(projectInfoFile.exists()) {
+					ProjectUtils.updateProjectInfo(projectInfo, projectInfoFile);
+				}
+			}
+			
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
 	}
 
 	private void updateDependenciesInSubModulePom(ApplicationInfo appInfo, String rootModule, String oldAppDirName, String rootModulePath) throws PhrescoException {
