@@ -2,6 +2,7 @@
 	<div class="unit_text" data-i18n="integration.label.integrationtest">
     	
 	</div>
+
     <div class="flt_right">
 		<div class="unit_view hideContent">
 			<div class="code_report_icon" id="pdfDiv">
