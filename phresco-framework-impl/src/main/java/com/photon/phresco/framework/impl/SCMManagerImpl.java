@@ -2662,6 +2662,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	public int deleteWorkspace(RepoDetail repoDetail) throws PhrescoException {
 		int executeCmd = 1;
 		try {
+			if (repoDetail.getType().equals(TFS)) {
 			Command cmdWorkspace = new CommandWorkspace();
 			List<Option> options = new ArrayList<Option>(4);
 			options.add(optionsMap.findOption("-delete"));
@@ -2669,6 +2670,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			appendServerUrl(repoDetail.getRepoUrl(), options);
 			appendCredentials(repoDetail.getUserName(), repoDetail.getPassword(), options);
 			executeCmd = executeCmd(new String[] { repoDetail.getWorkspaceName() }, cmdWorkspace, options);
+			}
 		} catch (TFSUnauthorizedException e) {
 			throw new PhrescoException(AUTHENTICATION_FAILED);
 		} catch (InvalidOptionException e) {
