@@ -439,7 +439,7 @@ public class CIServiceTest extends RestBaseTest {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
 			ContinuousDelivery continuousDelivery = continuousDeliveryInfoUpdate();
-			Response updateJob = ciservice.updateJob(httpServletRequest, continuousDelivery, "Photon", "TestProject", "", userId, "testContinuousDelivery","");
+			Response updateJob = ciservice.updateJob(httpServletRequest, continuousDelivery, "Photon", "TestProject", "", userId, "testContinuousDelivery","","");
 //			ciservice.updateJob(httpServletRequest, continuousDeliveryInfoUpdateApp(), "Photon", "", "TestProject", "admin","","");
 			Assert.assertEquals(200, updateJob.getStatus());
 		} else {
