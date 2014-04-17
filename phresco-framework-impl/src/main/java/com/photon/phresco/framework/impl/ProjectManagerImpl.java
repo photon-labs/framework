@@ -963,7 +963,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		pomProcessor.setArtifactId(applicationInfo.getCode());
 		pomProcessor.setName(applicationInfo.getName());
 		if(StringUtils.isNotEmpty(applicationInfo.getBuildVersion()) 
-				&& !pomProcessor.getVersion().equals("${build.version}")) {
+				&& !pomProcessor.getVersion().contains("${package.version}")) {
 			pomProcessor.setVersion(applicationInfo.getVersion());
 		}
 		pomProcessor.save();

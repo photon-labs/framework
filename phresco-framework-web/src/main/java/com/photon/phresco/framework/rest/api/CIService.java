@@ -1899,7 +1899,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			}
 			
 		if (StringUtils.isNotEmpty(version)){
-			mvncmd= mvncmd + FrameworkConstants.SPACE + "-Dbuild.version="+version;
+			mvncmd= mvncmd + FrameworkConstants.SPACE + "-Dpackage.version="+version;
 		}
 			
 			
