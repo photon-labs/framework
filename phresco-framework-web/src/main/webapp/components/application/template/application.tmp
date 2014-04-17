@@ -31,7 +31,7 @@
 	                    </select>  
                     </td>
 					<td><span data-i18n="application.edit.buildversion"></td>
-                    <td><input type="text" placeholder="buildversion" maxlength="20" name="buildVersion"/></td>
+                    <td><input type="text" placeholder="buildversion" maxlength="20" name="buildVersion" value="{{buildVersion}}"/></td>
 					<td colspan="2"></td>
                 </tr>
 				{{/each}}	  
