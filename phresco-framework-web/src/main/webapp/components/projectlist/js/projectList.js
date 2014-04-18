@@ -156,7 +156,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			
 			Handlebars.registerHelper('permissiondata', function(id, userPermissions) {
 				var manageapp;
-				if(userPermissions.manageRepo || userPermissions.manageApplication){
+				if(userPermissions.manageRepo || userPermissions.manageApplication || userPermissions.viewRepo){
 					manageapp = '<a name="addRepo_' + id +'" dynamicId="'+ id +'" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Add Repo" ><img src="themes/default/images/Phresco/add_repo_icon.png" width="18" height="15" border="0" alt="" class="left_add_repo"></a><a name="commit'+ id +'" dynamicId="'+ id +'" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Commit" ><img src="themes/default/images/Phresco/commit_icon.png" width="16" height="15" border="0" alt="" class="centre_img"></a>';
 				}else{				
 					manageapp ='<img src="themes/default/images/Phresco/add_repo_icon_off.png" width="18" height="15" border="0" alt="" class="left_add_repo"> <img src="themes/default/images/Phresco/commit_icon_off.png" width="16" height="15" border="0" alt="">';
@@ -165,7 +165,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				
 			Handlebars.registerHelper('updatepermissiondata', function(id, userPermissions) {
 				var updateapp;
-				if( userPermissions.manageRepo || userPermissions.manageApplication){
+				if( userPermissions.manageRepo || userPermissions.manageApplication || userPermissions.viewRepo){
 					updateapp = '<a name="svn_update' + id +'" dynamicId="'+ id +'" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Update" ><img src="themes/default/images/Phresco/update_svn_icon.png" width="22" height="15" border="0" alt=""></a>';  
 					}else{		
 					updateapp ='<img src="themes/default/images/Phresco/update_svn_icon_off.png" width="22" height="15" border="0" alt="">';
