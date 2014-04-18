@@ -1541,7 +1541,7 @@ define([], function() {
 			        var key = e.name;
 			        var value = data[key];
 
-			        if (self.isBlank(e.name)) continue; 
+			        if (!self.isBlank(e.name) && self.isBlank(value)) continue; 
 
 			       	switch (e.type) {
 			            case 'text':
@@ -1771,7 +1771,7 @@ define([], function() {
 				}
 			});
 //			}
-
+			if (!emptyFound) {
 			if(templateJsonData.type === "performanceTest" || templateJsonData.type === "loadTest") {
 				var ciRequestBody = {}, redirect = true, templJsonStr="",testAction;
 				redirect = self.contextUrlsMandatoryVal();
@@ -1794,6 +1794,7 @@ define([], function() {
 				} else {
 					emptyFound = true;
 				}
+			}
 			}
 			//scheduler validation
 			if (!templateJsonData.enableSheduler) {
