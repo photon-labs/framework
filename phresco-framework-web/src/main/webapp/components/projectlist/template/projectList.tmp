@@ -281,7 +281,11 @@
 						 </table>
 						 </div>
 						 <div class="flt_right" appId="{{id}}" projectId = "{{../id}}" appDirName="{{appDirName}}">
+						{{#if ../../userPermissions.viewRepo}}
+							<button class="btn btn_style" disabled><span class="ladda-label">Add To Repo</span></button>
+						{{else}}
 							<button class="btn btn_style btn_style_spin ladda-button" id="{{id}}" data-style="expand-left" name="addrepobtn"><span class="ladda-label">Add To Repo</span></button>
+						{{/if}}
 							<input type="button" value="Close" data-i18n="[value]common.btn.close;" class="btn btn_style dyn_popup_close">
 						 </div> 
                   </div>
