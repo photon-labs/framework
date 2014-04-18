@@ -589,6 +589,10 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_MAVEN_REPORTS)) {
 						permissions.setManageMavenReports(true);
 					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_VIEW_REPO)) {
+						permissions.setViewRepo(true);
+					}
 				}
 			}
 		} catch (PhrescoException e) {
