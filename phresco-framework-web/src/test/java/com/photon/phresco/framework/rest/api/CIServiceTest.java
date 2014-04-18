@@ -422,7 +422,7 @@ public class CIServiceTest extends RestBaseTest {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
 			Response createClone = ciservice.createClone(httpServletRequest, "testContinuousDelivery1", "Testing","", "testContinuousDelivery", "Photon", "TestProject", "", userId,"");
-			ciservice.createClone(httpServletRequest, "testContinuousDeliveryApp", "Testing", "","testContinuousDeliveryApp", "Photon", "", "TestProject", userId,"");
+			ciservice.createClone(httpServletRequest, "testContinuousDeliveryApp", "Testing","", "testContinuousDeliveryApp", "Photon", "", "TestProject", userId,"");
 			Assert.assertEquals(200, createClone.getStatus());
 		} else {
 			Assert.assertNotSame("200", jenkinsAlive);
