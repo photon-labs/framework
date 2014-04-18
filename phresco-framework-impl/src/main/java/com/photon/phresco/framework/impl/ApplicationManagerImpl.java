@@ -101,6 +101,13 @@ public class ApplicationManagerImpl implements ApplicationManager {
 			}
 		}
 		StringBuilder command = buildMavenCommand(action, mavenArgCommands);
+		if(projectInfo != null) {
+			String buildVersion = projectInfo.getAppInfos().get(0).getBuildVersion();
+			if(StringUtils.isNotEmpty(buildVersion)) {
+				command.append(Constants.SPACE);
+				command.append("-Dpackage.version=" + buildVersion);
+			}
+		}
 		if (action.equals(ActionType.LIQUIBASE)) {
 			return executeLiquibaseMavenCommand(projectInfo, action, command, workingDirectory);
 		} else {
