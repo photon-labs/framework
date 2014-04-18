@@ -68,9 +68,9 @@ define(["downloads/listener/downloadsListener"], function() {
 			Handlebars.registerHelper('getfilesize', function(fileSize) {
 				var returnVal = "";
 				if (fileSize > 1048576) {
-					returnVal = parseInt(fileSize/1048576) + commonVariables.megabyte;
+					returnVal = parseFloat(fileSize/1048576).toFixed(2) + commonVariables.megabyte;
 				} else {
-					returnVal = parseInt(fileSize/1024) + commonVariables.kilobyte;
+					returnVal = parseFloat(fileSize/1024).toFixed(2) + commonVariables.kilobyte;
 				}
 				return returnVal;
 			});
