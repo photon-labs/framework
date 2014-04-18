@@ -2443,8 +2443,7 @@ define([], function() {
 				$('#dataBaseLi').show();
 			}
 		},
-		
-				
+					
 	});
 
 	return Clazz.com.components.ci.js.listener.CIListener;
