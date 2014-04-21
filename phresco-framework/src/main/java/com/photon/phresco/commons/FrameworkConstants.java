@@ -2070,6 +2070,8 @@ public interface FrameworkConstants {
 	    String PER_MANAGE_MAVEN_REPORTS = "manage_maven_reports";
 	    String PER_VIEW_MAVEN_REPORTS = "view_maven_reports";
 	    String PER_VIEW_REPO = "view_repo";
+	    String PER_MANAGE_DASH = "manage_dash";
+	    String PER_RELESE_REPO = "relese_repo";
 	    
 	    String TEST_UNIT = "unitTest";
 	    String TEST_FUNCTIONAL = "functionalTest";
