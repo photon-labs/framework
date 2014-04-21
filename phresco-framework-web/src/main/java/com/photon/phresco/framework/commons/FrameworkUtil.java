@@ -593,6 +593,14 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 					if (permissionIds.contains(FrameworkConstants.PER_VIEW_REPO)) {
 						permissions.setViewRepo(true);
 					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_DASH)) {
+						permissions.setManageDash(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_RELESE_REPO)) {
+						permissions.setReleseRepo(true);
+					}
 				}
 			}
 		} catch (PhrescoException e) {
