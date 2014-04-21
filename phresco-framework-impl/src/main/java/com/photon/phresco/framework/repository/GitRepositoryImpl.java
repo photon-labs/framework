@@ -70,7 +70,7 @@ public class GitRepositoryImpl implements RepositoryManager, FrameworkConstants 
 
 				List<Ref> remoteCall = git.branchList().setListMode(ListMode.REMOTE).call();
 				for (Ref ref : remoteCall) {
-					if (StringUtils.isNotEmpty(ref.getName()) && !ref.getName().contains(HEAD_REVISION)) {
+					if (StringUtils.isNotEmpty(ref.getName())  && !ref.getName().contains(HEAD_REVISION)) {
 						branchList.add(ref.getName());
 					}
 				}
