@@ -12,7 +12,11 @@
 					<tr>
 						<td><input type="text" class="pop_txt dyn_popup_text" name="envName" maxlength="30" title="30 Characters only" data-i18n="[placeholder]configuration.placeholder.envname"></td>
 						<td><input type="text" class="pop_txt dyn_popup_text" name="envDesc" maxlength="150" title="150 Characters only" data-i18n="[placeholder]configuration.placeholder.envdescription"></td>
-						<td><input type="button" class="btn btn_style" name="addEnv" value="Add" data-i18n="[value]common.btn.add"></td>
+						{{#if userPermissions.manageConfiguration}}
+							<td><input type="button" class="btn btn_style" name="addEnv" value="Add" data-i18n="[value]common.btn.add"></td>
+						{{else}}
+							<td><input type="button" class="btn btn_style" name="addEnv" value="Add" data-i18n="[value]common.btn.add" disabled></td>
+						{{/if}}
 					</tr>
 					<tr>
 						<td colspan="3">
@@ -101,7 +105,11 @@
 												<input type="checkbox" class="checkboxStyle" name="cloneName{{name}}" value="Set as Default"><label class="labelfont" data-i18n="configuration.label.setdefault"></label>
 											</td> --!>
 											<td name={{name}} style="float: right; margin-right: -203px;">
+											{{#if ../userPermissions.manageConfiguration}}
 												<input type="button" name="cloneEnvr" class="btn btn_style" value="Clone" data-i18n="[value]configuration.label.clone">	
+											{{else}}
+												<input type="button" name="cloneEnvr" class="btn btn_style" value="Clone" data-i18n="[value]configuration.label.clone" disabled>
+											{{/if}}
 												<input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
 											</td>    
 										</tr>
@@ -109,20 +117,17 @@
 								</div>
 							</td>
 							<td class="list_img">
-								{{#if ../userPermissions.manageConfiguration}}
-									{{#if defaultEnv}}
-										<img src="themes/default/images/Phresco/delete_row_off.png" border="0" alt="">
-									{{else}}
 										<a name="{{name}}" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Delete Row">
 										<img src="themes/default/images/Phresco/delete_row.png" border="0" alt=""></a>
-									{{/if}}
-								{{else}}
-									<img src="themes/default/images/Phresco/delete_row_off.png" border="0" alt="">
-								{{/if}}	
 								<div id="{{name}}" class="dyn_popup delete_msg"> Are you sure to delete this ?
 									<div>
+									{{#if ../userPermissions.manageConfiguration}}
 										<input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style" name="deleteEnv">
+									{{else}}
+										<input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style" name="deleteEnv" disabled>
+									{{/if}}	
 										<input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close">
+										
 									</div>
 								</div>
 							</td>
