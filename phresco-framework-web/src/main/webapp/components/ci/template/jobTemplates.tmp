@@ -69,8 +69,12 @@
                          </table>
                        
 						  <span id='errMsg' class="flt_left"/>						
-                          <div class="flt_right">							
+                          <div class="flt_right">	
+						{{#if userPermissions.manageCIJobs}}
 							<input type="button" data-i18n="[value]ci.create;" name="save" class="btn btn_style">
+						{{else}}
+							<input type="button" data-i18n="[value]ci.create;" name="save" class="btn btn_style" disabled>
+						{{/if}}
                             <input type="button" data-i18n="[value]ci.close;" class="btn btn_style dyn_popup_close">
                          </div>
             </form>
@@ -106,8 +110,12 @@
                           
                           <div id="yesnopopup_{{name}}" name="{{name}}" class="dyn_popup"> Are you sure to delete this ?
                           <div>
+						{{#if ../userPermissions.manageCIJobs}}
                             <input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style" name="delete">
-                            <input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close">
+                        {{else}}
+							<input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style" name="delete" disabled>
+						{{/if}}
+							<input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close">
                           </div>
                       </td>
                     </tr>

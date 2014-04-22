@@ -56,6 +56,7 @@ function pomcheck {
                
                   #  echo $1 
            }  
+		   
 function noninteractive
             {
                       if [ -f $FILE ]; then
@@ -103,35 +104,96 @@ case "$1" in
                 then
                 pomcheck package
                 else
-                echo "Invaild Location";
+                echo "Invalid Location";
                 fi
                 ;;
 
-		run-source)
-				if [ -d ".phresco/" ];
+        run-source)
+				 if [ -d ".phresco/" ];
                 then
-                mvn tomcat:run
+                pomcheck start
                 else
-                echo "Invaild Location";
+                echo "Invalid Location";
                 fi
                 ;;
-
+				
+		run-source-stop)
+				 if [ -d ".phresco/" ];
+                then
+                mvn phresco:stop
+                else
+                echo "Invalid Location";
+                fi
+                ;;
+		
      	deploy)
+             shopt -s nullglob
+             files=(do_not_checkin/build/*.zip)
+             if [[ "${#files[@]}" -gt 0 ]] ; then
                 if [ -d ".phresco/" ];
-                then
-                 pomcheck deploy
-               # mvn phresco:deploy
+                   then
+                   pomcheck deploy
                 else
-                echo "Invaild Location";
-                fi
+                   echo "Invalid Location";
+                   fi
+              else 
+                echo "No Builds available to deploy ";
+              fi
                 ;;
 
-  		unit-test)
+      unit-test)
                 if [ -d ".phresco/" ];
                 then
                 pomcheck unit-test
                 else
-                echo "Invaild Location";
+                echo "Invalid Location";
+                fi
+                ;;
+
+      start-hub)
+               if [ -d ".phresco/" ];
+                then
+                read -p "Do you want to run functional script? (y/n) " RESP
+                if [ "$RESP" = "y" ]; then
+                mvn phresco:start-hub -f phresco-pom.xml -e
+                else
+                echo "Start hub not applicable to project";
+                fi
+                else
+                echo "Invalid Location";
+                fi
+                ;;
+
+      start-node)
+                if [ -d ".phresco/" ];
+                then
+                read -p "Do you want to run functional script? (y/n) " RESP
+                if [ "$RESP" = "y" ]; then
+                mvn phresco:start-node -f phresco-pom.xml -e
+                else
+                echo "Start node not applicable to project";
+                fi
+                else
+                echo "Invalid Location";
+                fi
+                ;;
+
+
+      stop-hub)
+              if [ -d ".phresco/" ];
+                then
+                mvn phresco:stop-hub
+                else
+                echo "Invalid Location";
+                fi
+                ;;
+
+      stop-node)
+              if [ -d ".phresco/" ];
+                then
+                mvn phresco:stop-node
+                else
+                echo "Invalid Location";
                 fi
                 ;;
 
@@ -140,7 +202,7 @@ case "$1" in
                 then
                 noninteractive functional-test
                 else
-                echo "Invaild Location";
+                echo "Invalid Location";
                 fi
                 ;;	
 
@@ -150,7 +212,7 @@ case "$1" in
                noninteractive performance-test 
 
                 else
-                echo "Invaild Location";
+                echo "Invalid Location";
                 fi
                 ;;
 
@@ -159,7 +221,7 @@ case "$1" in
                 then
                 noninteractive load-test
                 else
-                echo "Invaild Location";
+                echo "Invalid Location";
                 fi
                 ;;
 
@@ -206,7 +268,7 @@ case "$1" in
                 then
                 noninteractive pdf-report
                 else
-                echo "Invaild Location";
+                echo "Invalid Location";
                 fi
                 ;;
 
@@ -215,7 +277,7 @@ case "$1" in
                 then
                 mvn clean site
                 else
-                echo "Invaild Location";
+                echo "Invalid Location";
                 fi
                 ;;
 
@@ -230,7 +292,7 @@ case "$1" in
                # echo $PATH
                 ;;
 	*)
-echo "Usage: $NAME { install-ui|version|create|build|deploy|run-source|sonar-setup|sonar-start|sonar-stop|validate|unit-test|functional-test|performance|load|pdf-report|site-report|help|test }" >&2
+echo "Usage: $NAME { install-ui|version|create|build|deploy|run-source|run-source-stop|start-hub|start-node|stop-hub|stop-node|sonar-setup|sonar-start|sonar-stop|validate|unit-test|functional-test|performance|load|pdf-report|site-report|help|test }" >&2
         exit 1
         ;;
 esac

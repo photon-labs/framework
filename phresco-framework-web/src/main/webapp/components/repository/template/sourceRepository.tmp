@@ -213,7 +213,11 @@
 									<tr>
 										<td><input type="checkbox" id="downloadBrToWorkspace" style="vertical-align: baseline;">Download to Workspace</td>
 										<td class="flt_right">
+										{{#if userPermissions.releseRepo}}
 											<input type="button" class="btn btn_style" id="createBranch" value="Create">
+										{{else}}
+											<input type="button" class="btn btn_style" id="createBranch" value="Create" disabled>
+										{{/if}}
 											<input type="button" value="Close" class="btn btn_style dyn_popup_close">
 										</td>
 									</tr>

@@ -130,8 +130,12 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
 			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, "list"), function(response) {
+				var jobTemplates = {};
 				self.templateData.jobTemplates = response.data;
-				renderFunction(self.templateData, whereToRender);
+				jobTemplates.jobTemplates = response.data;
+				var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
+				jobTemplates.userPermissions = userPermissions;
+				renderFunction(jobTemplates, whereToRender);
 			});			
 		},
 

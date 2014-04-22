@@ -3,12 +3,16 @@ package com.photon.phresco.framework.rest.api;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.google.gson.Gson;
 import com.photon.phresco.commons.model.User;
@@ -48,7 +52,11 @@ public class LoginServiceTest extends RestBaseTest {
 	public void loginTest() {
 		LoginService service = new LoginService();
 		Credentials credentials = new Credentials(userId, password);
-		Response response = service.authenticate(credentials);
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+		MockHttpServletResponse respose = new MockHttpServletResponse();
+		HttpServletResponse httpServletResponse = (HttpServletResponse)respose;
+		Response response = service.authenticate(httpServletRequest,httpServletResponse, credentials);
 		ResponseInfo<User> responseInfo = (ResponseInfo<User>) response.getEntity();
 		User user = responseInfo.getData();
 		serviceManager  = CONTEXT_MANAGER_MAP.get(userId);
@@ -124,7 +132,11 @@ public class LoginServiceTest extends RestBaseTest {
 		LoginService service = new LoginService();
 		Response response = service.forgotPassword("dummy","photon");
 		Credentials credentials = new Credentials("dummy", "dummy");
-		Response response1 = service.authenticate(credentials);
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+		MockHttpServletResponse respose = new MockHttpServletResponse();
+		HttpServletResponse httpServletResponse = (HttpServletResponse)respose;
+		Response response1 = service.authenticate(httpServletRequest,httpServletResponse, credentials);
 		ResponseInfo<User> responseInfo1 = (ResponseInfo<User>) response1.getEntity();
 		User user = responseInfo1.getData();
 		Assert.assertEquals(null, user);

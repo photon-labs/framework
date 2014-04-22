@@ -48,6 +48,13 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 			self.onShowHideConsoleEvent.add(repositoryListener.showHideConsole, repositoryListener);
 		},
 		
+		preRender: function(whereToRender, renderFunction){
+			var repo = {};
+			var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
+			repo.userPermissions = userPermissions;
+			renderFunction(repo, whereToRender);			
+		},
+		
 		/***
 		 * Called after the preRender() and bindUI() completes. 
 		 * Override and add any preRender functionality here

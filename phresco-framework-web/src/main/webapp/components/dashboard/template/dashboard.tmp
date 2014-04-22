@@ -58,7 +58,11 @@
                             </tbody>
                         </table>
 						<div class="flt_right">
+						{{#if userPermissions.manageDash}}
 							<input type="button" id="configure_widget" class="btn btn_style" value="Configure">
+						{{else}}
+							<input type="button" id="configure_widget" class="btn btn_style" value="Configure" disabled>
+						{{/if}}
 							<input type="button" class="btn btn_style dyn_popup_close" value="Close">
 						</div>
                  </div>
