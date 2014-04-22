@@ -13,7 +13,7 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 		currentwidgetid : null,
 		dashboardnametemp : null,
 		widgetnametemp : null,
-
+	
 		/***
 		 * Called in initialization time of this class 
 		 */
@@ -54,6 +54,14 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 			$(commonVariables.basePlaceholder).empty();
 			Clazz.navigationController.jQueryContainer = commonVariables.basePlaceholder;
 			Clazz.navigationController.push(this);
+		},
+		
+		preRender: function(whereToRender, renderFunction){
+			var dashboard = {};
+			var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
+			dashboard.userPermissions = userPermissions;
+			renderFunction(dashboard, whereToRender);
+						
 		},
 		
 		/***
@@ -169,10 +177,8 @@ define(["framework/widgetWithTemplate", "dashboard/listener/dashboardListener"],
 				
 				$('.features_content_main').css('overflow','auto');
 			});
-			
 		},
 		
-
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
