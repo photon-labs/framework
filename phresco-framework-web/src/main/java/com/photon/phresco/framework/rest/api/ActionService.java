@@ -25,6 +25,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -825,12 +826,12 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 	@POST
 	@Path("/sonarExecution")
 	@Produces(MediaType.APPLICATION_JSON)
-	 public Response sonarExecution(@Context HttpServletRequest request) throws PhrescoException  {
+	 public Response sonarExecution(@QueryParam("sonarParam") String sonarParam) throws PhrescoException  {
 		ActionFunction actionFunction = new ActionFunction();
 		ActionResponse response = new ActionResponse();
 		try	{
-			actionFunction.prePopulateSonarData(request);
-			response = actionFunction.sonarExecution(request);
+//			actionFunction.prePopulateSonarData(request);
+			response = actionFunction.sonarExecution(sonarParam);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
 			response.setStatus(ERROR);

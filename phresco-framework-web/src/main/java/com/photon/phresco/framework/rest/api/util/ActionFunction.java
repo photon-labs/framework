@@ -132,7 +132,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	private ServiceManager serviceManager = null;
 	private String appDirName = "";
 	private String module = "";
-	private String sonarParam = "";
 	HttpServletRequest request;
 
 	private LiquibaseRollbackCountInfo liquibaseRollbackCountInfo;
@@ -161,7 +160,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 	}
 	
-	public void prePopulateSonarData(HttpServletRequest request) throws PhrescoException {
+/*	public void prePopulateSonarData(HttpServletRequest request) throws PhrescoException {
 		try {
 			this.request = request;
 
@@ -174,7 +173,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		} catch (Exception e) {
 			throw new PhrescoException(e.getMessage());
 		}
-	}
+	}*/
 	
 	public void prePopulateBuildProcessData(HttpServletRequest request) throws PhrescoException {
 		try {
@@ -832,12 +831,12 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 	}
 	
-	public ActionResponse sonarExecution(HttpServletRequest request) throws PhrescoException, IOException {
+	public ActionResponse sonarExecution(String sonarParam) throws PhrescoException, IOException {
 		printLogs();
 		BufferedInputStream server_logs=null;
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = sonarExecution();
+		server_logs = sonarExecutions(sonarParam);
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
@@ -2364,15 +2363,14 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return reader;
 	}
 
-	public BufferedInputStream sonarExecution() throws PhrescoException {
+	public BufferedInputStream sonarExecutions(String sonarParam) throws PhrescoException {
 		BufferedInputStream reader = null;
 //		StringBuilder sb = new StringBuilder();
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method  MavenFunctions .sonarExecution()");
 		}
 		try {
-			String paramToTrigger = getSonarParam();
-			System.out.println("paramToTrigger" + paramToTrigger);
+			System.out.println("sonarParam" + sonarParam);
 			String phrescoHome = Utility.getPhrescoHome();
 			phrescoHome = phrescoHome + "/workspace/tools/sonar";
 			System.out.println("phrescoHome" + phrescoHome);
@@ -2380,11 +2378,11 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			if (isDebugEnabled) {
 				S_LOGGER.debug("Sonar Home " + phrescoHome.toString());
 			}
-			if(paramToTrigger.equals("setup")) {
+			if(sonarParam.equals("setup")) {
 				reader = sonarSetup(phrescoHome);
-			} else if(paramToTrigger.equals("start")) {
+			} else if(sonarParam.equals("start")) {
 				reader = sonarStart(phrescoHome);
-			} else if(paramToTrigger.equals("stop")) {
+			} else if(sonarParam.equals("stop")) {
 				reader = sonarStop(phrescoHome);
 			}
 			
@@ -3540,13 +3538,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		this.module = module;
 	}
 
-	public String getSonarParam() {
-		return sonarParam;
-	}
-
-	public void setSonarParam(String sonarParam) {
-		this.sonarParam = sonarParam;
-	}
 	/* protected ServiceManager getServiceManager(String username) {
 			return serviceManager;
 		}
