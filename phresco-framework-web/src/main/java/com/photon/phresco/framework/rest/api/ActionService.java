@@ -822,6 +822,25 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
+	@POST
+	@Path("/sonarExecution")
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response sonarExecution(@Context HttpServletRequest request) throws PhrescoException  {
+		ActionFunction actionFunction = new ActionFunction();
+		ActionResponse response = new ActionResponse();
+		try	{
+			actionFunction.prePopulateSonarData(request);
+			response = actionFunction.sonarExecution(request);
+		} catch (Exception e) {
+			S_LOGGER.error(e.getMessage());
+			response.setStatus(ERROR);
+			response.setLog("");
+			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+			response.setUniquekey("");
+		}
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+	}
+	
 	/**
 	 * Ci stop.
 	 *
