@@ -1748,6 +1748,16 @@ define([], function() {
 				});		
 				emptyFound = true;
 			}
+			if (self.isBlank($("input[name=releaseVersion]").val())) {
+				$("input[name=releaseVersion]").focus();
+				$("input[name=releaseVersion]").attr('placeholder','Enter release version');
+				$("input[name=releaseVersion]").addClass("errormessage");
+				$("input[name=releaseVersion]").bind('keypress', function() {
+					$(this).removeClass("errormessage");
+				});		
+				emptyFound = true;
+			}
+			
 			
 			var selectedJobLiObj = $("#sortable2 li[temp=ci]");
 			var add = $(".content_end").find("input[type=submit]").val();
