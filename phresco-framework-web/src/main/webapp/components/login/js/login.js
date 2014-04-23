@@ -121,7 +121,7 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 				if(e.keyCode === 13){
 					$('#login').focus();
 					$('#login').attr('disabled', '');
-					self.onLoginEvent.dispatch();
+					//self.onLoginEvent.dispatch();
 					$(".login_error_msg").text('');
 				}	
 			});
