@@ -172,8 +172,7 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 						counter = 0;														
 						commonVariables.hideloading = true;
 						self.repositoryListener.projectListAction(self.repositoryListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {								
-							 	$.each($.unique(response.data), function(index, value) {
-								
+							 	$.each($.unique(response.data), function(index, value) { 
 									$('.searchdropdown').append('<option value='+value+'>'+$.unique(response.data)+'</option>');
 							});
 							commonVariables.hideloading = false;

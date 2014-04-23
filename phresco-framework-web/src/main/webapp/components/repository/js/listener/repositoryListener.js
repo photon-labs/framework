@@ -76,8 +76,7 @@ define([], function() {
 				header.requestMethod = "POST";
 				header.requestPostBody = JSON.stringify(requestBody);
 				header.webserviceurl = commonVariables.webserviceurl +"repository/logMessages";
-			}
-			
+			}			
 			return header;
 		},
 		
