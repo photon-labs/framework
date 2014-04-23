@@ -1671,7 +1671,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if (!sb.toString().endsWith(FORWARD_SLASH) && !srcRootPrpty.startsWith(FORWARD_SLASH)) {
 				sb.append(FORWARD_SLASH);
 			}
-			pomProcessor.setProperty(Constants.POM_PROP_KEY_ROOT_SRC_DIR, sb.toString() + srcRootPrpty);
+
+			if (srcRootPrpty.startsWith(BACK_SLASH)) {
+				pomProcessor.setProperty(Constants.POM_PROP_KEY_ROOT_SRC_DIR, sb.toString());
+			} else {
+				pomProcessor.setProperty(Constants.POM_PROP_KEY_ROOT_SRC_DIR, sb.toString() + srcRootPrpty);
+			}
 
 			pomProcessor.setProperty(Constants.POM_PROP_KEY_SRC_REPO_URL, srcRepoUrl);
 
