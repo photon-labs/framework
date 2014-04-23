@@ -18,7 +18,7 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 		 */
 		initialize : function(){
 			var self = this;
-			
+			console.info("Hi*******************");
 			if (self.repositoryListener === null) {
 				self.repositoryListener = new Clazz.com.components.repository.js.listener.RepositoryListener();
 			}
@@ -120,6 +120,8 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 			$("input[name=rep_release]").bind("click", function() {
 				$('#releaseSkipTests').prop('checked', false);
 				self.opencc(this, $(this).attr('name'));
+				$('.searchdropdown').hide();
+				$('#releaseComment').val('');
 			});
 			
 			$("#createBranchVersion").unbind('click');
@@ -159,6 +161,29 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 			$('#consoleImg').click(function() {
 				self.onShowHideConsoleEvent.dispatch();
 			});
+
+
+				$('.search').unbind("click");
+				$('.search').bind("click", function() {					
+					var actionBody = {};					
+					var url = $(".tree_view").find("ul[role='group']:first").find("li:first span:first a").attr('title');
+					actionBody.repoUrl = url;
+						$('.searchdropdown').empty();
+						counter = 0;														
+						commonVariables.hideloading = true;
+						self.repositoryListener.projectListAction(self.repositoryListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {								
+							 	$.each($.unique(response.data), function(index, value) {
+								console.info("in unique............");
+									$('.searchdropdown').append('<option value='+value+'>'+$.unique(response.data)+'</option>');
+							});
+							commonVariables.hideloading = false;
+							self.repositoryListener.hidePopupLoad();
+							// Loading latest message by default
+							var repoMsg = $('.searchdropdown').eq(0).find('option:first').text();
+							$("#releaseComment").val(repoMsg);								
+						});
+						$('.searchdropdown').show();
+				});	
 			
 			self.customScroll($(".file_view"));
 			self.customScroll($(".consolescrolldiv"));

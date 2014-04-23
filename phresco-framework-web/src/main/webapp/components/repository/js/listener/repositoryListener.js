@@ -72,6 +72,11 @@ define([], function() {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + 'repository/version?appDirName='+requestBody.appDirName+'&currentBranch='+requestBody.currentBranch;
 			}
+			if(action === "searchlogmessage") {
+				header.requestMethod = "POST";
+				header.requestPostBody = JSON.stringify(requestBody);
+				header.webserviceurl = commonVariables.webserviceurl +"repository/logMessages";
+			}
 			
 			return header;
 		},
@@ -452,6 +457,54 @@ define([], function() {
 					$("#repoCredentials").modal("hide");
 					commonVariables.navListener.onMytabEvent(commonVariables.sourceRepo);
 				});
+			}
+		},
+			
+		hidePopupLoad : function(){
+			$('.popuploading').hide();
+		},
+
+		showpopupLoad : function(){
+			$('.popuploading').show();
+		},
+
+		projectListAction : function(header, loadingObj, callback) {
+			var self = this;			
+			try {
+				if (!self.isBlank(loadingObj)) {
+					self.showpopupLoad(loadingObj);
+				}
+				commonVariables.api.ajaxRequest(header,
+					function(response) {
+						if(response !== null && response.status !== "error" && response.status !== "failure"){
+							self.hidePopupLoad();
+							if(response.responseCode !== 'PHR210051' && response.responseCode !== 'PHR200015' && response.responseCode !== 'PHR200021' && response.responseCode !== 'PHR600004' && response.responseCode !== null && response.responseCode !== undefined && response.responseCode !== 'PHR200027') {
+								commonVariables.api.showError(response.responseCode ,"success", true);
+								if(response.responseCode === 'PHR200010' || response.responseCode === 'PHR200026') {
+									$('.msgdisplay').prepend(self.delprojectname+' ');
+								}
+							}	
+							callback(response);		
+						} else {
+							if(response.responseCode === "PHR210035") {
+								callback(response);
+								self.hidePopupLoad();
+							} else if(response.responseCode === "PHR210037") {
+								callback(response);
+								self.hidePopupLoad();
+							} else {
+								commonVariables.api.showError(response.responseCode ,"error", true);
+								self.hidePopupLoad();
+							}
+						}
+					},					
+					function(textStatus) {
+						commonVariables.api.showError("serviceerror" ,"error", true);
+						self.hidePopupLoad();
+					}
+				);
+			} catch(exception) {
+				self.hidePopupLoad();
 			}
 		},
 		
