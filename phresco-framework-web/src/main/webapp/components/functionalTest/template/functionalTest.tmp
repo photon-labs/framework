@@ -98,9 +98,23 @@
                     <input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
 				</div>
 			</div>
+
+			<input type="button" {{#appiumButton appiumStatus}}{{/appiumButton}} class="btn btn_style {{#showHideAppium functionalFramework}}{{/showHideAppium}}">
+        	<div id="startAppium_popup" class="dyn_popup {{#showHideAppium functionalFramework}}{{/showHideAppium}} dynamic_cont" style="display: none;  width:310px">
+				<form id="startAppiumForm" style="margin: 0 0 0 0;">
+					<ul class="row dynamicControls" id="startAppiumDynCtrls">
+					</ul>
+					<div class="dynamicPopupLoading hideContent">&nbsp</div>
+					<div class="hiddenControls"></div>
+				</form>
+                <div class="flt_right">
+                    <input type="button" value="Start" data-i18n="[value]common.btn.start" class="btn btn_style" id="executeStartAppium">
+                    <input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
+				</div>
+			</div>
 			
 			{{#if userPermissions.manageTests}}
-            	<input type="button" value="Test" data-i18n="[value]test.label.test" id="functionalTestBtn" {{#enableDisable functionalFramework hubStatus}}{{/enableDisable}} class="btn btn_style">
+            	<input type="button" value="Test" data-i18n="[value]test.label.test" id="functionalTestBtn" {{#enableDisable functionalFramework hubStatus appiumStatus}}{{/enableDisable}} class="btn btn_style">
         	{{else}}
         		<input type="button" value="Test" data-i18n="[value]test.label.test" class="btn btn_style" disabled>
         	{{/if}}  

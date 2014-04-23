@@ -512,6 +512,16 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 					boolean isConnectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, host, port);
 					map.put(NODE_STATUS, isConnectionAlive);
 				}
+			} else if (SELENIUM_APPIUM.equalsIgnoreCase(functionalTestFramework)) {
+				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_START_APPIUM, Constants.PHASE_START_APPIUM, rootModulePath, subModuleName)));
+				Parameter appiumHostParameter = mojo.getParameter(Constants.PHASE_START_APPIUM, HOST);
+				Parameter appiumPortParameter = mojo.getParameter(Constants.PHASE_START_APPIUM, PORT);
+				if (appiumHostParameter != null && appiumPortParameter != null) {
+					String appiumHost = appiumHostParameter.getValue();
+					int appiumPort = Integer.parseInt(appiumPortParameter.getValue());
+					boolean isConnectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, appiumHost, appiumPort);
+					map.put(APPIUM_STATUS, isConnectionAlive);
+				}
 			}
 			ResponseInfo<Map<String, Object>> finalOutput = responseDataEvaluation(responseData, null,
 					map, RESPONSE_STATUS_SUCCESS, PHRQ300001);
@@ -562,6 +572,15 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 					String host = ip.getHostAddress();
 					int port = nodeConfig.getConfiguration().getPort();
 					connection_status = Utility.isConnectionAlive(HTTP_PROTOCOL, host, port);
+				}
+			} else if (APPIUM_STATUS.equals(fromPage)) {
+				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_START_APPIUM, Constants.PHASE_START_APPIUM, rootModulePath, subModuleName)));
+				Parameter appiumHostParameter = mojo.getParameter(Constants.PHASE_START_APPIUM, HOST);
+				Parameter appiumPortParameter = mojo.getParameter(Constants.PHASE_START_APPIUM, PORT);
+				if (appiumHostParameter != null && appiumPortParameter != null) {
+					String appiumHost = appiumHostParameter.getValue();
+					int appiumPort = Integer.parseInt(appiumPortParameter.getValue());
+					connection_status = Utility.isConnectionAlive(HTTP_PROTOCOL, appiumHost, appiumPort);
 				}
 			}
 		} catch (Exception e) {

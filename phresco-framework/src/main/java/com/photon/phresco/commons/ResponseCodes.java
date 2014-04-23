@@ -400,7 +400,11 @@ public interface ResponseCodes {
 	String PHRQ310009 = "PHRQ310009"; // failed to show started hub log
 	String PHRQ300010 = "PHRQ300010"; // 'show started node log' started successfully
 	String PHRQ310010 = "PHRQ310010"; // failed to show started node log
-	
+	String PHRQ300011 = "PHRQ300011"; // 'start appium' process started successfully
+	String PHRQ310011 = "PHRQ310011"; // failed to start appium
+	String PHRQ300012 = "PHRQ300012"; // 'stop appium' process started successfully
+	String PHRQ310012 = "PHRQ310012"; // failed to stop appium
+		
 	/*
 	 * Manual
 	 */

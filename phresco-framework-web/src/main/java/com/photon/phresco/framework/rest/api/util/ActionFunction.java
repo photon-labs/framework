@@ -727,6 +727,19 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 	}
 
+	public ActionResponse startAppium(HttpServletRequest request) throws PhrescoException, IOException {
+		printLogs();
+		BufferedInputStream server_logs=null;
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		server_logs = startAppium();
+		if (server_logs != null) {
+			return generateResponse(server_logs, unique_key);
+		} else {
+			throw new PhrescoException("No startAppium logs obtained");
+		}
+	}
+
 	public ActionResponse runFunctionalTest(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
 		BufferedInputStream server_logs=null;
@@ -764,6 +777,19 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			return generateResponse(server_logs, unique_key);
 		} else {
 			throw new PhrescoException("No startHub logs obtained");
+		}
+	}
+
+	public ActionResponse stopAppium(HttpServletRequest request) throws PhrescoException, IOException {
+		printLogs();
+		BufferedInputStream server_logs=null;
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		server_logs = stopAppium();
+		if (server_logs != null) {
+			return generateResponse(server_logs, unique_key);
+		} else {
+			throw new PhrescoException("No stopAppium logs obtained");
 		}
 	}
 
@@ -1991,7 +2017,31 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 
 		return reader;
 	}
-	
+
+	public BufferedInputStream startAppium() throws PhrescoException {
+		BufferedInputStream reader = null;
+		if (isDebugEnabled) {
+			S_LOGGER.debug("Entering Method MavenFunctions.startAppium()");
+		}
+		try {
+			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
+			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");	
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_START_APPIUM, rootModulePath, getModule())));
+			persistValuesToXml(mojo, PHASE_START_APPIUM);
+			List<Parameter> parameters = getMojoParameters(mojo, PHASE_START_APPIUM);
+			List<String> buildArgCmds = getMavenArgCommands(parameters);
+			buildArgCmds.add(HYPHEN_N);
+			appendMultiModuleCommand(getModule(), buildArgCmds);
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			reader = applicationManager.performAction(projectInfo, ActionType.START_APPIUM, buildArgCmds, pomFileLocation.getParent());
+		} catch (PhrescoException e) {
+			S_LOGGER.error("Entered into catch block of MavenFunctions.startAppium()"+ FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException("Exception occured in the MavenFunctions.startAppium process");
+		}
+		return reader;
+	}
+
 	public BufferedInputStream validateTheme() throws PhrescoException {
 		BufferedInputStream reader = null;
 		try {
@@ -2145,7 +2195,27 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return reader;
 	}
 
-
+	public BufferedInputStream stopAppium() throws PhrescoException {
+		BufferedInputStream reader = null;
+		if (isDebugEnabled) {
+			S_LOGGER.debug("Entering Method MavenFunctions.stopAppium()");
+		}
+		try {
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
+			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
+			List<String> buildArgCmds = new ArrayList<String>();
+			buildArgCmds.add(HYPHEN_N);
+			appendMultiModuleCommand(getModule(), buildArgCmds);
+			reader = applicationManager.performAction(projectInfo, ActionType.STOP_APPIUM, buildArgCmds, pomFileLocation.getParent());
+		} catch (PhrescoException e) {
+			S_LOGGER.error("Entered into catch block of MavenFunctions.stopAppium()"+ FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException("Entered into catch block of MavenFunctions.stopAppium()");
+		}
+		return reader;
+	}
+	
 	public ActionResponse checkForHub(ActionResponse response) throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.checkForHub()");

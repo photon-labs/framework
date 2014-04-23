@@ -146,7 +146,17 @@ define([], function() {
 			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnShowStartedNode, paramData);
 			self.mvnService(header, divId, callback);
 		},
+
+		mvnStartAppium : function(paramData, divId, callback){
+			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnStartAppium, paramData);
+			self.mvnService(header, divId, callback);
+		},
 		
+		mvnStopAppium : function(paramData, divId, callback){
+			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnStopAppium, paramData);
+			self.mvnService(header, divId, callback);
+		},
+				
 		mvnValidateTheme : function(paramData, divId, callback){
 			var self = this, header = self.getRequestHeader("GET", "", commonVariables.mvnValidateTheme, paramData);
 			self.mvnService(header, divId, callback);
@@ -272,7 +282,8 @@ define([], function() {
 									response.log.toLowerCase().match("info: starting coyote http/1.1") ||
 									response.log.toLowerCase().match("server running at https://") ||
 									response.log.toLowerCase().match("server running at http://") ||
-									response.log.toLowerCase().match(".*jboss.*microcontainer.*started in.*")) {
+									response.log.toLowerCase().match(".*jboss.*microcontainer.*started in.*") ||
+									response.log.toLowerCase().match(".*non-default server args:.*")) {
 									//For start node
 									self.setContentEndHeight();
 									callback(response);

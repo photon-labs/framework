@@ -15,6 +15,7 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 		onPerformActionEvent : null,
 		onStopHubEvent : null,
 		onStopNodeEvent : null,
+		onStopAppiumEvent : null,
 		validation : null,
 		iframeAction : null,
 		iframeUrlAlive : null,
@@ -54,10 +55,16 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 		
 		registerEvents : function() {
 			var self = this;
-			// To enable/disable the test button when the functional framework is grid and based on the hub status
-			Handlebars.registerHelper('enableDisable', function(functionalFramework, hubStatus) {
+			// To enable/disable the test button when the functional framework is grid/appium and based on the hub/appium status
+			Handlebars.registerHelper('enableDisable', function(functionalFramework, hubStatus, appiumStatus) {
 				if (functionalFramework === "grid") {
 					if (hubStatus) {
+						return "";
+					} else {
+						return "disabled";
+					}
+				} else if (functionalFramework === "appium") {
+					if (appiumStatus) {
 						return "";
 					} else {
 						return "disabled";
@@ -76,6 +83,15 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 				}
 			});
 			
+			//To show the Start Appium button only when the functional framework is appium
+			Handlebars.registerHelper('showHideAppium', function(functionalFramework) {
+				if (functionalFramework === "appium") {
+					return "";
+				} else {
+					return "hideContent";
+				}
+			});
+
 			//To show the start node and stat hub button only when the functional framework is grid
 			Handlebars.registerHelper('hubButton', function(hubStatus) {
 				if (hubStatus) {
@@ -91,6 +107,15 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 					return 'value="Stop Node" id="stopNode"';
 				} else {
 					return 'value="Start Node" id="startNode"';
+				}
+			});
+
+			//To show the Start Appium button only when the functional framework is appium
+			Handlebars.registerHelper('appiumButton', function(appiumStatus) {
+				if (appiumStatus) {
+					return 'value="Stop Appium" id="stopAppium"';
+				} else {
+					return 'value="Start Appium" id="startAppium"';
 				}
 			});
 
@@ -151,6 +176,7 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 				functionalTestOptions.functionalFramework = responseData.functionalFramework;
 				functionalTestOptions.hubStatus = responseData.hubStatus;
 				functionalTestOptions.nodeStatus = responseData.nodeStatus;
+				functionalTestOptions.appiumStatus = responseData.appiumStatus;
 				functionalTestOptions.iframeUrlAlive = responseData.iframeUrlAlive;
 				functionalTestOptions.iframeAction = responseData.iframeUrl;
 				var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
@@ -198,6 +224,16 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			$("#stopNode").unbind("click");
 			$("#stopNode").click(function() {
 				self.onPerformActionEvent.dispatch("stopNode");
+			});
+
+			$("#startAppium").unbind("click");
+			$("#startAppium").click(function() {
+				self.onDynamicPageEvent.dispatch(this, $('#startAppiumDynCtrls'), 'startAppium_popup', commonVariables.startAppiumGoal);
+			});
+			
+			$("#stopAppium").unbind("click");
+			$("#stopAppium").click(function() {
+				self.onPerformActionEvent.dispatch("stopAppium");
 			});
 			
 			$("#testSuites").css("display", "none");
@@ -259,6 +295,14 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 				self.onPerformActionEvent.dispatch("startNode");
 			});
 
+			//To start the Appium Server
+			$("#executeStartAppium").unbind("click");
+			$("#executeStartAppium").click(function() {
+				commonVariables.runType = 'startAppium';
+				$('input[name=kill]').attr('disabled', true);
+				self.onPerformActionEvent.dispatch("startAppium");
+			});
+			
 			$("#iframe").unbind("click");
 			$("#iframe").click(function() {
 				$("iframeContent").show();

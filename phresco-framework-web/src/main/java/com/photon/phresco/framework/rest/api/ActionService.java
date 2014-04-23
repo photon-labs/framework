@@ -535,7 +535,34 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
-	
+	/**
+	 * Start Appium.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
+	@POST
+	@Path("/startAppium")
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response startAppium(@Context HttpServletRequest request) throws PhrescoException  {
+		ActionFunction actionFunction = new ActionFunction();
+		ActionResponse response = new ActionResponse();
+		try	{
+			actionFunction.prePopulateModelData(request);
+			response = actionFunction.startAppium(request);
+			response.setResponseCode(PHRQ300011);
+		} catch (Exception e) {
+			S_LOGGER.error(e.getMessage());
+			response.setStatus(RESPONSE_STATUS_ERROR);
+			response.setLog("");
+			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+			response.setUniquekey("");
+			response.setResponseCode(PHRQ310011);
+		}
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+	}
+
 	/**
 	 * Run functional test.
 	 *
@@ -619,6 +646,35 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
 			response.setResponseCode(PHRQ310006);
+		}
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+	}
+	
+	/**
+	 * Stop Appium.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
+	@POST
+	@Path("/stopAppium")
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response stopAppium(@Context HttpServletRequest request) throws PhrescoException  {
+		
+		ActionFunction actionFunction = new ActionFunction();
+		ActionResponse response = new ActionResponse();
+		try	{
+			actionFunction.prePopulateModelData(request);
+			response = actionFunction.stopAppium(request);
+			response.setResponseCode(PHRQ300012);
+		} catch (Exception e) {
+			S_LOGGER.error(e.getMessage());
+			response.setStatus(RESPONSE_STATUS_ERROR);
+			response.setLog("");
+			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+			response.setUniquekey("");
+			response.setResponseCode(PHRQ310012);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}

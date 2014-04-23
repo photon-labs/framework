@@ -73,7 +73,10 @@ define([], function() {
 					if (goal === commonVariables.startNodeGoal) {
 						formObj = $('#startNodeForm');
 					}
-					
+					if (goal === commonVariables.startAppiumGoal) {
+						formObj = $('#startAppiumForm');
+					}
+
 					formObj.css("max-height", height - 92 + 'px');
 					if (formObj.find('li.ctrl').length > 5) {
 						formObj.mCustomScrollbar({
@@ -131,6 +134,10 @@ define([], function() {
 				$("#startNode_popup").toggle();
 				testData = $('#startNodeForm').serialize();
 			}
+			if (from === "startAppium") {
+				$("#startAppium_popup").toggle();
+				testData = $('#startAppiumForm').serialize();
+			}
 			if (from === "runFunctionalTest") {
 				$("#functionalTest_popup").toggle();
 				testData = $('#functionalTestForm').serialize();
@@ -165,6 +172,11 @@ define([], function() {
 						self.postStartNode();
 					});
 				}
+				if (from === "startAppium") {
+					retVal.mvnStartAppium(queryString, '#testConsole', function(response) {
+						self.postStartAppium();
+					});
+				}
 				if (from === "runFunctionalTest") {
 					var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 					if (userInfo !== null) {
@@ -183,6 +195,11 @@ define([], function() {
 				if (from === "stopNode") {
 					retVal.mvnStopNode(queryString, '#testConsole', function(response) {
 						self.postStopNode();
+					});
+				}
+				if (from === "stopAppium") {
+					retVal.mvnStopAppium(queryString, '#testConsole', function(response) {
+						self.postStopAppium();
 					});
 				}
 			});
@@ -226,6 +243,25 @@ define([], function() {
 			});
 		},
 
+		postStartAppium : function() {
+			var self = this;
+			self.closeConsole();
+			$('.progress_loading').hide();
+			var requestBody = {};
+			requestBody.from = "appiumStatus";
+			self.getFunctionalTestOptions(self.getActionHeader(requestBody, "status"), function(response) {
+				if (response) {
+					$('#startAppium').attr('value', 'Stop Appium').attr('id', "stopAppium");
+					$('#functionalTestBtn').attr('disabled', false);
+
+					$("#stopAppium").unbind("click");
+					$("#stopAppium").click(function() {
+						self.performAction("stopAppium");
+					});
+				}
+			});
+		},
+
 		postStopHub : function() {
 			var self = this;
 			self.closeConsole();
@@ -258,6 +294,25 @@ define([], function() {
 					$("#startNode").unbind("click");
 					$("#startNode").click(function() {
 						self.getDynamicParams(this, $('#startNodeDynCtrls'), 'startNode_popup', commonVariables.startNodeGoal);
+					});
+				}
+			});
+		},
+
+		postStopAppium : function() {
+			var self = this;
+			self.closeConsole();
+			$('.progress_loading').hide();
+			var requestBody = {};
+			requestBody.from = "appiumStatus";
+			self.getFunctionalTestOptions(self.getActionHeader(requestBody, "status"), function(response) {
+				if (!response) {
+					$('#stopAppium').attr('value', 'Start Appium').attr('id', "startAppium");
+					$('#functionalTestBtn').attr('disabled', true);
+
+					$("#startAppium").unbind("click");
+					$("#startAppium").click(function() {
+						self.getDynamicParams(this, $('#startAppiumDynCtrls'), 'startAppium_popup', commonVariables.startAppiumGoal);
 					});
 				}
 			});

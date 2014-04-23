@@ -39,6 +39,8 @@ public enum ActionType {
 	STOP_HUB("phresco:stop-hub"), 
 	START_NODE("phresco:start-node"), 
 	STOP_NODE("phresco:stop-node"), 
+	START_APPIUM("phresco:start-appium"), 
+	STOP_APPIUM("phresco:stop-appium"),
 	PDF_REPORT("phresco:pdf-report"),
 	MINIFY("yuicompressor:compress"),
 	IPA_DOWNLOAD("xcode:ipaBuilder"),

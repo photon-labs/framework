@@ -190,6 +190,7 @@ var commonVariables = {
 
 	startHubGoal : "start-hub",
 	startNodeGoal : "start-node",
+	startAppiumGoal : "start-appium",
 	
 	/******* mvn Context *********/
 	mvnlogService : "app/readlog",
@@ -215,6 +216,8 @@ var commonVariables = {
 	mvnStopNode : "app/stopNode",
 	mvnCheckNode : "app/checkForNode",
 	mvnShowStartedNode : "app/showStartedNodeLog",
+	mvnStartAppium : "app/startAppium",
+	mvnStopAppium : "app/stopAppium",
 	mvnCiSetup : "app/ciSetup",
 	mvnCiStart : "app/ciStart",
 	mvnCiStop : "app/ciStop",

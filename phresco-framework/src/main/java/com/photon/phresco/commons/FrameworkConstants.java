@@ -543,6 +543,7 @@ public interface FrameworkConstants {
 	String REQ_FUNCTEST_SELENIUM_TOOL = "functionalTestSeleniumTool";
 	String SELENIUM_GRID = "grid";
 	String SELENIUM_WEBDRIVER = "webdriver";
+	String SELENIUM_APPIUM = "appium";
 	String SELENIUM_UIAUTOMATION = "UIAutomation";
 	String BUILD = "build";
 	String DEVICE_BUILD = "deviceBuild";
