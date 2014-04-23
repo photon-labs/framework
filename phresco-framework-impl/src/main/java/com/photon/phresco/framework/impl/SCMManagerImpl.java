@@ -167,7 +167,7 @@ import com.phresco.pom.model.DeploymentRepository;
 import com.phresco.pom.model.DistributionManagement;
 import com.phresco.pom.model.Plugin;
 import com.phresco.pom.util.PomProcessor;
-
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
@@ -359,8 +359,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			//for https and ssh
 			additionalAuthentication(repodetail.getPassPhrase());
 
-			Git git = Git.open(updateDir); // checkout is the folder with .git
-			git.pull().call(); // succeeds
+			UsernamePasswordCredentialsProvider userCredential = new UsernamePasswordCredentialsProvider(repodetail.getUserName(), repodetail.getPassword());
+            Git git = Git.open(updateDir); // checkout is the folder with .git
+            git.pull().setCredentialsProvider(userCredential).call(); // succeeds
 			git.getRepository().close();
 			if(debugEnabled){
 				S_LOGGER.debug("Updated!");
@@ -1670,7 +1671,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if (!sb.toString().endsWith(FORWARD_SLASH) && !srcRootPrpty.startsWith(FORWARD_SLASH)) {
 				sb.append(FORWARD_SLASH);
 			}
-			pomProcessor.setProperty(Constants.POM_PROP_KEY_ROOT_SRC_DIR, sb.toString() + srcRootPrpty);
+
+			if (srcRootPrpty.startsWith(BACK_SLASH)) {
+				pomProcessor.setProperty(Constants.POM_PROP_KEY_ROOT_SRC_DIR, sb.toString());
+			} else {
+				pomProcessor.setProperty(Constants.POM_PROP_KEY_ROOT_SRC_DIR, sb.toString() + srcRootPrpty);
+			}
 
 			pomProcessor.setProperty(Constants.POM_PROP_KEY_SRC_REPO_URL, srcRepoUrl);
 
