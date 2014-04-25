@@ -45,7 +45,11 @@
 		                   	</table>
 		                   	<div class="popuploading" id="pdfReportLoading">&nbsp</div>
 			               	<div class="flt_right">
+							{{#if userPermissions.managePdfReports}}
 			                   <input type="button" data-i18n="[value]commonlabel.label.generate" class="btn btn_style" id="generatePdf">
+							{{else}}
+								<input type="button" data-i18n="[value]commonlabel.label.generate" class="btn btn_style" id="generatePdf" disabled>
+							{{/if}}
 			                  <input type="button" data-i18n="[value]commonlabel.label.close" class="btn btn_style dyn_popup_close">
 			               	</div>
 	               			<input type="hidden" name="fromPage" value="component"/>
