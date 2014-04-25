@@ -26,9 +26,9 @@ public class AppInfoConfigsTest extends RestBaseTest {
 	
 	@Test
 	public void fetchWebServices() {
-		Response webServicesLoginFail = appInfoConfigs.getWebServices("sample");
+		Response webServicesLoginFail = appInfoConfigs.getWebServices("sample", "tech-java-webservice");
 		Assert.assertEquals(200, webServicesLoginFail.getStatus());
-		Response webServices = appInfoConfigs.getWebServices(userId);
+		Response webServices = appInfoConfigs.getWebServices(userId, "tech-java-webservice");
 		Assert.assertEquals(200, webServices.getStatus());
 	}
 	
