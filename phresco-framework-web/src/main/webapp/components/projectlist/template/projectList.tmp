@@ -91,7 +91,7 @@
                 {{#if ../../userPermissions.managePdfReports}}
                  	<input type="button" fromPage="All"  appDirName="{{appDirName}}" value="Generate" data-i18n="[value]projectlist.label.generate" class="btn btn_style" name="generate" appId="{{id}}" projectId = "{{../id}}">
                  {{else}}
-                 	<input type="button" disabled=true fromPage="All"  appDirName="{{appDirName}}" value="Generate" data-i18n="[value]projectlist.label.generate" class="btn btn_style" name="generate" appId="{{id}}" projectId = "{{../id}}">
+                 	<input type="button" disabled=true value="Generate"  class="btn btn_style" appId="{{id}}" projectId = "{{../id}}">
                   {{/if}}
                  <input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
                </div>
@@ -494,7 +494,11 @@
 							</div>
 							<div class="popuploading" id="updateLoading_{{id}}">&nbsp</div>
 						 	<div class="flt_right" appId="{{id}}" projectId = "{{../id}}" appDirName="{{appDirName}}">
-						 		<button class="btn btn_style btn_style_spin ladda-button" id="{{id}}" data-style="expand-left" name="commitbtn"><span class="ladda-label">Commit</span></button>
+							{{#if ../../userPermissions.viewRepo}}
+						 		<button class="btn btn_style btn_style_spin ladda-button" id="{{id}}" data-style="expand-left" disabled><span class="ladda-label">Commit</span></button>
+							{{else}}
+								<button class="btn btn_style btn_style_spin ladda-button" id="{{id}}" data-style="expand-left" name="commitbtn"><span class="ladda-label">Commit</span></button>
+							{{/if}}
 								<input type="button" value="Close" data-i18n="[value]common.btn.close;" class="btn btn_style dyn_popup_close">
 							</div>
 						</div>
@@ -721,7 +725,11 @@
 							</div>
 							<div class="popuploading" id="updateLoading_{{id}}">&nbsp</div>
 						 	<div class="flt_right" appId="{{id}}" projectId = "{{../id}}" appDirName="{{appDirName}}">
-						 		<button class="btn btn_style btn_style_spin ladda-button" id="{{id}}" data-style="expand-left" name="updatebtn"><span class="ladda-label">Update Application</span></button>
+							{{#if ../../userPermissions.viewRepo}}
+						 		<button class="btn btn_style btn_style_spin ladda-button" id="{{id}}" data-style="expand-left" disabled><span class="ladda-label">Update Application</span></button>
+							{{else}}
+								<button class="btn btn_style btn_style_spin ladda-button" id="{{id}}" data-style="expand-left" name="updatebtn"><span class="ladda-label">Update Application</span></button>
+							{{/if}}
 								<input type="button" value="Close" data-i18n="[value]common.btn.close;" class="btn btn_style dyn_popup_close">
 							</div>
 						</div>

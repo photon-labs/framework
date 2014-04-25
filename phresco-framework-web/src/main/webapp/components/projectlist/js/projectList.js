@@ -176,8 +176,8 @@ define(["projectlist/listener/projectListListener"], function() {
 				var pdfapp;
 				if(userPermissions.managePdfReports){
 					pdfapp ='<a name="pdf_report_'+ id +'" temp="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="'+ id +'" data-placement="bottom" data-t="tooltip" href="javascript:void(0)" data-original-title="PDF Report"><img src="themes/default/images/Phresco/pdf_icon.png" width="14" height="16" border="0" alt=""></a>';
-				}else{		
-				pdfapp ='<img src="themes/default/images/Phresco/pdf_icon.png" width="14" height="16" border="0" alt="">';
+					}else{		
+					pdfapp ='<a name="pdf_report_'+ id +'" temp="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="'+ id +'" data-placement="bottom" data-t="tooltip" href="javascript:void(0)" data-original-title="PDF Report"><img src="themes/default/images/Phresco/pdf_icon.png" width="14" height="16" border="0" alt=""></a>';
 				}return pdfapp;
 				});		
 		},	
