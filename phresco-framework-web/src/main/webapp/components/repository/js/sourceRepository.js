@@ -18,7 +18,6 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 		 */
 		initialize : function(){
 			var self = this;
-			console.info("Hi*******************");
 			if (self.repositoryListener === null) {
 				self.repositoryListener = new Clazz.com.components.repository.js.listener.RepositoryListener();
 			}
