@@ -503,7 +503,7 @@ define([], function() {
 				webserviceurl: ''
 			};
 			
-			header.webserviceurl = commonVariables.webserviceurl+ "appConfig/webservices?userId="+userId;
+			header.webserviceurl = commonVariables.webserviceurl+ "appConfig/webservices?userId="+userId+"&techId="+techId;
 			try {
 				commonVariables.api.ajaxRequest(header,
 					function(response) {

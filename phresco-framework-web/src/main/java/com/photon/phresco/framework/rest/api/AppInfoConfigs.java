@@ -107,7 +107,7 @@ public class AppInfoConfigs extends RestBase implements ServiceConstants, Framew
 	@GET
 	@Path("/webservices")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getWebServices(@QueryParam(REST_QUERY_USERID) String userId) {
+	public Response getWebServices(@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_TECHID) String techId) {
 		ResponseInfo<List<WebService>> responseData = new ResponseInfo<List<WebService>>();
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
@@ -121,7 +121,7 @@ public class AppInfoConfigs extends RestBase implements ServiceConstants, Framew
 			}
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR300001;
-			List<WebService> webServices = serviceManager.getWebServices();
+			List<WebService> webServices = serviceManager.getWebServices(techId);
 			ResponseInfo<List<WebService>> finalOutput = responseDataEvaluation(responseData, null,
 					webServices, status, successCode);
 			return Response.status(ClientResponse.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
