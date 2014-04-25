@@ -1593,6 +1593,9 @@ define(["croneExpression/croneExpression"], function() {
 				$("input[name='envrName']").bind('keypress', function() {
 					$("input[name='envrName']").removeClass("errormessage");
 				});
+				$("input[value='Close']").bind('click', function() {
+					$("input[name='envrName']").removeClass("errormessage");
+				});
 			} else {
 				$('.envlist').each(function() {
 					arr[count]=$(this).find('td:first').text();

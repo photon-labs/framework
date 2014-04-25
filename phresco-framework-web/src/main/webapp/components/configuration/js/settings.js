@@ -128,6 +128,7 @@ define(["configuration/listener/configurationListener"], function() {
 				if(name === ""){	
 					$("input[name='envName']").focus();
 					$("input[name='envName']").attr('placeholder','Enter Environment Name');
+					
 				} else {							  
 					$('.envlistname').each(function() {
 						if ($(this).text().toLowerCase() === $("input[name='envName']").val().toLowerCase()) {
@@ -160,6 +161,13 @@ define(["configuration/listener/configurationListener"], function() {
 				if (($.trim(Env) === $.trim(defaultEnv)) && ($.trim(arr) === $.trim(array))){
 					$("input[name='envName']").focus();
 					$("input[name='envName']").attr('placeholder','Enter Environment Name');
+					$("input[name='envName']").addClass("errormessage");
+					$("input[name='envName']").bind('keypress', function() {
+						$("input[name='envName']").removeClass("errormessage");
+					});
+					$("input[value='Close']").bind('click', function() {
+					$("input[name='envName']").removeClass("errormessage");
+				});
 				} else {
 					self.saveEnvEvent.dispatch(self.envWithConfig, function(response){
 						self.configRequestBody = response;

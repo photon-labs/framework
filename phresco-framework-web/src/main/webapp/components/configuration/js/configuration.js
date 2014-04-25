@@ -147,6 +147,7 @@ define(["configuration/listener/configurationListener"], function() {
 					$("input[name='envName']").bind('keypress', function() {
 						$("input[name='envName']").removeClass("errormessage");
 					});
+					
 				} else {							  
 					$('.envlistname').each(function() {
 						if ($(this).text().toLowerCase() === $("input[name='envName']").val().toLowerCase()) {
@@ -192,6 +193,9 @@ define(["configuration/listener/configurationListener"], function() {
 					$("input[name='envName']").bind('keypress', function() {
 						$("input[name='envName']").removeClass("errormessage");
 					});
+					$("input[value='Close']").bind('click', function() {
+					$("input[name='envName']").removeClass("errormessage");
+				});
 				}
 				else {
 					self.saveEnvEvent.dispatch(self.envWithConfig, function(response){
