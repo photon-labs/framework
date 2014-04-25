@@ -156,6 +156,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	String status;
 	String errorCode;
 	String successCode;
+	public static List<File> iosFrameworks = new ArrayList<File>();
 
 	/**
 	 * Import application from repository.
@@ -204,6 +205,13 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				
 				//SCM tags, pom-properties and distribution tags will be added here
 				scmi.updatePoms(repoInfo, projInfo, serviceManager);
+				
+				// Fix for corrupt iOS frameworks after importing
+				String techGrpId = srcAppInfo.getTechInfo().getTechGroupId();
+				if (techGrpId.equals(Constants.IOS)) {
+					File projectBaseDir = new File(Utility.getProjectHome(), srcAppInfo.getAppDirName());
+					fixIosFrameworks(projectBaseDir);
+				}
 			}
 			if (projInfo == null) {
 				status = RESPONSE_STATUS_FAILURE;
@@ -270,6 +278,105 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		}
 	}
 
+	/* Fix for corrupt iOS Frameworks after Importing Application */
+	private void fixIosFrameworks(File projectDir) {
+		String frameworkDir = "", frameworkNameDotFramework = "", frameworkName = "";
+
+		// Getting List of Frameworks
+		getFrameworks(projectDir);
+		
+		if (!iosFrameworks.isEmpty()) {
+			for (File file: iosFrameworks) {
+				frameworkNameDotFramework = file.getName();
+				frameworkName = frameworkNameDotFramework.substring(0, frameworkNameDotFramework.length() - 10);
+				frameworkDir = file.getParent() + File.separator + frameworkNameDotFramework;
+				File versionDir = new File(frameworkDir + File.separator + Constants.VERSIONS);
+				for (File version: versionDir.listFiles()) {
+					if (version.isDirectory() && !version.getName().endsWith(Constants.CURRENT)) {
+						// {Framework}/Versions/{version} to {Framework}/Versions/Current
+						StringBuilder command = new StringBuilder()
+						.append(Constants.LN_CMD)
+						.append(versionDir.getPath())
+						.append(File.separator)
+						.append(version.getName())
+						.append(Constants.SPACE)
+						.append(versionDir.getPath())
+						.append(File.separator)
+						.append(Constants.CURRENT);					
+						Utility.executeCommand(command.toString(), frameworkDir);
+											
+						// {Framework}/Versions/Current/{FrameworkName} to {Framework}/{FrameworkName} 
+						command = new StringBuilder()
+						.append(Constants.LN_CMD)
+						.append(versionDir.getPath())
+						.append(File.separator)
+						.append(Constants.CURRENT)
+						.append(File.separator)
+						.append(frameworkName)
+						.append(Constants.SPACE)
+						.append(frameworkDir)
+						.append(File.separator)
+						.append(frameworkName);
+						Utility.executeCommand(command.toString(), frameworkDir);
+						
+						// {Framework}/Versions/Current/Headers to {Framework}/Headers
+						command = new StringBuilder()
+						.append(Constants.LN_CMD)
+						.append(versionDir.getPath())
+						.append(File.separator)
+						.append(Constants.CURRENT)
+						.append(File.separator)
+						.append(Constants.HEADERS)
+						.append(Constants.SPACE)
+						.append(frameworkDir)
+						.append(File.separator)
+						.append(Constants.HEADERS);
+						Utility.executeCommand(command.toString(), frameworkDir);
+						
+						// {Framework}/Versions/Current/Resources to {Framework}/Resources
+						if (hasResources(versionDir + File.separator + version.getName())) {
+							command = new StringBuilder()
+							.append(Constants.LN_CMD)
+							.append(versionDir.getPath())
+							.append(File.separator)
+							.append(Constants.CURRENT)
+							.append(File.separator)
+							.append(Constants.RESOURCES)
+							.append(Constants.SPACE)
+							.append(frameworkDir)
+							.append(File.separator)
+							.append(Constants.RESOURCES);
+							Utility.executeCommand(command.toString(), frameworkDir);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	/* Getting the list of iOS Frameworks */
+	private static void getFrameworks(File workingDir) {
+		for (File file: workingDir.listFiles()) {
+			if (file.isDirectory() && file.getName().endsWith(Constants.DOT_FRAMEWORK)) {
+				iosFrameworks.add(file);
+			} else if (file.isDirectory() && !file.getName().equals(Constants.DO_NOT_CHECKIN_DIRY)) {
+				getFrameworks(file);
+			}
+		}
+	}
+	
+	/* Checking whether the iOS framework contains Resources folder */
+	private static Boolean hasResources(String workingDir) {
+		File versionDir = new File(workingDir);
+		File[] files = versionDir.listFiles();
+		for (File file: files) {
+			if (file.getName().equals(Constants.RESOURCES)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Update imported applicaion  from repository.
 	 *
