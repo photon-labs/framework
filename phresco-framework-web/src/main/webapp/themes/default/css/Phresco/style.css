@@ -2688,7 +2688,8 @@ form[name="deployForm"] {
 }
 
 .env_border ul li .envlistname {
-	padding-left: 6px;
+	padding-left: 6px;	
+	
 }
 
 .env_border ul li:last-child {
@@ -2717,7 +2718,6 @@ form[name="deployForm"] {
 	width: 60px;
 	text-align:center;
 	border-right: 1px solid #d8d8d8;
-	padding-bottom:8px;
 }
 
 .add_env .connected li div input{

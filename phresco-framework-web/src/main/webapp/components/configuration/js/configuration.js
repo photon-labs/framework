@@ -161,7 +161,7 @@ define(["configuration/listener/configurationListener"], function() {
 						$("input[name='envName']").attr('placeholder','Environment Name');
 						$("input[name='envDesc']").attr('placeholder','Environment Description');
 					} else {
-						commonVariables.api.showError("envalreadyexists" ,"success", true);	
+						commonVariables.api.showError("envalreadyexists" ,"error", true);	
 						$("input[name='envName']").focus();
 					}
 				}

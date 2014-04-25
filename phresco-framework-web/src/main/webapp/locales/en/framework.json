@@ -261,7 +261,8 @@
 		"PHRTR1012" : "Published Environment fetch Failed",
 		"PHRTRS1020" : "Please Select Environment",
 		"PHRTRS1030" : "Please Select Target",
-		"PHRSR10007" : "Content and WebSite is need to create further proceed"
+		"PHRSR10007" : "Content and WebSite is need to create further proceed",
+		"envalreadyexists" : "Environment Already Exists"
 		
 	},
 	"successCodes" : {
@@ -306,7 +307,7 @@
 		"PHRQ400005" : "Test case added successfully",
 		"PHRQ400006" : "Test case updated successfully",
 		"PHR12C00001" : "No Downloads available",
-		"envalreadyexists" : "Environment Already Exists",
+		
 		"chooseserver" : "Choose the Server Type from App Info",
 		"choosedb" : "Choose the DB Type from App Info",
 		"PHR500005" : "Report not available",
