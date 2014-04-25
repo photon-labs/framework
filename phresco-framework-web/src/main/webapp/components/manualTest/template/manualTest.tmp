@@ -43,7 +43,7 @@
 		                   	</table>
 		                   	<div class="popuploading" id="pdfReportLoading">&nbsp</div>
 			               	<div class="flt_right">
-							{{#if userPermissions.manageTests}}
+							{{#if userPermissions.managePdfReports}}
 			                 	<input type="button" value="Generate" data-i18n="[value]projectlist.label.generate"  class="btn btn_style" id="generatePdf">
 							{{else}}
 								<input type="button" value="Generate" data-i18n="[value]projectlist.label.generate"  class="btn btn_style" id="generatePdf" disabled>
