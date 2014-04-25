@@ -700,7 +700,7 @@ define(["projectlist/listener/projectListListener"], function() {
 							commonVariables.hideloading = true;
 							self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
 							self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {
-								 $.each(response.data, function(index, value) {
+								 $.each($.unique(response.data), function(index, value) {
 									$('.searchdropdown').append('<option value='+value+'>'+value+'</option>');
 								});
 								commonVariables.hideloading = false;
