@@ -281,7 +281,18 @@ define([], function() {
 			if("functionalFrameworks" === type){
 				header.webserviceurl = commonVariables.webserviceurl+ "appConfig/functionalFrameworks?techId="+techId+"&userId="+userId+"&customerId="+customerId;			
 			}else{
-				header.webserviceurl = commonVariables.webserviceurl+ "appConfig/list?techId="+techId+"&customerId="+customerId+"&type="+type+"&platform=Windows64&userId="+userId;
+					var platform;
+					var ua = navigator.userAgent.toLowerCase();
+					if (ua.indexOf("win") != -1) {
+						platform = "Windows64";
+					} else if (ua.indexOf("mac") != -1) {
+						platform = "Mac64";
+					} else if (ua.indexOf("linux") != -1) {
+						platform = "Linux64";
+					} else {
+						platform = "Windows64";
+					}
+				header.webserviceurl = commonVariables.webserviceurl+ "appConfig/list?techId="+techId+"&customerId="+customerId+"&type="+type+"&platform="+platform+"&userId="+userId;
 			}
 			try {
 				commonVariables.api.ajaxRequest(header,
