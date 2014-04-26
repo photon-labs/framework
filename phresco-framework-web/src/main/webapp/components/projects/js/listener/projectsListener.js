@@ -948,13 +948,8 @@ define([], function() {
 						if(keyAttr === 'displayed'){
 							var valueCount = $(value).attr('count');
 							var appcodeVal = $(value).val();
-							console.info("currentCount", currentCount);
-							console.info("valueCount", valueCount);
-							console.info("currentVal", currentVal);
-							console.info("appcodeVal", appcodeVal);
 							if(currentCount !== valueCount && currentVal === appcodeVal){
 								//$(appCodeTextObj).val("");
-								console.info("true");
 								$(appCodeTextObj).focus();
 								$(appCodeTextObj).addClass('errormessage');
 								$(appCodeTextObj).attr('placeholder', 'Appcode Already Exists');
