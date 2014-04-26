@@ -279,6 +279,7 @@ define([], function() {
 							}else if(response.status.toUpperCase() === 'INPROGRESS'){
 								if (response.log.indexOf("SocketConnector@0.0.0.0:") != -1 || 
 									response.log.indexOf("Done: /status") != -1 ||
+									response.log.indexOf("Registering the node to hub :") != -1 ||
 									response.log.toLowerCase().match("info: starting coyote http/1.1") ||
 									response.log.toLowerCase().match("server running at https://") ||
 									response.log.toLowerCase().match("server running at http://") ||
