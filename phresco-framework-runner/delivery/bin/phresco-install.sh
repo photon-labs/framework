@@ -50,7 +50,7 @@ function pomcheck {
                       
                       mvn phresco:$1 -Dinteractive=true -e -N
                       else
-                      mvn phresco:$1 -e
+                      mvn phresco:$1 -e -N
                       fi
                       fi
                
@@ -228,7 +228,7 @@ case "$1" in
         validate)
                 if [ -d ".phresco/" ];
                 then
-					if curl --output /dev/null --silent --head --fail "http://localhost:2468/sonar"; then
+					if curl --output /dev/null --silent --head --fail "http://localhost:9000/sonar"; then
 						echo "Sonar Started"
 						pomcheck validate-code 
 					else
