@@ -441,7 +441,7 @@
         <jasperreports-maven-plugin.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.0-beta-2</jasperreports-maven-plugin.version>
         <tomcat-maven-plugin.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.1</tomcat-maven-plugin.version>
         <lifecycle-mapping.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.0.0</lifecycle-mapping.version>
-        <java-maven-plugin.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.0.0.10002</java-maven-plugin.version>
+        <java-maven-plugin.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">3.3.1.7000</java-maven-plugin.version>
         <json-simple xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.1</json-simple>
         <phresco.src.repo.url>https://github.com/photon-infotech/framework.git</phresco.src.repo.url>
     </properties>
