@@ -490,13 +490,13 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				List<String> techIds = getTechId(customerId, projectId);
 				 if (CollectionUtils.isNotEmpty(techIds)) {
 					 for (String tech_Id : techIds) {
-						settingsTemplate = serviceManager.getConfigTemplateByTechId(tech_Id, type);
+						settingsTemplate = serviceManager.getConfigTemplateByTechAndCustomerId(customerId, tech_Id, type);
 						settingsTemplates.add(settingsTemplate);
 					 }
 					 settingsTemplate  = removeDuplicatePropertyTemplates(settingsTemplates);
 				 }
 			} else {
-				settingsTemplate = serviceManager.getConfigTemplateByTechId(techId, type);
+				settingsTemplate = serviceManager.getConfigTemplateByTechAndCustomerId(customerId, techId, type);
 			}
 			if (StringUtils.isEmpty(appDirName)) {
 				List<String> appDirNameList = getAppDirNameList(projectId, customerId);
