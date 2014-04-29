@@ -320,4 +320,7 @@
         	</ul>
         </div>
     	<h1 id="aplntitle"></h1>
+		<!-- App directory name conflict occurs in multiple tab -->
+		<input type="hidden" id="seltdAppDirName">
+		<!-- ends here -->
     </section>

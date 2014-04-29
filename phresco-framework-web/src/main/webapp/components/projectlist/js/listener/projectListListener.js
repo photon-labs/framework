@@ -327,6 +327,9 @@ define([], function() {
 				Clazz.navigationController.push(self.editAplnContent, commonVariables.animation);
 			}
 			self.isBlank(module) ? $("#aplntitle").html("Edit - "+appName) : $("#aplntitle").html("Edit - "+module);
+			// Code Added by balakumaran : App directory name conflict occurs in multiple tab
+			$("#seltdAppDirName").val(value);
+
 		},
 		
 		dynamicrenderlocales : function(contentPlaceholder) {

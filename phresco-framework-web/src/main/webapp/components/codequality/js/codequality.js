@@ -61,7 +61,10 @@ define(["codequality/listener/codequalityListener"], function() {
 		 
 		postRender : function(element) {
 			var self = this; 
-			var appDirName = commonVariables.api.localVal.getSession('appDirName');
+			// Code Added and commented by balakumaran : App directory name conflict occurs in multiple tab
+			//var appDirName = commonVariables.api.localVal.getSession('appDirName');
+			var appDirName = $('#seltdAppDirName').val();
+			// ends here
 			var goal = "validate-code";
 			commonVariables.goal = goal;
 			self.showHideSysSpecCtrls();
@@ -123,7 +126,7 @@ define(["codequality/listener/codequalityListener"], function() {
 			$(".tooltiptop").tooltip();
 			$(".dyn_popup").hide();
 			self.killProcess();
-			$("#codeAnalysis").click(function() {
+			$("#codeAnalysis").click(function() {		
 				var whereToRender = $('#code_popup ul');
                 commonVariables.goal = "validate-code";
                 commonVariables.phase = "validate-code";
@@ -132,14 +135,14 @@ define(["codequality/listener/codequalityListener"], function() {
                 });
 			});
 			
-			$("#validate").click(function() {
+			$("#validate").click(function() {				
 				commonVariables.runType = "codeValidate";
 				$('input[name=kill]').attr('disabled', true);
 				var against = $("#sonar").val();
 				self.checkForLock("code-"+against, '', '', function(response){
-					if (response.status === "success" && response.responseCode === "PHR10C00002") {
-						$('.progress_loading').css('display','block');
-						$(".dyn_popup").hide();
+					if (response.status === "success" && response.responseCode === "PHR10C00002") {				
+						$('.progress_loading').css('display','block');						
+						$(".dyn_popup").hide();						
 						var ipjson = $("#codeValidateForm").serialize();
 						self.readLogEvent.dispatch(ipjson , function(){
 							$('.progress_loading').css('display','none');
@@ -148,11 +151,11 @@ define(["codequality/listener/codequalityListener"], function() {
 				 	} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
 						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 					}	
-				});		
-				
+				});	
+						
 			});
 			
-			$("#codeValidateConsole").click(function() {
+			$("#codeValidateConsole").click(function() {				
 				self.onProgressEvent.dispatch(this);
 			});
 			

@@ -36,12 +36,11 @@ define([], function() {
 				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=validate-code&phase=validate-code&projectId="+projectId+"&"+ipjson+'&displayName='+userInfo.displayName;
 			}
 			queryString += self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
-			$('#iframePart').html('');
-			self.openConsole();//To open the console
-			
+			$('#iframePart').html('');	
+			self.openConsole();//To open the console				
 						
-			if(self.mavenServiceListener === null)	{
-				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
+			if(self.mavenServiceListener === null)	{				
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){			
 					self.mavenServiceListener = retVal;
 					self.mavenServiceListener.mvnCodeValidation(queryString, '#iframePart', function(returnVal){
 						/* var validateAgainst = $("#src").find(':selected').val();
@@ -51,23 +50,21 @@ define([], function() {
 						
 						var validateAgainst = $("#repTypes").attr("key");
 						self.getIframeReport(validateAgainst);
-						callback(returnVal);
+						callback(returnVal);								
 					});
 				});
-			}else{
+			}else{				
 				self.mavenServiceListener.mvnCodeValidation(queryString, '#iframePart', function(returnVal){
 					/* var validateAgainst = $("#src").find(':selected').val();
 					if(validateAgainst === undefined){
 						validateAgainst = $("#sonar").find(':selected').val();
-					} */
+					} */  
 					var validateAgainst = $("#repTypes").attr("key");
 					self.getIframeReport(validateAgainst);
-					callback(returnVal);
+					callback(returnVal);						
 				});
-			}			
-			
+			}						
 		},
-
 
 		onPrgoress : function(clicked) {
 			var self = this;
@@ -109,17 +106,26 @@ define([], function() {
 			}
 			
 			if(action === "reporttypes"){
-				var appDirName = commonVariables.api.localVal.getSession('appDirName');
+				// Code Added and commented by balakumaran : App directory name conflict occurs in multiple tab
+				//var appDirName = commonVariables.api.localVal.getSession('appDirName');
+				var appDirName = $('#seltdAppDirName').val();
+				// ends here
 				header.webserviceurl = commonVariables.webserviceurl+"parameter/codeValidationReportTypes?appDirName="+appDirName+"&goal=validate-code"+moduleParam;
 			}
 			
 			if(action === "sonarurl"){
-				var appDirName = commonVariables.api.localVal.getSession('appDirName');
+				// Code Added and commented by balakumaran : App directory name conflict occurs in multiple tab
+				//var appDirName = commonVariables.api.localVal.getSession('appDirName');
+				var appDirName = $('#seltdAppDirName').val();
+				// ends here
 				header.webserviceurl = commonVariables.webserviceurl+"parameter/sonarUrl?appDirName="+appDirName+moduleParam;
 			}
 			
-			if(action === "iframereport"){
-				var appDirName = commonVariables.api.localVal.getSession('appDirName');
+			if(action === "iframereport"){		
+				// Code Added and commented by balakumaran : App directory name conflict occurs in multiple tab
+				//var appDirName = commonVariables.api.localVal.getSession('appDirName');								
+				var appDirName = $('#seltdAppDirName').val();
+				// ends here
 				username = commonVariables.api.localVal.getSession('username');
 				header.webserviceurl = commonVariables.webserviceurl+"parameter/iFrameReport?appDirName="+appDirName+"&validateAgainst="+inputData+"&customerId="+customerId+"&userId="+username+moduleParam;
 			}
