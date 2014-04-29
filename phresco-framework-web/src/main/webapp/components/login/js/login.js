@@ -54,13 +54,14 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 			} else {
 				$('#loginlogo').attr("src", "themes/default/images/Phresco/logo_login.png");
 			}
+
+			//commonVariables.api.localVal.deleteSession('loggedout');
 			
 			if(commonVariables.api.localVal.getSession('loggedout') === "true" || commonVariables.api.localVal.getSession('multiplelogout') === "true"){
 				$(".login_error_msg").text('Logged out');
 				$(".login_error_msg").css('color','green');
 			}
-		
-			commonVariables.api.localVal.deleteSession('loggedout');
+		  
 			
 			commonVariables.api.localVal.deleteSession('multiplelogout');	
 			
