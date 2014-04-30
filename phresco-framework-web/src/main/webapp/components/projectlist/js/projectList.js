@@ -857,7 +857,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			
 				});	
 
-				$('.testsearchdropdown').click(function() {
+				$('.testsearchdropdown').on("change",function() {
 					$('.testsearchdropdown').hide();
 					var temp = $(this).find(':selected').text();
 					if($(this).attr('typeOfRepo') === 'add')
