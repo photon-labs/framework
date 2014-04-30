@@ -106,6 +106,7 @@ define([], function() {
 		},
 
 		getRequestHeader : function(ciRequestBody, action, params) {
+		
 			var self = this, appDir = '', projectId='', header;
 			// basic params for job templates
 			var customerId = self.getCustomer();
@@ -1671,7 +1672,7 @@ define([], function() {
 						}
 					});
 				}
-			
+				
 				if ($("#urlTest").is(':checked')) {
 					var test = $("#testTab :input").not("#testTab input[type=hidden]");
 					test.each(function() {
@@ -1687,7 +1688,6 @@ define([], function() {
 					});
 				}
 			}
-
 			var confluence = $("#confluenceUploadSettings input, #confluenceUploadSettings select").not("#confluenceUploadSettings input[type=checkbox], input[name=confluenceOther]");
 			confluence.each(function() {
 				if (self.isBlank(this.value) && (this.name === 'confluenceSite')) {
@@ -1706,7 +1706,7 @@ define([], function() {
 					emptyFound = true;
 				}	
 			});
-
+			
 			var collabnet = $("#collabnetUploadSettings input").not("#repoType input[type=radio]");
 			collabnet.each(function() {
 				if (self.isBlank(this.value)) {
@@ -1738,7 +1738,7 @@ define([], function() {
 					emptyFound = true;
 				}	
 			});
-
+			
 			if (self.isBlank($("input[name=jobName]").val())) {
 				$("input[name=jobName]").focus();
 				$("input[name=jobName]").attr('placeholder','Enter Name');
@@ -1748,16 +1748,18 @@ define([], function() {
 				});		
 				emptyFound = true;
 			}
-			if (self.isBlank($("input[name=releaseVersion]").val())) {
-				$("input[name=releaseVersion]").focus();
-				$("input[name=releaseVersion]").attr('placeholder','Enter release version');
-				$("input[name=releaseVersion]").addClass("errormessage");
-				$("input[name=releaseVersion]").bind('keypress', function() {
-					$(this).removeClass("errormessage");
-				});		
-				emptyFound = true;
-			}
 			
+			if (templateJsonData.type === "release") {			
+				if (self.isBlank($("input[name=releaseVersion]").val())) {
+					$("input[name=releaseVersion]").focus();
+					$("input[name=releaseVersion]").attr('placeholder','Enter release version');
+					$("input[name=releaseVersion]").addClass("errormessage");
+					$("input[name=releaseVersion]").bind('keypress', function() {
+						$(this).removeClass("errormessage");
+					});		
+					emptyFound = true;
+				}
+			}	
 			
 			var selectedJobLiObj = $("#sortable2 li[temp=ci]");
 			var add = $(".content_end").find("input[type=submit]").val();
@@ -1780,6 +1782,7 @@ define([], function() {
 					}
 				}
 			});
+			
 //			}
 			if (!emptyFound) {
 			if(templateJsonData.type === "performanceTest" || templateJsonData.type === "loadTest") {
@@ -1862,6 +1865,7 @@ define([], function() {
 						jobConfiguration.skipTests = "true";
 					}
 				}
+				
 				jobConfiguration.operation = templateJsonData.type;
 				jobConfiguration.triggers = triggers;
 				jobConfiguration.templateName = templateJsonData.name;
