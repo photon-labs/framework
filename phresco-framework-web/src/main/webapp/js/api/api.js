@@ -349,7 +349,7 @@ define(["api/localStorageAPI", "framework/widgetWithTemplate"], function(){
 					contentType: "application/json",
 					requestMethod: "POST",
 					dataType: "json",
-					webserviceurl: commonVariables.webserviceurl+"util/sendErrorReport?emailId=phresco-support@photoninfotech.net",
+					webserviceurl: commonVariables.webserviceurl+"util/sendErrorReport",
 				}
 				header.requestPostBody = jsonData;
 				if (commonVariables.callLadda) {

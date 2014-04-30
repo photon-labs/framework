@@ -36,6 +36,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.io.InputStream;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -636,10 +638,15 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 	@POST
 	@Path("/sendErrorReport")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response sendErrorReport(String errorReport, @QueryParam("emailId") String emailId) throws PhrescoException {
+	public Response sendErrorReport(String errorReport) throws PhrescoException {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
-			Utility.sendTemplateEmail(emailId, MAIL_ID, MAIL_SUBJECT, errorReport, MAIL_ID, MAIL_PASSWORD, null);
+		     InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("framework.config");
+             Properties prop = new Properties();
+             prop.load(resourceAsStream);
+		     String group = prop.getProperty("phresco.support.mailIds");
+			 String[] groupp=group.split(",");
+			 Utility.sendTemplateEmail(groupp, MAIL_ID, MAIL_SUBJECT, errorReport, MAIL_ID, MAIL_PASSWORD, null);
 			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, null,
 					RESPONSE_STATUS_SUCCESS, PHR14C00001);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
