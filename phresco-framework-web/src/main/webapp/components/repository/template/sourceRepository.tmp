@@ -35,7 +35,7 @@
 							</tr>	
 							<tr>
 								<td colspan="2">
-									<textarea id="releaseComment"></textarea><img class="search" typeOfRepo="add"  dynId="{{id}}" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
+									<textarea id="releaseComment"></textarea><img class="search" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
 								</td>
 							</tr>
 							<tr>
@@ -213,7 +213,11 @@
 										</td>
 									</tr>
 									<tr>
-										<td colspan="2"><textarea id="branchComment"></textarea></td>
+										<td colspan="2"><textarea id="branchComment"></textarea><img class="search" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
+										</td>
+									</tr>
+									<tr>
+										<td><select class="searchdropdown"></select></td>
 									</tr>
 									<tr>
 										<td><input type="checkbox" id="downloadBrToWorkspace" style="vertical-align: baseline;">Download to Workspace</td>

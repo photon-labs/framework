@@ -99,7 +99,7 @@ define(["tridiongeneral/listener/tridiongeneralListener"], function() {
 			var self = this;
 			//self.getPublishStatusEvent.dispatch('PublicationStatus');
 			self.getEnvironmentsEvent.dispatch('getEnv');
-			self.clickFunction();
+			//self.clickFunction();
 		},
 
 		/***
@@ -109,18 +109,19 @@ define(["tridiongeneral/listener/tridiongeneralListener"], function() {
 		 * @element: Element as the result of the template + data binding
 		 */
 
-					
-		clickFunction : function(){
+		// Commented by sudhakar for bind issue code added in listener file			
+		/*clickFunction : function(){
 			var self = this;
-			//$("#envList li[name=selectEnv]").unbind('click');
-			$("#envList li[name=selectEnv]").live("click" , function() {
+			$("#envList li[name=selectEnv]").bind('click', function (){
 				$('.dyn_popup').hide();
 				var selEnvironment = $(this).attr('key');
 				$("#selectedEnv").text($(this).attr('data'));
 				$("#selectedEnv").attr("key",selEnvironment);
 				self.clonePublicationEvent.dispatch(selEnvironment , 'clonePublication');
 			});		
-		},		
+		},*/
+
+
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -191,6 +192,12 @@ define(["tridiongeneral/listener/tridiongeneralListener"], function() {
 			$("#submitPublication").bind('click', function(){
 				self.submitPublicationEvent.dispatch();
 			});
+
+
+			$("input[name='publicationName']").focusout(function(){
+			  $("input[name='publicationKey']").val($(this).val());
+			});
+
 
 			$(function() {
 				// sortable1 functionality

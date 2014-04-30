@@ -105,6 +105,8 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 				$("#tagFromName").val(selectedBranch);
 				$("#tagNameSkipTest").prop('checked', false);
 				self.opencc(this, $(this).attr('name'));
+				$('.searchdropdown').hide();
+				$('#branchComment').val('');
 			});
 			
 			$("#releaseVersion,#devVersion").bind('input propertychange', function() {
@@ -178,7 +180,9 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 							self.repositoryListener.hidePopupLoad();
 							// Loading latest message by default
 							var repoMsg = $('.searchdropdown').eq(0).find('option:first').text();
-							$("#releaseComment").val(repoMsg);								
+							$("#releaseComment").val(repoMsg);	
+							$("#branchComment").val(repoMsg);
+														
 						});
 						$('.searchdropdown').show();
 				});	
@@ -193,6 +197,7 @@ define(["framework/widgetWithTemplate", "repository/listener/repositoryListener"
 			$('#submitCredentials').bind("click", function() {
 				self.repositoryListener.saveCredentials();
 			});
+			
 			
 			$('#closeCredPopup').unbind("click");
 			$('#closeCredPopup').bind("click", function() {

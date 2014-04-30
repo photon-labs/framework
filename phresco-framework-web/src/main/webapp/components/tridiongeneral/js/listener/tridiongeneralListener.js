@@ -136,7 +136,7 @@ define([], function() {
 							} */
 							//if($.inArray(value.name , envArray)){
 							if (jQuery.inArray(value.name , envArray) === -1) {
-								environments += '<li disabled="disabled" style="padding-left:8px;" data="'+value.name+'" key="'+value.name+'" name="selectEnv" class="dropdown-key">'+value.name+'</li>';
+								environments += '<li style="padding-left:8px;" data="'+value.name+'" key="'+value.name+'" name="selectEnv" class="dropdown-key">'+value.name+'</li>';
 							} /* else {
 								environments += '<li style="padding-left:8px;cursor:none;" data="'+value.name+'" key="'+value.name+'" name="selectEnv">'+value.name+'</li>';
 							} */
@@ -144,11 +144,23 @@ define([], function() {
 							
 						});	
 						$("#envList").append(environments);
+						self.callBind();
 					}
 				}
 			});
 		},
 		
+		callBind : function(){
+			var self = this;
+			$("#envList li[name=selectEnv]").on('click', function (){
+				$('.dyn_popup').hide();
+				var selEnvironment = $(this).attr('key');
+				$("#selectedEnv").text($(this).attr('data'));
+				$("#selectedEnv").attr("key",selEnvironment);
+				self.clonePublications(selEnvironment , 'clonePublication');
+			});	
+		},
+
 		getPublicationStatus : function(action){
 			var self = this;
 			var environments = "";
