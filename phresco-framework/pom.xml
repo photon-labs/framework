@@ -23,6 +23,8 @@
         </site>
     </distributionManagement>
     <properties>
+		<phresco.env.config.xml>/src/main/resources/phresco-env-config.xml</phresco.env.config.xml>
+        <phresco.env.test.config.xml>/src/test/webapp/resources/phresco-env-config.xml</phresco.env.test.config.xml>
         <phresco.functionalTest.selenium.tool>fest</phresco.functionalTest.selenium.tool>
         <phresco.functionalTest.dir>/test/functional</phresco.functionalTest.dir>
         <phresco.functionalTest.report.dir>/test/functional/target</phresco.functionalTest.report.dir>

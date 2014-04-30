@@ -117,6 +117,8 @@
         </profile>
 	</profiles>
 	  <properties>
+	   <phresco.env.config.xml>/src/main/resources/phresco-env-config.xml</phresco.env.config.xml>
+        <phresco.env.test.config.xml>/src/test/webapp/resources/phresco-env-config.xml</phresco.env.test.config.xml>
         <phresco.unitTest.java.report.dir>/do_not_checkin/reports/unitReports</phresco.unitTest.java.report.dir>
         <phresco.unitTest.java.testsuite.xpath>/testsuite</phresco.unitTest.java.testsuite.xpath>
         <phresco.unitTest.java.testcase.path>/testcase</phresco.unitTest.java.testcase.path>

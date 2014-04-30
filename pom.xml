@@ -60,7 +60,7 @@
                 <plugin>
                     <groupId>com.photon.phresco.plugins</groupId>
                     <artifactId>phresco-maven-plugin</artifactId>
-                    <version>3.3.1.7000</version>
+                    <version>3.3.1.6000</version>
                     <extensions>true</extensions>
                 </plugin>
             </plugins>
@@ -361,14 +361,14 @@
         </site>
     </distributionManagement>
     <properties>
-       <phresco.env.config.xml>/src/main/webapp/WEB-INF/resources/phresco-env-config.xml</phresco.env.config.xml>
+       <phresco.env.config.xml>/src/main/resources/phresco-env-config.xml</phresco.env.config.xml>
         <phresco.env.test.config.xml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/src/test/webapp/resources/phresco-env-config.xml</phresco.env.test.config.xml>
         <project.build.sourceEncoding xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">UTF-8</project.build.sourceEncoding>
         <sonar.language xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">js</sonar.language>
         <sonar.javascript.jstest.reportsfolder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">do_not_checkin/target/jstest/report/emulator-0</sonar.javascript.jstest.reportsfolder>
         <sonar.javascript.testframework xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">jstest</sonar.javascript.testframework>
         <phresco.jslibs.source.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/src/main/webapp/lib</phresco.jslibs.source.dir>
-        <phresco.source.resource.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/src/main/webapp/WEB-INF/resources</phresco.source.resource.dir>
+        <phresco.source.resource.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/src/main/resources</phresco.source.resource.dir>
         <phresco.components.source.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/src/main/webapp/components</phresco.components.source.dir>
         <phresco.eclipse xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</phresco.eclipse>
         <phresco.unitTest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">js,java</phresco.unitTest>

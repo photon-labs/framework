@@ -857,12 +857,38 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 	}
 	
-	public ActionResponse sonarExecution(String sonarParam) throws PhrescoException, IOException {
+	public ActionResponse sonarSetupAction() throws PhrescoException, IOException {
 		printLogs();
 		BufferedInputStream server_logs=null;
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = sonarExecutions(sonarParam);
+		server_logs = sonarSetup();
+		if (server_logs != null) {
+			return generateResponse(server_logs, unique_key);
+		} else {
+			throw new PhrescoException("No logs obtained");
+		}
+	}
+	
+	public ActionResponse sonarStartAction() throws PhrescoException, IOException {
+		printLogs();
+		BufferedInputStream server_logs=null;
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		server_logs = sonarStart();
+		if (server_logs != null) {
+			return generateResponse(server_logs, unique_key);
+		} else {
+			throw new PhrescoException("No logs obtained");
+		}
+	}
+	
+	public ActionResponse sonarStopAction() throws PhrescoException, IOException {
+		printLogs();
+		BufferedInputStream server_logs=null;
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		server_logs = stopSonar();
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
@@ -2433,59 +2459,15 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return reader;
 	}
 
-	public BufferedInputStream sonarExecutions(String sonarParam) throws PhrescoException {
-		BufferedInputStream reader = null;
-//		StringBuilder sb = new StringBuilder();
-		if (isDebugEnabled) {
-			S_LOGGER.debug("Entering Method  MavenFunctions .sonarExecution()");
-		}
+	private BufferedInputStream sonarSetup() throws PhrescoException {
 		try {
-			System.out.println("sonarParam" + sonarParam);
-			String phrescoHome = Utility.getPhrescoHome();
-			phrescoHome = phrescoHome + "/workspace/tools/sonar";
-			System.out.println("phrescoHome" + phrescoHome);
-			
-			if (isDebugEnabled) {
-				S_LOGGER.debug("Sonar Home " + phrescoHome.toString());
-			}
-			if(sonarParam.equals("setup")) {
-				reader = sonarSetup(phrescoHome);
-			} else if(sonarParam.equals("start")) {
-				reader = sonarStart(phrescoHome);
-			} else if(sonarParam.equals("stop")) {
-				reader = sonarStop(phrescoHome);
-			}
-			
-	/*		String platform = findPlatform();
-			if(platform.equals(WINDOWS)) {
-				sb.append("sonar-");
-				sb.append(paramToTrigger);
-				sb.append(".bat");				
-			} else {
-				sb.append("sh");
-				sb.append(Constants.SPACE);
-				sb.append("sonar-");
-				sb.append(paramToTrigger);
-				sb.append(".sh");	
-				
-			}*/
-/*			
-			System.out.println("command ......... " + sb.toString());
-			Commandline cl = new Commandline(sb.toString());
-	        if (StringUtils.isNotEmpty(phrescoHome)) {
-	            cl.setWorkingDirectory(phrescoHome);
-	        } 
-	            Process process = cl.execute();
-	            reader =  new BufferedInputStream(new MyWrapper(process.getInputStream()));
-*/
-		} catch (CommandLineException e) {
-			S_LOGGER.error("Entered into catch block of sonarExecution()" + FrameworkUtil.getStackTraceAsString(e));
-			throw new PhrescoException("exception occured in the sonarExecution ");
+		String phrescoHome = Utility.getPhrescoHome();
+		phrescoHome = phrescoHome + "/workspace/tools/sonar";
+		
+		if (isDebugEnabled) {
+			S_LOGGER.debug("Sonar Home " + phrescoHome.toString());
 		}
-		return reader;
-	}
-	
-	private BufferedInputStream sonarSetup(String phrescoHome) throws CommandLineException {
+		
 		BufferedInputStream reader = null;
 		StringBuilder sb = new StringBuilder();
 		sb.append(MAVEN);
@@ -2502,10 +2484,22 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
             reader =  new BufferedInputStream(new MyWrapper(process.getInputStream()));
 		
 		return reader;
+		}  catch (CommandLineException e) {
+			S_LOGGER.error("Entered into catch block of sonarSetup()" + FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException("exception occured in the sonarSetup");
+		}	
 		
 	}
 	
-	private BufferedInputStream sonarStart(String phrescoHome) throws CommandLineException {
+	private BufferedInputStream sonarStart() throws PhrescoException {
+		try {
+		String phrescoHome = Utility.getPhrescoHome();
+		phrescoHome = phrescoHome + "/workspace/tools/sonar";
+		
+		if (isDebugEnabled) {
+			S_LOGGER.debug("Sonar Home " + phrescoHome.toString());
+		}
+		
 		BufferedInputStream reader = null;
 		StringBuilder sb = new StringBuilder();
 		sb.append(MAVEN);
@@ -2520,10 +2514,21 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
             reader =  new BufferedInputStream(new MyWrapper(process.getInputStream()));
 		
 		return reader;
+		}  catch (CommandLineException e) {
+			S_LOGGER.error("Entered into catch block of sonarStart()" + FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException("exception occured in the sonarStart");
+		}	
 		
 	}
 	
-	private BufferedInputStream sonarStop(String phrescoHome) throws CommandLineException {
+	private BufferedInputStream stopSonar() throws PhrescoException {
+		try {
+		String phrescoHome = Utility.getPhrescoHome();
+		phrescoHome = phrescoHome + "/workspace/tools/sonar";
+		
+		if (isDebugEnabled) {
+			S_LOGGER.debug("Sonar Home " + phrescoHome.toString());
+		}
 		BufferedInputStream reader = null;
 		StringBuilder sb = new StringBuilder();
 		sb.append(MAVEN);
@@ -2538,27 +2543,13 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
             reader =  new BufferedInputStream(new MyWrapper(process.getInputStream()));
 		
 		return reader;
+		}  catch (CommandLineException e) {
+			S_LOGGER.error("Entered into catch block of sonarStop()" + FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException("exception occured in the sonarStop");
+		}	
 		
 	}
 	
-/*	
-	public String findPlatform() {
-		String osName = System.getProperty(Constants.OS_NAME);
-		if (osName.contains(Constants.WINDOWS)) {
-			osName = Constants.WINDOWS;
-		} else if (osName.contains(FrameworkConstants.LINUX)) {
-			osName = FrameworkConstants.LINUX;
-		} else if (osName.contains(FrameworkConstants.MAC)) {
-			osName = FrameworkConstants.MAC;
-		} else if (osName.contains(FrameworkConstants.SERVER)) {
-			osName = FrameworkConstants.SERVER;
-		} else if (osName.contains(FrameworkConstants.WINDOWS7)) {
-			osName = FrameworkConstants.WINDOWS7.replace(" ", "");
-		}
-		
-		return osName;
-	}*/
-
 	public BufferedInputStream sonarStop() throws PhrescoException {
 		BufferedInputStream reader = null;
 
