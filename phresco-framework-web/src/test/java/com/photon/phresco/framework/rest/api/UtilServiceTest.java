@@ -244,7 +244,7 @@ public class UtilServiceTest extends RestBaseTest {
 	public void testSendErrorReport() throws PhrescoException, UnknownHostException {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
-		Response sendReport = utilService.sendErrorReport("test error report","rohan.lukose@photoninfotech.net");
+		Response sendReport = utilService.sendErrorReport("test error report");
 		System.out.println(sendReport.getStatus());
 		ResponseInfo<String> responseInfo = (ResponseInfo<String> )sendReport.getEntity();
 		System.out.println(responseInfo.getResponseCode());
@@ -255,7 +255,7 @@ public class UtilServiceTest extends RestBaseTest {
 	public void testSendErrorReportFail() throws PhrescoException, UnknownHostException {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
-		Response sendReport = utilService.sendErrorReport("test error report","rohan.lukosephotoninfotech.net");
+		Response sendReport = utilService.sendErrorReport("test error report");
 		System.out.println(sendReport.getStatus());
 		ResponseInfo<String> responseInfo = (ResponseInfo<String> )sendReport.getEntity();
 		System.out.println(responseInfo.getResponseCode());
