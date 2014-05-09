@@ -1612,24 +1612,45 @@ define([], function() {
 		    }
 		},
 		
-		consDragnDropcnt : function(parameter, whereToRender){
+		/*consDragnDropcnt : function(parameter, whereToRender){
 			var self = this;
 			if(parameter != null && parameter != ""){
+			console.info("parameter",parameter);
 				var sortable1Val = "", sortable2Val = "", sort2 ={};
 				$('table[name=fetchSql_table]').remove();
 				if(parameter.fetchSql != null && parameter.fetchSql != ""){
 					$.each(JSON.parse(parameter.fetchSql), function(key, currentDbList){
 						sort2[key] = [];
 						$.each(currentDbList, function(index, current){
-							sortable2Val += '<li class="ui-state-default '+ ($("#dataBase").val() == key ? "" : "ui-state-disabled")+'" path="'+ current +'" dbName="' + key + '">'+ current.split('/').pop() +'</li>';
+							sortable2Val = '<li class="ui-state-default '+ ($("#dataBase").val() == key ? "" : "ui-state-disabled")+'" path="'+ current +'" dbName="' + key + '">'+ current.split('/').pop() +'</li>';
 							sort2[key].push(current);
 						});
 					});
 				} 
-				whereToRender.append('<table name="fetchSql_table" class="table table-striped table_border table-bordered fetchSql_table border_div" cellpadding="0" cellspacing="0" border="0"><thead><tr><th colspan="2">DB Script Execution</th></tr></thead><tbody><tr><td><ul name="sortable1" class="sortable1 connectedSortable">' + sortable1Val + '</ul></td><td><ul name="sortable2" class="sortable2 connectedSortable">' + sortable2Val + '</ul></td></tr></tbody></table>');
+				whereToRender.append('<table name="fetchSql_table" class="table table-striped table_border table-bordered fetchSql_table border_div" cellpadding="0" cellspacing="0" border="0"><thead><tr><th colspan="2">DB Script Execution:::::::</th></tr></thead><tbody><tr><td><ul name="sortable1" class="sortable1 connectedSortable">' + sortable1Val + '</ul></td><td><ul name="sortable2" class="sortable2 connectedSortable">' + sortable2Val + '</ul></td></tr></tbody></table>');
 			}
+		},*/
+		
+		consDragnDropcnt : function(parameter, whereToRender){
+			var self = this;
+			if(parameter != null && parameter != ""){
+				var sortable1Val="", sortable2 = "", sort2 = {};
+				if(parameter.fetchSql != null && parameter.fetchSql != ""){
+					$.each(JSON.parse(parameter.fetchSql), function(key, currentDbList){
+						$.each(currentDbList, function(index, current){
+							var sortable2 = $('table[name=fetchSql_table]').find('.sortable2').append('<li class="ui-state-default '+ ($("#dataBase").val() == key ? "" : "ui-state-disabled")+'" path="'+ current +'" dbName="' + key + '">'+ current.split('/').pop() +'</li>');	
+							$.each($('ul[name=sortable1] li'), function(num, liVal){
+								if(current == $(liVal).attr("path")){
+									$(liVal).remove();
+								}
+							});
+						});
+					});
+				}
+			}
+			
 		},
-
+		
 		configureJob : function (thisObj) {
 			var self = this;
 			// Get app name
