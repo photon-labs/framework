@@ -10,6 +10,9 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 		switchStatus : null,
 		start : null,
 		stop : null,
+		sonarstart : null,
+		sonarstop : null,
+		sonarsetup : null,
 		setup : null,
 		presetup : null,
 		save : null,
@@ -65,6 +68,17 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 				self.presetup = new signals.Signal();
 			}
 			
+			if (self.sonarsetup === null) {
+			    self.sonarsetup = new signals.Signal();
+			}
+			
+			if (self.sonarstart === null) {
+			   self.sonarstart = new signals.Signal();
+			}
+			
+			if (self.sonarstop === null) {
+			   self.sonarstop = new signals.Signal();
+			}
 
 			// Trigger registered events
 			self.getSettings.add(settingsListener.getSettings, settingsListener);
@@ -75,6 +89,9 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 			self.save.add(settingsListener.save, settingsListener);
 			self.onShowHideConsoleEvent.add(settingsListener.showHideConsole, settingsListener);
 			self.presetup.add(settingsListener.presetup, settingsListener);
+			self.sonarsetup.add(settingsListener.sonarsetup, settingsListener);
+			self.sonarstart.add(settingsListener.sonarstart, settingsListener);
+			self.sonarstop.add(settingsListener.sonarstop, settingsListener);
 		},
 
 		/***
@@ -118,11 +135,11 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
    				$("#unit_popup").toggle();
 			});
    			
-   			$('input[name=setup]').click(function() {
-				self.setup.dispatch();
-				$("#unit_popup").toggle();
-		});
-   			
+			$('input[name=setup]').click(function() {
+					self.setup.dispatch();
+					$("#unit_popup").toggle();
+			});
+				
    			$("input[name=switch]").click(function() {		
    				if ($(this).attr('value') === 'Start') {
    					$('input[name=switch]').attr('value', "Stop");
@@ -134,6 +151,24 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 				}
    				$("#unit_popup").toggle();
    			});
+				
+			$('input[name=sonarsetup]').click(function() {
+					self.sonarsetup.dispatch();
+					$("#unit_popup").toggle();
+			 });
+   			
+			$("input[name=sonarswitch]").click(function() {		
+				if ($(this).attr('value') === 'Start') {
+					$('input[name=sonarswitch]').attr('value', "Stop");
+					self.sonarstart.dispatch();
+				} else if ($(this).attr('value') === 'Stop') {
+					$('input[name=sonarswitch]').attr('value', "Start");
+					$('input[name=presonarsetup]').attr('disabled', false);
+					self.sonarstop.dispatch();
+				}
+					$("#unit_popup").toggle();
+				});
+				
    			
    		//To show hide the console content when the console is clicked
 			$('#consoleImg').unbind("click");
@@ -172,6 +207,8 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
    			$('input[name=save]').click(function() {
    				self.save.dispatch();
 			});
+			
+			
 			
    			self.customScroll($(".consolescrolldiv"));
 

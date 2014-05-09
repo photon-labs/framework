@@ -163,6 +163,8 @@ define(["lib/fileuploader-2.4"], function() {
 		
 		addManualTestcase : function(testsuiteName) {
 			var self = this; data = {}, response = {};
+			$("#tabularView").show();
+			$("#graphicalView").hide();
 			if(!self.validationTestcase()) {
 				data = $("#manualTestTestCaseForm").serializeObject();
 				self.manualRequestBody = data;

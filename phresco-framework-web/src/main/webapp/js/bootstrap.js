@@ -226,6 +226,9 @@ var commonVariables = {
 	mvnTag : "repository/tag",
 	mvnCreateBranch : "repository/createBranch",
 	mvnFlag : "flag",
+	mvnSonarSetup : "app/sonarSetup",
+	mvnSonarStart : "app/sonarStart",
+	mvnSonarStop : "app/sonarStop",
 	
 	/******** mvn Context end****/
 	
