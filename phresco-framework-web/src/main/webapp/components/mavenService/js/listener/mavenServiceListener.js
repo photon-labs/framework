@@ -54,6 +54,20 @@ define([], function() {
 			self.mvnService(header, divId, callback);
 		},
 		
+		mvnSonarSetup : function(paramData, divId, callback){
+			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnSonarSetup, paramData);
+			self.mvnService(header, divId, callback);
+		},
+		
+		mvnSonarStart : function(paramData, divId, callback){
+			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnSonarStart, paramData);
+			self.mvnService(header, divId, callback);
+		},
+		
+		mvnSonarStop : function(paramData, divId, callback){
+			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnSonarStop, paramData);
+			self.mvnService(header, divId, callback);
+		},
 		mvnComponentTest : function(paramData, divId, callback){
 			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnComponentTest, paramData);
 			self.mvnService(header, divId, callback);
