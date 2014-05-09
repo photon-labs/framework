@@ -1633,6 +1633,7 @@ define([], function() {
 		
 		consDragnDropcnt : function(parameter, whereToRender){
 			var self = this;
+			
 			if(parameter != null && parameter != ""){
 				var sortable1Val="", sortable2 = "", sort2 = {};
 				if(parameter.fetchSql != null && parameter.fetchSql != ""){
