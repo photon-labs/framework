@@ -86,7 +86,16 @@ define([], function() {
 			} else if (action === "presetup") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/presetup";
-			}else if (action === "save") {
+			} else if (action === "sonarsetup") {
+				header.requestMethod = "POST";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.mvnSonarSetup;
+			} else if (action === "sonarstart") {
+				header.requestMethod = "POST";				
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.mvnSonarStart;				
+			} else if (action === "sonarstop") {
+				header.requestMethod = "POST";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.mvnSonarStop;
+			} else if (action === "save") {
 				header.requestMethod = "POST";
 				var eUser = $('input[name=username][temp=email]').val();
 				var ePass = $('input[name=password][temp=email]').val();
@@ -97,6 +106,7 @@ define([], function() {
 				header.requestPostBody = JSON.stringify(ciRequestBody);
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/global?emailAddress=" + eUser + "&emailPassword=" + ePass + "&url=" + jUrl + "&username=" + jName + "&password=" + jPass + "&tfsUrl=" + tfcle;
 			} 
+			
 			return header;
 		},
 		
@@ -117,7 +127,6 @@ define([], function() {
 			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'getTfs'), function(tfs) {
 				$('input[name=tfcle][temp=jenkins]').val(tfs.data);
 			});
-			
 			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'getKeyChains'), function(response) {
 				for (i in response.data) {
 					var data = response.data[i];
@@ -133,24 +142,23 @@ define([], function() {
 				self.switchStatus();
 				setTimeout(function() {
 					$('#keychainTable').on('click', 'a.deleteKeychain', function() {
-						console.info("hello enterin")
 						$(this).closest('.keychain').remove();
 					});
 				}, 500);
 			});
 			
 			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'getConfluence'), function(response) {
-				for (i in response.data) {
-					var data = response.data[i];
-					var tds = $('#prototype').html();
-					var tr = $('<tr class=confluence>');
-					tr.append(tds);
-					tr.find('[name=url]').val(data.repoUrl);
-					tr.find('[name=username]').val(data.userName);
-					tr.find('[name=password]').val(data.password);
-					
-					tr.insertBefore($('#save'));
-				}
+					for (i in response.data) {
+						var data = response.data[i];
+						var tds = $('#prototype').html();
+						var tr = $('<tr class=confluence>');
+						tr.append(tds);
+						tr.find('[name=url]').val(data.repoUrl);
+						tr.find('[name=username]').val(data.userName);
+						tr.find('[name=password]').val(data.password);
+						tr.insertBefore($('#save'));
+					}
+				
 				self.switchStatus();
 				setTimeout(function() {
 					$('#conflTable').on('click', 'a.delete', function() {
@@ -220,8 +228,7 @@ define([], function() {
 		setup : function() {
 			$(".dyn_popup").hide();
 			var self = this;
-			var queryString = '';
-						
+			var queryString = '';			
 			$('#testConsole').html('');
 			self.openConsole(true);//To open the console
 			if (self.mavenServiceListener === null) {
@@ -284,6 +291,79 @@ define([], function() {
 				});
 			} else {
 				self.mavenServiceListener.mvnCiStop(queryString, '#testConsole', function(response) {
+					self.closeConsole();
+					$('.progress_loading').hide();
+				});
+			}
+		},
+		
+		sonarsetup : function () {
+		    $(".dyn_popup").hide();
+			var self = this;
+			var queryString = '';
+						
+			$('#testConsole').html('');
+			self.openConsole(true);//To open the console
+			if (self.mavenServiceListener === null) {
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
+					self.mavenServiceListener = retVal;
+					self.mavenServiceListener.mvnSonarSetup(queryString, '#testConsole', function(response) {
+						self.closeConsole();
+						if (response !== undefined && response.status === "COMPLETED") {
+							//$('input[name=sonarsetup]').attr('disabled', "disabled");	
+						}					
+						$('.progress_loading').hide();
+					});
+				});
+			} else {
+				self.mavenServiceListener.mvnSonarSetup(queryString, '#testConsole', function(response) {
+					self.closeConsole();
+					if (response !== undefined && response.status === "COMPLETED") {
+						//$('input[name=sonarsetup]').attr('disabled', "disabled");	
+					}					
+					$('.progress_loading').hide();
+				});
+			}
+		},
+		
+		sonarstart : function () {
+		   var self = this;
+			var queryString = '';
+						
+			$('#testConsole').html('');
+			self.openConsole(true);//To open the console
+			if (self.mavenServiceListener === null) {
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
+					self.mavenServiceListener = retVal;
+					self.mavenServiceListener.mvnSonarStart(queryString, '#testConsole', function(response) {
+						self.closeConsole();
+						$('.progress_loading').hide();
+					});
+				});
+			} else {
+				self.mavenServiceListener.mvnSonarStart(queryString, '#testConsole', function(response) {
+					self.closeConsole();
+					$('.progress_loading').hide();
+				});
+			}		
+		},
+		
+		sonarstop : function () {
+		   var self = this;
+			var queryString = '';
+						
+			$('#testConsole').html('');
+			self.openConsole(true);//To open the console
+			if (self.mavenServiceListener === null) {
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
+					self.mavenServiceListener = retVal;
+					self.mavenServiceListener.mvnSonarStop(queryString, '#testConsole', function(response) {
+						self.closeConsole();
+						$('.progress_loading').hide();
+					});
+				});
+			} else {
+				self.mavenServiceListener.mvnSonarStop(queryString, '#testConsole', function(response) {
 					self.closeConsole();
 					$('.progress_loading').hide();
 				});
