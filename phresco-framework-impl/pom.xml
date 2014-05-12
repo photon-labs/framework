@@ -196,11 +196,11 @@
 		  <version>1.0</version>
 		</dependency>
 		
-		<!-- <dependency>
+		 <dependency>
 		  <groupId>com.microsoft.tfs.client</groupId>
 		  <artifactId>common</artifactId>
 		  <version>1.0</version>
-		</dependency> -->
+		</dependency> 
 		
 		<dependency>
 		  <groupId>com.microsoft.tfs</groupId>
@@ -268,11 +268,11 @@
 		  <version>1.0</version>
 		</dependency>
 		
-		<!-- <dependency>
+		<dependency>
 		  <groupId>com.microsoft.tfs.core</groupId>
 		  <artifactId>ws</artifactId>
 		  <version>1.0</version>
-		</dependency> -->
+		</dependency>
 		
 		<dependency>
 		  <groupId>com.microsoft.tfs.core.ws</groupId>
@@ -280,11 +280,11 @@
 		  <version>1.0</version>
 		</dependency>
 		
-		<!-- <dependency>
+	 <dependency>
 		  <groupId>com.microsoft.tfs</groupId>
 		  <artifactId>jni</artifactId>
 		  <version>1.0</version>
-		</dependency> -->
+		</dependency> 
 		
 		<!-- <dependency>
 		  <groupId>com.microsoft.tfs</groupId>
