@@ -92,7 +92,7 @@ public class DynamicFetchSqlImpl implements DynamicParameter, Constants {
 			String dbType = configuration.getProperties().getProperty(DB_TYPE).toLowerCase();
 			if (dbType.equals(dbname)) { 
 				dbVersion =configuration.getProperties().getProperty(DB_VERSION);
-				ProjectInfo info = Utility.getProjectInfo(rootModulePath, subModuleName);
+				ProjectInfo info = Utility.getProjectInfo(rootModulePath, "");
 				File srcFolderLocation = Utility.getSourceFolderLocation(info, rootModulePath, subModuleName);
 				StringBuilder sb = new StringBuilder(srcFolderLocation.toString());
 				sb.append(File.separator).append(sqlFilePath).append(dbname)
