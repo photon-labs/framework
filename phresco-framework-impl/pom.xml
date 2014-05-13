@@ -3,7 +3,7 @@
      <parent>
         <groupId>com.photon.phresco.framework</groupId>
         <artifactId>phresco-framework-root</artifactId>
-        <version>3.3.1.9001-SNAPSHOT</version>
+        <version>3.3.1.9002-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
    
@@ -11,7 +11,7 @@
     <groupId>com.photon.phresco.framework</groupId>
     <artifactId>phresco-framework-impl</artifactId>
     <name>Phresco Framework Implementation</name>
-    <version>3.3.1.9001-SNAPSHOT</version>
+    <version>3.3.1.9002-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>Phresco Framework Implementation</description>
     <url>http://www.phresco.org</url>
@@ -196,11 +196,11 @@
 		  <version>1.0</version>
 		</dependency>
 		
-		<!-- <dependency>
+		 <dependency>
 		  <groupId>com.microsoft.tfs.client</groupId>
 		  <artifactId>common</artifactId>
 		  <version>1.0</version>
-		</dependency> -->
+		</dependency> 
 		
 		<dependency>
 		  <groupId>com.microsoft.tfs</groupId>
@@ -268,11 +268,11 @@
 		  <version>1.0</version>
 		</dependency>
 		
-		<!-- <dependency>
+		<dependency>
 		  <groupId>com.microsoft.tfs.core</groupId>
 		  <artifactId>ws</artifactId>
 		  <version>1.0</version>
-		</dependency> -->
+		</dependency>
 		
 		<dependency>
 		  <groupId>com.microsoft.tfs.core.ws</groupId>
@@ -280,11 +280,11 @@
 		  <version>1.0</version>
 		</dependency>
 		
-		<!-- <dependency>
+	 <dependency>
 		  <groupId>com.microsoft.tfs</groupId>
 		  <artifactId>jni</artifactId>
 		  <version>1.0</version>
-		</dependency> -->
+		</dependency> 
 		
 		<!-- <dependency>
 		  <groupId>com.microsoft.tfs</groupId>

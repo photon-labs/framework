@@ -1368,6 +1368,7 @@ define([], function() {
 			
 			$('.dyn_popup_close').click( function() {
 				$(placeId).hide();
+				$("#jobConfigure").hide();
 				$("#cron_expression").hide();
 				$('#header').css('z-index','7');
 				$('.content_title').css('z-index','6');

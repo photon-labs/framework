@@ -1645,12 +1645,17 @@ define([], function() {
 						
 						var subModules = response.data;
 						var isMultiModule = false;
-						if (subModules !== null && subModules !== undefined && subModules.length > 0) {
+						var preBuilt=$('#editPrjprojectname').attr('preBuilt');
+						if (subModules !== null && subModules !== undefined && !preBuilt &&subModules.length > 0) {
 							isMultiModule = true;
 						}
 						var multiModBtnCls = "btn btn_style add_icon_btn multi_module_btn hideContent";
 						if (isMultiModule) {
 							multiModBtnCls = "btn btn_style add_icon_btn multi_module_btn";
+						}
+						var addLayerIconCls = "flt_right icon_center";
+						if (preBuilt) {
+							addLayerIconCls = "flt_right icon_center hideContent";
 						}
 						var disabledAttr = "";
 						if (modules !== null && modules !== undefined && modules.length > 0) {
@@ -1661,7 +1666,7 @@ define([], function() {
 											'<td name="technology" class="technology"><select class="selectpicker appln_technology" name="appln_technology" disabled>'+ self.getTechnology(value.techInfo.id) +'</select></td>'+
 											'<td name="version" class="version"><select name="appln_version" class="selectpicker appln_version" disabled><option>'+versionMsg+'</option></select></td>'+
 											'<td><input type="button" value="Multi Module" class="'+multiModBtnCls+'" '+disabledAttr+' name="multiModuleBtn"></td>'+
-											'<td><div class="flt_right icon_center"><a href="javascript:;" name="addApplnLayer"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a></div></td></tr>';
+											'<td><div class="'+addLayerIconCls+'"><a href="javascript:;" name="addApplnLayer"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a></div></td></tr>';
 						if (modules !== null && modules !== undefined && modules.length > 0) {
 							$.each(modules, function(i, module) {
 								var selectedDepndtMods = [];
@@ -1722,12 +1727,17 @@ define([], function() {
 						
 						var subModules = response.data;
 						var isMultiModule = false;
-						if (subModules !== null && subModules !== undefined && subModules.length > 0) {
+						var preBuilt = $('#editPrjprojectname').attr('preBuilt');
+						if (subModules !== null && subModules !== undefined && !preBuilt && subModules.length > 0) {
 							isMultiModule = true;
 						}
 						var multiModBtnCls = "btn btn_style add_icon_btn multi_module_btn hideContent";
 						if (isMultiModule) {
 							multiModBtnCls = "btn btn_style add_icon_btn multi_module_btn";
+						}
+						var addLayerIconCls = "flt_right icon_center";
+						if (preBuilt) {
+							addLayerIconCls = "flt_right icon_center hideContent";
 						}
 						var disabledAttr = "";
 						if (modules !== null && modules !== undefined && modules.length > 0) {
@@ -1738,7 +1748,7 @@ define([], function() {
 											'<td name="widget" class="widget"><select name="web_widget" class="selectpicker web_widget" disabled> '+ self.editgetwidgettype(value.techInfo.id) +'</select></td>'+
 											'<td name="widgetversion" class="widgetversion"><select name="web_version" class="selectpicker web_version" disabled><option>'+value.techInfo.version+'</option></select></td>'+
 											'<td><input type="button" value="Multi Module" class="'+multiModBtnCls+'" '+disabledAttr+' name="multiModuleBtn"></td>'+
-											'<td><div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a></div></td></tr>';
+											'<td><div class="'+addLayerIconCls+'"><a href="javascript:;" name="addWebLayer"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a></div></td></tr>';
 						if (modules !== null && modules !== undefined && modules.length > 0) {
 							$.each(modules, function(i, module) {
 								var selectedDepndtMods = [];
@@ -1801,12 +1811,17 @@ define([], function() {
 						
 						var subModules = response.data;
 						var isMultiModule = false;
-						if (subModules !== null && subModules !== undefined && subModules.length > 0) {
+						var preBuilt=$('#editPrjprojectname').attr('preBuilt');
+						if (subModules !== null && subModules !== undefined && !preBuilt && subModules.length > 0) {
 							isMultiModule = true;
 						}
 						var multiModBtnCls = "btn btn_style add_icon_btn multi_module_btn hideContent";
 						if (isMultiModule) {
 							multiModBtnCls = "btn btn_style add_icon_btn multi_module_btn";
+						}
+						var addLayerIconCls = "flt_right icon_center";
+						if (preBuilt) {
+							addLayerIconCls = "flt_right icon_center hideContent";
 						}
 						var disabledAttr = "";
 						if (modules !== null && modules !== undefined && modules.length > 0) {
@@ -1817,7 +1832,7 @@ define([], function() {
 											'<td name="types" class="types"><select name="mobile_types" class="selectpicker mobile_types" disabled>'+self.editgetmobiletype(value.techInfo.id)+'</select></td>'+
 											'<td name="mobileversion" class="mobileversion"><select name="mobile_version" disabled class="mobile_version selectpicker"><option>'+versionMsg +'</option></select></td>'+
 											'<td><input type="button" value="Multi Module" class="'+multiModBtnCls+'" '+disabledAttr+' name="multiModuleBtn"></td>'+
-											'<td><div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a></div></td></tr>';
+											'<td><div class="'+addLayerIconCls+'"><a href="javascript:;" name="addMobileLayer"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a></div></td></tr>';
 						if (modules !== null && modules !== undefined && modules.length > 0) {
 							$.each(modules, function(i, module) {
 								var selectedDepndtMods = [];
