@@ -76,7 +76,7 @@ define(["codequality/listener/codequalityListener"], function() {
 			self.codequalityListener.getReportTypes(self.codequalityListener.getRequestHeader(self.appDirName , "sonarurl"), function(response) {
 				if(response.data !== null){
 					self.codequalityListener.getSonarStatus(response.data, function(status) {
-						if(status === true){
+						if(status.data === true){
 							setTimeout(function() {
 								self.codequalityListener.getReportTypes(self.codequalityListener.getRequestHeader(self.appDirName , "reporttypes"), function(response) {
 									var projectlist = {};

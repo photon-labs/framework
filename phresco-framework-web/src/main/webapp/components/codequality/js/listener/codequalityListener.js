@@ -105,6 +105,10 @@ define([], function() {
 				header.webserviceurl = commonVariables.webserviceurl+"app/readlog?uniquekey="+uniquekey;
 			}
 			
+			if(action === "sonarstatus"){
+				header.webserviceurl = commonVariables.webserviceurl+"parameter/sonarStatus";
+			}
+			
 			if(action === "reporttypes"){
 				// Code Added and commented by balakumaran : App directory name conflict occurs in multiple tab
 				//var appDirName = commonVariables.api.localVal.getSession('appDirName');
@@ -133,7 +137,27 @@ define([], function() {
 			return header;
 		},
 		
+		/*
+		 * Sonar status with service call
+		 */
 		getSonarStatus : function(url , callback){
+			var self = this;
+			commonVariables.api.ajaxRequest(self.getRequestHeader('' , "sonarstatus", function(response){
+				callback(response);
+			}),
+			function(response){
+				callback(response);
+			},		
+			function(textStatus) {
+				commonVariables.api.showError("serviceerror" ,"error", true);
+			}
+			); 
+		},
+		
+		/*
+		 *  Sonar status without service call 
+		 * 
+		 getSonarStatus : function(url , callback){
 			var self = this;
 			try {
 				commonVariables.api.urlExists(url, 
@@ -161,7 +185,7 @@ define([], function() {
 				console.info('exception');
 			}
 		},
-		
+		*/
 		getSonarUrl : function(url , callback){
 			var self = this;
 			try {

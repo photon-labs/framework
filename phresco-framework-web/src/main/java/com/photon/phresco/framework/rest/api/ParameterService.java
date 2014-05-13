@@ -586,6 +586,48 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			}
 	}
 	
+	@GET
+	@Path("/sonarStatus")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSonarStatus(@Context HttpServletRequest request) {
+		 FrameworkUtil frameworkUtil = new FrameworkUtil(request);
+		 ResponseInfo<String> responseData = new ResponseInfo<String>();
+		 HttpURLConnection connection = null;
+		 String url = "";
+		 int responseCode = 0;
+			try {
+				URL sonarURL = new URL(frameworkUtil.getSonarURL());
+				url = sonarURL.toString();
+				try {
+					connection = (HttpURLConnection) sonarURL.openConnection();
+					responseCode = connection.getResponseCode();
+				} catch (IOException e) {
+					 ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
+			                    false, RESPONSE_STATUS_FAILURE, PHR510001);
+					return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+							ALL_HEADER).build();
+				}
+	    		if(responseCode == 200){
+	    			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
+							true, RESPONSE_STATUS_SUCCESS, PHR510003);
+					return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+							ALL_HEADER).build();
+	    		}
+	    		    ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
+						url, RESPONSE_STATUS_SUCCESS, PHR500004);
+				return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+			} catch (MalformedURLException e) {
+				 ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e,
+		                    null, RESPONSE_STATUS_ERROR, PHR510001);
+		            return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, 
+		            		ALL_HEADER).build();
+			} catch (PhrescoException e) {
+				 ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e,
+		                    null, RESPONSE_STATUS_ERROR, PHR510001);
+		            return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+		            		ALL_HEADER).build();
+			}
+	}
 
 	/**
 	 * Gets the iframe report.
