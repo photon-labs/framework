@@ -40,6 +40,7 @@ define([], function() {
 		buildRepo : null,
 		tridiongeneral : null,
 		tridionpublish : null,
+		zapmenu : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -500,15 +501,24 @@ define([], function() {
 											
 					case commonVariables.tridionpublish :
 						if(self.tridionpublish === null) {
-							//console.info('pubi');
 							require(["tridionpublish/tridionpublish"], function(){
-							//console.info('tridionpublish');
 								self.tridionpublish = new Clazz.com.components.tridionpublish.js.tridionpublish();
-								//console.info('tridionpublish = ' , self.tridionpublish);
 								callback(self.tridionpublish);	
 							});
 						}else{
 							callback(self.tridionpublish);
+						}
+						
+						break;						
+					
+					case commonVariables.zapMenu :
+						if(self.zapmenu === null) {
+							require(["zapmenu/zapmenu"], function(){
+								self.zapmenu = new Clazz.com.components.zapmenu.js.zapmenu();
+								callback(self.zapmenu);	
+							});
+						}else{
+							callback(self.zapmenu);
 						}
 						
 						break;						
@@ -663,24 +673,41 @@ define([], function() {
 				$("table th[name=buildDep]").show();
 				$("table td[name=buildDep]").show();
 			}
+			
 			if (jQuery.inArray(commonVariables.optionsExeDownload, applicableOptions) === -1) { 
 				$('img[name=ipaDownload]').hide();
 			} else {
 				$('img[name=ipaDownload]').show();
 			}
+			
 			if (jQuery.inArray(commonVariables.optionsTridioninfo, applicableOptions) === -1) {
-			//console.info('applicableOptions = ');
 				$("#tridiongeneral").hide();
 			} else {
-			//console.info('applicableOptions else ' );
 				$("#tridiongeneral").show();
 			}
+			
 			if (jQuery.inArray(commonVariables.optionsTridionpublish, applicableOptions) === -1) {
-			//console.info('applicableOptions = ');
 				$("#tridionpublish").hide();
 			} else {
-			//console.info('applicableOptions else ' );
 				$("#tridionpublish").show();
+			}
+
+			if (jQuery.inArray(commonVariables.optionsZap, applicableOptions) === -1) {
+				$("#zapMenu").hide();
+			} else {
+				$("#zapMenu").show();
+			}
+
+			if (jQuery.inArray(commonVariables.optionsSEO, applicableOptions) === -1) {
+				$("#SEOMenu").hide();
+			} else {
+				$("#SEOMenu").show();
+			}
+
+			if (jQuery.inArray(commonVariables.optionsW3C, applicableOptions) === -1) {
+				$("#W3CMenu").hide();
+			} else {
+				$("#W3CMenu").show();
 			}
 
 			if (jQuery.inArray(commonVariables.optionsProcessBuild, applicableOptions) === -1) {
@@ -770,6 +797,7 @@ define([], function() {
 		
 		onMytabEvent : function(keyword) {
 			var self = this, currentObj;
+
 			if (self.currentTab !== commonVariables.editApplication && keyword === commonVariables.editApplication){
 				self.getMyObj(commonVariables.editApplication, function(returnVal){
 					currentObj = returnVal;
@@ -886,7 +914,12 @@ define([], function() {
 					currentObj.favourite = false;
 					self.myTabRenderFunction(currentObj, keyword);
 				});
-			}		
+			}	else if (self.currentTab !== commonVariables.zapMenu && keyword === commonVariables.zapMenu) {
+				self.getMyObj(commonVariables.zapMenu, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
+			}  	
 						
 
 		},

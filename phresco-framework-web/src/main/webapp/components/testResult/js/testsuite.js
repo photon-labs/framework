@@ -15,6 +15,8 @@ define(["testResult/listener/testResultListener"], function() {
 		onPrintPdfEvent : null,
 		onGeneratePdfEvent : null,
 		deleteTestSuiteEvent : null,
+		ongetZapTestReportsEvent : null,
+		
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -45,6 +47,11 @@ define(["testResult/listener/testResultListener"], function() {
 				self.deleteTestSuiteEvent = new signals.Signal();
 			}
 			self.deleteTestSuiteEvent.add(self.testResultListener.deleteTestSuite, self.testResultListener);
+						
+			if (self.ongetZapTestReportsEvent === null) {
+				self.ongetZapTestReportsEvent = new signals.Signal();
+			}
+			self.ongetZapTestReportsEvent.add(self.testResultListener.getZapTestReports, self.testResultListener);
 			
 			self.registerEvents();
 		},
@@ -127,11 +134,15 @@ define(["testResult/listener/testResultListener"], function() {
 						self.testResultListener.createManualBarChart(graphData);
 					});
 				} else {
+					//console.info('testsuites = null ');
+				
 					self.testResultListener.getBarChartGraphData(testsuites, function(graphData, testSuiteLabels) {
 						self.testResultListener.createBarChart(graphData, testSuiteLabels);
 					});
 				}
 				$('.unit_view').show();
+			} else {
+				self.ongetZapTestReportsEvent.dispatch();
 			}
 			
 			if ("manualTest" === currentTab) {

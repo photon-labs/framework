@@ -387,6 +387,9 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 					if ("integrationTest" === currentTab) {
 						header.webserviceurl = header.webserviceurl + "&projectCode=" + commonVariables.projectCode;
 					}
+					if("zapMenu" === currentTab){
+						header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/zap?appDirName=" + appDirName;
+					}
 				}
 				
 				if (techReport !== undefined) {
@@ -492,6 +495,76 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				commonVariables.hideloading = false;
 			});
 		},
+				
+		//To get the zap test reports
+		getZapTestReports : function() {
+			var self = this;
+			var requestBody = {};
+			commonVariables.hideloading = true;
+			self.performAction(self.getActionHeader('', "getTestReport"), function(response) {
+				$('.progress_loading').hide();
+				self.listZapTestReports(response.data);
+				commonVariables.hideloading = false;
+			});
+		},
+		
+		//To list the zap test reports
+		listZapTestReports : function(zapReports) {
+			var self = this;
+			if (zapReports !== undefined && zapReports !== null) {
+		
+				$("#noReport").hide();
+				$("#messagedisp").hide();
+				$("#testSuites").show();
+				$("#availablePdfRptsTbl").show();
+				var content = "<table class='table_border availablePdfRptsTbl' border='0' cellspacing='0' cellpadding='5' width='100%' id='availablePdfRptsTbl'>";
+				content = content.concat('<thead><tr><th>Alert</th><th>Riskcode</th><th>URI</th><th>Solution</th></tr></thead>');
+				var alertitem = zapReports.OWASPZAPReport.site[0].alerts.alertitem;
+				$.each(alertitem, function(index, value){
+					var solution = value.solution;
+					if (solution.length > 75) {
+						var conSolution = solution.substr(0, 75);
+						var h = solution.substr(75, solution.length - 75);
+						var finalSolution = conSolution + '<span class="moreellipses"> ... </span><span class="morecontent"><span>' + h + '</span> <a href="#" class="morelink less"> More </a></span>';
+					} else {
+						var finalSolution = value.solution;
+					}
+					content = content.concat('<tr class="generatedRow"><td>' + value.alert + '</td><td>' + value.riskcode + '</td><td>' + value.uri + '</td><td>' + finalSolution + '</td></tr>');
+				});
+				$(commonVariables.contentPlaceholder).find("#testSuites").append(content);
+				self.morelinkClick();
+			} else {
+				$(commonVariables.contentPlaceholder).find("#testSuites").hide();
+				$("#noReport").show();
+				$("#noReport").html("No Report are Available");
+			}
+			self.hidePopupLoading($('#pdfReportLoading'));
+			$(".tooltiptop").tooltip();
+		},
+		
+	
+		morelinkClick : function(){
+			$("#morelink").unbind("click");
+			$(".morelink").click(function(){
+				console.info('test' , $(this));
+				if($(this).hasClass("less")) {
+					console.info('if');
+					$(this).removeClass("less");
+					$(this).text("Less");
+					$(this).find(".morecontent").show();
+				} else {
+					console.info('else');
+					$(this).addClass("less");
+					$(this).text("More");
+					$(this).find(".morecontent").hide();
+
+				}
+				$(this).parent().prev().toggle();
+				$(this).prev().toggle();
+				return false;
+			});		
+		},
+				
 		
 		//To list the generated PDF reports
 		listPdfReports : function(pdfReports) {
@@ -524,7 +597,7 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			self.hidePopupLoading($('#pdfReportLoading'));
 			$(".tooltiptop").tooltip();
 		},
-		
+	
 		//To generate the pdf report
 		generatePdfReport : function() {
 			var self = this;

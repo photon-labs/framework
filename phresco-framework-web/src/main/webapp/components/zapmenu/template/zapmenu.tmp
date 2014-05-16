@@ -1,0 +1,44 @@
+<section class="optiontitle qual_unit">
+	<div class="unit_text" data-i18n="navigation.application.Zap"></div>
+    <div class="flt_right">
+		<div class="unit_view hideContent">
+		</div>
+      
+	  
+		<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/Phresco/openfolder_icon.png" ></a></div>
+		<div class="icon_images copy_path_icon"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/Phresco/copypath_icon.png" ></a></div>	
+            
+        <div class="code_anal">
+		<input type="button" data-i18n="[value]navigation.application.zapStart" id="zapStart" class="btn">
+			<form id="zapStartForm" class="zap_form">
+				<div id="zapstart_popup" class="dyn_popup hideContent dynamic_cont" style="width:180px;">
+					<ul class="row dynamicControls1">
+					</ul>
+					<div class="flt_right">
+						<input type="button" data-i18n="[value]navigation.application.start" class="btn btn_style" id="runZapStart">
+						<input type="button" data-i18n="[value]commonlabel.label.close" class="btn btn_style dyn_popup_close">
+					</div>
+				</div>
+			</form>		
+ 			<input id="zapStop" type="submit" data-i18n="[value]build.label.stop" class="btn">
+
+		<input type="button" data-i18n="[value]commonlabel.label.test" id="unitTestBtn" class="btn btn_style">
+			<form id="unitTestForm" class="zap_form">
+				<div id="unit_popup" class="dyn_popup hideContent dynamic_cont" style="width:310px;">
+					<ul class="row dynamicControls">
+					</ul>
+					<div class="dynamicPopupLoading" style="display:none;">&nbsp</div>
+					<div class="hiddenControls"></div>
+					<div class="flt_right">
+						<input type="button" data-i18n="[value]commonlabel.label.attack" class="btn btn_style" id="zapAttack">
+						<input type="button" data-i18n="[value]commonlabel.label.close" class="btn btn_style dyn_popup_close">
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</section>
+<div class="mainContent" id="testResult"></div>
+<section class="content_end" style="display:none;">
+	<div class="msgdisplay"></div>
+</section>

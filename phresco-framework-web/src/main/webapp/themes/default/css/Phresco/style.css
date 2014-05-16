@@ -5910,3 +5910,22 @@ map area { cursor:pointer !important; display:block; }
 	font-size:13px;
 	margin-top:5px;
 }
+
+a {
+    color: #0254EB
+}
+
+a.morelink {
+    text-decoration:none;
+    outline: none;
+	color : #0000ff;
+}
+.morecontent span {
+    display: none;
+}
+.comment {
+    width: 400px;
+    background-color: #f0f0f0;
+    margin: 10px;
+}
+.zap_form { display:inline; margin:0 !important; }

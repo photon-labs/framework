@@ -312,6 +312,11 @@
                             <li id="manualTest" name="qualityMenu"><a href="javascript:void(0)" data-i18n="navigation.application.manual"></a></li>
 							<li id="performanceTest" name="qualityMenu"><a href="javascript:void(0)" data-i18n="navigation.application.performance"></a></li>
                             <li id="loadTest" name="qualityMenu"><a href="javascript:void(0)" data-i18n="navigation.application.load"></a></li>
+                            
+							<li id="zapMenu" name="qualityMenu"><a href="javascript:void(0)" data-i18n="navigation.application.Zap"></a></li>
+                            <!--<li id="SEOMenu" name="qualityMenu"><a href="javascript:void(0)" data-i18n="navigation.application.SEO"></a></li>
+								<li id="W3CMenu" name="qualityMenu"><a href="javascript:void(0)" data-i18n="navigation.application.W3C"></a></li>
+							-->
                         </ul>
                       </div>
                 </li>
