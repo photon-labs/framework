@@ -585,6 +585,9 @@ public interface FrameworkConstants {
     String COMPONENT = "component";
     String LOAD = "load";
     String PERFORMACE = "performance";
+    String ZAP = "ZapTest";
+    String ZAP_START = "zapStart";
+    String ZAP_STOP = "zapStop";
     String INTEGRATION = "integration";
     String INTEGRATION_TEST = "-integrationtest";
     String WEBSERVICE = "WebService";
@@ -1200,6 +1203,8 @@ public interface FrameworkConstants {
     String REST_SERVERS_PATH = "/component/servers";
     String REST_DATABASE_PATH = "/component/databases";
     String REST_UPDATE = "/repo/update";
+    String REST_ZAP_ACTION = "/zapAction";
+    String REST_ZAP_TEST =  "/zapTest";
 
     String ATTR_TIME 	= "time";
     String ATTR_TESTS 	= "tests";
@@ -2307,6 +2312,32 @@ public interface FrameworkConstants {
 	    String DEV_SMALL = "dev";
 	    String DEV_CAPS = "Dev";
 	    String ENVIRONMENT_LIST = "/environmentList";
+	    
+	    
+	    /**
+	     * 
+	     * Zap Test Constants
+	     * 
+	     */
+	    String ZAP_XML_PATH = "/OWASPZAPReport/site/alerts";
+	    String PLUGIN_ID = "pluginid";
+	    String ALERT = "alert";
+	    String RISK_CODE = "riskcode";
+	    String RELIABILITY = "reliability";
+	    String RISK_DESC = "riskdesc";
+	    String DESC = "desc";
+	    String SOLUTION = "solution";
+	    String URI = "uri";
+	    String PARAM = "param";
+	    String REFERENCES = "reference";
+	    String ZAP_REPORT = "zapreport";
+	    String REPORT_FILE = "report.xml";
+	    String REPORT_ERROR = "report File is not available";
+	    String ZAP_START_MSG =  "Zap Started Successfully";
+	    String ZAP_NOT_START_MSG = "Zap  not Started ";
+	    String ZAP_START_FAIL  =  "Zap Started failed";
+	    String DISPLAY_NAME = "displayName";
+	    String ZAP_LOG_FAIL = "No Zap test logs obtained";
 	    
 	    
 }

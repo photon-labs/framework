@@ -371,6 +371,10 @@ public interface ResponseCodes {
 	String PHRQ100002 = "PHRQ100002"; // unit test started successfully
 	String PHRQ110002 = "PHRQ110002"; // failed to complete unit test
 	
+	
+	
+	
+	
 	/*
 	 * Component
 	 */
@@ -442,6 +446,25 @@ public interface ResponseCodes {
 	String PHRQ510005 = "PHRQ510005"; // unable to get performance test results
 	String PHRQ500005 = "PHRQ500005"; // performance test started successfully
 	String PHRQ510006 = "PHRQ510006"; // could not perform performance test
+	
+	
+	/**
+	 * Zap Test
+	 */
+	String PHRQ100003 = "PHRQ100003"; //  zap test started successfully
+	String PHRQ110004 = "PHRQ110004"; // failed to complete zap test
+	String PHRQ500007 = "PHRQ500007"; // zap test started successfully
+	String PHRQ500008 = "PHRQ500008"; // zap test started failed
+	String PHRQ500009 = "PHRQ500009"; // zap started successfully
+	String PHRQ500010 = "PHRQ5000010"; // zap started failed
+	String PHRQ500011 = "PHRQ500011"; // zap stop successfully
+	String PHRQ500012 = "PHRQ500012"; // zap stop started failed
+	String PHRQ110005 = "PHRQ110005";
+	String PHRQ110006 = "PHRQ110006";
+	
+	
+	
+	
 	
 	/*
 	 * Load

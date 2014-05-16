@@ -389,6 +389,72 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
+	
+	/**
+	 * zap start
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
+	@GET
+	@Path(REST_ZAP_ACTION)
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response zapStart(@Context HttpServletRequest request, @QueryParam(ATTR_TYPE) String type ) throws PhrescoException  {
+		ActionFunction actionFunction = new ActionFunction();
+		ActionResponse response = new ActionResponse();
+		try	{
+			actionFunction.prePopulateModelData(request);
+			response = actionFunction.zapAction(request, type);
+			if (type.equalsIgnoreCase(ZAP_START)) {
+				response.setResponseCode(PHRQ500009);
+			} else if (type.equalsIgnoreCase(ZAP_STOP)) {
+				response.setResponseCode(PHRQ500011);
+			}
+		} catch (Exception e) {
+			S_LOGGER.error(e.getMessage());
+			response.setStatus(RESPONSE_STATUS_ERROR);
+			response.setLog("");
+			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+			response.setUniquekey("");
+			if (type.equalsIgnoreCase(ZAP_START)) {
+				response.setResponseCode(PHRQ500010);
+			} else if (type.equalsIgnoreCase(ZAP_STOP)) {
+				response.setResponseCode(PHRQ500012);
+			}
+		}
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+	}
+	
+	
+	/**
+	 * zap test.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
+	@POST
+	@Path(REST_ZAP_TEST)
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response zapTest(@Context HttpServletRequest request) throws PhrescoException  {
+		ActionFunction actionFunction = new ActionFunction();
+		ActionResponse response = new ActionResponse();
+		try	{
+			actionFunction.prePopulateModelData(request);
+			response = actionFunction.zapTest(request);
+			response.setResponseCode(PHRQ500007);
+		} catch (Exception e) {
+			S_LOGGER.error(e.getMessage());
+			response.setStatus(RESPONSE_STATUS_ERROR);
+			response.setLog("");
+			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+			response.setUniquekey("");
+			response.setResponseCode(PHRQ500008);
+		}
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+	}
+	
 	/**
 	 * Performance test.
 	 *

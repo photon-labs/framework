@@ -29,11 +29,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
@@ -44,11 +50,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
+import org.json.simple.JSONObject;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
 import com.photon.phresco.api.ApplicationProcessor;
@@ -360,8 +368,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 
 	private ActionResponse generateResponse(BufferedInputStream server_logs, String unique_key) {
 		ActionResponse response = new ActionResponse();
-//		UUID uniqueKey = UUID.randomUUID();
-//		String unique_key = uniqueKey.toString();
 		BufferMap.addBufferReader(unique_key, server_logs);
 
 		response.setStatus(STARTED);
@@ -371,6 +377,8 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 
 		return response;
 	}
+	
+	
 
 	public ActionResponse build(HttpServletRequest request) throws PhrescoException {
 		printLogs();
@@ -3648,8 +3656,93 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			return name.endsWith(filter_);
 		}
 	}
+	
+	public ActionResponse zapAction(HttpServletRequest request, String type) throws PhrescoException {
+		printLogs();
+		ActionType actionType = null;
+		BufferedInputStream server_logs = null;
+		String displayName = request.getParameter(DISPLAY_NAME);
+		initModuleName(request);
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		if (type.equalsIgnoreCase(ZAP_START)) {
+			actionType = ActionType.ZAP_START;
+		} else if (type.equalsIgnoreCase(ZAP_STOP)) {
+			actionType = ActionType.ZAP_STOP;
+		}  
+		server_logs = zapAction(unique_key, displayName, actionType);
+		if (server_logs != null) {
+			return generateResponse(server_logs, unique_key);
+		} else {
+			throw new PhrescoException(ZAP_LOG_FAIL);
+		}
+	}
+	
 
+	public ActionResponse zapTest(HttpServletRequest request) throws PhrescoException {
+		printLogs();
+		BufferedInputStream server_logs=null;
+		String displayName = request.getParameter(DISPLAY_NAME);
+		initModuleName(request);
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		server_logs = zapTest(unique_key, displayName);
+		if (server_logs != null) {
+			return generateResponse(server_logs, unique_key);
+		} else {
+			throw new PhrescoException(ZAP_LOG_FAIL);
+		}
+	}
 
+	private BufferedInputStream zapAction(String unique_key, String displayName, ActionType actionType) throws PhrescoException {
+		BufferedInputStream reader = null;
+		try {
+			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			
+			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, getModule());
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+			ProjectInfo rootprojectInfo = Utility.getProjectInfo(rootModulePath, "");
+			
+			if (ZAP_START .equalsIgnoreCase(actionType.toString())) {
+				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_ZAP_START,rootModulePath, module)));
+				persistValuesToXml(mojo, PHASE_ZAP_START);
+			}
+			reader = applicationManager.performAction(rootprojectInfo, actionType, null, pomFileLocation.getParent());
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), actionType.toString(), displayName, unique_key)), true);
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+		return reader;
+	}
+	
+	
+	private BufferedInputStream zapTest(String unique_key, String displayName) throws PhrescoException {
+		BufferedInputStream reader = null;
+		try {
+			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			
+			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, getModule());
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_ZAP_TEST, rootModulePath, getModule())));
+			persistValuesToXml(mojo, PHASE_ZAP_TEST);
+
+			List<Parameter> parameters = getMojoParameters(mojo, PHASE_ZAP_TEST);
+			List<String> buildArgCmds = getMavenArgCommands(parameters);
+			buildArgCmds.add(HYPHEN_N);
+			appendMultiModuleCommand(getModule(), buildArgCmds);
+			ProjectInfo rootprojectInfo = Utility.getProjectInfo(rootModulePath, "");
+			
+			reader = applicationManager.performAction(rootprojectInfo, ActionType.ZAP_TEST, buildArgCmds, pomFileLocation.getParent());
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), PERFORMACE, displayName, unique_key)), true);
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+		return reader;
+	}
 
 
 }

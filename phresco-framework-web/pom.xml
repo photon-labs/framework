@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.photon.phresco.framework</groupId>
     <artifactId>phresco-framework-web</artifactId>
+     <version>3.3.1.9002-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>Framework Web Archive</name>
     <description>Framework Web Archive</description>
@@ -493,6 +494,11 @@
             <artifactId>phresco-framework-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.photon.phresco.pom</groupId>
+            <artifactId>phresco-pom</artifactId>
+            <version>${project.version}</version>
+        </dependency> 
         
          <!-- <dependency>
             <groupId>com.photon.phresco.pom</groupId>
@@ -849,6 +855,12 @@
 		<artifactId>jersey-server</artifactId>
 		<version>1.8</version>
 	</dependency>
+	<dependency>
+		<groupId>org.json</groupId>
+		<artifactId>json</artifactId>
+		<version>20140107</version>
+	</dependency>
+            
      </dependencies>
     <build>
 		<sourceDirectory>${phresco.source.directory}</sourceDirectory>

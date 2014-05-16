@@ -54,7 +54,10 @@ public enum ActionType {
 	RELEASE("phresco:release"), 
 	CREATE_BRANCH("phresco:createBranch"), 
 	TAG("phresco:tag"), 
-	NEXUS_DEPLOY("phresco:nexusDeploy");
+	NEXUS_DEPLOY("phresco:nexusDeploy"),
+	ZAP_START("phresco:zap-start"),
+	ZAP_STOP("phresco:zap-stop"),
+	ZAP_TEST("phresco:zap");
 	
 	
 	private String actionType;
