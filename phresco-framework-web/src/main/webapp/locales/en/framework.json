@@ -362,8 +362,13 @@
 			"buildRepo" : "Build Repo",
 			"tridioninfo" : "Tridion Info",
 			"tridiongeneral" : "General",
-			"tridionpublish" : "Publish"
- 		}
+			"tridionpublish" : "Publish",
+			"Zap" : "Zap",
+			"SEO" : "SEO",
+			"W3C" : "W3C",
+			"start" : "Start",
+			"zapStart" : "Zap Start"
+		}
 	},
 	
 	"repository" : {
@@ -620,7 +625,8 @@
              "graphview"      : "Graph View",
 			 "module"  	      : "Module",
 			 "dashboard"  	  : "Dashboard",
-			 "action"		  : "Action"
+			 "action"		  : "Action",
+			 "attack"		  : "Attack"
 		},
 		"errormessage" : {
 			"serviceerror" : "Service Error"

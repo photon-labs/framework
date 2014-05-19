@@ -33,6 +33,16 @@ define([], function() {
 			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnUnitTest, paramData);
 			self.mvnService(header, divId, callback);
 		},
+				
+		mvnZapTest : function(paramData, divId, callback){
+			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnZapTest, paramData);
+			self.mvnService(header, divId, callback);
+		},
+						
+		mvnZapAction : function(paramData, divId, callback){
+			var self = this, header = self.getRequestHeader("GET", "", commonVariables.mvnZapAction, paramData);
+			self.mvnService(header, divId, callback);
+		},
 		
 		mvnIntegrationTest : function(paramData, divId, callback){
 			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnIntegrationTest, paramData);
@@ -298,7 +308,8 @@ define([], function() {
 									response.log.toLowerCase().match("server running at https://") ||
 									response.log.toLowerCase().match("server running at http://") ||
 									response.log.toLowerCase().match(".*jboss.*microcontainer.*started in.*") ||
-									response.log.toLowerCase().match(".*non-default server args:.*")) {
+									response.log.toLowerCase().match(".*non-default server args:.*") ||
+									response.log.toLowerCase().match("zap started")) {
 									//For start node
 									self.setContentEndHeight();
 									callback(response);

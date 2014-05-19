@@ -165,6 +165,11 @@
 		"tridionpublish" : {
 			"moduleName":"tridionpublish",
 			"path" : "../components/tridionpublish/js"
-		}		
+		},
+		
+		"zapmenu" : {
+			"moduleName":"zapmenu",
+			"path" : "../components/zapmenu/js"
+		}
 	}
 }
