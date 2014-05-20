@@ -571,8 +571,12 @@ define([], function() {
 							$(value).attr('selected', 'selected');
 						}
 					});
-					
-					if ((srcRepoDetail.repoInfoFile !== undefined && srcRepoDetail.repoInfoFile !== null && srcRepoDetail.repoInfoFile.length > 0) || "tfs" === srcRepoDetail.type) {
+	
+				if($("#commitType_" + dynamicId).val() !== 'svn'){
+					$("#commitUserName"+dynamicId).val("").removeAttr('readonly');
+					$("#commitPassword"+dynamicId).val("").removeAttr('readonly');
+				}
+				if ((srcRepoDetail.repoInfoFile !== undefined && srcRepoDetail.repoInfoFile !== null && srcRepoDetail.repoInfoFile.length > 0) || "tfs" === srcRepoDetail.type) {
 						$('.srcCommitableFiles').show();
 						self.constructCommitableFiles(dynamicId, srcRepoDetail, $('.commitable_files_'+dynamicId), "src");
 						self.checkBoxEvent($('.commitParentChk[dynamicId='+dynamicId+']'), 'commitChildChk[dynamicId='+dynamicId+'][from=src]', $('input[name=commitbtn][id='+dynamicId+']'));

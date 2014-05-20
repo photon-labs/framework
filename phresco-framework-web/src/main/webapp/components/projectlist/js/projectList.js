@@ -665,10 +665,22 @@ define(["projectlist/listener/projectListListener"], function() {
 						$('.dotphrescosearchdropdown').hide();
 						$(".testsearch").hide();
 						$('.testsearchdropdown').hide();
+						$("#uname_"+dynamicId).val("").removeAttr('readonly');
+						$("#pwd_"+dynamicId).val("").removeAttr('readonly');
+						$("#phrescouname_"+dynamicId).val("").removeAttr('readonly');
+						$("#phrescopwd_"+dynamicId).val("").removeAttr('readonly');
+						$("#testuname_"+dynamicId).val("").removeAttr('readonly');
+						$("#testpwd_"+dynamicId).val("").removeAttr('readonly');
 					} else{
 						$(".search").show();
 						$(".phrescosearch").show();
 						$(".testsearch").show();
+						$("#uname_"+dynamicId).val(userInfo.id);
+						$("#pwd_"+dynamicId).val(password);
+						$('#phrescouname_'+dynamicId).val(userInfo.id);
+						$('#phrescopwd_'+dynamicId).val(password);	
+						$('#testuname_'+dynamicId).val(userInfo.id);
+						$('#testpwd_'+dynamicId).val(password);	
 					}	
 				});
 				
