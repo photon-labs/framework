@@ -356,6 +356,7 @@ define([], function() {
 				repoInfo.srcRepoDetail = srcRepoDetail;
 				
 				if ($("#splitDotPhresco_"+dynid).is(":checked")) {
+					splitDotPhrescoVal = 'true';
 					phrescoRepoDetail.type = $("#phrescotype_"+dynid).val();
 					phrescoRepoDetail.repoUrl = $("#phrescorepourl_"+dynid).val();
 					phrescoRepoDetail.userName = $("#phrescouname_"+dynid).val();

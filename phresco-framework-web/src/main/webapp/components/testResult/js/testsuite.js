@@ -142,7 +142,9 @@ define(["testResult/listener/testResultListener"], function() {
 				}
 				$('.unit_view').show();
 			} else {
-				self.ongetZapTestReportsEvent.dispatch();
+				if ("zapMenu" === currentTab) {
+					self.ongetZapTestReportsEvent.dispatch();
+				}	
 			}
 			
 			if ("manualTest" === currentTab) {
