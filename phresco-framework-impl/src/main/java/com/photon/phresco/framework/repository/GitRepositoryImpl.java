@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -39,7 +40,7 @@ public class GitRepositoryImpl implements RepositoryManager, FrameworkConstants 
 		try {
 			boolean authenticated = authentication(username, password);
 			if (authenticated) {
-				document = getGitSourceRepo(appDirName);
+				document = getGitSourceRepo(appDirName, srcRepoUrl);
 			} else {
 				throw new PhrescoException(srcRepoUrl);
 			}
@@ -49,7 +50,7 @@ public class GitRepositoryImpl implements RepositoryManager, FrameworkConstants 
 	return document;
 }
 	
-	private Document getGitSourceRepo(String appDirName) throws PhrescoException {
+	private Document getGitSourceRepo(String appDirName,String srcRepoUrl) throws PhrescoException {
 		Document document = null;
 		String url = null;
 		try {
@@ -68,13 +69,13 @@ public class GitRepositoryImpl implements RepositoryManager, FrameworkConstants 
 				List<String> branchList = new ArrayList<String>();
 				List<String> tagLists = new ArrayList<String>();
 
-				List<Ref> remoteCall = git.branchList().setListMode(ListMode.REMOTE).call();
+				Collection<Ref> remoteCall = Git.lsRemoteRepository().setHeads(true).setRemote(srcRepoUrl).call();
 				for (Ref ref : remoteCall) {
 					if (StringUtils.isNotEmpty(ref.getName())  && !ref.getName().contains(HEAD_REVISION)) {
 						branchList.add(ref.getName());
 					}
 				}
-
+				
 				ListTagCommand tagList = git.tagList();
 				Map<String, Ref> tags = tagList.getRepository().getTags();
 				Set<Entry<String,Ref>> entrySet = tags.entrySet();

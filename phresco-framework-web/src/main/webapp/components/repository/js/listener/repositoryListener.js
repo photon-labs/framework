@@ -1,8 +1,10 @@
 define([], function() {
 
 	Clazz.createPackage("com.components.repository.js.listener");
-
+	
 	Clazz.com.components.repository.js.listener.RepositoryListener = Clazz.extend(Clazz.WidgetWithTemplate, {
+		branchList : [] ,
+		
 		initialize : function(config) {
 			var self = this;
 		},
@@ -219,7 +221,8 @@ define([], function() {
 			var self = this;
 			var strUl = "", strRoot ="", strItems ="", strCollection = "";
 			$(ItemList).each(function(index, value) {
-				if ($(value).children().length > 0) {
+					if ($(value).children().length > 0) {
+					
 					strRoot = $(value).attr('name');
 					self.getList($(value).children(),function(callback) {
 						strCollection = callback;
@@ -228,7 +231,9 @@ define([], function() {
 					strItems += '<li role="treeItem" class="parent_li">' + '<span class="badge badge-success">'+
 								'<i class="icon-plus-sign"></i>' + '<a version="'+ strRoot +'" title="'+ url +'">' + strRoot + '</a></span>' + strCollection +'</li>';
 				} else {
+				
 					var name = $(value).attr('name');
+					self.branchList.push(name);
 					var moduleName = $(value).attr('moduleName');
 					var appDirName = $(value).attr('appDirName');
 					var nature = $(value).attr('nature');
@@ -238,6 +243,7 @@ define([], function() {
 						hideClass = "";
 					}
 					strItems += '<li role="treeItem" class="parent_li '+hideClass+'">' + '<span class="badge badge-warning">'+ '<i></i><a title="'+ name +'" ';
+					
 					if (moduleName !== undefined) {
 						strItems += 'moduleName="'+moduleName+'"';
 					}
@@ -292,7 +298,7 @@ define([], function() {
 			}
 		},
 		
-		validateCreateBranch : function() {
+		 validateCreateBranch : function() {
 			var self = this;
 			var branchName = $("#newBranchName").val();
 			var version = $("#createBranchVersion").val();
@@ -312,6 +318,16 @@ define([], function() {
 				$("#createBranchVersion").val('');
 				commonVariables.navListener.validateTextBox($("#createBranchVersion"), 'Duplicate branch Version');
 				return true;
+			}
+			if ($.inArray(branchName, self.branchList) !== -1)
+			{				
+				$(".msgdisplay").show();
+				$("#branchNameValidate").text('Branch name already exists');
+					setTimeout(function() {
+						$(".msgdisplay").hide();
+					},2000);				
+				return true;
+					
 			}
 			return false;
 		},
