@@ -5929,3 +5929,27 @@ a.morelink {
     margin: 10px;
 }
 .zap_form { display:inline; margin:0 !important; }
+
+.showDesc {
+	cursor : pointer;
+	float:left;
+	font-size: 14px;
+	color: #ef7b43;	
+}
+.rowborder{
+	border-bottom: 1px solid #000000;
+}
+
+.reports_table{
+	width : 96%;
+	padding:15px 10px 10px 10px;
+	border : 1px solid #000;
+	background: #ffffff;
+}
+
+.reports_text {
+	float:left;
+	font-size: 14px;
+	font-weight:bold;
+	color: #ef7b43;
+}

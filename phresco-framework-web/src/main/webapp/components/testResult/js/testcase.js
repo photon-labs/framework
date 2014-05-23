@@ -77,6 +77,101 @@ define(["testResult/listener/testResultListener"], function() {
 				}
 				return css;
 			});
+			/* 			
+			Handlebars.registerHelper('zapReports', function(site) {
+				var trData = '';
+				if($.isArray(site)){
+					$.each(site, function(index, value){
+						if($.isArray(value.alerts.alertitem)){
+							var alertitem = value.alerts.alertitem;
+							$.each(alertitem, function(index, value){
+								trData += '<tr class="testCaseRow" "><td class="zap hideContent">'+value.alert+'</td><td class="zap hideContent">'+ value.solution +'</td><td class="zap hideContent">'+ value.uri +'</td><td class="zap hideContent">'+ value.desc +'</td><td class="zap hideContent">'+ value.riskcode +'</td><td class="zap hideContent">'+ value.reliability +'</td><td class="zap hideContent">'+ value.pluginid +'</td><td class="zap hideContent">'+ value.riskdesc +'</td><td class="zap hideContent">'+ value.reference +'</td></tr>';
+							});
+						}else{
+							var alertitem = value.alerts.alertitem;
+							trData += '<tr class="testCaseRow" "><td class="zap hideContent">'+alertitem.alert+'</td><td class="zap hideContent">'+ alertitem.solution +'</td><td class="zap hideContent">'+ alertitem.uri +'</td><td class="zap hideContent">'+ alertitem.desc +'</td><td class="zap hideContent">'+ alertitem.riskcode +'</td><td class="zap hideContent">'+ alertitem.reliability +'</td><td class="zap hideContent">'+ alertitem.pluginid +'</td><td class="zap hideContent">'+ alertitem.riskdesc +'</td><td class="zap hideContent">'+ alertitem.reference +'</td></tr>';
+						}
+					});
+				}else{
+					if($.isArray(site.alerts.alertitem)){
+						var alertitem = site.alerts.alertitem;
+							$.each(alertitem, function(index, value){
+								trData += '<tr class="testCaseRow" "><td class="zap hideContent">'+value.alert+'</td><td class="zap hideContent">'+ value.solution +'</td><td class="zap hideContent">'+ value.uri +'</td><td class="zap hideContent">'+ value.desc +'</td><td class="zap hideContent">'+ value.riskcode +'</td><td class="zap hideContent">'+ value.reliability +'</td><td class="zap hideContent">'+ value.pluginid +'</td><td class="zap hideContent">'+ value.riskdesc +'</td><td class="zap hideContent">'+ value.reference +'</td></tr>';
+						});
+					}else{
+						var alertitem = site.alerts.alertitem;
+						trData += '<tr class="testCaseRow" "><td class="zap hideContent">'+alertitem.alert+'</td><td class="zap hideContent">'+ alertitem.solution +'</td><td class="zap hideContent">'+ alertitem.uri +'</td><td class="zap hideContent">'+ alertitem.desc +'</td><td class="zap hideContent">'+ alertitem.riskcode +'</td><td class="zap hideContent">'+ alertitem.reliability +'</td><td class="zap hideContent">'+ alertitem.pluginid +'</td><td class="zap hideContent">'+ alertitem.riskdesc +'</td><td class="zap hideContent">'+ alertitem.reference +'</td></tr>';
+					}
+				}	
+				return trData;
+			}); */
+
+			
+			Handlebars.registerHelper('zapReports', function(site) {
+				var trData = '';
+				var allData = [];
+				if($.isArray(site)){
+					$.each(site, function(index, value){
+						if($.isArray(value.alerts.alertitem)){
+							var alertitem = value.alerts.alertitem;
+							$.each(alertitem, function(index, value){
+								//trData += '<tr class="testCaseRow" "><td class="zap hideContent">'+value.alert (value.riskcode) +'</td><td class="zap hideContent"> - '+ value.reliability +'</td></tr>';
+								allData.push(value);
+							});
+						}else{
+							var alertitem = value.alerts.alertitem;
+							allData.push(alertitem);
+							//trData += '<tr class="testCaseRow" "><td class="zap hideContent">'+alertitem.alert (alertitem.riskcode)+'</td><td class="zap hideContent">'+ alertitem.reliability +'</td></tr>';
+						}
+					});
+				}else{
+					if($.isArray(site.alerts.alertitem)){
+						var alertitem = site.alerts.alertitem;
+							$.each(alertitem, function(index, value){
+							allData.push(value);
+							//trData += '<tr class="testCaseRow" "><td class="zap hideContent">'+value.alert (value.riskcode)+'</td><td class="zap hideContent">'+ value.reliability +'</td></tr>';
+						});
+					}else{
+						var alertitem = site.alerts.alertitem;
+						allData.push(alertitem);
+						//trData += '<tr class="testCaseRow" "><td class="zap hideContent">'+alertitem.alert (alertitem.riskcode)+'</td><td class="zap hideContent">'+ alertitem.riskcode +'</td></tr>';
+					}
+				}
+
+				var uniqueData = [];
+				var l = allData.length;
+				for(var i=0; i<l; i++) {
+				var uniqueJson = {};
+					for(var j=i+1; j<l; j++) {
+						if (allData[i].alert === allData[j].alert){
+							j = ++i;
+						}	  
+					}
+					uniqueJson.alert = allData[i].alert; 
+					uniqueJson.riskcode = allData[i].riskcode; 
+					uniqueJson.reliability = allData[i].reliability; 
+					uniqueJson.desc = allData[i].desc; 
+					uniqueJson.solution = allData[i].solution; 
+					uniqueJson.reference = allData[i].reference; 
+					uniqueData.push(uniqueJson);
+				}
+ 				$.each(uniqueData, function(index, value){
+					trData += '<tr class="testCaseRow"><td id='+index+' status="close" class="zap hideContent showDesc"> '+value.alert +'( ' + value.riskcode+' ) '+'</td><td class="zap hideContent">'+ value.reliability +'</td></tr>';
+					var resultTable = '<tr><td colspan="11"><table class="table reports_table currentDesc hideContent" id="show_'+index+'" cellpadding="0" cellspacing="0" border="0">';
+						resultTable = resultTable.concat('<tr class="testCaseRow"><td colspan="2"><span class="reports_text">Solution </span> : '+value.solution+'</td></tr>');
+						resultTable = resultTable.concat('<tr class="testCaseRow"><td colspan="2"><span class="reports_text">Description </span> : '+value.desc+'</td></tr>');
+						resultTable = resultTable.concat('<tr class="testCaseRow"><td colspan="2"><span class="reports_text">Reference </span> : '+value.reference+'</td></tr>');
+					$.each(allData, function(index, allValue){
+						if(allValue.alert === value.alert){
+							resultTable = resultTable.concat('<tr class="testCaseRow show_'+index+'"><td colspan="2">'+allValue.uri +'</td></tr>');
+						}
+					})
+					resultTable = resultTable.concat('</td></tr></table>');
+					trData += resultTable;
+				})
+ 				return trData;
+			});
+
 		},
 		
 		loadPage : function() {
@@ -89,12 +184,16 @@ define(["testResult/listener/testResultListener"], function() {
 			var requestBody = {};
 			var data = {};
 			requestBody.testSuite = commonVariables.testSuiteName;
-			self.testResultListener.getTestsuites(function(response) {
-				data.testSuites = response.data.testSuites;
-				commonVariables.testSuites = response.data;
-			});
+			var currentTab = commonVariables.navListener.currentTab;			
+			if ("zapMenu" !== currentTab) {
+				self.testResultListener.getTestsuites(function(response) {
+						data.testSuites = response.data.testSuites;
+						commonVariables.testSuites = response.data;
+					});
+			}		
 			self.testResultListener.performAction(self.testResultListener.getActionHeader(requestBody, "getTestReport"), function(response) {
 				var data = {};
+				console.info('response = ' , response);
 				data.testcases = response.data;
 				data.message = response.message;
 				commonVariables.testcases = response.data;
@@ -119,6 +218,12 @@ define(["testResult/listener/testResultListener"], function() {
 				$('.defaultHead').hide();
 			} else if ("functionalTest" === currentTab) {
 				$('.functional').show();
+			} else if("zapMenu" === currentTab){
+				$('.zap').show();
+				$('.log').hide();
+				$('.logTd').hide();
+				$('.defaultHead').hide();
+				
 			}
 			
 			if (currentTab === 'unitTest') {
@@ -169,7 +274,9 @@ define(["testResult/listener/testResultListener"], function() {
 			
 			self.testResultListener.resizeTestResultDiv();
 			self.resizeConsoleWindow();
+
 		},
+		
 		
 		showScreenShot : function() {
 			var testcases = commonVariables.testcases;
@@ -355,6 +462,20 @@ define(["testResult/listener/testResultListener"], function() {
 				}
 				
 				self.opencc(this, id);
+			});
+			
+			$('.showDesc').unbind('click');
+			$('.showDesc').click(function() {
+				var curId = $(this).attr('id');
+				var dStatus = $(this).attr('status');
+				$(".currentDesc").addClass('hideContent');
+				if(dStatus === "close"){
+					$('#show_'+curId).show('slow');
+					$(this).attr('status', "open");
+				}else{
+					$('#show_'+curId).hide('slow');
+					$(this).attr('status', "close");
+				}
 			});
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;

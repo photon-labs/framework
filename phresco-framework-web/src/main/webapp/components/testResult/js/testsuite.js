@@ -134,8 +134,6 @@ define(["testResult/listener/testResultListener"], function() {
 						self.testResultListener.createManualBarChart(graphData);
 					});
 				} else {
-					//console.info('testsuites = null ');
-				
 					self.testResultListener.getBarChartGraphData(testsuites, function(graphData, testSuiteLabels) {
 						self.testResultListener.createBarChart(graphData, testSuiteLabels);
 					});
@@ -146,7 +144,7 @@ define(["testResult/listener/testResultListener"], function() {
 					self.ongetZapTestReportsEvent.dispatch();
 				}	
 			}
-			
+
 			if ("manualTest" === currentTab) {
 				$('.manual').show();
 				$('.errorClm').hide();

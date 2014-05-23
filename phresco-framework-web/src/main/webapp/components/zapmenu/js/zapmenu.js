@@ -13,6 +13,7 @@ define(["zapmenu/listener/zapmenuListener", "testResult/listener/testResultListe
 		testResultListener : null,
 		onZapStartStopEvent : null,
 		onZapStatusEvent : null,
+		testcaseResult : null,
 		
 
 
@@ -84,12 +85,12 @@ define(["zapmenu/listener/zapmenuListener", "testResult/listener/testResultListe
 		
 		postRender : function(element) {
 			var self = this;
-			self.onZapStatusEvent.dispatch(self.zapmenuListener , "zap-status");
-			commonVariables.navListener.getMyObj(commonVariables.testsuiteResult, function(retVal) {
-				self.testsuiteResult = retVal;
+			//self.onZapStatusEvent.dispatch(self.zapmenuListener , "zap-status");
+			commonVariables.navListener.getMyObj(commonVariables.testcaseResult, function(retVal) {
+				self.testcaseResult = retVal;
 				Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
-				Clazz.navigationController.push(self.testsuiteResult, false);
-			});
+				Clazz.navigationController.push(self.testcaseResult, false);
+			});			
 		},
 
 		/***
@@ -137,7 +138,7 @@ define(["zapmenu/listener/zapmenuListener", "testResult/listener/testResultListe
 					commonVariables.logContent = $('#testConsole').html();
 					$('#testResult').empty();
 					Clazz.navigationController.jQueryContainer = '#testResult';
-					Clazz.navigationController.push(self.testsuiteResult, false);
+					Clazz.navigationController.push(self.testcaseResult, false);
 				});
 				$("#unit_popup").toggle();
 			});	
