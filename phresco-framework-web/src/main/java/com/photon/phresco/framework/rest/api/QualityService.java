@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,6 +66,10 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.json.JSONException;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -78,7 +84,9 @@ import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.FunctionalFrameworkInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.configuration.ConfigReader;
 import com.photon.phresco.configuration.Configuration;
+import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.QualityUtil;
@@ -97,6 +105,7 @@ import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
+import com.photon.phresco.plugins.util.MojoUtil;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.HubConfiguration;
 import com.photon.phresco.util.NodeConfiguration;
@@ -107,6 +116,7 @@ import com.phresco.pom.model.Plugin;
 import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
+
 /**
  * The Class QualityService.
  */
@@ -115,21 +125,21 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 
 	/** The test suite map. */
 	private static Map<String, Map<String, List<NodeList>>> testSuiteMap = Collections
-			.synchronizedMap(new HashMap<String, Map<String, List<NodeList>>>(8));
-	
+	.synchronizedMap(new HashMap<String, Map<String, List<NodeList>>>(8));
+
 	/** The set failure test cases. */
 	private int setFailureTestCases;
-	
+
 	/** The error test cases. */
 	private int errorTestCases;
-	
+
 	/** The node length. */
 	private int nodeLength;
-	
+
 	/** The test suite. */
 	private String testSuite = "";
-	
-	
+
+
 	/**
 	 * Unit.
 	 *
@@ -169,10 +179,181 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
 					null, RESPONSE_STATUS_ERROR, PHRQ110001);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
-					.build();
+			.build();
+		}
+	}
+
+	/**
+	 * zap.
+	 *
+	 * @param appDirName the app dir name
+	 * @param userId the user id
+	 * @return the response
+	 */
+	
+	@SuppressWarnings({ "unchecked"})
+	@GET
+	@Path(REST_API_ZAP)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response zap(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam(REST_QUERY_MODULE_NAME) String module) {
+		ResponseInfo<List<JSONObject>> finalOutput = null;
+		JSONObject jsonObject = null;
+		ResponseInfo<List<JSONObject>> responseData = new ResponseInfo<List<JSONObject>>();
+		try {
+			String rootModulePath = "";
+			String subModuleName = "";
+			if (StringUtils.isNotEmpty(module)) {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = module;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+			}
+
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, subModuleName);
+			String baseDir = pomFileLocation.getParent();
+			File reportPath = new File(baseDir + File.separator + DO_NOT_CHECKIN_DIR + File.separator + TARGET +  File.separator  + ZAP_REPORT + File.separator + REPORT_FILE);
+			if (reportPath.exists()) {
+				jsonObject = readReport(reportPath.getPath());
+			} else {
+				throw new PhrescoException(REPORT_ERROR);
+			}
+			finalOutput = responseDataEvaluation(responseData, null, jsonObject, RESPONSE_STATUS_SUCCESS, PHRQ100003);
+		} catch (PhrescoException e) {
+			finalOutput = responseDataEvaluation(responseData, e, null, REPORT_ERROR, PHRQ110004);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+			.build();
+		}
+		return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
+	}
+	
+	/**
+	 * zap- status.
+	 *
+	 * @param appDirName the app dir name
+	 * @param userId the user id
+	 * @return the response
+	 */
+	
+	@SuppressWarnings("unchecked")
+	@GET
+	@Path(REST_API_ZAP_STATUS)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response zapStatus(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam(REST_QUERY_MODULE_NAME) String module) {
+		ResponseInfo<Boolean> finalOutput = null;
+		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
+		StringBuffer url = new StringBuffer(64);
+		String protocol = "";
+		String host = "";
+		String port = "";
+		try {
+			String rootModulePath = "";
+			String subModuleName = "";
+			if (StringUtils.isNotEmpty(module)) {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = module;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+			}
+
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, subModuleName);
+			String baseDir = pomFileLocation.getParent();
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(baseDir + File.separator);
+			buffer.append(Constants.DOT_PHRESCO_FOLDER + File.separator);
+			buffer.append(CONFIGURATION_INFO_FILE_NAME);
+			ConfigReader reader = new ConfigReader( new File(buffer.toString()));
+
+			File infoFile = new File(pomFileLocation.getParent() + File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator + Constants.ZAP_START_INFO_XML);
+			MojoProcessor processor = new MojoProcessor(infoFile);
+        	com.photon.phresco.plugins.model.Mojos.Mojo.Configuration configuration = processor.getConfiguration(Constants.PHASE_ZAP_START);
+        	Map<String, String> configs = MojoUtil.getAllValues(configuration);
+        	String environment = configs.get(ENVIRONMENT_NAME);
+			if (StringUtils.isEmpty(environment)) {
+				environment = reader.getDefaultEnvName();
+			}
+			List<com.photon.phresco.configuration.Configuration> configurationList = reader.getConfigurations(environment, FrameworkConstants.SERVER);
+        	boolean urlExists = false;
+        	if (CollectionUtils.isNotEmpty(configurationList)) {
+				com.photon.phresco.configuration.Configuration config = configurationList.get(0);
+				Properties properties = config.getProperties();
+				protocol = (String) properties.get(PROTOCOL);
+				host = (String) properties.get(HOST);
+				port = (String) properties.get(PORT);
+				url.append(protocol);
+				url.append(COLON_DOUBLE_SLASH);
+				url.append(host);
+				url.append(FrameworkConstants.COLON);
+				url.append(port);
+				urlExists = checkIfURLExists(url.toString());
+			}
+        	if (urlExists) {
+				finalOutput = responseDataEvaluation(responseData, null, ZAP_START_MSG, RESPONSE_STATUS_SUCCESS, PHRQ110005);
+			} else {
+				finalOutput = responseDataEvaluation(responseData, null, ZAP_NOT_START_MSG, RESPONSE_STATUS_SUCCESS, PHRQ110006);
+			}
+			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
+		} catch (PhrescoException e) {
+			finalOutput = responseDataEvaluation(responseData, e, ZAP_START_FAIL, REPORT_ERROR, PHRQ110006);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
+		} catch (ConfigurationException e) {
+			finalOutput = responseDataEvaluation(responseData, e, ZAP_START_FAIL, REPORT_ERROR, PHRQ110006);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		}
 	}
 	
+	public static boolean checkIfURLExists(String targetUrl) {
+		HttpURLConnection httpUrlConn = null;
+		try {
+			httpUrlConn = (HttpURLConnection) new java.net.URL(targetUrl).openConnection();
+			httpUrlConn.setRequestMethod(HEAD_REVISION);
+			httpUrlConn.setConnectTimeout(30000);
+			httpUrlConn.setReadTimeout(30000);
+			return (httpUrlConn.getResponseCode() == HttpURLConnection.HTTP_OK);
+		} catch (Exception e) {
+			return false;
+		} finally {
+			httpUrlConn.disconnect();
+		}
+	}
+	
+	private static JSONObject readReport(String path) throws PhrescoException {
+		BufferedReader br = null;
+		JSONObject jsonObject = null;
+		try {
+			int PRETTY_PRINT_INDENT_FACTOR = 4;
+			br = new BufferedReader(new FileReader(path));
+			String line;
+			StringBuilder sb = new StringBuilder();
+
+			while((line=br.readLine())!= null){
+			    sb.append(line.trim());
+			}
+			org.json.JSONObject xmlJSONObj =  org.json.XML.toJSONObject(sb.toString());
+			String jsonString = xmlJSONObj.toString(PRETTY_PRINT_INDENT_FACTOR);
+			JSONParser parser = new JSONParser();
+			jsonObject = (JSONObject)parser.parse(jsonString);
+        } catch (JSONException je) {
+            throw new PhrescoException(je);
+        } catch (FileNotFoundException e) {
+        	throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		}catch (ParseException je) {
+            throw new PhrescoException(je);
+        } finally {
+        	try {
+				if (br != null) {
+					br.close();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        }
+		return jsonObject;
+	}
+
 	@GET
 	@Path("techOptions")
 	@Produces(MediaType.APPLICATION_JSON)
