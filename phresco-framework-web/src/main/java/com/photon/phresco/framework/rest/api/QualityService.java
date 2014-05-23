@@ -270,9 +270,12 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
         	com.photon.phresco.plugins.model.Mojos.Mojo.Configuration configuration = processor.getConfiguration(Constants.PHASE_ZAP_START);
         	Map<String, String> configs = MojoUtil.getAllValues(configuration);
         	String environment = configs.get(ENVIRONMENT_NAME);
-			
-        	List<com.photon.phresco.configuration.Configuration> configurationList = reader.getConfigurations(environment, FrameworkConstants.SERVER);
-			if (CollectionUtils.isNotEmpty(configurationList)) {
+			if (StringUtils.isEmpty(environment)) {
+				environment = reader.getDefaultEnvName();
+			}
+			List<com.photon.phresco.configuration.Configuration> configurationList = reader.getConfigurations(environment, FrameworkConstants.SERVER);
+        	boolean urlExists = false;
+        	if (CollectionUtils.isNotEmpty(configurationList)) {
 				com.photon.phresco.configuration.Configuration config = configurationList.get(0);
 				Properties properties = config.getProperties();
 				protocol = (String) properties.get(PROTOCOL);
@@ -283,9 +286,9 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 				url.append(host);
 				url.append(FrameworkConstants.COLON);
 				url.append(port);
+				urlExists = checkIfURLExists(url.toString());
 			}
-			boolean urlExists = checkIfURLExists(url.toString());
-			if (urlExists) {
+        	if (urlExists) {
 				finalOutput = responseDataEvaluation(responseData, null, ZAP_START_MSG, RESPONSE_STATUS_SUCCESS, PHRQ110005);
 			} else {
 				finalOutput = responseDataEvaluation(responseData, null, ZAP_NOT_START_MSG, RESPONSE_STATUS_SUCCESS, PHRQ110006);

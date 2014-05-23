@@ -3736,7 +3736,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			appendMultiModuleCommand(getModule(), buildArgCmds);
 			ProjectInfo rootprojectInfo = Utility.getProjectInfo(rootModulePath, "");
 			
-			reader = applicationManager.performAction(rootprojectInfo, ActionType.ZAP_TEST, buildArgCmds, pomFileLocation.getParent());
+			reader = applicationManager.performAction(rootprojectInfo, ActionType.ZAP_START, buildArgCmds, pomFileLocation.getParent());
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), PERFORMACE, displayName, unique_key)), true);
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
