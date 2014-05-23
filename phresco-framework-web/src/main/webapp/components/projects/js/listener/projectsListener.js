@@ -677,6 +677,8 @@ define([], function() {
 			$("input[name=multiModuleBtn]").unbind("click");
 			$("input[name=multiModuleBtn]").bind("click", function() {
 				$(this).attr("disabled", true);
+				var preBuilt=$('#editPrjprojectname').attr('preBuilt');
+				if(!preBuilt){
 				var techId = "";
 				var layerName = $(this).parent().parent().attr("class");
 				if (layerName === "applnlayercontent") {
@@ -696,7 +698,7 @@ define([], function() {
 				self.getEditProject(self.getRequestHeader(projectRequestBody, "", "subModules"), function(response) {
 					self.constructModuleDepd(renderElement, response.data, layer, position);
 				});
-			});
+				}});
 		},
 		
 		constructModuleDepd : function(renderElement, subModules, layer, position, availableDepnds) {
@@ -1646,12 +1648,15 @@ define([], function() {
 						var subModules = response.data;
 						var isMultiModule = false;
 						var preBuilt=$('#editPrjprojectname').attr('preBuilt');
-						if (subModules !== null && subModules !== undefined && !preBuilt &&subModules.length > 0) {
+						if (subModules !== null && subModules !== undefined  &&subModules.length > 0) {
 							isMultiModule = true;
 						}
 						var multiModBtnCls = "btn btn_style add_icon_btn multi_module_btn hideContent";
 						if (isMultiModule) {
 							multiModBtnCls = "btn btn_style add_icon_btn multi_module_btn";
+						}
+						if(preBuilt){
+							multiModBtnCls = "btn btn_style add_icon_btn multi_module_btn disabled";
 						}
 						var addLayerIconCls = "flt_right icon_center";
 						if (preBuilt) {
@@ -1728,12 +1733,15 @@ define([], function() {
 						var subModules = response.data;
 						var isMultiModule = false;
 						var preBuilt = $('#editPrjprojectname').attr('preBuilt');
-						if (subModules !== null && subModules !== undefined && !preBuilt && subModules.length > 0) {
+						if (subModules !== null && subModules !== undefined   && subModules.length > 0) {
 							isMultiModule = true;
 						}
 						var multiModBtnCls = "btn btn_style add_icon_btn multi_module_btn hideContent";
 						if (isMultiModule) {
 							multiModBtnCls = "btn btn_style add_icon_btn multi_module_btn";
+						}
+						if(preBuilt){
+							multiModBtnCls = "btn btn_style add_icon_btn multi_module_btn disabled";	
 						}
 						var addLayerIconCls = "flt_right icon_center";
 						if (preBuilt) {
@@ -1812,12 +1820,15 @@ define([], function() {
 						var subModules = response.data;
 						var isMultiModule = false;
 						var preBuilt=$('#editPrjprojectname').attr('preBuilt');
-						if (subModules !== null && subModules !== undefined && !preBuilt && subModules.length > 0) {
+						if (subModules !== null && subModules !== undefined  && subModules.length > 0) {
 							isMultiModule = true;
 						}
 						var multiModBtnCls = "btn btn_style add_icon_btn multi_module_btn hideContent";
 						if (isMultiModule) {
 							multiModBtnCls = "btn btn_style add_icon_btn multi_module_btn";
+						}
+						if(preBuilt){
+							multiModBtnCls = "btn btn_style add_icon_btn multi_module_btn disabled";	
 						}
 						var addLayerIconCls = "flt_right icon_center";
 						if (preBuilt) {
