@@ -46,14 +46,18 @@
 							<th width="5%" class="log">
 								<div class="th-inner" data-i18n="testcase.log"></div>
 							</th>
-							<th width="5%" class="functional hideContent">
-								<div class="th-inner" data-i18n="testcase.screenshot"></div>
-							</th>
+							<th width="80%" class="zap hideContent"><div class="th-inner">Alert (Risk)</div></th>
+							<th width="20%" class="zap hideContent"><div class="th-inner"> Reliability</div></th>
 						</tr>
 					</thead>
 					<tbody>
 						{{#each testcases}}
+							{{#if site}}
+								{{#zapReports site}}{{/zapReports}}
+							{{else}}
+							asdfasdf
 							<tr class="testCaseRow" testCaseId="{{testCaseId}}">
+								
 								<td class="manual hideContent">
 									{{featureId}}
 								</td>
@@ -262,6 +266,7 @@
 								{{/each}}
 								<!-- test step ends -->
 							</tr>
+							{{/if}}								
 						{{/each}}
 					</tbody>
 				</table>

@@ -517,9 +517,10 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				$("#messagedisp").hide();
 				$("#testSuites").show();
 				$("#availablePdfRptsTbl").show();
-				var content = "<table class='table_border availablePdfRptsTbl' border='0' cellspacing='0' cellpadding='5' width='100%' id='availablePdfRptsTbl'>";
-				content = content.concat('<thead><tr><th>Alert</th><th>Riskcode</th><th>URI</th><th>Solution</th></tr></thead>');
-				var alertitem = zapReports.OWASPZAPReport.site[0].alerts.alertitem;
+				var content = "<div class='fixed-table-container'><div class='header-background'></div><div class='fixed-table-container-inner'>";
+				var cTable = "<table class='table table-striped table_border table-bordered' cellpadding='0' cellspacing='0' border='0'>";
+				content = cTable.concat('<thead class="height_th"><tr><th width="15%"><div class="th-inner">Alert</div></th><th width="15%"><div class="th-inner">Riskcode</div></th><th width="15%"><div class="th-inner">URI</div></th><th width="15%"><div class="th-inner">Solution</div></th></tr></thead>');
+				var alertitem = zapReports.OWASPZAPReport.site.alerts.alertitem;
 				$.each(alertitem, function(index, value){
 					var solution = value.solution;
 					if (solution.length > 75) {
@@ -529,8 +530,9 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 					} else {
 						var finalSolution = value.solution;
 					}
-					content = content.concat('<tr class="generatedRow"><td>' + value.alert + '</td><td>' + value.riskcode + '</td><td>' + value.uri + '</td><td>' + finalSolution + '</td></tr>');
+					content = cTable.concat('<tr><td>' + value.alert + '</td><td>' + value.riskcode + '</td><td>' + value.uri + '</td><td>' + finalSolution + '</td></tr>');
 				});
+				content = content.concat('</div></div></div>');
 				$(commonVariables.contentPlaceholder).find("#testSuites").append(content);
 				self.morelinkClick();
 			} else {

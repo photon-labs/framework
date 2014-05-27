@@ -72,8 +72,8 @@ define([], function() {
 				var popupObj = 'unit_popup';
 				var dynamicControls = $('.dynamicControls')
 			} else 	if(type === 'start'){
-				commonVariables.goal = commonVariables.zapStart;
-				commonVariables.phase = commonVariables.zapStart;
+				commonVariables.goal = commonVariables.zapGoal;
+				commonVariables.phase = commonVariables.zapGoal;
 				var popupObj = 'zapstart_popup';
 				var dynamicControls = $('.dynamicControls1');
 			} 	
@@ -147,7 +147,7 @@ define([], function() {
 					if(response !== null){
 						$('.progress_loading').css('display','none');
 						var zapmenuListener = new Clazz.com.components.zapmenu.js.listener.zapmenuListener();
-						zapmenuListener.getZapStatus(zapmenuListener , "zap-status");
+						//zapmenuListener.getZapStatus(zapmenuListener , "zap-status");
 					}
 				});
 			});

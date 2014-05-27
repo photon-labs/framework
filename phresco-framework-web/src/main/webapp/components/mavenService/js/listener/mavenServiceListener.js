@@ -308,8 +308,7 @@ define([], function() {
 									response.log.toLowerCase().match("server running at https://") ||
 									response.log.toLowerCase().match("server running at http://") ||
 									response.log.toLowerCase().match(".*jboss.*microcontainer.*started in.*") ||
-									response.log.toLowerCase().match(".*non-default server args:.*") ||
-									response.log.toLowerCase().match("zap started")) {
+									response.log.toLowerCase().match(".*non-default server args:.*")) {
 									//For start node
 									self.setContentEndHeight();
 									callback(response);
@@ -321,6 +320,7 @@ define([], function() {
 									self.mvnlogService(response.uniquekey, divId, callback);
 								}
 							}else if(response.status.toUpperCase() === 'COMPLETED'){
+								console.info('mvn service res ' , response);
 								setTimeout(function() {
 									self.setContentEndHeight();
 									callback(response);
