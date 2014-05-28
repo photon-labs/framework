@@ -1824,7 +1824,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				if(jenkinsVersion.equalsIgnoreCase("1.442")) {
 					JSONObject emailCrdential = new JSONObject();
 					emailCrdential.put("smtpAuthUserName", emailAddress); 
-					emailCrdential.put("smtpAuthPassword", "");
+					emailCrdential.put("smtpAuthPassword", emailPassword);
 					mailConfiguration.put("useSMTPAuth", emailCrdential);
 				} else {
 					mailConfiguration.put("smtpAuthUserName", emailAddress); 
