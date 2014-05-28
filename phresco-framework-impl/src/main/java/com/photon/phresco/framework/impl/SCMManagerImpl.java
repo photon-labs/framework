@@ -24,14 +24,18 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.Proxy.Type;
+import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -168,6 +172,7 @@ import com.phresco.pom.model.DistributionManagement;
 import com.phresco.pom.model.Plugin;
 import com.phresco.pom.util.PomProcessor;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.eclipse.jgit.util.Base64;
 
 public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
@@ -1302,6 +1307,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				}
 
 				if (repoInfo.isSplitPhresco()) {
+					boolean validUser=authentication(repoInfo.getPhrescoRepoDetail().getUserName(), repoInfo.getPhrescoRepoDetail().getPassword());
+					if(!validUser){ 
+						throw new PhrescoException("Invalid User ..");
+					}
 					splitDotPhrescoContents(appInfo, tempPhrescoFile, appendedPhrUrl.toString(), appendedSrcUrl.toString(), appendedTestUrl.toString(), srcWorkspaceName, phrWorkspaceName, testWorkspaceName);
 					updatePom(tempPhrescoFile, appendedPhrUrl.toString(), repoType, PHR_POM_XML, appPomProcessor, Constants.PHRESCO);
 					File pomFile = new File(tempPhrescoFile, PHR_POM_XML);
@@ -1311,6 +1320,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					}
 				}
 				if (repoInfo.isSplitTest()) {
+					boolean validUser=authentication(repoInfo.getTestRepoDetail().getUserName(), repoInfo.getTestRepoDetail().getPassword());
+					if(!validUser){ 
+						throw new PhrescoException("Invalid User ..");
+					}
 					splitTestContents(appInfo, tempTestFile);
 					updatePom(tempTestFile, appendedTestUrl.toString(), repoType, POM_FILE, appPomProcessor, Constants.POM);
 					if (!TFS.equals(repoType)) {
@@ -1318,6 +1331,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					}
 				}
 				File pomDest = null;
+				boolean validUser=authentication(repoInfo.getSrcRepoDetail().getUserName(), repoInfo.getSrcRepoDetail().getPassword());
+				if(!validUser) { 
+					throw new PhrescoException("Invalid User ..");
+				}
 				splitSrcContents(appInfo, tempSrcFile, repoInfo, appendedPhrUrl.toString(), appendedSrcUrl.toString(), appendedTestUrl.toString(), srcWorkspaceName, phrWorkspaceName, testWorkspaceName);
 				if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
 					pomDest = new File(tempSrcFile, appInfo.getPhrescoPomFile());
@@ -1349,21 +1366,25 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					addSplittedProjectToTFS(srcRepoDetail, phrescoRepoDetail, testRepoDetail, dir);
 				}
 			} else {
-				appPomProcessor.setProperty(Constants.POM_PROP_KEY_SRC_REPO_URL, appendedSrcUrl.toString());
-				appPomProcessor.setProperty(Constants.POM_PROP_KEY_TFS_SRC_WORKSPACE_NAME, srcWorkspaceName);
-				String scmUrl = SCM + COLON + repoType + COLON + appendedSrcUrl.toString();
-				appPomProcessor.setSCM(appendedSrcUrl.toString(), scmUrl, scmUrl, "");
-				appPomProcessor.save();
-				if(StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
-					File pom = new File(dir, appInfo.getPomFile());
-					if(pom.exists()) {
-						PomProcessor processor = new PomProcessor(pom);
-						processor.setSCM(appendedSrcUrl.toString(), scmUrl, scmUrl, "");
-						processor.save();
-					}
-
+				boolean validUser=authentication(repoInfo.getSrcRepoDetail().getUserName(), repoInfo.getSrcRepoDetail().getPassword());
+				if(!validUser){ 
+					throw new PhrescoException("Invalid User ..");
 				}
-				addToRepo(srcRepoDetail, appInfo, dir, appDirName, dir, hasSplit);
+					appPomProcessor.setProperty(Constants.POM_PROP_KEY_SRC_REPO_URL, appendedSrcUrl.toString());
+					appPomProcessor.setProperty(Constants.POM_PROP_KEY_TFS_SRC_WORKSPACE_NAME, srcWorkspaceName);
+					String scmUrl = SCM + COLON + repoType + COLON + appendedSrcUrl.toString();
+					appPomProcessor.setSCM(appendedSrcUrl.toString(), scmUrl, scmUrl, "");
+					appPomProcessor.save();
+					if(StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
+						File pom = new File(dir, appInfo.getPomFile());
+						if(pom.exists()) {
+							PomProcessor processor = new PomProcessor(pom);
+							processor.setSCM(appendedSrcUrl.toString(), scmUrl, scmUrl, "");
+							processor.save();
+						}
+	
+					}
+					addToRepo(srcRepoDetail, appInfo, dir, appDirName, dir, hasSplit);
 			}
 		} catch (Exception e) {
 			deleteWorkspace(srcRepoDetail);
@@ -1813,7 +1834,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			throw new PhrescoException(e);
 		}
 	}
-
 	private void importToGITRepo(RepoDetail repodetail,ApplicationInfo appInfo, File appDir) throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importToGITRepo()");
@@ -1827,12 +1847,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			additionalAuthentication(repodetail.getPassPhrase());
 
 			CredentialsProvider cp = new UsernamePasswordCredentialsProvider(repodetail.getUserName(), repodetail.getPassword());
+			
 			FileRepositoryBuilder builder = new FileRepositoryBuilder();
 			Repository repository = builder.setGitDir(appDir).readEnvironment().findGitDir().build();
 			String dirPath = appDir.getPath();
 			File gitignore = new File(dirPath + GITIGNORE_FILE);
 			gitignore.createNewFile();
-
 			if (gitignore.exists()) {
 				String contents = FileUtils.readFileToString(gitignore);
 				if (!contents.isEmpty() && !contents.contains(DO_NOT_CHECKIN_DIR)) {
@@ -1851,7 +1871,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			}
 
 			Git git = new Git(repository);
-
+			
 			InitCommand initCommand = Git.init();
 			initCommand.setDirectory(appDir);
 			git = initCommand.call();
@@ -1869,16 +1889,19 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			config.setString(BRANCH, MASTER, REMOTE, ORIGIN);
 			config.setString(BRANCH, MASTER, MERGE, REF_HEAD_MASTER);
 			config.save();
-
+			
 			try {
 				PushCommand pc = git.push();
 				pc.setCredentialsProvider(cp).setForce(true);
 				pc.setPushAll().call();
 			} catch (Exception e){
 				git.getRepository().close();
+				PomProcessor appPomProcessor = new PomProcessor(new File(appDir,appInfo.getPhrescoPomFile()));
+				appPomProcessor.removeProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
+				appPomProcessor.save();
 				throw e;
 			}
-
+			
 			if (appInfo != null) {
 				updateSCMConnection(appInfo, repodetail.getRepoUrl());
 			}
@@ -2823,4 +2846,46 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	throws InvalidOptionValueException {
 		options.add(optionsMap.findOption("-noprompt"));
 	}
+	
+	private static boolean authentication(String username, String password) throws PhrescoException {
+		boolean validUser = false;
+		try {
+			URL url = new URL(GIT_URL);
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod(GET);
+			if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
+				String credentials = BASIC_SPACE + toBase64(username + COLON + password);
+				connection.setRequestProperty( AUTHORIZATION, credentials);
+				if (connection.getResponseCode() == 200) {
+					validUser = true;
+				}else {
+					validUser = false;
+				} 
+			} else {
+				validUser = false;
+			}
+		} catch (MalformedURLException e) {
+			throw new PhrescoException(e);
+		} catch (ProtocolException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		}
+		return validUser;
+	}
+	
+	private static final String toBase64(final String content) {
+		byte[] bytes;
+		try {
+			bytes = content.getBytes(UTF_8);
+		} catch (UnsupportedEncodingException e) {
+			bytes = content.getBytes();
+		}
+		return toBase64(bytes);
+	}
+	
+	private static final String toBase64(final byte[] content) {
+		return Base64.encodeBytes(content);
+	}
+
 }

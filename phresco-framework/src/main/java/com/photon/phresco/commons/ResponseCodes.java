@@ -170,6 +170,7 @@ public interface ResponseCodes {
 	String PHR210051 = "PHR210051"; // To retrive submodule's dependents
 	String PHR210052 = "PHR210052"; // Failed to retrive submodule's dependents
 	String PHR210054 = "PHR210053"; // Project is not Phresco Specific
+	String PHR210055 = "PHR210055"; // invalid user
 
 	
 	/*
