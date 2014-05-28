@@ -1334,6 +1334,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				boolean validUser=authentication(repoInfo.getSrcRepoDetail().getUserName(), repoInfo.getSrcRepoDetail().getPassword());
 				if(!validUser) { 
 					throw new PhrescoException("Invalid User ..");
+					
 				}
 				splitSrcContents(appInfo, tempSrcFile, repoInfo, appendedPhrUrl.toString(), appendedSrcUrl.toString(), appendedTestUrl.toString(), srcWorkspaceName, phrWorkspaceName, testWorkspaceName);
 				if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
