@@ -1703,6 +1703,8 @@ public interface FrameworkConstants {
 	
 	 /* Constants For Framework update */
    String TEMP_ZIP_FILE = "temp.zip";
+   String TEMP_ERRORIMG_FILE = "error.jpg";
+   String TEMP_ERROR_FILE = "error.txt";
    String MAVEN_SETTINGS_FILE = "../tools/maven/conf/settings.xml";
    String OUTPUT_SETTINGS_DIR = "tools/maven/conf";
    String BACKUP_DIRNAME = "backups";
