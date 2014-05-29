@@ -74,10 +74,12 @@ public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   
 		if (DebugEnabled) {
 			S_LOGGER.debug("Entering Method UpdateManagerImpl.getCurrentVersion()");
 		}
-		
 		try {
 			File pomFile = new File (Utility.getPhrescoHome() + File.separator + 
 					FrameworkConstants.BIN_DIR +  File.separator + FrameworkConstants.POM_FILE);
+			if(!pomFile.exists()) {
+				pomFile = new File("pom.xml");
+			}
 			PomProcessor processor = new PomProcessor(pomFile);
 			return processor.getProperty(FrameworkConstants.PROPERTY_VERSION);
 		} catch (PhrescoPomException e) {
