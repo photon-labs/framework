@@ -17,14 +17,19 @@
  */
 package com.photon.phresco.framework.rest.api;
 
+import java.awt.AWTException;
 import java.awt.Desktop;
+import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -36,9 +41,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.io.InputStream;
 import java.util.Properties;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -52,14 +57,15 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.util.SystemOutLogger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.LockUtil;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
-import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.Category;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
@@ -76,6 +82,7 @@ import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse.Status;
+import com.photon.phresco.framework.impl.UpgradeManagerImpl;
 
 /**
  * The Class UtilService.
@@ -638,26 +645,48 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 	@POST
 	@Path("/sendErrorReport")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response sendErrorReport(String errorReport) throws PhrescoException {
+	public Response sendErrorReport(String errorReport, @QueryParam("emailId") String emailId, @QueryParam("username") String username) throws PhrescoException {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		File screenShot = new File(Utility.getPhrescoTemp(), FrameworkConstants.TEMP_ERRORIMG_FILE);
+		File logFile = new File(Utility.getPhrescoTemp(), FrameworkConstants.TEMP_ERROR_FILE);
+		FileWriter fileWriter = null;	
+		UpgradeManagerImpl build = new UpgradeManagerImpl();
+		String buildNumber = build.getCurrentVersion();
 		try {
-		     InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("framework.config");
-             Properties prop = new Properties();
-             prop.load(resourceAsStream);
-		     String group = prop.getProperty("phresco.support.mailIds");
-			 String[] groupp=group.split(",");
-			 Utility.sendTemplateEmail(groupp, MAIL_ID, MAIL_SUBJECT, errorReport, MAIL_ID, MAIL_PASSWORD, null);
+            fileWriter = new FileWriter(logFile);
+            fileWriter.write(errorReport);
+            fileWriter.close();
+            // For screen shot
+            Robot robot = new Robot();
+            BufferedImage bi=robot.createScreenCapture(new Rectangle(1000,700));
+            ImageIO.write(bi, "jpg", new File(Utility.getPhrescoTemp(), FrameworkConstants.TEMP_ERRORIMG_FILE));
+            
+            InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("framework.config");
+            Properties prop = new Properties();
+            prop.load(resourceAsStream);
+		    String group = prop.getProperty("phresco.support.mailIds");
+		    String[] groupp=group.split(",");
+			Utility.sendTemplateEmail(groupp, emailId,username, MAIL_SUBJECT, logFile.getPath(), MAIL_ID, MAIL_PASSWORD, null, screenShot.getPath(),buildNumber);
 			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, null,
-					RESPONSE_STATUS_SUCCESS, PHR14C00001);
+				RESPONSE_STATUS_SUCCESS, PHR14C00001);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-		} catch (Exception e) {
+        } catch (IOException ex) {
+        	throw new PhrescoException(ex);
+        } catch (Exception e) {
 			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e, null,
 					RESPONSE_STATUS_ERROR, PHR14C10001);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} finally {
+			Utility.closeStream(fileWriter);
+			if(logFile.exists()) {
+				FileUtil.delete(logFile);
+			}
+			if(screenShot.exists()) {
+				FileUtil.delete(screenShot);
+			}
 		}
 	}
 	
-
 	private boolean isRequestFromLocalMachine(InetAddress addr) {
 		// Check if the address is a valid special local or loop back
 		if (addr.isAnyLocalAddress() || addr.isLoopbackAddress())
