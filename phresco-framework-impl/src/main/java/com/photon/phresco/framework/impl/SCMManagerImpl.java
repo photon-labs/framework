@@ -24,14 +24,18 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.Proxy.Type;
+import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -168,6 +172,7 @@ import com.phresco.pom.model.DistributionManagement;
 import com.phresco.pom.model.Plugin;
 import com.phresco.pom.util.PomProcessor;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.eclipse.jgit.util.Base64;
 
 public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
@@ -467,20 +472,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 
 		try {
-			File pomFile = getPomProcessor(appInfo);
-			PomProcessor pomProcessor = new PomProcessor(pomFile);
-			String androidsourceDir = pomProcessor.getProperty("source.dir");
+			PomProcessor processor = getPomProcessor(appInfo);
 			if(debugEnabled){
 				S_LOGGER.debug("processor.getSCM() exists and repo url "+ repoUrl);
 			}
-			if(StringUtils.isNotEmpty(androidsourceDir)) {
-				PomProcessor androidSourcePom = new PomProcessor(pomFile);
-				androidSourcePom.setSCM(repoUrl, "", "", "");
-				androidSourcePom.save();
-
-			}
-			pomProcessor.setSCM(repoUrl, "", "", "");
-			pomProcessor.save();
+			processor.setSCM(repoUrl, "", "", "");
+			processor.save();
 
 			// To write in phresco-pom.xml
 			PomProcessor phrescoPomProcessor = getPhrescoPomProcessor(appInfo);
@@ -513,13 +510,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			PomProcessor processor = new PomProcessor(pomFile);
 			processor.setSCM(repoUrl, "", "", "");
 			processor.save();
-			String androidsourceDir = processor.getProperty("source.dir");
-			if(StringUtils.isNotEmpty(androidsourceDir)) {
-				PomProcessor androidSourcePom = new PomProcessor(pomFile);
-				androidSourcePom.setSCM(repoUrl, "", "", "");
-				androidSourcePom.save();
-
-			}
 
 			// To write in phresco-pom.xml
 			if(StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
@@ -572,14 +562,14 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		return pomfile;
 	}
 
-	private File getPomProcessor(ApplicationInfo appInfo)throws Exception {
+	private PomProcessor getPomProcessor(ApplicationInfo appInfo)throws Exception {
 		try {
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 			builder.append(appInfo.getAppDirName());
 			builder.append(File.separatorChar);
 			builder.append(Utility.getPomFileName(appInfo));
 			File pomPath = new File(builder.toString());
-			return pomPath;
+			return new PomProcessor(pomPath);
 		} catch (Exception e) {
 			throw new PhrescoException(NO_POM_XML);
 		}
@@ -879,7 +869,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			Customer customer = serviceManager.getCustomer(customerId);
 			com.photon.phresco.commons.model.RepoInfo repoInfo = customer.getRepoInfo();
 			PomProcessor processor = new PomProcessor(pomFile);
-			String androidSourceDir = processor.getProperty("source.dir");
 			processor.setName(projInfo.getAppInfos().get(0).getName());
 			processor.addRepositories(customerId, repoInfo.getGroupRepoURL());
 			DistributionManagement distributionManagement = new DistributionManagement();
@@ -895,13 +884,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			}
 			processor.getModel().setDistributionManagement(distributionManagement);
 			processor.save();
-			if(StringUtils.isNotEmpty(androidSourceDir)) {
-				PomProcessor androidSourcePom = new PomProcessor(new File(pomFile.getParent() + androidSourceDir + File.separator + Constants.POM_NAME));
-				androidSourcePom.setName(projInfo.getAppInfos().get(0).getName());
-				androidSourcePom.addRepositories(customerId, repoInfo.getGroupRepoURL());
-				androidSourcePom.getModel().setDistributionManagement(distributionManagement);
-				androidSourcePom.save();
-			}
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
 		} catch (PhrescoPomException e) {
@@ -1325,6 +1307,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				}
 
 				if (repoInfo.isSplitPhresco()) {
+					boolean validUser=authentication(repoInfo.getPhrescoRepoDetail().getUserName(), repoInfo.getPhrescoRepoDetail().getPassword());
+					if(!validUser){ 
+						throw new PhrescoException("Invalid User ..");
+					}
 					splitDotPhrescoContents(appInfo, tempPhrescoFile, appendedPhrUrl.toString(), appendedSrcUrl.toString(), appendedTestUrl.toString(), srcWorkspaceName, phrWorkspaceName, testWorkspaceName);
 					updatePom(tempPhrescoFile, appendedPhrUrl.toString(), repoType, PHR_POM_XML, appPomProcessor, Constants.PHRESCO);
 					File pomFile = new File(tempPhrescoFile, PHR_POM_XML);
@@ -1334,6 +1320,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					}
 				}
 				if (repoInfo.isSplitTest()) {
+					boolean validUser=authentication(repoInfo.getTestRepoDetail().getUserName(), repoInfo.getTestRepoDetail().getPassword());
+					if(!validUser){ 
+						throw new PhrescoException("Invalid User ..");
+					}
 					splitTestContents(appInfo, tempTestFile);
 					updatePom(tempTestFile, appendedTestUrl.toString(), repoType, POM_FILE, appPomProcessor, Constants.POM);
 					if (!TFS.equals(repoType)) {
@@ -1341,6 +1331,11 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					}
 				}
 				File pomDest = null;
+				boolean validUser=authentication(repoInfo.getSrcRepoDetail().getUserName(), repoInfo.getSrcRepoDetail().getPassword());
+				if(!validUser) { 
+					throw new PhrescoException("Invalid User ..");
+					
+				}
 				splitSrcContents(appInfo, tempSrcFile, repoInfo, appendedPhrUrl.toString(), appendedSrcUrl.toString(), appendedTestUrl.toString(), srcWorkspaceName, phrWorkspaceName, testWorkspaceName);
 				if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
 					pomDest = new File(tempSrcFile, appInfo.getPhrescoPomFile());
@@ -1372,29 +1367,25 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					addSplittedProjectToTFS(srcRepoDetail, phrescoRepoDetail, testRepoDetail, dir);
 				}
 			} else {
-				appPomProcessor.setProperty(Constants.POM_PROP_KEY_SRC_REPO_URL, appendedSrcUrl.toString());
-				appPomProcessor.setProperty(Constants.POM_PROP_KEY_TFS_SRC_WORKSPACE_NAME, srcWorkspaceName);
-				String scmUrl = SCM + COLON + repoType + COLON + appendedSrcUrl.toString();
-				String androidSourceDir = appPomProcessor.getProperty("source.dir");
-				if(StringUtils.isNotEmpty(androidSourceDir)) {
-					PomProcessor androidSourcePom = new PomProcessor(new File(dir + androidSourceDir + File.separator + Constants.POM_NAME));
-					androidSourcePom.setProperty(Constants.POM_PROP_KEY_SRC_REPO_URL, appendedSrcUrl.toString());
-					androidSourcePom.setProperty(Constants.POM_PROP_KEY_TFS_SRC_WORKSPACE_NAME, srcWorkspaceName);
-					androidSourcePom.setSCM(appendedSrcUrl.toString(), scmUrl, scmUrl, "");
-					androidSourcePom.save();
+				boolean validUser=authentication(repoInfo.getSrcRepoDetail().getUserName(), repoInfo.getSrcRepoDetail().getPassword());
+				if(!validUser){ 
+					throw new PhrescoException("Invalid User ..");
 				}
-				appPomProcessor.setSCM(appendedSrcUrl.toString(), scmUrl, scmUrl, "");
-				appPomProcessor.save();
-				if(StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
-					File pom = new File(dir, appInfo.getPomFile());
-					if(pom.exists()) {
-						PomProcessor processor = new PomProcessor(pom);
-						processor.setSCM(appendedSrcUrl.toString(), scmUrl, scmUrl, "");
-						processor.save();
+					appPomProcessor.setProperty(Constants.POM_PROP_KEY_SRC_REPO_URL, appendedSrcUrl.toString());
+					appPomProcessor.setProperty(Constants.POM_PROP_KEY_TFS_SRC_WORKSPACE_NAME, srcWorkspaceName);
+					String scmUrl = SCM + COLON + repoType + COLON + appendedSrcUrl.toString();
+					appPomProcessor.setSCM(appendedSrcUrl.toString(), scmUrl, scmUrl, "");
+					appPomProcessor.save();
+					if(StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
+						File pom = new File(dir, appInfo.getPomFile());
+						if(pom.exists()) {
+							PomProcessor processor = new PomProcessor(pom);
+							processor.setSCM(appendedSrcUrl.toString(), scmUrl, scmUrl, "");
+							processor.save();
+						}
+	
 					}
-
-				}
-				addToRepo(srcRepoDetail, appInfo, dir, appDirName, dir, hasSplit);
+					addToRepo(srcRepoDetail, appInfo, dir, appDirName, dir, hasSplit);
 			}
 		} catch (Exception e) {
 			deleteWorkspace(srcRepoDetail);
@@ -1468,12 +1459,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				splitPomProcessor = updatePom(appPomProcessor, packaging, pomFile);
 			} else {
 				splitPomProcessor = new PomProcessor(pomFile);
-				String androidSourceDir = splitPomProcessor.getProperty("source.dir");
-				if(StringUtils.isNotEmpty(androidSourceDir)) {
-					PomProcessor androidSourcePomProcessor = new PomProcessor(new File(pomFile.getParent() + androidSourceDir + File.separator + Constants.POM_NAME));
-					androidSourcePomProcessor.setSCM(url, scmUrl, scmUrl, "");
-					androidSourcePomProcessor.save();
-				}
 			}
 			splitPomProcessor.setSCM(url, scmUrl, scmUrl, "");
 			splitPomProcessor.save();
@@ -1691,13 +1676,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 	private void updatePomProperties(ApplicationInfo appInfo, String moduleName, File pomFile, String phrescoRepoUrl, String srcRepoUrl, String testRepoUrl, String srcWorkspaceName, String phrWorkspaceName, String testWorkspaceName) throws PhrescoException {
 		try {
-			PomProcessor androidSourcePom = null;
 			String appDirName = appInfo.getAppDirName();
 			PomProcessor pomProcessor = new PomProcessor(pomFile);
-			String androidSoruceDir = pomProcessor.getProperty("source.dir");
-			if(StringUtils.isNotEmpty(androidSoruceDir)) {
-				androidSourcePom = new PomProcessor(new File(pomFile.getParent() + androidSoruceDir + File.separator + Constants.POM_NAME));
-			}
 			StringBuilder sb = new StringBuilder(PREV_DIR);
 			if (StringUtils.isNotEmpty(moduleName)) {
 				sb.append(PREV_DIR);
@@ -1716,66 +1696,34 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 			if (srcRootPrpty.startsWith(BACK_SLASH)) {
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_ROOT_SRC_DIR, sb.toString());
-				if(androidSourcePom != null){
-				androidSourcePom.setProperty(Constants.POM_PROP_KEY_ROOT_SRC_DIR, sb.toString());
-				}
 			} else {
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_ROOT_SRC_DIR, sb.toString() + srcRootPrpty);
-				if(androidSourcePom != null){
-				androidSourcePom.setProperty(Constants.POM_PROP_KEY_ROOT_SRC_DIR, sb.toString() + srcRootPrpty);
-				}
 			}
 
 			pomProcessor.setProperty(Constants.POM_PROP_KEY_SRC_REPO_URL, srcRepoUrl);
-			if(androidSourcePom != null){
-			androidSourcePom.setProperty(Constants.POM_PROP_KEY_SRC_REPO_URL, srcRepoUrl);
-			}
 
 			if (StringUtils.isNotEmpty(phrescoRepoUrl) || StringUtils.isNotEmpty(testRepoUrl)) {
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_SRC_DIR, appDirName);
-				if(androidSourcePom != null){
-				androidSourcePom.setProperty(Constants.POM_PROP_KEY_SPLIT_SRC_DIR, appDirName);
-				}
 			}
 
 			if (StringUtils.isNotEmpty(phrescoRepoUrl)) {
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_PHRESCO_DIR, appDirName + Constants.SUFFIX_PHRESCO);
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_PHRESCO_REPO_URL, phrescoRepoUrl);
-				if(androidSourcePom != null){
-				androidSourcePom.setProperty(Constants.POM_PROP_KEY_SPLIT_PHRESCO_DIR, appDirName + Constants.SUFFIX_PHRESCO);
-				androidSourcePom.setProperty(Constants.POM_PROP_KEY_PHRESCO_REPO_URL, phrescoRepoUrl);
-				}
 			}
 			if (StringUtils.isNotEmpty(testRepoUrl)) {
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_SPLIT_TEST_DIR, appDirName + Constants.SUFFIX_TEST);
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_TEST_REPO_URL, testRepoUrl);
-				if(androidSourcePom != null){
-				androidSourcePom.setProperty(Constants.POM_PROP_KEY_SPLIT_TEST_DIR, appDirName + Constants.SUFFIX_TEST);
-				androidSourcePom.setProperty(Constants.POM_PROP_KEY_TEST_REPO_URL, testRepoUrl);
-				}
 			}
 			if (StringUtils.isNotEmpty(srcWorkspaceName)) {
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_TFS_SRC_WORKSPACE_NAME, srcWorkspaceName);
-				if(androidSourcePom != null){
-				androidSourcePom.setProperty(Constants.POM_PROP_KEY_TFS_SRC_WORKSPACE_NAME, srcWorkspaceName);
-				}
 			}
 			if (StringUtils.isNotEmpty(phrWorkspaceName)) {
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_TFS_PHR_WORKSPACE_NAME, phrWorkspaceName);
-				if(androidSourcePom != null){
-				androidSourcePom.setProperty(Constants.POM_PROP_KEY_TFS_PHR_WORKSPACE_NAME, phrWorkspaceName);
-				}
 			}
 			if (StringUtils.isNotEmpty(testWorkspaceName)) {
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_TFS_TEST_WORKSPACE_NAME, testWorkspaceName);
-				if(androidSourcePom != null){
-				androidSourcePom.setProperty(Constants.POM_PROP_KEY_TFS_TEST_WORKSPACE_NAME, testWorkspaceName);
-				}
 			}
 			pomProcessor.save();
-			if(androidSourcePom != null){
-			androidSourcePom.save();
-			}
 		} catch (Exception e) {
 			throw new PhrescoException(e);
 		}
@@ -1887,7 +1835,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			throw new PhrescoException(e);
 		}
 	}
-
 	private void importToGITRepo(RepoDetail repodetail,ApplicationInfo appInfo, File appDir) throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importToGITRepo()");
@@ -1901,12 +1848,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			additionalAuthentication(repodetail.getPassPhrase());
 
 			CredentialsProvider cp = new UsernamePasswordCredentialsProvider(repodetail.getUserName(), repodetail.getPassword());
+			
 			FileRepositoryBuilder builder = new FileRepositoryBuilder();
 			Repository repository = builder.setGitDir(appDir).readEnvironment().findGitDir().build();
 			String dirPath = appDir.getPath();
 			File gitignore = new File(dirPath + GITIGNORE_FILE);
 			gitignore.createNewFile();
-
 			if (gitignore.exists()) {
 				String contents = FileUtils.readFileToString(gitignore);
 				if (!contents.isEmpty() && !contents.contains(DO_NOT_CHECKIN_DIR)) {
@@ -1925,7 +1872,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			}
 
 			Git git = new Git(repository);
-
+			
 			InitCommand initCommand = Git.init();
 			initCommand.setDirectory(appDir);
 			git = initCommand.call();
@@ -1943,16 +1890,19 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			config.setString(BRANCH, MASTER, REMOTE, ORIGIN);
 			config.setString(BRANCH, MASTER, MERGE, REF_HEAD_MASTER);
 			config.save();
-
+			
 			try {
 				PushCommand pc = git.push();
 				pc.setCredentialsProvider(cp).setForce(true);
 				pc.setPushAll().call();
 			} catch (Exception e){
 				git.getRepository().close();
+				PomProcessor appPomProcessor = new PomProcessor(new File(appDir,appInfo.getPhrescoPomFile()));
+				appPomProcessor.removeProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
+				appPomProcessor.save();
 				throw e;
 			}
-
+			
 			if (appInfo != null) {
 				updateSCMConnection(appInfo, repodetail.getRepoUrl());
 			}
@@ -2897,4 +2847,46 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	throws InvalidOptionValueException {
 		options.add(optionsMap.findOption("-noprompt"));
 	}
+	
+	private static boolean authentication(String username, String password) throws PhrescoException {
+		boolean validUser = false;
+		try {
+			URL url = new URL(GIT_URL);
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod(GET);
+			if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
+				String credentials = BASIC_SPACE + toBase64(username + COLON + password);
+				connection.setRequestProperty( AUTHORIZATION, credentials);
+				if (connection.getResponseCode() == 200) {
+					validUser = true;
+				}else {
+					validUser = false;
+				} 
+			} else {
+				validUser = false;
+			}
+		} catch (MalformedURLException e) {
+			throw new PhrescoException(e);
+		} catch (ProtocolException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		}
+		return validUser;
+	}
+	
+	private static final String toBase64(final String content) {
+		byte[] bytes;
+		try {
+			bytes = content.getBytes(UTF_8);
+		} catch (UnsupportedEncodingException e) {
+			bytes = content.getBytes();
+		}
+		return toBase64(bytes);
+	}
+	
+	private static final String toBase64(final byte[] content) {
+		return Base64.encodeBytes(content);
+	}
+
 }

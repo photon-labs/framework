@@ -201,6 +201,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
 				projectId = projectInfo.getId();
 			}
+			List<CIJob> jobs = continuousDelivery.getJobs();
 			boolean coreCreateJob = coreCreateJob(continuousDelivery, projectId, appDir, userId, customerId, request);
 			if (coreCreateJob) {
 				finalOutput = responseDataEvaluation(responseData, null, continuousDelivery, RESPONSE_STATUS_SUCCESS, PHR800002);
@@ -243,11 +244,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				
 				JSONArray jsonArray = new JSONArray("["+execute.toString()+"]");
 			    JSONObject jsonObject = jsonArray.getJSONObject(0);
-			    JSONArray jobJsonArray = jsonObject.getJSONArray("jobs");
+			    String json = jsonObject.getString("jobs");
+			    JSONArray jobJsonArray = new JSONArray(json);
 			    for (int k = 0; k<jobs.length(); k++) {
 				    for (int j = 0; j<jobJsonArray.length(); j++) {
-				    	 JSONObject jobjsonObject = jobJsonArray.getJSONObject(j);
-				    	 if(jobs.get(k).toString().equals(jobjsonObject.getString("name"))) {
+				    	 JSONObject jsonObject1 = jobJsonArray.getJSONObject(j);
+				    	 if(jobs.get(k).toString().equals(jsonObject1.getString("name"))) {
 				    		 hasTrue = false;
 				    		 name = jobs.get(k).toString();
 				    		 break;
