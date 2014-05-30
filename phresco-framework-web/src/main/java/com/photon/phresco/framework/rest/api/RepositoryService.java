@@ -65,13 +65,25 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.repository.metadata.Metadata;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
-import org.apache.maven.repository.internal.MavenRepositorySystemSession;
+import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.repository.LocalRepository;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.VersionRangeRequest;
+import org.eclipse.aether.resolution.VersionRangeResolutionException;
+import org.eclipse.aether.resolution.VersionRangeResult;
+import org.eclipse.aether.util.repository.layout.MavenDefaultLayout;
+import org.eclipse.aether.version.Version;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -81,17 +93,6 @@ import org.eclipse.jgit.lib.Config;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.sonatype.aether.RepositorySystem;
-import org.sonatype.aether.RepositorySystemSession;
-import org.sonatype.aether.artifact.Artifact;
-import org.sonatype.aether.repository.LocalRepository;
-import org.sonatype.aether.repository.RemoteRepository;
-import org.sonatype.aether.resolution.VersionRangeRequest;
-import org.sonatype.aether.resolution.VersionRangeResolutionException;
-import org.sonatype.aether.resolution.VersionRangeResult;
-import org.sonatype.aether.util.artifact.DefaultArtifact;
-import org.sonatype.aether.util.layout.MavenDefaultLayout;
-import org.sonatype.aether.version.Version;
 import org.sonatype.nexus.rest.model.ArtifactInfoResource;
 import org.sonatype.nexus.rest.model.ArtifactInfoResourceResponse;
 import org.tmatesoft.svn.core.SVNAuthenticationException;
@@ -934,7 +935,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				URI paths = defaultLayout.getPath(artifact);
 				MetadataXpp3Reader reader = new MetadataXpp3Reader();
 				if (nature.equalsIgnoreCase(SNAPSHOT)) {
-					repo = new RemoteRepository("", DEFAULT, repos.getSnapshotRepoURL());
+					repo = new RemoteRepository.Builder( "", DEFAULT, repos.getSnapshotRepoURL() ).build();
 					artifactPath =(repo.getUrl() + repo.getId() + paths).replace("\\", "/");
 					String path = artifactPath.substring(0, artifactPath.lastIndexOf("/"));
 					URL metadataPath = new URL(path + MVN_METADATA_XML);
@@ -947,7 +948,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 					artifactPath =  artifactPath + version + PRIORITY_JAR ;
 
 				} else {
-					repo = new RemoteRepository("", DEFAULT, repos.getReleaseRepoURL());
+					repo = new RemoteRepository.Builder( "", DEFAULT, repos.getSnapshotRepoURL()).build();
 					artifactPath =(repo.getUrl() + repo.getId() + paths).replace("\\", "/");
 				}
 				Client client = ClientHelper.createClient();
@@ -2168,7 +2169,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				UUID randomUUID = UUID.randomUUID();
 				randomIds.add(randomUUID);
 				RepositorySystemSession session = newRepositorySystemSession( system , randomUUID, "");
-				RemoteRepository repo =  new RemoteRepository("", DEFAULT, url);
+				RemoteRepository repo = new RemoteRepository.Builder( "", DEFAULT, url ).build();
 				VersionRangeRequest rangeRequest = new VersionRangeRequest();
 				rangeRequest.setArtifact(artifact);
 				rangeRequest.addRepository(repo);
@@ -2265,17 +2266,18 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	}
 
 	private static RepositorySystemSession newRepositorySystemSession(RepositorySystem system, UUID randomUUID, String localPath) {
-		MavenRepositorySystemSession session = new MavenRepositorySystemSession();
-		LocalRepository localRepo = null;
+		DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
+		 
+        LocalRepository localRepo = null;
 		if (randomUUID != null) {
 			localRepo = new LocalRepository(Utility.getPhrescoTemp() + File.separator + randomUUID);
 		} else if (StringUtils.isNotEmpty(localPath)) {
 			localRepo = new LocalRepository(localPath);
 		}
-		session.setLocalRepositoryManager(system.newLocalRepositoryManager(localRepo));
+		session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
 		return session;
 	}
-
+	
 	private static void clearCache(UUID randomUUID)  throws PhrescoException {
 		try {
 			File path = new File(Utility.getPhrescoTemp() + File.separator + randomUUID);
