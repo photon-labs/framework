@@ -1736,6 +1736,15 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null,
 					null, status, successCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch(PhrescoException e) {
+			if (e.getLocalizedMessage().contains("Invalid User ..")) {
+				status = RESPONSE_STATUS_ERROR;
+				errorCode = PHR210055;
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()),
+						null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
+				"*").build();
+		}
 		} catch (Exception e) {
 			if (e.getLocalizedMessage().contains("git-receive-pack not found")) {
 				status = RESPONSE_STATUS_ERROR;
@@ -1751,13 +1760,15 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 				"*").build();
 			}
-		} finally {
+		} 
+		finally {
 			try {
 				LockUtil.removeLock(uniqueKey);
 			} catch (PhrescoException e) {
 
 			}
 		}
+		return null;
 	}
 
 	/**

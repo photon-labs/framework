@@ -1,21 +1,20 @@
-@REM ----------------------------------------------------------------------------
-@REM Licensed to the Apache Software Foundation (ASF) under one
-@REM or more contributor license agreements.  See the NOTICE file
-@REM distributed with this work for additional information
-@REM regarding copyright ownership.  The ASF licenses this file
-@REM to you under the Apache License, Version 2.0 (the
-@REM "License"); you may not use this file except in compliance
-@REM with the License.  You may obtain a copy of the License at
 @REM
-@REM    http://www.apache.org/licenses/LICENSE-2.0
+@REM Framework Runner
 @REM
-@REM Unless required by applicable law or agreed to in writing,
-@REM software distributed under the License is distributed on an
-@REM "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-@REM KIND, either express or implied.  See the License for the
-@REM specific language governing permissions and limitations
-@REM under the License.
-@REM ----------------------------------------------------------------------------
+@REM Copyright (C) 1999-2013 Photon Infotech Inc.
+@REM
+@REM Licensed under the Apache License, Version 2.0 (the "License");
+@REM you may not use this file except in compliance with the License.
+@REM You may obtain a copy of the License at
+@REM
+@REM         http://www.apache.org/licenses/LICENSE-2.0
+@REM
+@REM Unless required by applicable law or agreed to in writing, software
+@REM distributed under the License is distributed on an "AS IS" BASIS,
+@REM WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+@REM See the License for the specific language governing permissions and
+@REM limitations under the License.
+@REM
 
 @REM ----------------------------------------------------------------------------
 @REM Maven2 Start Up Batch script
@@ -29,7 +28,7 @@
 @REM MAVEN_BATCH_PAUSE - set to 'on' to wait for a key stroke before ending
 @REM MAVEN_OPTS - parameters passed to the Java VM when running Maven
 @REM     e.g. to debug Maven itself, use
-@REM set MAVEN_OPTS=-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000
+@REM set MAVEN_OPTS=-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000
 @REM MAVEN_SKIP_RC - flag to disable loading of mavenrc files
 @REM ----------------------------------------------------------------------------
 
@@ -54,15 +53,15 @@ set ERROR_CODE=0
 if "%OS%"=="Windows_NT" @setlocal
 if "%OS%"=="WINNT" @setlocal
 
-set MAVEN_DEBUG_OPTS=-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000
+set MAVEN_DEBUG_OPTS=-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000
 
 @REM ==== START VALIDATION ====
 if not "%JAVA_HOME%" == "" goto OkJHome
 
 echo.
-echo Error: JAVA_HOME not found in your environment. >&2
-echo Please set the JAVA_HOME variable in your environment to match the >&2
-echo location of your Java installation >&2
+echo ERROR: JAVA_HOME not found in your environment.
+echo Please set the JAVA_HOME variable in your environment to match the
+echo location of your Java installation
 echo.
 goto error
 
@@ -70,10 +69,10 @@ goto error
 if exist "%JAVA_HOME%\bin\java.exe" goto chkMHome
 
 echo.
-echo Error: JAVA_HOME is set to an invalid directory. >&2
-echo JAVA_HOME = "%JAVA_HOME%" >&2
-echo Please set the JAVA_HOME variable in your environment to match the >&2
-echo location of your Java installation >&2
+echo ERROR: JAVA_HOME is set to an invalid directory.
+echo JAVA_HOME = "%JAVA_HOME%"
+echo Please set the JAVA_HOME variable in your environment to match the
+echo location of your Java installation
 echo.
 goto error
 
@@ -85,9 +84,9 @@ if "%OS%"=="WINNT" SET "M2_HOME=%~dp0.."
 if not "%M2_HOME%"=="" goto valMHome
 
 echo.
-echo Error: M2_HOME not found in your environment. >&2
-echo Please set the M2_HOME variable in your environment to match the >&2
-echo location of the Maven installation >&2
+echo ERROR: M2_HOME not found in your environment.
+echo Please set the M2_HOME variable in your environment to match the
+echo location of the Maven installation
 echo.
 goto error
 
@@ -102,10 +101,10 @@ goto stripMHome
 if exist "%M2_HOME%\bin\mvn.bat" goto init
 
 echo.
-echo Error: M2_HOME is set to an invalid directory. >&2
-echo M2_HOME = "%M2_HOME%" >&2
-echo Please set the M2_HOME variable in your environment to match the >&2
-echo location of the Maven installation >&2
+echo ERROR: M2_HOME is set to an invalid directory.
+echo M2_HOME = "%M2_HOME%"
+echo Please set the M2_HOME variable in your environment to match the
+echo location of the Maven installation
 echo.
 goto error
 @REM ==== END VALIDATION ====
@@ -197,3 +196,4 @@ if "%MAVEN_BATCH_PAUSE%" == "on" pause
 if "%MAVEN_TERMINATE_CMD%" == "on" exit %ERROR_CODE%
 
 exit /B %ERROR_CODE%
+

@@ -344,12 +344,17 @@ define(["api/localStorageAPI", "framework/widgetWithTemplate"], function(){
 		sendReport : function() {
 			var self=this;
 			$("#sendReport").click(function() {
+				var data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+				if(data !== "") { 
+					userId = data.email; 
+					username= data.id;
+					}
 				jsonData = $(".modal-body").text();
 				var header =  {
 					contentType: "application/json",
 					requestMethod: "POST",
 					dataType: "json",
-					webserviceurl: commonVariables.webserviceurl+"util/sendErrorReport",
+					webserviceurl: commonVariables.webserviceurl+"util/sendErrorReport?emailId="+userId+"&username="+username,
 				}
 				header.requestPostBody = jsonData;
 				if (commonVariables.callLadda) {
