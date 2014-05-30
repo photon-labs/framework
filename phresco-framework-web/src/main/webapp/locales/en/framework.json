@@ -547,8 +547,14 @@
 	  "label" : {
 	      "manualtest"  :  "Manual Test"
 	  }
+	},	
+	"seo" : {
+	  "label" : {
+	      "seotest"  :  "SEO Test"
+	  }
 	},
 	
+
 	"performanceLoad" : {
 		"basedon"			:	"Based on",
 		"aggrresponsetime"	:	"Aggr Response Time",
