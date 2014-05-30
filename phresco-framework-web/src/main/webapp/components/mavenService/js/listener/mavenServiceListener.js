@@ -43,6 +43,11 @@ define([], function() {
 			var self = this, header = self.getRequestHeader("GET", "", commonVariables.mvnZapAction, paramData);
 			self.mvnService(header, divId, callback);
 		},
+								
+		mvnSeoTest : function(paramData, divId, callback){
+			var self = this, header = self.getRequestHeader("GET", "", commonVariables.mvnSeoTest, paramData);
+			self.mvnService(header, divId, callback);
+		},
 		
 		mvnIntegrationTest : function(paramData, divId, callback){
 			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnIntegrationTest, paramData);

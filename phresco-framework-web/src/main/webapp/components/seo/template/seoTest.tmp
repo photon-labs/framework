@@ -1,0 +1,47 @@
+<section class="optiontitle qual_unit manualTemp">
+	<div class="unit_text" data-i18n="seo.label.seotest"></div>
+	<div class="flt_right">
+		<div class="unit_view hideContent">
+        </div>
+          
+        <div class="unit_path">
+			<!--upload popup starts here -->
+			<input type="button" value="Test" title="Template Upload" id="show_uploadTemplate_popup" name="template_upload" class="btn btn_style">
+			<div id="template_upload" class="dyn_popup" style="display:none">
+				<form id="seoUploadForm">
+					<ul class="row dynamicControls">
+					</ul>
+					<ul class="row uploader">
+						<li>Upload File<br/></li>
+						<li>
+							<div id="manual_temp_upload" class="file-uploader align" style="float:left"><noscript><p>Please enable JavaScript to use file uploader.</p><!-- or put a simple form for upload here --></noscript> </div>
+						</li>
+						<li>
+							<div class="flt_right">
+							<input type="button" value="Test" id="seoTest" class="btn btn_style" style="margin:0">
+							<input type="button" value="Close" class="btn btn_style dyn_popup_close" style="margin:0">
+							</div>
+						</li>
+					</ul>
+				</form>
+			</div>
+			<!--upload popup ends here -->	
+			
+			<!--download popup starts here -->
+			<!--download popup ends here -->
+			<!--Add TestSuite popup starts here -->
+			
+			<!--Add TestSuite popup ends here -->
+			
+			<!--Add TestCase popup starts here -->
+    		
+			<!--Add TestCase popup ends here -->
+        </div>
+	</div>	
+		
+</section>
+
+<div class="mainContent manualTemp" id="testResult"></div>
+<section class="content_end" style="display:none;">
+	<div class="msgdisplay"></div>
+</section>
