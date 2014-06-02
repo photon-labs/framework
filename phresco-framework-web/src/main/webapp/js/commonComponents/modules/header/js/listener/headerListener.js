@@ -164,7 +164,7 @@ define(["header/api/headerAPI"], function() {
 				} else {
 				$("#favicon").attr("href", "themes/default/images/Phresco/favicon.png");
 					$("#favicon1").attr("href", "themes/default/images/Phresco/favicon.png");
-				  }
+				      }
 			});	
 			
 			self.performAction(self.getActionHeader("getloginIcon", data), function(response) {
