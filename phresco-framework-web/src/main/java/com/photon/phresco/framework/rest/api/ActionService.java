@@ -17,9 +17,13 @@
  */
 package com.photon.phresco.framework.rest.api;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLDecoder;
 import java.util.List;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -30,12 +34,14 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.LockUtil;
 import com.photon.phresco.commons.ResponseCodes;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.model.MinifyInfo;
@@ -45,7 +51,10 @@ import com.photon.phresco.framework.rest.api.util.ActionResponse;
 import com.photon.phresco.framework.rest.api.util.ActionServiceConstant;
 import com.photon.phresco.framework.rest.api.util.BufferMap;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
+import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
@@ -454,6 +463,81 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
+	
+	/**
+	 * seo test.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
+	@GET
+	@Path(REST_SEO_TEST)
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response seoTest(@Context HttpServletRequest request) throws PhrescoException  {
+		ActionFunction actionFunction = new ActionFunction();
+		ActionResponse response = new ActionResponse();
+		try	{
+			actionFunction.prePopulateModelData(request);
+			response = actionFunction.seoTest(request);
+			response.setResponseCode(PHRQ500007);
+		} catch (Exception e) {
+			S_LOGGER.error(e.getMessage());
+			response.setStatus(RESPONSE_STATUS_ERROR);
+			response.setLog("");
+			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+			response.setUniquekey("");
+			response.setResponseCode(PHRQ500008);
+		}
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+	}
+	
+	
+	/**
+	 * Seo CSV file upload test.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
+	@POST
+	@Path(REST_CSV_FILE_UPLOAD)
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response csvFileupload(@Context HttpServletRequest request) throws PhrescoException  {
+		ActionResponse response = new ActionResponse();
+		String appDirName = "";
+		try	{
+			String uploadedFileName = request.getHeader(FrameworkConstants.X_FILE_NAME);
+			String fileName = URLDecoder.decode(uploadedFileName, CI_UTF8);
+			
+			InputStream inputStream = request.getInputStream();
+			appDirName = request.getParameter(REQ_APP_DIR_NAME);
+        	String moduleName = request.getParameter(MODULE_NAME);
+        	String rootModulePath = "";
+			String subModuleName = "";
+			if (StringUtils.isNotEmpty(moduleName)) {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+				subModuleName = moduleName;
+			} else {
+				rootModulePath = Utility.getProjectHome() + appDirName;
+			}
+			String seoTestPath = getSeoTestReportDir(rootModulePath, subModuleName);
+        	ProjectInfo projectinfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+        	File testDir = Utility.getTestFolderLocation(projectinfo, rootModulePath, subModuleName);
+        	StringBuilder builder = new StringBuilder(testDir.toString());
+    		builder.append(seoTestPath);
+    		builder.append(RESOURCE_FOLDER);
+    		System.out.println("Target = " + builder.toString());
+    		File destFile = new File(builder.toString() + File.separator + fileName);
+    		FileUtils.copyInputStreamToFile(inputStream, destFile);
+    		response.setStatus(SUCCESS);
+    		response.setResponseCode(PHRQ400001);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+	}
+	
 	
 	/**
 	 * Performance test.
@@ -1294,6 +1378,16 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 		
 	}
+	
+	private String getSeoTestReportDir(String rootModulePath, String subModuleName) throws PhrescoException {
+        try {
+        	PomProcessor pomProcessor = Utility.getPomProcessor(rootModulePath, subModuleName);
+        	String seoDir = pomProcessor.getProperty(Constants.POM_PROP_KEY_SEOTEST_DIR);
+        	return seoDir;
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+    }
 	
 
 }

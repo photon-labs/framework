@@ -41,6 +41,7 @@ define([], function() {
 		tridiongeneral : null,
 		tridionpublish : null,
 		zapmenu : null,
+		seo : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -522,6 +523,18 @@ define([], function() {
 						}
 						
 						break;						
+										
+					case commonVariables.seo :
+						if(self.seo === null) {
+							require(["seo/seo"], function(){
+								self.seo = new Clazz.com.components.seo.js.seo();
+								callback(self.seo);	
+							});
+						}else{
+							callback(self.seo);
+						}
+						
+						break;						
 					
 				}
 		},
@@ -699,9 +712,9 @@ define([], function() {
 			}
 
 			if (jQuery.inArray(commonVariables.optionsSEO, applicableOptions) === -1) {
-				$("#SEOMenu").hide();
+				$("#SEO").hide();
 			} else {
-				$("#SEOMenu").show();
+				$("#SEO").show();
 			}
 
 			if (jQuery.inArray(commonVariables.optionsW3C, applicableOptions) === -1) {
@@ -797,7 +810,6 @@ define([], function() {
 		
 		onMytabEvent : function(keyword) {
 			var self = this, currentObj;
-
 			if (self.currentTab !== commonVariables.editApplication && keyword === commonVariables.editApplication){
 				self.getMyObj(commonVariables.editApplication, function(returnVal){
 					currentObj = returnVal;
@@ -916,6 +928,11 @@ define([], function() {
 				});
 			}	else if (self.currentTab !== commonVariables.zapMenu && keyword === commonVariables.zapMenu) {
 				self.getMyObj(commonVariables.zapMenu, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
+			}  	else if (self.currentTab !== commonVariables.seo && keyword === commonVariables.seo) {
+				self.getMyObj(commonVariables.seo, function(returnVal){
 					currentObj = returnVal;
 					self.myTabRenderFunction(currentObj, keyword);
 				});

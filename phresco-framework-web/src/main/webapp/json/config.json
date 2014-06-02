@@ -170,6 +170,11 @@
 		"zapmenu" : {
 			"moduleName":"zapmenu",
 			"path" : "../components/zapmenu/js"
+		},
+		
+		"seo" : {
+			"moduleName":"seo",
+			"path" : "../components/seo/js"
 		}
 	}
 }

@@ -426,8 +426,10 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			}
 			String testSuitePath = getTestSuitePath(appDirName, rootModulePath, subModuleName, testType, techReport);
 			String testCasePath = getTestCasePath(appDirName, rootModulePath, subModuleName, testType, techReport);
+			
+						
 			List<TestSuite> testSuites = testSuites(appDirName, moduleName, testType, techReport,
-					testSuitePath, testCasePath, ALL,rootModulePath, subModuleName);
+					testSuitePath, testCasePath, ALL, rootModulePath, subModuleName);
 			if (CollectionUtils.isEmpty(testSuites)) {
 				ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, null,
 						testSuites, RESPONSE_STATUS_SUCCESS, PHRQ000003);
@@ -860,6 +862,8 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			testCasePath = getComponentTestCasePath(rootModulePath, subModule);
 		} else if(testType.equals(INTEGRATION)) {
 			testCasePath = getIntegrationTestCasePath(appDirName);
+		}else if(testType.equals(SEO_TYPE)) {
+			testCasePath = getseoTestCasePath(rootModulePath, subModule);
 		}
 		return testCasePath;
 	}
@@ -1359,8 +1363,9 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			testResultPath = getComponentTestResultPath(rootModulePath, subModule);
 		} else if (testType.equals(INTEGRATION)) {
 			testResultPath = getIntegraionTestResultPath(appDirName);
+		}else if (testType.equals(SEO_TYPE)) {
+			testResultPath = getseoTestResultPath(rootModulePath, subModule);
 		}
-		
 		return testResultPath;
 	}
 
@@ -1387,6 +1392,8 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			testSuitePath = getFunctionalTestSuitePath(rootModulePath, subModule);
 		} else if(testType.equals(INTEGRATION)) {
 			testSuitePath = getIntegrationTestSuitePath(appDirName);
+		} else if(testType.equals(SEO_TYPE)) {
+			testSuitePath = getseoTestSuitePath(rootModulePath, subModule);
 		}
 		return testSuitePath;
 	}
@@ -1449,6 +1456,34 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 
 		return sb.toString();
 	}
+	
+	/**
+	 * Gets the seo test result path.
+	 *
+	 * @param appDirName the app dir name
+	 * @param moduleName the module name
+	 * @return the functional test result path
+	 * @throws PhrescoException the phresco exception
+	 */
+	private String getseoTestResultPath(String rootModulePath, String subModule) throws PhrescoException {
+
+		StringBuilder sb = new StringBuilder();
+		try {
+			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModule);
+			File testFolderLocation = Utility.getTestFolderLocation(projectInfo, rootModulePath, subModule);
+			String seoTestReportDir = getseoTestReportDir(rootModulePath, subModule);
+			if (seoTestReportDir.contains(PROJECT_BASEDIR)) {
+				seoTestReportDir = seoTestReportDir.replace(PROJECT_BASEDIR, testFolderLocation.getPath());
+			}
+			sb.append(seoTestReportDir);
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+
+		return sb.toString();
+	}
+	
+	
 	
 	
 	private String getIntegraionTestResultPath(String appDirName) throws PhrescoException {
@@ -1775,6 +1810,23 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	}
 
 	/**
+	 * Gets the seo test suite path.
+	 *
+	 * @param appDirName the app dir name
+	 * @return the functional test suite path
+	 * @throws PhrescoException the phresco exception
+	 */
+	private String getseoTestSuitePath(String rootModulePath,String subModule) throws PhrescoException {
+		try {
+			return Utility.getPomProcessor(rootModulePath, subModule).getProperty(Constants.POM_PROP_KEY_SEOTEST_TESTSUITE_XPATH);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	
+	
+	/**
 	 * Gets the component test suite path.
 	 *
 	 * @param appDirName the app dir name
@@ -1806,6 +1858,24 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			throw new PhrescoException(e);
 		}
 	}
+	
+	/**
+	 * Gets the seo test report dir.
+	 *
+	 * @param appDirName the app dir name
+	 * @return the functional test report dir
+	 * @throws PhrescoException the phresco exception
+	 */
+	private String getseoTestReportDir(String rootModulePath,String subModule) throws PhrescoException {
+		try {
+			String property = Utility.getPomProcessor(rootModulePath, subModule).getPropertyValue(
+					Constants.POM_PROP_KEY_SEOTEST_RPT_DIR);
+			return property;
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
 
 	/**
 	 * Gets the component test report dir.
@@ -1921,6 +1991,24 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			throw new PhrescoException(e);
 		}
 	}
+	
+	/**
+	 * Gets the seo test case path.
+	 *
+	 * @param appDirName the app dir name
+	 * @return the functional test case path
+	 * @throws PhrescoException the phresco exception
+	 */
+	private String getseoTestCasePath(String rootModulePath, String subModule) throws PhrescoException {
+		try {
+			return Utility.getPomProcessor(rootModulePath, subModule).getProperty(
+					Constants.POM_PROP_KEY_SEOTEST_TESTCASE_PATH);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	
 	
 	/**
 	 * Gets the functional test step path.

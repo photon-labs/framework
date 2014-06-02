@@ -362,6 +362,9 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			} else if ("integrationTest" === currentTab) {
 			    appDirName = $("#editprojecttitle").attr('projectname');
  				testType = "integration";
+			} else if ("SEO" === currentTab) {
+				console.info('currentTab = ' , currentTab);
+ 				testType = "seo";
 			}
 			if (action === "getTestSuite") {
 				header.requestMethod = "GET";
