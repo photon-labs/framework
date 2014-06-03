@@ -1219,7 +1219,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		return pom;
 	}
 
-	public boolean importToRepo(RepoInfo repoInfo, ApplicationInfo appInfo) throws Exception {
+	public boolean addToRepo(RepoInfo repoInfo, ApplicationInfo appInfo) throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importToRepo()");
 		}
@@ -1255,7 +1255,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			}
 			
 			srcWorkspaceName = srcDirName + UUID.randomUUID().toString();
+			if(TFS.equals(repoType)) {
 			srcRepoDetail.setWorkspaceName(srcWorkspaceName);
+			}
 				
 			FrameworkUtil.saveCredential(srcRepoDetail, appendedSrcUrl);
 
@@ -1284,7 +1286,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						appendedPhrUrl.append(TRUNK);
 					}
 					phrWorkspaceName = phrescoDirName + UUID.randomUUID().toString();
+					if(TFS.equals(phrescoRepoDetail.getType())) {
 					phrescoRepoDetail.setWorkspaceName(phrWorkspaceName);
+					}
 					FrameworkUtil.saveCredential(phrescoRepoDetail, appendedPhrUrl);
 				}
 
@@ -1302,7 +1306,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						appendedTestUrl.append(TRUNK);
 					}
 					testWorkspaceName = testDirName + UUID.randomUUID().toString();
+					if(TFS.equals(testRepoDetail.getType())) {
 					testRepoDetail.setWorkspaceName(testWorkspaceName);
+					}
 					FrameworkUtil.saveCredential(testRepoDetail, appendedTestUrl);
 				}
 

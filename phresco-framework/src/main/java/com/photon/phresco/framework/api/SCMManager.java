@@ -64,7 +64,7 @@ public interface SCMManager {
 	 * @throws Exception 
 	 
 	 */
-	public boolean importToRepo(RepoInfo repoInfo, ApplicationInfo appInfo) throws Exception ;
+	public boolean addToRepo(RepoInfo repoInfo, ApplicationInfo appInfo) throws Exception ;
 	
 	/**
 	 * 

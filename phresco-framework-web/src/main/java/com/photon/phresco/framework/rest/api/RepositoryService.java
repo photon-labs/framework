@@ -181,24 +181,34 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			ProjectInfo projInfo = null;
 			if(repoInfo.isSplitPhresco()) {
 				RepoDetail phrescoRepoDetail = repoInfo.getPhrescoRepoDetail();
+				if(TFS.equals(phrescoRepoDetail.getType())) {
 				phrescoRepoDetail.setWorkspaceName(uniqueId + System.currentTimeMillis());
+				}
 				projInfo = scmi.validatePhrescoProject(phrescoRepoDetail, tempFolder);
 			} else {
 				RepoDetail srcRepoDetail = repoInfo.getSrcRepoDetail();
+				if(TFS.equals(srcRepoDetail.getType())) {
 				srcRepoDetail.setWorkspaceName(uniqueId + System.currentTimeMillis());
+				}
 				projInfo = scmi.validatePhrescoProject(srcRepoDetail, tempFolder);
 			}
 			
 			if (projInfo != null) {
 				ApplicationInfo srcAppInfo = projInfo.getAppInfos().get(0);
+				if(TFS.equals(repoInfo.getSrcRepoDetail().getType())) {
 				repoInfo.getSrcRepoDetail().setWorkspaceName(srcAppInfo.getAppDirName() + UUID.randomUUID().toString());
+				}
 				scmi.importProject(srcAppInfo, repoInfo, displayName, unique_key);
 				if(repoInfo.isSplitTest()) {
+					if(TFS.equals(repoInfo.getPhrescoRepoDetail().getType())) {
 					repoInfo.getPhrescoRepoDetail().setWorkspaceName(srcAppInfo.getAppDirName() + UUID.randomUUID().toString());
+					}
 					scmi.importTest(srcAppInfo, repoInfo);
 				}
 				if(repoInfo.isSplitPhresco()) {
+					if(TFS.equals(repoInfo.getTestRepoDetail().getType())) {
 					repoInfo.getTestRepoDetail().setWorkspaceName(srcAppInfo.getAppDirName() + UUID.randomUUID().toString());
+					}
 					scmi.importPhresco(srcAppInfo, repoInfo);
 				}
 				scmi.updateSCMConnection(repoInfo, srcAppInfo);
@@ -274,7 +284,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			try {
 				LockUtil.removeLock(unique_key);
 			} catch (PhrescoException e) {
-
+				throw new PhrescoException(e);
 			}
 		}
 	}
@@ -1728,7 +1738,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			//To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), ADD_TO_REPO, displayName, uniqueKey)), true);
-			scmi.importToRepo(repoInfo, applicationInfo);
+			scmi.addToRepo(repoInfo, applicationInfo);
 			User user = ServiceManagerImpl.USERINFO_MANAGER_MAP.get(userId);
 			// updateLatestProject(user, projectId, appId);
 			status = RESPONSE_STATUS_SUCCESS;

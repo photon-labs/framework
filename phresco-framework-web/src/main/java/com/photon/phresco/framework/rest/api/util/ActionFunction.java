@@ -1144,7 +1144,8 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_VALIDATE_CODE);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
-			appendMultiModuleCommand(module, buildArgCmds); 
+			appendMultiModuleCommand(module, buildArgCmds);
+			buildArgCmds = getProps(buildArgCmds);
 			String workingDirectory = pomFileLocation.getParent();
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo rootprojectInfo = Utility.getProjectInfo(rootModulePath, "");
@@ -1159,6 +1160,30 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 
 		return reader;
+	}
+	
+	public List<String> getProps(List<String> buildArgCmds) throws PhrescoException {
+		Properties sonarConfig = new Properties();
+		InputStream inputstream = null;
+		try {
+			inputstream = this.getClass().getClassLoader().getResourceAsStream("framework.config");
+			sonarConfig.load(inputstream);
+			String remoteSonar = sonarConfig.getProperty("phresco.code.remote.sonar");
+			if(StringUtils.isNotEmpty(remoteSonar) && remoteSonar.equalsIgnoreCase("true")) {
+			String sonarUrl = sonarConfig.getProperty("phresco.code.sonar.url");
+			String sonarJdbcUrl = sonarConfig.getProperty("phresco.code.sonar.jdbc.url");
+			String sonarUserName = sonarConfig.getProperty("phresco.code.sonar.username");
+			String sonarPassWord = sonarConfig.getProperty("phresco.code.sonar.password");
+			buildArgCmds.add("-Dsonar.host.url=" + sonarUrl);
+			buildArgCmds.add("-Dsonar.jdbc.url=" + sonarJdbcUrl);
+			buildArgCmds.add("-Dsonar.jdbc.username=" + sonarUserName);
+			buildArgCmds.add("-Dsonar.jdbc.password=" + sonarPassWord);
+			}
+			return buildArgCmds;
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		}
+		
 	}
 	
 	public BufferedInputStream liquibaseDbdoc(LiquibaseDbDocInfo liquibaseDbDocInfo) throws PhrescoException {
