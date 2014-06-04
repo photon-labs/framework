@@ -144,10 +144,27 @@ define(["header/api/headerAPI"], function() {
 			data.customerId = customerId;
 			self.performAction(self.getActionHeader("getfavIcon", data), function(response) {
 				if(response.data.favIcon !== null){
-					$("#favicon").attr("href", "data:image/png;base64," + response.data.favIcon);
+				$("#favicon").attr("href", "data:image/png;base64," + response.data.favIcon);
+				$("#favicon1").attr("href", "data:image/png;base64," + response.data.favIcon);
+			    var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+                // Opera 8.0+ (UA detection to detect Blink/v8-powered Opera)
+                var isFirefox = typeof InstallTrigger !== 'undefined';   // Firefox 1.0+
+                var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+                // At least Safari 3+: "[object HTMLElementConstructor]"
+                var isChrome = !!window.chrome && !isOpera;              // Chrome 1+
+                var isIE = /*@cc_on!@*/false || !!document.documentMode; 
+                if(isChrome || isOpera){
+                    document.head.removeChild('link');
+			    }
+				var link = document.createElement('link');
+                link.type = 'image/x-icon';
+                link.rel = 'shortcut icon';
+                link.href ="data:image/png;base64," + response.data.favIcon;
+                document.getElementsByTagName('head')[0].appendChild(link);
 				} else {
-					$("#favicon").attr("href", "themes/default/images/Phresco/favicon.png");
-				}
+				$("#favicon").attr("href", "themes/default/images/Phresco/favicon.png");
+					$("#favicon1").attr("href", "themes/default/images/Phresco/favicon.png");
+				      }
 			});	
 			
 			self.performAction(self.getActionHeader("getloginIcon", data), function(response) {

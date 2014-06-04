@@ -1144,7 +1144,8 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_VALIDATE_CODE);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
-			appendMultiModuleCommand(module, buildArgCmds); 
+			appendMultiModuleCommand(module, buildArgCmds);
+			buildArgCmds = getProps(buildArgCmds);
 			String workingDirectory = pomFileLocation.getParent();
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo rootprojectInfo = Utility.getProjectInfo(rootModulePath, "");
@@ -1159,6 +1160,30 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 
 		return reader;
+	}
+	
+	public List<String> getProps(List<String> buildArgCmds) throws PhrescoException {
+		Properties sonarConfig = new Properties();
+		InputStream inputstream = null;
+		try {
+			inputstream = this.getClass().getClassLoader().getResourceAsStream("framework.config");
+			sonarConfig.load(inputstream);
+			String remoteSonar = sonarConfig.getProperty("phresco.code.remote.sonar");
+			if(StringUtils.isNotEmpty(remoteSonar) && remoteSonar.equalsIgnoreCase("true")) {
+			String sonarUrl = sonarConfig.getProperty("phresco.code.sonar.url");
+			String sonarJdbcUrl = sonarConfig.getProperty("phresco.code.sonar.jdbc.url");
+			String sonarUserName = sonarConfig.getProperty("phresco.code.sonar.username");
+			String sonarPassWord = sonarConfig.getProperty("phresco.code.sonar.password");
+			buildArgCmds.add("-Dsonar.host.url=" + sonarUrl);
+			buildArgCmds.add("-Dsonar.jdbc.url=" + sonarJdbcUrl);
+			buildArgCmds.add("-Dsonar.jdbc.username=" + sonarUserName);
+			buildArgCmds.add("-Dsonar.jdbc.password=" + sonarPassWord);
+			}
+			return buildArgCmds;
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		}
+		
 	}
 	
 	public BufferedInputStream liquibaseDbdoc(LiquibaseDbDocInfo liquibaseDbDocInfo) throws PhrescoException {
@@ -3693,6 +3718,22 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			throw new PhrescoException(ZAP_LOG_FAIL);
 		}
 	}
+	
+	public ActionResponse seoTest(HttpServletRequest request) throws PhrescoException {
+		printLogs();
+		BufferedInputStream server_logs=null;
+		String displayName = request.getParameter(DISPLAY_NAME);
+		initModuleName(request);
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		server_logs = seoTest(unique_key, displayName);
+		if (server_logs != null) {
+			return generateResponse(server_logs, unique_key);
+		} else {
+			throw new PhrescoException(ZAP_LOG_FAIL);
+		}
+	}
+	
 
 	private BufferedInputStream zapAction(String unique_key, String displayName, ActionType actionType) throws PhrescoException {
 		BufferedInputStream reader = null;
@@ -3737,7 +3778,33 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ProjectInfo rootprojectInfo = Utility.getProjectInfo(rootModulePath, "");
 			
 			reader = applicationManager.performAction(rootprojectInfo, ActionType.ZAP_START, buildArgCmds, pomFileLocation.getParent());
-			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), PERFORMACE, displayName, unique_key)), true);
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), ActionType.ZAP_TEST.toString(), displayName, unique_key)), true);
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+		return reader;
+	}
+	
+	private BufferedInputStream seoTest(String unique_key, String displayName) throws PhrescoException {
+		BufferedInputStream reader = null;
+		try {
+			String rootModulePath = getAppDirBasedOnMultiModule(getModule());
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			
+			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, getModule());
+			File pomFileLocation = Utility.getPomFileLocation(rootModulePath, "");
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_SEO_TEST, rootModulePath, getModule())));
+			persistValuesToXml(mojo, PHASE_SEO_TEST);
+
+			List<Parameter> parameters = getMojoParameters(mojo, PHASE_SEO_TEST);
+			List<String> buildArgCmds = getMavenArgCommands(parameters);
+			buildArgCmds.add(HYPHEN_N);
+			appendMultiModuleCommand(getModule(), buildArgCmds);
+			ProjectInfo rootprojectInfo = Utility.getProjectInfo(rootModulePath, "");
+			
+			reader = applicationManager.performAction(rootprojectInfo, ActionType.SEO_TEST, buildArgCmds, pomFileLocation.getParent());
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), ActionType.SEO_TEST.toString(), displayName, unique_key)), true);
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
 		}

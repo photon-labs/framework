@@ -57,7 +57,8 @@ public enum ActionType {
 	NEXUS_DEPLOY("phresco:nexusDeploy"),
 	ZAP_START("phresco:zap-start"),
 	ZAP_STOP("phresco:zap-stop"),
-	ZAP_TEST("phresco:zap");
+	ZAP_TEST("phresco:zap"),
+	SEO_TEST("phresco:seo-test");
 	
 	
 	private String actionType;

@@ -47,9 +47,12 @@ define(["header/listener/headerListener", "framework/widgetWithTemplate"] , func
 				$('#aboutimge').attr("src", "themes/default/images/Phresco/helios_logo.png");
 			}
 			if(self.headerListener.headerAPI.localVal.getSession('favicon') !== null){
-				$("#favicon").attr("href", "data:image/png;base64," + commonVariables.api.localVal.getSession('favicon'));
-			} else {
-				$("#favicon").attr("href", "themes/default/images/Phresco/favicon.png");
+			$("#favicon").attr("href", "data:image/png;base64," + commonVariables.api.localVal.getSession('favicon'));
+				$("#favicon1").attr("href", "data:image/png;base64," + commonVariables.api.localVal.getSession('favicon'));
+				} else {
+			$("#favicon").attr("href", "themes/default/images/Phresco/favicon.png");
+				$("#favicon1").attr("href", "themes/default/images/Phresco/favicon.png");
+				
 			}
 			var customername = self.headerListener.headerAPI.localVal.getSession('customername');
 			if (customername !== null && customername !== undefined && customername !== "") {

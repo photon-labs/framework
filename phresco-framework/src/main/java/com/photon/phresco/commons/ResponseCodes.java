@@ -227,6 +227,8 @@ public interface ResponseCodes {
 	String PHR510010 = "PHR510010"; // Error in sonar url 
 	String PHR510011 = "PHR510011"; // sonar url returned failed
 	String PHR500005 = "PHR500005"; //No report available
+	String PHR500006 = "PHR500006"; //sonar Params saved successfully
+	String PHR510012 = "PHR510012"; // sonar Params save failed
 	
 	
 	/*

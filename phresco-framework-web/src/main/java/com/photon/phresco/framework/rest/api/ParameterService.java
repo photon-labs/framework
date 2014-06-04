@@ -20,9 +20,11 @@ package com.photon.phresco.framework.rest.api;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -104,6 +106,7 @@ import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.model.Profile;
 import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
@@ -746,10 +749,22 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			sb.append(groupId);
 			sb.append(FrameworkConstants.COLON);
 			sb.append(artifactId);
-
 			if (StringUtils.isNotEmpty(validateAgainst) && !REQ_SRC.equals(validateAgainst)) {
+			String textContent = "";
+			PomProcessor pomPro = new PomProcessor(pomFile);
+			Profile profile = pomPro.getProfile(validateAgainst);
+			if(profile != null) {
+				List<Element> properties = profile.getProperties().getAny();
+				for (Element element : properties) {
+					if( element.getTagName().equalsIgnoreCase("sonar.branch")) {
+						textContent = element.getTextContent();
+					}
+				}
+			} else {
+				textContent = validateAgainst + projectInfo.getAppInfos().get(0).getId();
+			}
 				sb.append(FrameworkConstants.COLON);
-				sb.append(validateAgainst);
+				sb.append(textContent);
 			}
 			
 			int responseCode = 0;
@@ -1158,6 +1173,40 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 		} catch (Exception e) {
 			return Response.status(Status.EXPECTATION_FAILED).entity(PUBLICATIONS_NOT_FOUND).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					ALL_HEADER).build();
+		}
+	}
+	
+	@GET
+	@Path("/sonarParam/save")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response setSonarConfiguration(@QueryParam(REST_QUERY_SONAR_URL) String sonarUrl, @QueryParam(REST_QUERY_USER_NAME) String username , 
+			@QueryParam(REST_QUERY_PASSWORD) String password, @QueryParam(REST_QUERY_SONAR_JDBC_URL) String sonarJdbcUrl ,@QueryParam(REST_QUERY_REMOTE_SONAR) String remoteSonar) throws PhrescoException {
+		 ResponseInfo<String> responseData = new ResponseInfo<String>();
+		 Properties sonarConfig = new Properties();
+		OutputStream outputStream = null;
+		InputStream inputstream = null;
+		try {
+			inputstream = this.getClass().getClassLoader().getResourceAsStream("framework.config");
+			sonarConfig.load(inputstream);
+			sonarConfig.setProperty("phresco.code.sonar.url", sonarUrl);
+			sonarConfig.setProperty("phresco.code.sonar.jdbc.url", sonarJdbcUrl);
+			sonarConfig.setProperty("phresco.code.sonar.username", username);
+			sonarConfig.setProperty("phresco.code.sonar.password", password);
+			sonarConfig.setProperty("phresco.code.remote.sonar", remoteSonar);
+			inputstream.close();
+			URL resource = this.getClass().getClassLoader().getResource("framework.config");
+			outputStream = new FileOutputStream(resource.getPath());
+			sonarConfig.store(outputStream, null);
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
+					null, RESPONSE_STATUS_SUCCESS, PHR500006);
+			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+		} catch (IOException e) { 
+			 ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e,
+	                    null, RESPONSE_STATUS_ERROR, PHR510012);
+	            return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+	                    .build();
+		} finally {
+			Utility.closeStream(outputStream);
 		}
 	}
 	
