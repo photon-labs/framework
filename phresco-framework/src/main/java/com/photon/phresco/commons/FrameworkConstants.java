@@ -544,6 +544,7 @@ public interface FrameworkConstants {
 	String SELENIUM_GRID = "grid";
 	String SELENIUM_WEBDRIVER = "webdriver";
 	String SELENIUM_APPIUM = "appium";
+	String APPIUM = "Appium";
 	String SELENIUM_UIAUTOMATION = "UIAutomation";
 	String BUILD = "build";
 	String DEVICE_BUILD = "deviceBuild";

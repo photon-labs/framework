@@ -696,12 +696,10 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 					map.put(NODE_STATUS, isConnectionAlive);
 				}
 			} else if (SELENIUM_APPIUM.equalsIgnoreCase(functionalTestFramework)) {
-				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_START_APPIUM, Constants.PHASE_START_APPIUM, rootModulePath, subModuleName)));
-				Parameter appiumHostParameter = mojo.getParameter(Constants.PHASE_START_APPIUM, HOST);
-				Parameter appiumPortParameter = mojo.getParameter(Constants.PHASE_START_APPIUM, PORT);
-				if (appiumHostParameter != null && appiumPortParameter != null) {
-					String appiumHost = appiumHostParameter.getValue();
-					int appiumPort = Integer.parseInt(appiumPortParameter.getValue());
+				Map<String, String> appiumConfig = getAppiumConfiguration(rootModulePath, subModuleName);
+				String appiumHost = appiumConfig.get(HOST);
+				int appiumPort = Integer.parseInt(appiumConfig.get(PORT));
+				if (appiumHost != null) {
 					boolean isConnectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, appiumHost, appiumPort);
 					map.put(APPIUM_STATUS, isConnectionAlive);
 				}
@@ -718,7 +716,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	}
 	
 	/**
-	 * Gets the status of the Hub/Node
+	 * Gets the status of the Hub/Node/Appium
 	 * @param appDirName
 	 * @param fromPage
 	 * @return
@@ -757,12 +755,10 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 					connection_status = Utility.isConnectionAlive(HTTP_PROTOCOL, host, port);
 				}
 			} else if (APPIUM_STATUS.equals(fromPage)) {
-				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_START_APPIUM, Constants.PHASE_START_APPIUM, rootModulePath, subModuleName)));
-				Parameter appiumHostParameter = mojo.getParameter(Constants.PHASE_START_APPIUM, HOST);
-				Parameter appiumPortParameter = mojo.getParameter(Constants.PHASE_START_APPIUM, PORT);
-				if (appiumHostParameter != null && appiumPortParameter != null) {
-					String appiumHost = appiumHostParameter.getValue();
-					int appiumPort = Integer.parseInt(appiumPortParameter.getValue());
+				Map<String, String> appiumConfig = getAppiumConfiguration(rootModulePath, subModuleName);
+				String appiumHost = appiumConfig.get(HOST);
+				int appiumPort = Integer.parseInt(appiumConfig.get(PORT));
+				if (appiumHost != null) {
 					connection_status = Utility.isConnectionAlive(HTTP_PROTOCOL, appiumHost, appiumPort);
 				}
 			}
@@ -839,6 +835,33 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		return nodeConfig;
 	}
 
+	/**
+	 * Gets the appium configuration.
+	 *
+	 * @param rootModulePath the root module path
+	 * @param subModuleName the sub module name
+	 * @return the appium configuration map
+	 * @throws PhrescoException the phresco exception
+	 */
+	private Map<String, String> getAppiumConfiguration(String rootModulePath, String subModuleName) throws PhrescoException {
+		Map<String, String> appiumConfiguration = new HashMap<String, String>();
+		String dotPhrescoParent = rootModulePath;
+		if (StringUtils.isNotEmpty(subModuleName)) {
+			dotPhrescoParent = dotPhrescoParent + File.separatorChar + subModuleName;
+		}
+		File phrescoEnvConfig = new File (dotPhrescoParent + File.separatorChar + FOLDER_DOT_PHRESCO + File.separatorChar + PHRESCO_ENV_CONFIG_FILE_NAME);		
+		try {
+			ConfigReader configReader = new ConfigReader(phrescoEnvConfig);
+			String environment = configReader.getDefaultEnvName();
+			Configuration config = configReader.getConfigurations(environment, APPIUM).get(0);
+			appiumConfiguration.put(HOST, config.getProperties().getProperty(HOST));
+			appiumConfiguration.put(PORT, config.getProperties().getProperty(PORT));
+		} catch (ConfigurationException e) {
+			throw new PhrescoException(e);
+		}
+		return appiumConfiguration;
+	}
+	
 	/**
 	 * Gets the test case path.
 	 *
