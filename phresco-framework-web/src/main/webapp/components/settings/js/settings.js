@@ -16,8 +16,10 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 		setup : null,
 		presetup : null,
 		save : null,
+		sonarsave : null,
 		settingsListener: null,
 		onShowHideConsoleEvent : null,
+		remotesonar : null,
 	
 		/***
 		 * Called in initialization time of this class 
@@ -79,7 +81,12 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 			if (self.sonarstop === null) {
 			   self.sonarstop = new signals.Signal();
 			}
+			
+			if (self.sonarsave === null) {
+			   self.sonarsave = new signals.Signal();
+			}
 
+			
 			// Trigger registered events
 			self.getSettings.add(settingsListener.getSettings, settingsListener);
 			self.switchStatus.add(settingsListener.switchStatus, settingsListener);
@@ -92,6 +99,8 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 			self.sonarsetup.add(settingsListener.sonarsetup, settingsListener);
 			self.sonarstart.add(settingsListener.sonarstart, settingsListener);
 			self.sonarstop.add(settingsListener.sonarstop, settingsListener);
+			self.sonarsave.add(settingsListener.sonarvalue,settingsListener);
+			
 		},
 
 		/***
@@ -208,7 +217,19 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
    				self.save.dispatch();
 			});
 			
+			$('input[name=sonarsave]').click(function() {
+   				self.sonarsave.dispatch();
+			});
 			
+			$('input[name=remotesonar]').click(function(){
+				 if ($(this).is(":checked")) {
+					 $('input[name=sonarsetup]').prop("disabled",true);
+					 $("input[name=sonarswitch]").prop("disabled",true);
+				 }else{
+					  $('input[name=sonarsetup]').prop("disabled",false);
+					  $("input[name=sonarswitch]").prop("disabled",false);
+				 }
+			 });
 			
    			self.customScroll($(".consolescrolldiv"));
 
