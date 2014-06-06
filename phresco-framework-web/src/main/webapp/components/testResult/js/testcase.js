@@ -148,7 +148,7 @@ define(["testResult/listener/testResultListener"], function() {
 						}	  
 					}
 					uniqueJson.alert = allData[i].alert; 
-					uniqueJson.riskcode = allData[i].riskcode; 
+					uniqueJson.riskdesc = allData[i].riskdesc; 
 					uniqueJson.reliability = allData[i].reliability; 
 					uniqueJson.desc = allData[i].desc; 
 					uniqueJson.solution = allData[i].solution; 
@@ -156,7 +156,7 @@ define(["testResult/listener/testResultListener"], function() {
 					uniqueData.push(uniqueJson);
 				}
  				$.each(uniqueData, function(index, value){
-					trData += '<tr class="testCaseRow"><td id='+index+' status="close" class="zap hideContent showDesc"> '+value.alert +'( ' + value.riskcode+' ) '+'</td><td class="zap hideContent">'+ value.reliability +'</td></tr>';
+					trData += '<tr class="testCaseRow"><td id='+index+' status="close" class="zap hideContent showDesc"> '+value.alert +'( ' + value.riskdesc+' ) '+'</td><td class="zap hideContent">'+ value.reliability +'</td></tr>';
 					var resultTable = '<tr><td colspan="11"><table class="table reports_table currentDesc hideContent" id="show_'+index+'" cellpadding="0" cellspacing="0" border="0">';
 						resultTable = resultTable.concat('<tr class="testCaseRow"><td colspan="2"><span class="reports_text">Solution </span> : '+value.solution+'</td></tr>');
 						resultTable = resultTable.concat('<tr class="testCaseRow"><td colspan="2"><span class="reports_text">Description </span> : '+value.desc+'</td></tr>');
