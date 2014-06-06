@@ -1253,7 +1253,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				appendedSrcUrl.append(FORWARD_SLASH);
 				appendedSrcUrl.append(TRUNK);
 			}
-			
 			srcWorkspaceName = srcDirName + UUID.randomUUID().toString();
 			if(TFS.equals(repoType)) {
 			srcRepoDetail.setWorkspaceName(srcWorkspaceName);
@@ -1313,10 +1312,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				}
 
 				if (repoInfo.isSplitPhresco()) {
-//					boolean validUser=authentication(repoInfo.getPhrescoRepoDetail().getUserName(), repoInfo.getPhrescoRepoDetail().getPassword());
-//					if(!validUser){ 
-//						throw new PhrescoException("Invalid User ..");
-//					}
+						boolean validUser=authentication(repoInfo.getPhrescoRepoDetail().getUserName(), repoInfo.getPhrescoRepoDetail().getPassword(), repoType);
+					if(!validUser){ 
+						throw new PhrescoException("Invalid User ..");
+					}
 					splitDotPhrescoContents(appInfo, tempPhrescoFile, appendedPhrUrl.toString(), appendedSrcUrl.toString(), appendedTestUrl.toString(), srcWorkspaceName, phrWorkspaceName, testWorkspaceName);
 					updatePom(tempPhrescoFile, appendedPhrUrl.toString(), repoType, PHR_POM_XML, appPomProcessor, Constants.PHRESCO);
 					File pomFile = new File(tempPhrescoFile, PHR_POM_XML);
@@ -1326,10 +1325,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					}
 				}
 				if (repoInfo.isSplitTest()) {
-//					boolean validUser=authentication(repoInfo.getTestRepoDetail().getUserName(), repoInfo.getTestRepoDetail().getPassword());
-//					if(!validUser){ 
-//						throw new PhrescoException("Invalid User ..");
-//					}
+						boolean validUser=authentication(repoInfo.getTestRepoDetail().getUserName(), repoInfo.getTestRepoDetail().getPassword(), repoType);
+					if(!validUser){ 
+						throw new PhrescoException("Invalid User ..");
+					}
 					splitTestContents(appInfo, tempTestFile);
 					updatePom(tempTestFile, appendedTestUrl.toString(), repoType, POM_FILE, appPomProcessor, Constants.POM);
 					if (!TFS.equals(repoType)) {
@@ -1337,11 +1336,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					}
 				}
 				File pomDest = null;
-//				boolean validUser=authentication(repoInfo.getSrcRepoDetail().getUserName(), repoInfo.getSrcRepoDetail().getPassword());
-//				if(!validUser) { 
-//					throw new PhrescoException("Invalid User ..");
-//					
-//				}
+					boolean validUser=authentication(repoInfo.getSrcRepoDetail().getUserName(), repoInfo.getSrcRepoDetail().getPassword(), repoType);
+				if(!validUser) { 
+					throw new PhrescoException("Invalid User ..");
+				}
 				splitSrcContents(appInfo, tempSrcFile, repoInfo, appendedPhrUrl.toString(), appendedSrcUrl.toString(), appendedTestUrl.toString(), srcWorkspaceName, phrWorkspaceName, testWorkspaceName);
 				if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
 					pomDest = new File(tempSrcFile, appInfo.getPhrescoPomFile());
@@ -1373,10 +1371,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					addSplittedProjectToTFS(srcRepoDetail, phrescoRepoDetail, testRepoDetail, dir);
 				}
 			} else {
-				/*boolean validUser=authentication(repoInfo.getSrcRepoDetail().getUserName(), repoInfo.getSrcRepoDetail().getPassword());
-				if(!validUser){ 
+				boolean validUser=authentication(repoInfo.getSrcRepoDetail().getUserName(), repoInfo.getSrcRepoDetail().getPassword(), repoType);
+				if(!validUser){
 					throw new PhrescoException("Invalid User ..");
-				}*/
+				}
 					appPomProcessor.setProperty(Constants.POM_PROP_KEY_SRC_REPO_URL, appendedSrcUrl.toString());
 					if (TFS.equals(repoType)) {
 					appPomProcessor.setProperty(Constants.POM_PROP_KEY_TFS_SRC_WORKSPACE_NAME, srcWorkspaceName);
@@ -2856,29 +2854,34 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		options.add(optionsMap.findOption("-noprompt"));
 	}
 	
-	private static boolean authentication(String username, String password) throws PhrescoException {
+	private static boolean authentication(String username, String password, String repoType) throws PhrescoException {
 		boolean validUser = false;
-		try {
-			URL url = new URL(GIT_URL);
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			connection.setRequestMethod(GET);
-			if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
-				String credentials = BASIC_SPACE + toBase64(username + COLON + password);
-				connection.setRequestProperty( AUTHORIZATION, credentials);
-				if (connection.getResponseCode() == 200) {
-					validUser = true;
-				}else {
+		if(GIT.equalsIgnoreCase(repoType))
+		{
+			try {
+				URL url = new URL(GIT_URL);
+				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+				connection.setRequestMethod(GET);
+				if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
+					String credentials = BASIC_SPACE + toBase64(username + COLON + password);
+					connection.setRequestProperty( AUTHORIZATION, credentials);
+					if (connection.getResponseCode() == 200) {
+						validUser = true;
+					}else {
+						validUser = false;
+					} 
+				} else {
 					validUser = false;
-				} 
-			} else {
-				validUser = false;
+				}
+			} catch (MalformedURLException e) {
+				throw new PhrescoException(e);
+			} catch (ProtocolException e) {
+				throw new PhrescoException(e);
+			} catch (IOException e) {
+				throw new PhrescoException(e);
 			}
-		} catch (MalformedURLException e) {
-			throw new PhrescoException(e);
-		} catch (ProtocolException e) {
-			throw new PhrescoException(e);
-		} catch (IOException e) {
-			throw new PhrescoException(e);
+		}else {
+			validUser=true;
 		}
 		return validUser;
 	}
