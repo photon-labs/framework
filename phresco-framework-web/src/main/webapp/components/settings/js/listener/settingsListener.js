@@ -59,6 +59,9 @@ define([], function() {
 			if (action === "jenkinsUrl") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/jenkinsUrl";
+			} else if (action === "sonarUrl"){
+			    header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/sonarValue/sonarUrl"; 
 			} else if (action === "getMail") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/mail";
@@ -105,7 +108,12 @@ define([], function() {
 				var tfcle = $('input[name=tfcle][temp=jenkins]').val();	
 				header.requestPostBody = JSON.stringify(ciRequestBody);
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/global?emailAddress=" + eUser + "&emailPassword=" + ePass + "&url=" + jUrl + "&username=" + jName + "&password=" + jPass + "&tfsUrl=" + tfcle;
-			} 
+			} else if (action === "sonarsave") {
+			       header.requestMethod = "POST";
+				   header.requestPostBody = JSON.stringify(ciRequestBody);
+				   header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext +  "/sonarParam/save";
+			
+			}
 			
 			return header;
 		},
@@ -123,6 +131,12 @@ define([], function() {
 				$('input[name=username][temp=email]').val(response.data[0]);
 				$('input[name=password][temp=email]').val(response.data[1]);
 			});
+			
+			 self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'sonarUrl'), function(response) {
+				 $('input[name=sonarUrl]').val(response.data.repoUrl);
+				 $('input[name=sonarName]').val(response.data.userName);
+				 $('input[name=sonarpassword]').val(response.data.password);
+			 });
 			
 			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'getTfs'), function(tfs) {
 				$('input[name=tfcle][temp=jenkins]').val(tfs.data);
@@ -187,6 +201,10 @@ define([], function() {
 				}, 500);
 			});
 			
+		},
+		
+		sonarparams : function(){
+		    console.info("entering sonar params");
 		},
 		
 		switchStatus : function() {
@@ -370,6 +388,77 @@ define([], function() {
 			}
 		},
 		
+		sonarvalue : function(){
+		   var self = this;
+		   var status = self.sonarvalidate();
+		   if (status === true){
+		   var sonarvalue = {};
+		   sonarvalue.sonarUrl = $('input[name=sonarUrl]').val();
+		   sonarvalue.sonarJdbcUrl = $('input[name=sonarjdbcUrl]').val();
+		   sonarvalue.username = $('input[name=sonarName]').val();
+		   sonarvalue.password = $('input[name=sonarpassword]').val();	
+            if ($('input:checkbox[name=remotesonar]:checked').is(':checked')){
+				sonarvalue.remoteSonar = "on";
+			}
+			else{
+				sonarvalue.remoteSonar = "off";
+			}
+		   		   
+		   self.getHeaderResponse(self.getRequestHeader(sonarvalue, 'sonarsave'), function(response) {
+					commonVariables.api.showError(response.responseCode ,"success", true, false, true);
+				});
+		   
+		   }
+		},
+		sonarvalidate : function() {
+		
+			   var self = this;
+			   var status = true;
+			   var sonarUrl = $('input[name=sonarUrl]').val();
+			   var sonarJdbcUrl = $('input[name=sonarjdbcUrl]').val();
+			   var username = $('input[name=sonarName]').val();
+			   var password = $('input[name=sonarpassword]').val();	
+		   
+		   if (sonarUrl === ""){
+				 $("input[name=sonarUrl]").focus();
+				 $("input[name='sonarUrl']").attr('placeholder','Enter SonarUrl');
+				 $("input[name='sonarUrl']").addClass("errormessage");
+				 $("input[name='sonarUrl']").bind('keypress', function() {
+				 $("input[name='sonarUrl']").removeClass("errormessage");
+						 });
+						 status = false;					 
+		   }
+		   
+		   if (sonarJdbcUrl === ""){
+				 $("input[name=sonarjdbcUrl]").focus();
+				 $("input[name='sonarjdbcUrl']").attr('placeholder','Enter Sonar Jdbc Url');
+				 $("input[name='sonarjdbcUrl']").addClass("errormessage");
+				 $("input[name='sonarjdbcUrl']").bind('keypress', function() {
+				 $("input[name='sonarjdbcUrl']").removeClass("errormessage");
+						 });
+						 status = false;					 
+		   }
+		   
+		   if (username === "") {
+				 $("input[name=sonarName]").focus();
+				 $("input[name='sonarName']").attr('placeholder','Enter Username');
+				 $("input[name='sonarName']").addClass("errormessage");
+				 $("input[name='sonarName']").bind('keypress', function() {
+				 $("input[name='sonarName']").removeClass("errormessage");
+						 });
+						 status = false;					 
+		   }
+		   if (password === "") {
+				 $("input[name=sonarpassword]").focus();
+				 $("input[name='sonarpassword']").attr('placeholder','Enter Password');
+				 $("input[name='sonarpassword']").addClass("errormessage");
+				 $("input[name='sonarpassword']").bind('keypress', function() {
+				 $("input[name='sonarpassword']").removeClass("errormessage");
+						 });
+						 status = false;					 
+		   }
+				return status;
+		},
 		validate : function (callback) {
 			var self=this;
 			var status = true;

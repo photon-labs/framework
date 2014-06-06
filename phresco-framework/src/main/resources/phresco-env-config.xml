@@ -13,14 +13,12 @@
             <host>localhost</host>
             <protocol>http</protocol>
         </Server>
-        
-    <Database desc="" name="Database Configuration">
+        <Database name="Database Configuration">
             <version>5.5.1</version>
             <port>3306</port>
             <password/>
             <type>MYSQL</type>
             <host>localhost</host>
-            <driver>com.mysql.jdbc.Driver</driver>
             <dbname>jwsdb</dbname>
             <username>root</username>
         </Database>

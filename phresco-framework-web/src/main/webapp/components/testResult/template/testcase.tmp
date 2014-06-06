@@ -55,7 +55,6 @@
 							{{#if site}}
 								{{#zapReports site}}{{/zapReports}}
 							{{else}}
-							asdfasdf
 							<tr class="testCaseRow" testCaseId="{{testCaseId}}">
 								
 								<td class="manual hideContent">

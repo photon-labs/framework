@@ -426,8 +426,10 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			}
 			String testSuitePath = getTestSuitePath(appDirName, rootModulePath, subModuleName, testType, techReport);
 			String testCasePath = getTestCasePath(appDirName, rootModulePath, subModuleName, testType, techReport);
+			
+						
 			List<TestSuite> testSuites = testSuites(appDirName, moduleName, testType, techReport,
-					testSuitePath, testCasePath, ALL,rootModulePath, subModuleName);
+					testSuitePath, testCasePath, ALL, rootModulePath, subModuleName);
 			if (CollectionUtils.isEmpty(testSuites)) {
 				ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, null,
 						testSuites, RESPONSE_STATUS_SUCCESS, PHRQ000003);
@@ -694,12 +696,10 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 					map.put(NODE_STATUS, isConnectionAlive);
 				}
 			} else if (SELENIUM_APPIUM.equalsIgnoreCase(functionalTestFramework)) {
-				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_START_APPIUM, Constants.PHASE_START_APPIUM, rootModulePath, subModuleName)));
-				Parameter appiumHostParameter = mojo.getParameter(Constants.PHASE_START_APPIUM, HOST);
-				Parameter appiumPortParameter = mojo.getParameter(Constants.PHASE_START_APPIUM, PORT);
-				if (appiumHostParameter != null && appiumPortParameter != null) {
-					String appiumHost = appiumHostParameter.getValue();
-					int appiumPort = Integer.parseInt(appiumPortParameter.getValue());
+				Map<String, String> appiumConfig = getAppiumConfiguration(rootModulePath, subModuleName);
+				String appiumHost = appiumConfig.get(HOST);
+				int appiumPort = Integer.parseInt(appiumConfig.get(PORT));
+				if (appiumHost != null) {
 					boolean isConnectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, appiumHost, appiumPort);
 					map.put(APPIUM_STATUS, isConnectionAlive);
 				}
@@ -716,7 +716,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	}
 	
 	/**
-	 * Gets the status of the Hub/Node
+	 * Gets the status of the Hub/Node/Appium
 	 * @param appDirName
 	 * @param fromPage
 	 * @return
@@ -755,12 +755,10 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 					connection_status = Utility.isConnectionAlive(HTTP_PROTOCOL, host, port);
 				}
 			} else if (APPIUM_STATUS.equals(fromPage)) {
-				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_START_APPIUM, Constants.PHASE_START_APPIUM, rootModulePath, subModuleName)));
-				Parameter appiumHostParameter = mojo.getParameter(Constants.PHASE_START_APPIUM, HOST);
-				Parameter appiumPortParameter = mojo.getParameter(Constants.PHASE_START_APPIUM, PORT);
-				if (appiumHostParameter != null && appiumPortParameter != null) {
-					String appiumHost = appiumHostParameter.getValue();
-					int appiumPort = Integer.parseInt(appiumPortParameter.getValue());
+				Map<String, String> appiumConfig = getAppiumConfiguration(rootModulePath, subModuleName);
+				String appiumHost = appiumConfig.get(HOST);
+				int appiumPort = Integer.parseInt(appiumConfig.get(PORT));
+				if (appiumHost != null) {
 					connection_status = Utility.isConnectionAlive(HTTP_PROTOCOL, appiumHost, appiumPort);
 				}
 			}
@@ -838,6 +836,33 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	}
 
 	/**
+	 * Gets the appium configuration.
+	 *
+	 * @param rootModulePath the root module path
+	 * @param subModuleName the sub module name
+	 * @return the appium configuration map
+	 * @throws PhrescoException the phresco exception
+	 */
+	private Map<String, String> getAppiumConfiguration(String rootModulePath, String subModuleName) throws PhrescoException {
+		Map<String, String> appiumConfiguration = new HashMap<String, String>();
+		String dotPhrescoParent = rootModulePath;
+		if (StringUtils.isNotEmpty(subModuleName)) {
+			dotPhrescoParent = dotPhrescoParent + File.separatorChar + subModuleName;
+		}
+		File phrescoEnvConfig = new File (dotPhrescoParent + File.separatorChar + FOLDER_DOT_PHRESCO + File.separatorChar + PHRESCO_ENV_CONFIG_FILE_NAME);		
+		try {
+			ConfigReader configReader = new ConfigReader(phrescoEnvConfig);
+			String environment = configReader.getDefaultEnvName();
+			Configuration config = configReader.getConfigurations(environment, APPIUM).get(0);
+			appiumConfiguration.put(HOST, config.getProperties().getProperty(HOST));
+			appiumConfiguration.put(PORT, config.getProperties().getProperty(PORT));
+		} catch (ConfigurationException e) {
+			throw new PhrescoException(e);
+		}
+		return appiumConfiguration;
+	}
+	
+	/**
 	 * Gets the test case path.
 	 *
 	 * @param appDirName the app dir name
@@ -860,6 +885,8 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			testCasePath = getComponentTestCasePath(rootModulePath, subModule);
 		} else if(testType.equals(INTEGRATION)) {
 			testCasePath = getIntegrationTestCasePath(appDirName);
+		}else if(testType.equals(SEO_TYPE)) {
+			testCasePath = getseoTestCasePath(rootModulePath, subModule);
 		}
 		return testCasePath;
 	}
@@ -1359,8 +1386,9 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			testResultPath = getComponentTestResultPath(rootModulePath, subModule);
 		} else if (testType.equals(INTEGRATION)) {
 			testResultPath = getIntegraionTestResultPath(appDirName);
+		}else if (testType.equals(SEO_TYPE)) {
+			testResultPath = getseoTestResultPath(rootModulePath, subModule);
 		}
-		
 		return testResultPath;
 	}
 
@@ -1387,6 +1415,8 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			testSuitePath = getFunctionalTestSuitePath(rootModulePath, subModule);
 		} else if(testType.equals(INTEGRATION)) {
 			testSuitePath = getIntegrationTestSuitePath(appDirName);
+		} else if(testType.equals(SEO_TYPE)) {
+			testSuitePath = getseoTestSuitePath(rootModulePath, subModule);
 		}
 		return testSuitePath;
 	}
@@ -1449,6 +1479,34 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 
 		return sb.toString();
 	}
+	
+	/**
+	 * Gets the seo test result path.
+	 *
+	 * @param appDirName the app dir name
+	 * @param moduleName the module name
+	 * @return the functional test result path
+	 * @throws PhrescoException the phresco exception
+	 */
+	private String getseoTestResultPath(String rootModulePath, String subModule) throws PhrescoException {
+
+		StringBuilder sb = new StringBuilder();
+		try {
+			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModule);
+			File testFolderLocation = Utility.getTestFolderLocation(projectInfo, rootModulePath, subModule);
+			String seoTestReportDir = getseoTestReportDir(rootModulePath, subModule);
+			if (seoTestReportDir.contains(PROJECT_BASEDIR)) {
+				seoTestReportDir = seoTestReportDir.replace(PROJECT_BASEDIR, testFolderLocation.getPath());
+			}
+			sb.append(seoTestReportDir);
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+
+		return sb.toString();
+	}
+	
+	
 	
 	
 	private String getIntegraionTestResultPath(String appDirName) throws PhrescoException {
@@ -1775,6 +1833,23 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	}
 
 	/**
+	 * Gets the seo test suite path.
+	 *
+	 * @param appDirName the app dir name
+	 * @return the functional test suite path
+	 * @throws PhrescoException the phresco exception
+	 */
+	private String getseoTestSuitePath(String rootModulePath,String subModule) throws PhrescoException {
+		try {
+			return Utility.getPomProcessor(rootModulePath, subModule).getProperty(Constants.POM_PROP_KEY_SEOTEST_TESTSUITE_XPATH);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	
+	
+	/**
 	 * Gets the component test suite path.
 	 *
 	 * @param appDirName the app dir name
@@ -1806,6 +1881,24 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			throw new PhrescoException(e);
 		}
 	}
+	
+	/**
+	 * Gets the seo test report dir.
+	 *
+	 * @param appDirName the app dir name
+	 * @return the functional test report dir
+	 * @throws PhrescoException the phresco exception
+	 */
+	private String getseoTestReportDir(String rootModulePath,String subModule) throws PhrescoException {
+		try {
+			String property = Utility.getPomProcessor(rootModulePath, subModule).getPropertyValue(
+					Constants.POM_PROP_KEY_SEOTEST_RPT_DIR);
+			return property;
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
 
 	/**
 	 * Gets the component test report dir.
@@ -1921,6 +2014,24 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			throw new PhrescoException(e);
 		}
 	}
+	
+	/**
+	 * Gets the seo test case path.
+	 *
+	 * @param appDirName the app dir name
+	 * @return the functional test case path
+	 * @throws PhrescoException the phresco exception
+	 */
+	private String getseoTestCasePath(String rootModulePath, String subModule) throws PhrescoException {
+		try {
+			return Utility.getPomProcessor(rootModulePath, subModule).getProperty(
+					Constants.POM_PROP_KEY_SEOTEST_TESTCASE_PATH);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	
 	
 	/**
 	 * Gets the functional test step path.

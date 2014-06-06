@@ -97,6 +97,7 @@ var commonVariables = {
 	tridiongeneral : "tridiongeneral",
 	tridionpublish : "tridionpublish",	
 	zapMenu : "zapMenu",	
+	seo : "SEO",	
 	
 	settings : "settings",
 	projectSettings : "projectsettings",
@@ -165,7 +166,11 @@ var commonVariables = {
 	optionsZap : "Zap",
 	optionsSEO : "SEO",
 	optionsW3C : "W3C",
-
+	optionsParentCode : "Parent_Code",
+	optionsParentBuild : "Parent_Build",
+	optionsParentDeploy : "Parent_Deploy",
+	optionsParentUnitTest : "Parent_Unit_Test",
+	
 	/******* Customer main menu options constants *******/
 	optionsDashboard : "Home",
     optionsHelp : "Help",
@@ -193,6 +198,7 @@ var commonVariables = {
 	projectCode : "",
 	zapGoal : "zap-test",
 	zapStart : "zap-start",
+	seoGoal : "seo-test",
 
 	startHubGoal : "start-hub",
 	startNodeGoal : "start-node",
@@ -206,6 +212,7 @@ var commonVariables = {
 	mvnUnitTest : "app/runUnitTest",
 	mvnZapTest : "app/zapTest",
 	mvnZapAction : "app/zapAction",
+	mvnSeoTest : "app/seoTest",
 	mvnIntegrationTest : "app/runIntegrationTest",
 	mvnComponentTest : "app/runComponentTest",
 	mvnCodeValidation : "app/codeValidate",

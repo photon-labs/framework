@@ -41,6 +41,7 @@ define([], function() {
 		tridiongeneral : null,
 		tridionpublish : null,
 		zapmenu : null,
+		seo : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -522,6 +523,18 @@ define([], function() {
 						}
 						
 						break;						
+										
+					case commonVariables.seo :
+						if(self.seo === null) {
+							require(["seo/seo"], function(){
+								self.seo = new Clazz.com.components.seo.js.seo();
+								callback(self.seo);	
+							});
+						}else{
+							callback(self.seo);
+						}
+						
+						break;						
 					
 				}
 		},
@@ -597,11 +610,49 @@ define([], function() {
 			}
 		},
 		
+		showHideParentOptions : function() {
+			var self = this;
+			var applicableOptions = JSON.parse(commonVariables.api.localVal.getSession('applicableOptions'));
+			//console.info('applicableOptions = ' , applicableOptions);
+			if (jQuery.inArray(commonVariables.optionsParentCode, applicableOptions) === -1) {
+				$("#codequality").hide();
+			} else {
+				$("#codequality").show();
+			}
+			if (jQuery.inArray(commonVariables.optionsParentBuild, applicableOptions) === -1) {
+				$("#build").hide();
+			} else {
+				$("#build").show();
+			}
+
+			if (jQuery.inArray(commonVariables.optionsParentDeploy, applicableOptions) === -1) {
+				$("table th[name=buildDep]").hide();
+			} else {
+				$("table th[name=buildDep]").show();
+			}
+
+			if (jQuery.inArray(commonVariables.optionsParentUnitTest, applicableOptions) === -1) {
+				$(".testmenu").hide();
+				$("#unitTest").hide();
+			} else {
+				$(".testmenu").show();
+				$("#unitTest").show();
+				$("#componentTest").hide();
+				$("#functionalTest").hide();
+				$("#performanceTest").hide();
+				$("#loadTest").hide();
+				$("#manualTest").hide();
+				$("#zapMenu").hide();
+				$("#SEO").hide();
+				$("#W3CMenu").hide();
+			}
+			
+		},
+		
 		//To show hide the options like build, deploy based on the applicable options for the technology
 		showHideTechOptions : function() {
 			var self = this;
 			var applicableOptions = JSON.parse(commonVariables.api.localVal.getSession('applicableOptions'));
-			//console.info('applicableOptions = ' , applicableOptions);
 			if (jQuery.inArray(commonVariables.optionsCode, applicableOptions) === -1) {
 				$("#codequality").hide();
 			} else {
@@ -699,9 +750,9 @@ define([], function() {
 			}
 
 			if (jQuery.inArray(commonVariables.optionsSEO, applicableOptions) === -1) {
-				$("#SEOMenu").hide();
+				$("#SEO").hide();
 			} else {
-				$("#SEOMenu").show();
+				$("#SEO").show();
 			}
 
 			if (jQuery.inArray(commonVariables.optionsW3C, applicableOptions) === -1) {
@@ -797,7 +848,6 @@ define([], function() {
 		
 		onMytabEvent : function(keyword) {
 			var self = this, currentObj;
-
 			if (self.currentTab !== commonVariables.editApplication && keyword === commonVariables.editApplication){
 				self.getMyObj(commonVariables.editApplication, function(returnVal){
 					currentObj = returnVal;
@@ -916,6 +966,11 @@ define([], function() {
 				});
 			}	else if (self.currentTab !== commonVariables.zapMenu && keyword === commonVariables.zapMenu) {
 				self.getMyObj(commonVariables.zapMenu, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
+			}  	else if (self.currentTab !== commonVariables.seo && keyword === commonVariables.seo) {
+				self.getMyObj(commonVariables.seo, function(returnVal){
 					currentObj = returnVal;
 					self.myTabRenderFunction(currentObj, keyword);
 				});

@@ -544,6 +544,7 @@ public interface FrameworkConstants {
 	String SELENIUM_GRID = "grid";
 	String SELENIUM_WEBDRIVER = "webdriver";
 	String SELENIUM_APPIUM = "appium";
+	String APPIUM = "Appium";
 	String SELENIUM_UIAUTOMATION = "UIAutomation";
 	String BUILD = "build";
 	String DEVICE_BUILD = "deviceBuild";
@@ -588,6 +589,7 @@ public interface FrameworkConstants {
     String ZAP = "ZapTest";
     String ZAP_START = "zapStart";
     String ZAP_STOP = "zapStop";
+    String SEO_TYPE = "seo";
     String INTEGRATION = "integration";
     String INTEGRATION_TEST = "-integrationtest";
     String WEBSERVICE = "WebService";
@@ -1205,6 +1207,9 @@ public interface FrameworkConstants {
     String REST_UPDATE = "/repo/update";
     String REST_ZAP_ACTION = "/zapAction";
     String REST_ZAP_TEST =  "/zapTest";
+    String REST_SEO_TEST = "/seoTest";
+    String REST_CSV_FILE_UPLOAD = "/csvFileUpload";
+    String RESOURCE_FOLDER = "/src/main/resources";
 
     String ATTR_TIME 	= "time";
     String ATTR_TESTS 	= "tests";
