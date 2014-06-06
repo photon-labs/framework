@@ -788,6 +788,7 @@ define([], function() {
 				self.listPdfReports(response, temp, dynamicId, modulename);
 				self.clickFunction(dynamicId);
 				commonVariables.hideloading = false;
+				$(".tooltiptop").tooltip();
 			});
 		},
 		
@@ -805,12 +806,23 @@ define([], function() {
 				$("table[name=pdfHeader_"+dynamicId+"]").show();
 				for(var i =0; i < response.data.json.length; i++) {
 					var idgenerate = Date.now();
-					var headerTr = '<tr class="generatedRow" fileName="'+response.data.json[i].fileName+'" appdirname = "'+temp+'" moduleName="'+ modulename +'"><td style="width:41% !important;">' + response.data.json[i].time + '</td><td>'+response.data.json[i].type+'</td>';
+					var repname = response.data.json[i].fileName.length;
+					if(repname >= 10){
+						var temp,temp,str2,reportname2,result;
+						temp = response.data.json[i].fileName;
+						str2 = temp.substr(0,10);
+						reportname2 = "...";
+						result = str2.concat(reportname2);
+					}
+					else {
+						result = response.data.json[i].fileName;
+					}
+					var headerTr = '<tr class="generatedRow" fileName="'+response.data.json[i].fileName+'" appdirname = "'+temp+'" moduleName="'+ modulename +'"><td><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="'+response.data.json[i].fileName+'" style="width:41% !important;">' + result +'</a></td><td>'+response.data.json[i].time + '</td><td>'+'</td>';
 					content = content.concat(headerTr);
-					headerTr = '<td class="list_img"><a class="tooltiptop" fileName="'+response.data.json[i].fileName+'" fromPage="All" href="javascript:void(0)" data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title=""><img src="themes/default/images/Phresco/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>';
+					headerTr = '<td class="list_img"><a class="tooltiptop" fileName="'+response.data.json[i].fileName+'" fromPage="All" href="javascript:void(0)" data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" ><img src="themes/default/images/Phresco/download_icon.png" class="imgalign" ></a></td>';
 					content = content.concat(headerTr);
 					if(userPermissions.managePdfReports) {
-						headerTr = '<td class="list_img"><a class="tooltiptop" name="deletepdf_'+idgenerate+i+'" fileName="'+response.data.json[i].fileName+'" fromPage="All" href="javascript:void(0)" data-toggle="tooltip" data-placement="top" namedel="delete" data-original-title="Delete Pdf" title=""><img src="themes/default/images/Phresco/delete_row.png" width="14" height="18" border="0" alt="0"></a><div style="display:none;" id="deletepdf_'+idgenerate+i+'" class="delete_msg tohide">Are you sure to delete ?<div><input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style dlt" name="delpdf"><input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close"></div></div></td></tr>';
+						headerTr = '<td class="list_img"><a class="tooltiptop" name="deletepdf_'+idgenerate+i+'" fileName="'+response.data.json[i].fileName+'" fromPage="All" href="javascript:void(0)" data-toggle="tooltip" data-placement="top" namedel="delete" data-original-title="Delete Pdf" title=""><img src="themes/default/images/Phresco/delete_row.png" class="imgaligndel" width="14" height="18" border="0" alt="0"></a><div style="display:none;" id="deletepdf_'+idgenerate+i+'" class="delete_msg tohide">Are you sure to delete ?<div><input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style dlt" name="delpdf"><input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close"></div></div></td></tr>';
 					} else {
 						headerTr = '<td class="list_img"><a class="tooltiptop" fileName="'+response.data.json[i].fileName+'" fromPage="All" href="javascript:void(0)" data-toggle="tooltip" data-placement="top" data-original-title="Delete Pdf" title=""><img src="themes/default/images/Phresco/delete_row_off.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
 					}
