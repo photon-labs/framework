@@ -299,7 +299,6 @@ define([], function() {
 			self.editAplnContent.appDirName = value;
 			commonVariables.api.localVal.setSession('appDirName', value);
 			commonVariables.api.localVal.setSession('techid', techid);
-
 			if (self.isBlank(commonVariables.editAppFrom) && commonVariables.editAppHasModules) {
 				try {
 					var header = self.editAplnContent.editApplicationListener.getRequestHeader(value , "getappinfo");
@@ -321,23 +320,6 @@ define([], function() {
 							commonVariables.api.showError("serviceerror" ,"error", true);
 						}
 					);
-					setTimeout(function() {
-						var header = self.editAplnContent.editApplicationListener.getRequestHeader(value , "getApplicableOptions" , techid);
-						commonVariables.api.ajaxRequest(header,
-							function(response) {
-								if (response !== null && response.status !== "error" && response.status !== "failure") {
-									commonVariables.api.localVal.setSession("applicableOptions", JSON.stringify(response.data));
-									commonVariables.navListener.showHideParentOptions();									
-							} else {
-									commonVariables.api.showError(response.responseCode ,"error", true);			
-								}
-							},
-							function(textStatus) {
-								commonVariables.api.showError("serviceerror" ,"error", true);
-							}
-						);
-					}, 500);
-					
 				} catch(exception) {
 					
 				}

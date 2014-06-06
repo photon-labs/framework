@@ -634,7 +634,9 @@
 			 "module"  	      : "Module",
 			 "dashboard"  	  : "Dashboard",
 			 "action"		  : "Action",
-			 "attack"		  : "Attack"
+			 "attack"		  : "Attack",
+			 "name"			  : "Name",
+			 "time"			  : "Time"
 		},
 		"errormessage" : {
 			"serviceerror" : "Service Error"
