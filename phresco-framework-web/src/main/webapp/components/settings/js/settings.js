@@ -13,6 +13,7 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 		sonarstart : null,
 		sonarstop : null,
 		sonarsetup : null,
+		sonarpresetup : null,
 		setup : null,
 		presetup : null,
 		save : null,
@@ -70,6 +71,10 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 				self.presetup = new signals.Signal();
 			}
 			
+			if (self.sonarpresetup === null) {
+			    self.sonarpresetup = new signals.Signal();
+			}
+			
 			if (self.sonarsetup === null) {
 			    self.sonarsetup = new signals.Signal();
 			}
@@ -97,6 +102,7 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 			self.onShowHideConsoleEvent.add(settingsListener.showHideConsole, settingsListener);
 			self.presetup.add(settingsListener.presetup, settingsListener);
 			self.sonarsetup.add(settingsListener.sonarsetup, settingsListener);
+			self.sonarpresetup.add(settingsListener.sonarpresetup, settingsListener);
 			self.sonarstart.add(settingsListener.sonarstart, settingsListener);
 			self.sonarstop.add(settingsListener.sonarstop, settingsListener);
 			self.sonarsave.add(settingsListener.sonarvalue,settingsListener);
@@ -122,7 +128,12 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 			self.resizeConsoleWindow();
 			self.settingsListener.getSettings();
 			commonVariables.navListener.showHideControls(commonVariables.settings);
+			$('input[name=sonarjdbcUrl]').prop("disabled",true);
+		    $('input[name=sonarName]').prop("disabled",true);
+			$('input[name=sonarpassword]').prop("disabled",true);
+			$('input[name=sonarsave]').prop("disabled",true);
 		},
+		
 		
 		/* dynamicEvent : function() {
 			var self = this; 
@@ -160,6 +171,11 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 				}
    				$("#unit_popup").toggle();
    			});
+			
+			$('input[name=sonarpresetup]').click(function() {
+   				self.sonarpresetup.dispatch(this);
+   				$("#unit_popup").toggle();
+			});
 				
 			$('input[name=sonarsetup]').click(function() {
 					self.sonarsetup.dispatch();
@@ -223,11 +239,21 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 			
 			$('input[name=remotesonar]').click(function(){
 				 if ($(this).is(":checked")) {
-					 $('input[name=sonarsetup]').prop("disabled",true);
-					 $("input[name=sonarswitch]").prop("disabled",true);
+				    $('input[name=sonarjdbcUrl]').prop("disabled",false);
+					$('input[name=sonarName]').prop("disabled",false);
+					$('input[name=sonarpassword]').prop("disabled",false);
+					$('input[name=sonarsave]').prop("disabled",false);
+					$('input[name=sonarpresetup]').prop("disabled",true);
+					$('input[name=sonarswitch]').prop("disabled",true);
+					
+					
 				 }else{
-					  $('input[name=sonarsetup]').prop("disabled",false);
-					  $("input[name=sonarswitch]").prop("disabled",false);
+				    $('input[name=sonarjdbcUrl]').prop("disabled",true);
+					$('input[name=sonarName]').prop("disabled",true);
+					$('input[name=sonarpassword]').prop("disabled",true);
+					$('input[name=sonarsave]').prop("disabled",true);
+					$('input[name=sonarpresetup]').prop("disabled",false);
+					$('input[name=sonarswitch]').prop("disabled",false);
 				 }
 			 });
 			

@@ -154,29 +154,52 @@
 						</tr>
 						
 						<tr id="save"><td colspan="4" align="right"><input type="button" value="Save" name="save" class="btn btn_style flt_right"></td></tr>    
+						
+							 
+					</tbody>
+				</table>
+				<table class="table table-striped table_border table-bordered settings_tab border_div" cellpadding="0" cellspacing="0" border="0">
+					<thead>
 						<tr>
-								  <td>
+							<th>Sonar Settings</th>
+						</tr>
+					</thead>
+					<tbody> 
+				     <tr>
+						<td>
 							   <table class="table table-striped table_border table-bordered border_div setting_action" cellpadding="0" cellspacing="0" border="0">
 									<thead>
 										<tr>
 											<th>Sonar Url</th>
-											<th>Sonar Jdbc Url </th>
-											<th>UserName</th>
-											<th>Password</th>
-											<th>Remote Sonar</th>
-											<th>Actions</th>
+											<th>Actions </th>
+											<th></th>
+											<th></th>
+											<th></th>
 										</tr>
 									</thead>
 									<tbody>
 										<tr>
 											<td><input type="text" name="sonarUrl" temp="sonar"></td>
-											<td><input type="text" name="sonarjdbcUrl" temp="sonar"></td>
-											<td><input type="text" name="sonarName" temp="sonar"></td>
-											<td><input type="password" name="sonarpassword" temp="sonar"></td>
-											<td><input type="checkbox" name="remotesonar"></td>
-										  	<td>
-												<input type="button" name="sonarsetup" value="Setup" class="btn btn_style">&nbsp&nbsp<input type="button" name="sonarswitch" value="Start" class="btn btn_style"></a>
+											<td>
+											    <a value="sonarsetupagain" class="tooltiptop" id="sonarsetupagain" name="sonarsetupagain" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Setup">
+												<input type="button" name="sonarpresetup" value="Setup" class="btn btn_style">&nbsp&nbsp<input type="button" name="sonarswitch" value="Start" class="btn btn_style"></a>
+												<div id="sonaryesnopopup_setup" name="sonaryesnopopup_setup" class="dyn_popup"> Overwrite old installation?
+												<div>
+												    <input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style" name="sonarsetup">
+												    <input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close">
+												</div>
                       						</td>
+											<td></td>
+											<td></td>
+											<td></td>
+										</tr>
+										<tr>
+										    <td>Remote Sonar</td>
+										    <td><input type="checkbox" name="remotesonar"></td>
+										    <td><input type="text" name="sonarjdbcUrl" placeholder="Sonar Jdbc Url" temp="sonar"></td>
+											<td><input type="text" name="sonarName" placeholder="User Name" temp="sonar"></td>
+											<td><input type="password" name="sonarpassword" placeholder="Password" temp="sonar"></td>
+											
 										</tr>
 									</tbody>
 								</table>								
@@ -185,9 +208,9 @@
 							   </td>
 							   </tr>
 							
-							 
-					</tbody>
 				</table>
+			</tbody>
+			</table>
 			</div>
 		</div>
     	<!--content_main div ends here -->
