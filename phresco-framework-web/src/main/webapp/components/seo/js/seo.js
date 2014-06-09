@@ -113,6 +113,7 @@ define(["seo/listener/seoListener", "testResult/listener/testResultListener"], f
 					Clazz.navigationController.jQueryContainer = '#testResult';
 					Clazz.navigationController.push(self.testsuiteResult, false);
 				});
+				$('.dyn_popup_close').click();
 			});
 
 

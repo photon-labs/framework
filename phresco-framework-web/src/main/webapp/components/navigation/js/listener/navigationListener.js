@@ -610,11 +610,49 @@ define([], function() {
 			}
 		},
 		
+		showHideParentOptions : function() {
+			var self = this;
+			var applicableOptions = JSON.parse(commonVariables.api.localVal.getSession('applicableOptions'));
+			//console.info('applicableOptions = ' , applicableOptions);
+			if (jQuery.inArray(commonVariables.optionsParentCode, applicableOptions) === -1) {
+				$("#codequality").hide();
+			} else {
+				$("#codequality").show();
+			}
+			if (jQuery.inArray(commonVariables.optionsParentBuild, applicableOptions) === -1) {
+				$("#build").hide();
+			} else {
+				$("#build").show();
+			}
+
+			if (jQuery.inArray(commonVariables.optionsParentDeploy, applicableOptions) === -1) {
+				$("table th[name=buildDep]").hide();
+			} else {
+				$("table th[name=buildDep]").show();
+			}
+
+			if (jQuery.inArray(commonVariables.optionsParentUnitTest, applicableOptions) === -1) {
+				$(".testmenu").hide();
+				$("#unitTest").hide();
+			} else {
+				$(".testmenu").show();
+				$("#unitTest").show();
+				$("#componentTest").hide();
+				$("#functionalTest").hide();
+				$("#performanceTest").hide();
+				$("#loadTest").hide();
+				$("#manualTest").hide();
+				$("#zapMenu").hide();
+				$("#SEO").hide();
+				$("#W3CMenu").hide();
+			}
+			
+		},
+		
 		//To show hide the options like build, deploy based on the applicable options for the technology
 		showHideTechOptions : function() {
 			var self = this;
 			var applicableOptions = JSON.parse(commonVariables.api.localVal.getSession('applicableOptions'));
-			//console.info('applicableOptions = ' , applicableOptions);
 			if (jQuery.inArray(commonVariables.optionsCode, applicableOptions) === -1) {
 				$("#codequality").hide();
 			} else {

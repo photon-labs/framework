@@ -166,7 +166,11 @@ var commonVariables = {
 	optionsZap : "Zap",
 	optionsSEO : "SEO",
 	optionsW3C : "W3C",
-
+	optionsParentCode : "Parent_Code",
+	optionsParentBuild : "Parent_Build",
+	optionsParentDeploy : "Parent_Deploy",
+	optionsParentUnitTest : "Parent_Unit_Test",
+	
 	/******* Customer main menu options constants *******/
 	optionsDashboard : "Home",
     optionsHelp : "Help",

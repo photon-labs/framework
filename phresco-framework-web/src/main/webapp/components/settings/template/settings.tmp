@@ -160,22 +160,28 @@
 									<thead>
 										<tr>
 											<th>Sonar Url</th>
+											<th>Sonar Jdbc Url </th>
 											<th>UserName</th>
 											<th>Password</th>
+											<th>Remote Sonar</th>
 											<th>Actions</th>
 										</tr>
 									</thead>
 									<tbody>
 										<tr>
 											<td><input type="text" name="sonarUrl" temp="sonar"></td>
+											<td><input type="text" name="sonarjdbcUrl" temp="sonar"></td>
 											<td><input type="text" name="sonarName" temp="sonar"></td>
 											<td><input type="password" name="sonarpassword" temp="sonar"></td>
+											<td><input type="checkbox" name="remotesonar"></td>
 										  	<td>
 												<input type="button" name="sonarsetup" value="Setup" class="btn btn_style">&nbsp&nbsp<input type="button" name="sonarswitch" value="Start" class="btn btn_style"></a>
                       						</td>
 										</tr>
 									</tbody>
-							   </table>
+								</table>								
+									
+							   <tr id="save"><td colspan="4" align="right"><input type="button" value="Save" name="sonarsave" class="btn btn_style flt_right"></td></tr>
 							   </td>
 							   </tr>
 							

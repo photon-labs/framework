@@ -53,9 +53,9 @@
 				  <table class="hideContent table" name="pdfHeader_{{id}}" show="true">
 						  <thead>  
 							<tr>
-								<th class="" data-i18n="commonlabel.label.existingreport"></th>
-								<th class="" data-i18n="commonlabel.label.type"></th>
-								<th class="" data-i18n="commonlabel.label.download"></th>
+								<th class="" data-i18n="commonlabel.label.name"></th>
+								<th class="align" data-i18n="commonlabel.label.time"></th>
+								<th class="align1" data-i18n="commonlabel.label.download"></th>
 								<th class="" data-i18n="commonlabel.label.delete"></th>
 							</tr>
 						  </thead>			
@@ -67,12 +67,12 @@
 				  </table>
 				  </div>	  
                 <form id="pdfReport">
-                   <table class="report_type">
+                   <table class="report_type tooltiptop">
                     <tbody>
                         <tr>
                         	<td data-i18n="commonlabel.label.reporttype"></td>
                         	<td>
-                            	<select name="reportDataType" class="reportDataType">
+                            	<select name="reportDataType" class="reportDataType reportWidth">
                                 	<option value="detail" data-i18n="projectlist.label.detailedReport"></option>
                                 	<option value="crisp" data-i18n="projectlist.label.overallReport"></option>
                             	</select>
@@ -775,9 +775,9 @@
 										<table class="hideContent table" name="pdfHeader_{{id}}" show="true">
 											  <thead>  
 												<tr>
-													<th class="" data-i18n="commonlabel.label.existingreport"></th>
-													<th class="" data-i18n="commonlabel.label.type"></th>
-													<th class="" data-i18n="commonlabel.label.download"></th>
+													<th class="" data-i18n="commonlabel.label.name"></th>
+													<th class="align" data-i18n="commonlabel.label.time"></th>
+													<th class="align1" data-i18n="commonlabel.label.download"></th>
 													<th class="" data-i18n="commonlabel.label.delete"></th>
 												</tr>
 											  </thead>			
@@ -788,7 +788,7 @@
 										  </table>
 									  </div>
                                       <form id="pdfReport">
-                                          <table class="report_type">
+                                          <table class="report_type ">
                                               <tbody>
                                                   <tr>
                                                       <td data-i18n="commonlabel.label.reporttype"></td>

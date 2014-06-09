@@ -92,6 +92,8 @@ import com.photon.phresco.framework.model.CodeValidationReportType;
 import com.photon.phresco.framework.model.DependantParameters;
 import com.photon.phresco.framework.model.PerformanceDetails;
 import com.photon.phresco.framework.model.Publication;
+import com.photon.phresco.framework.model.RepoDetail;
+import com.photon.phresco.framework.model.SonarParams;
 import com.photon.phresco.framework.param.impl.IosTargetParameterImpl;
 import com.photon.phresco.plugins.model.Mojos;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
@@ -1176,11 +1178,10 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 		}
 	}
 	
-	@GET
+	@POST
 	@Path("/sonarParam/save")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response setSonarConfiguration(@QueryParam(REST_QUERY_SONAR_URL) String sonarUrl, @QueryParam(REST_QUERY_USER_NAME) String username , 
-			@QueryParam(REST_QUERY_PASSWORD) String password, @QueryParam(REST_QUERY_SONAR_JDBC_URL) String sonarJdbcUrl ,@QueryParam(REST_QUERY_REMOTE_SONAR) String remoteSonar) throws PhrescoException {
+	public Response setSonarConfiguration(SonarParams sonarparams) throws PhrescoException {
 		 ResponseInfo<String> responseData = new ResponseInfo<String>();
 		 Properties sonarConfig = new Properties();
 		OutputStream outputStream = null;
@@ -1188,11 +1189,11 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 		try {
 			inputstream = this.getClass().getClassLoader().getResourceAsStream("framework.config");
 			sonarConfig.load(inputstream);
-			sonarConfig.setProperty("phresco.code.sonar.url", sonarUrl);
-			sonarConfig.setProperty("phresco.code.sonar.jdbc.url", sonarJdbcUrl);
-			sonarConfig.setProperty("phresco.code.sonar.username", username);
-			sonarConfig.setProperty("phresco.code.sonar.password", password);
-			sonarConfig.setProperty("phresco.code.remote.sonar", remoteSonar);
+			sonarConfig.setProperty("phresco.code.sonar.url",sonarparams.getSonarUrl());
+			sonarConfig.setProperty("phresco.code.sonar.jdbc.url",sonarparams.getSonarJdbcUrl());
+			sonarConfig.setProperty("phresco.code.sonar.username", sonarparams.getUsername());
+			sonarConfig.setProperty("phresco.code.sonar.password", sonarparams.getPassword());
+			sonarConfig.setProperty("phresco.code.remote.sonar", sonarparams.getRemoteSonar());
 			inputstream.close();
 			URL resource = this.getClass().getClassLoader().getResource("framework.config");
 			outputStream = new FileOutputStream(resource.getPath());
@@ -1210,7 +1211,33 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 		}
 	}
 	
-	
+	@GET
+	@Path("/sonarValue/sonarUrl")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response getsonarurl() throws PhrescoException, IOException{
+		ResponseInfo responseData = new ResponseInfo();
+		Properties sonarConfig = new Properties();
+		ResponseInfo finalOut=null;
+		OutputStream outputStream = null;
+		InputStream inputstream = null;
+		try {
+			inputstream = this.getClass().getClassLoader().getResourceAsStream("framework.config");
+			sonarConfig.load(inputstream);
+			RepoDetail sonarDetails = new RepoDetail();
+			if(inputstream != null){			
+			sonarDetails.setRepoUrl(sonarConfig.getProperty("phresco.code.sonar.url"));
+			sonarDetails.setUserName(sonarConfig.getProperty("phresco.code.sonar.username"));
+			sonarDetails.setPassword(sonarConfig.getProperty("phresco.code.sonar.password"));
+			}
+			finalOut = responseDataEvaluation(responseData, null, sonarDetails, RESPONSE_STATUS_SUCCESS, PHR800024); 
+			}catch (IOException e) { 
+			 ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e,
+	                    null, RESPONSE_STATUS_ERROR, PHR510012);
+		}
+		return Response.status(Status.OK).entity(finalOut).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+				.build();
+	}
 	private static boolean saveCofiguration( String appDirName , String module, Publication config) throws PhrescoException {
 		boolean fileSaved = false;
 		try {

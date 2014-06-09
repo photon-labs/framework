@@ -1061,6 +1061,7 @@ ul.nav li.dropdown:hover > .test_options{
 	width: 251px;
 }
 
+
 .report_type select
 {
 		width:245px !important;
@@ -4964,6 +4965,8 @@ a.selected { background:#dcdcdc; }
 /* **************************Abouts Us Ends**********************************************************/
 .hideManualColumns { display: none !important; }
 
+
+
 select[name="reportDataType"], input[name="pdfName"] {
 	margin:0;
 }
@@ -5952,4 +5955,21 @@ a.morelink {
 	font-size: 14px;
 	font-weight:bold;
 	color: #ef7b43;
+}
+.report_type select.reportWidth {
+	width:250px !important;
+}
+.align{
+	text-align: center !important;
+	padding: 0px 0px 5px 46px !important;
+}
+.align1{
+	padding: 0px 0px 5px 73px !important; 
+	text-align: center !important;
+}
+.imgalign{
+	margin-right:24px !important;
+}
+.imgaligndel{
+	margin-right:8px !important;
 }
