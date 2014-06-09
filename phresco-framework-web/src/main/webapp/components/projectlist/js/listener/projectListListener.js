@@ -808,9 +808,9 @@ define([], function() {
 					var idgenerate = Date.now();
 					var repname = response.data.json[i].fileName.length;
 					if(repname >= 10){
-						var temp,temp,str2,reportname2,result;
-						temp = response.data.json[i].fileName;
-						str2 = temp.substr(0,10);
+						var tempname,str2,reportname2,result;
+						tempname = response.data.json[i].fileName;
+						str2 = tempname.substr(0,10);
 						reportname2 = "...";
 						result = str2.concat(reportname2);
 					}
