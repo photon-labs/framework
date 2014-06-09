@@ -1304,6 +1304,30 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	}
 	
 	
+    @GET
+    @Path("/sonarpresetup")
+    @Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+    public Response presonarSetup() throws PhrescoException {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		ResponseInfo<String> finalOutput;
+		boolean exists = false;
+		String status = PHR810050;
+		try {
+			File warFile = new File(Utility.getPhrescoHome() + "workspace/tools/sonar/target/tomcat/webapps/sonar");
+			if (warFile.exists()) {
+				exists = true;
+				status = PHR810049;
+			} 
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		finalOutput = responseDataEvaluation(responseData, null, exists, RESPONSE_STATUS_SUCCESS, status);
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+		.build();
+	}
+	
+    
 	/**
 	 * @return
 	 */

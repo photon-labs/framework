@@ -89,7 +89,11 @@ define([], function() {
 			} else if (action === "presetup") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/presetup";
-			} else if (action === "sonarsetup") {
+			} else if (action === "sonarpresetup") {
+			    header.requestMethod = "GET";
+				header.webserviceurl= commonVariables.webserviceurl + commonVariables.ci + "/sonarpresetup";			
+			}
+			else if (action === "sonarsetup") {
 				header.requestMethod = "POST";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.mvnSonarSetup;
 			} else if (action === "sonarstart") {
@@ -134,6 +138,7 @@ define([], function() {
 			
 			 self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'sonarUrl'), function(response) {
 				 $('input[name=sonarUrl]').val(response.data.repoUrl);
+				  $('input[name=sonarjdbcUrl]').val(response.data.jdbcUrl);
 				 $('input[name=sonarName]').val(response.data.userName);
 				 $('input[name=sonarpassword]').val(response.data.password);
 			 });
@@ -201,10 +206,6 @@ define([], function() {
 				}, 500);
 			});
 			
-		},
-		
-		sonarparams : function(){
-		    console.info("entering sonar params");
 		},
 		
 		switchStatus : function() {
@@ -314,7 +315,17 @@ define([], function() {
 				});
 			}
 		},
-		
+		sonarpresetup : function(obj) {
+			var self = this;
+			self.getHeaderResponse(self.getRequestHeader('', 'sonarpresetup'), function(response) {
+				if (response.data === false) {
+				   console.info("response",response.data);
+					self.sonarsetup();
+				} else {
+					self.openccci(obj, "sonaryesnopopup_setup","setup", true);
+				}
+			});
+		},
 		sonarsetup : function () {
 		    $(".dyn_popup").hide();
 			var self = this;
@@ -389,7 +400,7 @@ define([], function() {
 		},
 		
 		sonarvalue : function(){
-		   var self = this;
+		   var self = this;		    
 		   var status = self.sonarvalidate();
 		   if (status === true){
 		   var sonarvalue = {};
@@ -398,10 +409,10 @@ define([], function() {
 		   sonarvalue.username = $('input[name=sonarName]').val();
 		   sonarvalue.password = $('input[name=sonarpassword]').val();	
             if ($('input:checkbox[name=remotesonar]:checked').is(':checked')){
-				sonarvalue.remoteSonar = "on";
+				sonarvalue.remoteSonar = "true";
 			}
 			else{
-				sonarvalue.remoteSonar = "off";
+				sonarvalue.remoteSonar = "false";
 			}
 		   		   
 		   self.getHeaderResponse(self.getRequestHeader(sonarvalue, 'sonarsave'), function(response) {

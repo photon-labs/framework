@@ -564,6 +564,8 @@ public interface ResponseCodes {
 	String PHR810047 = "PHR810047"; // Setup details retrieval Failed
 	String PHR800027 = "PHR800027"; // Keychains retrieved successfully
 	String PHR810048 = "PHR810048"; // Keychains retrieval Failed
+	String PHR810049 = "PHR810049"; // Sonarsetup Details retrived successfully
+	String PHR810050 = "PHR810050"; // Sonarsetup Details retrieval Failed
 	/*
 	 * Upgrade Service
 	 */

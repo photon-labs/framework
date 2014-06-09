@@ -17,6 +17,7 @@ public class RepoDetail implements Serializable {
 	
 	private String revision;
 	private String repoUrl;
+	private String jdbcUrl;
 	private String userName;
 	private String password;
 	private String revisionVal;
@@ -45,12 +46,13 @@ public class RepoDetail implements Serializable {
 		super();
 	}
 	
-	public RepoDetail(String revision, String repoUrl, String userName, String password, String revisionVal, String commitMessage,
+	public RepoDetail(String revision, String repoUrl,String jdbcUrl, String userName, String password, String revisionVal, String commitMessage,
 			List<String> commitableFiles, List<RepoFileInfo> repoInfoFile, String type, boolean testCheckOut, String testRepoUrl,
 			String testUserName, String testPassword, String testRevision, boolean repoExist, String stream, String proName, String serverPath) {
 		super();
 		this.revision = revision;
 		this.repoUrl = repoUrl;
+		this.jdbcUrl = jdbcUrl;
 		this.userName = userName;
 		this.password = password;
 		this.revisionVal = revisionVal;
@@ -67,6 +69,14 @@ public class RepoDetail implements Serializable {
 		this.stream = stream;
         this.proName = proName;
         this.serverPath = serverPath;
+	}
+
+	public String getJdbcUrl() {
+		return jdbcUrl;
+	}
+
+	public void setJdbcUrl(String jdbcUrl) {
+		this.jdbcUrl = jdbcUrl;
 	}
 
 	public String getRevision() {

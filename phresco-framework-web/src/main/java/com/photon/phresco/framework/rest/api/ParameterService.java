@@ -1227,6 +1227,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			RepoDetail sonarDetails = new RepoDetail();
 			if(inputstream != null){			
 			sonarDetails.setRepoUrl(sonarConfig.getProperty("phresco.code.sonar.url"));
+			sonarDetails.setJdbcUrl(sonarConfig.getProperty("phresco.code.sonar.jdbc.url"));
 			sonarDetails.setUserName(sonarConfig.getProperty("phresco.code.sonar.username"));
 			sonarDetails.setPassword(sonarConfig.getProperty("phresco.code.sonar.password"));
 			}
