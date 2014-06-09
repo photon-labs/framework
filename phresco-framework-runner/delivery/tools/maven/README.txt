@@ -1,21 +1,3 @@
-====
-    Framework Runner
-
-    Copyright (C) 1999-2013 Photon Infotech Inc.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-            http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-====
-
 
                           Apache Maven
 
@@ -58,18 +40,18 @@
   1) Unpack the archive where you would like to store the binaries, eg:
 
     Unix-based Operating Systems (Linux, Solaris and Mac OS X)
-      tar zxvf apache-maven-3.0.x.tar.gz
+      tar zxvf apache-maven-3.x.y.tar.gz
     Windows 2000/XP
-      unzip apache-maven-3.0.x.zip
+      unzip apache-maven-3.x.y.zip
 
-  2) A directory called "apache-maven-3.0.x" will be created.
+  2) A directory called "apache-maven-3.x.y" will be created.
 
   3) Add the bin directory to your PATH, eg:
 
     Unix-based Operating Systems (Linux, Solaris and Mac OS X)
-      export PATH=/usr/local/apache-maven-3.0.x/bin:$PATH
+      export PATH=/usr/local/apache-maven-3.x.y/bin:$PATH
     Windows 2000/XP
-      set PATH="c:\program files\apache-maven-3.0.x\bin";%PATH%
+      set PATH="c:\program files\apache-maven-3.x.y\bin";%PATH%
 
   4) Make sure JAVA_HOME is set to the location of your JDK
 
@@ -89,7 +71,7 @@
   Downloads:          http://maven.apache.org/download.html
   Release Notes:      http://maven.apache.org/release-notes.html
   Mailing Lists:      http://maven.apache.org/mail-lists.html
-  Source Code:        http://svn.apache.org/repos/asf/maven/
+  Source Code:        https://git-wip-us.apache.org/repos/asf/maven.git/apache-maven
   Issue Tracking:     http://jira.codehaus.org/browse/MNG
-  Wiki:               http://docs.codehaus.org/display/MAVENUSER/
+  Wiki:               https://cwiki.apache.org/confluence/display/MAVEN/
   Available Plugins:  http://maven.apache.org/plugins/index.html
