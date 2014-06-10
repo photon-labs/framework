@@ -22,7 +22,7 @@ if "%PHRESCO_HOME%" == "%cd%\.." goto :eof
 set PHRESCO_HOME=%CD%\..
 set MAVEN_HOME=%CD%\..\tools\maven
 set JENKINS_HOME=%PHRESCO_HOME%\workspace\tools\jenkins
-set SONAR_HOME=%PHRESCO_HOME%\workspace\tools\sonar-3.5.1
+set SONAR_HOME=%PHRESCO_HOME%\workspace\tools\sonar-3.7.4
 set M2_HOME=%MAVEN_HOME%
 set TFS_HOME=%PHRESCO_HOME%\workspace\tools\native\native
 set PATH=%SONAR_HOME%\bin;%MAVEN_HOME%\bin;%PHRESCO_HOME%\bin;%PHRESCO_HOME%\workspace\tools\phantomjs-1.5.0-win32-static;%TFS_HOME%;%PATH%;

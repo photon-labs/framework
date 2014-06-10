@@ -4,11 +4,11 @@
 	<groupId>com.photon.phresco.sonar</groupId>
 	<artifactId>sonar</artifactId>
 	<packaging>pom</packaging>
-	<version>3.5.1</version>
+	<version>3.7.4</version>
 	<name>sonar</name>
 
     <properties>		
-		<sonar.version>3.5.1</sonar.version>
+		<sonar.version>3.7.4</sonar.version>
 	</properties>
 
 	<dependencies>
@@ -29,13 +29,13 @@
         </dependency>
    
          <!-- Sonar plungins dependencies -->
-         
+    <!--      
         <dependency>
             <groupId>sonar.plugin</groupId>
             <artifactId>sonar-w3c-markup-validation-plugin</artifactId>
             <version>0.1</version>
         </dependency>
-         <!-- for code coverage with emma start-->
+     -->     <!-- for code coverage with emma start-->
 		
 		<dependency>
             <groupId>sonar.plugin</groupId>
@@ -67,13 +67,13 @@
 			<artifactId>sonar-dotnet-plugin</artifactId>
 			<version>2.1</version>
 		</dependency>
-        
+    <!--     
         <dependency>
           <groupId>sonar.plugin</groupId>
           <artifactId>w3cmarkupvalidationfilter</artifactId>
           <version>1.0.2</version>
         </dependency>
-
+ -->
         <dependency>
           <groupId>sonar.plugin</groupId>
           <artifactId>mem-tracker-sonar-plugin</artifactId>

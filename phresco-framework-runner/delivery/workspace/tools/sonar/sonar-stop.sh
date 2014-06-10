@@ -1,6 +1,6 @@
 
 export PHRESCO_HOME=$PWD/../../..
-export SONAR_HOME=$PWD/../sonar-3.5.1
+export SONAR_HOME=$PWD/../sonar-3.7.4
 export MAVEN_HOME=$PWD/../../../tools/maven
 export JENKINS_HOME=$PHRESCO_HOME/workspace/tools/jenkins
 export M2_HOME=$MAVEN_HOME
