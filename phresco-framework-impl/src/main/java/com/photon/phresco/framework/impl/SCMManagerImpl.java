@@ -1314,7 +1314,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				if (repoInfo.isSplitPhresco()) {
 					boolean validUser = authentication(repoInfo.getPhrescoRepoDetail().getUserName(), repoInfo.getPhrescoRepoDetail().getPassword(), repoType, appendedTestUrl.toString());
 					if(!validUser){ 
-						throw new PhrescoException("Invalid Credentials ");
+						throw new PhrescoException("Invalid User ");
 					}
 					splitDotPhrescoContents(appInfo, tempPhrescoFile, appendedPhrUrl.toString(), appendedSrcUrl.toString(), appendedTestUrl.toString(), srcWorkspaceName, phrWorkspaceName, testWorkspaceName);
 					updatePom(tempPhrescoFile, appendedPhrUrl.toString(), repoType, PHR_POM_XML, appPomProcessor, Constants.PHRESCO);
@@ -1327,7 +1327,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				if (repoInfo.isSplitTest()) {
 					boolean validUser = authentication(repoInfo.getTestRepoDetail().getUserName(), repoInfo.getTestRepoDetail().getPassword(), repoType, appendedTestUrl.toString());
 					if(!validUser){ 
-						throw new PhrescoException("Invalid Credentials ");
+						throw new PhrescoException("Invalid User ");
 					}
 					splitTestContents(appInfo, tempTestFile);
 					updatePom(tempTestFile, appendedTestUrl.toString(), repoType, POM_FILE, appPomProcessor, Constants.POM);
@@ -1338,7 +1338,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				File pomDest = null;
 				boolean validUser = authentication(repoInfo.getSrcRepoDetail().getUserName(), repoInfo.getSrcRepoDetail().getPassword(), repoType, appendedTestUrl.toString());
 				if(!validUser) { 
-					throw new PhrescoException("Invalid Credentials ");
+					throw new PhrescoException("Invalid User ");
 				}
 				splitSrcContents(appInfo, tempSrcFile, repoInfo, appendedPhrUrl.toString(), appendedSrcUrl.toString(), appendedTestUrl.toString(), srcWorkspaceName, phrWorkspaceName, testWorkspaceName);
 				if (StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
@@ -2893,7 +2893,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						throw new PhrescoException("Invalid URL");
 					}
 					else if(e.getErrorMessage().getErrorCode() == SVNErrorCode.RA_NOT_AUTHORIZED) {
-						throw new PhrescoException("Invalid Credentials ");
+						throw new PhrescoException("Invalid User ");
 					}
 				}
 				}
