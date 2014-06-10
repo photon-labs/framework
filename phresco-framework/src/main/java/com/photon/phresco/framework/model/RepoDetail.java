@@ -20,6 +20,7 @@ public class RepoDetail implements Serializable {
 	private String jdbcUrl;
 	private String userName;
 	private String password;
+	private String remotesonar;
 	private String revisionVal;
 	private String commitMessage = "";
 	private List<String>commitableFiles;
@@ -46,7 +47,7 @@ public class RepoDetail implements Serializable {
 		super();
 	}
 	
-	public RepoDetail(String revision, String repoUrl,String jdbcUrl, String userName, String password, String revisionVal, String commitMessage,
+	public RepoDetail(String revision, String repoUrl,String jdbcUrl, String userName, String password,String remotesonar, String revisionVal, String commitMessage,
 			List<String> commitableFiles, List<RepoFileInfo> repoInfoFile, String type, boolean testCheckOut, String testRepoUrl,
 			String testUserName, String testPassword, String testRevision, boolean repoExist, String stream, String proName, String serverPath) {
 		super();
@@ -55,6 +56,7 @@ public class RepoDetail implements Serializable {
 		this.jdbcUrl = jdbcUrl;
 		this.userName = userName;
 		this.password = password;
+		this.remotesonar = remotesonar;
 		this.revisionVal = revisionVal;
 		this.commitMessage = commitMessage;
 		this.commitableFiles = commitableFiles;
@@ -109,6 +111,14 @@ public class RepoDetail implements Serializable {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+    
+	public String getRemotesonar() {
+		return remotesonar;
+	}
+
+	public void setRemotesonar(String remotesonar) {
+		this.remotesonar = remotesonar;
 	}
 
 	public String getRevisionVal() {

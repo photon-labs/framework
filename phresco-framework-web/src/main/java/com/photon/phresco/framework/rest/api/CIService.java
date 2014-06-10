@@ -1312,7 +1312,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		boolean exists = false;
 		String status = PHR810050;
 		try {
-			File warFile = new File(Utility.getPhrescoHome() + "workspace/tools/sonar/target/tomcat/webapps/sonar");
+			File warFile = new File(Utility.getPhrescoHome() + "workspace/tools/sonar/target/tomcat");
 			if (warFile.exists()) {
 				exists = true;
 				status = PHR810049;

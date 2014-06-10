@@ -1230,6 +1230,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			sonarDetails.setJdbcUrl(sonarConfig.getProperty("phresco.code.sonar.jdbc.url"));
 			sonarDetails.setUserName(sonarConfig.getProperty("phresco.code.sonar.username"));
 			sonarDetails.setPassword(sonarConfig.getProperty("phresco.code.sonar.password"));
+			sonarDetails.setRemotesonar(sonarConfig.getProperty("phresco.code.remote.sonar"));
 			}
 			finalOut = responseDataEvaluation(responseData, null, sonarDetails, RESPONSE_STATUS_SUCCESS, PHR800024); 
 			}catch (IOException e) { 

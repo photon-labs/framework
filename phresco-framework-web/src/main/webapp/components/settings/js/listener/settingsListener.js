@@ -138,9 +138,25 @@ define([], function() {
 			
 			 self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'sonarUrl'), function(response) {
 				 $('input[name=sonarUrl]').val(response.data.repoUrl);
-				  $('input[name=sonarjdbcUrl]').val(response.data.jdbcUrl);
+				 $('input[name=sonarjdbcUrl]').val(response.data.jdbcUrl);
 				 $('input[name=sonarName]').val(response.data.userName);
 				 $('input[name=sonarpassword]').val(response.data.password);
+				  if(response.data.remotesonar === "true"){
+						$('input[name=remotesonar]').prop('checked' , true);
+						$('input[name=sonarjdbcUrl]').prop("disabled",false);
+						$('input[name=sonarName]').prop("disabled",false);
+						$('input[name=sonarpassword]').prop("disabled",false);
+						$('input[name=sonarpresetup]').prop("disabled",true);
+						$('input[name=sonarswitch]').prop("disabled",true);
+				   }
+				  else{
+						$('input[name=remotesonar]').prop('checked', false);
+						$('input[name=sonarjdbcUrl]').prop("disabled",true);
+						$('input[name=sonarName]').prop("disabled",true);
+						$('input[name=sonarpassword]').prop("disabled",true);
+						$('input[name=sonarpresetup]').prop("disabled",false);
+						$('input[name=sonarswitch]').prop("disabled",false);
+				  }
 			 });
 			
 			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'getTfs'), function(tfs) {
@@ -236,6 +252,7 @@ define([], function() {
 		presetup : function(obj) {
 			var self = this;
 			self.getHeaderResponse(self.getRequestHeader('', 'presetup'), function(response) {
+			      console.info("response",response.data);
 				if (response.data === false) {
 					self.setup();
 				} else {

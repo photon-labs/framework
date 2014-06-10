@@ -131,7 +131,6 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 			$('input[name=sonarjdbcUrl]').prop("disabled",true);
 		    $('input[name=sonarName]').prop("disabled",true);
 			$('input[name=sonarpassword]').prop("disabled",true);
-			$('input[name=sonarsave]').prop("disabled",true);
 		},
 		
 		
@@ -242,7 +241,6 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 				    $('input[name=sonarjdbcUrl]').prop("disabled",false);
 					$('input[name=sonarName]').prop("disabled",false);
 					$('input[name=sonarpassword]').prop("disabled",false);
-					$('input[name=sonarsave]').prop("disabled",false);
 					$('input[name=sonarpresetup]').prop("disabled",true);
 					$('input[name=sonarswitch]').prop("disabled",true);
 					
@@ -251,7 +249,6 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 				    $('input[name=sonarjdbcUrl]').prop("disabled",true);
 					$('input[name=sonarName]').prop("disabled",true);
 					$('input[name=sonarpassword]').prop("disabled",true);
-					$('input[name=sonarsave]').prop("disabled",true);
 					$('input[name=sonarpresetup]').prop("disabled",false);
 					$('input[name=sonarswitch]').prop("disabled",false);
 				 }
