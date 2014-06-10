@@ -1178,6 +1178,9 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			buildArgCmds.add("-DjdbcUrl=" + "\"" + sonarJdbcUrl + "\"");
 			buildArgCmds.add("-DsonarUsername=" + "\"" + sonarUserName + "\"");
 			buildArgCmds.add("-DsonarPassword=" + "\"" + sonarPassWord + "\"");
+			} else {
+				String sonarUrl = sonarConfig.getProperty("phresco.code.sonar.url");
+				buildArgCmds.add("-DsonarUrl=" + "\"" + sonarUrl + "\"");
 			}
 			return buildArgCmds;
 		} catch (IOException e) {
