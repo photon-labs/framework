@@ -484,11 +484,11 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	
 	 //get server Url for sonar
     public static String getSonarURL(HttpServletRequest request) throws PhrescoException {
-    	FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
+//    	FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
     	String serverUrl = getSonarHomeURL(request);
-	    String sonarReportPath = frameworkConfig.getSonarReportPath();
-	    String[] sonar = sonarReportPath.split("/");
-	    serverUrl = serverUrl.concat(FORWARD_SLASH + sonar[1]);
+//	    String sonarReportPath = frameworkConfig.getSonarReportPath();
+//	    String[] sonar = sonarReportPath.split("/");
+//	    serverUrl = serverUrl.concat(FORWARD_SLASH + sonar[1]);
 	    return serverUrl;
     }
     
@@ -1083,8 +1083,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 			if (StringUtils.isEmpty(isIphone)) {
 				FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
 				String serverUrl = FrameworkServiceUtil.getSonarURL(request);
-				String sonarReportPath = frameworkConfig.getSonarReportPath().replace(
-						FrameworkConstants.FORWARD_SLASH + SONAR, "");
+				String sonarReportPath = frameworkConfig.getSonarReportPath();
 				serverUrl = serverUrl + sonarReportPath;
 				// sub module pom processor
 //				PomProcessor processor = frameworkUtil.getPomProcessor(appDirName);
@@ -1165,6 +1164,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	private boolean checkSonarModuleUrl(String sonarProfile, String serverUrl, String module,
 			FrameworkUtil frameworkUtil, String rootModulePath, String subModule) throws PhrescoException {
 		boolean isSonarReportAvailable = false;
+		ProjectInfo projectInfo = null;
 		try {
 			if (StringUtils.isNotEmpty(module)) {
 				PomProcessor processor = Utility.getPomProcessor(rootModulePath, subModule);
@@ -1175,9 +1175,9 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 //				if (!FUNCTIONALTEST.equals(sonarProfile)) {
 //					builder.append(module);
 //				}
+				 projectInfo = Utility.getProjectInfo(rootModulePath, subModule);
 				if (StringUtils.isNotEmpty(sonarProfile) && FUNCTIONALTEST.equals(sonarProfile)) {
 //					PomProcessor processor = Utility.getPomProcessor(rootModulePath, subModule);
-					ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModule);
 					File testFolderLocation = Utility.getTestFolderLocation(projectInfo, rootModulePath, subModule);
 					String funcDir = processor.getProperty(Constants.POM_PROP_KEY_FUNCTEST_DIR);
 //					builder.append(frameworkUtil.getFunctionalTestDir(appDirName));
@@ -1207,7 +1207,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 					sbuild.append(artifactId);
 					if (!REQ_SRC.equals(sonarProfile)) {
 						sbuild.append(FrameworkConstants.COLON);
-						sbuild.append(sonarProfile);
+						sbuild.append(sonarProfile + projectInfo.getAppInfos().get(0).getId());
 					}
 
 					String artifact = sbuild.toString();
@@ -1242,6 +1242,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	 */
 	private boolean checkSonarUrl(String sonarProfile, String serverUrl, FrameworkUtil frameworkUtil, String rootModulePath, String subModule) throws PhrescoException {
 		boolean isSonarReportAvailable = false;
+		ProjectInfo projectInfo = null;
 		try {
 			if (StringUtils.isNotBlank(sonarProfile)) {
 				PomProcessor processor = Utility.getPomProcessor(rootModulePath, subModule);
@@ -1249,9 +1250,8 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 				StringBuilder builder = new StringBuilder();
 //				builder.append(appDirName);
 //				builder.append(File.separatorChar);
-
+				projectInfo = Utility.getProjectInfo(rootModulePath, subModule);
 				if (StringUtils.isNotEmpty(sonarProfile) && FUNCTIONALTEST.equals(sonarProfile)) {
-					ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModule);
 					File testFolderLocation = Utility.getTestFolderLocation(projectInfo, rootModulePath, subModule);
 					String funcDir = processor.getProperty(Constants.POM_PROP_KEY_FUNCTEST_DIR);
 //					builder.append(frameworkUtil.getFunctionalTestDir(appDirName));
@@ -1284,7 +1284,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 
 					if (!SOURCE_DIR.equals(sonarProfile)) {
 						sbuild.append(FrameworkConstants.COLON);
-						sbuild.append(sonarProfile);
+						sbuild.append(sonarProfile + projectInfo.getAppInfos().get(0).getId());
 					}
 				}
 

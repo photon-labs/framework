@@ -101,6 +101,7 @@ import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Para
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceManager;
+import com.photon.phresco.service.client.impl.ClientHelper;
 import com.photon.phresco.util.ArchiveUtil;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.FileUtil;
@@ -110,7 +111,10 @@ import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Profile;
 import com.phresco.pom.util.PomProcessor;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
+import com.sun.jersey.api.client.WebResource;
 
 /**
  * The Class ParameterService.
@@ -654,6 +658,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 		StringBuilder sb = new StringBuilder();
 		String rootModulePath = "";
 		String subModuleName = "";
+		String textContent = "";
 		try {
 			if (StringUtils.isNotEmpty(module)) {
 				rootModulePath = Utility.getProjectHome() + appDirName;
@@ -752,7 +757,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			sb.append(FrameworkConstants.COLON);
 			sb.append(artifactId);
 			if (StringUtils.isNotEmpty(validateAgainst) && !REQ_SRC.equals(validateAgainst)) {
-			String textContent = "";
 			PomProcessor pomPro = new PomProcessor(pomFile);
 			Profile profile = pomPro.getProfile(validateAgainst);
 			if(profile != null) {
@@ -782,6 +786,11 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			}
 			
 			if (responseCode != 200) {
+				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
+						null, RESPONSE_STATUS_FAILURE, PHR510003);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+						ALL_HEADER).build();
+			} else if(!checkReportForHigherVersion(serverUrl, textContent)) {
 				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
 						null, RESPONSE_STATUS_FAILURE, PHR510003);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
@@ -821,6 +830,18 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 		ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
 				sb.toString(), RESPONSE_STATUS_SUCCESS, PHR500003);
 		return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+	}
+	
+	private boolean checkReportForHigherVersion(String serverUrl, String reportId) {
+		boolean reportExsists = false;
+		Client client = ClientHelper.createClient();
+		WebResource resource = client.resource(serverUrl + "/api/resources");
+		ClientResponse res = resource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+		String string = res.getEntity(String.class);
+		if(string.contains(reportId)) {
+			reportExsists = true;
+		}
+		return reportExsists;
 	}
 
 	/**

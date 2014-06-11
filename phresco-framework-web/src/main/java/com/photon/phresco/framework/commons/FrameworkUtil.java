@@ -418,15 +418,15 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
     
     //get server Url for sonar
     public String getSonarURL() throws PhrescoException {
-    	FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
+//    	FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
     	String serverUrl = getSonarHomeURL();
     	S_LOGGER.debug("serverUrl ... " + serverUrl);
-	    String sonarReportPath = frameworkConfig.getSonarReportPath();
-	    S_LOGGER.debug("sonarReportPath ... " + sonarReportPath);
-	    String[] sonar = sonarReportPath.split("/");
-	    S_LOGGER.debug("sonar[1] " + sonar[1]);
-	    serverUrl = serverUrl.concat(FORWARD_SLASH + sonar[1]);
-	    S_LOGGER.debug("Final url => " + serverUrl);
+//	    String sonarReportPath = frameworkConfig.getSonarReportPath();
+//	    S_LOGGER.debug("sonarReportPath ... " + sonarReportPath);
+//	    String[] sonar = sonarReportPath.split("/");
+//	    S_LOGGER.debug("sonar[1] " + sonar[1]);
+//	    serverUrl = serverUrl.concat(FORWARD_SLASH + sonar[1]);
+//	    S_LOGGER.debug("Final url => " + serverUrl);
 	    return serverUrl;
     }
     
