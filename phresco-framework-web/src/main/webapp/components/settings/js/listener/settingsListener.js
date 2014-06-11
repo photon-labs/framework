@@ -336,7 +336,6 @@ define([], function() {
 			var self = this;
 			self.getHeaderResponse(self.getRequestHeader('', 'sonarpresetup'), function(response) {
 				if (response.data === false) {
-				   console.info("response",response.data);
 					self.sonarsetup();
 				} else {
 					self.openccci(obj, "sonaryesnopopup_setup","setup", true);
@@ -417,29 +416,30 @@ define([], function() {
 		},
 		
 		sonarvalue : function(){
-		   var self = this;		    
-		   var status = self.sonarvalidate();
-		   if (status === true){
-		   var sonarvalue = {};
-		   sonarvalue.sonarUrl = $('input[name=sonarUrl]').val();
-		   sonarvalue.sonarJdbcUrl = $('input[name=sonarjdbcUrl]').val();
-		   sonarvalue.username = $('input[name=sonarName]').val();
-		   sonarvalue.password = $('input[name=sonarpassword]').val();	
-            if ($('input:checkbox[name=remotesonar]:checked').is(':checked')){
-				sonarvalue.remoteSonar = "true";
+			var self = this;	
+			var status = true; 	
+			if ($('input:checkbox[name=remotesonar]:checked').is(':checked')){		   
+		          status = self.sonarvalidate();
 			}
-			else{
-				sonarvalue.remoteSonar = "false";
-			}
-		   		   
-		   self.getHeaderResponse(self.getRequestHeader(sonarvalue, 'sonarsave'), function(response) {
-					commonVariables.api.showError(response.responseCode ,"success", true, false, true);
+			if (status === true){
+			   var sonarvalue = {};
+			   sonarvalue.sonarUrl = $('input[name=sonarUrl]').val();
+			   sonarvalue.sonarJdbcUrl = $('input[name=sonarjdbcUrl]').val();
+			   sonarvalue.username = $('input[name=sonarName]').val();
+			   sonarvalue.password = $('input[name=sonarpassword]').val();	
+				if ($('input:checkbox[name=remotesonar]:checked').is(':checked')){
+					sonarvalue.remoteSonar = "true";
+				}
+				else{
+					sonarvalue.remoteSonar = "false";
+				}
+				self.getHeaderResponse(self.getRequestHeader(sonarvalue, 'sonarsave'), function(response) {
+						commonVariables.api.showError(response.responseCode ,"success", true, false, true);
 				});
 		   
-		   }
+			}
 		},
 		sonarvalidate : function() {
-		
 			   var self = this;
 			   var status = true;
 			   var sonarUrl = $('input[name=sonarUrl]').val();

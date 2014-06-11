@@ -174,15 +174,16 @@
 											<th>Actions </th>
 											<th></th>
 											<th></th>
-											<th></th>
+											
 										</tr>
 									</thead>
 									<tbody>
 										<tr>
 											<td><input type="text" name="sonarUrl" temp="sonar"></td>
+			
 											<td>
 											    <a value="sonarsetupagain" class="tooltiptop" id="sonarsetupagain" name="sonarsetupagain" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Setup">
-												<input type="button" name="sonarpresetup" value="Setup" class="btn btn_style">&nbsp&nbsp<input type="button" name="sonarswitch" value="Start" class="btn btn_style"></a>
+												<input type="button" name="sonarpresetup" value="Setup" class="btn btn_style">&nbsp;&nbsp;<input type="button" name="sonarswitch" value="Start" class="btn btn_style"></a>
 												<div id="sonaryesnopopup_setup" name="sonaryesnopopup_setup" class="dyn_popup"> Overwrite old installation?
 												<div>
 												    <input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style" name="sonarsetup">
@@ -191,11 +192,10 @@
                       						</td>
 											<td></td>
 											<td></td>
-											<td></td>
 										</tr>
 										<tr>
-										    <td>Remote Sonar</td>
-										    <td><input type="checkbox" name="remotesonar"></td>
+										    <td>Remote Sonar &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										    &nbsp;&nbsp;&nbsp;<input type="checkbox" name="remotesonar"></td>
 										    <td><input type="text" name="sonarjdbcUrl" placeholder="Sonar Jdbc Url" temp="sonar"></td>
 											<td><input type="text" name="sonarName" placeholder="User Name" temp="sonar"></td>
 											<td><input type="password" name="sonarpassword" placeholder="Password" temp="sonar"></td>

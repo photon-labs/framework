@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], function() {
+define(["framework/widgetWithTemplate", "settings/listener/settingsListener", "codequality/listener/codequalityListener"], function() {
 	Clazz.createPackage("com.components.settings.js");
 
 	Clazz.com.components.settings.js.Settings = Clazz.extend(Clazz.WidgetWithTemplate, {
@@ -19,6 +19,7 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 		save : null,
 		sonarsave : null,
 		settingsListener: null,
+		codequalityListener: null,
 		onShowHideConsoleEvent : null,
 		remotesonar : null,
 	
@@ -31,6 +32,11 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 			var self = this;
 			if (self.settingsListener === null) {
 				self.settingsListener = new Clazz.com.components.settings.js.listener.SettingsListener(globalConfig);
+			}
+			
+			if(self.codequalityListener === null)
+			{
+			   self.codequalityListener = new Clazz.com.components.codequality.js.listener.CodequalityListener();
 			}
 			
 			self.registerEvents(self.settingsListener);
@@ -125,9 +131,18 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 		 */
 		postRender : function(element) {
 			var self = this;
+			var sonarurl = $('input[name=sonarUrl]').val();
 			self.resizeConsoleWindow();
 			self.settingsListener.getSettings();
 			commonVariables.navListener.showHideControls(commonVariables.settings);
+			self.codequalityListener.getSonarStatus(sonarurl, function(status) {
+				if(status.data === true){
+					$('input[name=sonarswitch]').attr('value', "Stop");						    
+				}
+				else{
+					$('input[name=sonarswitch]').attr('value', "Start");
+				}
+			});
 			$('input[name=sonarjdbcUrl]').prop("disabled",true);
 		    $('input[name=sonarName]').prop("disabled",true);
 			$('input[name=sonarpassword]').prop("disabled",true);
@@ -165,7 +180,6 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
    					self.start.dispatch();
    				} else if ($(this).attr('value') === 'Stop') {
 					$('input[name=switch]').attr('value', "Start");
-					$('input[name=presetup]').attr('disabled', false);
 					self.stop.dispatch();
 				}
    				$("#unit_popup").toggle();
@@ -244,13 +258,16 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 					$('input[name=sonarpresetup]').prop("disabled",true);
 					$('input[name=sonarswitch]').prop("disabled",true);
 					
-					
-				 }else{
+					 }else{
 				    $('input[name=sonarjdbcUrl]').prop("disabled",true);
 					$('input[name=sonarName]').prop("disabled",true);
 					$('input[name=sonarpassword]').prop("disabled",true);
 					$('input[name=sonarpresetup]').prop("disabled",false);
 					$('input[name=sonarswitch]').prop("disabled",false);
+					$("input[name='sonarUrl']").removeClass("errormessage");
+					$("input[name='sonarjdbcUrl']").removeClass("errormessage");
+					$("input[name='sonarName']").removeClass("errormessage");
+					$("input[name='sonarpassword']").removeClass("errormessage");
 				 }
 			 });
 			
