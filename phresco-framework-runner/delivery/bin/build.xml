@@ -239,7 +239,7 @@
 		<echo message="copying framework.config into conf"/>
 		<copy file="${phresco.home}/conf/service.properties" 
 			tofile="${tomcat.home}/webapps/${framework.context}/WEB-INF/classes/framework.config" 
-			overwrite="true"
+			overwrite="false"
 		/>
 	</target>
 	
