@@ -713,6 +713,7 @@
 			"database" : "Database",
 			"version" : "Version",
 			"technology" : "Technology",
+			"date"  : "Date/Time", 
 			"versions" : "Versions",
 			"code" : "Code",
 			"name" : "Name",

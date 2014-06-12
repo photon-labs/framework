@@ -233,7 +233,28 @@ define([], function() {
 						commonVariables.api.localVal.setJson('functionalFrameworkInfo', response.data.projectInfo.appInfos[0].functionalFrameworkInfo);
 						var data = {};
 							data.appdetails = response;
-							if (response){$('.hProjectId').val(response.data.projectInfo.appInfos[0].id);}
+							if (response){
+								$('.hProjectId').val(response.data.projectInfo.appInfos[0].id);
+								gmtdate = new Date(response.data.projectInfo.appInfos[0].creationDate);
+								localdate = new Date(gmtdate);
+								var tail = 'GMT', D= [localdate.getUTCMonth()+1, localdate.getUTCDate(),localdate.getUTCFullYear()];
+								T= [localdate.getHours(), localdate.getMinutes(), localdate.getSeconds()];
+								if(+T[0]> 12){
+									T[0]-= 12;
+									tail = ' PM '+tail;
+								}
+								else {
+									tail = ' AM '+tail;
+								}
+							    var i= 3;
+							    while(i){
+							        --i;
+							        if(D[i]<10) D[i]= '0'+D[i];
+							        if(T[i]<10) T[i]= '0'+T[i];
+							    }
+							   var date= D.join('-')+' '+T.join(':')+ tail;
+					 		response.data.projectInfo.appInfos[0].creationDate=date;
+							}
 							commonVariables.api.localVal.setProjectInfo(response);
 							self.getAppConfig(response , 'SERVER', function(appInfo){
 								data.serverData = appInfo.data;

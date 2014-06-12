@@ -24,6 +24,8 @@
                     <td data-i18n="application.edit.technology"></td>
                     <td><input type="text" placeholder="Android Hybrid" name="technology" value="{{techInfo.name}} {{#if techInfo.version}} - {{techInfo.version}}{{/if}}" readonly/>
 					</td>
+					<td data-i18n="application.edit.date"></td>
+					 <td>{{creationDate}}</td>
                     <td class="embed" data-i18n="application.edit.embedapplication"></td>
                     <td class="embed"> 
 	                    <select class="selectpicker" id="embed">
