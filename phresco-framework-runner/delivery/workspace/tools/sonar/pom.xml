@@ -36,12 +36,6 @@
         </dependency>
 		
 		<dependency>
-			<groupId>sonar.plugin</groupId>
-			<artifactId>sonar-csharp-plugin</artifactId>
-			<version>2.1</version>
-		</dependency>
-		
-		<dependency>
          <groupId>org.codehaus.sonar-plugins.android</groupId>
          <artifactId>sonar-android-plugin</artifactId>
          <version>0.1</version>
