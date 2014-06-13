@@ -1311,8 +1311,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					FrameworkUtil.saveCredential(testRepoDetail, appendedTestUrl);
 				}
 
-				if (repoInfo.isSplitPhresco()) {
-					boolean validUser = authentication(repoInfo.getPhrescoRepoDetail().getUserName(), repoInfo.getPhrescoRepoDetail().getPassword(), repoType, appendedTestUrl.toString());
+				if (repoInfo.isSplitPhresco()) {					
+					boolean validUser = authentication(repoInfo.getPhrescoRepoDetail().getUserName(), repoInfo.getPhrescoRepoDetail().getPassword(), repoType, repoInfo.getPhrescoRepoDetail().getRepoUrl());
 					if(!validUser){ 
 						throw new PhrescoException("Invalid User ");
 					}
@@ -1324,8 +1324,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						addToRepo(phrescoRepoDetail, appInfo, dir, phrescoDirName, tempPhrescoFile, hasSplit);
 					}
 				}
-				if (repoInfo.isSplitTest()) {
-					boolean validUser = authentication(repoInfo.getTestRepoDetail().getUserName(), repoInfo.getTestRepoDetail().getPassword(), repoType, appendedTestUrl.toString());
+				if (repoInfo.isSplitTest()) {					
+					boolean validUser = authentication(repoInfo.getTestRepoDetail().getUserName(), repoInfo.getTestRepoDetail().getPassword(), repoType, repoInfo.getTestRepoDetail().getRepoUrl());
 					if(!validUser){ 
 						throw new PhrescoException("Invalid User ");
 					}
@@ -1336,7 +1336,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					}
 				}
 				File pomDest = null;
-				boolean validUser = authentication(repoInfo.getSrcRepoDetail().getUserName(), repoInfo.getSrcRepoDetail().getPassword(), repoType, appendedTestUrl.toString());
+				boolean validUser = authentication(repoInfo.getSrcRepoDetail().getUserName(), repoInfo.getSrcRepoDetail().getPassword(), repoType, repoInfo.getSrcRepoDetail().getRepoUrl());
 				if(!validUser) { 
 					throw new PhrescoException("Invalid User ");
 				}
@@ -1394,6 +1394,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					addToRepo(srcRepoDetail, appInfo, dir, appDirName, dir, hasSplit);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			deleteWorkspace(srcRepoDetail);
 			if (phrescoRepoDetail != null) {
 				deleteWorkspace(phrescoRepoDetail);	
@@ -1792,6 +1793,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				addToTfsRepo(repodetail, dir); 
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new PhrescoException(e);
 		} finally {
 			if (tempUuidFile.exists()) {
@@ -2854,7 +2856,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		options.add(optionsMap.findOption("-noprompt"));
 	}
 	
-	private static boolean authentication(String username, String password, String repoType, String repoUrl) throws PhrescoException {
+	private static boolean authentication(String username, String password, String repoType, String repoUrl) throws PhrescoException {		
 		boolean validUser = false;
 		if(GIT.equalsIgnoreCase(repoType))
 		{
@@ -2889,6 +2891,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					svnRepository.testConnection();
 					validUser=true;
 				} catch(SVNException e) {
+					e.printStackTrace();
 					if(e.getErrorMessage().getErrorCode() == SVNErrorCode.RA_DAV_REQUEST_FAILED) {
 						throw new PhrescoException("Invalid URL");
 					}
