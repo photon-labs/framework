@@ -580,8 +580,19 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				var content = "";
 				for (i in pdfReports) {
 					var idgenerate = Date.now();
-					content = content.concat('<tr class="generatedRow" fileName="' + pdfReports[i].fileName + '"><td>' + pdfReports[i].time + '</td>');
-					content = content.concat('<td>' + pdfReports[i].type + '</td>');
+					var repname = pdfReports[i].fileName.length;
+					if(repname >= 10){
+						var tempname,str2,reportname2,result;
+						tempname = pdfReports[i].fileName;
+						str2 = tempname.substr(0,10);
+						reportname2 = "...";
+						result = str2.concat(reportname2);
+					}
+					else {
+						result = pdfReports[i].fileName;
+					} 
+					content = content.concat('<tr class="generatedRow" fileName="' + pdfReports[i].fileName + '"><td><a <a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="'+pdfReports[i].fileName+'" style="width:41% !important;">' + result + '</a></td>');
+					content = content.concat('<td>' + pdfReports[i].time + '</td>');
 					content = content.concat('<td><a class="tooltiptop" fileName="' + pdfReports[i].fileName + '" href="javascript:void(0)"');
 					content = content.concat(' data-toggle="tooltip" data-placement="top" name="downloadPdfReport" data-original-title="Download Pdf" title="">');
 					content = content.concat('<img src="themes/default/images/Phresco/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>');

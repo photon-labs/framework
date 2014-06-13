@@ -1064,7 +1064,7 @@ ul.nav li.dropdown:hover > .test_options{
 
 .report_type select
 {
-		width:245px !important;
+		width:251px !important;
 }
 
 .report_type tr td {
@@ -5956,9 +5956,17 @@ a.morelink {
 	font-weight:bold;
 	color: #ef7b43;
 }
-.report_type select.reportWidth {
-	width:250px !important;
+/* *************************************************************** This is for unit test pdf report icon ************************************************************* */
+.alignname{
+	text-align: center !important;
+	padding-right: 34px;
 }
+.aligntime{
+	text-align: center ;
+	padding-right: 65px;
+}
+/* *************************************************************** ENDS ************************************************************* */
+/* *************************************************************** This is for project tab pdf report icon ************************************************************* */
 .align{
 	text-align: center !important;
 	padding: 0px 0px 5px 46px !important;
@@ -5968,8 +5976,9 @@ a.morelink {
 	text-align: center !important;
 }
 .imgalign{
-	margin-right:24px !important;
+	margin-right:30px !important;
 }
 .imgaligndel{
 	margin-right:8px !important;
 }
+/* *************************************************************** ENDS ************************************************************* */
