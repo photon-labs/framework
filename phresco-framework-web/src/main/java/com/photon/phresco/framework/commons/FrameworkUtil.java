@@ -48,6 +48,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
@@ -82,6 +83,7 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.service.client.api.ServiceManager;
+import com.photon.phresco.service.client.impl.ClientHelper;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
@@ -89,6 +91,9 @@ import com.phresco.pom.model.Model;
 import com.phresco.pom.model.Model.Profiles;
 import com.phresco.pom.model.Profile;
 import com.phresco.pom.util.PomProcessor;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
 
 public class FrameworkUtil implements Constants, FrameworkConstants {
 
@@ -113,6 +118,20 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 	
 	public FrameworkUtil(HttpServletRequest request) {
 		this.request = request;
+	}
+	
+	public boolean checkReportForHigherVersion(String serverUrl, String reportId) {
+		
+		boolean reportExsists = false;
+		Client client = ClientHelper.createClient();
+		WebResource resource = client.resource(serverUrl + "/api/resources");
+		ClientResponse res = resource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+		String string = res.getEntity(String.class);
+		if(string.contains(reportId)) {
+			reportExsists = true;
+		}
+		
+		return reportExsists;
 	}
 	
 	public String getSqlFilePath(String oldAppDirName) throws PhrescoException, PhrescoPomException {

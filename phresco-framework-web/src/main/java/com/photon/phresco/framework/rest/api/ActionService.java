@@ -1148,7 +1148,8 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 			
 			// is sonar report available
 			if ((FrameworkConstants.ALL).equals(fromPage)) {
-				isReportAvailable = futil.isSonarReportAvailable(frameworkUtil, request, rootModulePath, subModuleName);
+				ProjectInfo projectInfo=Utility.getProjectInfo(rootModulePath, "");
+				isReportAvailable = futil.isSonarReportAvailable(frameworkUtil, request, rootModulePath, subModuleName,projectInfo);
 			}
 			// is test report available
 			if (!isReportAvailable) {

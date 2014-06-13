@@ -72,6 +72,7 @@ import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.CIJob;
 import com.photon.phresco.commons.model.CertificateInfo;
 import com.photon.phresco.commons.model.Customer;
+import com.photon.phresco.commons.model.ModuleInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.configuration.ConfigReader;
@@ -1072,7 +1073,63 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	        return plugins;
 	    }
 	    
-	public  boolean isSonarReportAvailable(FrameworkUtil frameworkUtil,
+	    public  boolean isSonarReportAvailable(FrameworkUtil frameworkUtil,
+				HttpServletRequest request, String rootModulePath, String subModule,ProjectInfo projectInfo) throws PhrescoException, PhrescoPomException 
+		{
+	    	boolean isSonarReportAvailable = false;
+			File sourceDir = Utility.getSourceFolderLocation(projectInfo, rootModulePath, "");
+			sourceDir = new File(sourceDir  + File.separator + Constants.POM_NAME);
+			PomProcessor pomProcessor = new PomProcessor(sourceDir);
+	    	String isIphone = pomProcessor.getProperty(PHRESCO_CODE_VALIDATE_REPORT);
+	    	if (StringUtils.isEmpty(isIphone)) {
+			String serverUrl = FrameworkServiceUtil.getSonarURL(request);
+			String id = projectInfo.getAppInfos().get(0).getId();
+			if (CollectionUtils.isNotEmpty(projectInfo.getAppInfos().get(0).getModules())) {
+				Modules pomModules = pomProcessor.getPomModule();
+				List<String> modules = null;
+				if (pomModules != null) {
+					modules = pomModules.getModule();
+				}
+				else {
+					for (String module : modules) {
+						List<String> sonarProfiles = frameworkUtil.getSonarProfiles(rootModulePath, module);
+						for (String sonarProfile : sonarProfiles) {
+							if (frameworkUtil.checkReportForHigherVersion(serverUrl, sonarProfile + id));
+							isSonarReportAvailable = true;
+						}
+					}
+				}
+			}
+			else {
+				List<String> sonarProfiles = frameworkUtil.getSonarProfiles(rootModulePath, subModule);
+				for (String sonarProfile : sonarProfiles) {
+					if(frameworkUtil.checkReportForHigherVersion(serverUrl, sonarProfile + id));
+						isSonarReportAvailable=true;
+				}
+			}
+	    	}
+	    	else
+	    	{
+				File pomFile = Utility.getPomFileLocation(rootModulePath, subModule);
+				StringBuilder sb = new StringBuilder(pomFile.getParent()).append(
+						File.separatorChar).append(DO_NOT_CHECKIN_DIR).append(File.separatorChar).append(
+						STATIC_ANALYSIS_REPORT);
+				File indexPath = new File(sb.toString());
+				if (indexPath.exists() && indexPath.isDirectory()) {
+					File[] listFiles = indexPath.listFiles();
+					for (int i = 0; i < listFiles.length; i++) {
+						File file = listFiles[i];
+						File htmlFileCheck = new File(file, INDEX_HTML);
+						if (htmlFileCheck.exists()) {
+							isSonarReportAvailable = true;
+						}
+					}
+				}
+	    	}
+		return isSonarReportAvailable;
+	}
+	    
+	/* public  boolean isSonarReportAvailable(FrameworkUtil frameworkUtil,
 			HttpServletRequest request, String rootModulePath, String subModule) throws PhrescoException {
 		boolean isSonarReportAvailable = false;
 		try {
@@ -1143,7 +1200,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 		}
 		return isSonarReportAvailable;
 	}
-
+*/
 	/**
 	 * Check sonar module url.
 	 * 

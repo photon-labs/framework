@@ -790,7 +790,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 						null, RESPONSE_STATUS_FAILURE, PHR510003);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 						ALL_HEADER).build();
-			} else if(!checkReportForHigherVersion(serverUrl, textContent)) {
+			} else if(!frameworkUtil.checkReportForHigherVersion(serverUrl, textContent)) {
 				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
 						null, RESPONSE_STATUS_FAILURE, PHR510003);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
@@ -832,18 +832,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 		return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 	}
 	
-	private boolean checkReportForHigherVersion(String serverUrl, String reportId) {
-		boolean reportExsists = false;
-		Client client = ClientHelper.createClient();
-		WebResource resource = client.resource(serverUrl + "/api/resources");
-		ClientResponse res = resource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
-		String string = res.getEntity(String.class);
-		if(string.contains(reportId)) {
-			reportExsists = true;
-		}
-		return reportExsists;
-	}
-
 	/**
 	 * Gets the clang reports.
 	 *

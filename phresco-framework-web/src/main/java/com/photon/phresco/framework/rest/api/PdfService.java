@@ -46,6 +46,7 @@ import org.apache.commons.lang.StringUtils;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.QualityUtil;
@@ -207,6 +208,7 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response showGeneratePdfPopup(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
 			@QueryParam(REST_QUERY_FROM_PAGE) String fromPage, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName, @Context HttpServletRequest request) {
+		
 		ResponseInfo<Map<String, Object>> responseData = new ResponseInfo<Map<String, Object>>();
 		 Map<String, Object> paramMap = new HashMap<String, Object>(8);
 		try {
@@ -224,20 +226,19 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 			} else {
 				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
-			
 			File pomFile = Utility.getPomFileLocation(rootModulePath, subModuleName);
 			existingPDFs = getExistingPDFs(fromPage, pomFile.getParent());
-				
+			
 			// is sonar report available
 			if ((FrameworkConstants.ALL).equals(fromPage)) {
-				isReportAvailable = futil.isSonarReportAvailable(frameworkUtil, request, rootModulePath, subModuleName);
+				ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, "");
+				isReportAvailable = futil.isSonarReportAvailable(frameworkUtil, request, rootModulePath, subModuleName, projectInfo);
 			}
-
+			
 			// is test report available
 			if (!isReportAvailable) {
 				isReportAvailable = futil.isTestReportAvailable(frameworkUtil, rootModulePath, subModuleName);
 			}
-			
 			paramMap.put("value", isReportAvailable);
 			if (existingPDFs != null ) {
 				paramMap.put("json", existingPDFs);
@@ -269,8 +270,8 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 	 * @throws PhrescoException the phresco exception
 	 */
 	private List<PdfReportInfo> getExistingPDFs(String fromPage, String targetDir) {
-		List<PdfReportInfo> pdfList = new ArrayList<PdfReportInfo>();
 		
+		List<PdfReportInfo> pdfList = new ArrayList<PdfReportInfo>();
 		// popup showing list of pdf's already created
 		String pdfDirLoc = targetDir + File.separator;
 		if (StringUtils.isEmpty(fromPage) || FROMPAGE_ALL.equals(fromPage)) {
@@ -288,7 +289,7 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 			for (File child : children) {
 				PdfReportInfo report= new PdfReportInfo();
 				// three value
-				DateFormat yymmdd = new SimpleDateFormat("MMM dd yyyy HH.mm");
+				DateFormat yymmdd = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm");
 				
 				if (child.toString().contains("detail")) {
 					report.setTime(yymmdd.format(child.lastModified()));
