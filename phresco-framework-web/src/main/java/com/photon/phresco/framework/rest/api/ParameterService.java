@@ -667,6 +667,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				rootModulePath = Utility.getProjectHome() + appDirName;
 			}
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
             PomProcessor processor = Utility.getPomProcessor(rootModulePath, subModuleName);
             File pomFile = Utility.getPomFileLocation(rootModulePath, subModuleName);
 			String validateReportUrl = "";
@@ -707,7 +708,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 					sb.append(phrescoFileServerNumber);
 					sb.append(FrameworkConstants.FORWARD_SLASH);
 					sb.append(appDirName);
-					ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 					String splitPhrDir = processor.getProperty(Constants.POM_PROP_KEY_SPLIT_PHRESCO_DIR);
 					String splitSrcDir = processor.getProperty(Constants.POM_PROP_KEY_SPLIT_SRC_DIR);
 					if (StringUtils.isNotEmpty(applicationInfo.getPhrescoPomFile()) && StringUtils.isNotEmpty(splitPhrDir)) {
@@ -757,22 +757,23 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			sb.append(FrameworkConstants.COLON);
 			sb.append(artifactId);
 			if (StringUtils.isNotEmpty(validateAgainst) && !REQ_SRC.equals(validateAgainst)) {
-			PomProcessor pomPro = new PomProcessor(pomFile);
-			Profile profile = pomPro.getProfile(validateAgainst);
-			if(profile != null) {
-				List<Element> properties = profile.getProperties().getAny();
-				for (Element element : properties) {
-					if( element.getTagName().equalsIgnoreCase("sonar.branch")) {
-						textContent = element.getTextContent();
-					}
-				}
-			} else {
 				textContent = validateAgainst + projectInfo.getAppInfos().get(0).getId();
+			} else {
+				PomProcessor pomPro = new PomProcessor(pomFile);
+				Profile profile = pomPro.getProfile(validateAgainst);
+				if(profile != null) {
+					List<Element> properties = profile.getProperties().getAny();
+					for (Element element : properties) {
+						if( element.getTagName().equalsIgnoreCase("sonar.branch")) {
+							textContent = element.getTextContent();
+						}
+					}
+				} else {
+					textContent = validateAgainst + projectInfo.getAppInfos().get(0).getId();
+				}
 			}
-				sb.append(FrameworkConstants.COLON);
-				sb.append(textContent);
-			}
-			
+			sb.append(FrameworkConstants.COLON);
+			sb.append(textContent);
 			int responseCode = 0;
 			URL sonarURL = new URL(sb.toString());
 			String protocol = sonarURL.getProtocol();
@@ -784,7 +785,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			} else if (protocol.equals("https")) {
 				responseCode = FrameworkUtil.getHttpsResponse(sb.toString());
 			}
-			
 			if (responseCode != 200) {
 				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
 						null, RESPONSE_STATUS_FAILURE, PHR510003);
