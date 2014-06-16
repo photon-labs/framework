@@ -963,11 +963,9 @@ define([], function() {
 			$("#nexusDeploy").html('');
 			if (templateJsonData.type === "release") {
 				$("#release").html('<thead><tr><th colspan="3">Release Parameters</th></tr></thead>'+
-									'<tbody><tr><td>Release Version</td>'+
-									'<td>Development Version</td>'+
-									'<td>Tag Name</td></tr><tr><td><input name="releaseVersion" type="text" placeholder="Release Version" readonly></td>'+
-									'<td><input name="developmentVersion" type="text" placeholder="Development Version" readonly></td>'+
-									'<td><input name="tagName" type="text" placeholder="Tag Name" readonly></td></tr>'+
+									'<tbody><tr><td><input name="releaseVersion" type="text" placeholder="Release Version"></td>'+
+									'<td><input name="developmentVersion" type="text" placeholder="Development Version"></td>'+
+									'<td><input name="tagName" type="text" placeholder="Tag Name"></td></tr>'+
 									'<tr><td><input name="releaseUsername" type="text" placeholder="Username"></td>'+
 									'<td><input name="releasePassword" type="password" placeholder="Password"></td>'+
 									'<td><input name="releaseMessage" type="text" placeholder="Message"></td></tr>'+

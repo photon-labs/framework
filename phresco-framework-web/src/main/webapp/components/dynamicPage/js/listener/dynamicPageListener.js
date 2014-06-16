@@ -29,61 +29,12 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
          * 
          * @header: constructed header for each call
          */
-        
-        
-        getVersion : function(whereToRender, btnObj, openccObj, callback) {
-            try{
-                var self = this, header = self.getRequestHeader(self.projectRequestBody, "", "", "version");
-                var appDirName = commonVariables.appDirName;
-                var goal = commonVariables.goal;
-                if(self.parameterValidation(appDirName, goal)){
-                    commonVariables.api.ajaxForDynamicParam(header, '', 
-                        function(response){
-                            self.responseData = response.data;
-                            if(response !== undefined && response !== null && response.status !== "error" && response.status !== "failure"){
-                                if (response.data === null || response.data.length === 0) {
-                                    callback("No parameters available");
-                                } else {
-                                	
-                                	$("input[name='releaseVersion']").val(response.data.currentVersion);
-                                	$("input[name='developmentVersion']").val(response.data.devVersion);
-                                	$("input[name='tagName']").val(response.data.tagVersion);
-                                	}
-                            } else {
-                                //responce value failed
-                                $(".content_end").show();
-								$(".msgdisplay").removeClass("success").addClass("error");
-								$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-								self.renderlocales(commonVariables.contentPlaceholder);	
-								$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-								setTimeout(function() {
-									$(".content_end").hide();
-								},2500);
-                            }
-                        }, 
-                        function(serviceError){
-                            //service access failed
-							$(".content_end").show();
-							$(".msgdisplay").removeClass("success").addClass("error");
-							$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-							self.renderlocales(commonVariables.contentPlaceholder);		
-							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-							setTimeout(function() {
-								$(".content_end").hide();
-							},2500);
-                        }
-                    );
-                }
-            }catch(error){
-                //Exception
-            }
-        },
-        
         getServiceContent : function(whereToRender, btnObj, openccObj, callback) {
             try{
-                var self = this, header = self.getRequestHeader(self.projectRequestBody, "", "", "parameter");               
+                var self = this, header = self.getRequestHeader(self.projectRequestBody, "", "", "parameter");
                 var appDirName = commonVariables.appDirName;
                 var goal = commonVariables.goal;
+                
                 if(self.parameterValidation(appDirName, goal)){
                     commonVariables.api.ajaxForDynamicParam(header, '', 
                         function(response){
@@ -1752,11 +1703,8 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                 dataType: "json",
                 webserviceurl: commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dynamicPageContext + "?appDirName="+appDirName+"&goal="+ goal+moduleParam
             };
-            if(action === "version" && goal=="release"){
-                header.webserviceurl = commonVariables.webserviceurl + "repository" + "/" + "version" + "?appDirName="+appDirName+"&currentBranch=master&goal="+ goal+moduleParam;
-				}
             
-            else if(action === "parameter"){
+            if(action === "parameter"){
                 header.requestMethod = "GET";
 				var buildNumber = "";
 				
@@ -1767,7 +1715,6 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 				if (goal === commonVariables.integrationTestGoal) {
 					header.webserviceurl = header.webserviceurl + "&projectCode=" + commonVariables.projectCode;
 				}
-				
                 
             } else if (action === "updateWatcher") {
                 header.requestMethod = "POST";

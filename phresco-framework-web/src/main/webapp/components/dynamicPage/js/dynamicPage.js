@@ -41,7 +41,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/listener/dynamicPageListene
 			var self = this;
 			commonVariables.loadingScreen.showLoading($(commonVariables.contentPlaceholder));
 			self.dynamicPageListener.getServiceContent(whereToRender, btnObj, openccObj, callback);
-			self.dynamicPageListener.getVersion(whereToRender, btnObj, openccObj, callback);
+			//self.dynamicPageListener.getVersion(whereToRender, btnObj, openccObj, callback);
 		},
 		
 		showParameters : function() {
