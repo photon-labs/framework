@@ -618,6 +618,8 @@ define([], function() {
 							self.checkAllEvent('.phrCommitParentChk[dynamicId='+dynamicId+']', 'commitChildChk[dynamicId='+dynamicId+'][from=phr]', $('input[name=commitbtn][id='+dynamicId+']'));
 						}
 					}
+					else
+						{$('#commitDotPhresco_'+dynamicId).attr("checked", false);}
 					var testRepoDetail = responseData.testRepoDetail;
 					if (testRepoDetail !== null && testRepoDetail !== undefined && responseData.splitTest) {
 						$("#commitTest_"+dynamicId).attr("disabled", false);
@@ -635,6 +637,8 @@ define([], function() {
 							self.checkAllEvent('.tesCommitParentChk[dynamicId='+dynamicId+']', 'commitChildChk[dynamicId='+dynamicId+'][from=test]', $('input[name=commitbtn][id='+dynamicId+']'));
 						}
 					}
+					else
+						{$('#commitTest_'+dynamicId).attr("checked", false);}
 				}
 				commonVariables.hideloading = false;
 			});
@@ -723,7 +727,10 @@ define([], function() {
 					$('#svn_update'+dynamicId).find("#myTabContent").show();
 					
 					var phrescoRepoDetail = responseData.phrescoRepoDetail;
+					    
 					if (responseData.splitPhresco && phrescoRepoDetail !== null && phrescoRepoDetail !== undefined) {
+					    
+					    $('#updateDotPhresco_'+dynamicId).attr("checked", true);						
 						$("#updateDotPhresco_"+dynamicId).attr("disabled", false);
 						$('#updatePhrescoRepourl'+dynamicId).val(phrescoRepoDetail.repoUrl);
 						$("#updatePhrescoType"+dynamicId).find('option').each(function(index, value){
@@ -732,8 +739,12 @@ define([], function() {
 							}
 						});
 					}
+					else
+						{$('#updateDotPhresco_'+dynamicId).attr("checked", false);}
 					var testRepoDetail = responseData.testRepoDetail;
 					if (responseData.splitTest && testRepoDetail !== null && testRepoDetail !== undefined) {
+						
+						$('#updateTest_'+dynamicId).attr("checked", true);
 						$("#updateTest_"+dynamicId).attr("disabled", false);
 						$('#updateTestRepourl'+dynamicId).val(testRepoDetail.repoUrl);
 						$("#testUpdateType"+dynamicId).find('option').each(function(index, value){
@@ -742,6 +753,8 @@ define([], function() {
 							}
 						});
 					}
+					else
+						{$('#updateDotPhresco_'+dynamicId).attr("checked", false);}
 				}
 				commonVariables.hideloading = false;
 			});

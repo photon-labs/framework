@@ -454,13 +454,13 @@ define(["projectlist/listener/projectListListener"], function() {
 					self.hideBtnLoading("button[name='commitbtn'][id='"+dynamicId+"']");
 					commonVariables.navListener.showSrcTab($("#commitDotphresco"+dynamicId), $("#commitSource"+dynamicId), $("#commitTest"+dynamicId), $("#commitDotPhresco_"+dynamicId), $("#commitTest_"+dynamicId));
 					
-					if(splitDotPhrescoVal){
-						$('#commitDotPhresco_'+dynamicId).attr("checked", true);
-						$('#commitTest_'+dynamicId).attr("checked", true);
-					}else{
-						$('#commitDotPhresco_'+dynamicId).attr("checked", false);
-						$('#commitTest_'+dynamicId).attr("checked", false);
-					}
+					// if(splitDotPhrescoVal){
+					// 	$('#commitDotPhresco_'+dynamicId).attr("checked", true);
+					// 	$('#commitTest_'+dynamicId).attr("checked", true);
+					// }else{
+					// 	$('#commitDotPhresco_'+dynamicId).attr("checked", false);
+					// 	$('#commitTest_'+dynamicId).attr("checked", false);
+					// }
 
 					$('.cmtSrcOtherCredential').attr("checked", false);
 					$('.phrCmtSrcOtherCredential').attr("checked", false);
@@ -493,13 +493,14 @@ define(["projectlist/listener/projectListListener"], function() {
 				} else if (action === "Update") {
 					self.hideBtnLoading("button[name='updatebtn'][id='"+dynamicId+"']");
 					commonVariables.navListener.showSrcTab($("#updateDotphresco"+dynamicId), $("#updateSource"+dynamicId), $("#updateTest"+dynamicId), $("#updateDotPhresco_"+dynamicId), $("#updateTest_"+dynamicId));
-					if(splitDotPhrescoVal){
-						$('#updateDotPhresco_'+dynamicId).attr("checked", true);
-						$('#updateTest_'+dynamicId).attr("checked", true);
-					}else{
-						$('#updateDotPhresco_'+dynamicId).attr("checked", false);
-						$('#updateTest_'+dynamicId).attr("checked", false);
-					}
+					// if(splitDotPhrescoVal)					
+					// {						
+					// 	$('#updateDotPhresco_'+dynamicId).attr("checked", true);					
+					// 	$('#updateTest_'+dynamicId).attr("checked", true);
+					// }else{						
+					// 	$('#updateDotPhresco_'+dynamicId).attr("checked", false);
+					// 	$('#updateTest_'+dynamicId).attr("checked", false);
+					// }
 					
 					$('.updSrcOtherCredential').attr("checked", false);
 					$('.updPhrOtherCredential').attr("checked", false);
