@@ -53,37 +53,18 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.metadata.Metadata;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
-import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
-import org.codehaus.plexus.DefaultPlexusContainer;
-import org.codehaus.plexus.PlexusContainerException;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.eclipse.aether.DefaultRepositorySystemSession;
-import org.eclipse.aether.RepositorySystem;
-import org.eclipse.aether.RepositorySystemSession;
-import org.eclipse.aether.artifact.Artifact;
-import org.eclipse.aether.artifact.DefaultArtifact;
-import org.eclipse.aether.repository.LocalRepository;
-import org.eclipse.aether.repository.RemoteRepository;
-import org.eclipse.aether.resolution.VersionRangeRequest;
-import org.eclipse.aether.resolution.VersionRangeResolutionException;
-import org.eclipse.aether.resolution.VersionRangeResult;
-import org.eclipse.aether.util.repository.layout.MavenDefaultLayout;
-import org.eclipse.aether.version.Version;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -104,7 +85,6 @@ import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import com.google.gson.Gson;
 import com.perforce.p4java.exception.ConnectionException;
@@ -129,12 +109,12 @@ import com.photon.phresco.framework.model.RepoFileInfo;
 import com.photon.phresco.framework.model.RepoInfo;
 import com.photon.phresco.framework.rest.api.util.ActionResponse;
 import com.photon.phresco.framework.rest.api.util.ActionServiceConstant;
+import com.photon.phresco.framework.rest.api.util.AetherUtil;
 import com.photon.phresco.framework.rest.api.util.BufferMap;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.service.client.impl.ServiceManagerImpl;
 import com.photon.phresco.util.Constants;
-import com.photon.phresco.util.MavenArtifactResolver;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
@@ -758,7 +738,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 					List<ModuleInfo> modules = applicationInfo.getModules();
 					if (CollectionUtils.isNotEmpty(modules)) {
 						for (ModuleInfo module : modules) {
-							Artifact artifact = readArtifact(applicationInfo.getAppDirName(), "", module.getCode());
+							Artifact artifact = new AetherUtil().getArtifact(applicationInfo.getAppDirName(), "", module.getCode());
 							String moduleName = module.getCode();
 
 							Element moduleItem = doc.createElement(ITEM);
@@ -772,11 +752,12 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 							if (StringUtils.isNotEmpty(snapshotRepoURL)) {
 								urls.add(snapshotRepoURL);
 							}
-							doc = constructDomSource(artifact, applicationInfo.getAppDirName(), urls, moduleName, doc, moduleItem);
+							doc = new AetherUtil().constructDomSource(artifact, applicationInfo.getAppDirName(), 
+									urls, moduleName, doc, moduleItem);
 						}
 						documents.add(com.photon.phresco.framework.impl.util.FrameworkUtil.convertDocumentToString(doc));
 					} else {
-						Artifact artifact = readArtifact(applicationInfo.getAppDirName(), "", "");
+						Artifact artifact = new AetherUtil().getArtifact(applicationInfo.getAppDirName(), "", "");
 						if (StringUtils.isNotEmpty(releaseRepoURL)) {
 							urls.add(releaseRepoURL);
 						} 
@@ -784,7 +765,8 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 							urls.add(snapshotRepoURL);
 						}
 						
-						Document document = constructDomSource(artifact, applicationInfo.getAppDirName(), urls, "", doc, applicationItem);
+						Document document = new AetherUtil().constructDomSource(artifact, applicationInfo.getAppDirName(), urls, 
+								"", doc, applicationItem);
 						documents.add(com.photon.phresco.framework.impl.util.FrameworkUtil.convertDocumentToString(document));
 					}
 				}
@@ -793,10 +775,13 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				.build();
 			}
 		} catch (PhrescoException e) {
+			e.printStackTrace();
 			throw new PhrescoException(e);
 		} catch (DOMException e) {
+			e.printStackTrace();
 			throw new PhrescoException(e);
 		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
 			throw new PhrescoException(e);
 		}
 		return response;
@@ -931,22 +916,19 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_NATURE) String nature, @QueryParam(REST_QUERY_VERSION) String version, @QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
 		Map<String, Object> infoMap = new HashMap<String, Object>();
 		ResponseInfo<Map<String, Object>> responseData = new ResponseInfo<Map<String, Object>>();
-		RemoteRepository repo = null;
 		Response response = null;
-		ArtifactInfoResource infos = null;
+		ArtifactInfoResource artifactInfoResource = null;
 		Artifact artifact = null;
 		String artifactPath = "";
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager != null) {
-				com.photon.phresco.commons.model.RepoInfo repos = serviceManager.getCustomer(customerId).getRepoInfo();
-				artifact = readArtifact(appDirName, version, moduleName);
-				MavenDefaultLayout defaultLayout = new MavenDefaultLayout();
-				URI paths = defaultLayout.getPath(artifact);
+				com.photon.phresco.commons.model.RepoInfo repo = serviceManager.getCustomer(customerId).getRepoInfo();
+				artifact = new AetherUtil().getArtifact(appDirName, version, moduleName);
+				URI paths = new AetherUtil().getArtifactPath(artifact);
 				MetadataXpp3Reader reader = new MetadataXpp3Reader();
 				if (nature.equalsIgnoreCase(SNAPSHOT)) {
-					repo = new RemoteRepository.Builder( "", DEFAULT, repos.getSnapshotRepoURL() ).build();
-					artifactPath =(repo.getUrl() + repo.getId() + paths).replace("\\", "/");
+					artifactPath =(repo.getSnapshotRepoURL() + paths).replace("\\", "/");
 					String path = artifactPath.substring(0, artifactPath.lastIndexOf("/"));
 					URL metadataPath = new URL(path + MVN_METADATA_XML);
 					InputStream inputStream = metadataPath.openStream();
@@ -958,17 +940,17 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 					artifactPath =  artifactPath + version + PRIORITY_JAR ;
 
 				} else {
-					repo = new RemoteRepository.Builder( "", DEFAULT, repos.getSnapshotRepoURL()).build();
-					artifactPath =(repo.getUrl() + repo.getId() + paths).replace("\\", "/");
+					artifactPath =(repo.getReleaseRepoURL() + paths).replace("\\", "/");
 				}
 				Client client = ClientHelper.createClient();
 				WebResource webResource = client.resource(artifactPath + DESCRIBE_INFO);
 				ClientResponse clientResponse = webResource.get(ClientResponse.class);
 				String info = (String)clientResponse.getEntity(String.class);
 				if (!info.startsWith(HTML_ELEMENT)) {
-					ArtifactInfoResourceResponse artifactInfo = new Gson().fromJson(info, ArtifactInfoResourceResponse.class);
-					infos = artifactInfo.getData();
-					infoMap.put(ARTIFACT_INFO, infos);
+					ArtifactInfoResourceResponse artifactInfo = new Gson().
+						fromJson(info, ArtifactInfoResourceResponse.class);
+					artifactInfoResource = artifactInfo.getData();
+					infoMap.put(ARTIFACT_INFO, artifactInfoResource);
 					infoMap.put(MAVEN_INFO, artifact);
 				}
 			}
@@ -1024,9 +1006,14 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				} else {
 					url = repos.getSnapshotRepoURL();
 				}
-				artifact = readArtifact(appDirName, version, moduleName);
+				artifact = new AetherUtil().getArtifact(appDirName, version, moduleName);
+				System.out.println("******************************");
+				System.out.println("Resolved Artifact   " + artifact);
 				artifacts.add(artifact);
-				URL artifacturl = MavenArtifactResolver.resolveSingleArtifact(url, "", "", artifacts);
+				URL artifacturl = new AetherUtil().resolveArtifact(url, "", "", artifacts);
+				System.out.println(artifacturl.toString());
+				
+				System.out.println("******************************");
 				artifactFile = new File(artifacturl.toURI());
 				inputStream = new FileInputStream(artifactFile);
 			}
@@ -1498,29 +1485,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		} catch (ParserConfigurationException e) {
 			throw new PhrescoException(e);
 		}
-	}
-
-	private Artifact readArtifact(String appDirName, String version, String moduleName) throws PhrescoException {
-		Artifact artifact = null;
-		try {
-			String appDirPath = Utility.getProjectHome() + appDirName;
-			ProjectInfo projectInfo = Utility.getProjectInfo(appDirPath, "");
-			File sourceFolderLocation = Utility.getSourceFolderLocation(projectInfo, appDirPath, moduleName);
-			File pomFile = new File (sourceFolderLocation, POM_FILE);
-			if (pomFile.exists()) {
-				PomProcessor processor = new PomProcessor(pomFile);
-				if (StringUtils.isNotEmpty(version)) {
-					artifact = new DefaultArtifact(processor.getGroupId(), processor.getArtifactId(), "", processor.getPackage(), version);
-				} else {
-					artifact = new DefaultArtifact(processor.getGroupId(), processor.getArtifactId(), "", processor.getPackage(), "");
-				}
-			}
-		} catch (PhrescoPomException e) {
-			throw new PhrescoException(e);
-		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
-		}
-		return artifact;
 	}
 
 	private Response importPerforceApplication(String type, RepoDetail repodetail, String displayName) throws Exception {
@@ -2176,147 +2140,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		}
 	}
 
-	private static Document constructDomSource(Artifact artifacts, String appDirName, List<String> urls, String moduleName, Document doc, Element appendItem) throws PhrescoException {
-		List<UUID> randomIds = new ArrayList<UUID>();
-		try {
-			Element snapshot = doc.createElement(ITEM);
-			snapshot.setAttribute(TYPE, FOLDER);
-			snapshot.setAttribute(PATH, "");
-			snapshot.setAttribute(NAME, SNAPSHOT);
-			appendItem.appendChild(snapshot);
-
-
-			Element release = doc.createElement(ITEM);
-			release.setAttribute(TYPE, FOLDER);
-			release.setAttribute(PATH, "");
-			release.setAttribute(NAME, RELEASE);
-			appendItem.appendChild(release);
-
-			RepositorySystem system = newRepositorySystem();
-			Artifact artifact = new DefaultArtifact(artifacts.getGroupId() + ":" + artifacts.getArtifactId()+ ":" + artifacts.getExtension() + ":" + "[,)");
-			for (String url : urls) {
-				UUID randomUUID = UUID.randomUUID();
-				randomIds.add(randomUUID);
-				RepositorySystemSession session = newRepositorySystemSession( system , randomUUID, "");
-				RemoteRepository repo = new RemoteRepository.Builder( "", DEFAULT, url ).build();
-				VersionRangeRequest rangeRequest = new VersionRangeRequest();
-				rangeRequest.setArtifact(artifact);
-				rangeRequest.addRepository(repo);
-				VersionRangeResult rangeResult = system.resolveVersionRange( session, rangeRequest);
-				List<Version> versions = rangeResult.getVersions();
-				if (versions.size() > 10) {
-					versions = versions.subList(versions.size() - 10, versions.size());
-				}
-				constructArtifactItem(versions, artifact, repo, doc, appDirName, moduleName);
-				clearCache(randomUUID);
-			}
-			urls.clear();
-		} catch (DOMException e) {
-			throw new PhrescoException(e);
-		} catch (VersionRangeResolutionException e) {
-			throw new PhrescoException(e);
-		} finally {
-			if (CollectionUtils.isNotEmpty(randomIds)) {
-				for (UUID uuid : randomIds) {
-					clearCache(uuid);
-				}
-			}
-		}
-		return doc;
-	}
-
-	private static void constructArtifactItem(List<Version> versions, Artifact artifactInfo, RemoteRepository repo, Document doc, String appDirName, String moduleName) throws PhrescoException {
-		try {
-			Element versionItem = null;
-			Element element =  null;
-			if (CollectionUtils.isNotEmpty(versions)) {
-				for (Version vers : versions) {
-					String version = vers.toString();
-					Artifact repoArtifact = new DefaultArtifact(artifactInfo.getGroupId(), artifactInfo.getArtifactId(), artifactInfo.getExtension(), version);
-					MavenDefaultLayout defaultLayout = new MavenDefaultLayout();
-					URI Paths = defaultLayout.getPath(repoArtifact);
-					String artifactPath = Paths.getPath();
-					String pathString = Paths.toString();
-					String fileName = pathString.substring(pathString.lastIndexOf("/") + 1);
-
-					Element jarItem = doc.createElement(ITEM);
-					jarItem.setAttribute(TYPE, FILE);
-					jarItem.setAttribute(NAME, fileName);
-					jarItem.setAttribute(REQ_APP_DIR_NAME, appDirName);
-					jarItem.setAttribute(MODULE_NAME, moduleName);
-
-					versionItem = doc.createElement(ITEM);
-					versionItem.setAttribute(TYPE, FOLDER);
-					versionItem.setAttribute(NAME, version);
-					versionItem.setAttribute(PATH, artifactPath);
-
-					versionItem.appendChild(jarItem);
-					String expression = "";
-					if (StringUtils.isNotEmpty(moduleName)) {
-						expression = ROOT_ITEM_XPATH + moduleName + NAME_FILTER_SUFIX;
-					}
-					
-					if (version.contains(SNAPSHOT)) {
-						jarItem.setAttribute(NATURE, SNAPSHOT);
-						XPath xpath = XPathFactory.newInstance().newXPath();
-						expression = expression + SNAPSHOT_ITEM;
-						Node node = (Node) xpath.compile(expression).evaluate(doc, XPathConstants.NODE);
-						if (node != null) {
-							element = (Element) node;
-							element.appendChild(versionItem);
-						}
-					} else {
-						jarItem.setAttribute(NATURE, RELEASE);
-						XPath xpath = XPathFactory.newInstance().newXPath();
-						expression = expression + RELEASE_ITEM;
-						Node node = (Node) xpath.compile(expression).evaluate(doc, XPathConstants.NODE);
-						if (node != null) {
-							element = (Element) node;
-							element.appendChild(versionItem);
-						}
-					}
-				}
-			}
-		} catch (DOMException e) {
-			throw new PhrescoException(e);
-		} catch (XPathExpressionException e) {
-			throw new PhrescoException(e);
-		}
-	}
-
-	private static RepositorySystem newRepositorySystem() throws PhrescoException {
-		try {
-			return new DefaultPlexusContainer().lookup(RepositorySystem.class);
-		} catch (ComponentLookupException e) {
-			throw new PhrescoException(e);
-		} catch (PlexusContainerException e) {
-			throw new PhrescoException(e);
-		}
-	}
-
-	private static RepositorySystemSession newRepositorySystemSession(RepositorySystem system, UUID randomUUID, String localPath) {
-		DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-		 
-        LocalRepository localRepo = null;
-		if (randomUUID != null) {
-			localRepo = new LocalRepository(Utility.getPhrescoTemp() + File.separator + randomUUID);
-		} else if (StringUtils.isNotEmpty(localPath)) {
-			localRepo = new LocalRepository(localPath);
-		}
-		session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
-		return session;
-	}
-	
-	private static void clearCache(UUID randomUUID)  throws PhrescoException {
-		try {
-			File path = new File(Utility.getPhrescoTemp() + File.separator + randomUUID);
-			if (path.exists()) {
-				FileUtils.deleteDirectory(path);
-			}
-		} catch (IOException e) {
-			throw new PhrescoException(e);
-		}
-	}
 
 	private static String convertDocumentToString(Document doc) throws PhrescoException {
 		TransformerFactory tf = TransformerFactory.newInstance();

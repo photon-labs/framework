@@ -25,6 +25,11 @@
     </distributionManagement>
     
   <dependencies>
+	           <dependency>
+	<groupId>org.apache.ant</groupId>
+	<artifactId>ant</artifactId>
+	<version>1.8.2</version>
+</dependency>
 	           
   		<dependency>
 			<groupId>org.easymock</groupId>
@@ -860,7 +865,19 @@
 		<artifactId>json</artifactId>
 		<version>20140107</version>
 	</dependency>
-            
+	
+	<dependency>
+	<groupId>org.apache.maven</groupId>
+	<artifactId>maven-aether-provider</artifactId>
+	<version>3.2.1</version>
+	<exclusions>
+		<exclusion>
+			<groupId>org.eclipse.aether</groupId>
+			<artifactId>aether-spi</artifactId>
+		</exclusion>
+	</exclusions>
+</dependency>
+
      </dependencies>
     <build>
 		<sourceDirectory>${phresco.source.directory}</sourceDirectory>
