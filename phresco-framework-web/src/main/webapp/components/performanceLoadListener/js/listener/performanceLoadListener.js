@@ -400,8 +400,10 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 				var content = "";
 				for (var i = 0; i < pdfReports.length; i++) {
 					var idgenerate = Date.now();
-					content = content.concat('<tr class="generatedRow" fileName="' + pdfReports[i].fileName + '"><td>' + pdfReports[i].time + '</td>');
-					content = content.concat('<td>' + pdfReports[i].type + '</td>');
+					var repname = pdfReports[i].fileName;
+					var tooltipname = self.tooltip(repname);
+					content = content.concat('<tr class="generatedRow" fileName="' + pdfReports[i].fileName + '"><td><a <a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="'+pdfReports[i].fileName+'" style="width:41% !important;">' + tooltipname + '</a></td>');
+					content = content.concat('<td>' + pdfReports[i].time + '</td>');
 					content = content.concat('<td><a class="tooltiptop" fileName="' + pdfReports[i].fileName + '" href="javascript:void(0)"');
 					content = content.concat(' data-toggle="tooltip" data-placement="top" from="'+from+'" name="downloadPdfReport" data-original-title="Download Pdf" title="">');
 					content = content.concat('<img src="themes/default/images/Phresco/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>');

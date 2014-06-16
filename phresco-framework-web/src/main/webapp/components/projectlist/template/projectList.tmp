@@ -775,9 +775,9 @@
 										<table class="hideContent table" name="pdfHeader_{{id}}" show="true">
 											  <thead>  
 												<tr>
-													<th class="" data-i18n="commonlabel.label.existingreport"></th>
-													<th class="" data-i18n="commonlabel.label.type"></th>
-													<th class="" data-i18n="commonlabel.label.download"></th>
+													<th class="" data-i18n="commonlabel.label.name"></th>
+													<th class="align" data-i18n="commonlabel.label.time"></th>
+													<th class="align1" data-i18n="commonlabel.label.download"></th>
 													<th class="" data-i18n="commonlabel.label.delete"></th>
 												</tr>
 											  </thead>			

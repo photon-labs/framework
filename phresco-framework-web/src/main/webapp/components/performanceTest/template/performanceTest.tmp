@@ -48,8 +48,8 @@
 	                	<table class="table_border availablePdfRptsTbl hideContent" border="0" cellspacing="0" cellpadding="5" width="100%" id="availablePdfRptsTbl">
 	                		<thead>
 	                        	<tr>
-		                            <th data-i18n=commonlabel.label.existingreport></th>
-		                            <th data-i18n=commonlabel.label.type></th>
+		                            <th class="alignname" data-i18n=commonlabel.label.name></th>
+		                            <th class="aligntime" data-i18n=commonlabel.label.time></th>
 		                            <th data-i18n=commonlabel.label.download></th>
 		                            <th data-i18n=commonlabel.label.delete></th>
 	                        	</tr>    

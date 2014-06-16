@@ -836,18 +836,9 @@ define([], function() {
 				$("table[name=pdfHeader_"+dynamicId+"]").show();
 				for(var i =0; i < response.data.json.length; i++) {
 					var idgenerate = Date.now();
-					var repname = response.data.json[i].fileName.length;
-					if(repname >= 10){
-						var tempname,str2,reportname2,result;
-						tempname = response.data.json[i].fileName;
-						str2 = tempname.substr(0,10);
-						reportname2 = "...";
-						result = str2.concat(reportname2);
-					}
-					else {
-						result = response.data.json[i].fileName;
-					}
-					var headerTr = '<tr class="generatedRow" fileName="'+response.data.json[i].fileName+'" appdirname = "'+temp+'" moduleName="'+ modulename +'"><td><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="'+response.data.json[i].fileName+'" style="width:41% !important;">' + result +'</a></td><td>'+response.data.json[i].time + '</td><td>'+'</td>';
+					var repname = response.data.json[i].fileName;
+					var tooltipname = self.tooltip(repname);
+					var headerTr = '<tr class="generatedRow" fileName="'+response.data.json[i].fileName+'" appdirname = "'+temp+'" moduleName="'+ modulename +'"><td><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="'+response.data.json[i].fileName+'" style="width:41% !important;">' + tooltipname +'</a></td><td>'+response.data.json[i].time + '</td><td>'+'</td>';
 					content = content.concat(headerTr);
 					headerTr = '<td class="list_img"><a class="tooltiptop" fileName="'+response.data.json[i].fileName+'" fromPage="All" href="javascript:void(0)" data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" ><img src="themes/default/images/Phresco/download_icon.png" class="imgalign" ></a></td>';
 					content = content.concat(headerTr);

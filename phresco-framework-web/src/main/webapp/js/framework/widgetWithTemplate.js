@@ -1461,6 +1461,20 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				$(commonVariables.footerPlaceholder).empty();
 			},
 			
+			tooltip :function(repname){
+				var repnamelength = repname.length;
+				if(repnamelength >= 10){
+						var tempname,str2,reportname2,result;
+						str2 = repname.substr(0,10);
+						reportname2 = "...";
+						result = str2.concat(reportname2);
+					}
+					else {
+						result = repname;
+					} 
+					return result;
+			},
+			
 			killProcess : function() {
 				var self = this, requestBody = {};
 				$("input[name=kill]").unbind('click');
