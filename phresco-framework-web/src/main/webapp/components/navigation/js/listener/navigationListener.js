@@ -556,7 +556,7 @@ define([], function() {
 					$("#settingsNav").hide();
 					$("#downloadsNav").hide();
 					if (self.isBlank(commonVariables.editAppFrom) && commonVariables.editAppHasModules) {
-						$("li[name=editMenu]").not("#featurelist").hide();
+						$("li[name=editMenu]").not("#featurelist").not("#configuration").hide();
 //					} else if (commonVariables.editAppFrom === "multimodule") {
 //						$("li[name=editMenu]").not(".continuousDeliveryView").show();
 					} else {
