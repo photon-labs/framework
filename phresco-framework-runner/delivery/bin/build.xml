@@ -237,10 +237,17 @@
 	
     <target name="copy-framework-config">
 		<echo message="copying framework.config into conf"/>
-		<copy file="${phresco.home}/conf/service.properties" 
+		<if>
+        <available file="${tomcat.home}/webapps/${framework.context}/WEB-INF/classes/framework.config"/>
+        <then>
+            <echo message="framework.config already exists"/>
+        </then>
+        <else>
+            <copy file="${phresco.home}/conf/service.properties" 
 			tofile="${tomcat.home}/webapps/${framework.context}/WEB-INF/classes/framework.config" 
-			overwrite="false"
 		/>
+        </else>
+    </if>
 	</target>
 	
 	<target name="set-execute-permissions" depends="condition-true">
