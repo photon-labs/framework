@@ -27,5 +27,7 @@ export M2_HOME=$MAVEN_HOME
 export WAXSIM_HOME=$PHRESCO_HOME/workspace/tools/waxsim/usr/local/bin/waxsim
 export PATH=$WAXSIM_HOME:$CHIEF_HOME:$CHECKER_HOME:$SONAR_HOME:$MAVEN_HOME/bin:$PHRESCO_HOME/bin:$PATH
 export OCUNIT2JUNIT_HOME=$PHRESCO_HOME/workspace/tools/ocunit2junit/ocunit2junit.rb
-export PATH=$OCUNIT2JUNIT_HOME:$WAXSIM_HOME:$CHIEF_HOME:$CHECKER_HOME:$SONAR_HOME:$JMETER_HOME:$MAVEN_HOME/bin:$PHRESCO_HOME/bin:$PHRESCO_HOME/workspace/tools/phantomjs-1.5.0-mac/bin:$PATH
+export IOS_SIM_HOME=$PHRESCO_HOME/workspace/tools/ios-sim/build/Release
+export PATH=$IOS_SIM_HOME:$OCUNIT2JUNIT_HOME:$WAXSIM_HOME:$CHIEF_HOME:$CHECKER_HOME:$SONAR_HOME:$JMETER_HOME:$MAVEN_HOME/bin:$PHRESCO_HOME/bin:$PHRESCO_HOME/workspace/tools/phantomjs-1.5.0-mac/bin:$PATH
+
 mvn clean validate
