@@ -350,7 +350,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 		String plainText = "";
 		try {
-			Cipher cipher = Cipher.getInstance(AES_ALGO);
+			Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
 			cipher.init(Cipher.DECRYPT_MODE, getAes128Key(CI_SECRET_KEY));
 			byte[] decode = Base64.decode(encryptedText.toCharArray());
 			plainText = new String(cipher.doFinal(decode));
@@ -1801,6 +1801,8 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			String globalConfig;
 			if(jenkinsVersion.equalsIgnoreCase("1.442")) {
 				globalConfig = "/ciGlobalConfig.json";
+			} else if(jenkinsVersion.equalsIgnoreCase("1.538")) {
+				globalConfig = "/ciGlobalConfig2.json";
 			} else {
 				globalConfig = "/ciGlobalConfig1.json";
 			}
@@ -1821,10 +1823,10 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				mailConfiguration.put("defaultSuffix", "");
 				mailConfiguration.put("adminAddress", emailAddress); 
 				
-				if(jenkinsVersion.equalsIgnoreCase("1.442")) {
+				if(jenkinsVersion.equalsIgnoreCase("1.442") || jenkinsVersion.equalsIgnoreCase("1.538")) {
 					JSONObject emailCrdential = new JSONObject();
 					emailCrdential.put("smtpAuthUserName", emailAddress); 
-					emailCrdential.put("smtpAuthPassword", "");
+					emailCrdential.put("smtpAuthPassword", emailPassword);
 					mailConfiguration.put("useSMTPAuth", emailCrdential);
 				} else {
 					mailConfiguration.put("smtpAuthUserName", emailAddress); 
@@ -1833,7 +1835,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				}
 				
 //				// Basic
-				mailConfiguration.put("useSsl", false);
+				mailConfiguration.put("useSsl", true);
 				mailConfiguration.put("smtpPort", "465");
 				mailConfiguration.put("replyToAddress", "");
 				mailConfiguration.put("charset", "UTF-8");
@@ -1849,7 +1851,8 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 					nameValuePairs.add(new BasicNameValuePair("_.replyToAddress", ""));
 					nameValuePairs.add(new BasicNameValuePair("_.charset", "UTF-8"));
 					nameValuePairs.add(new BasicNameValuePair("sendTestMailTo", ""));
-				}
+				} 
+				
 			}
 
 			// Confluence list need to be handled
@@ -1920,6 +1923,16 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		nameValuePairs.add(new BasicNameValuePair("_.numExecutors","2"));
 		nameValuePairs.add(new BasicNameValuePair("_.quietPeriod","5"));
 		nameValuePairs.add(new BasicNameValuePair("_.scmCheckoutRetryCount","0"));
+		nameValuePairs.add(new BasicNameValuePair("_.namePattern",".*"));
+		nameValuePairs.add(new BasicNameValuePair("_.description",""));
+		nameValuePairs.add(new BasicNameValuePair("stapler-class","jenkins.mvn.DefaultSettingsProvider"));
+		nameValuePairs.add(new BasicNameValuePair("stapler-class","jenkins.mvn.FilePathSettingsProvider"));
+		nameValuePairs.add(new BasicNameValuePair("stapler-class","jenkins.mvn.DefaultGlobalSettingsProvider"));
+		nameValuePairs.add(new BasicNameValuePair("stapler-class","jenkins.mvn.FilePathGlobalSettingsProvider"));
+		nameValuePairs.add(new BasicNameValuePair("_.description",""));
+		
+		
+		
 		
 		if(jenkinsVersion.equalsIgnoreCase("1.546")) {
 			nameValuePairs.add(new BasicNameValuePair("namingStrategy","0"));
