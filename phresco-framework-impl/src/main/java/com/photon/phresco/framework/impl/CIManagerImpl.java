@@ -1802,7 +1802,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			if(jenkinsVersion.equalsIgnoreCase("1.442")) {
 				globalConfig = "/ciGlobalConfig.json";
 			} else if(jenkinsVersion.equalsIgnoreCase("1.538")) {
-				globalConfig = "/ciGlobalConfig2.json";
+				globalConfig = "/ciGlobalConfig2.json" ;
 			} else {
 				globalConfig = "/ciGlobalConfig1.json";
 			}
