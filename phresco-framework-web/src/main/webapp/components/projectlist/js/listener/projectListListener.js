@@ -603,6 +603,7 @@ define([], function() {
 					
 					var phrescoRepoDetail = responseData.phrescoRepoDetail;
 					if (phrescoRepoDetail !== null && phrescoRepoDetail !== undefined && responseData.splitPhresco) {
+						$('#commitDotPhresco_'+dynamicId).attr("checked", true);
 						$("#commitDotPhresco_"+dynamicId).attr("disabled", false);
 						$('#phrCommitRepourl'+dynamicId).val(phrescoRepoDetail.repoUrl);
 						$("#phrCommitType_"+dynamicId).find('option').each(function(index, value){
@@ -622,6 +623,7 @@ define([], function() {
 						{$('#commitDotPhresco_'+dynamicId).attr("checked", false);}
 					var testRepoDetail = responseData.testRepoDetail;
 					if (testRepoDetail !== null && testRepoDetail !== undefined && responseData.splitTest) {
+						$('#commitTest_'+dynamicId).attr("checked", true);
 						$("#commitTest_"+dynamicId).attr("disabled", false);
 						$('#testCommitRepourl'+dynamicId).val(testRepoDetail.repoUrl);
 						$("#testCommitType_"+dynamicId).find('option').each(function(index, value){
