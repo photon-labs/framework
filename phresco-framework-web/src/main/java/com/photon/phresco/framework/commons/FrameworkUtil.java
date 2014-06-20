@@ -71,6 +71,7 @@ import org.jopendocument.dom.ODPackage;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
 import org.w3c.dom.Element;
 
+import com.phloc.commons.state.EEnabled;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.Role;
@@ -78,6 +79,7 @@ import com.photon.phresco.commons.model.TestCase;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.commons.model.UserPermissions;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.exception.PhrescoWebServiceException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.model.TestSuite;
@@ -92,7 +94,9 @@ import com.phresco.pom.model.Model.Profiles;
 import com.phresco.pom.model.Profile;
 import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 
 public class FrameworkUtil implements Constants, FrameworkConstants {
@@ -125,12 +129,15 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 		boolean reportExsists = false;
 		Client client = ClientHelper.createClient();
 		WebResource resource = client.resource(serverUrl + "/api/resources");
-		ClientResponse res = resource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
-		String string = res.getEntity(String.class);
-		if(string.contains(reportId)) {
-			reportExsists = true;
+		try {
+			ClientResponse res = resource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+			String string = res.getEntity(String.class);
+			if(string.contains(reportId)) {
+				reportExsists = true;
+			}
+		} catch (ClientHandlerException e) {
+			reportExsists = false;
 		}
-		
 		return reportExsists;
 	}
 	
