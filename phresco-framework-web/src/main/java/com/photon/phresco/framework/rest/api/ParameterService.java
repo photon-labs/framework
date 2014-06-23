@@ -1205,8 +1205,12 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			sonarConfig.setProperty("phresco.code.remote.sonar", sonarparams.getRemoteSonar());
 			inputstream.close();
 			URL resource = this.getClass().getClassLoader().getResource("framework.config");
-			outputStream = new FileOutputStream(resource.getPath());
-			sonarConfig.store(outputStream, null);
+			String filePath = resource.getPath();
+			File configFile = new File(filePath);
+			if(configFile.exists()) {
+				outputStream = new FileOutputStream(configFile);
+				sonarConfig.store(outputStream, null);
+			}
 			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
 					null, RESPONSE_STATUS_SUCCESS, PHR500006);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();

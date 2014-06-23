@@ -1350,6 +1350,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 				if (StringUtils.isNotEmpty(appInfo.getPomFile())) {
 					pomDest = new File(tempSrcFile, appInfo.getPomFile());
+					PomProcessor sourceProcessor = new PomProcessor(pomDest);
+					String andSrcDir = sourceProcessor.getProperty("source.dir");
+					if(StringUtils.isNotEmpty(andSrcDir)) {
+						File androidSourcePom = new File(pomDest.getParent() + andSrcDir);
+						updatePom(androidSourcePom, appendedSrcUrl.toString(), repoType, Constants.POM_NAME, appPomProcessor, "");
+					}
 					if (pomDest.exists()) {
 						updatePom(tempSrcFile, appendedSrcUrl.toString(), repoType, appInfo.getPomFile(), appPomProcessor, "");
 					}
@@ -1371,6 +1377,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					addSplittedProjectToTFS(srcRepoDetail, phrescoRepoDetail, testRepoDetail, dir);
 				}
 			} else {
+				File pom = null;
 					boolean validUser = authentication(repoInfo.getSrcRepoDetail().getUserName(), repoInfo.getSrcRepoDetail().getPassword(), repoType, appendedSrcUrl.toString());
 				if(!validUser){
 					throw new PhrescoException("Invalid Credentials ");
@@ -1383,13 +1390,23 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					appPomProcessor.setSCM(appendedSrcUrl.toString(), scmUrl, scmUrl, "");
 					appPomProcessor.save();
 					if(StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
-						File pom = new File(dir, appInfo.getPomFile());
+						 pom = new File(dir, appInfo.getPomFile());
 						if(pom.exists()) {
 							PomProcessor processor = new PomProcessor(pom);
 							processor.setSCM(appendedSrcUrl.toString(), scmUrl, scmUrl, "");
 							processor.save();
 						}
 	
+					}
+					 pom = new File(dir, appInfo.getPomFile());
+					PomProcessor sourceProcessor = new PomProcessor(pom);
+					String andSrcDir = sourceProcessor.getProperty("source.dir");
+					if(StringUtils.isNotEmpty(andSrcDir)) {
+						File androidSourcePom = new File(pom.getParent() + File.separator + andSrcDir + File.separator + Constants.POM_NAME);
+						PomProcessor andSrcProcessor = new PomProcessor(androidSourcePom);
+						andSrcProcessor.setProperty(Constants.POM_PROP_KEY_SRC_REPO_URL, appendedSrcUrl.toString());
+						andSrcProcessor.setSCM(appendedSrcUrl.toString(), scmUrl, scmUrl, "");
+						andSrcProcessor.save();
 					}
 					addToRepo(srcRepoDetail, appInfo, dir, appDirName, dir, hasSplit);
 			}
@@ -1593,6 +1610,13 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						}
 					} else {
 						pomDest = new File(srcDest, moduleAppInfo.getPomFile());
+						PomProcessor sourceProcessor = new PomProcessor(pomDest);
+						String andSrcDir = sourceProcessor.getProperty("source.dir");
+						if(StringUtils.isNotEmpty(andSrcDir)) {
+							File androidSourcePom = new File(pomDest.getParent() + File.separator + andSrcDir + File.separator + Constants.POM_NAME);
+							updatePomProperties(appInfo, moduleAppInfo.getAppDirName(), androidSourcePom, phrescoRepoUrl, srcRepoUrl,
+									testRepoUrl, srcWorkspaceName, phrWorkspaceName, testWorkspaceName);
+						}
 						updatePomProperties(appInfo, moduleAppInfo.getAppDirName(), pomDest, phrescoRepoUrl, srcRepoUrl,
 								testRepoUrl, srcWorkspaceName, phrWorkspaceName, testWorkspaceName);
 					}
@@ -1647,6 +1671,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 					}
 				} else {
 					pomDest = new File(tempSrcFile, appInfo.getPomFile());
+					PomProcessor sourceProcessor = new PomProcessor(pomDest);
+					String andSrcDir = sourceProcessor.getProperty("source.dir");
+					if(StringUtils.isNotEmpty(andSrcDir)) {
+						File androidSourcePom = new File(pomDest.getParent() + File.separator + andSrcDir + File.separator + Constants.POM_NAME);
+						updatePomProperties(appInfo, "", androidSourcePom, phrescoRepoUrl, srcRepoUrl, testRepoUrl, srcWorkspaceName, phrWorkspaceName, testWorkspaceName);
+					}
 					updatePomProperties(appInfo, "", pomDest, phrescoRepoUrl, srcRepoUrl, testRepoUrl, srcWorkspaceName, phrWorkspaceName, testWorkspaceName);
 				}
 

@@ -3,14 +3,14 @@
 	<groupId>com.photon.phresco.ci</groupId>
 	<artifactId>ci</artifactId>
 	<packaging>war</packaging>
-	<version>3.3.1.14002-SNAPSHOT</version>
+	<version>3.3.1.15001-SNAPSHOT</version>
 	<name>CI Web Application</name>
    
 	<dependencies>
 		<dependency>
 			<groupId>org.jenkins-ci.main</groupId>
 			<artifactId>jenkins-war</artifactId>
-			<version>1.442</version>
+			<version> 1.538</version>
 			<type>war</type>
 		</dependency>
 		
