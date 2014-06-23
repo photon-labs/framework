@@ -23,12 +23,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.KeyStore;
 import java.security.cert.CertificateException;
@@ -55,8 +53,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
@@ -69,10 +65,8 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.BuildInfo;
-import com.photon.phresco.commons.model.CIJob;
 import com.photon.phresco.commons.model.CertificateInfo;
 import com.photon.phresco.commons.model.Customer;
-import com.photon.phresco.commons.model.ModuleInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.configuration.ConfigReader;
@@ -83,8 +77,6 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ApplicationManager;
-import com.photon.phresco.framework.api.ProjectManager;
-import com.photon.phresco.framework.commons.ApplicationsUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.rest.api.QualityService;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
@@ -1082,31 +1074,31 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 			PomProcessor pomProcessor = new PomProcessor(sourceDir);
 	    	String isIphone = pomProcessor.getProperty(PHRESCO_CODE_VALIDATE_REPORT);
 	    	if (StringUtils.isEmpty(isIphone)) {
-			String serverUrl = FrameworkServiceUtil.getSonarURL(request);
-			String id = projectInfo.getAppInfos().get(0).getId();
-			if (CollectionUtils.isNotEmpty(projectInfo.getAppInfos().get(0).getModules())) {
-				Modules pomModules = pomProcessor.getPomModule();
-				List<String> modules = null;
-				if (pomModules != null) {
-					modules = pomModules.getModule();
-				}
-				else {
-					for (String module : modules) {
-						List<String> sonarProfiles = frameworkUtil.getSonarProfiles(rootModulePath, module);
-						for (String sonarProfile : sonarProfiles) {
-							if (frameworkUtil.checkReportForHigherVersion(serverUrl, sonarProfile + id));
-							isSonarReportAvailable = true;
+				String serverUrl = FrameworkServiceUtil.getSonarURL(request);
+				String id = projectInfo.getAppInfos().get(0).getId();
+				if (CollectionUtils.isNotEmpty(projectInfo.getAppInfos().get(0).getModules())) {
+					Modules pomModules = pomProcessor.getPomModule();
+					List<String> modules = null;
+					if (pomModules != null) {
+						modules = pomModules.getModule();
+					}
+					else {
+						for (String module : modules) {
+							List<String> sonarProfiles = frameworkUtil.getSonarProfiles(rootModulePath, module);
+							for (String sonarProfile : sonarProfiles) {
+								if (frameworkUtil.checkReportForHigherVersion(serverUrl, sonarProfile + id))
+									isSonarReportAvailable = true;
+							}
 						}
 					}
 				}
-			}
-			else {
-				List<String> sonarProfiles = frameworkUtil.getSonarProfiles(rootModulePath, subModule);
-				for (String sonarProfile : sonarProfiles) {
-					if(frameworkUtil.checkReportForHigherVersion(serverUrl, sonarProfile + id));
-						isSonarReportAvailable=true;
+				else {
+					List<String> sonarProfiles = frameworkUtil.getSonarProfiles(rootModulePath, subModule);
+					for (String sonarProfile : sonarProfiles) {
+						if(frameworkUtil.checkReportForHigherVersion(serverUrl, sonarProfile + id))
+							isSonarReportAvailable=true;
+					}
 				}
-			}
 	    	}
 	    	else
 	    	{
