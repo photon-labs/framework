@@ -291,6 +291,12 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	public Response updateProject(ProjectInfo projectinfo, @QueryParam(REST_QUERY_USERID) String userId) {
 		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
+			ResponseInfo validationResponse = validateUpdatedProject(projectinfo);
+			if (validationResponse != null) {
+				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
+						validationResponse.getData(), validationResponse.getStatus(), validationResponse.getResponseCode());
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+			}
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
 				status = RESPONSE_STATUS_FAILURE;
@@ -1655,6 +1661,32 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 						response.setResponseCode(PHR210044);
 						return response;
 					}
+				}
+			}
+		}
+		return response;
+	}
+	
+	private ResponseInfo validateUpdatedProject(ProjectInfo projectinfo) throws PhrescoException {
+		ResponseInfo response = null;
+		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+		List<ProjectInfo> discoveredProjectInfos = projectManager.discover();
+		
+		for (ProjectInfo projectInfos : discoveredProjectInfos) {
+			
+			
+			List<ApplicationInfo> appInfos = projectinfo.getAppInfos();
+			List<ApplicationInfo> discoveredAppInfos = projectInfos.getAppInfos();
+			for(int i = 0; i < appInfos.size(); i++) {
+				for(int j = 0; j < discoveredAppInfos.size(); j++) {
+					if(appInfos.get(i).getCode().equalsIgnoreCase(discoveredAppInfos.get(j).getCode())) {
+						response = new ResponseInfo();
+						response.setStatus(RESPONSE_STATUS_FAILURE);
+						response.setResponseCode(PHR210043);
+						response.setData(appInfos.get(i).getCode());
+						return response;
+					}
+					
 				}
 			}
 		}
