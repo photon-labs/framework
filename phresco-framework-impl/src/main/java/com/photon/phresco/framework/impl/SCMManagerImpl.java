@@ -1276,6 +1276,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				StringBuilder appendedPhrUrl = new StringBuilder();
 				if (phrescoRepoDetail != null) {
 					phrescoRepoUrl = phrescoRepoDetail.getRepoUrl();
+					appendedPhrUrl.append(phrescoRepoUrl);
 					if (SVN.equalsIgnoreCase(phrescoRepoDetail.getType())) {
 						if (!phrescoRepoUrl.endsWith(FORWARD_SLASH)) {
 							appendedPhrUrl.append(FORWARD_SLASH);
