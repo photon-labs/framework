@@ -2792,7 +2792,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 		String repoType = "";
 		if (repoUrl.startsWith("bk")) {
 			repoType = BITKEEPER;
-		} else if (repoUrl.endsWith(".git") || repoUrl.contains("gerrit") || repoUrl.startsWith("ssh")) {
+		} else if (repoUrl.endsWith(".git") || repoUrl.contains("gerrit") || repoUrl.startsWith("ssh") || repoUrl.contains("git")) {
 			repoType = GIT;
 		} else if (repoUrl.contains("svn")) {
 			repoType = SVN;
