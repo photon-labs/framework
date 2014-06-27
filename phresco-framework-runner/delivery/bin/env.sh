@@ -17,7 +17,7 @@
 #
 
 export PHRESCO_HOME=$PWD/..
-export MAVEN_HOME=$PHRESCO_HOME/tools/maven
+export MAVEN_HOME=$PHRESCO_HOME/tools/maven-3.2.1
 export M2_HOME=$MAVEN_HOME
 export CHECKER_HOME=$PHRESCO_HOME/workspace/tools/checker
 export CHIEF_HOME=$PHRESCO_HOME/workspace/tools/chief

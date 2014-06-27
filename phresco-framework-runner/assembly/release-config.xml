@@ -29,6 +29,16 @@ xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assemb
 	<fileSets>
     
 		<!-- copying bin directory -->
+		 <fileSet>
+                <directory>${project.basedir}/settings/maven</directory>
+                <outputDirectory>tools/maven-3.2.1/conf</outputDirectory>
+                <filtered>true</filtered>
+            </fileSet>
+			<fileSet>
+			<directory>${basedir}/delivery/tools/maven-3.2.1</directory>
+			<outputDirectory>tools/maven-3.2.1</outputDirectory>
+			<fileMode>0777</fileMode>
+		</fileSet>
 		<fileSet>
 			<directory>${project.basedir}/delivery/bin</directory>
 			<outputDirectory>bin</outputDirectory>
@@ -39,14 +49,7 @@ xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assemb
 		</fileSet>
 		
 		<!-- copying maven settings.xml file -->
-	   <fileSet>
-			<directory>${project.basedir}/delivery/tools/maven/conf</directory>
-			<outputDirectory>tools/maven/conf</outputDirectory>
-			<fileMode>0777</fileMode>
-			<includes>
-				<include>*.xml</include>
-			</includes>
-		</fileSet>
+	  
         
         <fileSet>
 			<directory>${project.basedir}/delivery/docs</directory>
