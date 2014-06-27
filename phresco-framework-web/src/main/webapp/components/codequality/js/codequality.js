@@ -73,8 +73,8 @@ define(["codequality/listener/codequalityListener"], function() {
 			$(".code_report").hide();
 			$(".code_report_icon").hide();
 			$("#codereportTypes").hide();
-			self.codequalityListener.getReportTypes(self.codequalityListener.getRequestHeader(self.appDirName , "sonarurl"), function(response) {
-				if(response.data !== null){
+			  self.codequalityListener.getReportTypes(self.codequalityListener.getRequestHeader(self.appDirName , "sonarurl"), function(response) {
+				  if(response.data !== null && response.data !== ""){
 					self.codequalityListener.getSonarStatus(response.data, function(status) {
 						if(status.data === true){
 							setTimeout(function() {
@@ -93,8 +93,18 @@ define(["codequality/listener/codequalityListener"], function() {
 							self.renderlocales(commonVariables.contentPlaceholder);	
 						}
 					}, 200);
-				}	
-			});
+				 }	
+				 else {
+				    setTimeout(function() { 
+					 self.codequalityListener.getReportTypes(self.codequalityListener.getRequestHeader(self.appDirName , "reporttypes"), function(response) {
+									 var projectlist = {};
+									 projectlist.projectlist = response;	
+									 self.renderedData = response;
+									 self.codequalityListener.constructHtml(self.renderedData);
+								});
+								}, 200);				    
+				 }
+			  });
 			//RBAC
 			var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 			if (userPermissions && !userPermissions.manageCodeValidation) {
