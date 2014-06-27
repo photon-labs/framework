@@ -629,6 +629,12 @@ a.dropdown-toggle b.caret  {
 	margin: -38px 0 0 -22px !important;
 }
 
+.svnsearch{
+  position: relative;
+  bottom: 60px;
+  right: -450px;
+}
+
 .phrescosearch{
 	margin: -38px 0 0 -22px !important;
 }
