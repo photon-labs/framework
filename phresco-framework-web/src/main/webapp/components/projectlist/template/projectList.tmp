@@ -165,7 +165,7 @@
 								</tr>
 								<tr>
 									<td colspan="2">
-										<textarea class="popuptextarea" name="commitMsg" data-i18n="[placeholder]projectlist.label.message" id="repomessage_{{id}}""></textarea><img class="search" typeOfRepo="add"  dynId="{{id}}" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
+										<textarea class="popuptextarea" name="commitMsg" data-i18n="[placeholder]projectlist.label.message" id="repomessage_{{id}}""></textarea><img class="svnsearch" typeOfRepo="add"  dynId="{{id}}" src="themes/default/images/Phresco/search_icon.png" border="0" alt="">
 									</td>
 								</tr>
 								<tr>
