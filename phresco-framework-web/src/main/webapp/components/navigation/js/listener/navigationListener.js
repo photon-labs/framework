@@ -1112,6 +1112,7 @@ define([], function() {
 			var self = this;
 			var hasError = false;
 			var importType = $("#importType").val();
+			console.info("entering validate import");
 			if (importType === "git") {
 				hasError = self.validateGitData($('#importRepourl'));
 				if (hasError) {
@@ -1235,29 +1236,38 @@ define([], function() {
 		validateGitData : function(repoUrlObj) {
 			var self = this;
 			repoUrlObj.removeClass("errormessage");
-			
+			console.info("entering Validate Git data");
 			var repoUrl = repoUrlObj.val();
 			if (repoUrl === "") {
 				self.validateTextBox(repoUrlObj, 'Enter Url');
 				return true;
 			}
 			if(!self.isValidUrl(repoUrl)) {
-				repoUrlObj.val('');
+			    repoUrlObj.val('');
 				self.validateTextBox(repoUrlObj, 'Invalid Repo Url');
 				return true;
 			}
 			return false;
 		},
 		
-		validateSvnData : function(repoUrlObj, userNameObj, pwdObj, headOptObj, revisionObj) {
+		validateSvnData : function(repotypeObj,repoUrlObj, userNameObj, pwdObj, headOptObj, revisionObj) {
 			var self = this;
 			userNameObj.removeClass("errormessage");
 			pwdObj.removeClass("errormessage");
-			repoUrlObj.removeClass("errormessage");
-			
+			repoUrlObj.removeClass("errormessage");			
 			var repoUrl = repoUrlObj.val();
 			var userName = userNameObj.val().replace(/\s/g, '');
 			var pswd = pwdObj.val();
+			var repotype = repotypeObj.val();
+			if(repotype === "git"){
+				 var pattern = /git/;
+				 var exists = pattern.test(repoUrl);
+				if(exists === false){				    
+					repoUrlObj.val('');
+					self.validateTextBox(repoUrlObj, 'Invalid Repo Url');
+					return true;
+				}
+			}
 			if (repoUrl === "") {
 				self.validateTextBox(repoUrlObj, 'Enter Url');
 				return true;
