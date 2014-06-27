@@ -1090,7 +1090,7 @@ define([], function() {
 			var self = this;
 			var hasError = false;
 			
-			hasError = commonVariables.navListener.validateSvnData($("#repourl_"+dynamicId), $("#uname_"+dynamicId), $('#pwd_'+dynamicId));
+			hasError = commonVariables.navListener.validateSvnData($("#type_"+dynamicId),$("#repourl_"+dynamicId), $("#uname_"+dynamicId), $('#pwd_'+dynamicId));
 			if (hasError) {
 				commonVariables.navListener.showSrcTab($("#dotphresco"+dynamicId), $("#source"+dynamicId), $("#test"+dynamicId), $("#splitDotPhresco_"+dynamicId), $("#splitTest_"+dynamicId));
 			}
