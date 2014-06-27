@@ -20,7 +20,7 @@
 if "%PHRESCO_HOME%" == "%cd%\.." goto :eof
   
 set PHRESCO_HOME=%CD%\..
-set MAVEN_HOME=%CD%\..\tools\maven
+set MAVEN_HOME=%CD%\..\tools\maven-3.2.1
 set JENKINS_HOME=%PHRESCO_HOME%\workspace\tools\jenkins
 set SONAR_HOME=%PHRESCO_HOME%\workspace\tools\sonar-3.7.4
 set M2_HOME=%MAVEN_HOME%

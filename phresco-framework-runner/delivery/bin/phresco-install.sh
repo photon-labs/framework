@@ -19,7 +19,7 @@
 #
 export JENKINS_HOME=$PHRESCO_HOME/workspace/tools/jenkins
 export JMETER_HOME=$PHRESCO_HOME/workspace/tools/apache-jmeter-2.9
-export MAVEN_HOME=$PHRESCO_HOME/tools/maven
+export MAVEN_HOME=$PHRESCO_HOME/tools/maven-3.2.1
 export SONAR_HOME=$PHRESCO_HOME/workspace/tools/sonar-3.5.1
 export CHECKER_HOME=$PHRESCO_HOME/workspace/tools/checker
 export CHIEF_HOME=$PHRESCO_HOME/workspace/tools/chief
