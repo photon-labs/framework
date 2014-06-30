@@ -38,14 +38,6 @@
 			<pathelement location="${env.PHRESCO_HOME}/workspace/repo/ant-contrib/ant-contrib/1.0b3/ant-contrib-1.0b3.jar" />
 		</classpath>
 	</taskdef>
-	
-	
-	
-	
-
-	
-
-	
      
     <target name="start-waxsim">
 	 	<echo message="waxsim startup"/>
@@ -63,13 +55,7 @@
         </exec>
     </target>
     
-   
-	
-	
-	
-    
-	
-	<target name="set-execute-permissions" depends="condition-true">
+    <target name="set-execute-permissions" depends="condition-true">
 		<echo message="Setting execute permissions ${checkers.home}, ${chief.home}" />
 		<chmod perm="ugo+rx" type="file">
 		  <fileset dir="${checkers.home}">
@@ -97,7 +83,7 @@
          <antcall target="start-waxsim"/>
         <antcall target="start-iossim"/>
         
-	</target>
+    </target>
     
     <target name="set-execute-permissions-2">
 		<chmod perm="ugo+rx" type="file">
@@ -105,7 +91,8 @@
 		    <include name="**/*"/>
 		  </fileset>
 		</chmod>
-	</target>
+		
+    </target>
 	
 	<condition property="strings-match">
         <equals arg1="${os.name}" arg2="mac os x" casesensitive="false"/>
