@@ -1,0 +1,123 @@
+	<!--
+
+    Framework Runner
+
+    Copyright (C) 1999-2014 Photon Infotech Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project name="Phresco Deployment Script" basedir="." default="set-execute-permissions">
+	<property environment="env" />
+	<property name="tomcat.home" value="${env.PHRESCO_HOME}/workspace/tools/apache-tomcat-https-7.0.21"/>
+	<property name="sonar.home" value="${env.PHRESCO_HOME}/workspace/tools/sonar-${sonar.version}"/>
+	<property name="jenkins.home" value="${env.PHRESCO_HOME}/workspace/tools/jenkins"/>
+	<property name="checkers.home" value="${env.PHRESCO_HOME}/workspace/tools/checker"/>
+	<property name="chief.home" value="${env.PHRESCO_HOME}/workspace/tools/chief"/>
+	<property name="ios-sim.home" value="${env.PHRESCO_HOME}/workspace/tools/ios-sim"/>
+    <property name="ocunit2junit.home" value="${env.PHRESCO_HOME}/workspace/tools/ocunit2junit"/>
+    <property name="waxsim.home" value="${env.PHRESCO_HOME}/workspace/tools/waxsim"/>
+	<property name="phresco.upgrade.file" value="${env.PHRESCO_HOME}/workspace/temp/upgrade.properties"/>
+    <property name="phantomjs.mac.path" value="${env.PHRESCO_HOME}/workspace/tools/phantomjs-1.5.0-mac/bin"/>
+	<property file ="${env.PHRESCO_HOME}/conf/service.properties"/>
+    <property file ="${env.PHRESCO_HOME}/bin/framework.properties"/>
+ 	   
+	
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${env.PHRESCO_HOME}/workspace/repo/ant-contrib/ant-contrib/1.0b3/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+	
+	
+	
+	
+
+	
+
+	
+     
+    <target name="start-waxsim">
+	 	<echo message="waxsim startup"/>
+        <exec dir="${waxsim.home}" executable="xcodebuild" osfamily="mac">
+        <arg value="install"> </arg>
+        <arg value="DSTROOT="> </arg>
+        </exec>
+    </target>
+    
+    <target name="start-iossim">
+	 	<echo message="ios-sim startup"/>
+        <exec dir="${ios-sim.home}" executable="rake" osfamily="mac">
+        <arg value="install"> </arg>
+        <arg value="prefix=/usr/local/"> </arg>
+        </exec>
+    </target>
+    
+   
+	
+	
+	
+    
+	
+	<target name="set-execute-permissions" depends="condition-true">
+		<echo message="Setting execute permissions ${checkers.home}, ${chief.home}" />
+		<chmod perm="ugo+rx" type="file">
+		  <fileset dir="${checkers.home}">
+		    <include name="**/*"/>
+		  </fileset>
+		  
+		  <fileset dir="${chief.home}">
+		    <include name="**/*"/>
+		  </fileset>
+		  
+		  <fileset dir="${ios-sim.home}">
+		    <include name="**/*"/>
+		  </fileset>
+          
+          <fileset dir="${waxsim.home}">
+		    <include name="**/*"/>
+		  </fileset>
+          
+           <fileset dir="${ocunit2junit.home}">
+		    <include name="**/*"/>
+		  </fileset>
+          
+		</chmod>
+        
+         <antcall target="start-waxsim"/>
+        <antcall target="start-iossim"/>
+        
+	</target>
+    
+    <target name="set-execute-permissions-2">
+		<chmod perm="ugo+rx" type="file">
+           <fileset dir="../../tools/node_modules">
+		    <include name="**/*"/>
+		  </fileset>
+		</chmod>
+	</target>
+	
+	<condition property="strings-match">
+        <equals arg1="${os.name}" arg2="mac os x" casesensitive="false"/>
+    </condition>
+
+    <target name="condition-true" if="${strings-match}">
+    	<chmod perm="ugo+rx" type="file">
+        	<fileset dir="${phantomjs.mac.path}">
+                <include name="**/*"/>
+              </fileset>
+        </chmod>
+    </target>
+
+    
+</project>
