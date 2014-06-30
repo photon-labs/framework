@@ -1112,7 +1112,6 @@ define([], function() {
 			var self = this;
 			var hasError = false;
 			var importType = $("#importType").val();
-			console.info("entering validate import");
 			if (importType === "git") {
 				hasError = self.validateGitData($('#importRepourl'));
 				if (hasError) {
@@ -1132,18 +1131,18 @@ define([], function() {
 				}
 			}
 			if (!hasError && importType === "svn") {
-				hasError = self.validateSvnData($('#importRepourl'), $('#importUserName'), $('#importPassword'), $('input[name=headoption]:checked'), $('#revision'));
+				hasError = self.validateSvnData($('#importRepourl'), $('#importUserName'), $('#importPassword'),$('#importType'), $('input[name=headoption]:checked'), $('#revision'));
 				if (hasError) {
 					self.showSrcTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 				}
 				if ($('#importDotPhrescoSrc').is(":checked") && !hasError) {
-					hasError = self.validateSvnData($('#importPhrescoRepourl'), $('#importPhrescoUserName'), $('#importPhrescoPassword'), $('input[name=phrescoHeadoption]:checked'), $('#phrescoRevision'));
+					hasError = self.validateSvnData($('#importPhrescoRepourl'), $('#importPhrescoUserName'), $('#importPhrescoPassword'),$('#phrescoImportType'),$('input[name=phrescoHeadoption]:checked'), $('#phrescoRevision'));
 					if (hasError) {
 						self.showDotPhrescoTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 					}
 				}
 				if ($('#importTestSrc').is(":checked") && !hasError) {
-					hasError = self.validateSvnData($('#importTestRepourl'), $('#importTestUserName'), $('#importTestPassword'), $('input[name=testHeadoption]:checked'), $('#testRevision'));
+					hasError = self.validateSvnData($('#importTestRepourl'), $('#importTestUserName'), $('#importTestPassword'), $('#testImportType'),$('input[name=testHeadoption]:checked'), $('#testRevision'));
 					if (hasError) {
 						self.showTestTab($("#importDotphresco"), $("#importSource"), $("#importTest"), $("#importDotPhrescoSrc"), $("#importTestSrc"));
 					}
@@ -1250,7 +1249,7 @@ define([], function() {
 			return false;
 		},
 		
-		validateSvnData : function(repotypeObj,repoUrlObj, userNameObj, pwdObj, headOptObj, revisionObj) {
+		validateSvnData : function(repoUrlObj, userNameObj, pwdObj,repotypeObj, headOptObj, revisionObj) {
 			var self = this;
 			userNameObj.removeClass("errormessage");
 			pwdObj.removeClass("errormessage");
