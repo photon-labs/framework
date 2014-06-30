@@ -1059,18 +1059,18 @@ define([], function() {
 			var self = this;
 			var hasError = false;
 			
-			hasError = commonVariables.navListener.validateSvnData($("#commitRepourl"+dynamicId), $("#commitUserName"+dynamicId), $('#commitPassword'+dynamicId));
+			hasError = commonVariables.navListener.validateSvnData($("#commitRepourl"+dynamicId), $("#commitUserName"+dynamicId), $('#commitPassword'+dynamicId),$("#commitType_"+dynamicId));
 			if (hasError) {
 				commonVariables.navListener.showSrcTab($("#commitDotphresco"+dynamicId), $("#commitSource"+dynamicId), $("#commitTest"+dynamicId), $("#commitDotPhresco_"+dynamicId), $("#commitTest_"+dynamicId));
 			}
 			if ($('#commitDotPhresco_'+dynamicId).is(":checked") && !hasError) {
-				hasError = commonVariables.navListener.validateSvnData($('#phrCommitRepourl'+dynamicId), $('#phrCommitUserName'+dynamicId), $('#phrCommitPassword'+dynamicId));
+				hasError = commonVariables.navListener.validateSvnData($('#phrCommitRepourl'+dynamicId), $('#phrCommitUserName'+dynamicId), $('#phrCommitPassword'+dynamicId),$("#phrCommitType_"+dynamicId));
 				if (hasError) {
 					commonVariables.navListener.showDotPhrescoTab($("#commitDotphresco"+dynamicId), $("#commitSource"+dynamicId), $("#commitTest"+dynamicId), $("#commitDotPhresco_"+dynamicId), $("#commitTest_"+dynamicId));
 				}
 			}
 			if ($('#commitTest_'+dynamicId).is(":checked") && !hasError) {
-				hasError = commonVariables.navListener.validateSvnData($('#testCommitRepourl'+dynamicId), $('#testCommitUserName'+dynamicId), $('#testCommitPassword'+dynamicId));
+				hasError = commonVariables.navListener.validateSvnData($('#testCommitRepourl'+dynamicId), $('#testCommitUserName'+dynamicId), $('#testCommitPassword'+dynamicId),$("#testCommitType"+dynamicId));
 				if (hasError) {
 					commonVariables.navListener.showTestTab($("#commitDotphresco"+dynamicId), $("#commitSource"+dynamicId), $("#commitTest"+dynamicId), $("#commitDotPhresco_"+dynamicId), $("#commitTest_"+dynamicId));
 				}
@@ -1078,10 +1078,10 @@ define([], function() {
 			return hasError;
 		},
 		
-		validatedotPhrescoAndTest : function(dynamicId, repourl, uname, pwd){
+		validatedotPhrescoAndTest : function(dynamicId, repourl, uname, pwd,type){
 			var self = this;
 			var hasError = false;
-			hasError = commonVariables.navListener.validateSvnData($("#"+repourl+"_"+dynamicId), $("#"+uname+"_"+dynamicId), $("#"+pwd+"_"+dynamicId));
+			hasError = commonVariables.navListener.validateSvnData($("#"+repourl+"_"+dynamicId), $("#"+uname+"_"+dynamicId), $("#"+pwd+"_"+dynamicId),$("#"+type+"_"+dynamicId));
 			return hasError;
 		
 		},
@@ -1090,18 +1090,18 @@ define([], function() {
 			var self = this;
 			var hasError = false;
 			
-			hasError = commonVariables.navListener.validateSvnData($("#type_"+dynamicId),$("#repourl_"+dynamicId), $("#uname_"+dynamicId), $('#pwd_'+dynamicId));
+			hasError = commonVariables.navListener.validateSvnData($("#repourl_"+dynamicId), $("#uname_"+dynamicId), $('#pwd_'+dynamicId),$("#type_"+dynamicId));
 			if (hasError) {
 				commonVariables.navListener.showSrcTab($("#dotphresco"+dynamicId), $("#source"+dynamicId), $("#test"+dynamicId), $("#splitDotPhresco_"+dynamicId), $("#splitTest_"+dynamicId));
 			}
 			if ($('#splitDotPhresco_'+dynamicId).is(":checked") && !hasError) {
-				hasError = commonVariables.navListener.validateSvnData($('#phrescorepourl_'+dynamicId), $('#phrescouname_'+dynamicId), $('#phrescopwd_'+dynamicId));
+				hasError = commonVariables.navListener.validateSvnData($('#phrescorepourl_'+dynamicId), $('#phrescouname_'+dynamicId), $('#phrescopwd_'+dynamicId),$("#phrescotype_"+dynamicId));
 				if (hasError) {
 					commonVariables.navListener.showDotPhrescoTab($("#dotphresco"+dynamicId), $("#source"+dynamicId), $("#test"+dynamicId), $("#splitDotPhresco_"+dynamicId), $("#splitTest_"+dynamicId));
 				}
 			}
 			if ($('#splitTest_'+dynamicId).is(":checked") && !hasError) {
-				hasError = commonVariables.navListener.validateSvnData($('#testrepourl_'+dynamicId), $('#testuname_'+dynamicId), $('#testpwd_'+dynamicId));
+				hasError = commonVariables.navListener.validateSvnData($('#testrepourl_'+dynamicId), $('#testuname_'+dynamicId), $('#testpwd_'+dynamicId),$("#testtype_"+dynamicId));
 				if (hasError) {
 					commonVariables.navListener.showTestTab($("#dotphresco"+dynamicId), $("#source"+dynamicId), $("#test"+dynamicId), $("#splitDotPhresco_"+dynamicId), $("#splitTest_"+dynamicId));
 				}
@@ -1132,18 +1132,18 @@ define([], function() {
 				}
 			}
 			if (!hasError && updateType === "svn") {
-				hasError = commonVariables.navListener.validateSvnData($('#updateRepourl'+dynamicId), $('#updateUserName'+dynamicId), $('#updatePassword'+dynamicId), $('input[name=updateHeadoption'+dynamicId+']:checked'), $('#updateRevision'+dynamicId));
+				hasError = commonVariables.navListener.validateSvnData($('#updateRepourl'+dynamicId), $('#updateUserName'+dynamicId), $('#updatePassword'+dynamicId),$('#updateType'+dynamicId), $('input[name=updateHeadoption'+dynamicId+']:checked'), $('#updateRevision'+dynamicId));
 				if (hasError) {
 					commonVariables.navListener.showSrcTab($("#updateDotphresco"+dynamicId), $("#updateSource"+dynamicId), $("#updateTest"+dynamicId), $("#updateDotPhresco_"+dynamicId), $("#updateTest_"+dynamicId));
 				}
 				if ($('#updateDotPhresco_'+dynamicId).is(":checked") && !hasError) {
-					hasError = commonVariables.navListener.validateSvnData($('#updatePhrescoRepourl'+dynamicId), $('#updatePhrescoUserName'+dynamicId), $('#updatePhrescoPassword'+dynamicId), $('input[name=updatePhrescoHeadoption'+dynamicId+']:checked'), $('#updatePhrescoRevision'+dynamicId));
+					hasError = commonVariables.navListener.validateSvnData($('#updatePhrescoRepourl'+dynamicId), $('#updatePhrescoUserName'+dynamicId), $('#updatePhrescoPassword'+dynamicId),$('#updatePhrescoType'+dynamicId), $('input[name=updatePhrescoHeadoption'+dynamicId+']:checked'), $('#updatePhrescoRevision'+dynamicId));
 					if (hasError) {
 						commonVariables.navListener.showDotPhrescoTab($("#updateDotphresco"+dynamicId), $("#updateSource"+dynamicId), $("#updateTest"+dynamicId), $("#updateDotPhresco_"+dynamicId), $("#updateTest_"+dynamicId));
 					}
 				}
 				if ($('#updateTest_'+dynamicId).is(":checked") && !hasError) {
-					hasError = commonVariables.navListener.validateSvnData($('#updateTestRepourl'+dynamicId), $('#updateTestUserName'+dynamicId), $('#updateTestPassword'+dynamicId), $('input[name=testUpdateHeadoption'+dynamicId+']:checked'), $('#testUpdateRevision'+dynamicId));
+					hasError = commonVariables.navListener.validateSvnData($('#updateTestRepourl'+dynamicId), $('#updateTestUserName'+dynamicId), $('#updateTestPassword'+dynamicId),$('#testUpdateType'+dynamicId),$('input[name=testUpdateHeadoption'+dynamicId+']:checked'), $('#testUpdateRevision'+dynamicId));
 					if (hasError) {
 						commonVariables.navListener.showTestTab($("#updateDotphresco"+dynamicId), $("#updateSource"+dynamicId), $("#updateTest"+dynamicId), $("#updateDotPhresco_"+dynamicId), $("#updateTest_"+dynamicId));
 					}
