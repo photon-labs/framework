@@ -593,6 +593,10 @@ define([], function() {
 				if($("#commitType_" + dynamicId).val() !== 'svn'){
 					$("#commitUserName"+dynamicId).val("").removeAttr('readonly');
 					$("#commitPassword"+dynamicId).val("").removeAttr('readonly');
+					$("#phrCommitUserName"+dynamicId).val("").removeAttr('readonly');
+					$("#phrCommitPassword"+dynamicId).val("").removeAttr('readonly');
+					$("#testCommitUserName"+dynamicId).val("").removeAttr('readonly');
+					$("#testCommitPassword"+dynamicId).val("").removeAttr('readonly');
 				}
 				if ((srcRepoDetail.repoInfoFile !== undefined && srcRepoDetail.repoInfoFile !== null && srcRepoDetail.repoInfoFile.length > 0) || "tfs" === srcRepoDetail.type) {
 						$('.srcCommitableFiles').show();
