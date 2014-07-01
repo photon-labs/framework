@@ -991,37 +991,50 @@ define(["projectlist/listener/projectListListener"], function() {
 			$(".addToRepocredential").unbind("click");
 			$(".addToRepocredential").bind("click", function() {
 				var dynamicId = $(this).attr("repoDynid");
-				self.otherCredentialClickEvent($(this), $('#uname_'+dynamicId), $('#pwd_'+dynamicId));
+				if($('#type_' + dynamicId).val() !== 'svn'){
+					self.otherCredentialClickEvent($(this), $('#uname_').val("").removeAttr('readonly'), $('#pwd_').val("").removeAttr('readonly'));
+				}else{		
+					self.otherCredentialClickEvent($(this), $('#uname_'+dynamicId), $('#pwd_'+dynamicId));
+				}
 			});
 			
 			$(".addToRepoPhrescocredential").unbind("click");
 			$(".addToRepoPhrescocredential").bind("click", function() {
 				var dynamicId = $(this).attr("repoDynid");
-				self.otherCredentialClickEvent($(this), $('#phrescouname_'+dynamicId), $('#phrescopwd_'+dynamicId));
+				if($("#phrescotype_" + dynamicId).val() !== 'svn'){
+					self.otherCredentialClickEvent($(this), $('#phrescouname_').val("").removeAttr('readonly'), $('#phrescopwd_').val("").removeAttr('readonly'));
+				}else{
+					self.otherCredentialClickEvent($(this), $('#phrescouname_' + dynamicId), $('#phrescopwd_' + dynamicId));
+				}		
 			});
 			
 			$(".addToRepoTestCredential").unbind("click");
 			$(".addToRepoTestCredential").bind("click", function() {
 				var dynamicId = $(this).attr("repoDynid");
-				self.otherCredentialClickEvent($(this), $('#testuname_'+dynamicId), $('#testpwd_'+dynamicId));
+				if($('#testtype_' + dynamicId).val() !== 'svn'){
+					self.otherCredentialClickEvent($(this), $('#testuname_').val("").removeAttr('readonly'), $('#testpwd_').val("").removeAttr('readonly'));
+				}else{
+					self.otherCredentialClickEvent($(this), $('#testuname_'+dynamicId), $('#testpwd_'+dynamicId));
+				}
+				
 			});
 			
 			$(".cmtSrcOtherCredential").unbind("click");
 			$(".cmtSrcOtherCredential").bind("click", function() {
 				var dynamicId = $(this).attr("dynamicId");
-				self.otherCredentialClickEvent($(this), $('#commitUserName'+dynamicId), $('#commitPassword'+dynamicId));
+				self.otherCredentialClickEvent($(this),$("#commitUserName").val("").removeAttr('readonly'), $('#commitPassword').val("").removeAttr('readonly'));
 			});
 			
 			$(".phrCmtSrcOtherCredential").unbind("click");
 			$(".phrCmtSrcOtherCredential").bind("click", function() {
 				var dynamicId = $(this).attr("dynamicId");
-				self.otherCredentialClickEvent($(this), $('#phrCommitUserName'+dynamicId), $('#phrCommitPassword'+dynamicId));
+				self.otherCredentialClickEvent($(this), $('#phrCommitUserName').val("").removeAttr('readonly'), $('#phrCommitPassword').val("").removeAttr('readonly'));
 			});
 			
 			$(".testCmtSrcOtherCredential").unbind("click");
 			$(".testCmtSrcOtherCredential").bind("click", function() {
 				var dynamicId = $(this).attr("dynamicId");
-				self.otherCredentialClickEvent($(this), $('#testCommitUserName'+dynamicId), $('#testCommitPassword'+dynamicId));
+				self.otherCredentialClickEvent($(this), $('#testCommitUserName').val("").removeAttr('readonly'), $('#testCommitPassword').val("").removeAttr('readonly'));
 			});
 			
 			$(".updSrcOtherCredential").unbind("click");
