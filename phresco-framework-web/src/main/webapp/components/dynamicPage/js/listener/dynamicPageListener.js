@@ -856,6 +856,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 			self.chkSQLCheck();
 			if (key === "signing") {
 				self.signingCheck();
+				self.formObj.css("overflow", "auto");
 			} else if (key === "zipAlign") {
 				self.zipAlignCheck(false);
 			} else if (key === "skipTest" || key === "coverage") {
