@@ -1790,7 +1790,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 	}
 
-	private void addToRepo(RepoDetail repodetail, ApplicationInfo appInfo, File dir, String dirName, File srcDir, boolean hasSplit) throws PhrescoException {
+	private void addToRepo(RepoDetail repodetail, ApplicationInfo appInfo, File dir, String dirName, File srcDir, boolean hasSplit) throws PhrescoException, PhrescoPomException {
 		String phrescoTemp = Utility.getPhrescoTemp();
 		String uuid = UUID.randomUUID().toString();
 		File tempUuidFile = new File(phrescoTemp, uuid);
@@ -1825,12 +1825,20 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			removeSrcProperty(new File(dir,appInfo.getPhrescoPomFile()));
 			throw new PhrescoException(e);
 		} finally {
 			if (tempUuidFile.exists()) {
 				FileUtil.delete(tempUuidFile);
 			}
 		}
+	}
+	
+	private void removeSrcProperty(File phrescoPomFile) throws PhrescoPomException {	
+		PomProcessor appPomProcessor = new PomProcessor(phrescoPomFile);
+		appPomProcessor.getModel().setScm(null);
+		appPomProcessor.removeProperty(Constants.POM_PROP_KEY_SRC_REPO_URL);
+		appPomProcessor.save();
 	}
 
 	private SVNCommitInfo importDirectoryContentToSubversion(RepoDetail repodetail, final String subVersionedDirectory) throws SVNException {
