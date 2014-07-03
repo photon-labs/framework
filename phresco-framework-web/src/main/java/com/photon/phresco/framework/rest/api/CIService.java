@@ -526,8 +526,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		
 		JSONArray jsonArray = new JSONArray("["+execute.toString()+"]");
 	    JSONObject jsonObject = jsonArray.getJSONObject(0);
-	    String json = jsonObject.getString("jobs");
-	    JSONArray jobJsonArray = new JSONArray(json);
+	    JSONArray jobJsonArray = jsonObject.getJSONArray("jobs");
 	    for (int j = 0; j<jobJsonArray.length(); j++) {
 	    	 JSONObject jsonObject1 = jobJsonArray.getJSONObject(j);
 	    	 if(jobName.equals(jsonObject1.getString("name"))) {
