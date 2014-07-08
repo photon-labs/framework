@@ -1362,7 +1362,7 @@ define([], function() {
 				if(e.which === 27){
 					$(placeId).hide();
 					$('#header').css('z-index','7');
-					$('.content_title').css('z-index','6');
+					$('.content_title').css('z-index','4');
 				}
 			});
 			
@@ -1371,7 +1371,7 @@ define([], function() {
 				$("#jobConfigure").hide();
 				$("#cron_expression").hide();
 				$('#header').css('z-index','7');
-				$('.content_title').css('z-index','6');
+				$('.content_title').css('z-index','4');
 			});
 				
 		},
@@ -1916,7 +1916,7 @@ define([], function() {
 	            // Hide popup
 	            $(".dyn_popup").hide();
 				$('#header').css('z-index','7');
-				$('.content_title').css('z-index','6');
+				$('.content_title').css('z-index','3');
 			} 	
 		},
 
