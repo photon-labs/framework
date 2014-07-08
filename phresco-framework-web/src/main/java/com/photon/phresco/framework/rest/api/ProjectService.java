@@ -1669,16 +1669,17 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	
 	private ResponseInfo validateUpdatedProject(ProjectInfo projectinfo) throws PhrescoException {
 		ResponseInfo response = null;
-		if(CollectionUtils.isNotEmpty(projectinfo.getAppInfos().get(0).getModules())) {
+		List<ApplicationInfo> appInfos = projectinfo.getAppInfos();
+		if(CollectionUtils.isEmpty(appInfos)) {
+			return response;
+		}
+		if(CollectionUtils.isNotEmpty(appInfos.get(0).getModules())) {
 			return response;
 		}
 		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 		List<ProjectInfo> discoveredProjectInfos = projectManager.discover();
 		
 		for (ProjectInfo projectInfos : discoveredProjectInfos) {
-			
-			
-			List<ApplicationInfo> appInfos = projectinfo.getAppInfos();
 			List<ApplicationInfo> discoveredAppInfos = projectInfos.getAppInfos();
 			for(int i = 0; i < appInfos.size(); i++) {
 				for(int j = 0; j < discoveredAppInfos.size(); j++) {
