@@ -682,6 +682,7 @@ define(["projectlist/listener/projectListListener"], function() {
 						$("#phrescopwd_"+dynamicId).val("").removeAttr('readonly');
 						$("#testuname_"+dynamicId).val("").removeAttr('readonly');
 						$("#testpwd_"+dynamicId).val("").removeAttr('readonly');
+						$(".svnsearch").hide();
 					} else{
 						$(".search").show();
 						$(".phrescosearch").show();
@@ -692,23 +693,24 @@ define(["projectlist/listener/projectListListener"], function() {
 						$('#phrescopwd_'+dynamicId).val(password);	
 						$('#testuname_'+dynamicId).val(userInfo.id);
 						$('#testpwd_'+dynamicId).val(password);	
+						$('.svnsearch').show();
 					}	
 				});
 				
 				if($("#type_"+dynamicId).val() === 'svn'){
-					$('.search').show();
+					$('.svnsearch').show();
 					$('.phrescosearch').show();
 					$('.testsearch').show();
 					$('.tfsAddServerPath').hide();
 				} else {
-					$(".search").hide();
+					$(".svnsearch").hide();
 					$(".phrescosearch").hide();
 					$(".testsearch").hide();
 					$('.tfsAddServerPath').hide();
 				}	
 				
-				$('.search').unbind("click");
-				$('.search').bind("click", function() {
+				$('.svnsearch').unbind("click");
+				$('.svnsearch').bind("click", function() {
 					self.projectslistListener.flag1 = 1;
 					var idval = $(this).attr('dynId');
 					var repoType = $(this).attr('typeOfRepo');

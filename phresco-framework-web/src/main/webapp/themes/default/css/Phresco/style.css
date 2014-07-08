@@ -626,7 +626,7 @@ a.dropdown-toggle b.caret  {
 }
 
 .search{
-	margin: -38px 0 0 -22px !important;
+	margin: -25px 0 0 -22px !important;
 }
 
 .svnsearch{
@@ -636,11 +636,11 @@ a.dropdown-toggle b.caret  {
 }
 
 .phrescosearch{
-	margin: -38px 0 0 -22px !important;
+	margin: -25px 0 0 -22px !important;
 }
 
 .testsearch{
-	margin: -38px 0 0 -22px !important;
+	margin: -25px 0 0 -22px !important;
 }
 .cust_sel ul li{
 	color: #000 !important;
