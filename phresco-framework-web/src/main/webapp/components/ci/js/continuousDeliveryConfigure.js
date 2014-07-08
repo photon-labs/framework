@@ -257,15 +257,15 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 					start: function( event, ui ) {
 						$(".dyn_popup").hide();
 						$('#header').css('z-index','7');
-						$('.content_title').css('z-index','6');
-						$('.qual_unit').css('z-index','6');
+						$('.content_title').css('z-index','4');
+						$('.qual_unit').css('z-index','0');
 					},
 
 					stop: function( event, ui ) {
 						$(".dyn_popup").hide();
 						$('#header').css('z-index','7');
-						$('.content_title').css('z-index','6');
-						$('.qual_unit').css('z-index','6');
+						$('.content_title').css('z-index','4');
+						$('.qual_unit').css('z-index','0');
 						self.downStreamCriteria.dispatch();
 						self.lastChild.dispatch();
 					},
