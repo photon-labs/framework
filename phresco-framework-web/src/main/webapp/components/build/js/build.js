@@ -584,6 +584,7 @@ define(["build/listener/buildListener"], function() {
 							}
 							queryStr += '&displayName=' + displayName;
 							queryStr += self.isBlank($('.moduleName').val()) ? "" : '&moduleName='+$('.moduleName').val();
+							
 							self.onMavenServiceEvent.dispatch('mvnMinification', queryStr, $('#minAllchk').is(':checked'),  finalArray, function(response){
 								$('.progress_loading').css('display','none');
 								self.refreshContent(true);
