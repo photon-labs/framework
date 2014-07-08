@@ -512,9 +512,14 @@ html, body {
 	padding-left:1%;
 	padding-right:1%;
 	position:fixed;
-	z-index:6;
+	z-index: 5;
 }
 
+#projectList.content_title
+{
+	z-index: 5;
+}
+ 
 .content_title h1 {
 	font-size:15px;
 	color:#000000;
@@ -1185,8 +1190,9 @@ ul.nav li.dropdown:hover > .test_options{
 .delete_msg , .deleteproj_msg{
 	color: #000 !important;
 	font-weight:normal !important;
-	font-size:12px;	
-}
+	font-size:12px;
+	}
+
 
 .delete_msg div input, .deleteproj_msg div input {
 	padding: 3px 8px !important;
@@ -1780,6 +1786,11 @@ img[name="close"] {
 	border-bottom: 1px solid #d2d2d2;
 	z-index:1;
 }
+.optiontitle, .qual_unit
+{
+	z-index:1;
+	
+}
 
 .code_content {
 	margin-top:170px;
@@ -1886,6 +1897,9 @@ img[name="close"] {
 	border-radius: 6px;
 	padding: 10px;
 	z-index: 1;
+	margin-left:auto;
+	
+
 }
 
 .dyn_popup form {
@@ -2209,6 +2223,7 @@ img[name="close"] {
 	.project_list_popup input[type=text], .project_list_popup select, .project_list_popup input[type=password] {
 		width:165px !important;
 }
+
 
 }
 
@@ -3471,6 +3486,7 @@ html>body tbody.scrollContent {
 
 .job_configure{
 	width:517px;
+
 }
 
 .job_configure #schedule_daily [type="button"]{
