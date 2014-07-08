@@ -719,6 +719,7 @@ define(["projectlist/listener/projectListListener"], function() {
 							$('.searchdropdown').empty();
 							counter = 0;
 							var actionBody = {};
+							
 							actionBody.repoUrl = $("#repourl_"+dynamicId).val();
 							actionBody.userName = $("#uname_"+dynamicId).val();
 							actionBody.password = $("#pwd_"+dynamicId).val();
