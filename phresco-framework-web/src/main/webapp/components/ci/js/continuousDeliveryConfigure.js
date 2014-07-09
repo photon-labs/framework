@@ -320,7 +320,6 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 			// By Default gear icon should not be displayed
 			$("#sortable1 li.ui-state-default a").hide();
 			
-			
    			$('#sortable2').on('click', 'a[name=jobConfigurePopup]', function() {
 				$('#header').css('z-index','0');
 				$('.content_title').css('z-index','0');
