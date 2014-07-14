@@ -4,11 +4,11 @@
 	<groupId>com.photon.phresco.framework</groupId>
 	<artifactId>PhrescoFrameworkRuntime</artifactId>
 	<packaging>pom</packaging>
-	<version>3.3.1.16002-SNAPSHOT</version>
+	<version>3.3.1.16001</version>
 	<name>Phresco Framework Web Application</name>
 
     <properties>
-		<phresco.framework.version>3.3.1.16002-SNAPSHOT</phresco.framework.version>		
+		<phresco.framework.version>3.3.1.16001</phresco.framework.version>		
 		<tomcat.version>7.0.21.3</tomcat.version>
 		<phantomjs.version>1.5.0</phantomjs.version>
 		<tfs.version>1.0</tfs.version>
