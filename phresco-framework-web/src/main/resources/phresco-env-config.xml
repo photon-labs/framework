@@ -52,7 +52,7 @@
             <port>80</port>
             <username/>
             <password/>
-            <context>service-v3.0</context>
+            <context>staging-service</context>
                         <additional_context>/rest/api</additional_context>
         </WebService>
 

@@ -196,12 +196,12 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 			
 			$("input[name=continuousDeliveryName]").unbind('input');
 	  		$("input[name=continuousDeliveryName]").bind('input propertychange', function(e) {
-				this.value = this.value.replace(/[^a-zA-Z 0-9\-\_]+/g, '');
+				 this.value.replace(/[^a-zA-Z 0-9\-\_]+/g, ''); 
 			});
 	  		
 			$("input[name=jobName]").unbind('input');
 	  		$("input[name=jobName]").bind('input propertychange', function(e) {
-				this.value = this.value.replace(/[^a-zA-Z 0-9\-\_]+/g, '');
+				this.value.replace(/[^a-zA-Z 0-9\-\_]+/g, '');
 			});
 	  		
 	  		$( "#jobConfigure" ).delegate( "#Publish", "click", function() {
@@ -260,6 +260,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 						$('.content_title').css('z-index','4');
 						$('.qual_unit').css('z-index','0');
 					},
+					
 
 					stop: function( event, ui ) {
 						$(".dyn_popup").hide();
