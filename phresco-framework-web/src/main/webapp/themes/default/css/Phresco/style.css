@@ -3510,8 +3510,8 @@ html>body tbody.scrollContent {
 	width:135px !important;
 }
 
-.cont_delivery table input[name="url"][type="text"] {
-	width: 485px;
+.cont_delivery table input[name="url"][type="text"],.cont_delivery table input[name="phrescoUrl"][type="text"],.cont_delivery table input[name="testUrl"][type="text"] {
+	width: 455px;
 	margin-bottom: 0;
 }
 
