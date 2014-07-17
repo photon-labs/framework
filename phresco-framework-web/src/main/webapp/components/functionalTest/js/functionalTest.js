@@ -20,6 +20,7 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 		iframeAction : null,
 		iframeUrlAlive : null,
 		
+		
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -166,6 +167,7 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			});
 		
 			$("#formid").submit();
+			
 		},
 		
 		preRender: function(whereToRender, renderFunction) {
@@ -300,9 +302,11 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			$("#executeStartAppium").click(function() {
 				commonVariables.runType = 'startAppium';
 				$('input[name=kill]').attr('disabled', true);
-				self.onPerformActionEvent.dispatch("startAppium");
+				if(!self.validationtextbox()){
+					self.onPerformActionEvent.dispatch("startAppium");
+				}
 			});
-			
+		
 			$("#iframe").unbind("click");
 			$("#iframe").click(function() {
 				$("iframeContent").show();
@@ -334,6 +338,29 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			
 			self.tableScrollbar();
 			self.customScroll($(".consolescrolldiv"));
+		},
+		
+		validationtextbox:function(){
+			var self = this;
+				if($('#appPackage').val() === ""){
+					self.valid("#appPackage", "Package Name");
+					self.hasError = true;
+				} else if($('#appActivity').val() === ""){
+					self.valid("#appActivity", "Activity Name");
+					self.hasError = true;
+				}else {
+					self.hasError = false;
+				} 
+				return self.hasError;
+		},
+		
+		valid : function(item, msg) {
+			$(item).focus();
+			$(item).attr('placeholder', msg);
+			$(item).addClass("errormessage");
+			$(item).bind('keypress', function() {
+				$(this).removeClass("errormessage");
+			});
 		}
 	});
 

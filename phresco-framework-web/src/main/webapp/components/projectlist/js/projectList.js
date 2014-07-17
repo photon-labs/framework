@@ -719,7 +719,6 @@ define(["projectlist/listener/projectListListener"], function() {
 							$('.searchdropdown').empty();
 							counter = 0;
 							var actionBody = {};
-							
 							actionBody.repoUrl = $("#repourl_"+dynamicId).val();
 							actionBody.userName = $("#uname_"+dynamicId).val();
 							actionBody.password = $("#pwd_"+dynamicId).val();
@@ -1025,19 +1024,32 @@ define(["projectlist/listener/projectListListener"], function() {
 			$(".cmtSrcOtherCredential").unbind("click");
 			$(".cmtSrcOtherCredential").bind("click", function() {
 				var dynamicId = $(this).attr("dynamicId");
-				self.otherCredentialClickEvent($(this),$("#commitUserName").val("").removeAttr('readonly'), $('#commitPassword').val("").removeAttr('readonly'));
+				if($('#commitType_' + dynamicId).val() !== 'svn'){
+					self.otherCredentialClickEvent($(this), $('#commitUserName').val("").removeAttr('readonly'), $('#commitPassword').val("").removeAttr('readonly'));
+				}else{
+					self.otherCredentialClickEvent($(this), $('#commitUserName'+dynamicId), $('#commitPassword'+dynamicId));
+				}
+				
 			});
 			
 			$(".phrCmtSrcOtherCredential").unbind("click");
 			$(".phrCmtSrcOtherCredential").bind("click", function() {
 				var dynamicId = $(this).attr("dynamicId");
-				self.otherCredentialClickEvent($(this), $('#phrCommitUserName').val("").removeAttr('readonly'), $('#phrCommitPassword').val("").removeAttr('readonly'));
+				if($('#phrCommitType_' + dynamicId).val() !== 'svn'){
+					self.otherCredentialClickEvent($(this), $('#phrCommitUserName').val("").removeAttr('readonly'), $('#phrCommitPassword').val("").removeAttr('readonly'));
+				}else{
+				self.otherCredentialClickEvent($(this), $('#phrCommitUserName'+dynamicId), $('#phrCommitPassword'+dynamicId));
+				}
 			});
 			
 			$(".testCmtSrcOtherCredential").unbind("click");
 			$(".testCmtSrcOtherCredential").bind("click", function() {
 				var dynamicId = $(this).attr("dynamicId");
-				self.otherCredentialClickEvent($(this), $('#testCommitUserName').val("").removeAttr('readonly'), $('#testCommitPassword').val("").removeAttr('readonly'));
+				if($('#testCommitType_' + dynamicId).val() !== 'svn'){
+					self.otherCredentialClickEvent($(this), $('#testCommitUserName').val("").removeAttr('readonly'), $('#testCommitPassword').val("").removeAttr('readonly'));
+				}else{
+					self.otherCredentialClickEvent($(this), $('#testCommitUserName'+dynamicId), $('#testCommitPassword'+dynamicId));
+				}
 			});
 			
 			$(".updSrcOtherCredential").unbind("click");
