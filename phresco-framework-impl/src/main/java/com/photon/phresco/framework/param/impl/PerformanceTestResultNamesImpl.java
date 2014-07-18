@@ -86,7 +86,7 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 	}
 	
 	private String getTestDirPath(String testAgainst, String goal, String rootModulePath, String subModuleName) throws PhrescoException {
-    	ProjectInfo info = Utility.getProjectInfo(rootModulePath, subModuleName);
+    	ProjectInfo info = Utility.getProjectInfo(rootModulePath, "");
 		File testFolderLocation = Utility.getTestFolderLocation(info, rootModulePath, subModuleName);
 		StringBuilder builder = new StringBuilder(testFolderLocation.toString());
 		try {

@@ -180,14 +180,14 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				}
 				scmi.importProject(srcAppInfo, repoInfo, displayName, unique_key);
 				if(repoInfo.isSplitTest()) {
-					if(TFS.equals(repoInfo.getPhrescoRepoDetail().getType())) {
-					repoInfo.getPhrescoRepoDetail().setWorkspaceName(srcAppInfo.getAppDirName() + UUID.randomUUID().toString());
+					if(TFS.equals(repoInfo.getTestRepoDetail().getType())) {
+					repoInfo.getTestRepoDetail().setWorkspaceName(srcAppInfo.getAppDirName() + UUID.randomUUID().toString());
 					}
 					scmi.importTest(srcAppInfo, repoInfo);
 				}
 				if(repoInfo.isSplitPhresco()) {
-					if(TFS.equals(repoInfo.getTestRepoDetail().getType())) {
-					repoInfo.getTestRepoDetail().setWorkspaceName(srcAppInfo.getAppDirName() + UUID.randomUUID().toString());
+					if(TFS.equals(repoInfo.getPhrescoRepoDetail().getType())) {
+					repoInfo.getPhrescoRepoDetail().setWorkspaceName(srcAppInfo.getAppDirName() + UUID.randomUUID().toString());
 					}
 					scmi.importPhresco(srcAppInfo, repoInfo);
 				}
@@ -1007,13 +1007,8 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 					url = repos.getSnapshotRepoURL();
 				}
 				artifact = new AetherUtil().getArtifact(appDirName, version, moduleName);
-				System.out.println("******************************");
-				System.out.println("Resolved Artifact   " + artifact);
 				artifacts.add(artifact);
 				URL artifacturl = new AetherUtil().resolveArtifact(url, "", "", artifacts);
-				System.out.println(artifacturl.toString());
-				
-				System.out.println("******************************");
 				artifactFile = new File(artifacturl.toURI());
 				inputStream = new FileInputStream(artifactFile);
 			}

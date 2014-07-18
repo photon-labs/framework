@@ -1133,6 +1133,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			S_LOGGER.debug("Entering Method MavenFunctions.codeValidate()");
 		}
 		BufferedInputStream reader = null;
+		FrameworkServiceUtil fUtil = new FrameworkServiceUtil();
 		try {
 			String rootModulePath = getAppDirBasedOnMultiModule(module);
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, module);
@@ -1145,7 +1146,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
 			appendMultiModuleCommand(module, buildArgCmds);
-			buildArgCmds = getProps(buildArgCmds);
+			buildArgCmds = fUtil.getProps(buildArgCmds);
 			String workingDirectory = pomFileLocation.getParent();
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo rootprojectInfo = Utility.getProjectInfo(rootModulePath, "");
@@ -1160,33 +1161,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 
 		return reader;
-	}
-	
-	public List<String> getProps(List<String> buildArgCmds) throws PhrescoException {
-		Properties sonarConfig = new Properties();
-		InputStream inputstream = null;
-		try {
-			inputstream = this.getClass().getClassLoader().getResourceAsStream("framework.config");
-			sonarConfig.load(inputstream);
-			String remoteSonar = sonarConfig.getProperty("phresco.code.remote.sonar");
-			if(StringUtils.isNotEmpty(remoteSonar) && remoteSonar.equalsIgnoreCase("true")) {
-			String sonarUrl = sonarConfig.getProperty("phresco.code.sonar.url");
-			String sonarJdbcUrl = sonarConfig.getProperty("phresco.code.sonar.jdbc.url");
-			String sonarUserName = sonarConfig.getProperty("phresco.code.sonar.username");
-			String sonarPassWord = sonarConfig.getProperty("phresco.code.sonar.password");
-			buildArgCmds.add("-DsonarUrl=" + "\"" + sonarUrl + "\"");
-			buildArgCmds.add("-DjdbcUrl=" + "\"" + sonarJdbcUrl + "\"");
-			buildArgCmds.add("-DsonarUsername=" + "\"" + sonarUserName + "\"");
-			buildArgCmds.add("-DsonarPassword=" + "\"" + sonarPassWord + "\"");
-			} else {
-				String sonarUrl = sonarConfig.getProperty("phresco.code.sonar.url");
-				buildArgCmds.add("-DsonarUrl=" + "\"" + sonarUrl + "\"");
-			}
-			return buildArgCmds;
-		} catch (IOException e) {
-			throw new PhrescoException(e);
-		}
-		
 	}
 	
 	public BufferedInputStream liquibaseDbdoc(LiquibaseDbDocInfo liquibaseDbDocInfo) throws PhrescoException {

@@ -1780,6 +1780,9 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				mvncmd =  actionType.getActionType().toString();
 				operationName = Constants.PHASE_PDF_REPORT;
 			} else if (CODE_VALIDATION.equals(operation)) {
+				FrameworkServiceUtil fUtil = new FrameworkServiceUtil();
+				StringBuilder sb = new StringBuilder();
+				List<String> buildArgCmds = new ArrayList<String>();
 				path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_VALIDATE_CODE, splitPath);
 				File phrescoPluginInfoFilePath = new File(path);
 				if (phrescoPluginInfoFilePath.exists()) {
@@ -1789,6 +1792,13 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				}
 				ActionType actionType = ActionType.CODE_VALIDATE;
 				mvncmd =  actionType.getActionType().toString();
+				List<String> props = fUtil.getProps(buildArgCmds);
+				if(CollectionUtils.isNotEmpty(props)) {
+				        for(String sonarParams : props){
+				            sb.append(Constants.SPACE).append(sonarParams); 
+				        }
+				        mvncmd = mvncmd + sb.toString();   
+				}
 				operationName = Constants.PHASE_VALIDATE_CODE;
 			} else if (UNIT_TEST.equals(operation)) {
 				path = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_UNIT_TEST, splitPath);
