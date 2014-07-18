@@ -810,7 +810,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 							}
 
 							File modulePropertyPom = returnPropertyPom(modPomFileName, repoInfo, new File(baseDir, module.getCode() + File.separator + modPomFileName), baseDir, module.getCode(),appInfo);
-							updatePomProperties(moduleAppInfo, module.getCode(), modulePropertyPom, phrescoUrl, srcUrl, testUrl, srcWorkspaceName, phrWorkspaceName, testWorkspaceName);
+							updatePomProperties(appInfo, module.getCode(), modulePropertyPom, phrescoUrl, srcUrl, testUrl, srcWorkspaceName, phrWorkspaceName, testWorkspaceName);
 						}
 					}
 				}
@@ -1734,6 +1734,8 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 			if (srcRootPrpty.startsWith(BACK_SLASH)) {
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_ROOT_SRC_DIR, sb.toString());
+			} else if (srcRootPrpty.startsWith("..")) {
+				pomProcessor.setProperty(Constants.POM_PROP_KEY_ROOT_SRC_DIR, srcRootPrpty);
 			} else {
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_ROOT_SRC_DIR, sb.toString() + srcRootPrpty);
 			}
