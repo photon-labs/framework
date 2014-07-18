@@ -732,14 +732,14 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					} else if(placeId === 'noc_config') {
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) + 32;
 						$(target).css({"right":d,"margin-top":10,"left": "auto","top": "auto"});
-					} else if($(target).hasClass('add_repo')) {
+					} else if($(target).hasClass('add_repo')) {						
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 4;
 						var BottomHeight = clicked.offset().top + clicked.height() - 134 ;
-						$(target).css({"right":d,"left": "auto","margin-top":10,"top": BottomHeight});	
+						$(target).css({"right":d,"left": "auto","margin-top":10,"top": BottomHeight,"bottom" : "auto"});	
 					} else if($(target).hasClass('svn_update')) {
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 4;
 						var BottomHeight = clicked.offset().top + clicked.height() - 134 ;
-						$(target).css({"right":d,"left": "auto","margin-top":10,"top": BottomHeight});	
+						$(target).css({"right":d,"left": "auto","margin-top":10,"top": BottomHeight,"bottom" : "auto"});	
 					} else if($(target).hasClass('commit_table')) {
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 4;
 						var BottomHeight = clicked.offset().top + clicked.height() - 134 ;
@@ -788,10 +788,19 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
 						$(target).toggle();
 						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
-					} else if($(target).hasClass('add_repo')) {
+					} else if($(target).hasClass('add_repo')) {						
 						d = ($(window).width() - (clicked.offset().left + clicked.outerWidth())) +2;
-						var BottomHeight = clicked.offset().top + clicked.height() - 460 ;
-						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});	
+						var bottom = $(window).height() - clicked.offset().top
+						var BottomHeight = bottom + clicked.height() - 68;						
+						$(target).css({"right":d ,"bottom": BottomHeight, "top" : "auto", "left": "auto"});	
+						$(target).toggle();
+						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
+					} 
+					else if($(target).hasClass('svn_update')) {						
+						d = ($(window).width() - (clicked.offset().left + clicked.outerWidth())) +2;
+						var bottom = $(window).height() - clicked.offset().top
+						var BottomHeight = bottom + clicked.height() - 68;						
+						$(target).css({"right":d ,"bottom": BottomHeight, "top" : "auto", "left": "auto"});	
 						$(target).toggle();
 						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
 					} else if ($(ee).attr('name') === 'updateManualTestCase_popup') {
