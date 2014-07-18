@@ -1009,7 +1009,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				artifact = new AetherUtil().getArtifact(appDirName, version, moduleName);
 				artifacts.add(artifact);
 				URL artifacturl = new AetherUtil().resolveArtifact(url, "", "", artifacts);
-				
 				artifactFile = new File(artifacturl.toURI());
 				inputStream = new FileInputStream(artifactFile);
 			}
@@ -1992,7 +1991,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		StringBuilder filePath = new StringBuilder(Utility.getProjectHome()).append(appDirName);
 		File dotPhresoFile = new File(filePath.toString(), appDirName + Constants.SUFFIX_PHRESCO);
 		if(dotPhresoFile.exists() && dotPhresoFile.isDirectory()) {
-			if(StringUtils.isNotEmpty(appInfo.getAppDirName())) {
+			 if(StringUtils.isNotEmpty(appInfo.getAppDirName()) && StringUtils.isNotEmpty(appInfo.getPhrescoPomFile())) {
 				filePath.append(File.separator).append(appDirName + Constants.SUFFIX_PHRESCO).append(File.separator).append(appInfo.getPhrescoPomFile());
 				return new File(filePath.toString());
 			}

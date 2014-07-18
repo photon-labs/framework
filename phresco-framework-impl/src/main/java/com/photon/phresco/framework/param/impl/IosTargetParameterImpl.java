@@ -84,9 +84,14 @@ public class IosTargetParameterImpl implements DynamicParameter {
             } else if (sourceDirectory.startsWith("/source")) {
             	sourceDir = new File(pomFileLocation.getParent() + File.separatorChar + sourceDirectory);
             } else {
-            	sourceDir = new File(Utility.getProjectHome() + applicationInfo.getAppDirName() + File.separator + sourceDirectory);
+            	String filePath = Utility.getProjectHome() + applicationInfo.getAppDirName() ;
+            	String srcSplitDir = pomProcessor.getProperty("phresco.split.src.dir");
+            	if(StringUtils.isNotEmpty(srcSplitDir)) {
+            		filePath = filePath + File.separator + srcSplitDir;
+            	}
+            	sourceDir = new File(filePath, sourceDirectory);
             }
-            
+ 
             FilenameFilter filter = new FileListFilter("", IPHONE_XCODE_WORKSPACE_PROJ_EXTN, IPHONE_XCODE_PROJ_EXTN);
             File[] listFiles = sourceDir.listFiles(filter);
             
@@ -126,6 +131,7 @@ public class IosTargetParameterImpl implements DynamicParameter {
             }
         
         } catch (Exception e) {
+        	e.printStackTrace();
             throw new PhrescoException(e);
         }
 
