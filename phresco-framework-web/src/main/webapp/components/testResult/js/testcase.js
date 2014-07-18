@@ -193,10 +193,10 @@ define(["testResult/listener/testResultListener"], function() {
 			}		
 			self.testResultListener.performAction(self.testResultListener.getActionHeader(requestBody, "getTestReport"), function(response) {
 				var data = {};
-				console.info('response = ' , response);
+				var testcases = {};
 				data.testcases = response.data;
 				data.message = response.message;
-				commonVariables.testcases = response.data;
+				commonVariables.testcases = testcases.data;
 				renderFunction(data, $('#testResult div.widget-maincontent-div'));
 			});
 		},
@@ -385,6 +385,7 @@ define(["testResult/listener/testResultListener"], function() {
 			$("input[name=updateTestCase]").unbind("click");
 			$('input[name=updateTestCase]').click(function() {
 				var data = {};
+			
 				data = $(this).parent().parent().serializeObject();
 				var currentTestsuiteName = commonVariables.testSuiteName;
 				data.testSuite = currentTestsuiteName;
