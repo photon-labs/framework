@@ -682,7 +682,7 @@ define(["projectlist/listener/projectListListener"], function() {
 						$("#phrescopwd_"+dynamicId).val("").removeAttr('readonly');
 						$("#testuname_"+dynamicId).val("").removeAttr('readonly');
 						$("#testpwd_"+dynamicId).val("").removeAttr('readonly');
-						$(".svnsearch").hide();
+						$(".search").hide();
 					} else{
 						$(".search").show();
 						$(".phrescosearch").show();
@@ -693,24 +693,24 @@ define(["projectlist/listener/projectListListener"], function() {
 						$('#phrescopwd_'+dynamicId).val(password);	
 						$('#testuname_'+dynamicId).val(userInfo.id);
 						$('#testpwd_'+dynamicId).val(password);	
-						$('.svnsearch').show();
+						$('.search').show();
 					}	
 				});
 				
 				if($("#type_"+dynamicId).val() === 'svn'){
-					$('.svnsearch').show();
+					$('.search').show();
 					$('.phrescosearch').show();
 					$('.testsearch').show();
 					$('.tfsAddServerPath').hide();
 				} else {
-					$(".svnsearch").hide();
+					$(".search").hide();
 					$(".phrescosearch").hide();
 					$(".testsearch").hide();
 					$('.tfsAddServerPath').hide();
 				}	
 				
-				$('.svnsearch').unbind("click");
-				$('.svnsearch').bind("click", function() {
+				$('.search').unbind("click");
+				$('.search').bind("click", function() {
 					self.projectslistListener.flag1 = 1;
 					var idval = $(this).attr('dynId');
 					var repoType = $(this).attr('typeOfRepo');
@@ -722,6 +722,8 @@ define(["projectlist/listener/projectListListener"], function() {
 							actionBody.repoUrl = $("#repourl_"+dynamicId).val();
 							actionBody.userName = $("#uname_"+dynamicId).val();
 							actionBody.password = $("#pwd_"+dynamicId).val();
+							actionBody.type = $("#commitType_"+dynamicId).val();
+							actionBody.appDirName = $(openccObj).parent().parent().attr("class");
 							commonVariables.hideloading = true;
 							self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
 							self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {
@@ -743,6 +745,8 @@ define(["projectlist/listener/projectListListener"], function() {
 							actionBody.repoUrl = $("#commitRepourl"+dynamicId).val();
 							actionBody.userName = $("#commitUserName"+dynamicId).val();
 							actionBody.password = $("#commitPassword"+dynamicId).val();
+							actionBody.type = $("#commitType_"+dynamicId).val();
+							actionBody.appDirName = $(openccObj).parent().parent().attr("class");
 							commonVariables.hideloading = true;
 							self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
 							self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {
@@ -769,10 +773,12 @@ define(["projectlist/listener/projectListListener"], function() {
 							$('.dotphrescosearchdropdown').empty();
 							dotphresco = 0;
 							var actionBody = {};
+							var appDirName = $(openccObj).parent().parent().attr("class");
 							actionBody.repoUrl = $("#phrescorepourl_"+dynamicId).val();
 							actionBody.userName = $("#phrescouname_"+dynamicId).val();
 							actionBody.password = $("#phrescopwd_"+dynamicId).val();
-
+							actionBody.type = $("#commitType_"+dynamicId).val();
+							actionBody.appDirName = appDirName + "/" + appDirName + "-phresco";
 							commonVariables.hideloading = true;
 							self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
 							self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {
@@ -791,10 +797,13 @@ define(["projectlist/listener/projectListListener"], function() {
 					} else if(typeOfRepo === "commit") {
 							$('.dotphrescosearchdropdown').empty();
 							dotphresco = 0;
+							var appDirName = $(openccObj).parent().parent().attr("class");
 							var actionBody = {};
 							actionBody.repoUrl = $("#phrCommitRepourl"+dynamicId).val();
 							actionBody.userName = $("#phrCommitUserName"+dynamicId).val();
 							actionBody.password = $("#phrCommitPassword"+dynamicId).val();
+							actionBody.type = $("#commitType_"+dynamicId).val();
+							actionBody.appDirName = appDirName + "/" + appDirName + "-phresco";
 							commonVariables.hideloading = true;
 							self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
 							self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {
@@ -820,11 +829,13 @@ define(["projectlist/listener/projectListListener"], function() {
 						if(!(self.projectslistListener.validatedotPhrescoAndTest(idval, 'testrepourl' , 'testuname', 'testpwd','testtype'))) {
 							$('.testsearchdropdown').empty();
 							testsearch = 0;
+							var appDirName = $(openccObj).parent().parent().attr("class");
 							var actionBody = {};
 							actionBody.repoUrl = $("#testrepourl_"+dynamicId).val();
 							actionBody.userName = $("#testuname_"+dynamicId).val();
 							actionBody.password = $("#testpwd_"+dynamicId).val();
-
+							actionBody.type = $("#commitType_"+dynamicId).val();
+							actionBody.appDirName = appDirName + "/" + appDirName + "-test";
 							commonVariables.hideloading = true;
 							self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
 							self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {
@@ -844,10 +855,12 @@ define(["projectlist/listener/projectListListener"], function() {
 						$('.testsearchdropdown').empty();
 							testsearch = 0;
 							var actionBody = {};
+							var appDirName = $(openccObj).parent().parent().attr("class");
 							actionBody.repoUrl = $("#testCommitRepourl"+dynamicId).val();
 							actionBody.userName = $("#testCommitUserName"+dynamicId).val();
 							actionBody.password = $("#testCommitPassword"+dynamicId).val();
-							actionBody.password = $("#testCommitType"+dynamicId).val();
+							actionBody.type = $("#commitType_"+dynamicId).val();
+							actionBody.appDirName = appDirName + "/" + appDirName + "-test";
 							commonVariables.hideloading = true;
 							self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
 							self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {

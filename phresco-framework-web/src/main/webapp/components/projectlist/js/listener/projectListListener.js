@@ -248,7 +248,7 @@ define([], function() {
 			if(action === "searchlogmessage") {
 				header.requestMethod = "POST";
 				header.requestPostBody = JSON.stringify(projectRequestBody);
-				header.webserviceurl = commonVariables.webserviceurl +"repository/logMessages";
+				header.webserviceurl = commonVariables.webserviceurl +"repository/logMessages?appDirName="+projectRequestBody.appDirName;
 			}
 			if (action === "checkMachine") {
 				header.requestMethod = "GET";

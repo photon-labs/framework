@@ -627,13 +627,13 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	@Path("/logMessages")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response fetchLogMessages(RepoDetail repodetail) throws PhrescoException {
+	public Response fetchLogMessages(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, RepoDetail repodetail) throws PhrescoException {
 		List<String> restrictedLogs = null;
 		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
 		try {
 			SCMManagerImpl scmi = new SCMManagerImpl();
 			List<String> svnLogMessages = scmi.getSvnLogMessages(repodetail.getRepoUrl(), repodetail.getUserName(),
-					repodetail.getPassword());
+					repodetail.getPassword(), repodetail.getType(), appDirName);
 			restrictedLogs = restrictLogs(svnLogMessages);
 		} catch (PhrescoException e) {
 			if (e.getLocalizedMessage().contains("Authorization Realm")) {

@@ -72,6 +72,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.UnsupportedCredentialItem;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.StoredConfig;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.CredentialItem;
 import org.eclipse.jgit.transport.CredentialsProvider;
@@ -2215,27 +2216,55 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		return fileslist;
 	}
 
-	public List<String> getSvnLogMessages(String Url, String userName, String Password) throws PhrescoException {
-		setupLibrary();
-		long startRevision = 0;
-		long endRevision = -1; //HEAD (the latest) revision
-		SVNRepository repository = null;
+	public List<String> getSvnLogMessages(String Url, String userName, String Password, String repoType, String appDirName) throws PhrescoException {
 		List<String> logMessages = new ArrayList<String>();
-		try {
-			repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(Url));
-			ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(userName, Password);
-			repository.setAuthenticationManager(authManager);
-			Collection logEntries = null;
-
-			logEntries = repository.log( new String[] { "" } , null , startRevision , endRevision , true , true );
-			for (Iterator entries = logEntries.iterator(); entries.hasNext();) {
-				SVNLogEntry logEntry = (SVNLogEntry) entries.next( );
-				logMessages.add(logEntry.getMessage());
+		if(repoType.equalsIgnoreCase(SVN)) {
+			setupLibrary();
+			long startRevision = 0;
+			long endRevision = -1; //HEAD (the latest) revision
+			SVNRepository repository = null;
+			try {
+				repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(Url));
+				ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(userName, Password);
+				repository.setAuthenticationManager(authManager);
+				Collection logEntries = null;
+				logEntries = repository.log( new String[] { "" } , null , startRevision , endRevision , true , true );
+				for (Iterator entries = logEntries.iterator(); entries.hasNext();) {
+					SVNLogEntry logEntry = (SVNLogEntry) entries.next();
+					logMessages.add(logEntry.getMessage());
+				}
+			} catch (SVNException e) {
+				throw new PhrescoException(e);
 			}
-		} catch (SVNException e) {
-			throw new PhrescoException(e);
 		}
-
+		else if(repoType.equalsIgnoreCase(GIT))	{
+			try {
+					FileRepositoryBuilder builder = new FileRepositoryBuilder();
+					String dotGitDir = Utility.getProjectHome() + appDirName+ File.separator + DOT_GIT;
+					File dotGitDirectory = new File(dotGitDir);
+					if(!dotGitDirectory.exists()) {
+						dotGitDir = Utility.getProjectHome() +appDirName + File.separator + appDirName+ File.separator + DOT_GIT;
+						dotGitDirectory= new File(dotGitDir);
+					}
+					if(!dotGitDir.isEmpty()) {
+					 Repository repo = builder.setGitDir(dotGitDirectory).setMustExist(true).build();
+					 Git git = new Git(repo);
+					 Iterable<RevCommit> log = git.log().call();
+					 for (Iterator<RevCommit> iterator = log.iterator(); iterator.hasNext();) {
+						 RevCommit rev = iterator.next();
+						if(!rev.getFullMessage().isEmpty()) {	
+							logMessages.add(rev.getFullMessage());				}
+						}
+					 repo.close();
+				}
+			}
+			catch(GitAPIException ge) {
+				throw new PhrescoException(ge);
+			}
+			catch(IOException ioe) {
+				throw new PhrescoException(ioe);
+			}
+		}
 		return logMessages;
 	}
 
