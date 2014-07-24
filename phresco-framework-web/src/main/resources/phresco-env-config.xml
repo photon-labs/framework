@@ -21,7 +21,7 @@
 			<port>80</port>
 			<username/>
 			<password/>
-			<context>service-2.0</context>
+			<context>service</context>
 			<additional_context>/rest/api</additional_context>
 		</WebService>
                  
@@ -125,7 +125,7 @@
         </Other>
     </environment>
 
-<environment default="false" name="Testing-amazon">
+<environment default="false" name="Testing-release">
          <Server appliesTo="tech-html5-widget" desc="" name="server">
             <protocol>http</protocol>
             <host>localhost</host>
@@ -143,11 +143,11 @@
 
         <WebService desc="" name="webservice">
             <protocol>http</protocol>
-            <host>54.242.10.51</host>
-            <port>8080</port>
+            <host>172.16.8.122</host>
+            <port>7070</port>
             <username/>
             <password/>
-            <context>service-testing</context>
+            <context>service-release</context>
             <additional_context>/rest/api</additional_context>
         </WebService>
 
