@@ -143,8 +143,8 @@
 
         <WebService desc="" name="webservice">
             <protocol>http</protocol>
-            <host>172.16.8.122</host>
-            <port>7070</port>
+            <host>phresco.photoninfotech.com</host>
+            <port>80</port>
             <username/>
             <password/>
             <context>service-release</context>
