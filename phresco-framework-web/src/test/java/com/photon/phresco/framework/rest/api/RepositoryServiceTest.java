@@ -113,26 +113,27 @@ public class RepositoryServiceTest extends RestBaseTest  {
 
 	@Test
 	public void  fetchLogMessages() throws PhrescoException {
+		String appDirName = "";
 		RepoDetail repodetail = new RepoDetail();
 		repodetail.setUserName("santhosh_ja");
 		repodetail.setPassword("sandoze!24");
 		repodetail.setRevision("head");
 		repodetail.setType("svn");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
-		Response fetchLogMessages = repositoryservice.fetchLogMessages(repodetail);
+		Response fetchLogMessages = repositoryservice.fetchLogMessages(appDirName, repodetail);
 		Assert.assertEquals(200,fetchLogMessages.getStatus());
 		
 		repodetail.setRepoUrl("http://wrong.url.com");
-		Response wrongUrlResponse = repositoryservice.fetchLogMessages(repodetail);
+		Response wrongUrlResponse = repositoryservice.fetchLogMessages(appDirName, repodetail);
 		Assert.assertEquals(200, wrongUrlResponse.getStatus());
 		
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/Dharani/iphone/iPhone-Native-None/");
-		Response lessLogs = repositoryservice.fetchLogMessages(repodetail);
+		Response lessLogs = repositoryservice.fetchLogMessages(appDirName, repodetail);
 		Assert.assertEquals(200, lessLogs.getStatus());
 		
 		repodetail.setUserName("sample");
 		repodetail.setPassword("sample");
-		Response unauthorisedResponse = repositoryservice.fetchLogMessages(repodetail);
+		Response unauthorisedResponse = repositoryservice.fetchLogMessages(appDirName, repodetail);
 		Assert.assertEquals(200, unauthorisedResponse.getStatus());
 	}
 	
