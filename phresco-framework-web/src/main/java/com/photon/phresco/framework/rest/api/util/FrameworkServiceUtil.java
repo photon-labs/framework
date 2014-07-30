@@ -23,7 +23,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -37,7 +36,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1496,7 +1494,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 					 String manualDir = pomProcessor.getPropertyValue(POM_PROP_KEY_MANUALTEST_RPT_DIR);
 					 if (manualDir.contains(PHRESO_TEST_DIR)) {
 							manualDir = manualDir.replace(PHRESO_TEST_DIR, TEST);
-							manualDir = rootModulePath + manualDir ;
+							manualDir = testFolder + manualDir ;
 					  }
 					 file = new File(manualDir);
 					 xmlResultsAvailable = xlsFileSearch(file, xmlResultsAvailable); 
@@ -1685,33 +1683,6 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 		}
 
 		return isResultFileAvailable;
-	}
-	
-	public List<String> getProps(List<String> buildArgCmds) throws PhrescoException {
-		Properties sonarConfig = new Properties();
-		InputStream inputstream = null;
-		try {
-			inputstream = this.getClass().getClassLoader().getResourceAsStream("framework.config");
-			sonarConfig.load(inputstream);
-			String remoteSonar = sonarConfig.getProperty("phresco.code.remote.sonar");
-			if(StringUtils.isNotEmpty(remoteSonar) && remoteSonar.equalsIgnoreCase("true")) {
-			String sonarUrl = sonarConfig.getProperty("phresco.code.sonar.url");
-			String sonarJdbcUrl = sonarConfig.getProperty("phresco.code.sonar.jdbc.url");
-			String sonarUserName = sonarConfig.getProperty("phresco.code.sonar.username");
-			String sonarPassWord = sonarConfig.getProperty("phresco.code.sonar.password");
-			buildArgCmds.add("-DsonarUrl=" + "\"" + sonarUrl + "\"");
-			buildArgCmds.add("-DjdbcUrl=" + "\"" + sonarJdbcUrl + "\"");
-			buildArgCmds.add("-DsonarUsername=" + "\"" + sonarUserName + "\"");
-			buildArgCmds.add("-DsonarPassword=" + "\"" + sonarPassWord + "\"");
-			} else {
-				String sonarUrl = sonarConfig.getProperty("phresco.code.sonar.url");
-				buildArgCmds.add("-DsonarUrl=" + "\"" + sonarUrl + "\"");
-			}
-			return buildArgCmds;
-		} catch (IOException e) {
-			throw new PhrescoException(e);
-		}
-		
 	}
 
 	private boolean xmlFileSearch(File file, boolean xmlResultsAvailable) {
