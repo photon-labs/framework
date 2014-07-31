@@ -578,18 +578,21 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 						url, RESPONSE_STATUS_SUCCESS, PHR500004);
 				return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 			} catch (MalformedURLException e) {
-				 ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e,
-		                    null, RESPONSE_STATUS_ERROR, PHR510010);
+				 url = CODE_404;
+				 ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
+		                    url, RESPONSE_STATUS_ERROR, PHR510010);
 		            return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 		                    .build();
 			} catch (PhrescoException e) {
-				 ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e,
-		                    null, RESPONSE_STATUS_ERROR, PHR510011);
+				url = CODE_404;
+				 ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
+		                    url, RESPONSE_STATUS_ERROR, PHR510011);
 		            return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 		                    .build();
 			} catch (PhrescoPomException e) {
-				 ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e,
-		                    null, RESPONSE_STATUS_ERROR, PHR510011);
+				url = CODE_404;
+				 ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
+		                    url, RESPONSE_STATUS_ERROR, PHR510011);
 		            return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 		                    .build();
 			}
@@ -626,13 +629,16 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 						url, RESPONSE_STATUS_SUCCESS, PHR500004);
 				return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 			} catch (MalformedURLException e) {
-				 ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e,
-		                    null, RESPONSE_STATUS_ERROR, PHR510001);
+				 url = CODE_404;
+				 
+				 ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
+		                    url, RESPONSE_STATUS_ERROR, PHR510001);
 		            return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, 
 		            		ALL_HEADER).build();
 			} catch (PhrescoException e) {
-				 ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e,
-		                    null, RESPONSE_STATUS_ERROR, PHR510001);
+				url = CODE_404;
+				 ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
+		                    url, RESPONSE_STATUS_ERROR, PHR510001);
 		            return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 		            		ALL_HEADER).build();
 			}
