@@ -189,10 +189,10 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 				}
             }
             boolean resutlAvailable = testResultAvailunit(rootModulePath, subModuleName, testAgainsts, Constants.PHASE_UNIT_TEST);
-            System.out.println("resultavailable"+ resutlAvailable);
+            
             String showDevice = getUnitTestShowDevice(rootModulePath, subModuleName);
             if (resutlAvailable) {
-            	System.out.println("entering if loop");
+            	
             	testResultFiles = testResultFilesunit(rootModulePath, subModuleName, testAgainsts, showDevice, Constants.PHASE_UNIT_TEST);
               }
             
@@ -231,7 +231,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
     	for ( String p : testResultFiles )
     	{
     		if(p.length()!= -2){
-    			System.out.println("length"+p.length());
     		String  test = p.substring(5, p.length() - 4);    		 
     			 testResult.append(test).append(",");  
     		}
@@ -2398,7 +2397,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
         	File testFolderLocation = Utility.getTestFolderLocation(projectInfo, rootModulePath, subModuleName);
         	if (Constants.PHASE_UNIT_TEST.equals(action)) {
         		reportDir =FrameworkServiceUtil.getUnitTestRptDir(rootModulePath, subModuleName);
-        		System.out.println("reportDir"+reportDir);
         		resultExtension = "xml";
         	} /*else {
         		reportDir = FrameworkServiceUtil.getLoadTestReportDir(rootModulePath, subModuleName);
@@ -2421,7 +2419,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
                 
                 File file = new File(sb.toString());
                 if (StringUtils.isNotEmpty(resultExtension) && file.exists()) {
-                	System.out.println("entering result extension && file exists");
                 	File[] children = file.listFiles(new XmlNameFileFilter(resultExtension));
                 	if (!ArrayUtils.isEmpty(children)) {
                 		resultAvailable = true;
@@ -2432,7 +2429,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
             
             if (CollectionUtils.isEmpty(testAgainsts) && Constants.PHASE_UNIT_TEST.equals(action) 
             			&& StringUtils.isNotEmpty(reportDir)) {
-            	System.out.println("entering test against  && report dir");
             	 StringBuilder sb = new StringBuilder(testFolderLocation.getPath());
             	 sb.append(reportDir);
             	 File file = new File(sb.toString());
