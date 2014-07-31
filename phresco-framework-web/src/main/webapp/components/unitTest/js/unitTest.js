@@ -13,6 +13,7 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 		onDynamicPageEvent : null,
 		onRunUnitTestEvent : null,
 		validation : null,
+
 		
 		/***
 		 * Called in initialization time of this class 
@@ -72,6 +73,36 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 				}
 				return returnVal;
 			});
+			
+			Handlebars.registerHelper('testResult', function(showDevice, testResult, firstValue, id) {
+				var returnVal = "";
+				if (showDevice!== undefined && testResult.length > 0 && !$.isEmptyObject(testResult)) {
+					if (firstValue && id) {
+						returnVal = testResult[0].split("#SEP#")[0];
+					} else if (firstValue && !id) {
+						returnVal = testResult[0].split("#SEP#")[1];
+					} else {
+						$.each(testResult, function(i, value){
+							returnVal += '<li class="devicesOption"><a href="javascript:void(0)" name="testResult" deviceId="'+ value.split("#SEP#")[0] +'">'+ value.split("#SEP#")[0] +'</a></li>';
+						});
+						 returnVal += '<li class="devicesOption"><a href="javascript:void(0)" name="testResult" deviceId="">All</a></li>';
+						
+					} 
+				} 
+				
+				return returnVal;
+			});
+			
+			//To show/hide device dropdown
+			Handlebars.registerHelper('showDeviceDropDown', function(showDevice, testResult, options) {
+				var returnVal = "";
+				if (showDevice && testResult.length > 0) {
+					return options.fn(this);
+				} else {
+					return options.inverse(this);
+				} 
+			});
+
 		},
 		
 		/***
@@ -96,6 +127,9 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 				Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
 				Clazz.navigationController.push(self.testsuiteResult, false);
 			});
+			
+			//commonVariables.currentDevice = $('li a[name="testResult"]').attr("deviceid");
+			
 		},
 		
 		preRender: function(whereToRender, renderFunction) {
@@ -105,10 +139,27 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 				var unitTestOptions = {};
 				unitTestOptions.reportOptions = responseData.reportOptions;
 				unitTestOptions.projectModules = responseData.projectModules;
+				unitTestOptions.testAgainsts = responseData.testAgainsts;
+			    unitTestOptions.resultAvailable = responseData.resultAvailable;
+			    unitTestOptions.showDevice = responseData.showDevice;
+			    unitTestOptions.testResultFiles = responseData.testResultFiles;
+				unitTestOptions.testResult = responseData.testResult;
 				var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 				unitTestOptions.userPermissions = userPermissions;
 				renderFunction(unitTestOptions, whereToRender);
+				self.handleDevice(unitTestOptions);
 			});
+		},
+		
+		handleDevice : function(unitTestOptions){
+		 if(unitTestOptions.showDevice !== null && unitTestOptions.showDevice !== ""){
+		  console.info("enetring if");
+		  commonVariables.currentDevice = $('li a[name="testResult"]').attr("deviceid");
+		 }
+		 else{
+		  console.info("enetring else");
+		  commonVariables.currentDevice = "";
+		 }
 		},
 		
 		reportModifier : function(data) {
@@ -190,6 +241,21 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 				var paramJson = {};
 				paramJson.type =  commonVariables.typeUnitTest;
 				commonVariables.navListener.copyPath(paramJson);
+			});
+			
+			$('li a[name="testResult"]').unbind("click");
+			$('li a[name="testResult"]').click(function() {
+			   var previousDevice =  $("#deviceDropDown").attr("value");
+			   commonVariables.currentDevice = $(this).attr("deviceid");
+			if (previousDevice !== commonVariables.currentDevice) {
+				$("#deviceDropDown").html($(this).text()  + '<b class="caret"></b>');
+				$("#deviceDropDown").attr("value", commonVariables.currentDevice);
+			  }
+			  commonVariables.navListener.getMyObj(commonVariables.testsuiteResult, function(retVal) {
+				self.testsuiteResult = retVal;
+				Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
+				Clazz.navigationController.push(self.testsuiteResult, false);
+			});
 			});
 			
 			//To run the unit test

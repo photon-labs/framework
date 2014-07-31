@@ -169,6 +169,7 @@ define(["testResult/listener/testResultListener"], function() {
 		},
 		
 		showReportView : function() {
+		    
 			$("#testSuites, #testcases, #graphView, #iframeContent, .urlInactive, #executeView").hide();
 			if ($('.suite_table').size() === 1) {
 				//Test suite table report is alive

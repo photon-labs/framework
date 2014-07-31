@@ -20,7 +20,6 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 		iframeAction : null,
 		iframeUrlAlive : null,
 		
-		
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -142,6 +141,34 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 				width = (iframeKey !== undefined) ?  'width:236px;' : '';
 				return width;
 			});
+			
+			Handlebars.registerHelper('testResult', function(showDevice, testResult, firstValue, id) {
+				var returnVal = "";
+				if (showDevice && testResult !== undefined && testResult.length > 0 && !$.isEmptyObject(testResult)) {
+					if (firstValue && id) {
+						returnVal = testResult[0].split("#SEP#")[0];
+					} else if (firstValue && !id) {
+						returnVal = testResult[0].split("#SEP#")[1];
+					} else {
+						$.each(testResult, function(i, value){
+							returnVal += '<li class="devicesOption"><a href="javascript:void(0)" name="testResult" deviceId="'+ value.split("#SEP#")[0] +'">'+ value.split("#SEP#")[0] +'</a></li>';
+						});
+						returnVal += '<li class="devicesOption"><a href="javascript:void(0)" name="testResult" deviceId="">All</a></li>';
+					} 
+				} 
+				
+				return returnVal;
+			});
+			
+			//To show/hide device dropdown
+			Handlebars.registerHelper('showDeviceDropDown', function(showDevice, testResult, options) {
+				var returnVal = "";
+				if (showDevice && testResult.length > 0) {
+					return options.fn(this);
+				} else {
+					return options.inverse(this);
+				} 
+			});
 		},
 		
 		/***
@@ -167,7 +194,7 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			});
 		
 			$("#formid").submit();
-			
+			 commonVariables.currentDevice = $('li a[name="testResult"]').attr("deviceid");
 		},
 		
 		preRender: function(whereToRender, renderFunction) {
@@ -181,6 +208,11 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 				functionalTestOptions.appiumStatus = responseData.appiumStatus;
 				functionalTestOptions.iframeUrlAlive = responseData.iframeUrlAlive;
 				functionalTestOptions.iframeAction = responseData.iframeUrl;
+				functionalTestOptions.testAgainsts = responseData.testAgainsts;
+			    functionalTestOptions.resultAvailable = responseData.resultAvailable;
+			    functionalTestOptions.showDevice = responseData.showDevice;
+			    functionalTestOptions.testResultFiles = responseData.testResultFiles;
+				functionalTestOptions.testResult = responseData.testResult;
 				var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 				functionalTestOptions.userPermissions = userPermissions;
 				renderFunction(functionalTestOptions, whereToRender);
@@ -302,16 +334,30 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			$("#executeStartAppium").click(function() {
 				commonVariables.runType = 'startAppium';
 				$('input[name=kill]').attr('disabled', true);
-				if(!self.validationtextbox()){
-					self.onPerformActionEvent.dispatch("startAppium");
-				}
+				self.onPerformActionEvent.dispatch("startAppium");
 			});
-		
+			
 			$("#iframe").unbind("click");
 			$("#iframe").click(function() {
 				$("iframeContent").show();
 
 			});
+			
+			$('li a[name="testResult"]').unbind("click");
+			$('li a[name="testResult"]').click(function() {
+			   var previousDevice =  $("#deviceDropDown").attr("value");
+			   commonVariables.currentDevice = $(this).attr("deviceid");
+			if (previousDevice !== commonVariables.currentDevice) {
+				$("#deviceDropDown").html($(this).text()  + '<b class="caret"></b>');
+				$("#deviceDropDown").attr("value", commonVariables.currentDevice);
+			  }
+			  commonVariables.navListener.getMyObj(commonVariables.testsuiteResult, function(retVal) {
+				self.testsuiteResult = retVal;
+				Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
+				Clazz.navigationController.push(self.testsuiteResult, false);
+			});
+			});
+			
 
 			//Shows the report view of the test result
 			$(".report1").unbind("click");
@@ -338,29 +384,6 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			
 			self.tableScrollbar();
 			self.customScroll($(".consolescrolldiv"));
-		},
-		
-		validationtextbox:function(){
-			var self = this;
-				if($('#appPackage').val() === ""){
-					self.valid("#appPackage", "Package Name");
-					self.hasError = true;
-				} else if($('#appActivity').val() === ""){
-					self.valid("#appActivity", "Activity Name");
-					self.hasError = true;
-				}else {
-					self.hasError = false;
-				} 
-				return self.hasError;
-		},
-		
-		valid : function(item, msg) {
-			$(item).focus();
-			$(item).attr('placeholder', msg);
-			$(item).addClass("errormessage");
-			$(item).bind('keypress', function() {
-				$(this).removeClass("errormessage");
-			});
 		}
 	});
 

@@ -361,10 +361,8 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				testType = "manual";
 			} else if ("integrationTest" === currentTab) {
 			    appDirName = $("#editprojecttitle").attr('projectname');
-			    projectCode = $("#editprojecttitle").attr('projectcode');
  				testType = "integration";
 			} else if ("SEO" === currentTab) {
-				console.info('currentTab = ' , currentTab);
  				testType = "seo";
 			}
 			if (action === "getTestSuite") {
@@ -375,6 +373,14 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 					header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/testsuites?appDirName=" + appDirName + "&testType=" + testType + moduleParam;
 					if ("integrationTest" === currentTab) {
 						header.webserviceurl = header.webserviceurl + "&projectCode=" + commonVariables.projectCode;
+					}
+					if ("unitTest" === currentTab){
+					    header.webserviceurl = header.webserviceurl + "&deviceid=" + commonVariables.
+						currentDevice;  
+					}
+					if ("functionalTest" === currentTab){
+					    header.webserviceurl = header.webserviceurl + "&deviceid=" + commonVariables.
+						currentDevice;  
 					}
 				}
 				
@@ -403,30 +409,14 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				commonVariables.hideloading = true;
 				var data = $('#pdfReportForm').serialize();
 				header.requestMethod = "POST";
-				if ("integrationTest" === currentTab) {
-				var projectCode = commonVariables.projectCode;
-				header.webserviceurl = commonVariables.webserviceurl + "app/printAsPdf?appDirName=" + projectCode + "&fromPage=" + testType + "&" + data + "&userId=" + userId + rootModuleParam;
-				} else {
 				header.webserviceurl = commonVariables.webserviceurl + "app/printAsPdf?appDirName=" + appDirName + "&" + data + "&userId=" + userId + rootModuleParam;
-				}
 			} else if (action === "getPdfReports") {
 				var data = $('#pdfReportForm').serialize();
 				header.requestMethod = "GET";
-				if ("integrationTest" === currentTab) {
-				var projectCode = commonVariables.projectCode;
-				header.webserviceurl = commonVariables.webserviceurl + "pdf/showPopUp?appDirName=" + projectCode + "&fromPage=" + testType + rootModuleParam;
-				} else {	
 				header.webserviceurl = commonVariables.webserviceurl + "pdf/showPopUp?appDirName=" + appDirName + "&fromPage=" + testType + rootModuleParam;
-				}
 			} else if (action === "deletePdfReport") {
-				var data = $('#pdfReportForm').serialize();
 				header.requestMethod = "DELETE";
-				if ("integrationTest" === currentTab) {
-				var projectCode = commonVariables.projectCode;
-				header.webserviceurl = commonVariables.webserviceurl + "pdf/deleteReport?appDirName=" + projectCode + "&fromPage=" + testType + "&reportFileName=" + requestBody.fileName + rootModuleParam;
-				} else {
 				header.webserviceurl = commonVariables.webserviceurl + "pdf/deleteReport?appDirName=" + appDirName + "&fromPage=" + testType + "&reportFileName=" + requestBody.fileName + rootModuleParam;
-				}
 			} else if(action === "deleteTestSuite") {
 				header.requestMethod = "DELETE";
 				header.webserviceurl = commonVariables.webserviceurl + "manual/deleteTestsuite?appDirName=" + appDirName +"&testSuiteName=" + requestBody.testsuitename + rootModuleParam;
@@ -434,14 +424,8 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				header.requestMethod = "DELETE";
 				header.webserviceurl = commonVariables.webserviceurl + "manual/deleteTestCase?appDirName=" + appDirName +"&testSuiteName=" + requestBody.testsuitename +"&testCaseId="+requestBody.testCaseName+ rootModuleParam;
 			} else if (action === "downloadPdfReport") {
-				var data = $('#pdfReportForm').serialize();
 				header.requestMethod = "GET";
-				if ("integrationTest" === currentTab) {
-				var projectCode = commonVariables.projectCode;
-				header.webserviceurl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName=" + projectCode + "&fromPage=" + testType + "&reportFileName=" + requestBody.fileName + rootModuleParam;
-				} else {
 				header.webserviceurl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName=" + appDirName + "&fromPage=" + testType + "&reportFileName=" + requestBody.fileName + rootModuleParam;
-				}
 			} else if (action === "updateTestcase") {
 				header.requestMethod = "PUT";
 				header.requestPostBody = JSON.stringify(requestBody);
@@ -517,7 +501,7 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			commonVariables.hideloading = true;
 			self.performAction(self.getActionHeader(requestBody, "getPdfReports"), function(response) {
 				$('.progress_loading').hide();
-				self.listPdfReports(response.data.json); 	
+				self.listPdfReports(response.data.json);
 				commonVariables.hideloading = false;
 			});
 		},
