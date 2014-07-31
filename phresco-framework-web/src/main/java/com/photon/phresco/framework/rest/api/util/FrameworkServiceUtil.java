@@ -286,7 +286,16 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	public static String getUnitTestDir(String rootModulePath, String subModule) throws PhrescoException, PhrescoPomException {
         return Utility.getPomProcessor(rootModulePath, subModule).getProperty(POM_PROP_KEY_UNITTEST_DIR);
     }
-	
+	/**
+	 * To ge the unit test directory
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 * @throws PhrescoPomException
+	 */
+	public static String getUnitTestRptDir(String rootModulePath, String subModule) throws PhrescoException, PhrescoPomException {
+        return Utility.getPomProcessor(rootModulePath, subModule).getProperty(POM_PROP_KEY_UNITTEST_RPT_DIR);
+    }
 	/**
 	 * To get the functional test directory
 	 * @param appDirName
@@ -297,7 +306,16 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	public static String getFunctionalTestDir(String rootModulePath, String subModule) throws PhrescoException, PhrescoPomException {
 		return Utility.getPomProcessor(rootModulePath, subModule).getProperty(POM_PROP_KEY_FUNCTEST_DIR);
 	}
-	
+	/**
+	 * To get the functional test directory
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 * @throws PhrescoPomException
+	 */
+	public static String getFunctionalTestRptDir(String rootModulePath, String subModule) throws PhrescoException, PhrescoPomException {
+		return Utility.getPomProcessor(rootModulePath, subModule).getProperty(POM_PROP_KEY_FUNCTIONAL_RPT_DIR);
+	}
 	/**
 	 * To get the component test directory
 	 * @param appinfo
@@ -423,6 +441,16 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
         return Utility.getPomProcessor(rootModulePath, subModule).getProperty(POM_PROP_KEY_MANUALTEST_RPT_DIR);
     }
 	
+	/**
+	 * To get the unit test result file extension
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 * @throws PhrescoPomException
+	 */
+	public static String getunitResultFileExtension(String rootModulePath, String subModule) throws PhrescoException, PhrescoPomException {
+			return Utility.getPomProcessor(rootModulePath, subModule).getProperty(Constants.POM_PROP_KEY_UNITTEST_RESULT_EXTENSION);
+	}
 	/**
 	 * To get the build test directory
 	 * @param appDirName
@@ -1496,7 +1524,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 					 String manualDir = pomProcessor.getPropertyValue(POM_PROP_KEY_MANUALTEST_RPT_DIR);
 					 if (manualDir.contains(PHRESO_TEST_DIR)) {
 							manualDir = manualDir.replace(PHRESO_TEST_DIR, TEST);
-							manualDir = testFolder + manualDir ;
+							manualDir = rootModulePath + manualDir ;
 					  }
 					 file = new File(manualDir);
 					 xmlResultsAvailable = xlsFileSearch(file, xmlResultsAvailable); 

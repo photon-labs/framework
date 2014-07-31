@@ -63,9 +63,11 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.tools.ant.types.resources.Files;
 import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -146,15 +148,19 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 * @param appDirName the app dir name
 	 * @param userId the user id
 	 * @return the response
+	 * @throws Exception 
 	 */
 	@GET
 	@Path(REST_API_UNIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response unit(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
+			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_MODULE_NAME) String module) throws Exception  {
+		List<String> testResultFiles = new ArrayList<String>();
+		List<String> testResult = new ArrayList<String>();
 		ResponseInfo<Map> responseData = new ResponseInfo<Map>();
 		try {
-			Map<String, List<String>> unitTestOptionsMap = new HashMap<String, List<String>>();
+			Map<String, Object> unitMap = new HashMap<String, Object>();
+			//Map<String, List<String>> unitTestOptionsMap = new HashMap<String, List<String>>();
 			String rootModulePath = "";
 			String subModuleName = "";
 			if (StringUtils.isNotEmpty(module)) {
@@ -166,15 +172,49 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			List<String> unitReportOptions = getUnitReportOptions(rootModulePath, subModuleName);
 			if (StringUtils.isEmpty(module)) {
 				List<String> projectModules = FrameworkServiceUtil.getProjectModules(rootModulePath, subModuleName);
-				unitTestOptionsMap.put(PROJECT_MODULES, projectModules);
+				unitMap.put(PROJECT_MODULES, projectModules);
 				if (CollectionUtils.isNotEmpty(projectModules)) {
 					unitReportOptions = getUnitReportOptions(rootModulePath, projectModules.get(0));
 				}
 			}
-			unitTestOptionsMap.put(REPORT_OPTIONS, unitReportOptions);
-			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-					unitTestOptionsMap, RESPONSE_STATUS_SUCCESS, PHRQ100001);
+			
+            MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_UNIT_TEST, 
+									Constants.PHASE_UNIT_TEST, rootModulePath, subModuleName)));
+            List<String> testAgainsts = new ArrayList<String>();
+            Parameter testAgainstParameter = mojo.getParameter(Constants.PHASE_UNIT_TEST, REQ_TEST_AGAINST);
+            if (testAgainstParameter != null && TYPE_LIST.equalsIgnoreCase(testAgainstParameter.getType())) {
+            	List<Value> values = testAgainstParameter.getPossibleValues().getValue();
+            	for (Value value : values) {
+            		testAgainsts.add(value.getKey());
+				}
+            }
+            boolean resutlAvailable = testResultAvailunit(rootModulePath, subModuleName, testAgainsts, Constants.PHASE_UNIT_TEST);
+            System.out.println("resultavailable"+ resutlAvailable);
+            String showDevice = getUnitTestShowDevice(rootModulePath, subModuleName);
+            if (resutlAvailable) {
+            	System.out.println("entering if loop");
+            	testResultFiles = testResultFilesunit(rootModulePath, subModuleName, testAgainsts, showDevice, Constants.PHASE_UNIT_TEST);
+              }
+            
+            if(StringUtils.isNotEmpty(showDevice)) {
+            	testResult = testResultfileTrim(testResultFiles);   
+            }
+            
+            unitMap.put(TEST_AGAINSTS, testAgainsts);
+            unitMap.put(RESULT_AVAILABLE, resutlAvailable);
+            unitMap.put(TEST_RESULT_FILES, testResultFiles);
+            unitMap.put(TEST_RESULT, testResult);
+            unitMap.put(SHOW_DEVICE, showDevice);
+            unitMap.put(REPORT_OPTIONS, unitReportOptions);
+          
+
+			ResponseInfo<Map> finalOutput = responseDataEvaluation(responseData, null,
+					unitMap,RESPONSE_STATUS_SUCCESS, PHRQ100001);
+			
+			/*ResponseInfo<List<String>> finalOutputvalue = responseDataEvaluation(responseData, null,
+					unitTestOptionsMap, RESPONSE_STATUS_SUCCESS, PHRQ100001);*/
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
+			
 		} catch (PhrescoException e) {
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
 					null, RESPONSE_STATUS_ERROR, PHRQ110001);
@@ -182,6 +222,28 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			.build();
 		}
 	}
+
+
+	private List<String> testResultfileTrim(List<String> testResultFiles) {
+		
+		StringBuilder testResult = new StringBuilder();
+		testResult.append("[");
+    	for ( String p : testResultFiles )
+    	{
+    		if(p.length()!= -2){
+    			System.out.println("length"+p.length());
+    		String  test = p.substring(5, p.length() - 4);    		 
+    			 testResult.append(test).append(",");  
+    		}
+    		
+    		
+    	}
+    	testResult.append("]");
+    	String testResultf = testResult.substring(1, testResult.length()-2).toString();
+    	List<String> testResultfile = Arrays.asList(testResultf.split("\\s*,\\s*"));
+		return testResultfile;
+	}
+
 
 	/**
 	 * zap.
@@ -397,8 +459,9 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTestSuites(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
 			@QueryParam(REST_QUERY_TEST_TYPE) String testType, @QueryParam(REST_QUERY_TECH_REPORT) String techReport,
-			@QueryParam(REST_QUERY_MODULE_NAME) String moduleName, @QueryParam(REST_QUERY_PROJECT_CODE) String projectCode) throws PhrescoException {
+			@QueryParam(REST_QUERY_MODULE_NAME) String moduleName, @QueryParam(REST_QUERY_PROJECT_CODE) String projectCode, @QueryParam("deviceid") String deviceid) throws PhrescoException {
 		ResponseInfo<List<TestSuite>> responseData = new ResponseInfo<List<TestSuite>>();
+		
 		try {
 			if (StringUtils.isNotEmpty(projectCode)) {
 				appDirName = projectCode + INTEGRATION_TEST;
@@ -429,7 +492,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			
 						
 			List<TestSuite> testSuites = testSuites(appDirName, moduleName, testType, techReport,
-					testSuitePath, testCasePath, ALL, rootModulePath, subModuleName);
+					testSuitePath, testCasePath, ALL, rootModulePath, subModuleName,deviceid);
 			if (CollectionUtils.isEmpty(testSuites)) {
 				ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, null,
 						testSuites, RESPONSE_STATUS_SUCCESS, PHRQ000003);
@@ -458,18 +521,19 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 * @return the list
 	 * @throws PhrescoException the phresco exception
 	 */
-	private List<TestSuite> testSuites(String appDirName, String moduleName, String testType, String techReport, String testSuitePath, String testCasePath, String testSuite, String rootModulePath,String subModule) throws PhrescoException {
+	private List<TestSuite> testSuites(String appDirName, String moduleName, String testType, String techReport, String testSuitePath, String testCasePath, String testSuite, String rootModulePath,String subModule, String deviceid) throws PhrescoException {
 		setTestSuite(testSuite);
 		List<TestSuite> allSuites = new ArrayList<TestSuite>();
 		try {
 			String mapKey = constructMapKey(appDirName, moduleName);
 			String testSuitesMapKey = mapKey + testType + moduleName + techReport;
 			String testResultPath = getTestResultPath(appDirName, rootModulePath, subModule, testType, techReport);
-			File[] testResultFiles = getTestResultFiles(testResultPath);
+			File[] testResultFiles = getTestResultFiles(testResultPath, "");
+			
 			if (ArrayUtils.isEmpty(testResultFiles)) {
 				return null;
 			}
-			getTestSuiteNames(appDirName, testType, moduleName, techReport, testResultPath, testSuitePath);
+			getTestSuiteNames(appDirName, testType, moduleName, techReport, testResultPath, testSuitePath,rootModulePath,subModule,deviceid);
 			Map<String, List<NodeList>> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
 			if (MapUtils.isEmpty(testResultNameMap)) {
 				return null;
@@ -599,7 +663,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTestReports(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
 			@QueryParam(REST_QUERY_TEST_TYPE) String testType, @QueryParam(REST_QUERY_TECH_REPORT) String techReport,
-			@QueryParam(REST_QUERY_MODULE_NAME) String moduleName, @QueryParam(REST_QUERY_TEST_SUITE) String testSuite, @QueryParam(REST_QUERY_PROJECT_CODE) String projectCode)
+			@QueryParam(REST_QUERY_MODULE_NAME) String moduleName, @QueryParam(REST_QUERY_TEST_SUITE) String testSuite, @QueryParam(REST_QUERY_PROJECT_CODE) String projectCode, @QueryParam("deviceid") String deviceid)
 			throws PhrescoException {
 		String testSuitePath = "";
 		String testCasePath = "";
@@ -625,7 +689,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			testStepPath = getTestStepNodeName(appDirName,rootModulePath, subModuleName, testType, techReport);
 			
 			return testReport(rootModule, moduleName, testType, moduleName, techReport, testSuitePath, testCasePath, testStepPath,
-					testSuite, rootModulePath, subModuleName);
+					testSuite, rootModulePath, subModuleName,deviceid);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new PhrescoException(e);
@@ -651,6 +715,8 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			
 			String rootModulePath = "";
 			String subModuleName = "";
+			List<String> testResultFiles = new ArrayList<String>();
+			List<String> testResult = new ArrayList<String>();
 			if (StringUtils.isNotEmpty(module)) {
 				rootModulePath = Utility.getProjectHome() + appDirName;
 				subModuleName = module;
@@ -704,6 +770,33 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 					map.put(APPIUM_STATUS, isConnectionAlive);
 				}
 			}
+		MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_FUNCTIONAL_TEST, 
+								Constants.PHASE_FUNCTIONAL_TEST, rootModulePath, subModuleName)));
+		List<String> testAgainsts = new ArrayList<String>();
+		Parameter testAgainstParameter = mojo.getParameter(Constants.PHASE_FUNCTIONAL_TEST, REQ_TEST_AGAINST);
+		if (testAgainstParameter != null && TYPE_LIST.equalsIgnoreCase(testAgainstParameter.getType())) {
+			List<Value> values = testAgainstParameter.getPossibleValues().getValue();
+			for (Value value : values) {
+				testAgainsts.add(value.getKey());
+			}
+		}
+		boolean resutlAvailable = testResultAvailfunctional(rootModulePath, subModuleName, testAgainsts, Constants.PHASE_FUNCTIONAL_TEST);
+		boolean showDevice = Boolean.parseBoolean(getFunctionalTestShowDevice(rootModulePath, subModuleName));
+		if (resutlAvailable) {
+			testResultFiles = testResultFilesfunctional(rootModulePath, subModuleName, testAgainsts, showDevice, Constants.PHASE_FUNCTIONAL_TEST);
+			testResult = testResultfileTrim(testResultFiles);
+		}
+		
+		
+		
+		map.put(TEST_AGAINSTS, testAgainsts);
+		map.put(RESULT_AVAILABLE, resutlAvailable);
+		map.put(TEST_RESULT_FILES, testResultFiles);
+		map.put(SHOW_DEVICE, showDevice);
+		map.put(TEST_RESULT, testResult);
+		
+		
+			
 			ResponseInfo<Map<String, Object>> finalOutput = responseDataEvaluation(responseData, null,
 					map, RESPONSE_STATUS_SUCCESS, PHRQ300001);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
@@ -929,17 +1022,16 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 * @throws PhrescoException the phresco exception
 	 */
 	private Response testReport(String appDirName, String moduleName, String testType, String module, String techReport, String testSuitePath, String testCasePath, 
-			String testStepPath, String testSuite, String rootModulePath, String subModule) throws PhrescoException {
+			String testStepPath, String testSuite, String rootModulePath, String subModule,String deviceid) throws PhrescoException {
 		setTestSuite(testSuite);
 		ResponseInfo<TestReportResult> responseDataAll = new ResponseInfo<TestReportResult>();
 		ResponseInfo<List<TestCase>> responseData = new ResponseInfo<List<TestCase>>();
-		
 		try {
 			String mapKey = constructMapKey(appDirName, moduleName);
 			String testSuitesMapKey = mapKey + testType + module + techReport;
 			if (MapUtils.isEmpty(testSuiteMap)) {
 				String testResultPath = getTestResultPath(appDirName, rootModulePath, subModule, testType, techReport);
-				getTestSuiteNames(appDirName, testType, moduleName, techReport, testResultPath, testSuitePath);
+				getTestSuiteNames(appDirName, testType, moduleName, techReport, testResultPath, testSuitePath,rootModulePath, subModule,deviceid);
 			}
 			Map<String, List<NodeList>> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
 			List<NodeList> testSuitesList = testResultNameMap.get(testSuite);
@@ -1555,15 +1647,21 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 * @param testSuitePath the test suite path
 	 * @return the test suite names
 	 * @throws PhrescoException the phresco exception
+	 * @throws PhrescoPomException 
+	 *  
 	 */
 	private List<String> getTestSuiteNames(String appDirName, String testType, String moduleName, String techReport,
-			String testResultPath, String testSuitePath) throws PhrescoException {
+			String testResultPath, String testSuitePath,String rootModulePath,String subModule, String deviceid) throws PhrescoException {
+		File[] resultFiles = null;
+		String name = "";
 		String mapKey = constructMapKey(appDirName, moduleName);
 		String testSuitesMapKey = mapKey + testType + moduleName + techReport;
 		Map<String, List<NodeList>> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
 		List<String> resultTestSuiteNames = null;
-		//if (MapUtils.isEmpty(testResultNameMap)) {
-			File[] resultFiles = getTestResultFiles(testResultPath);
+		if(StringUtils.isNotEmpty(deviceid)){
+			name = "TEST-" + deviceid;
+			}
+		resultFiles = getTestResultFiles(testResultPath, name);	
 			if (!ArrayUtils.isEmpty(resultFiles)) {
 				QualityUtil.sortResultFile(resultFiles);
 				updateCache(appDirName, testType, moduleName, techReport, resultFiles, testSuitePath);
@@ -1573,6 +1671,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		if (testResultNameMap != null) {
 			resultTestSuiteNames = new ArrayList<String>(testResultNameMap.keySet());
 		}
+	   
 		return resultTestSuiteNames;
 	}
 
@@ -1807,10 +1906,10 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 * @param path the path
 	 * @return the test result files
 	 */
-	private File[] getTestResultFiles(String path) {
+	private File[] getTestResultFiles(String path, String name) {
 		File testDir = new File(path);
 		if (testDir.isDirectory()) {
-			FilenameFilter filter = new FileListFilter("", XML);
+			FilenameFilter filter = new FileListFilter(name, XML);
 			return testDir.listFiles(filter);
 		}
 		return null;
@@ -2290,6 +2389,126 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 
         return resultAvailable;
     }
+	public boolean testResultAvailunit(String rootModulePath, String subModuleName, List<String> testAgainsts, String action) throws PhrescoException {
+		boolean resultAvailable = false;
+        try {
+        	String reportDir = "";
+        	String resultExtension = "";
+        	ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+        	File testFolderLocation = Utility.getTestFolderLocation(projectInfo, rootModulePath, subModuleName);
+        	if (Constants.PHASE_UNIT_TEST.equals(action)) {
+        		reportDir =FrameworkServiceUtil.getUnitTestRptDir(rootModulePath, subModuleName);
+        		System.out.println("reportDir"+reportDir);
+        		resultExtension = "xml";
+        	} /*else {
+        		reportDir = FrameworkServiceUtil.getLoadTestReportDir(rootModulePath, subModuleName);
+        		resultExtension = FrameworkServiceUtil.getLoadResultFileExtension(rootModulePath, subModuleName);
+        	}*/
+            for (String testAgainst: testAgainsts) {
+            	StringBuilder sb = new StringBuilder(testFolderLocation.getPath());
+            	if (Constants.PHASE_UNIT_TEST.equals(action)) {
+            		reportDir =FrameworkServiceUtil.getUnitTestRptDir(rootModulePath, subModuleName);
+            	} /*else {
+            		reportDir = FrameworkServiceUtil.getLoadTestReportDir(rootModulePath, subModuleName);
+            	}*/
+               
+                if (StringUtils.isNotEmpty(reportDir) && StringUtils.isNotEmpty(testAgainst)) {
+                    Pattern p = Pattern.compile(TEST_DIRECTORY);
+                    Matcher matcher = p.matcher(reportDir);
+                    reportDir = matcher.replaceAll(testAgainst);
+                    sb.append(reportDir); 
+                }
+                
+                File file = new File(sb.toString());
+                if (StringUtils.isNotEmpty(resultExtension) && file.exists()) {
+                	System.out.println("entering result extension && file exists");
+                	File[] children = file.listFiles(new XmlNameFileFilter(resultExtension));
+                	if (!ArrayUtils.isEmpty(children)) {
+                		resultAvailable = true;
+                		break;
+                	}
+                }
+            }
+            
+            if (CollectionUtils.isEmpty(testAgainsts) && Constants.PHASE_UNIT_TEST.equals(action) 
+            			&& StringUtils.isNotEmpty(reportDir)) {
+            	System.out.println("entering test against  && report dir");
+            	 StringBuilder sb = new StringBuilder(testFolderLocation.getPath());
+            	 sb.append(reportDir);
+            	 File file = new File(sb.toString());
+                 if (StringUtils.isNotEmpty(resultExtension)) {
+                 	File[] children = file.listFiles(new XmlNameFileFilter(resultExtension));
+                 	if (!ArrayUtils.isEmpty(children)) {
+                 		resultAvailable = true;
+                 	}
+                 }
+            }
+            
+        } catch(Exception e) {
+        	throw new PhrescoException(e);
+        }
+
+        return resultAvailable;
+    }
+	
+	public boolean testResultAvailfunctional(String rootModulePath, String subModuleName, List<String> testAgainsts, String action) throws PhrescoException {
+		boolean resultAvailable = false;
+        try {
+        	String reportDir = "";
+        	String resultExtension = "";
+        	ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+        	File testFolderLocation = Utility.getTestFolderLocation(projectInfo, rootModulePath, subModuleName);
+        	if (Constants.PHASE_FUNCTIONAL_TEST.equals(action)) {
+        		reportDir =FrameworkServiceUtil.getFunctionalTestRptDir(rootModulePath, subModuleName);
+        		resultExtension = "xml";
+        	} /*else {
+        		reportDir = FrameworkServiceUtil.getLoadTestReportDir(rootModulePath, subModuleName);
+        		resultExtension = FrameworkServiceUtil.getLoadResultFileExtension(rootModulePath, subModuleName);
+        	}*/
+            for (String testAgainst: testAgainsts) {
+            	StringBuilder sb = new StringBuilder(testFolderLocation.getPath());
+            	if (Constants.PHASE_FUNCTIONAL_TEST.equals(action)) {
+            		reportDir =FrameworkServiceUtil.getFunctionalTestRptDir(rootModulePath, subModuleName);
+            	} /*else {
+            		reportDir = FrameworkServiceUtil.getLoadTestReportDir(rootModulePath, subModuleName);
+            	}*/
+               
+                if (StringUtils.isNotEmpty(reportDir) && StringUtils.isNotEmpty(testAgainst)) {
+                    Pattern p = Pattern.compile(TEST_DIRECTORY);
+                    Matcher matcher = p.matcher(reportDir);
+                    reportDir = matcher.replaceAll(testAgainst);
+                    sb.append(reportDir); 
+                }
+                
+                File file = new File(sb.toString());
+                if (StringUtils.isNotEmpty(resultExtension) && file.exists()) {
+                	File[] children = file.listFiles(new XmlNameFileFilter(resultExtension));
+                	if (!ArrayUtils.isEmpty(children)) {
+                		resultAvailable = true;
+                		break;
+                	}
+                }
+            }
+            
+            if (CollectionUtils.isEmpty(testAgainsts) && Constants.PHASE_FUNCTIONAL_TEST.equals(action) 
+            			&& StringUtils.isNotEmpty(reportDir)) {
+            	 StringBuilder sb = new StringBuilder(testFolderLocation.getPath());
+            	 sb.append(reportDir);
+            	 File file = new File(sb.toString());
+                 if (StringUtils.isNotEmpty(resultExtension)) {
+                 	File[] children = file.listFiles(new XmlNameFileFilter(resultExtension));
+                 	if (!ArrayUtils.isEmpty(children)) {
+                 		resultAvailable = true;
+                 	}
+                 }
+            }
+            
+        } catch(Exception e) {
+        	throw new PhrescoException(e);
+        }
+
+        return resultAvailable;
+    }
 	
 	private List<String> testResultFiles(String rootModulePath, String subModuleName, List<String> testAgainsts, boolean showDevice, String action) throws PhrescoException {
 		List<String> testResultFiles = new ArrayList<String>();
@@ -2317,6 +2536,104 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
             
             //for android - test type will not be available --- to get device id from result xml
             if (Constants.PHASE_PERFORMANCE_TEST.equals(action) && showDevice) {
+            	sb.append(reportDir);
+            }
+            
+            File file = new File(sb.toString());
+
+            if (StringUtils.isNotEmpty(resultExtension)) {
+            	File[] resultFiles = file.listFiles(new XmlNameFileFilter(resultExtension));
+            	if (!ArrayUtils.isEmpty(resultFiles)) {
+            		QualityUtil.sortResultFile(resultFiles);
+            		for (File resultFile : resultFiles) {
+            			if (resultFile.isFile()) {
+            				testResultFiles.add(resultFile.getName());
+            			}
+            		}
+            	}
+            }
+        } catch(Exception e) {
+        	throw new PhrescoException(e);
+        } 
+
+        return testResultFiles;
+    }
+	
+	private List<String> testResultFilesunit(String rootModulePath, String subModuleName, List<String> testAgainsts, String showDevice, String action) throws PhrescoException {
+		List<String> testResultFiles = new ArrayList<String>();
+		String reportDir = "";
+    	String resultExtension = "";
+		try {
+			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+        	File testFolderLocation = Utility.getTestFolderLocation(projectInfo, rootModulePath, subModuleName);
+            StringBuilder sb = new StringBuilder(testFolderLocation.getPath());
+        	if (Constants.PHASE_UNIT_TEST.equals(action)) {
+        		reportDir =FrameworkServiceUtil.getUnitTestRptDir(rootModulePath, subModuleName);
+        		resultExtension = "xml";
+        	} /*else {
+        		reportDir = FrameworkServiceUtil.getLoadTestReportDir(rootModulePath, subModuleName);
+        		resultExtension = FrameworkServiceUtil.getLoadResultFileExtension(rootModulePath, subModuleName);
+        	}
+        	*/
+            //test against will be available 
+            if (StringUtils.isNotEmpty(reportDir) && CollectionUtils.isNotEmpty(testAgainsts)) {
+                Pattern p = Pattern.compile(TEST_DIRECTORY);
+                Matcher matcher = p.matcher(reportDir);
+                reportDir = matcher.replaceAll(testAgainsts.get(0));
+                sb.append(reportDir);
+            }
+            
+            //for android - test type will not be available --- to get device id from result xml
+            if (Constants.PHASE_UNIT_TEST.equals(action) && StringUtils.isNotEmpty(showDevice)) {
+            	sb.append(reportDir);
+            }
+            
+            File file = new File(sb.toString());
+
+            if (StringUtils.isNotEmpty(resultExtension)) {
+            	File[] resultFiles = file.listFiles(new XmlNameFileFilter(resultExtension));
+            	if (!ArrayUtils.isEmpty(resultFiles)) {
+            		QualityUtil.sortResultFile(resultFiles);
+            		for (File resultFile : resultFiles) {
+            			if (resultFile.isFile()) {
+            				testResultFiles.add(resultFile.getName());
+            			}
+            		}
+            	}
+            }
+        } catch(Exception e) {
+        	throw new PhrescoException(e);
+        } 
+
+        return testResultFiles;
+    }
+	
+	private List<String> testResultFilesfunctional(String rootModulePath, String subModuleName, List<String> testAgainsts, boolean showDevice, String action) throws PhrescoException {
+		List<String> testResultFiles = new ArrayList<String>();
+		String reportDir = "";
+    	String resultExtension = "";
+		try {
+			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+        	File testFolderLocation = Utility.getTestFolderLocation(projectInfo, rootModulePath, subModuleName);
+            StringBuilder sb = new StringBuilder(testFolderLocation.getPath());
+        	if (Constants.PHASE_FUNCTIONAL_TEST.equals(action)) {
+        		reportDir =FrameworkServiceUtil.getFunctionalTestRptDir(rootModulePath, subModuleName);
+        		resultExtension = "xml";
+        	} /*else {
+        		reportDir = FrameworkServiceUtil.getLoadTestReportDir(rootModulePath, subModuleName);
+        		resultExtension = FrameworkServiceUtil.getLoadResultFileExtension(rootModulePath, subModuleName);
+        	}
+        	*/
+            //test against will be available 
+            if (StringUtils.isNotEmpty(reportDir) && CollectionUtils.isNotEmpty(testAgainsts)) {
+                Pattern p = Pattern.compile(TEST_DIRECTORY);
+                Matcher matcher = p.matcher(reportDir);
+                reportDir = matcher.replaceAll(testAgainsts.get(0));
+                sb.append(reportDir);
+            }
+            
+            //for android - test type will not be available --- to get device id from result xml
+            if (Constants.PHASE_FUNCTIONAL_TEST.equals(action) && showDevice) {
             	sb.append(reportDir);
             }
             
@@ -2485,6 +2802,28 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		}
     }
 	
+	/*@GET
+	@Path("/unitTestResults")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response unitTestResults(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_TEST_AGAINST) String testAgainst , 
+			@QueryParam(REST_QUERY_RESULT_FILE_NAME) String resultFileName, @QueryParam(REST_QUERY_DEVICE_ID) String deviceId, @QueryParam(REST_QUERY_SHOW_GRAPH_FOR) String showGraphFor, 
+			@QueryParam("from") String from, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
+		
+		String rootModulePath = "";
+		String subModuleName = "";
+		if (StringUtils.isNotEmpty(module)) {
+			rootModulePath = Utility.getProjectHome() + appDirName;
+			subModuleName = module;
+		} else {
+			rootModulePath = Utility.getProjectHome() + appDirName;
+		}
+		ResponseInfo<List<PerformanceTestResult>> responseData = new ResponseInfo<List<PerformanceTestResult>>();
+		PerformancResultInfo performanceResultInfo = null;
+		 StringBuilder graphData = new StringBuilder("[");
+         StringBuilder label = new StringBuilder("[");
+	         return response;
+	}
+	*/
 	private String getLoadOrPerformanceTestResultPath(String rootModulePath, String subModuleName, String testAgainst, String resultFileName, String action) throws PhrescoException {
 		try {
 			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
@@ -2512,10 +2851,53 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			throw new PhrescoException(e);
 		}
 	}
-	
+	private String getUnitTestResultPath(String rootModulePath, String subModuleName, String testAgainst, String resultFileName, String action) throws PhrescoException {
+		try {
+			ProjectInfo projectInfo = Utility.getProjectInfo(rootModulePath, subModuleName);
+        	File testFolderLocation = Utility.getTestFolderLocation(projectInfo, rootModulePath, subModuleName);
+        	
+	        StringBuilder sb = new StringBuilder(testFolderLocation.getPath());
+	        String reportDir = "";
+        	if (Constants.PHASE_UNIT_TEST.equals(action)) {
+        		reportDir =FrameworkServiceUtil.getUnitTestRptDir(rootModulePath, subModuleName);
+        	} /*else {
+        		reportDir = FrameworkServiceUtil.getLoadTestReportDir(rootModulePath, subModuleName);
+        	}*/
+	        //To change the dir_type based on the selected type
+	        Pattern p = Pattern.compile(TEST_DIRECTORY);
+	        Matcher matcher = p.matcher(reportDir);
+	        if (StringUtils.isNotEmpty(reportDir) && StringUtils.isNotEmpty(testAgainst) && matcher.find()) {
+	        	reportDir = matcher.replaceAll(testAgainst);
+	        }
+	        sb.append(reportDir);
+	        sb.append(File.separator);
+	        sb.append(resultFileName);
+             
+	        return sb.toString();
+	        
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
 	private String getPerformanceTestShowDevice(String rootModulePath, String subModule) throws PhrescoException {
 		try {
 			return Utility.getPomProcessor(rootModulePath, subModule).getProperty(Constants.POM_PROP_KEY_PERF_SHOW_DEVICE);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	private String getUnitTestShowDevice(String rootModulePath, String subModule) throws PhrescoException {
+		try {
+			return Utility.getPomProcessor(rootModulePath, subModule).getProperty(Constants.POM_PROP_KEY_UNIT_SHOW_DEVICE);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	private String getFunctionalTestShowDevice(String rootModulePath, String subModule) throws PhrescoException {
+		try {
+			return Utility.getPomProcessor(rootModulePath, subModule).getProperty(Constants.POM_PROP_KEY_FUNCTIONAL_SHOW_DEVICE);
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		}
