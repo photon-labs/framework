@@ -12,6 +12,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.rest.api.util.ActionResponse;
+import com.phresco.pom.exception.PhrescoPomException;
 
 public class UnitServiceTest extends RestBaseTest {
 
@@ -19,14 +20,14 @@ public class UnitServiceTest extends RestBaseTest {
 	ActionService actionService = new ActionService();
 
 	@Test
-	public void testUnitTestReportOption() throws PhrescoException, IOException {
+	public void testUnitTestReportOption() throws Exception {
 		Response response = service.unit(appDirName, userId, "");
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
 	
 	@Test
-	public void testUnitTestReportOptionWithoutDirName() throws PhrescoException, IOException {
+	public void testUnitTestReportOptionWithoutDirName() throws Exception {
 		Response response = service.unit("", userId, "");
 		Assert.assertEquals(200, response.getStatus());
 	}
@@ -108,28 +109,28 @@ public class UnitServiceTest extends RestBaseTest {
 
 	@Test
 	public void testGetTestSuites() throws PhrescoException, IOException {
-		Response response = service.getTestSuites(appDirName, "unit", "java", "", "");
+		Response response = service.getTestSuites(appDirName, "unit", "java", "", "","");
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
 	
 	@Test
 	public void testGetTestSuitesWithOutAppDir() throws PhrescoException, IOException {
-		Response response = service.getTestSuites("", "unit", "java", "", "");
+		Response response = service.getTestSuites("", "unit", "java", "", "","");
 		Assert.assertEquals(200, response.getStatus());
 	}
 
 	
 	@Test
 	public void testGetTestSuitesWithOutTestType() throws PhrescoException, IOException {
-		Response response = service.getTestSuites(appDirName, "", "java", "", "");
+		Response response = service.getTestSuites(appDirName, "", "java", "", "","");
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
 	
 	@Test
 	public void testGetTestSuitesWithOutTestReport() throws PhrescoException, IOException {
-		Response response = service.getTestSuites(appDirName, "unit", "", "", "");
+		Response response = service.getTestSuites(appDirName, "unit", "", "", "","");
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
@@ -137,13 +138,13 @@ public class UnitServiceTest extends RestBaseTest {
 	
 	@Test
 	public void testGetTestReports() throws PhrescoException, IOException {
-		Response response = service.getTestReports(appDirName, "unit", "java", "", "com.photon.phresco.service.TestCase", "");
+		Response response = service.getTestReports(appDirName, "unit", "java", "", "com.photon.phresco.service.TestCase", "","");
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
 	@Test
 	public void testGetTestReportsAll() throws PhrescoException, IOException {
-		Response response = service.getTestReports(appDirName, "unit", "java", "", "All", "");
+		Response response = service.getTestReports(appDirName, "unit", "java", "", "All", "","");
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
