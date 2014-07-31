@@ -9,6 +9,7 @@ var commonVariables = {
 	phase : null,
 	buildNo : null,
 	iphoneDeploy : null,
+	currentDevice : "",
 	
 	header : "header",
 	headerContext : "",
@@ -66,6 +67,7 @@ var commonVariables = {
 	testType : null,
 	unit : "unit",
 	unitTest : "unitTest",
+	unitTestResults : "unitTestResults",
 	component : "component",
 	componentTest : "componentTest",
 	functional : "functional",
