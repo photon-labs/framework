@@ -226,12 +226,15 @@ public class ConfigProcessor implements FrameworkConstants {
 		gitGitSCM.addContent(submoduleCfg);
 		
 		//5
-		org.jdom.Element extensions = new Element(EXTENSIONS);
+//		org.jdom.Element extensions = new Element(EXTENSIONS);
 		
-		org.jdom.Element RelativeTargetDirectory = new Element(HUDSON_PLUGINS_GIT_EXTENSIONS_IMPL_RELATIVE_TARGET_DIRECTORY);
-		RelativeTargetDirectory.addContent(createElement(RELATIVE_TARGET_DIR, subModule));
-		extensions.addContent(RelativeTargetDirectory);
-		gitGitSCM.addContent(extensions);
+//		org.jdom.Element RelativeTargetDirectory = new Element(HUDSON_PLUGINS_GIT_EXTENSIONS_IMPL_RELATIVE_TARGET_DIRECTORY);
+//		RelativeTargetDirectory.addContent(createElement(RELATIVE_TARGET_DIR, subModule));
+//		extensions.addContent(RelativeTargetDirectory);
+//		gitGitSCM.addContent(extensions);
+		
+		// relativeTargetDir - for setting - "Local subdirectory for repo"
+		gitGitSCM.addContent(createElement(RELATIVE_TARGET_DIR, subModule));
 		
 		return gitGitSCM;
     }
