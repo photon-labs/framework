@@ -2228,13 +2228,17 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(userName, Password);
 				repository.setAuthenticationManager(authManager);
 				Collection logEntries = null;
-				logEntries = repository.log( new String[] { "" } , null , startRevision , endRevision , true , true );
+				logEntries = repository.log( new String[] { "" } , null , startRevision , endRevision , false , true );
 				for (Iterator entries = logEntries.iterator(); entries.hasNext();) {
 					SVNLogEntry logEntry = (SVNLogEntry) entries.next();
 					logMessages.add(logEntry.getMessage());
 				}
 			} catch (SVNException e) {
 				throw new PhrescoException(e);
+			}finally {
+				if (repository != null) {
+					repository.closeSession();
+				}
 			}
 		}
 		else if(repoType.equalsIgnoreCase(GIT))	{
