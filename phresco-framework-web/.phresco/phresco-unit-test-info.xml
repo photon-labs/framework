@@ -29,7 +29,7 @@
                     <mavenCommands>
                         <mavenCommand>
                             <key>java</key>
-                            <value>-Pjava</value>
+                            <value>-Pjava -Dmaven.test.failure.ignore=true</value>
                         </mavenCommand>
                         <mavenCommand>
                             <key>js</key>
