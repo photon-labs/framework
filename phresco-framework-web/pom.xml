@@ -3,14 +3,14 @@
     <parent>
         <groupId>com.photon.phresco.framework</groupId>
         <artifactId>phresco-framework-root</artifactId>
-        <version>4.0.1001-SNAPSHOT</version>
+        <version>4.0.0.1001-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
    
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.photon.phresco.framework</groupId>
     <artifactId>phresco-framework-web</artifactId>
-     <version>4.0.1001-SNAPSHOT</version>
+     <version>4.0.0.1001-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>Framework Web Archive</name>
     <description>Framework Web Archive</description>
@@ -1009,7 +1009,7 @@
 	    		<plugin>
 				<groupId>net.awired.jstest</groupId>
 				<artifactId>jstest-maven-plugin</artifactId>
-				<version>4.0.1001-SNAPSHOT</version>
+				<version>4.0.0.1001-SNAPSHOT</version>
 				<executions>
 					<execution>
 						<goals>
