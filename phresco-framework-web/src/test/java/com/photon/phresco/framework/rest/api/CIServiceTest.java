@@ -33,7 +33,7 @@ public class CIServiceTest extends RestBaseTest {
 	
 	
 	private String isJenkinsAlive() throws PhrescoException {
-		Response localJenkinsLocalAlive = ciservice.localJenkinsLocalAlive();
+		Response localJenkinsLocalAlive = ciservice.localJenkinsLocalAlive("Jenkins");
 		ResponseInfo<String> response = (ResponseInfo<String>) localJenkinsLocalAlive.getEntity();
 		String data = response.getData();
 		return data;
@@ -243,8 +243,8 @@ public class CIServiceTest extends RestBaseTest {
 	public void createBuildTest() throws PhrescoException {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response build = ciservice.build("testJob", "TestProject", "", "", "testContinuousDelivery", "photon");
-			Response buildApp = ciservice.build("testJobApp", null, "TestProject", "", "testContinuousDeliveryApp", "photon");
+			Response build = ciservice.build("testJob", "TestProject", "", "", "testContinuousDelivery", "photon","Jenkins","");
+			Response buildApp = ciservice.build("testJobApp", null, "TestProject", "", "testContinuousDeliveryApp", "photon","Jenkins","");
 			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) build.getEntity();
 			Assert.assertEquals(200, build.getStatus());
 		} else {
@@ -270,8 +270,8 @@ public class CIServiceTest extends RestBaseTest {
 	public void getContinuousDeliveryTest() throws PhrescoException {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response continuousDeliveryJob = ciservice.getContinuousDeliveryJob("TestProject", "", "", "photon");
-			Response continuousDeliveryJobApp = ciservice.getContinuousDeliveryJob("", "TestProject", "","photon");
+			Response continuousDeliveryJob = ciservice.getContinuousDeliveryJob("TestProject", "", "", "photon","Jenkins");
+			Response continuousDeliveryJobApp = ciservice.getContinuousDeliveryJob("", "TestProject", "","photon","Jenkins");
 //			Response cdJob = ciservice.getContinuousDeliveryJob("", "", "photon");
 			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) continuousDeliveryJob.getEntity();
 			Assert.assertEquals(200, continuousDeliveryJob.getStatus());
@@ -285,8 +285,8 @@ public class CIServiceTest extends RestBaseTest {
 		
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response builds = ciservice.getBuilds("TestProject", "", "testJob", "testContinuousDelivery", "photon","");
-			Response buildsApp = ciservice.getBuilds("", "TestProject", "testJobApp", "testContinuousDeliveryApp", "photon","");
+			Response builds = ciservice.getBuilds("TestProject", "", "testJob", "testContinuousDelivery", "photon","","Jenkins","");
+			Response buildsApp = ciservice.getBuilds("", "TestProject", "testJobApp", "testContinuousDeliveryApp", "photon","","Jenkins","");
 			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) builds.getEntity();
 			Assert.assertEquals(200, builds.getStatus());
 		} else {
@@ -299,8 +299,8 @@ public class CIServiceTest extends RestBaseTest {
 		
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response lastBuildStatus = ciservice.getLastBuildStatus("testJob", "testContinuousDelivery", "TestProject", "", "", "photon");
-			Response buildsApp = ciservice.getBuilds("", "TestProject", "testJobApp", "testContinuousDeliveryApp","","");
+			Response lastBuildStatus = ciservice.getLastBuildStatus("testJob", "testContinuousDelivery", "TestProject", "", "", "photon","Jenkins","");
+			Response buildsApp = ciservice.getBuilds("", "TestProject", "testJobApp", "testContinuousDeliveryApp","","","Jenkins","");
 //			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) builds.getEntity();
 			Assert.assertEquals(200, lastBuildStatus.getStatus());
 		} else {
@@ -350,7 +350,7 @@ public class CIServiceTest extends RestBaseTest {
 			testFlight.setTeamToken("testTeamToken");
 			testFlightConfigs.add(testFlight);
 			gs.setTestFlight(testFlightConfigs);
-			Response builds = ciservice.setGlobalConfiguration(gs, "test@gmail.com", "manage", "", "", "", "tfsUrl");
+			Response builds = ciservice.setGlobalConfiguration(gs, "test@gmail.com", "manage", "", "", "", "tfsUrl","Jenkins");
 //			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) builds.getEntity();
 //			Assert.assertEquals(200, builds.getStatus());
 		} else {
@@ -541,8 +541,8 @@ public class CIServiceTest extends RestBaseTest {
 	public void getStatusTest() throws PhrescoException {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			ciservice.getStatus("testJob", "testContinuousDelivery", "TestProject", "", "", "photon");
-			ciservice.getStatus("testJobApp", "testContinuousDeliveryApp", "", "TestProject", "", "photon");
+			ciservice.getStatus("testJob", "testContinuousDelivery", "TestProject", "", "", "photon","Jenkins","");
+			ciservice.getStatus("testJobApp", "testContinuousDeliveryApp", "", "TestProject", "", "photon","Jenkins","");
 		} else {
 			Assert.assertNotSame("200", jenkinsAlive);
 		}
