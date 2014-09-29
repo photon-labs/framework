@@ -14,7 +14,7 @@
                 <groupId>com.photon.phresco.plugins</groupId>
                 <artifactId>java-phresco-plugin</artifactId>
                 <type>jar</type>
-                <version>3.3.1.16001</version>
+                <version>4.0.0.1001-SNAPSHOT</version>
                 <class>com.photon.phresco.plugins.java.JavaPlugin</class>
             </dependency>
         </implementation>
@@ -29,7 +29,7 @@
                     <mavenCommands>
                         <mavenCommand>
                             <key>java</key>
-                            <value>-Pjava</value>
+                            <value>-Pjava -Dmaven.test.failure.ignore=true</value>
                         </mavenCommand>
                         <mavenCommand>
                             <key>js</key>
