@@ -110,8 +110,9 @@ define([], function() {
 				var jName = $('input[name=juserName][temp=jenkins]').val();
 				var jPass = $('input[name=jpassword][temp=jenkins]').val();
 				var tfcle = $('input[name=tfcle][temp=jenkins]').val();	
+				var ciType = $('input:radio[name=citype]:checked').val();
 				header.requestPostBody = JSON.stringify(ciRequestBody);
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/global?emailAddress=" + eUser + "&emailPassword=" + ePass + "&url=" + jUrl + "&username=" + jName + "&password=" + jPass + "&tfsUrl=" + tfcle;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/global?emailAddress=" + eUser + "&emailPassword=" + ePass + "&url=" + jUrl + "&username=" + jName + "&password=" + jPass + "&tfsUrl=" + tfcle + "&type=" + ciType ;
 			} else if (action === "sonarsave") {
 			       header.requestMethod = "POST";
 				   header.requestPostBody = JSON.stringify(ciRequestBody);
@@ -126,11 +127,21 @@ define([], function() {
 			var self = this;
 			
 			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'jenkinsUrl'), function(response) {
-				$('input[name=jenkinsUrl]').val(response.data.repoUrl);
-				$('input[name=juserName]').val(response.data.userName);
-				$('input[name=jpassword]').val(response.data.password);
+				$(response.data).each(function(index, value){
+					if(value.type == commonVariables.bamboo){
+						$('input[name=bambooUrl]').val(value.repoUrl);
+						$('input[name=buserName]').val(value.userName);
+						$('input[name=bpassword]').val(value.password);
+					}else {
+						$('input[name=jenkinsUrl]').val(value.repoUrl);
+						$('input[name=juserName]').val(value.userName);
+						$('input[name=jpassword]').val(value.password);	
+						$('input[name=tJenkinsUrl]').val(value.repoUrl);
+						$('input[name=tJuserName]').val(value.userName);
+						$('input[name=tJpassword]').val(value.password);
+					}
+				});
 			});
-			
 			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'getMail'), function(response) {
 				$('input[name=username][temp=email]').val(response.data[0]);
 				$('input[name=password][temp=email]').val(response.data[1]);
@@ -252,7 +263,6 @@ define([], function() {
 		presetup : function(obj) {
 			var self = this;
 			self.getHeaderResponse(self.getRequestHeader('', 'presetup'), function(response) {
-			      console.info("response",response.data);
 				if (response.data === false) {
 					self.setup();
 				} else {
@@ -288,7 +298,32 @@ define([], function() {
 				});
 			}
 		},
-
+		citype : function(){
+		$("input[name='citype']").on("change", function () {
+			if($(this).val() !== 'jenkins'){
+				$("input[name='username']").val('Email Id');
+				$("input[name='password']").val('');
+				$("input[name='tfcle']").val('TF command line executable');
+				$('input[name=jenkinsUrl]').val($('input[name=bambooUrl]').val());
+				$('input[name=juserName]').val($('input[name=buserName]').val());
+				$('input[name=jpassword]').val($('input[name=bpassword]').val());
+				$("input[name='presetup']").attr('disabled','disabled');
+				$("input[name='switch']").attr('disabled','disabled') ;
+				$("input[name='username']").attr('disabled','disabled');
+				$("input[name='password']").attr('disabled','disabled');
+				$("input[name='tfcle']").attr('disabled','disabled');
+			}else{
+				$('input[name=jenkinsUrl]').val($('input[name=tJenkinsUrl]').val());
+				$('input[name=juserName]').val($('input[name=tJuserName]').val());
+				$('input[name=jpassword]').val($('input[name=tJpassword]').val());
+				$('input[name="presetup"]').removeAttr('disabled');
+				$('input[name="switch"]').removeAttr('disabled');
+				$("input[name='username']").removeAttr('disabled');
+				$("input[name='password']").removeAttr('disabled');
+				$("input[name='tfcle']").removeAttr('disabled');
+			}
+		});
+		},
 		start : function() {
 			var self = this;
 			var queryString = '';
@@ -527,31 +562,33 @@ define([], function() {
 					status = false;				
 				}
 			});
-			
-			var username = $("input[name=username][temp=email]");	
-			username.each(function(i, selected) {
-				if($(this).val() === "") {
-					$(this).focus();
-					$(this).attr('placeholder','Enter EmailId');
-					$(this).addClass("errormessage");
-					$(this).bind('keypress', function() {
-						$(this).removeClass("errormessage");
-					});
-					status = false;				
-				}
-			});
-			var password = $("input[name=password][temp=email]");	
-			password.each(function(i, selected) {
-				if($(this).val() === "") {
-					$(this).focus();
-					$(this).attr('placeholder','Enter Password');
-					$(this).addClass("errormessage");
-					$(this).bind('keypress', function() {
-						$(this).removeClass("errormessage");
-					});
-					status = false;				
-				}
-			});
+			var ciType = $("input:radio[name=citype]:checked").val();
+			if(ciType == 'jenkins') {
+				var username = $("input[name=username][temp=email]");	
+				username.each(function(i, selected) {
+					if($(this).val() === "") {
+						$(this).focus();
+						$(this).attr('placeholder','Enter EmailId');
+						$(this).addClass("errormessage");
+						$(this).bind('keypress', function() {
+							$(this).removeClass("errormessage");
+						});
+						status = false;				
+					}
+				});
+				var password = $("input[name=password][temp=email]");	
+				password.each(function(i, selected) {
+					if($(this).val() === "") {
+						$(this).focus();
+						$(this).attr('placeholder','Enter Password');
+						$(this).addClass("errormessage");
+						$(this).bind('keypress', function() {
+							$(this).removeClass("errormessage");
+						});
+						status = false;				
+					}
+				});
+			}
 			
 			return status
 		},

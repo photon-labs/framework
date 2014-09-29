@@ -30,6 +30,7 @@ public interface FrameworkConstants {
     String PHRESCO_DOT = "phresco.";
     String DOT_TARGET_DIR = ".target.dir";
     String PHRESCO_DOT_EXTRACT_DOT = "phresco.extract.";
+    String FRAMEWORK_CONFIG ="framework.config";
     
     String HYPHEN_N = "-N";
     String DMODULE_NAME = "-DmoduleName=";
@@ -2345,6 +2346,20 @@ public interface FrameworkConstants {
 	    String ZAP_START_FAIL  =  "Zap Started failed";
 	    String DISPLAY_NAME = "displayName";
 	    String ZAP_LOG_FAIL = "No Zap test logs obtained";
-	    
-	    
+	    	    
+	    /**
+	     * CI for Bamboo
+	     * */
+	    String BAMBOO_URL = "phresco.ci.bamboo.url";
+	    String BAMBOO_USERNAME = "phresco.ci.bamboo.username";
+	    String BAMBOO_PASSWORD = "phresco.ci.bamboo.password";	    
+	    String BAMBOO_PROJECTS = "projects";
+	    String BAMBOO_KEY = "key";
+	    String BAMBOO_REST_PATH ="/rest/api/latest";
+	    String BAMBOO_REST_PLANS_PATH = BAMBOO_REST_PATH + "/project?expand=projects.project.plans.plan";
+	    String BAMBOO = "Bamboo";
+	    String JENKINS = "Jenkins";
+	    String BAMBOO_BUILD_URL = BAMBOO_REST_PATH + "/queue/";
+	    String BAMBOO_PLAN_KEY = "planKey";
+	    String BAMBOO_RESULT_PATH = BAMBOO_REST_PATH + "/result/";
 }

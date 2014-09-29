@@ -51,20 +51,30 @@ define(["projects/listener/projectsListener"], function() {
 			self.addLayerEvent.add(projectsListener.addlayeredit, projectsListener);
 			self.onUpdateProjectsEvent.add(projectsListener.createproject, projectsListener);
 			self.onCancelUpdateEvent.add(projectsListener.cancelCreateproject, projectsListener);
+			
+			Handlebars.registerHelper('type',function(ciType) {
+				var returnVal = ciType;
+				if (returnVal == commonVariables.jenkins) {
+					return commonVariables.bamboo;
+				}else{
+					return commonVariables.jenkins;
+				}				
+			});
 		},
 		
 		
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
-				self.applicationlayerData = commonVariables.api.localVal.getJson("Front End");
-				self.weblayerData = commonVariables.api.localVal.getJson("Middle Tier");
-				self.mobilelayerData = commonVariables.api.localVal.getJson("CMS");
+			self.applicationlayerData = commonVariables.api.localVal.getJson("Front End");
+			self.weblayerData = commonVariables.api.localVal.getJson("Middle Tier");
+			self.mobilelayerData = commonVariables.api.localVal.getJson("CMS");
 			if (self.applicationlayerData !== null && self.weblayerData !== null && self.mobilelayerData !== null) {
 				self.templateData.applicationlayerData = self.applicationlayerData;
 				self.templateData.weblayerData = self.weblayerData;
 				self.templateData.mobilelayerData = self.mobilelayerData;
 				var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 				self.templateData.userPermissions = userPermissions;
+				
 				self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, commonVariables.projectId), function(response) {
 					var responseData = response.data;
 					//To change start date into the format of (dd/mm/yyyy)
@@ -93,6 +103,7 @@ define(["projects/listener/projectsListener"], function() {
 							$('#integrationTest').show();
 					}
 					self.templateData.editProject = responseData;
+					
 					// Setting project id in local storage for future use in job templates
 					commonVariables.api.localVal.setSession("projectId", responseData.id);
 					self.getData = self.templateData.editProject.appInfos;	
@@ -236,7 +247,7 @@ define(["projects/listener/projectsListener"], function() {
 			$("#strdt").click(function() {
 				$("#startDate").focus();
 			});
-
+			
 			$("#enddt").click(function() {
 				$("#endDate").focus();
 			});

@@ -306,6 +306,5 @@ define(["projects/listener/projectsListener"], function() {
 			this.customScroll($(".scrolldiv"));
 		}
 	});
-
 	return Clazz.com.components.projects.js.addProject;
 });

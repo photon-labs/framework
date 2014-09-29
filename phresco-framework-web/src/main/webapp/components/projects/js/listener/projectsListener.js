@@ -1,3 +1,4 @@
+
 define([], function() {
 
 	Clazz.createPackage("com.components.projects.js.listener");
@@ -235,7 +236,7 @@ define([], function() {
 						var applnAppCodeObj = $(value).find('input.appln-appcode');
 						//App code validation
 						if (self.isBlank(applnAppCodeObj.val())) {
-							applnAppCodeObj.addClass("errormessage").focus().attr('placeholder', 'Enter AppCode');
+							applnAppCodeObj.addClass("errormessage").focus().attr('placeholder', 'Enter AppCode::::::::::::::::::');
 							applnAppCodeObj.bind('keypress', function() {
 								$(this).removeClass("errormessage");
 								$(this).removeAttr("placeholder");
@@ -1297,6 +1298,7 @@ define([], function() {
 						}	
 					});
 				} else {
+					console.info('::::::::::::::',$("select[name='builtmyself']").val());
 					$("input[name=Create]").attr('disabled', false);
 					$("tr[name=applicationlayer]").show();
 					$("tr.applnLayer").show();
@@ -1924,7 +1926,9 @@ define([], function() {
 				var enddate = $("input[name='enddate']").val();
 				var integrationTest = $("input[name=integrationTest]").is(":checked");
 				var groupId = $("#groupId").val();
+				var citype = $("#ciType").val();
 				var isMultiModule = false;
+				
 				
 				//To convert dd/mm//yyyy to (month date,year) format
 				if (startdate.length !== 0 && enddate.length !== 0) {
@@ -1951,7 +1955,8 @@ define([], function() {
 				self.projectInfo.customerIds = self.customerIds;
 				self.projectInfo.integrationTest = integrationTest;
 				self.projectInfo.groupId = groupId;
-				
+				self.projectInfo.ciType = citype;
+
 				var versionInfo = {};
 				versionInfo.major = Number(majorVersion);
 				versionInfo.minor = Number(minorVersion);

@@ -15,7 +15,7 @@ define([], function() {
 		previousLiObj : null,
 		nextLiObj : null,
 		nextJob : null,
-
+		ciType : null,
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -63,8 +63,8 @@ define([], function() {
 				Clazz.navigationController.push(self.edit, commonVariables.animation);
 			}); 
 		},
-
-		editContinuousViewTable : function (response) {		
+		
+	editContinuousViewTable : function (response) {		
 			var self = this;			
 			var data = response.data;
 			$("input[type=submit][value=Add]").attr("data-i18n","[value]common.btn.update");	
@@ -107,7 +107,7 @@ define([], function() {
 
 		getRequestHeader : function(ciRequestBody, action, params) {
 		
-			var self = this, appDir = '', projectId='', header;
+			var self = this, appDir = '', projectId = '', header;
 			// basic params for job templates
 			var customerId = self.getCustomer();
 			customerId = (customerId === "") ? "photon" : customerId;
@@ -115,14 +115,28 @@ define([], function() {
 			if(data !== "") { 
 				userId = data.id; 
 			}
-			
 			// application level
 			if (commonVariables.api.localVal.getProjectInfo() !== null && !commonVariables.projectLevel){
 				var projectInfo = commonVariables.api.localVal.getProjectInfo();
 				appDir = projectInfo.data.projectInfo.appInfos[0].appDirName;
+				self.ciType = projectInfo.data.projectInfo.ciType;
 			// project level
 			} else if(commonVariables.projectLevel){
+				header = {
+						contentType: "application/json",
+						dataType: "json",
+						requestMethod : "GET",
+						webserviceurl : ''
+				};
 				projectId = $('.hProjectId').val();
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci +"/type?customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+appDir;
+				commonVariables.api.ajaxRequest(header, function(response) {
+					if (response !== null && (response.status !== "error" || response.status !== "failure")) {
+						self.ciType = response.data;
+						} 
+					});
+				
 			}
 			var rootModule = self.isBlank($('.rootModule').val()) ? "" : $('.rootModule').val();
 			header = {
@@ -144,7 +158,7 @@ define([], function() {
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates+ "?customerId="+ customerId + "&projectId=" + projectId;
 			} else if (action === "continuousDeliveryList") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci+"/list?projectId="+projectId+"&appDirName="+appDir + "&customerId="+ customerId +"&rootModule="+rootModule ;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/list?projectId="+ projectId+"&appDirName="+ appDir + "&customerId="+ customerId + "&rootModule="+ rootModule+ "&type="+ self.ciType;
 			} else if (action === "update") {
 				header.requestMethod = "PUT";
 				header.requestPostBody = JSON.stringify(ciRequestBody);
@@ -205,13 +219,13 @@ define([], function() {
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/update" + "?customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+appDir + "&userId=" +userId + "&oldname=" + oldName +"&rootModule="+rootModule;
 			}  else if (action === "getBuilds") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/builds?projectId="+projectId+"&name="+ciRequestBody.jobName+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName + "&customerId=" + customerId +"&rootModule="+rootModule;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/builds?projectId="+projectId+"&name="+ciRequestBody.jobName+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName + "&customerId=" + customerId +"&rootModule="+rootModule + "&type=" + self.ciType + "&planKey=" + ciRequestBody.jobName;
 			} else if (action === "generateBuild") {
 				header.requestMethod = "POST";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/build?name="+ciRequestBody.jobName+"&projectId="+projectId+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName + "&customerId=" + customerId + "&rootModule="+rootModule;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/build?name="+ciRequestBody.jobName+"&projectId="+projectId+"&appDirName="+ appDir + "&continuousName=" +ciRequestBody.continuousName + "&customerId=" + customerId + "&rootModule="+rootModule + "&type=" + self.ciType + "&planKey=" + ciRequestBody.planKey;
 			} else if (action === "lastBuildStatus") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/lastBuildStatus?name="+ciRequestBody.jobName+"&projectId="+projectId+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName + "&customerId=" + customerId +"&rootModule="+rootModule;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/lastBuildStatus?name="+ciRequestBody.jobName+"&projectId="+projectId+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName + "&customerId=" + customerId +"&rootModule=" +rootModule+ "&type=" + self.ciType + "&planKey=" + ciRequestBody.jobName;
 			} else if (action === "deleteBuild") {
 				header.requestMethod = "DELETE";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/deletebuilds?buildNumber="+ciRequestBody.buildNumber+"&name="+ciRequestBody.jobName+"&projectId="+projectId + "&customerId=" + customerId + "&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName +"&rootModule="+rootModule;
@@ -220,7 +234,7 @@ define([], function() {
 				header.webserviceurl  =commonVariables.webserviceurl + commonVariables.ci +"/downloadBuild?buildDownloadUrl=" +ciRequestBody.buildDownloadUrl+"&downloadJobName="+ciRequestBody.jobName+ "&customerId=" + customerId +"&projectId="+projectId+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName + "&rootModule="+rootModule;
 			} else if (action === "jobStatus") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/jobStatus?name="+ciRequestBody.jobName+"&continuousName="+ciRequestBody.cdName+"&projectId="+projectId+"&appDirName="+appDir + "&customerId=" + customerId + "&rootModule="+rootModule;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/jobStatus?name="+ciRequestBody.jobName+"&continuousName="+ciRequestBody.cdName+"&projectId="+projectId+"&appDirName="+appDir + "&customerId=" + customerId + "&rootModule="+rootModule + "&type=" + self.ciType + "&planKey=" + ciRequestBody.planKey;
 			} else if (action === "deleteContinuousDelivery") {
 				header.requestMethod = "DELETE";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/delete?continuousName="+ciRequestBody.cdName+"&customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+appDir + "&rootModule="+rootModule;
@@ -237,7 +251,7 @@ define([], function() {
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/editContinuousView?projectId="+projectId+"&appDirName="+appDir+"&name=" + params + "&customerId="+ customerId + "&rootModule="+rootModule;
 			} else if(action === "jenkinsStatus") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/isAlive";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/isAlive?type=" + self.ciType;
 			} else if(action === "writeJson") {
 				header.requestMethod = "POST";
 				header.webserviceurl = commonVariables.webserviceurl+"app/ciPerformanceTest?"+ciRequestBody.data;
@@ -254,7 +268,11 @@ define([], function() {
 			} else if (action === "pipeline") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/pipeline?projectId=" + projectId + "&appDirName=" + appDir + "&name=" + ciRequestBody.name + "&customerId="+ customerId + "&rootModule="+rootModule;
+			} else if (action === "continuousDeliveryType") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/type?appDirName="+appDir;
 			}
+			
 
 			return header;
 		},
@@ -272,9 +290,16 @@ define([], function() {
 		ciStatus:function(obj) {
 			var self = this;
 			var ciRequestBody = {},name;
-			ciRequestBody.jobName=obj.attr("id");
+			ciRequestBody.jobName=obj.attr("title");
 			ciRequestBody.cdName = obj.parent().parent("div").attr("name");
 			commonVariables.hideloading = true;
+			var projectInfo = commonVariables.api.localVal.getProjectInfo();
+			if(self.ciType == commonVariables.bamboo){
+				ciRequestBody.planKey = document.getElementById(document.getElementById(ciRequestBody.jobName).value).value;
+				if(ciRequestBody.planKey == "") {
+					ciRequestBody.planKey = document.getElementById(ciRequestBody.jobName).value;
+				}
+			}
 			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'jobStatus'), function (response) {
 				var parseJson = $.parseJSON(response.data);
 				if(parseJson === "red") {
@@ -283,6 +308,8 @@ define([], function() {
 					obj.find('.img_process').attr('src',"themes/default/images/Phresco/processing.gif");
 				} else if (parseJson === "blue") {
 					obj.find('.img_process').attr('src',"themes/default/images/Phresco/tick_green.png");
+				} else if(parseJson == "Queued") {
+					obj.find('.img_process').attr('src',"themes/default/images/Phresco/progress_queued.png");
 				}
 			});
 		},
@@ -341,7 +368,11 @@ define([], function() {
 							headerTr = '<td><center><img src="themes/default/images/Phresco/cross_red.png" width="14" height="18" border="0" alt="0"><center></td>';
 						}
 						content = content.concat(headerTr);
-						headerTr = '<td><a href="javascript:void(0)" data-placement="top" continuousName="'+continuousName+'" jobName="'+jobName+'"buildNumber="'+response.data[i].number+'"temp="deleteBuild"><img src="themes/default/images/Phresco/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
+						if(self.ciType == commonVariables.bamboo) {
+							headerTr = '<td><img src="themes/default/images/Phresco/delete_row.png" width="14" height="18" border="0" alt="0"></td></tr>';
+						} else {
+							headerTr = '<td><a href="javascript:void(0)" data-placement="top" continuousName="'+continuousName+'" jobName="'+jobName+'"buildNumber="'+response.data[i].number+'"temp="deleteBuild"><img src="themes/default/images/Phresco/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>';	
+						}
 						content = content.concat(headerTr);
 					}
 					
@@ -412,7 +443,29 @@ define([], function() {
 			ciRequestBody.jobName = obj.attr("jobName");
 			jobName = ciRequestBody.jobName;
 			ciRequestBody.continuousName = obj.closest('div[class=widget_testing]').attr('name');
+			var projectInfo = commonVariables.api.localVal.getProjectInfo();
+			if(self.ciType == commonVariables.bamboo)	{
+				ciRequestBody.planKey = document.getElementById(jobName).value;
+			}
+			else {
+				ciRequestBody.planKey = null;
+			}
+			ciRequestBody.fileName = obj.closest();		
 			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'generateBuild'), function (response) {
+			if(response.data.result) {
+					var jsonObject = $.parseJSON(response.data.result);
+					document.getElementById(ciRequestBody.planKey).value=jsonObject.buildResultKey;
+				}
+			else if(response.data.code == 401) {
+				$(".content_end").show();
+				$(".msgdisplay").removeClass("success").addClass("error");
+				$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+				self.renderlocales(commonVariables.contentPlaceholder);	
+				$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+				setTimeout(function() {
+					$(".content_end").hide();
+				},50000);
+			}
 			});
 		},
 		
@@ -577,7 +630,7 @@ define([], function() {
 			try {
 				commonVariables.loadingScreen.showLoading();
 				commonVariables.api.ajaxRequest(header, function(response) {
-						if (response !== null && (response.status !== "error" || response.status !== "failure")) {
+					if (response !== null && (response.status !== "error" || response.status !== "failure")) {
 							commonVariables.loadingScreen.removeLoading();
 							callback(response);
 						} else {
@@ -615,20 +668,21 @@ define([], function() {
 		getHeaderResponse : function (header, callback) {
 			var self = this;
 			try {
-				commonVariables.api.ajaxRequest(header, function(response) {
-						if (response !== null && (response.status !== "error" || response.status !== "failure")) {
-							callback(response);
-						} else {
-							$(".content_end").show();
-							$(".msgdisplay").removeClass("success").addClass("error");
-							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-							self.renderlocales(commonVariables.contentPlaceholder);	
-							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-							setTimeout(function() {
-								$(".content_end").hide();
-							},2500);
-						}
+					commonVariables.api.ajaxRequest(header, function(response) {
+					if (response !== null && (response.status !== "error" || response.status !== "failure")) {
+						callback(response);
+					} else {
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".content_end").hide();
+						},2500);
+					}
 
+					
 					},
 
 					function(textStatus) {						

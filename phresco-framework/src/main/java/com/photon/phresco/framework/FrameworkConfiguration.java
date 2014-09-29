@@ -126,4 +126,16 @@ public class FrameworkConfiguration implements FrameworkConstants {
     public String getCIServerPath() {
         return frameworkConfig.getProperty(PHRESCO_CI_JENKINS_URL);
     }
+    
+    public String getBambooHome() {
+    	return frameworkConfig.getProperty(BAMBOO_URL);
+    }
+    
+    public String getBambooUserName() {
+    	return frameworkConfig.getProperty(BAMBOO_USERNAME);
+    }
+    
+    public String getBambooPassword() {
+    	return frameworkConfig.getProperty(BAMBOO_PASSWORD);
+    }
 }

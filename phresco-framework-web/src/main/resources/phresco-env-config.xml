@@ -112,11 +112,11 @@
 	
 	<WebService desc="true" name="webservice">
             <protocol>http</protocol>
-            <host>172.16.17.117</host>
+            <host>localhost</host>
             <port>7070</port>
             <username/>
             <password/>
-            <context>service-3</context>
+            <context>service</context>
 	    <additional_context>/rest/api</additional_context>
         </WebService>
         

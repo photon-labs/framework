@@ -263,7 +263,7 @@
                     </div>
                 </li>
                 <li id="integrationTest"><a href="javascript:void(0)"><span data-i18n="navigation.application.integrationtest"></span></a></li>
-                <li class="dropdown">
+                <li class="dropdown" id="continuousIntegration" style="display:none">
                     <a href="javascript:void(0)" id="drop4" role="quality" class="dropdown-toggle drop-qual" data-toggle="dropdown"><span data-i18n="navigation.application.continuousintegration"></span><b class="caret"></b></a>
                     <div class="dropdown-menu cust_sel test_options" role="quality" aria-labelledby="drop4">
                         <ul id="ci" class="ci_dropdown">

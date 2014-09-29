@@ -28,6 +28,9 @@ define([], function() {
 			var self = this;
 			commonVariables.projectId = projectId;
 			self.projectRequestBody.projectId = projectCode;
+			self.projectListAction(self.getActionHeader("", "continuousDeliveryType"), "", function(response) {
+				ciType = response.data;
+			});
 			self.projectListAction(self.getActionHeader(self.projectRequestBody, "configTypes"), "", function(response) {	
 				commonVariables.api.localVal.setJson('configTypes', response.data);
 				commonVariables.navListener.getMyObj(commonVariables.dashboard, function(editprojectObject) {
@@ -35,7 +38,13 @@ define([], function() {
 					$('.hProjectId').val(projectId); 
 					Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 					Clazz.navigationController.push(editprojectObject, commonVariables.animation);
-					$("#editprojectTab").css("display", "block");
+					if(ciType == "Bamboo"){
+						$("#editprojectTab").css("display", "block");
+						$("#continuousIntegration").css("display","none");
+					}else{
+						$("#editprojectTab").css("display", "block");
+						$("#continuousIntegration").css("display","block");
+					}
 					$("#dashboard a").addClass('act');
 					self.dynamicrenderlocales(commonVariables.contentPlaceholder);
 				});
@@ -217,7 +226,10 @@ define([], function() {
 					self.bcheck = true;
 					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/types?customerId="+customerId+"&userId="+userId+"&techId="+projectRequestBody.techid;
 				}
-			} 
+			} else if(action === "continuousDeliveryType"){
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/type?customerId="+ customerId + "&projectId=" + projectId;
+			}
 			if(action === "generateReport") {
 				var moduleParam = self.isBlank(projectRequestBody.moduleName) ? "" : '&moduleName='+projectRequestBody.moduleName;
 				header.requestMethod = "POST";

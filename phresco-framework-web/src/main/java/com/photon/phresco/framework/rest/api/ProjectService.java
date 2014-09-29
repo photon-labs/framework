@@ -329,7 +329,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					ProjectUtils.updateProjectInfo(projectinfo, new File(sb.toString()));
 				}
 			} else {
-				for (ApplicationInfo applicationInfo : availableProjectInfo.getAppInfos()) {
+					for (ApplicationInfo applicationInfo : availableProjectInfo.getAppInfos()) {
 					String appDirPath = Utility.getProjectInfoPath(Utility.getProjectHome()
 							+ applicationInfo.getAppDirName(), null);
 					ProjectInfo projectInfoFile = Utility.getProjectInfo(Utility.getProjectHome()
@@ -337,6 +337,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					
 					projectInfoFile.setDescription(projectinfo.getDescription());
 					projectInfoFile.setIntegrationTest(projectinfo.isIntegrationTest());
+					projectInfoFile.setCiType(projectinfo.getCiType());
 					ProjectUtils.updateProjectInfo(projectInfoFile, new File(appDirPath));
 					
 					if(projectinfo.isIntegrationTest()) {

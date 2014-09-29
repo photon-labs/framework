@@ -22,6 +22,7 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener", "c
 		codequalityListener: null,
 		onShowHideConsoleEvent : null,
 		remotesonar : null,
+		citype: null,
 	
 		/***
 		 * Called in initialization time of this class 
@@ -61,6 +62,9 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener", "c
 				self.start = new signals.Signal();
 			}
 			
+			if	(self.citype === null){
+			    self.citype = new signals.Signal();
+			}
 			if (self.stop === null) {
 				self.stop = new signals.Signal();
 			}
@@ -102,6 +106,7 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener", "c
 			self.getSettings.add(settingsListener.getSettings, settingsListener);
 			self.switchStatus.add(settingsListener.switchStatus, settingsListener);
 			self.start.add(settingsListener.start, settingsListener);
+			self.citype.add(settingsListener.citype, settingsListener)
 			self.stop.add(settingsListener.stop, settingsListener);
 			self.setup.add(settingsListener.setup, settingsListener);
 			self.save.add(settingsListener.save, settingsListener);
@@ -167,6 +172,10 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener", "c
    			$('input[name=presetup]').click(function() {
    				self.presetup.dispatch(this);
    				$("#unit_popup").toggle();
+			});
+			
+			$('input[name=citype]').click(function(){
+				self.citype.dispatch();
 			});
    			
 			$('input[name=setup]').click(function() {

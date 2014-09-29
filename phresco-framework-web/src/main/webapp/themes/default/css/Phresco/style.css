@@ -4794,6 +4794,12 @@ vertical-align: middle;
 .settings_tab tr td input[type="text"] {
 	width:170px;
 }
+.ci_label_style {
+   	bottom: 16px;
+    position: relative;
+  	width:200px;
+    right: -25px;
+}
 /**************************** STYLES FOR GLOBAL SETTINGS ENDS *************************************/
 
 

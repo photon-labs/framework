@@ -567,6 +567,7 @@ public interface ResponseCodes {
 	String PHR810048 = "PHR810048"; // Keychains retrieval Failed
 	String PHR810049 = "PHR810049"; // Sonarsetup Details retrived successfully
 	String PHR810050 = "PHR810050"; // Sonarsetup Details retrieval Failed
+	String PHR810051 = "PHR8100051"; // Bamboo build failed due to bad credentials.
 	/*
 	 * Upgrade Service
 	 */

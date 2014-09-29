@@ -9,8 +9,8 @@
                     <td><input type="text" name="appName" maxlength="30" title="30 Characters only" data-i18n="[placeholder]application.edit.appname" value="{{name}}"/></td>
                     <td><span data-i18n="application.edit.code"></span><sup>*</sup></td>
                     <td><input type="text" data-i18n="[placeholder]application.edit.appcode" maxlength="30" title="30 Characters only" Code" name="appCode" value="{{code}}"/></td>
-                    <td class="desc" rowspan="3" data-i18n="application.edit.description"></td>
-                    <td class="descdata" rowspan="3"><textarea name="appDesc" maxlength="150" title="150 Characters only" data-i18n="[placeholder]application.edit.description" class="appDesc popuptextarea" id="appDesc">{{description}}</textarea></td>
+                    <td class="desc" rowspan="1" data-i18n="application.edit.description"></td>
+                    <td class="descdata" rowspan="2"><textarea name="appDesc" maxlength="150" title="150 Characters only" data-i18n="[placeholder]application.edit.description" class="appDesc popuptextarea" id="appDesc">{{description}}</textarea></td>
 					<td colspan="2"></td>
                 </tr>
                 <tr>
@@ -32,6 +32,11 @@
 	                    		{{#embedselect ../projectlist.appdetails.data.embedList ../projectlist.appdetails.data.projectInfo.appInfos.0.embedAppId}}{{/embedselect}}
 	                    </select>  
                     </td>
+					<td><label data-i18n="project.create.label.citype"></label></td>
+					<td><select id='ciType' disabled = 'disabled'>
+							<option value="{{value}}" {{#selected}}selected="selected"{{/selected}}>{{#appendNames ciType}}{{/appendNames}}</option>
+						</select>
+					</td>
 					<td colspan="3"></td>
                 </tr>
 				{{/each}}	  

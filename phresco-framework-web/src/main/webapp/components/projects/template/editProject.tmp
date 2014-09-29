@@ -61,8 +61,13 @@
                 			<img id="enddt" src="themes/default/images/Phresco/cal_icon.png" border="0" alt="">
             			</span>
         			</td>
-					<td></td>
-                </tr>
+					<td><label data-i18n="project.create.label.citype"></label></td>
+					<td><select id='ciType'>
+							<option value={{ciType}} {{#selected}}selected="selected"{{/selected}}>{{ciType}}</option>
+							<option value={{#type ciType}}{{/type}}>{{#type ciType}}{{/type}}</option>
+						</select>
+					</td>
+				</tr>
 			{{/editProject}}
                <tr id="appLayaer" class="proj_title">
 				  <td colspan="3">{{applicationlayerData.name}}</td>

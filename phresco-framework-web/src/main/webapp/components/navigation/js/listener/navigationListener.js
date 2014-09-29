@@ -1235,7 +1235,6 @@ define([], function() {
 		validateGitData : function(repoUrlObj) {
 			var self = this;
 			repoUrlObj.removeClass("errormessage");
-			console.info("entering Validate Git data");
 			var repoUrl = repoUrlObj.val();
 			if (repoUrl === "") {
 				self.validateTextBox(repoUrlObj, 'Enter Url');

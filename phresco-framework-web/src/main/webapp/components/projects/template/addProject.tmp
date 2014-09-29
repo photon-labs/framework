@@ -22,7 +22,7 @@
                             <option>Select</option>
                         </select>
                     </td>
-					<td rowspan="2" style="vertical-align: top;">
+					<td rowspan="2" style="vertical-align: top;" colspan="2">
 						<textarea class="popuptextarea" name="projectdescription" id="projectdescription" maxlength="150" title="150 Characters only" data-i18n="[placeholder]project.create.label.description"/>
 					</td>
                 </tr>
@@ -50,7 +50,11 @@
                 			<img id="enddt" src="themes/default/images/Phresco/cal_icon.png" border="0" alt="">
             			</span>
         			</td>
-					<td></td>
+					<td><label data-i18n="project.create.label.citype"></label></td>
+					<td><select id='ciType'>
+							<option value="Jenkins" data-i18n="project.create.label.jenkins" selected>
+							<option value="Bamboo" data-i18n="project.create.label.bamboo"></option>
+						</select></td>
                 </tr>
 				{{#if applicationlayerData.techGroups}}
 				<tr class="proj_title" name="applicationlayer">
@@ -168,7 +172,7 @@
                       <td colspan="3"><span class="errmsg3"></span></td>
                       <td colspan="2"><img name="close" id="mobilelayer" src="themes/default/images/Phresco/close_icon.png"  border="0" alt=""></td>
                      </tr>
-                     <tr class="mobLayer" name="appvalidation" key="displayed">
+                     <tr class="mobLayer" name="appvalidation" keykey="displayed">
                       	<td colspan="8" class="mob">
 							<table class="table table-striped table_border border_div table-bordered mob-table" cellpadding="0" cellspacing="0" border="0">
 								<thead>

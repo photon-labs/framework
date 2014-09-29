@@ -17,18 +17,25 @@
  */
 package com.photon.phresco.framework.rest.api;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -56,11 +63,15 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -74,9 +85,11 @@ import com.photon.phresco.commons.model.ProjectDelivery;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.CIManager;
+import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.impl.CIManagerImpl;
 import com.photon.phresco.framework.impl.util.FrameworkUtil;
 import com.photon.phresco.framework.model.GlobalSettings;
@@ -87,12 +100,17 @@ import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceManager;
+import com.photon.phresco.service.client.impl.ClientHelper;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.WebResource.Builder;
 
 /**
  * The Class CIService.
@@ -117,56 +135,86 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getBuilds(@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir,
 			@QueryParam(REST_QUERY_NAME) String jobName, @QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName, 
-			@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule) throws PhrescoException {
+			@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule, @QueryParam(REST_QUERY_TYPE) String ciType, @QueryParam(BAMBOO_PLAN_KEY) String planKey) throws PhrescoException {
 		ResponseInfo<List<CIBuild>> responseData = new ResponseInfo<List<CIBuild>>();
-		List<CIBuild> builds = null;
-		CIJob job = null;
-		String module = "";
-		String splitPath = "";
-		try {
-			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
-				
-				if(StringUtils.isNotEmpty(rootModule)) {
-					module = appDir;
-					appDir = rootModule;
-				} 
-				splitPath = Utility.splitPathConstruction(appDir);
-				if(StringUtils.isNotEmpty(rootModule)) {
-					splitPath = splitPath + File.separator + module;
-				}
-				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
-				projectId = projectInfo.getId();
-			}
-			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
-			String globalInfo = "";
-			if (CollectionUtils.isNotEmpty(appInfos)) {
-				globalInfo = appInfos.get(0).getAppDirName();
-				globalInfo = Utility.splitPathConstruction(globalInfo);
-			}
-			if (StringUtils.isNotEmpty(appDir)) {
-				appDir = splitPath;
-			}
-			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
-			List<CIJob> ciJobs = Utility.getJobs(continuousName, projectId, ciJobInfo);
-			for (CIJob ciJob : ciJobs) {
-				if(ciJob.getJobName().equals(jobName)) {
-					job = ciJob;
+		List<CIBuild> builds = new ArrayList<CIBuild>();
+		if(ciType.equalsIgnoreCase(BAMBOO)) {
+			try {
+				FrameworkConfiguration frameworkConfig = new FrameworkConfiguration(FRAMEWORK_CONFIG);
+				StringBuilder resultUrl = new StringBuilder();
+			resultUrl.append(frameworkConfig.getBambooHome())
+				.append(BAMBOO_RESULT_PATH)
+				.append(planKey)
+				.append("?expand=results[0:10].result");
+				String response = getResponseGetMethod(resultUrl.toString());
+				JSONParser parser = new JSONParser();
+				JSONObject jsonObject = (JSONObject) parser.parse(response);
+				JSONObject buildResults = (JSONObject) jsonObject.get("results");
+				if(Integer.parseInt(buildResults.get("size").toString()) > 0) {
+					JSONArray allBuilds = (JSONArray) buildResults.get("result");
+					for(int resultIndex = 0; resultIndex < allBuilds.size(); resultIndex++)
+					{
+						builds.add(getBuildInstanceFromJson((JSONObject) allBuilds.get(resultIndex)));
+					}
 				}
 			}
-			builds = ciManager.getBuilds(job);
-			ResponseInfo<List<CIBuild>> finalOutput = responseDataEvaluation(responseData, null, builds, RESPONSE_STATUS_SUCCESS, PHR800001);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
-					.build();
-		} catch (PhrescoException e) {
-			ResponseInfo<List<CIBuild>> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810001);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
-					.build();
-		} catch (PhrescoPomException e) {
-			ResponseInfo<List<CIBuild>> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810001);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
-					.build();
+			catch (ParseException e) {
+				ResponseInfo<List<CIBuild>> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810001);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+						.build();
+			}
+			
 		}
+		else {
+			CIJob job = null;
+			String module = "";
+			String splitPath = "";
+			try {
+				if(projectId == null || projectId.equals("null") || projectId.equals("")) {
+					
+					if(StringUtils.isNotEmpty(rootModule)) {
+						module = appDir;
+						appDir = rootModule;
+					} 
+					splitPath = Utility.splitPathConstruction(appDir);
+					if(StringUtils.isNotEmpty(rootModule)) {
+						splitPath = splitPath + File.separator + module;
+					}
+					ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
+					projectId = projectInfo.getId();
+				}
+				CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+				List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
+				String globalInfo = "";
+				if (CollectionUtils.isNotEmpty(appInfos)) {
+					globalInfo = appInfos.get(0).getAppDirName();
+					globalInfo = Utility.splitPathConstruction(globalInfo);
+				}
+				if (StringUtils.isNotEmpty(appDir)) {
+					appDir = splitPath;
+				}
+				List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
+				List<CIJob> ciJobs = Utility.getJobs(continuousName, projectId, ciJobInfo);
+				for (CIJob ciJob : ciJobs) {
+					if(ciJob.getJobName().equals(jobName)) {
+						job = ciJob;
+					}
+				}
+				builds = ciManager.getBuilds(job);
+			} catch (PhrescoException e) {
+				ResponseInfo<List<CIBuild>> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810001);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+						.build();
+			} catch (PhrescoPomException e) {
+				ResponseInfo<List<CIBuild>> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810001);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+						.build();
+			}
+		}
+		ResponseInfo<List<CIBuild>> finalOutput = responseDataEvaluation(responseData, null, builds, RESPONSE_STATUS_SUCCESS, PHR800001);
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+					.build();
+		
 	}
 
 	/**
@@ -230,7 +278,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		String name = null;
 		try {
 			if(!flag.equalsIgnoreCase("update")) {
-				JSONArray jobs = new JSONArray("["+jobName+"]");
+				org.json.JSONArray jobs = new org.json.JSONArray("["+jobName+"]");
 				String jenkinsUrl = FrameworkUtil.getJenkinsUrl() + "/api/json";
 				
 				HttpClient httpClient = new DefaultHttpClient();
@@ -241,12 +289,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				ciManager.getAuthenticatedHttpClient(httpClient, httpContext);
 				String execute = httpClient.execute(httpget, responseHandler);
 				
-				JSONArray jsonArray = new JSONArray("["+execute.toString()+"]");
-			    JSONObject jsonObject = jsonArray.getJSONObject(0);
-			    JSONArray jobJsonArray = jsonObject.getJSONArray("jobs");
+				org.json.JSONArray jsonArray = new org.json.JSONArray("["+execute.toString()+"]");
+			    org.json.JSONObject jsonObject = jsonArray.getJSONObject(0);
+			    org.json.JSONArray jobJsonArray = jsonObject.getJSONArray("jobs");
 			    for (int k = 0; k<jobs.length(); k++) {
 				    for (int j = 0; j<jobJsonArray.length(); j++) {
-				    	 JSONObject jobJsonObject = jobJsonArray.getJSONObject(j);
+				    	org.json.JSONObject jobJsonObject = jobJsonArray.getJSONObject(j);
 				    	 if(jobs.get(k).toString().equals(jobJsonObject.getString("name"))) {
 				    		 hasTrue = false;
 				    		 name = jobs.get(k).toString();
@@ -524,11 +572,11 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		ResponseHandler<String> responseHandler = new BasicResponseHandler();
 		String execute = httpClient.execute(httpget, responseHandler);
 		
-		JSONArray jsonArray = new JSONArray("["+execute.toString()+"]");
-	    JSONObject jsonObject = jsonArray.getJSONObject(0);
-	    JSONArray jobJsonArray = jsonObject.getJSONArray("jobs");
+		org.json.JSONArray jsonArray = new org.json.JSONArray("["+execute.toString()+"]");
+		org.json.JSONObject jsonObject = jsonArray.getJSONObject(0);
+		org.json.JSONArray jobJsonArray = jsonObject.getJSONArray("jobs");
 	    for (int j = 0; j<jobJsonArray.length(); j++) {
-	    	 JSONObject jsonObject1 = jobJsonArray.getJSONObject(j);
+	    	org.json.JSONObject jsonObject1 = jobJsonArray.getJSONObject(j);
 	    	 if(jobName.equals(jsonObject1.getString("name"))) {
 	    		 hasTrue = false;
 	    		 break;
@@ -611,102 +659,173 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Path("/list")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getContinuousDeliveryJob(@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule, @QueryParam(REST_QUERY_CUSTOMERID) String customerId)
+	public Response getContinuousDeliveryJob(
+			@QueryParam(REST_QUERY_PROJECTID) String projectId,	@QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule,
+			@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_TYPE) String ciType)
 	throws PhrescoException {
 		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
-		String module = "";
-		String splitPath = "";
-		try {
-			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
-				if(StringUtils.isNotEmpty(rootModule)) {
-					module = appDir;
-					appDir = rootModule;
-				} 
-				splitPath = Utility.splitPathConstruction(appDir);
-				if(StringUtils.isNotEmpty(rootModule)) {
-					splitPath = splitPath + File.separator + module;
+		if(ciType != null && !ciType.isEmpty() && ciType.equalsIgnoreCase(BAMBOO)) {
+			JSONObject planList = new JSONObject();
+			planList.put("plans", new JSONObject());	
+			try {
+				FrameworkConfiguration frameworkConfig = new FrameworkConfiguration(FRAMEWORK_CONFIG);
+				StringBuilder sb = new StringBuilder();
+				sb.append(frameworkConfig.getBambooHome()).append(BAMBOO_REST_PLANS_PATH);
+				String responseString = getResponseGetMethod(sb.toString());
+				JSONParser jsonParser = new JSONParser();
+				JSONObject jsonObject = (JSONObject) jsonParser.parse(responseString);
+				JSONObject projectList = (JSONObject)jsonObject.get(BAMBOO_PROJECTS);
+				JSONArray projects = (JSONArray)projectList.get("project");
+				for(int projectIndex = 0; projectIndex < projects.size(); projectIndex++)	{
+					JSONObject project = (JSONObject) projects.get(projectIndex);
+					if(appDir.equalsIgnoreCase((String)project.get(BAMBOO_KEY)))	{
+						JSONObject planLists = (JSONObject) project.get("plans");
+						planList.put("plans",planLists);
+						break;
+					}
 				}
-				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
-				projectId = projectInfo.getId();
+			} catch (ParseException e) {
+				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810007);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+				.build();
+			} catch(PhrescoException e){
+				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810007);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+				.build();
 			}
-			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			ProjectDelivery projectContinuousDelivery = new ProjectDelivery();
-			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
-			String globalInfo = "";
-			if (CollectionUtils.isNotEmpty(appInfos)) {
-				globalInfo = appInfos.get(0).getAppDirName();
-				globalInfo = Utility.splitPathConstruction(globalInfo);
-			}
-			if (StringUtils.isNotEmpty(appDir)) {
-				appDir = splitPath;
-			}
-			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
-			if(CollectionUtils.isNotEmpty(ciJobInfo)) {
-				ProjectDelivery projectDelivery = Utility.getProjectDelivery(projectId, ciJobInfo);
-				if (projectDelivery != null) {
-					List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
-					List<ContinuousDelivery> contDeliveryList = new ArrayList<ContinuousDelivery>();
-					for (ContinuousDelivery continuousDelivery : continuousDeliveries) {
-
-						List<CIJob> ciJobs = continuousDelivery.getJobs();
-						String downstreamApplication = "";
-						ContinuousDelivery contDelivery = new ContinuousDelivery();
-						List<CIJob> jobs = new ArrayList<CIJob>();
-						for (CIJob ciJob : ciJobs) {
-							if(StringUtils.isEmpty(ciJob.getUpstreamApplication())) {
-								jobs.add(ciJob);
-								downstreamApplication = ciJob.getDownstreamApplication();
-								if(ciJobs.size() == 1) {
-									contDelivery.setJobs(jobs);
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, planList, RESPONSE_STATUS_SUCCESS, PHR800005);	
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build(); 
+		}
+		else {
+			String module = "";
+			String splitPath = "";
+			try {
+				if(projectId == null || projectId.equals("null") || projectId.equals("")) {
+					if(StringUtils.isNotEmpty(rootModule)) {
+						module = appDir;
+						appDir = rootModule;
+					} 
+					splitPath = Utility.splitPathConstruction(appDir);
+					if(StringUtils.isNotEmpty(rootModule)) {
+						splitPath = splitPath + File.separator + module;
+					}
+					ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
+					projectId = projectInfo.getId();
+				}
+				CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+				ProjectDelivery projectContinuousDelivery = new ProjectDelivery();
+				List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
+				String globalInfo = "";
+				if (CollectionUtils.isNotEmpty(appInfos)) {
+					globalInfo = appInfos.get(0).getAppDirName();
+					globalInfo = Utility.splitPathConstruction(globalInfo);
+				}
+				if (StringUtils.isNotEmpty(appDir)) {
+					appDir = splitPath;
+				}
+				List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
+				if(CollectionUtils.isNotEmpty(ciJobInfo)) {
+					ProjectDelivery projectDelivery = Utility.getProjectDelivery(projectId, ciJobInfo);
+					if (projectDelivery != null) {
+						List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
+						List<ContinuousDelivery> contDeliveryList = new ArrayList<ContinuousDelivery>();
+						for (ContinuousDelivery continuousDelivery : continuousDeliveries) {
+	
+							List<CIJob> ciJobs = continuousDelivery.getJobs();
+							String downstreamApplication = "";
+							ContinuousDelivery contDelivery = new ContinuousDelivery();
+							List<CIJob> jobs = new ArrayList<CIJob>();
+							for (CIJob ciJob : ciJobs) {
+								if(StringUtils.isEmpty(ciJob.getUpstreamApplication())) {
+									jobs.add(ciJob);
+									downstreamApplication = ciJob.getDownstreamApplication();
+									if(ciJobs.size() == 1) {
+										contDelivery.setJobs(jobs);
+									}
 								}
 							}
-						}
-						if(StringUtils.isNotEmpty(downstreamApplication)) {
-							int flag = 0;
-							for(int i=0;i<ciJobs.size();i++){
-								for (CIJob ciJob : ciJobs) {
-									if(ciJob.getJobName().equals(downstreamApplication)) {
-										jobs.add(ciJob);
-										if(StringUtils.isEmpty(ciJob.getDownstreamApplication())) {
-											flag = 1;
-											contDelivery.setJobs(jobs);
-											downstreamApplication = "";
-											break;
-										} else {
-											downstreamApplication = ciJob.getDownstreamApplication();
+							if(StringUtils.isNotEmpty(downstreamApplication)) {
+								int flag = 0;
+								for(int i=0;i<ciJobs.size();i++){
+									for (CIJob ciJob : ciJobs) {
+										if(ciJob.getJobName().equals(downstreamApplication)) {
+											jobs.add(ciJob);
+											if(StringUtils.isEmpty(ciJob.getDownstreamApplication())) {
+												flag = 1;
+												contDelivery.setJobs(jobs);
+												downstreamApplication = "";
+												break;
+											} else {
+												downstreamApplication = ciJob.getDownstreamApplication();
+											}
+											if(flag == 1) {
+												break;
+											}
 										}
 										if(flag == 1) {
 											break;
 										}
 									}
-									if(flag == 1) {
-										break;
-									}
 								}
-							}
-						} 
-						contDelivery.setName(continuousDelivery.getName());
-						contDelivery.setEnvName(continuousDelivery.getEnvName());
-						contDeliveryList.add(contDelivery);
-						projectContinuousDelivery.setContinuousDeliveries(contDeliveryList);
+							} 
+							contDelivery.setName(continuousDelivery.getName());
+							contDelivery.setEnvName(continuousDelivery.getEnvName());
+							contDeliveryList.add(contDelivery);
+							projectContinuousDelivery.setContinuousDeliveries(contDeliveryList);
+						}
 					}
+					projectContinuousDelivery.setId(projectId);
 				}
-				projectContinuousDelivery.setId(projectId);
+	
+				ResponseInfo<ProjectDelivery> finalOutput = responseDataEvaluation(responseData, null, projectContinuousDelivery, RESPONSE_STATUS_SUCCESS, PHR800005);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+			} catch (PhrescoException e) {
+				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810007);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+				.build();
+			} catch (PhrescoPomException e) {
+				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810007);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+				.build();
 			}
-
-			ResponseInfo<ProjectDelivery> finalOutput = responseDataEvaluation(responseData, null, projectContinuousDelivery, RESPONSE_STATUS_SUCCESS, PHR800005);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
-		} catch (PhrescoException e) {
-			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810007);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
-			.build();
-		} catch (PhrescoPomException e) {
-			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810007);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
-			.build();
 		}
 	}
-
+	
+	/**
+	 * @param appDir
+	 * @param projectId
+	 * @return string
+	 * @throws PhrescoException 
+	 * */
+	@GET
+	@Path("/type")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getCiType(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, 
+			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId) throws PhrescoException
+	{
+		ResponseInfo responseInfo = new ResponseInfo();
+		String ciType = "";
+		ProjectInfo projectInfo = null;
+		try {
+			if(projectId.isEmpty() && !appDirName.isEmpty() )	{
+				String splitPath = Utility.splitPathConstruction(appDirName);
+				projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
+				ciType = projectInfo.getCiType();
+			}
+			else {
+				ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+				projectInfo = projectManager.getProject(projectId, customerId);
+				ciType = projectInfo.getCiType();
+			}
+		} catch(Exception e){
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseInfo, e, null, RESPONSE_STATUS_ERROR, PHR810007);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			.build();
+			}
+		ResponseInfo finalOutput = responseDataEvaluation(responseInfo, null, ciType, RESPONSE_STATUS_SUCCESS, PHR800008);
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
+	}
+	
 	/**
 	 * @param continuousName
 	 * @param customerId
@@ -852,58 +971,89 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response build(@QueryParam(REST_QUERY_NAME) String name, @QueryParam(REST_QUERY_PROJECTID) String projectId, 
 			@QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule, 
-			@QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName, @QueryParam(REST_QUERY_CUSTOMERID) String customerId) throws PhrescoException {
+			@QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName, @QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_TYPE) String ciType, @QueryParam(BAMBOO_PLAN_KEY) String planKey) throws PhrescoException {
 		ResponseInfo<CIJobStatus> responseData = new ResponseInfo<CIJobStatus>();
-		String module = "";
-		String splitPath = "";
-		try {
-			//appLevel
-			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
-				if(StringUtils.isNotEmpty(rootModule)) {
-					module = appDir;
-					appDir = rootModule;
-				} 
-				splitPath = Utility.splitPathConstruction(appDir);
-				if(StringUtils.isNotEmpty(rootModule)) {
-					splitPath = splitPath + File.separator + module;
+		ResponseInfo<CIJobStatus> finalOutput = null;
+		CIJobStatus buildJobs = null;
+		if(ciType!= null && ciType.equalsIgnoreCase(BAMBOO)){
+			JSONObject response;	
+			try {
+				FrameworkConfiguration frameworkConfig = new FrameworkConfiguration(FRAMEWORK_CONFIG);
+				String bambooServerUrl = frameworkConfig.getBambooHome();
+				StringBuilder sb = new StringBuilder();
+				
+				sb.append(bambooServerUrl)
+				.append(BAMBOO_BUILD_URL)
+				.append(planKey)
+				.append("?executeAllStages=true");
+				String plainPassword = com.photon.phresco.framework.commons.FrameworkUtil.decryptString(frameworkConfig.getBambooPassword());
+				String credentials = new String (Base64.encodeBase64((frameworkConfig.getBambooUserName()+ FrameworkConstants.COLON + plainPassword).getBytes()));
+				response = getResponsePostMethod(sb.toString(), credentials);
+				buildJobs = new Gson().fromJson(response.toJSONString(), CIJobStatus.class);
+				
+				if(buildJobs.getCode() == 200) {
+					finalOutput = responseDataEvaluation(responseData, null, buildJobs , RESPONSE_STATUS_SUCCESS, PHR800008);
 				}
-				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
-				projectId = projectInfo.getId();
+				else {
+					finalOutput = responseDataEvaluation(responseData, null, buildJobs , RESPONSE_STATUS_FAILURE, PHR810048);
+				}
 			}
-			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			CIJobStatus buildJobs = null;
-			ResponseInfo<CIJobStatus> finalOutput; 
-			
-			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
-			String globalInfo = "";
-			//proj Level
-			if (CollectionUtils.isNotEmpty(appInfos)) {
-				globalInfo = appInfos.get(0).getAppDirName();
-				globalInfo = Utility.splitPathConstruction(globalInfo);
+			catch(Exception e)
+			{
+				ResponseInfo<Boolean> finalOutput1 = responseDataEvaluation(responseData, e,  null, RESPONSE_STATUS_FAILURE, PHR800013);
+				return Response.status(Status.OK).entity(finalOutput1).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+				.build();
 			}
-			if (StringUtils.isNotEmpty(appDir)) {
-				appDir = splitPath;
-			}
-			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
-			CIJob specificJob = ciManager.getJob(name, projectId, ciJobInfo, continuousName);
-			if (specificJob != null) {
-				buildJobs = ciManager.generateBuild(specificJob);
-				finalOutput = responseDataEvaluation(responseData, null, buildJobs, RESPONSE_STATUS_SUCCESS, PHR800008);
-			} else {
-				finalOutput = responseDataEvaluation(responseData, null, buildJobs, RESPONSE_STATUS_FAILURE, PHR810012);
-			}
-
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
-			.build();
-		} catch (PhrescoException e) {
-			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810013);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
-			.build();
-		} catch (PhrescoPomException e) {
-			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810013);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
-			.build();
 		}
+		else if(ciType.equalsIgnoreCase(JENKINS)){
+			String module = "";
+			String splitPath = "";
+			try {
+				//appLevel
+				if(projectId == null || projectId.equals("null") || projectId.equals("")) {
+					if(StringUtils.isNotEmpty(rootModule)) {
+						module = appDir;
+						appDir = rootModule;
+					} 
+					splitPath = Utility.splitPathConstruction(appDir);
+					if(StringUtils.isNotEmpty(rootModule)) {
+						splitPath = splitPath + File.separator + module;
+					}
+					ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
+					projectId = projectInfo.getId();
+				}
+				CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+				
+							
+				List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
+				String globalInfo = "";
+				//proj Level
+				if (CollectionUtils.isNotEmpty(appInfos)) {
+					globalInfo = appInfos.get(0).getAppDirName();
+					globalInfo = Utility.splitPathConstruction(globalInfo);
+				}
+				if (StringUtils.isNotEmpty(appDir)) {
+					appDir = splitPath;
+				}
+				List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
+				CIJob specificJob = ciManager.getJob(name, projectId, ciJobInfo, continuousName);
+				if (specificJob != null) {
+					buildJobs = ciManager.generateBuild(specificJob);
+					finalOutput = responseDataEvaluation(responseData, null, buildJobs, RESPONSE_STATUS_SUCCESS, PHR800008);
+				} else {
+					finalOutput = responseDataEvaluation(responseData, null, buildJobs, RESPONSE_STATUS_FAILURE, PHR800012);
+				}
+			} catch (PhrescoException e) {
+				ResponseInfo<CIJobStatus> finalOutput1 = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810013);
+				return Response.status(Status.OK).entity(finalOutput1).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+				.build();
+			} catch (PhrescoPomException e) {
+				ResponseInfo<CIJobStatus> finalOutput1 = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810013);
+				return Response.status(Status.OK).entity(finalOutput1).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+				.build();
+			}
+		}
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 	}
 
 	/**
@@ -982,13 +1132,23 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response getJenkinsUrl()throws PhrescoException, UnknownHostException {
 		ResponseInfo responseData = new ResponseInfo();
+		List<RepoDetail> ciDetails = new ArrayList<RepoDetail>();
 		ResponseInfo finalOutput = null;
 		try {
 			RepoDetail jenkinsDetails = new RepoDetail();
 			jenkinsDetails.setRepoUrl(FrameworkUtil.getJenkinsUrl());
 			jenkinsDetails.setUserName(FrameworkUtil.getJenkinsUsername());
 			jenkinsDetails.setPassword(FrameworkUtil.getJenkinsPassword());
-			finalOutput = responseDataEvaluation(responseData, null, jenkinsDetails, RESPONSE_STATUS_SUCCESS, PHR800024);
+			jenkinsDetails.setType(JENKINS);
+			ciDetails.add(jenkinsDetails);
+			FrameworkConfiguration frameworkConfig = new FrameworkConfiguration(FRAMEWORK_CONFIG);
+			RepoDetail bambooDetails = new RepoDetail();
+			bambooDetails.setRepoUrl(frameworkConfig.getBambooHome());
+			bambooDetails.setUserName(frameworkConfig.getBambooUserName());
+			bambooDetails.setPassword(com.photon.phresco.framework.commons.FrameworkUtil.decryptString(frameworkConfig.getBambooPassword()));
+			bambooDetails.setType(BAMBOO);
+			ciDetails.add(bambooDetails);
+			finalOutput = responseDataEvaluation(responseData, null, ciDetails, RESPONSE_STATUS_SUCCESS, PHR800024);
 		} catch (PhrescoException e) {
 			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810037);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
@@ -1133,11 +1293,39 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Path("/global")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response setGlobalConfiguration(GlobalSettings globalInfo, @QueryParam(REST_QUERY_EMAIL_ADDRESS) String emailAddress, @QueryParam(REST_QUERY_EMAIL_PASSWORD) String emailPassword , @QueryParam(REST_QUERY_URL) String url, @QueryParam(REST_QUERY_USER_NAME) String username , @QueryParam(REST_QUERY_PASSWORD) String password, @QueryParam(REST_QUERY_TFS_URL) String tfsUrl) throws PhrescoException {
+	public Response setGlobalConfiguration(GlobalSettings globalInfo, @QueryParam(REST_QUERY_EMAIL_ADDRESS) String emailAddress, @QueryParam(REST_QUERY_EMAIL_PASSWORD) String emailPassword , @QueryParam(REST_QUERY_URL) String url, @QueryParam(REST_QUERY_USER_NAME) String username , @QueryParam(REST_QUERY_PASSWORD) String password, @QueryParam(REST_QUERY_TFS_URL) String tfsUrl, @QueryParam(REST_QUERY_TYPE) String ciType) throws PhrescoException {
 		ResponseInfo responseData = new ResponseInfo();
 		ResponseInfo finalOutput = null;
 		boolean setGlobalConfiguration = false;
-		try {
+		if(ciType.equalsIgnoreCase(BAMBOO)){
+			try {
+					InputStream in = this.getClass().getClassLoader().getResourceAsStream(FRAMEWORK_CONFIG);
+					Properties frameworkConfig = new Properties();
+					frameworkConfig.load(in);
+					in.close();
+					
+					frameworkConfig.setProperty(BAMBOO_URL, url);
+					
+					frameworkConfig.setProperty(BAMBOO_USERNAME, username);
+					String encryptedPassword = com.photon.phresco.framework.commons.FrameworkUtil.encryptString(password);
+					
+					frameworkConfig.setProperty(BAMBOO_PASSWORD, encryptedPassword);
+					URL resource = this.getClass().getClassLoader().getResource("framework.config");
+					String filePath = resource.getPath();
+					File configFile = new File(filePath);
+					if(configFile.exists()) {
+						OutputStream out = new FileOutputStream(configFile);
+						frameworkConfig.store(out, "");
+						setGlobalConfiguration = true;
+					}
+			} catch (IOException e) {
+					finalOutput = responseDataEvaluation(responseData, e, setGlobalConfiguration, RESPONSE_STATUS_ERROR, PHR810034);
+					return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+					.build();
+			}
+		}
+		else {
+			try {
 			File pomFile = new File(FrameworkUtil.getJenkinsPOMFilePath());
 			PomProcessor pom = new PomProcessor(pomFile);
 			if (StringUtils.isNotEmpty(url)) {
@@ -1190,7 +1378,6 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 					keyChainJSONarray.put(keyChainObj);
 				}
 			}
-			
 			setGlobalConfiguration = ciManager.setGlobalConfiguration(jenkinsUrl, submitUrl, JSONarray, emailAddress, emailPassword, testFlightJSONarray, keyChainJSONarray,tfsUrl);
 		} catch (PhrescoException e) {
 			finalOutput = responseDataEvaluation(responseData, e, setGlobalConfiguration, RESPONSE_STATUS_ERROR, PHR810034);
@@ -1199,11 +1386,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		} catch (org.json.JSONException e) {
 			finalOutput = responseDataEvaluation(responseData, e, setGlobalConfiguration, RESPONSE_STATUS_ERROR, PHR810034);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
-			.build();
+				.build();
 		} catch (PhrescoPomException e) {
 			finalOutput = responseDataEvaluation(responseData, null, setGlobalConfiguration, RESPONSE_STATUS_SUCCESS, PHR800022);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
+		}
 		}
 		finalOutput = responseDataEvaluation(responseData, null, setGlobalConfiguration, RESPONSE_STATUS_SUCCESS, PHR800022);
 		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
@@ -1332,14 +1520,21 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Path("/isAlive")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response localJenkinsLocalAlive() {
+	public Response localJenkinsLocalAlive(@QueryParam(REST_QUERY_TYPE) String ciType) {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		String localJenkinsAlive = "";
 		ResponseInfo<String> finalOutput;
 		String statusCode= "";
+		String ciUrl = "";
 		try {
-			String jenkinsUrl = FrameworkUtil.getJenkinsUrl();
-			URL url = new URL(jenkinsUrl);
+			if(ciType != null && ciType.equalsIgnoreCase(BAMBOO)) {
+				FrameworkConfiguration frameworkConfig = new FrameworkConfiguration(FRAMEWORK_CONFIG);
+				ciUrl = frameworkConfig.getBambooHome();
+			}
+			else {
+				ciUrl = FrameworkUtil.getJenkinsUrl();
+			}
+			URL url = new URL(ciUrl);
 			URLConnection connection = url.openConnection();
 			HttpURLConnection httpConnection = (HttpURLConnection) connection;
 			int code = httpConnection.getResponseCode();
@@ -1370,55 +1565,121 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response getStatus(@QueryParam(REST_QUERY_NAME) String jobName, @QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir,
-			@QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule, @QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
+			@QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule, @QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_TYPE) String ciType, @QueryParam(BAMBOO_PLAN_KEY) String planKey) {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		ResponseInfo<Boolean> finalOutput = null;
+		String jobStatus = "";
 		String splitPath = "";
-		try {
-			String module = "";
-			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
-				if(StringUtils.isNotEmpty(rootModule)) {
-					module = appDir;
-					appDir = rootModule;
-				} 
-				splitPath = Utility.splitPathConstruction(appDir);
-				if(StringUtils.isNotEmpty(rootModule)) {
-					splitPath = splitPath + File.separator + module;
+		if(ciType != null && ciType.equalsIgnoreCase(BAMBOO)) {
+			try {
+					FrameworkConfiguration frameworkConfig = new FrameworkConfiguration(FRAMEWORK_CONFIG);
+					StringBuilder resultUrl = new StringBuilder();
+					if(planKey == null) {
+						PhrescoException pe = new PhrescoException("Plan Key is NULL");
+						return Response.status(Status.OK).entity(pe).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+					}
+					
+					resultUrl.append(frameworkConfig.getBambooHome())
+					.append(BAMBOO_RESULT_PATH).
+					append(planKey);
+					
+					String response = getResponseGetMethod(resultUrl.toString());
+					JSONParser parser = new JSONParser();
+					JSONObject jsonObject = (JSONObject) parser.parse(response);
+					if(jsonObject.containsKey("results"))	{
+						JSONObject resultsObj = (JSONObject) jsonObject.get("results");
+						if(Integer.parseInt(resultsObj.get("size").toString()) > 0) {
+							JSONArray results = (JSONArray) resultsObj.get("result");
+							JSONObject jsonObject1 = (JSONObject) results.get(0);
+							jobStatus = (jsonObject1.get("state").equals("Failed")) ? "\"red\"" : "\"blue\"";
+						} else {
+							jobStatus = "\"notbuilt\"";
+						}
+						
+					} else {
+						String lifeCycleState = (String) jsonObject.get("lifeCycleState"); 
+						String state = (String) jsonObject.get("state");
+						if(lifeCycleState.equalsIgnoreCase("Finished")){
+							if(state.equalsIgnoreCase("Failed"))	{
+							jobStatus = "\"red\"";	
+							}
+							else if(state.equalsIgnoreCase("Successful")) {
+								jobStatus = "\"blue\"";
+							}
+						}
+						else if(lifeCycleState.equalsIgnoreCase("NotBuilt")) {
+							if(state.equalsIgnoreCase("unknown")) {
+								jobStatus = "\"red\"";
+							}
+						}
+						else if(lifeCycleState.equalsIgnoreCase("InProgress")) {
+							jobStatus = "\"red_anime\"";
+						}
+						else if(lifeCycleState.equalsIgnoreCase("Queued")) {
+							jobStatus ="\"Queued\"";
+						}
+						
+					}
+					finalOutput = responseDataEvaluation(responseData, null, jobStatus, RESPONSE_STATUS_SUCCESS, PHR800012);
+					return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+				} catch (PhrescoException e) {
+				finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810018);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+				.build();
+			} catch (ParseException e) {
+				finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810018);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+				.build();
+			}
+		} 
+		else {
+			try {
+				String module = "";
+				if(projectId == null || projectId.equals("null") || projectId.equals("")) {
+					if(StringUtils.isNotEmpty(rootModule)) {
+						module = appDir;
+						appDir = rootModule;
+					} 
+					splitPath = Utility.splitPathConstruction(appDir);
+					if(StringUtils.isNotEmpty(rootModule)) {
+						splitPath = splitPath + File.separator + module;
+					}
+					ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
+					projectId = projectInfo.getId();
 				}
-				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
-				projectId = projectInfo.getId();
-			}
-			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			CIJob job = null;
-			
-			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
-			String globalInfo = "";
-			if (CollectionUtils.isNotEmpty(appInfos)) {
-				globalInfo = appInfos.get(0).getAppDirName();
-				globalInfo = Utility.splitPathConstruction(globalInfo);
-			}
-			if (StringUtils.isNotEmpty(appDir)) {
-				appDir = splitPath;
-			}
-			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
-			List<CIJob> ciJobs = Utility.getJobs(continuousName, projectId, ciJobInfo);
-			for (CIJob ciJob : ciJobs) {
-				if(ciJob.getJobName().equals(jobName)) {
-					job = ciJob;
+				CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+				CIJob job = null;
+				
+				List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
+				String globalInfo = "";
+				if (CollectionUtils.isNotEmpty(appInfos)) {
+					globalInfo = appInfos.get(0).getAppDirName();
+					globalInfo = Utility.splitPathConstruction(globalInfo);
 				}
+				if (StringUtils.isNotEmpty(appDir)) {
+					appDir = splitPath;
+				}
+				List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
+				List<CIJob> ciJobs = Utility.getJobs(continuousName, projectId, ciJobInfo);
+				for (CIJob ciJob : ciJobs) {
+					if(ciJob.getJobName().equals(jobName)) {
+						job = ciJob;
+					}
+				}
+				jobStatus = ciManager.getJobStatus(job);
+			} catch (PhrescoException e) {
+				finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810018);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+				.build();
+			} catch (PhrescoPomException e) {
+				finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810018);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+				.build();
 			}
-			String jobStatus = ciManager.getJobStatus(job);
-			finalOutput = responseDataEvaluation(responseData, null, jobStatus, RESPONSE_STATUS_SUCCESS, PHR800012);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
-		} catch (PhrescoException e) {
-			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810018);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
-			.build();
-		} catch (PhrescoPomException e) {
-			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810018);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
-			.build();
 		}
+		
+		finalOutput = responseDataEvaluation(responseData, null, jobStatus, RESPONSE_STATUS_SUCCESS, PHR800012);
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 	}
 	
 	@GET
@@ -1427,55 +1688,88 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response getLastBuildStatus(@QueryParam(REST_QUERY_NAME) String jobName, @QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, 
-			@QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule, @QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
+			@QueryParam(REST_QUERY_ROOT_MODULE_NAME) String rootModule, @QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_TYPE) String ciType, @QueryParam(BAMBOO_PLAN_KEY) String planKey) {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		ResponseInfo<Boolean> finalOutput = null;
-		String module = "";
-		String splitPath = "";
-		try {
-			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
-				if(StringUtils.isNotEmpty(rootModule)) {
-					module = appDir;
-					appDir = rootModule;
-				} 
-				splitPath = Utility.splitPathConstruction(appDir);
-				if(StringUtils.isNotEmpty(rootModule)) {
-					splitPath = splitPath + File.separator + module;
+		CIBuild build = null;
+		if(ciType!= null && ciType.equalsIgnoreCase(BAMBOO)){
+			try {
+				FrameworkConfiguration frameworkConfig = new FrameworkConfiguration(FRAMEWORK_CONFIG);
+				StringBuilder resultUrl = new StringBuilder();
+				
+				resultUrl.append(frameworkConfig.getBambooHome())
+				.append(BAMBOO_RESULT_PATH).
+				append(planKey).
+				append("?expand=results.result");
+				
+				String response = getResponseGetMethod(resultUrl.toString());
+				JSONParser parser = new JSONParser();
+				JSONObject jsonObject = (JSONObject) parser.parse(response);
+				if(jsonObject.containsKey("results"))	{
+					JSONObject resultsObj = (JSONObject) jsonObject.get("results");
+					if(Integer.parseInt(resultsObj.get("size").toString()) > 0) {
+						JSONArray results = (JSONArray) resultsObj.get("result");
+						JSONObject jsonObject1 = (JSONObject) results.get(0);
+						build = getBuildInstanceFromJson(jsonObject1); 
+					} 
 				}
-				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
-				projectId = projectInfo.getId();
+			} catch (ParseException e) {
+				finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810036);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+				.build();
+			} catch (PhrescoException e) {
+				finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810036);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+				.build();
 			}
-			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			CIJob job = null;
-			
-			List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
-			String globalInfo = "";
-			if (CollectionUtils.isNotEmpty(appInfos)) {
-				globalInfo = appInfos.get(0).getAppDirName();
-				globalInfo = Utility.splitPathConstruction(globalInfo);
-			}
-			if (StringUtils.isNotEmpty(appDir)) {
-				appDir = splitPath;
-			}
-			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
-			List<CIJob> ciJobs = Utility.getJobs(continuousName, projectId, ciJobInfo);
-			for (CIJob ciJob : ciJobs) {
-				if(ciJob.getJobName().equals(jobName)) {
-					job = ciJob;
+		} else {
+			String module = "";
+			String splitPath = "";
+			try {
+				if(projectId == null || projectId.equals("null") || projectId.equals("")) {
+					if(StringUtils.isNotEmpty(rootModule)) {
+						module = appDir;
+						appDir = rootModule;
+					} 
+					splitPath = Utility.splitPathConstruction(appDir);
+					if(StringUtils.isNotEmpty(rootModule)) {
+						splitPath = splitPath + File.separator + module;
+					}
+					ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(splitPath);
+					projectId = projectInfo.getId();
 				}
+				CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+				CIJob job = null;
+				
+				List<ApplicationInfo> appInfos = FrameworkUtil.getAppInfos(customerId, projectId);
+				String globalInfo = "";
+				if (CollectionUtils.isNotEmpty(appInfos)) {
+					globalInfo = appInfos.get(0).getAppDirName();
+					globalInfo = Utility.splitPathConstruction(globalInfo);
+				}
+				if (StringUtils.isNotEmpty(appDir)) {
+					appDir = splitPath;
+				}
+				List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir, globalInfo, READ);
+				List<CIJob> ciJobs = Utility.getJobs(continuousName, projectId, ciJobInfo);
+				for (CIJob ciJob : ciJobs) {
+					if(ciJob.getJobName().equals(jobName)) {
+						job = ciJob;
+					}
+				}
+				build = ciManager.getStatusInfo(job);
+			} catch (PhrescoException e) {
+				finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810036);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+				.build();
+			} catch (PhrescoPomException e) {
+				finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810036);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+				.build();
 			}
-			CIBuild build = ciManager.getStatusInfo(job);
-			finalOutput = responseDataEvaluation(responseData, null, build, RESPONSE_STATUS_SUCCESS, PHR800023);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
-		} catch (PhrescoException e) {
-			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810036);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
-			.build();
-		} catch (PhrescoPomException e) {
-			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810036);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
-			.build();
 		}
+		finalOutput = responseDataEvaluation(responseData, null, build, RESPONSE_STATUS_SUCCESS, PHR800023);
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 	}
 	
 	@GET
@@ -1987,4 +2281,72 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		return themeJsonStr;
 	}
 	
+	private String getResponseGetMethod(String restUrl) throws PhrescoException {
+		Client client = ClientHelper.createClient();
+		WebResource resource = client.resource(restUrl);
+        Builder builder = resource.accept(MediaType.APPLICATION_JSON);
+        ClientResponse response = null;
+       	response = builder.type(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+       	if(response.getStatus() != 200)
+       	{
+       		throw new PhrescoException(response.getEntity(String.class));
+       	}
+       	return response.getEntity(String.class);
+     }
+	
+	private JSONObject getResponsePostMethod(String restUrl, String credentials) throws PhrescoException {
+			JSONObject object = new JSONObject();
+			try {
+				URL url = new URL(restUrl);
+				HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
+				urlConnection.setRequestMethod(POST);
+				urlConnection.addRequestProperty("Accept", "application/json");
+				urlConnection.addRequestProperty(AUTHORIZATION, BASIC_SPACE + credentials);
+				urlConnection.addRequestProperty(CONTENT_TYPE, "application/x-www-form-urlencoded");
+				int responseCode = urlConnection.getResponseCode();
+				String message = responseCode == 200  ? "Bamboo build started" : "Bamboo build not Started";
+				StringBuilder sb = new StringBuilder();
+				if(responseCode == 200) {
+					BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+					String line = "";
+					while((line = br.readLine())!=null){
+						sb.append(line);
+					}
+				}
+				object.put("code", responseCode);
+		       	object.put("message",message);
+		       	object.put("result", sb.toString());
+		   	}
+			 catch(MalformedURLException e) {
+				 throw new PhrescoException(e);
+			 } catch (IOException e) {
+				 throw new PhrescoException(e);
+			}
+			return object;
+      }
+	
+	private CIBuild getBuildInstanceFromJson(JSONObject jsonObject) {
+		CIBuild build = new CIBuild();
+		build.setId(jsonObject.get("id").toString());
+		build.setNumber(Integer.parseInt(jsonObject.get("buildNumber").toString()));
+		build.setTimeStamp(jsonObject.get("buildStartedTime").toString());
+		
+		JSONObject link = (JSONObject) jsonObject.get("link");
+		build.setUrl(link.get("href").toString());
+		
+		String lifeCycleState = (String) jsonObject.get("lifeCycleState"); 
+		String state = (String) jsonObject.get("state");
+		if(lifeCycleState.equalsIgnoreCase("Finished")){
+			if(state.equalsIgnoreCase("Failed"))	{
+			build.setStatus("FAILURE");
+			}
+			else if(state.equalsIgnoreCase("Successful")) {
+				build.setStatus("SUCCESS");
+			}
+		}
+		if(lifeCycleState.equalsIgnoreCase("NotBuilt")) {
+			build.setStatus("FAILURE");
+		}
+		return build;
+	}
 }

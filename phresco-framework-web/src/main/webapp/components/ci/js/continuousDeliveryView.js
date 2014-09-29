@@ -1,4 +1,3 @@
-
 define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 	Clazz.createPackage("com.components.ci.js");
 
@@ -121,10 +120,34 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 		
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
-			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, "continuousDeliveryList"), function(response) {
-				self.templateData.projectDelivery = response.data;
-				renderFunction(self.templateData, whereToRender);
-			});		
+			self.ciListener.getHeaderResponse(self.ciListener.getRequestHeader(self.ciRequestBody, 'jenkinsStatus'), function (response) {
+				
+				if(response.data == 200) {
+				self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody,"continuousDeliveryList"), function(response) {
+						self.templateData.projectDelivery = response.data;
+						self.ciListener.data = response.data;
+						if(self.ciListener.ciType == "Bamboo")
+						{
+							if(response.data.plans.plan) {
+								self.projectPlan = response.data.plans.plan;
+								$.each(self.projectPlan,function(index, plan){
+								self.templateData.projectName = plan.projectName;
+									return false;
+								});
+							}
+							else {
+								renderFunction(self.templateData, whereToRender);
+							}
+							
+						} 
+						renderFunction(self.templateData, whereToRender);
+					});	
+				}else{
+					renderFunction("", whereToRender);
+				}
+			});
+					
+				
 		},
 
 		/***
@@ -138,8 +161,14 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 			//to hide all opts @ startup in view page
 			$(".opts").hide();
 			self.jenkinsStatus.dispatch(function(callback) {
+				var projectInfo = commonVariables.api.localVal.getProjectInfo();
 				if(callback.data !== "200" && callback.data !== "403") {
-					var errorMessage = callback.responseCode;
+					var errorMessage = "";
+					if(self.ciListener.ciType == "Jenkins"){
+						errorMessage = callback.responseCode;
+					}else if(projectInfo.data.projectInfo.ciType == "Bamboo"){
+						errorMessage = "PHR810049";
+					}
 					if(callback.data === "503") {
 						errorMessage = "PHR800011";
 					} 

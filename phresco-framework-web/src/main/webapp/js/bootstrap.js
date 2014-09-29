@@ -95,6 +95,8 @@ var commonVariables = {
 	jobTemplates : "jobTemplates",
 	continuousDeliveryView : "continuousDeliveryView",
 	continuousDeliveryConfigure : "continuousDeliveryConfigure",
+	bamboo : "Bamboo",
+	jenkins : "Jenkins",
 	
 	tridiongeneral : "tridiongeneral",
 	tridionpublish : "tridionpublish",	

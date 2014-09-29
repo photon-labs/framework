@@ -263,8 +263,9 @@
 		"PHRTRS1020" : "Please Select Environment",
 		"PHRTRS1030" : "Please Select Target",
 		"PHRSR10007" : "Content and WebSite is need to create further proceed",
-		"envalreadyexists" : "Environment Already Exists"
-		
+		"envalreadyexists" : "Environment Already Exists",
+		"PHR810049" :  "Bamboo server not found",
+		"PHR810048" : "Invalid Credentials for Bamboo"
 	},
 	"successCodes" : {
 		"PHR100008" : "Password emailed",
@@ -430,6 +431,9 @@
 				"custom" : "Custom",
 				"tablet" : "Tablet",
 				"prebuilt" : "Pre Built",
+				"citype" : "Ci Type",
+				"jenkins" : "Jenkins",
+				"bamboo" : "Bamboo",
 				"artifactId" : "Artifact Id",
 				"enddate" : "End Date",
 				"code" : "Code",
@@ -456,6 +460,7 @@
 				"integrationTest": "IntegrationTest",
 				"groupid" : "GroupId",
 				"splitdotphresco" : "Split .Phresco",
+				"projectKey" :"Bamboo Project Key",
 				"splittest" : "Split Test"
 			},
 			"title" : {

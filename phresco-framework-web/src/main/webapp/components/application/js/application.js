@@ -11,6 +11,7 @@ define(["application/listener/applicationListener"], function() {
 		onRemoveLayerEvent : null,
 		onAddLayerEvent : null,
 		renderData : {},
+		ciType : null,
 		positionCounter : 0,
 		header: {
 			contentType: null,
@@ -195,6 +196,11 @@ define(["application/listener/applicationListener"], function() {
 					importapp ='<input type="submit" data-i18n="[value]application.btn.update;" id="updatebutton" class="btn btn_style update_btn" disabled>';
 				}return importapp;
 			});	
+			
+			Handlebars.registerHelper('appendNames', function(jobName) {
+				var appId = self.ciType;
+				return appId;
+			});
 		},
 		 
 		
@@ -281,6 +287,7 @@ define(["application/listener/applicationListener"], function() {
 					var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 					projectlist.userPermissions = userPermissions;
 					self.renderData = response;
+					self.ciType = response.appdetails.data.projectInfo.ciType;
 					var techId = response.appdetails.data.projectInfo.appInfos[0].techInfo.id;
 					self.editApplicationListener.getApplicableOptions(self.editApplicationListener.getRequestHeader(self.appDirName, "getApplicableOptions", techId), function(response) {
 						commonVariables.api.localVal.setSession("applicableOptions", JSON.stringify(response.data));
