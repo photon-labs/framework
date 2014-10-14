@@ -518,7 +518,7 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 				contentType: 'application/json',
 				status: 200,
 				response: function() {
-					this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR600024","data":{"propertyTemplates":[{"required":false,"possibleValues":null,"appliesTo":null,"propertyTemplates":null,"multiple":false,"settingsTemplateId":null,"key":"Environment.SHOPLANDING","type":null,"defaultValue":null,"creationDate":1379418716561,"helpText":null,"system":false,"name":"Environment SHOPLANDING","id":"21ee19e8-e0b0-4bcb-8592-7618c92b2898","displayName":null,"description":null,"status":null}],"hasCustomProperty":true,"properties":{"Environment.SHOPLANDING":"http://staging-apps.usablenet.com/mt/qa1.walgreens.com/store/catalog/shopLanding?un_jtt_redirect"}},"status":"success"});
+					this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR600024","data":{"propertyTemplates":[{"required":false,"possibleValues":null,"appliesTo":null,"propertyTemplates":null,"multiple":false,"settingsTemplateId":null,"key":"Environment.SHOPLANDING","type":null,"defaultValue":null,"creationDate":1379418716561,"helpText":null,"system":false,"name":"Environment SHOPLANDING","id":"21ee19e8-e0b0-4bcb-8592-7618c92b2898","displayName":null,"description":null,"status":null}],"hasCustomProperty":true,"properties":{"Environment.SHOPLANDING":"http://www.phresco.com"}},"status":"success"});
 				}
 			});
 			
@@ -526,7 +526,7 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			$("select[compType=components0]").change();
 			setTimeout(function() {
 				start();
-				equal($(commonVariables.contentPlaceholder).find('input.Components0Configuration').val(), "http://staging-apps.usablenet.com/mt/qa1.walgreens.com/store/catalog/shopLanding?un_jtt_redirect", "Component Configuration key's Render Tested");
+				equal($(commonVariables.contentPlaceholder).find('input.Components0Configuration').val(), "http://www.phresco.com", "Component Configuration key's Render Tested");
 				self.editComponetConfig(editConfiguration);
 			}, 1500);
 		}); 
@@ -543,7 +543,7 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 				contentType: 'application/json',
 				status: 200,
 				response: function() {
-					this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR600002","data":{"defaultEnv":true,"appliesTo":[""],"delete":false,"name":"Production","desc":"Production Environment is used for Development purpose only","configurations":[{"envName":"Production","name":"new","properties":{"components":"Shop","Environment.SHOPLANDING":"http://staging-apps.usablenet.com/mt/qa1.walgreens.com/store/catalog/shopLanding?un_jtt_redirect"},"type":"Components","desc":"desc"}]},"status":"success"});
+					this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR600002","data":{"defaultEnv":true,"appliesTo":[""],"delete":false,"name":"Production","desc":"Production Environment is used for Development purpose only","configurations":[{"envName":"Production","name":"new","properties":{"components":"Shop","Environment.SHOPLANDING":"http://www.phresco.com"},"type":"Components","desc":"desc"}]},"status":"success"});
 				}
 			});
 			
@@ -551,7 +551,7 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			
 			setTimeout(function() {
 				start();
-				equal($(commonVariables.contentPlaceholder).find('input.Components1Configuration').val(), "http://staging-apps.usablenet.com/mt/qa1.walgreens.com/store/catalog/shopLanding?un_jtt_redirect", "Edit Component Configuration Render Tested");
+				equal($(commonVariables.contentPlaceholder).find('input.Components1Configuration').val(), "http://www.phresco.com", "Edit Component Configuration Render Tested");
 				self.configurationRenderWithCustomProperty(editConfiguration);
 			}, 2000);
 		}); 
