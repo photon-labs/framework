@@ -65,8 +65,8 @@ public class RepositoryServiceTest extends RestBaseTest  {
 @Test
 	public void  commitProjectToRepo() {
 		RepoDetail repodetail = new RepoDetail();
-		repodetail.setUserName("santhosh_ja");
-		repodetail.setPassword("sandoze!24");
+		repodetail.setUserName("username");
+		repodetail.setPassword("password");
 		repodetail.setType("svn");
 		repodetail.setCommitMessage("[artf710705]testcommit");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/" + appDirName);
@@ -82,8 +82,8 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	public void  updateProjectToRepo() {
 		RepoInfo repoInfo = new RepoInfo();
 		RepoDetail repodetail = new RepoDetail();
-		repodetail.setUserName("santhosh_ja");
-		repodetail.setPassword("sandoze!24");
+		repodetail.setUserName("username");
+		repodetail.setPassword("password");
 		repodetail.setRevision("head");
 		repodetail.setType("svn");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/" + appDirName);
@@ -96,44 +96,43 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	public void  importProjectFromRepo() throws Exception {
 		RepoInfo repoInfo = new RepoInfo();
 		RepoDetail repodetail = new RepoDetail();
-		repodetail.setUserName("santhosh_ja");
-		repodetail.setPassword("sandoze!24");
+		repodetail.setUserName("username");
+		repodetail.setPassword("password");
 		repodetail.setRevision("head");
 		repodetail.setType("svn");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0/239/");
 		repoInfo.setSrcRepoDetail(repodetail);
-		Response importApplication = repositoryservice.importApplication(repoInfo, "Admin", "santhosh_ja");
+		Response importApplication = repositoryservice.importApplication(repoInfo, "Admin", "username");
 		Assert.assertEquals(200,importApplication.getStatus());
 		
 		repodetail.setUserName("sample");
 		repoInfo.setSrcRepoDetail(repodetail);
-		Response authenticationException = repositoryservice.importApplication(repoInfo, "Admin", "santhosh_ja");
+		Response authenticationException = repositoryservice.importApplication(repoInfo, "Admin", "username");
 		Assert.assertEquals(200, authenticationException.getStatus());
 	}
 
 	@Test
 	public void  fetchLogMessages() throws PhrescoException {
-		String appDirName = "";
 		RepoDetail repodetail = new RepoDetail();
-		repodetail.setUserName("santhosh_ja");
-		repodetail.setPassword("sandoze!24");
+		repodetail.setUserName("username");
+		repodetail.setPassword("password");
 		repodetail.setRevision("head");
 		repodetail.setType("svn");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
-		Response fetchLogMessages = repositoryservice.fetchLogMessages(appDirName, repodetail);
+		Response fetchLogMessages = repositoryservice.fetchLogMessages(repodetail);
 		Assert.assertEquals(200,fetchLogMessages.getStatus());
 		
 		repodetail.setRepoUrl("http://wrong.url.com");
-		Response wrongUrlResponse = repositoryservice.fetchLogMessages(appDirName, repodetail);
+		Response wrongUrlResponse = repositoryservice.fetchLogMessages(repodetail);
 		Assert.assertEquals(200, wrongUrlResponse.getStatus());
 		
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/Dharani/iphone/iPhone-Native-None/");
-		Response lessLogs = repositoryservice.fetchLogMessages(appDirName, repodetail);
+		Response lessLogs = repositoryservice.fetchLogMessages(repodetail);
 		Assert.assertEquals(200, lessLogs.getStatus());
 		
 		repodetail.setUserName("sample");
 		repodetail.setPassword("sample");
-		Response unauthorisedResponse = repositoryservice.fetchLogMessages(appDirName, repodetail);
+		Response unauthorisedResponse = repositoryservice.fetchLogMessages(repodetail);
 		Assert.assertEquals(200, unauthorisedResponse.getStatus());
 	}
 	
@@ -160,8 +159,8 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	@Test
 	public void  commitGitProjectToRepo() {
 		RepoDetail repodetail = new RepoDetail();
-		repodetail.setUserName("santhosh-ja");
-		repodetail.setPassword("santJ!23");
+		repodetail.setUserName("username");
+		repodetail.setPassword("password");
 		repodetail.setType("git");
 		repodetail.setCommitMessage("[artf710705]testcommit");
 		repodetail.setRepoUrl("https://github.com/santhosh-ja/TestGit.git");
@@ -177,8 +176,8 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	public void  updateGitProjectToRepo() {
 		RepoInfo repoInfo = new RepoInfo();
 		RepoDetail repodetail = new RepoDetail();
-		repodetail.setUserName("santhosh-ja");
-		repodetail.setPassword("santJ!23");
+		repodetail.setUserName("username");
+		repodetail.setPassword("password");
 		repodetail.setType("git");
 		repodetail.setRepoUrl("https://github.com/santhosh-ja/TestGit.git");
 		repoInfo.setSrcRepoDetail(repodetail);
@@ -190,12 +189,12 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	public void  importGitProjectFromRepo() throws Exception {
 		RepoInfo repoInfo = new RepoInfo();
 		RepoDetail repodetail = new RepoDetail();
-		repodetail.setUserName("santhosh-ja");
-		repodetail.setPassword("santJ!23");
+		repodetail.setUserName("username");
+		repodetail.setPassword("password");
 		repodetail.setType("git");
 		repodetail.setRepoUrl("https://github.com/santhosh-ja/GitAdd.git");
 		repoInfo.setSrcRepoDetail(repodetail);
-		Response importApplication = repositoryservice.importApplication(repoInfo, "Admin", "santhosh_ja");
+		Response importApplication = repositoryservice.importApplication(repoInfo, "Admin", "username");
 		Assert.assertEquals(200,importApplication.getStatus());
 	}
 	
@@ -211,7 +210,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		repoDetail.setServerPath("raj/jsa");
 		repoDetail.setRepoUrl("https://vivekraja.visualstudio.com/DefaultCollection");
 		repoInfo.setSrcRepoDetail(repoDetail);
-		Response importApplication = repositoryservice.importApplication(repoInfo, "Admin", "santhosh_ja");
+		Response importApplication = repositoryservice.importApplication(repoInfo, "Admin", "username");
 		Assert.assertEquals(200,importApplication.getStatus());
 		Assert.assertEquals(true, true);
 	}
@@ -224,7 +223,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	
 	@Test
 	public void  getSourceRepoTest() throws Exception {
-		Response response = repositoryservice.getSourceRepo(customerId, "TestGitProject", "santhosh_ja", "farewellJ123");
+		Response response = repositoryservice.getSourceRepo(customerId, "TestGitProject", "username", "password");
 		Assert.assertEquals(200, response.getStatus());
 	} 
 
@@ -246,8 +245,8 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		RepoDetail srcRepoDetail = new RepoDetail();
 		srcRepoDetail.setType("svn");
 		srcRepoDetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
-		srcRepoDetail.setUserName("santhosh_ja");
-		srcRepoDetail.setPassword("sandoze!24");
+		srcRepoDetail.setUserName("username");
+		srcRepoDetail.setPassword("password");
 		srcRepoDetail.setCommitMessage("[artf778042] Add test");
 		srcRepoDetail.setPassPhrase("");
 		repoInfo.setSrcRepoDetail(srcRepoDetail);
@@ -282,8 +281,8 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		RepoDetail srcRepoDetail = new RepoDetail();
 		srcRepoDetail.setType("git");
 		srcRepoDetail.setRepoUrl("https://github.com/santhosh-ja/TestProject_src.git");
-		srcRepoDetail.setUserName("santhosh-ja");
-		srcRepoDetail.setPassword("santJ!23");
+		srcRepoDetail.setUserName("username");
+		srcRepoDetail.setPassword("password");
 		srcRepoDetail.setCommitMessage("[artf778042] Add test");
 		srcRepoDetail.setPassPhrase("");
 		repoInfo.setSrcRepoDetail(srcRepoDetail);
